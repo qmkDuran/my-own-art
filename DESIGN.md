@@ -4,7 +4,11 @@
 > New idea? Check it against this doc first. If it doesn't fit the current milestone, it goes in a parking lot.
 
 ## Hook
-A creature collector built like an ARPG. You're a trainer who sends a creature into battle and **fights as it**, with deep skill trees and gems that change how its attacks work.
+An ARPG where your starter creature is your class. You're a trainer who sends a creature into the world through a **spirit link** and **fights as it**, with deep skill trees and gems that change how its attacks work.
+
+## Story frame
+- **Spirit link:** the trainer stays safe in the hub and guides the creature through a mental bond. This explains why the player directly controls the creature.
+- The trainer appears only in the hub/town (story, menus, gems, skills). The creature is alone in the world.
 
 ## Platform
 - Engine: Godot
@@ -22,6 +26,10 @@ A creature collector built like an ARPG. You're a trainer who sends a creature i
 ## Combat
 - Real-time, 2D
 - The player directly controls the creature they send out
+
+## Starter selection
+- **No catching.** At the start, the player picks a starter creature, which is their class.
+- Catching was cut for scope.
 
 ## Classes and creatures
 - **One creature line per element.** Each line is its own class with its own element, playstyle and skill tree.
@@ -46,7 +54,6 @@ A creature collector built like an ARPG. You're a trainer who sends a creature i
 
 ## Open questions
 - Core gameplay loop (what does a session look like?)
-- How catching works
 - How evolution is triggered and how it ties to the skill tree
 - Gem system details
 
