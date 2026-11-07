@@ -29,7 +29,10 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
 - 2D pixel art, made by the developer in Aseprite (studying *Pixel Logic*)
 - Tiles and world: 16×16
 - Creature size grows with evolution: stage 1 = 16×16, stage 2 ≈ 24×24, stage 3 = 32×32
-- Use a limited, existing palette (e.g. from Lospec)
+- **Palette: Apollo** (46 colours, Lospec), chosen for its dark tone and clear ramps. Swappable later via Aseprite colour remap.
+  - Use ~4–6 colours per creature
+  - Darker, muted colours for the world; brighter, saturated colours for creatures, enemies and attacks (readability)
+  - No pure black: outlines use `#090A14`; cool darks for world shadows, warm darks (`#241527`, `#341C27`) for the fire creature
 - Silhouette first; one consistent light direction
 
 ## Combat
