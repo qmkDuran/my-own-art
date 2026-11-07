@@ -10,6 +10,15 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
 - **Spirit link:** the trainer stays safe in the hub and guides the creature through a mental bond. This explains why the player directly controls the creature.
 - The trainer appears only in the hub/town (story, menus, gems, skills). The creature is alone in the world.
 
+## Structure and story
+- **Campaign ARPG** structure (like Grim Dawn / Diablo 4): story split into **acts**; each act is a region of **hand-made zones**. No roguelite randomised runs.
+- **Moving hub:** the trainer journeys town to town / camp to camp; each act has a new hub.
+- Story told mostly **in the hub** via short dialogue. No cutscenes.
+- Journey-style story: a region to cross, a rival, powerful figures to beat, a villain group (original setting and characters).
+- **Tone: dark themes, not graphic content.** Loss, war, corruption, moral grey areas. No gore.
+- Scope: ~1 act for the demo, ~3 acts for the full game.
+- Write the story **after** the vertical slice is fun.
+
 ## Platform
 - Engine: Godot
 - Release: Steam (PC)
@@ -53,7 +62,7 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
 - If it isn't fun with boxes, better art won't fix it.
 
 ## Open questions
-- Core gameplay loop (what does a session look like?)
+- Core gameplay loop: draft is hub → link into zone → fight → XP + gems → hub to spend → harder zone → evolve
 - How evolution is triggered and how it ties to the skill tree
 - Gem system details
 
