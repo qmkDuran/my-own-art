@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3]
+[gd_scene load_steps=28 format=3]
 
 [ext_resource type="Script" path="res://scripts/creatures/creature.gd" id="1_creature"]
 [ext_resource type="Script" path="res://scripts/animation/creature_animator.gd" id="2_animator"]
@@ -24,6 +24,7 @@
 [ext_resource type="Script" path="res://scripts/effects/screen_shake.gd" id="22_shake"]
 [ext_resource type="Script" path="res://scripts/creatures/mouse_orders.gd" id="23_mouse_orders"]
 [ext_resource type="Script" path="res://scripts/creatures/level_up_boost.gd" id="24_level_up"]
+[ext_resource type="Script" path="res://scripts/components/spinning_hook.gd" id="25_spinning_hook"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_body"]
 radius = 5.0
@@ -60,9 +61,14 @@ script = ExtResource("4_movement")
 [node name="Facing" type="Node" parent="."]
 script = ExtResource("5_facing")
 
-[node name="MeleeAttack" type="Node" parent="."]
+[node name="MeleeAttack" type="Node" parent="." node_paths=PackedStringArray("finisher")]
 script = ExtResource("6_melee")
 impact_effect = ExtResource("7_impact")
+finisher = NodePath("../SpinningHook")
+
+[node name="SpinningHook" type="Node" parent="." node_paths=PackedStringArray("screen_shake")]
+script = ExtResource("25_spinning_hook")
+screen_shake = NodePath("../ScreenShake")
 
 [node name="Dodge" type="Node" parent="."]
 script = ExtResource("8_dodge")

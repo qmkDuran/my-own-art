@@ -28,8 +28,9 @@ enum Kind { SKILL, UPGRADE, STAT, ULTIMATE }
 ## (those get theirs worked out live, see EmberTreeStatSheet). With `skill_action` set,
 ## "{name}" placeholders are filled from that skill's real values (see EmberTreeSkillFacts).
 @export_multiline var facts: String = ""
-## Name of the player's SkillBar child that plays this skill (e.g. "FlameUppercut"),
-## whose numbers fill `facts`. Empty for nodes that aren't a built skill.
+## Name of the player's node that plays this skill, a SkillBar child (e.g. "FlameUppercut")
+## or a direct child (e.g. "SpinningHook"), whose numbers fill `facts`.
+## Empty for nodes that aren't a built skill.
 @export var skill_action: String = ""
 ## Ids of nodes that lead here; learning any one of them is enough. Empty = grows from the centre.
 @export var requires: PackedStringArray = PackedStringArray()

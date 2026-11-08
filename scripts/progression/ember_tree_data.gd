@@ -50,8 +50,9 @@ const NODE_ROWS := [
 
 	# --- Flurry: be fast, chain punches ---------------------------------------
 	{"id": "spinning_hook", "branch": "flurry", "stage": 1, "tier": 0, "kind": Kind.SKILL, "icon": "swirl",
+		"skill_action": "SpinningHook",
 		"title": "Spinning Hook", "text": "The combo ends in a spin.",
-		"facts": "Every 3rd jab in a chain becomes a hook: 2 damage to every enemy within 24px."},
+		"facts": "Every 3rd punch in a chain is a spinning hook: {damage} damage to every enemy within {radius}px, and knocks them back.\nNo Heat cost"},
 	{"id": "quick_hands", "branch": "flurry", "stage": 1, "tier": 1, "angle": -SPREAD_NEAR, "kind": Kind.STAT, "icon": "hands",
 		"requires": ["spinning_hook"], "stats": {EmberTreeEffects.JAB_RECOVERY_CUT: 0.08},
 		"title": "Quick Hands", "text": "Faster recovery after each punch."},

@@ -3,9 +3,10 @@ extends RefCounted
 ## Fills a skill node's facts with the real numbers of the skill as the player has it,
 ## so the tree never repeats (and never drifts from) the skill's own values.
 ##
-## A node's `facts` may hold "{name}" placeholders. Each is filled from the player's
-## SkillBar child named by the node's `skill_action` (e.g. FlameUppercut: damage, reach,
-## arc_degrees) or from that action's Skill resource (heat_cost, cooldown).
+## A node's `facts` may hold "{name}" placeholders. Each is filled from the player's node
+## named by the node's `skill_action`: a SkillBar child (e.g. FlameUppercut: damage, reach,
+## arc_degrees, plus its Skill resource's heat_cost and cooldown) or, failing that, a
+## direct child of the player (e.g. SpinningHook, the jab combo's finisher).
 
 const SKILL_BAR := "SkillBar"
 
@@ -19,16 +20,16 @@ static func text_for(node: EmberTreeNode, player: Node) -> String:
 	if action == null:
 		return ""
 	var values := _script_values(action)
-	var skill: Skill = action.skill
-	if skill != null:
-		values.merge(_script_values(skill))
+	if action is SkillAction and (action as SkillAction).skill != null:
+		values.merge(_script_values((action as SkillAction).skill))
 	return node.facts.format(values)
 
 
-static func _find_action(action_name: String, player: Node) -> SkillAction:
+static func _find_action(action_name: String, player: Node) -> Node:
 	if player == null or not is_instance_valid(player):
 		return null
-	return player.get_node_or_null("%s/%s" % [SKILL_BAR, action_name]) as SkillAction
+	var skill_bar_action := player.get_node_or_null("%s/%s" % [SKILL_BAR, action_name])
+	return skill_bar_action if skill_bar_action != null else player.get_node_or_null(action_name)
 
 
 ## Every number the object's script declares, by name, written as the screen shows it.

@@ -39,6 +39,8 @@ const ANIMATION_SETTINGS := {
 	"uppercut": { "frame_durations": [0.16, 0.05, 0.09, 0.07, 0.08], "loops": false },
 	# A closed-eyes copy of every idle frame, so a blink never interrupts the breathing.
 	"blink": { "frame_durations": [0.30, 0.20, 0.30, 0.20], "loops": true },
+	# Spinning Hook: the jab's frames, held one at a time by SpinTurn (never played through).
+	"spin": { "sheet": "jab", "frame_durations": [0.12, 0.07, 0.11, 0.14], "loops": false },
 }
 
 ## Pairs of actions drawn frame-for-frame alike. Switching between them keeps
@@ -56,6 +58,8 @@ const STAND_IN_FOR_ACTION := {
 const BLINK_INTERVAL_RANGE := Vector2(2.0, 5.0)
 ## How long the eyes stay shut, in seconds.
 const BLINK_LENGTH := 0.12
+## The action posed by SpinTurn instead of following the creature's facing.
+const SPIN_ACTION := "spin"
 
 ## Used to find this creature's sprite sheets, e.g. "emberoo".
 @export var creature_name: String = "emberoo"
@@ -66,6 +70,8 @@ const BLINK_LENGTH := 0.12
 var _ground_offset: Vector2
 var _seconds_until_blink: float = 0.0
 var _blink_seconds_left: float = 0.0
+var _spin_turn := SpinTurn.new()
+var _is_spinning: bool = false
 
 
 func _ready() -> void:
@@ -86,9 +92,13 @@ func lift(height: float) -> void:
 
 
 ## Like show_animation, but always starts from the first frame,
-## e.g. so back-to-back jabs each play in full.
+## e.g. so back-to-back jabs each play in full. A spin starts its turn from the front.
 func replay_animation(action: String, facing: Facing) -> void:
+	if action == SPIN_ACTION:
+		_spin_turn.restart()
 	show_animation(action, facing)
+	if _is_spinning:
+		return
 	frame = 0
 	frame_progress = 0.0
 	play()
@@ -96,14 +106,19 @@ func replay_animation(action: String, facing: Facing) -> void:
 
 func _process(delta: float) -> void:
 	_update_blink_timers(delta)
+	_spin_turn.advance(delta)
 
 
-## The view (e.g. "front", "side") that matches the given facing.
+## The view (e.g. "front", "side") shown for the given facing; mid-spin, the spin's view.
 func view_for(facing: Facing) -> String:
-	return VIEW_FOR_DIRECTION[facing.direction]
+	return _spin_turn.view() if _is_spinning else VIEW_FOR_DIRECTION[facing.direction]
 
 
 func show_animation(action: String, facing: Facing) -> void:
+	_is_spinning = action == SPIN_ACTION
+	if _is_spinning:
+		_spin_turn.pose(self, SPIN_ACTION)
+		return
 	if action == "idle" and _is_blinking():
 		action = "blink"
 

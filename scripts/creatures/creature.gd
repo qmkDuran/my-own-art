@@ -7,7 +7,8 @@ extends CharacterBody2D
 ##   MouseOrders     -> click to move, click an enemy to attack it
 ##   Movement        -> how fast to move normally
 ##   Facing          -> which way to look
-##   MeleeAttack     -> the jab
+##   MeleeAttack     -> the jab combo: jab, jab, then the Spinning Hook
+##   SpinningHook    -> the combo's finisher: a spin that hits all around
 ##   Dodge           -> the leap out of danger
 ##   AfterimageTrail -> fading copies during a dodge
 ##   SpeedTrail      -> a streak behind a dodge
