@@ -56,8 +56,8 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
 - **First zone: Ruins Edge** (`scenes/zones/ruins_edge/`), overgrown ruins at the edge of the AI God's territory. The game starts here; `scenes/main/main.tscn` stays as the test arena (enemies start paused there).
 - One winding path through hand-made areas: Start Glade (dummy, berries), Mossy Steps, Fallen Courtyard, Sunken Garden (+ optional Berry Hollow), Conduit Hall, Warden Gate, Final Arena (open, kept for a future mini-boss). Aim: ~4–5 minutes per early zone. Enemy density rises toward the end.
 - Tiles are 16×16 from `art/tiles/ruins_edge_tileset.tres`: Ground, Decoration, and an Obstacles layer y-sorted with the creatures (`World` node). Dense forest walls the map in. Dead cyan conduits in the stone are the only tech hint; use them sparingly.
-- **Enemies wait until they notice you:** toads within ~7 tiles, Wardens within ~9 (their visors see Glimra light). Noticing (or being hit) alerts the rest of the pack; summoned toads come out already hunting.
-- `FutureEnemySpot` markers (under `Areas/`) mark where new enemy types will go.
+- **Enemies wait until they notice you:** toads and Gruntites within ~7 tiles, Zephoots ~8, Wardens ~9 (their visors see Glimra light). Noticing (or being hit) alerts the rest of the pack; summoned toads come out already hunting. Noticing a species for the first time brings up its discovery card.
+- Zephoots stand behind the toad packs (Mossy Steps, Sunken Garden), Gruntites hold the open stone areas (Fallen Courtyard, Conduit Hall); the Final Arena has one of each. One `FutureEnemySpot` marker (under `Areas/FinalArena`) is kept for the mini-boss.
 - The HUD and game systems live in one shared scene (`scenes/game/game_layer.tscn`) that every level instances.
 
 ## Platform
@@ -106,6 +106,9 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
 - Handlers use a **small fixed roster** of 2–3 bound creature species across the game (saves art).
 - Vertical slice: 1 Handler + 1 bound creature type (simple: runs at you and bites).
 
+- **Zephoot** (wind, `art/zephoot/`): a puff-owl floating on a cloud, 2 jabs. Keeps ~70–110px away (backs off, drifts), then a 0.6s puff-up wind-up with a glint and one slow gust orb (~55px/s, 1 damage + small push; a dodge passes through). A shot every ~2.2s; slow to move right after one (the counterplay window). 4 XP, 10% berry.
+- **Gruntite** (stone, `art/gruntite/`): a clay-rock boar, 5 jabs, health bar once hit. Plods slowly; from ~40–90px a 0.8s wind-up (red eyes, then head down with a hoof scrape and dust) and a straight 90px charge at 3× walk speed: 2 damage + a strong shove. A miss skids into a ~1s daze (the punish window); a wall stops it with a bonk. Super armour while winding up and charging. 8 XP.
+
 ### Creature #1 (player): Emberoo
 - Fire kangaroo boxer. Stage 1 sprite done (16×16): idle (with blink), hop, jab, jab2, dodge in front/side/back.
 - Jab: hold to repeat, alternates fists, roots you in place. Dodge: a kangaroo leap that can cancel a jab.
@@ -115,11 +118,11 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
 ## Naming
 - Creature names blend **[element/trait] + [animal/sound]** into 2–3 fun syllables (e.g. **Emberoo**, **Toxlop**); evolutions get heavier names.
 - Every name must be original and checked (web + later USPTO/EUIPO) before use.
-- Names in use: **Glimra** (the creatures), **Emberoo** (player, fire kangaroo), **Toxlop** (toxic toad), **Wardens** (the Handlers; fine for enemies, not as a game title).
+- Names in use: **Glimra** (the creatures), **Emberoo** (player, fire kangaroo), **Toxlop** (toxic toad), **Zephoot** (wind puff-owl) and **Gruntite** (stone boar), both pending the trademark check, **Wardens** (the Handlers; fine for enemies, not as a game title).
 
 ## HUD
 - **Health: one heart** at the bottom-centre, filled with red that drains from the top down as health is lost, with the numbers beside it (e.g. 7/10) in a tiny pixel font.
-- **Enemy health:** Wardens show a small bar once hit; one-hit mobs show none.
+- **Enemy health:** Wardens and Gruntites show a small bar once hit; one- and two-hit mobs show none.
 - **Ability hotbar (later, with the skill tree):** a row of skill slots at the bottom-centre beside the heart and Heat pips, with key labels and cooldown overlays.
 - **No mana yet.** When skills arrive, Emberoo's resource is **Heat**, gained by landing hits and spent on fire skills, shown as **fire pips** next to the heart. Each element class gets its own resource.
 

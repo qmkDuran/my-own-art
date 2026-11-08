@@ -5,6 +5,8 @@ extends RefCounted
 ## Enemies placed around a zone wait, unaware, until the player comes within their notice
 ## distance. Once they notice, they stay alert, and they alert their pack: every enemy close
 ## by that can notice the player (has a `notice_player()` method) notices too.
+## Noticing is also when the player meets the species: an enemy with `creature_info()` is
+## recorded in the CreatureLog (the first of its kind brings up the discovery card).
 
 ## Enemies this close to the one that noticed the player are alerted with it, in pixels.
 const PACK_ALERT_RADIUS := 64.0
@@ -26,6 +28,8 @@ func notice(body: Node2D) -> void:
 	if has_noticed:
 		return
 	has_noticed = true
+	if body.has_method("creature_info"):
+		CreatureLog.discover(body.creature_info())
 	for enemy in body.get_tree().get_nodes_in_group(EnemyReactions.ENEMIES_GROUP):
 		var other := enemy as Node2D
 		if other == null or other == body or not other.has_method("notice_player"):

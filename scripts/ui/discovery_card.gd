@@ -30,6 +30,8 @@ var _portrait: TextureRect
 var _title: Label
 var _name: Label
 var _element: Label
+## Species met while a card is still showing (e.g. two new kinds noticed together) wait here.
+var _waiting: Array[Dictionary] = []
 
 
 func _ready() -> void:
@@ -39,11 +41,28 @@ func _ready() -> void:
 
 
 func _on_discovered(info: Dictionary) -> void:
-	_portrait.texture = info.get("portrait")
+	if _card.visible:
+		_waiting.append(info)
+	else:
+		_announce(info)
+
+
+func _announce(info: Dictionary) -> void:
+	_show_picture(info)
 	_name.text = info["name"]
 	_element.text = info["element"]
 	_slow_motion()
 	_slide_in_and_out()
+
+
+## The painted portrait; for a species without one yet, its sprite scaled up (crisp, since
+## the picture is drawn with nearest filtering); with neither, the card shows only words.
+func _show_picture(info: Dictionary) -> void:
+	var picture: Texture2D = info.get("portrait")
+	if picture == null:
+		picture = info.get("sprite")
+	_portrait.texture = picture
+	_portrait.visible = picture != null
 
 
 func _slow_motion() -> void:
@@ -67,7 +86,13 @@ func _slide_in_and_out() -> void:
 	show.chain().tween_interval(SHOW_SECONDS)
 	show.chain().tween_property(_card, "modulate:a", 0.0, FADE_OUT_SECONDS)
 	show.parallel().tween_property(_card, "position:y", TOP_MARGIN - DRIFT, FADE_OUT_SECONDS)
-	show.chain().tween_callback(func() -> void: _card.visible = false)
+	show.chain().tween_callback(_finish_showing)
+
+
+func _finish_showing() -> void:
+	_card.visible = false
+	if not _waiting.is_empty():
+		_announce(_waiting.pop_front())
 
 
 func _build_card() -> void:

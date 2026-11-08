@@ -11,7 +11,7 @@
 
 [ext_resource type="Script" path="res://scripts/components/light_drop.gd" id="9_drop"]
 [ext_resource type="PackedScene" path="res://scenes/pickups/light_mote.tscn" id="10_mote"]
-[ext_resource type="Script" path="res://scripts/enemies/toad_death_drops.gd" id="11_drops"]
+[ext_resource type="Script" path="res://scripts/enemies/death_drops.gd" id="11_drops"]
 [sub_resource type="CircleShape2D" id="CircleShape2D_body"]
 radius = 5.0
 

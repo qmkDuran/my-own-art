@@ -1,0 +1,73 @@
+[gd_scene load_steps=11 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/zephoot.gd" id="1_zephoot"]
+[ext_resource type="Script" path="res://scripts/animation/single_view_animator.gd" id="2_animator"]
+[ext_resource type="Script" path="res://scripts/components/health.gd" id="3_health"]
+[ext_resource type="Script" path="res://scripts/effects/hit_flash.gd" id="4_flash"]
+[ext_resource type="Script" path="res://scripts/enemies/zephoot_gust_shot.gd" id="5_shot"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/zephoot/gust_orb.tscn" id="6_orb"]
+[ext_resource type="Script" path="res://scripts/components/light_drop.gd" id="7_drop"]
+[ext_resource type="PackedScene" path="res://scenes/pickups/light_mote.tscn" id="8_mote"]
+[ext_resource type="Script" path="res://scripts/enemies/death_drops.gd" id="9_drops"]
+[ext_resource type="PackedScene" path="res://scenes/pickups/berry.tscn" id="10_berry"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_body"]
+radius = 5.0
+
+[node name="Zephoot" type="CharacterBody2D" groups=["enemies"]]
+z_index = 1
+motion_mode = 1
+script = ExtResource("1_zephoot")
+
+[node name="Shadow" type="Polygon2D" parent="."]
+color = Color(0.0352941, 0.0392157, 0.0784314, 0.45)
+polygon = PackedVector2Array(-6, 0, -5, -1.5, 0, -2, 5, -1.5, 6, 0, 5, 1.5, 0, 2, -5, 1.5)
+
+[node name="Sprite" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -8)
+script = ExtResource("2_animator")
+sheet_folder = "res://art/zephoot"
+sheet_prefix = "zephoot"
+animation_settings = {
+"attack": {
+"frame_durations": [0.6, 0.3],
+"loops": false
+},
+"idle": {
+"frame_durations": [0.5, 0.5],
+"loops": true
+},
+"move": {
+"frame_durations": [0.15, 0.15, 0.15, 0.15],
+"loops": true
+}
+}
+
+[node name="CollisionShape" type="CollisionShape2D" parent="."]
+position = Vector2(0, -3)
+shape = SubResource("CircleShape2D_body")
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("3_health")
+max_health = 2
+
+[node name="HitFlash" type="Node" parent="." node_paths=PackedStringArray("sprite")]
+script = ExtResource("4_flash")
+sprite = NodePath("../Sprite")
+
+[node name="GustShot" type="Node" parent="." node_paths=PackedStringArray("hit_flash")]
+script = ExtResource("5_shot")
+orb_scene = ExtResource("6_orb")
+hit_flash = NodePath("../HitFlash")
+
+[node name="LightDrop" type="Node" parent="."]
+script = ExtResource("7_drop")
+mote_scene = ExtResource("8_mote")
+mote_count = 4
+xp_per_mote = 1
+burst_offset = Vector2(0, -9)
+
+[node name="DeathDrops" type="Node2D" parent="."]
+script = ExtResource("9_drops")
+berry_scene = ExtResource("10_berry")
+berry_drop_chance = 0.1

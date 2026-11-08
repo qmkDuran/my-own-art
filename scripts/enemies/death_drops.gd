@@ -1,10 +1,11 @@
-class_name ToadDeathDrops
+class_name DeathDrops
 extends Node2D
-## What a toad leaves behind when it dies: a burst of toxic goo, and sometimes a berry
-## (which refills one Trainer's Aid charge). The toad calls `drop` when it dies.
-## A Node2D so it sits on the toad's feet: everything appears at this node's position.
+## What a bound creature leaves behind when it dies, besides its light (see LightDrop):
+## an optional burst effect (e.g. a toad's toxic goo), and sometimes a berry (which refills
+## one Trainer's Aid charge). The creature calls `drop` when it dies.
+## A Node2D so it sits on the creature's feet: everything appears at this node's position.
 
-## The toxic goo burst shown when it dies.
+## The burst shown when it dies (e.g. the toad's toxic splat); none if left empty.
 @export var death_splat_scene: PackedScene
 ## A berry it sometimes drops (refills one Trainer's Aid charge).
 @export var berry_scene: PackedScene
@@ -34,6 +35,6 @@ func _maybe_drop_berry() -> void:
 	berry.set_deferred("global_position", global_position)
 
 
-## The level the toad lives in, so drops stay behind when the toad is freed.
+## The level the creature lives in, so drops stay behind when the creature is freed.
 func _world() -> Node:
 	return get_parent().get_parent()

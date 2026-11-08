@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/creatures/emberoo/emberoo.tscn" id="1_emberoo"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/handler/handler.tscn" id="3_handler"]
@@ -6,6 +6,8 @@
 [ext_resource type="PackedScene" path="res://scenes/enemies/training_dummy/training_dummy.tscn" id="8_dummy"]
 [ext_resource type="PackedScene" path="res://scenes/debug/debug_controls.tscn" id="9_debug"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/toxic_toad/toxic_toad.tscn" id="10_toad"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/zephoot/zephoot.tscn" id="11_zephoot"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/gruntite/gruntite.tscn" id="12_gruntite"]
 
 [node name="Main" type="Node2D"]
 
@@ -64,6 +66,12 @@ position = Vector2(45, 10)
 
 [node name="PracticeToad4" parent="." instance=ExtResource("10_toad")]
 position = Vector2(70, 15)
+
+[node name="PracticeZephoot" parent="." instance=ExtResource("11_zephoot")]
+position = Vector2(95, 45)
+
+[node name="PracticeGruntite" parent="." instance=ExtResource("12_gruntite")]
+position = Vector2(20, -60)
 
 [node name="TrainingDummy" parent="." instance=ExtResource("8_dummy")]
 position = Vector2(-60, 20)

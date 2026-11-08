@@ -9,7 +9,7 @@ extends CharacterBody2D
 ##   PUFFING    -> the warning: holds its puffed-up pose, then glints just before striking
 ##   LASHING    -> tongue shoots out; hits the player if they're still in the way
 ##   RECOVERING -> a short pause after attacking or being hit
-##   DYING      -> fades away (ToadDeathDrops leaves the goo and maybe a berry)
+##   DYING      -> fades away (DeathDrops leaves the goo and maybe a berry)
 ##
 ## Until it notices the player (they come within `notice_distance`, it gets hit, or a Warden
 ## summons it), it just sits. While DebugControls.enemies_passive is on, it only sits (RESTING)
@@ -75,7 +75,7 @@ var _awareness := PlayerAwareness.new()
 @onready var tongue: ToadTongue = $Tongue
 @onready var hit_flash: HitFlash = $HitFlash
 @onready var collision_shape: CollisionShape2D = $CollisionShape
-@onready var death_drops: ToadDeathDrops = $DeathDrops
+@onready var death_drops: DeathDrops = $DeathDrops
 
 
 func _ready() -> void:

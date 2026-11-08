@@ -15,6 +15,8 @@
 [ext_resource type="PackedScene" path="res://scenes/game/game_layer.tscn" id="13_jewaq"]
 [ext_resource type="PackedScene" path="res://scenes/debug/debug_controls.tscn" id="14_0y0he"]
 [ext_resource type="Script" path="res://scripts/debug/debug_controls.gd" id="15_3skcb"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/zephoot/zephoot.tscn" id="16_zeph"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/gruntite/gruntite.tscn" id="17_grun"]
 
 [node name="RuinsEdge" type="Node2D" unique_id=348360192]
 
@@ -328,6 +330,24 @@ motion_mode = 1
 script = ExtResource("9_rhgum")
 portrait = ExtResource("10_k2t23")
 
+[node name="MossyStepsZephoot1" type="CharacterBody2D" parent="World" unique_id=758618299 groups=["enemies"] instance=ExtResource("16_zeph")]
+position = Vector2(216, 504)
+
+[node name="FallenCourtyardGruntite1" type="CharacterBody2D" parent="World" unique_id=1651005076 groups=["enemies"] instance=ExtResource("17_grun")]
+position = Vector2(760, 280)
+
+[node name="SunkenGardenZephoot1" type="CharacterBody2D" parent="World" unique_id=958506638 groups=["enemies"] instance=ExtResource("16_zeph")]
+position = Vector2(728, 744)
+
+[node name="ConduitHallGruntite1" type="CharacterBody2D" parent="World" unique_id=1235700349 groups=["enemies"] instance=ExtResource("17_grun")]
+position = Vector2(1272, 280)
+
+[node name="FinalArenaGruntite1" type="CharacterBody2D" parent="World" unique_id=1359937302 groups=["enemies"] instance=ExtResource("17_grun")]
+position = Vector2(1416, 920)
+
+[node name="FinalArenaZephoot1" type="CharacterBody2D" parent="World" unique_id=812946852 groups=["enemies"] instance=ExtResource("16_zeph")]
+position = Vector2(1608, 920)
+
 [node name="Areas" type="Node2D" parent="." unique_id=837474602]
 
 [node name="StartGlade" type="Node2D" parent="Areas" unique_id=789296234]
@@ -336,26 +356,14 @@ position = Vector2(224, 912)
 [node name="MossySteps" type="Node2D" parent="Areas" unique_id=1783154215]
 position = Vector2(272, 432)
 
-[node name="FutureEnemySpot" type="Marker2D" parent="Areas/MossySteps" unique_id=1813621572 groups=["future_enemy_spots"]]
-position = Vector2(-56, 72)
-
 [node name="FallenCourtyard" type="Node2D" parent="Areas" unique_id=242470113]
 position = Vector2(672, 240)
-
-[node name="FutureEnemySpot" type="Marker2D" parent="Areas/FallenCourtyard" unique_id=1006933192 groups=["future_enemy_spots"]]
-position = Vector2(88, 40)
 
 [node name="SunkenGarden" type="Node2D" parent="Areas" unique_id=833168709]
 position = Vector2(832, 720)
 
-[node name="FutureEnemySpot" type="Marker2D" parent="Areas/SunkenGarden" unique_id=1401034160 groups=["future_enemy_spots"]]
-position = Vector2(-104, 24)
-
 [node name="ConduitHall" type="Node2D" parent="Areas" unique_id=616405375]
 position = Vector2(1232, 352)
-
-[node name="FutureEnemySpot" type="Marker2D" parent="Areas/ConduitHall" unique_id=1309463294 groups=["future_enemy_spots"]]
-position = Vector2(40, -72)
 
 [node name="WardenGate" type="Node2D" parent="Areas" unique_id=216869576]
 position = Vector2(1376, 672)
@@ -366,12 +374,6 @@ position = Vector2(1504, 944)
 [node name="FutureEnemySpot" type="Marker2D" parent="Areas/FinalArena" unique_id=1210105174 groups=["future_enemy_spots"]]
 position = Vector2(8, 24)
 metadata/note = "mini-boss"
-
-[node name="FutureEnemySpot2" type="Marker2D" parent="Areas/FinalArena" unique_id=1968910040 groups=["future_enemy_spots"]]
-position = Vector2(-88, -24)
-
-[node name="FutureEnemySpot3" type="Marker2D" parent="Areas/FinalArena" unique_id=1685834525 groups=["future_enemy_spots"]]
-position = Vector2(104, -24)
 
 [node name="BerryHollow" type="Node2D" parent="Areas" unique_id=303252639]
 position = Vector2(512, 848)
