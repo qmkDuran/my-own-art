@@ -23,6 +23,7 @@ extends CharacterBody2D
 ##   SkillBar        -> Q/W/E/R: skills that spend Heat (e.g. E = Flame Uppercut), once learned
 ##   ScreenShake     -> shakes the camera on big hits
 ##   LevelUpBoost    -> the small health boost and fanfare on each level up
+##   ZoneEntrance    -> the hop onto the spawn point when a zone starts (drives the creature meanwhile)
 ##   Sprite          -> what to show
 
 ## Below this speed (pixels per second) the creature counts as standing still.
@@ -50,6 +51,7 @@ var _push_seconds_left: float = 0.0
 @onready var fist_embers: FistEmbers = $FistEmbers
 @onready var trainer_aid: TrainerAid = $TrainerAid
 @onready var skill_bar: SkillBar = $SkillBar
+@onready var zone_entrance: ZoneEntrance = $ZoneEntrance
 
 
 func _ready() -> void:
@@ -59,6 +61,8 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if zone_entrance.is_playing:
+		return
 	_push_seconds_left = maxf(0.0, _push_seconds_left - delta)
 	mouse_orders.update()
 	if player_input.wants_trainer_aid():

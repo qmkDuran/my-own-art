@@ -78,6 +78,9 @@ position = Vector2(-60, 20)
 
 [node name="Emberoo" parent="." instance=ExtResource("1_emberoo")]
 
+[node name="ZoneEntrance" parent="Emberoo"]
+enabled = false
+
 [node name="Camera" type="Camera2D" parent="Emberoo"]
 position_smoothing_enabled = true
 
