@@ -7,7 +7,8 @@ extends Control
 ## and while recovering a dark veil shows the seconds left. The moment it can be used again it
 ## glows gold → orange for a moment (with a ring around the slot), then stays in full colour
 ## with a gold top edge. It also flashes white → gold → orange when used (with the trainer's
-## shout), and dimly when refused because it's still recovering.
+## shout), and dimly when refused because it's still recovering. Whenever its key is pressed
+## (used or refused) the contents dip a pixel, like a pressed button.
 ## The skill is any Resource with an `icon: Texture2D` and a `heat_cost: int` (see SkillBarHud);
 ## none = an empty slot.
 
@@ -80,6 +81,12 @@ func flash_used() -> void:
 	queue_redraw()
 
 
+## The key was pressed (used or refused): the contents dip a pixel for a moment.
+func press_down() -> void:
+	_flashes.start_press()
+	queue_redraw()
+
+
 ## The skill was refused because it's still recovering: a short, dim flash.
 func flash_refused() -> void:
 	_flashes.start_refused()
@@ -108,6 +115,7 @@ func _draw() -> void:
 	_draw_frame()
 	if _flashes.used_stage() == 0:
 		_draw_inner_glint()
+	draw_set_transform(_flashes.press_offset())
 	var icon := _icon()
 	if icon != null:
 		_draw_icon(icon)
@@ -119,6 +127,7 @@ func _draw() -> void:
 		_draw_seconds_left()
 	var key_color := ApolloPalette.CREAM if is_usable() or skill == null else ApolloPalette.GREY
 	PixelFont.draw_text(self, key_label, Vector2(INNER.position), key_color, ApolloPalette.OUTLINE)
+	draw_set_transform(Vector2.ZERO)
 	_flashes.draw_border(self, SLOT_SIZE)
 
 

@@ -3,9 +3,11 @@ extends Node2D
 ## A short line of speech above a character (e.g. a Warden shouting "Go, Toxlop!").
 ## Fades in, stays for a moment, fades out.
 
-@export var font_size: int = 6
+## Half of Monogram's native 16 px: one font pixel is half a game pixel (two screen pixels
+## at 4×), as fine as the HUD's cards and the Ember Tree, and still crisp.
+@export var font_size: int = 8
 @export var text_color: Color = ApolloPalette.CREAM
-## Same see-through dark card as the discovery toast, with no border.
+## A light see-through bubble with no border, so speech in the world never hides the fight.
 @export var background: Color = Color(ApolloPalette.OUTLINE, 0.6)
 
 
@@ -14,6 +16,7 @@ func say(text: String, seconds: float = 1.4) -> void:
 		child.queue_free()
 
 	var panel := PanelContainer.new()
+	panel.theme = EmberTreeFonts.ui_theme()
 	var style := StyleBoxFlat.new()
 	style.bg_color = background
 	style.set_corner_radius_all(3)

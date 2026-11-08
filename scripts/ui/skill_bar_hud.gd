@@ -2,8 +2,9 @@ class_name SkillBarHud
 extends Control
 ## Connects Emberoo's SkillBar to the HUD: fills the four SkillSlot children with their key
 ## letters (from the InputMap: skill_1..skill_4), skills, cooldowns and whether Emberoo's Heat
-## covers each skill's cost, plays the trainer's shout and the slot flash when a skill is used,
-## shows why a skill was refused, and the tooltip while the mouse hovers a slot.
+## covers each skill's cost, presses a slot down whenever its key is pressed, plays the
+## trainer's shout and the slot flash when a skill is used, shows why a skill was refused,
+## and the tooltip while the mouse hovers a slot.
 ##
 ## The SkillBar is read by name and duck typing (has_method / has_signal), so the HUD still
 ## works, with empty slots, while Emberoo has no SkillBar. Without a Heat node every skill
@@ -88,12 +89,15 @@ func _call_skill_bar(method: String, index: int, fallback: Variant) -> Variant:
 func _on_skill_used(slot_index: int) -> void:
 	if slot_index < 0 or slot_index >= _slots.size():
 		return
+	_slots[slot_index].press_down()
 	_slots[slot_index].flash_used()
 	if trainer != null:
 		trainer.shout()
 
 
 func _on_skill_refused(slot_index: int, reason: String) -> void:
+	if slot_index >= 0 and slot_index < _slots.size():
+		_slots[slot_index].press_down()
 	match reason:
 		"heat":
 			if heat_flame != null:

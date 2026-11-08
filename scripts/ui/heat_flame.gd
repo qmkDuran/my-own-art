@@ -3,7 +3,8 @@ extends Control
 ## Emberoo's Heat as one big flame to the right of the skill bar, with the numbers inside it.
 ##
 ## The flame lights up from the bottom as Heat builds (the tips light last) and sits as dark coal
-## when cold. When a skill is refused for lack of Heat, the flame shakes and flashes briefly.
+## when cold. While lit it flickers gently (HeatFlameFlicker), and it hops up a pixel when
+## Heat is gained. When a skill is refused for lack of Heat, the flame shakes and flashes briefly.
 
 ## Pixel map of the flame (25×26). 'x' = inside the flame.
 const FLAME_PIXELS := [
@@ -43,11 +44,14 @@ const DEEP_RIM_FROM_ROW := FLAME_SIZE.y * 0.7
 const NUMBERS_TOP := 17
 ## How long the "not enough Heat" shake lasts, and how far it moves, in pixels.
 const REFUSED_SECONDS := 0.3
-const SHAKE_PIXELS := 1.0
+## How long the hop on gaining Heat lasts.
+const GAIN_POP_SECONDS := 0.12
 
 var _heat: int = 0
 var _max_heat: int = 0
-var _refused_left: float = 0.0
+var _refused := HudMotion.new(REFUSED_SECONDS)
+var _gain_pop := HudMotion.new(GAIN_POP_SECONDS)
+var _flicker := HeatFlameFlicker.new()
 var _shape: Dictionary = PixelShape.from_rows(FLAME_PIXELS)
 var _depths: Dictionary = PixelShape.depths(_shape)
 
@@ -63,17 +67,22 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-	if _refused_left > 0.0:
-		_refused_left = maxf(0.0, _refused_left - delta)
+	var is_moving := _refused.advance(delta)
+	is_moving = _gain_pop.advance(delta) or is_moving
+	if _heat > 0:
+		is_moving = _flicker.advance(delta) or is_moving
+	if is_moving:
 		queue_redraw()
 
 
 ## A skill wanted more Heat than there is: shake and flash for a moment.
 func show_not_enough_heat() -> void:
-	_refused_left = REFUSED_SECONDS
+	_refused.start()
 
 
 func _on_heat_changed(heat: int, max_heat: int) -> void:
+	if heat > _heat and _max_heat > 0:
+		_gain_pop.start()
 	_heat = heat
 	_max_heat = max_heat
 	queue_redraw()
@@ -82,27 +91,20 @@ func _on_heat_changed(heat: int, max_heat: int) -> void:
 func _draw() -> void:
 	if _max_heat <= 0:
 		return
-	var origin := Vector2(_shake_offset(), 0)
+	var origin := _refused.shake() + _gain_pop.bounce()
 	PixelShape.draw_outlined(self, _flame_colors(), origin, _outline_color())
 	var numbers := "%d/%d" % [_heat, _max_heat]
 	var left := floori((FLAME_SIZE.x - PixelFont.width_of(numbers)) / 2.0) + 1
 	PixelFont.draw_text(self, numbers, origin + Vector2(left, NUMBERS_TOP), ApolloPalette.CREAM, ApolloPalette.OUTLINE)
 
 
-## Left-right jitter while a refusal is showing: right, left, right... one pixel each step.
-func _shake_offset() -> float:
-	if _refused_left <= 0.0:
-		return 0.0
-	var step := int(_refused_left / 0.05)
-	return SHAKE_PIXELS if step % 2 == 0 else -SHAKE_PIXELS
-
-
-## The outline flashes red while a refusal is showing.
+## The outline flashes red for the first half of a refusal.
 func _outline_color() -> Color:
-	return ApolloPalette.RED_LIGHT if _refused_left > REFUSED_SECONDS * 0.5 else ApolloPalette.OUTLINE
+	return ApolloPalette.RED_LIGHT if _refused.is_in_first(0.5) else ApolloPalette.OUTLINE
 
 
-## The colour of every flame pixel: fire from the bottom up to the Heat share, dark coal above.
+## The colour of every flame pixel: fire from the bottom up to the Heat share, dark coal
+## above, with the flicker's current shape when lit.
 func _flame_colors() -> Dictionary:
 	var first_lit_row := -1.0
 	if _heat < _max_heat:
@@ -117,6 +119,8 @@ func _flame_colors() -> Dictionary:
 			colors[pixel] = ApolloPalette.GOLD
 		else:
 			colors[pixel] = _fire_color(pixel, depth)
+	if _heat > 0:
+		_flicker.apply(colors, surface_row)
 	return colors
 
 

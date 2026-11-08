@@ -4,8 +4,13 @@ extends Control
 ## the top-centre with the creature's portrait, name and element, then slides away.
 ## (The full-size portrait belongs in the Creature Log, away from the fight.) The game slows down briefly
 ## (never freezes) so the moment registers while the player keeps control.
+## A HudCard: the Ember Tree's card style and Monogram font, laid out in card pixels
+## (twice the game's resolution) and shown at half size.
 
-const PORTRAIT_SIZE := 32.0          # a 128px portrait at 1:1 screen pixels when the game is scaled 4x
+## A 128px portrait at 1:1 screen pixels when the game is scaled 4x (32 game pixels).
+const PORTRAIT_SIZE := 64.0
+## Gap between the portrait and the words, in card pixels.
+const PORTRAIT_GAP := 8
 const SHOW_SECONDS := 2.0
 ## Gap between the top of the screen and the card, in game pixels.
 const TOP_MARGIN := 4.0
@@ -16,9 +21,8 @@ const FADE_OUT_SECONDS := 0.6
 const SLOW_MOTION_SCALE := 0.3
 const SLOW_MOTION_SECONDS := 0.5     # real seconds
 
-@export var background: Color = Color(ApolloPalette.OUTLINE, 0.6)
-@export var title_color: Color = ApolloPalette.ORANGE
-@export var name_color: Color = ApolloPalette.CREAM
+@export var title_color: Color = EmberTreePalette.ORANGE
+@export var name_color: Color = EmberTreePalette.CREAM
 @export var element_color: Color = ApolloPalette.GREEN_LIGHT
 
 var _card: PanelContainer
@@ -52,7 +56,7 @@ func _slow_motion() -> void:
 ## Fades in while drifting down a few pixels, waits, then fades out while drifting back up.
 func _slide_in_and_out() -> void:
 	_card.reset_size()
-	_card.position.x = roundf((size.x - _card.size.x) / 2.0)
+	_card.position.x = roundf((size.x - HudCard.size_on_screen(_card).x) / 2.0)
 	_card.position.y = TOP_MARGIN - DRIFT
 	_card.modulate.a = 0.0
 	_card.visible = true
@@ -67,18 +71,12 @@ func _slide_in_and_out() -> void:
 
 
 func _build_card() -> void:
-	_card = PanelContainer.new()
+	_card = HudCard.make()
 	_card.visible = false
-	var style := StyleBoxFlat.new()
-	style.bg_color = background
-	style.set_corner_radius_all(3)
-	style.set_content_margin_all(3)
-	style.content_margin_right = 6
-	_card.add_theme_stylebox_override("panel", style)
 	add_child(_card)
 
 	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", 4)
+	row.add_theme_constant_override("separation", PORTRAIT_GAP)
 	_card.add_child(row)
 
 	_portrait = TextureRect.new()
@@ -92,9 +90,9 @@ func _build_card() -> void:
 	column.alignment = BoxContainer.ALIGNMENT_CENTER
 	column.add_theme_constant_override("separation", 0)
 	row.add_child(column)
-	_title = UiLabel.make(4, title_color, "NEW CREATURE DISCOVERED")
-	_name = UiLabel.make(8, name_color)
-	_element = UiLabel.make(5, element_color)
+	_title = UiLabel.make(EmberTreeFonts.TEXT_SIZE, title_color, "NEW CREATURE DISCOVERED")
+	_name = UiLabel.make(EmberTreeFonts.LARGE_SIZE, name_color)
+	_element = UiLabel.make(EmberTreeFonts.TEXT_SIZE, element_color)
 	for item in [_title, _name, _element]:
 		column.add_child(item)
 

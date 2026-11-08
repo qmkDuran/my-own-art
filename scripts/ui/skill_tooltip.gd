@@ -1,17 +1,21 @@
 class_name SkillTooltip
 extends Control
 ## A small card above a skill slot while the mouse hovers it: the skill's name, its Heat cost
-## and cooldown, and what it does. Same see-through dark card as the speech bubbles.
+## and cooldown, and what it does. A HudCard: the Ember Tree's card style and Monogram font,
+## laid out at twice the game's resolution (sizes below are in card pixels) and shown at half size.
 
-const FONT_SIZE := 6
-## Width the description wraps at, in game pixels.
-const TEXT_WIDTH := 96.0
-## Gap between the card and the slot, and the screen edge.
+const FONT_SIZE := EmberTreeFonts.TEXT_SIZE
+## Width the description wraps at, in card pixels (96 game pixels).
+const TEXT_WIDTH := 192.0
+## Gap between the lines, in card pixels.
+const LINE_GAP := 2
+## Gap between the card and the slot, and the screen edge, in game pixels.
 const MARGIN := 3.0
 
 var _card: PanelContainer
 var _name: Label
 var _numbers: Label
+var _divider: ColorRect
 var _description: Label
 
 
@@ -28,9 +32,11 @@ func show_for(skill: Resource, slot_rect: Rect2) -> void:
 		hide_tooltip()
 		return
 	_name.text = str(_property(skill, "display_name", "Skill"))
-	_numbers.text = "Heat %s  ·  %ss cooldown" % [_property(skill, "heat_cost", 0), _property(skill, "cooldown", 0)]
+	var cooldown := String.num(float(_property(skill, "cooldown", 0.0)))
+	_numbers.text = "HEAT %s  ∙  %sS COOLDOWN" % [_property(skill, "heat_cost", 0), cooldown]
 	_description.text = str(_property(skill, "description", ""))
 	_description.visible = not _description.text.is_empty()
+	_divider.visible = _description.visible
 	_card.reset_size()
 	_card.visible = true
 	_card.global_position = _card_position(slot_rect)
@@ -40,35 +46,32 @@ func hide_tooltip() -> void:
 	_card.visible = false
 
 
-## Centred above the slot, kept inside the screen.
+## Centred above the slot, kept inside the screen, on whole game pixels.
 func _card_position(slot_rect: Rect2) -> Vector2:
 	var screen := get_viewport_rect().size
-	var x := slot_rect.get_center().x - _card.size.x / 2.0
-	var y := slot_rect.position.y - _card.size.y - MARGIN
+	var card_size := HudCard.size_on_screen(_card)
+	var x := slot_rect.get_center().x - card_size.x / 2.0
+	var y := slot_rect.position.y - card_size.y - MARGIN
 	return Vector2(
-		roundf(clampf(x, MARGIN, screen.x - _card.size.x - MARGIN)),
+		roundf(clampf(x, MARGIN, screen.x - card_size.x - MARGIN)),
 		roundf(maxf(MARGIN, y)))
 
 
+## Name (gold), numbers (orange capitals, like the Ember Tree's tags), a warm line, then
+## what the skill does (cream).
 func _build_card() -> void:
-	_card = PanelContainer.new()
-	_card.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color(ApolloPalette.OUTLINE, 0.85)
-	style.border_color = ApolloPalette.STONE
-	style.set_border_width_all(1)
-	style.set_content_margin_all(3)
-	_card.add_theme_stylebox_override("panel", style)
+	_card = HudCard.make()
 	var column := VBoxContainer.new()
-	column.add_theme_constant_override("separation", 0)
-	_name = UiLabel.make(FONT_SIZE, ApolloPalette.GOLD)
-	_numbers = UiLabel.make(FONT_SIZE, ApolloPalette.GREY)
-	_description = UiLabel.make(FONT_SIZE, ApolloPalette.CREAM)
+	column.add_theme_constant_override("separation", LINE_GAP)
+	column.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_name = UiLabel.make(FONT_SIZE, EmberTreePalette.GOLD)
+	_numbers = UiLabel.make(FONT_SIZE, EmberTreePalette.ORANGE)
+	_divider = EmberTreeWidgets.make_divider(TEXT_WIDTH)
+	_description = UiLabel.make(FONT_SIZE, EmberTreePalette.CREAM)
 	_description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_description.custom_minimum_size.x = TEXT_WIDTH
-	column.add_child(_name)
-	column.add_child(_numbers)
-	column.add_child(_description)
+	for part: Control in [_name, _numbers, _divider, _description]:
+		column.add_child(part)
 	_card.add_child(column)
 	add_child(_card)
 

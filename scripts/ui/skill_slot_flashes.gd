@@ -4,6 +4,7 @@ extends RefCounted
 ## - used: white → gold → orange, in step with the trainer's shout;
 ## - refused (still recovering): a short, dim grey edge;
 ## - ready (the skill just became usable): gold → orange, with a ring just outside the slot.
+## It also keeps the slot's press: its contents dip a pixel when the key is pressed.
 
 ## Border colour for each step of the "used" flash (one step per shout stage).
 const USED_FLASH_COLORS: Array[Color] = [ApolloPalette.WHITE, ApolloPalette.GOLD, ApolloPalette.ORANGE_DARK]
@@ -13,10 +14,13 @@ const READY_GLOW_SECONDS := 0.4
 const READY_GLOW_COLORS: Array[Color] = [ApolloPalette.GOLD, ApolloPalette.ORANGE, ApolloPalette.ORANGE_DARK]
 ## How far outside the slot's own outline the "ready" ring sits, in pixels.
 const READY_RING_MARGIN := 2
+## How long the slot's contents stay pressed down when its key is pressed.
+const PRESS_SECONDS := 0.08
 
 var _used_time: float = -1.0
 var _refused_left: float = 0.0
 var _ready_time: float = -1.0
+var _press := HudMotion.new(PRESS_SECONDS)
 
 
 func start_used() -> void:
@@ -32,9 +36,18 @@ func start_ready() -> void:
 	_ready_time = 0.0
 
 
+func start_press() -> void:
+	_press.start()
+
+
+## How far the slot's contents are pushed down right now (whole pixels).
+func press_offset() -> Vector2:
+	return _press.press()
+
+
 ## Moves every running flash on. Returns true while any is running (the slot must redraw).
 func advance(delta: float) -> bool:
-	var is_running := false
+	var is_running := _press.advance(delta)
 	if _used_time >= 0.0:
 		_used_time += delta
 		if used_stage() >= USED_FLASH_COLORS.size():
