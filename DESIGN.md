@@ -60,6 +60,9 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
 - Hits stack **burn** on enemies
 
 ## Enemies
+- **All enemies are front view only for now** (always face the camera), to keep art small.
+- **Handlers don't attack.** Early-game grunts: they keep their distance, back away when approached, and summon. ~5–6 jabs to kill.
+- Handler look: hooded servant of the AI God, dark navy coat, shadowed face with a glowing cyan visor slit, cyan trim, control rod with a glowing tip.
 - **Handlers:** human trainers serving the AI God. They stay back and send out **waves of ~6 weak bound creatures** (control collars) for a PoE-style power fantasy.
 - **Killing the Handler stops new waves.** Creatures already out keep fighting.
 - Handlers use a **small fixed roster** of 2–3 bound creature species across the game (saves art).
