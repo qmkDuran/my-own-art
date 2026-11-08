@@ -12,6 +12,7 @@ extends CharacterBody2D
 ##   RETREATING-> walks away because the player is too close (tires out after a bit)
 ##   SUMMONING -> raises the rod; creatures appear at the end
 ##   SHOVING   -> player too close: rod glows, then a shockwave knocks them back
+##                (hits don't interrupt it: super armour)
 ##   RECOVERING-> knocked back after being hit
 ##   DYING     -> fades away
 
@@ -291,6 +292,10 @@ func _direction_away_from_player() -> Vector2:
 func _on_damaged(_amount: int, source_position: Vector2) -> void:
 	hit_flash.flash()
 	if _state == State.DYING:
+		return
+	# Super armour: once the shove is winding up, hits hurt but don't interrupt it.
+	# Otherwise holding attack would cancel it every time.
+	if _state == State.SHOVING:
 		return
 	velocity = (global_position - source_position).normalized() * knockback_speed
 	_enter(State.RECOVERING, recover_time)
