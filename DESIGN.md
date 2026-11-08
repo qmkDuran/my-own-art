@@ -79,9 +79,9 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
 - Names in use: **Emberoo** (player, fire kangaroo), **Toxlop** (toxic toad), **Wardens** (the Handlers; fine for enemies, not as a game title).
 
 ## HUD
-- **Health: flame pips** at the bottom-centre of the screen, one flame per point of health; each hit snuffs one to a grey ember.
+- **Health: one heart** at the bottom-centre, filled with red that drains from the top down as health is lost.
 - **Enemy health:** Wardens show a small bar once hit; one-hit mobs show none.
-- **No mana yet.** When skills arrive, each element class gets its own resource built by fighting (Emberoo: **Heat**, gained by landing hits, spent on fire skills), shown next to the flames.
+- **No mana yet.** When skills arrive, Emberoo's resource is **Heat**, gained by landing hits and spent on fire skills, shown as **fire pips** next to the heart. Each element class gets its own resource.
 
 ## Elements
 - **Vertical slice: flavour only.** Element sets colours, effects and theme; no damage rules.
