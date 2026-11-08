@@ -22,6 +22,7 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
 - **Names to avoid:** *Lumari* (a funded studio's creature-collector game), *Lunari* (a League of Legends faction). Final names still need a formal trademark check (USPTO/EUIPO) before the game is announced.
 
 ## The trainer (in the world)
+- **No capture device, no ball.** We never catch Glimra and Emberoo is with you the whole game (like a partner who just walks beside you), so nothing stores or releases him. Avoid Pokéball-, Mega Bracelet- and Z-Ring-like items.
 - The trainer **walks with Emberoo**, a few steps behind. Enemies ignore them (Warden visors only see Glimra light).
 - Original look: brown coat, cream shirt, **orange scarf matching Emberoo**, satchel. 18×28 sprite, front view for now (walk/diagonal animations later).
 - **Trainer's Aid (F):** the trainer throws a healing tonic that arcs to Emberoo (+4 health). **3 charges**; can't be used at full health.
