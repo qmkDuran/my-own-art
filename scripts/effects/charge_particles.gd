@@ -12,7 +12,7 @@ extends Node2D
 ## Seconds a spark takes to reach the point.
 @export var travel_time: float = 0.25
 ## Spark colours, picked at random. Red energy by default.
-@export var colors: Array[Color] = [Color(0.647, 0.188, 0.188), Color(0.812, 0.341, 0.235), Color(0.871, 0.62, 0.255)]
+@export var colors: Array[Color] = [ApolloPalette.RED, ApolloPalette.RED_LIGHT, ApolloPalette.ORANGE]
 
 var _is_charging: bool = false
 var _seconds_until_spark: float = 0.0

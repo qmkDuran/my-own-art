@@ -22,10 +22,10 @@ const SHOUT_TICKS := [
 ]
 ## Each step of the shout: how far out the ticks start, how long they are, and their colour.
 const SHOUT_STAGES := [
-	{"distance": 0, "length": 2, "color": HudPalette.WHITE},
-	{"distance": 1, "length": 3, "color": HudPalette.WHITE},
-	{"distance": 3, "length": 2, "color": HudPalette.GOLD},
-	{"distance": 5, "length": 1, "color": HudPalette.ORANGE_DARK},
+	{"distance": 0, "length": 2, "color": ApolloPalette.WHITE},
+	{"distance": 1, "length": 3, "color": ApolloPalette.WHITE},
+	{"distance": 3, "length": 2, "color": ApolloPalette.GOLD},
+	{"distance": 5, "length": 1, "color": ApolloPalette.ORANGE_DARK},
 ]
 ## Seconds each of the two turn frames shows.
 const TURN_FRAME_SECONDS := 0.07
@@ -42,7 +42,7 @@ const HANDS_OFFSET := Vector2(0, -6)
 @export var back_animation: StringName = &"back"
 @export var front_animation: StringName = &"front"
 
-## Outlined pictures already made, per texture: {texture: {is_squashed: TrainerPicture}}.
+## Outlined pictures already made, per texture: {texture: {is_squashed: HudTrainerPicture}}.
 static var _picture_cache: Dictionary = {}
 
 var _is_facing_back: bool = false
@@ -58,7 +58,7 @@ var _player: Node2D
 
 func _process(delta: float) -> void:
 	if not is_instance_valid(_player):
-		_player = get_tree().get_first_node_in_group("player") as Node2D
+		_player = PlayerFinder.find(self)
 	_update_facing(delta)
 	_update_walk(delta)
 	if _shout_time >= 0.0:
@@ -113,20 +113,20 @@ func _is_turning() -> bool:
 
 
 ## Mid-turn: first the old view squashed to half width, then the new one; otherwise the full view.
-func _current_picture() -> TrainerPicture:
+func _current_picture() -> HudTrainerPicture:
 	if not _is_turning():
 		return _picture_for(_is_facing_back, false)
 	var is_second_frame := _turn_time >= TURN_FRAME_SECONDS
 	return _picture_for(_is_facing_back != is_second_frame, true)
 
 
-func _picture_for(back_view: bool, is_squashed: bool) -> TrainerPicture:
+func _picture_for(back_view: bool, is_squashed: bool) -> HudTrainerPicture:
 	var texture := _view_texture(back_animation if back_view else front_animation)
 	if texture == null:
 		return null
 	var by_squash: Dictionary = _picture_cache.get_or_add(texture, {})
 	if not by_squash.has(is_squashed):
-		by_squash[is_squashed] = TrainerPicture.from_texture(texture, is_squashed)
+		by_squash[is_squashed] = HudTrainerPicture.from_texture(texture, is_squashed)
 	return by_squash[is_squashed]
 
 
@@ -178,54 +178,3 @@ func _draw_shout(head_top_centre: Vector2i) -> void:
 		var direction: Vector2i = tick[1]
 		for distance in range(step["distance"], step["distance"] + step["length"]):
 			PixelShape.draw_pixel(self, Vector2(start + direction * distance), step["color"])
-
-
-## One view of the trainer, ready to draw: its pixels, a dark outline and a gold one around that,
-## placed so the feet's centre sits on the node's position.
-class TrainerPicture:
-	var pixels: Dictionary
-	var dark_ring: Array[Vector2i]
-	var gold_ring: Array[Vector2i]
-	## Top-left of the picture, from the node (the feet's centre).
-	var offset: Vector2
-	## The highest row with a pixel (the top of the head).
-	var top_row: int
-
-	static func from_texture(texture: Texture2D, is_squashed: bool) -> TrainerPicture:
-		var image := texture.get_image()
-		if image == null:
-			return null
-		if is_squashed:
-			image = image.duplicate()
-			image.decompress()
-			image.resize(maxi(1, ceili(image.get_width() / 2.0)), image.get_height(), Image.INTERPOLATE_NEAREST)
-		var picture := TrainerPicture.new()
-		picture.pixels = PixelShape.from_image(image)
-		picture.dark_ring = PixelShape.ring_around(picture.pixels)
-		var body := picture.pixels.duplicate()
-		for pixel in picture.dark_ring:
-			body[pixel] = true
-		picture.gold_ring = PixelShape.ring_around(body)
-		picture._place_feet()
-		return picture
-
-	func draw(canvas: CanvasItem, origin: Vector2) -> void:
-		for pixel in gold_ring:
-			PixelShape.draw_pixel(canvas, origin + Vector2(pixel), HudPalette.GOLD)
-		for pixel in dark_ring:
-			PixelShape.draw_pixel(canvas, origin + Vector2(pixel), HudPalette.OUTLINE)
-		for pixel: Vector2i in pixels:
-			PixelShape.draw_pixel(canvas, origin + Vector2(pixel), pixels[pixel])
-
-	## Centres the used columns on the node and puts the lowest row on it.
-	func _place_feet() -> void:
-		var left := 1 << 30
-		var right := -(1 << 30)
-		var bottom := -(1 << 30)
-		top_row = 1 << 30
-		for pixel: Vector2i in pixels:
-			left = mini(left, pixel.x)
-			right = maxi(right, pixel.x)
-			bottom = maxi(bottom, pixel.y)
-			top_row = mini(top_row, pixel.y)
-		offset = Vector2(-floori((left + right + 1) / 2.0), -bottom)

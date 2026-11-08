@@ -7,12 +7,12 @@ extends Control
 ## 'g' glass at the neck, 'c'/'C' cork (lit/shaded).
 const FLASK := [".llll...", "lGllll..", "lllllgcc", "LllllgcC", "LLlll...", ".LLL...."]
 const FULL_COLORS := {
-	"l": HudPalette.PINK, "L": HudPalette.MAGENTA, "G": HudPalette.WHITE,
-	"g": HudPalette.SILVER, "c": HudPalette.CORK, "C": HudPalette.CORK_DARK,
+	"l": ApolloPalette.PINK, "L": ApolloPalette.MAGENTA, "G": ApolloPalette.WHITE,
+	"g": ApolloPalette.SILVER, "c": ApolloPalette.CORK, "C": ApolloPalette.CORK_DARK,
 }
 const EMPTY_COLORS := {
-	"l": HudPalette.SLATE, "L": HudPalette.DARK, "G": HudPalette.STONE,
-	"g": HudPalette.STONE, "c": HudPalette.STONE, "C": HudPalette.STONE,
+	"l": ApolloPalette.SLATE, "L": ApolloPalette.DARK, "G": ApolloPalette.STONE,
+	"g": ApolloPalette.STONE, "c": ApolloPalette.STONE, "C": ApolloPalette.STONE,
 }
 ## Pixels from one flask's left edge to the next.
 const SPACING := 10
@@ -28,10 +28,7 @@ var _flask: Dictionary = PixelShape.from_rows(FLASK)
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	await get_tree().process_frame
-	var player := get_tree().get_first_node_in_group("player")
-	if player == null:
-		return
-	var aid: TrainerAid = player.get_node_or_null("TrainerAid")
+	var aid := PlayerFinder.find_component(self, "TrainerAid") as TrainerAid
 	if aid == null:
 		return
 	aid.charges_changed.connect(_on_charges_changed)
@@ -47,15 +44,8 @@ func _on_charges_changed(charges: int, max_charges: int) -> void:
 func _draw() -> void:
 	if _max_charges <= 0:
 		return
-	PixelFont.draw_text(self, KEY_LABEL, KEY_LABEL_TOP_LEFT, HudPalette.GREY, HudPalette.OUTLINE)
+	PixelFont.draw_text(self, KEY_LABEL, KEY_LABEL_TOP_LEFT, ApolloPalette.GREY, ApolloPalette.OUTLINE)
 	for index in _max_charges:
 		var colors := FULL_COLORS if index < _charges else EMPTY_COLORS
 		var top_left := FIRST_FLASK_TOP_LEFT + Vector2(index * SPACING, 0)
-		PixelShape.draw_outlined(self, _colored_flask(colors), top_left, HudPalette.OUTLINE)
-
-
-func _colored_flask(colors: Dictionary) -> Dictionary:
-	var pixels := {}
-	for pixel: Vector2i in _flask:
-		pixels[pixel] = colors[_flask[pixel]]
-	return pixels
+		PixelShape.draw_outlined(self, PixelShape.colored(_flask, colors), top_left, ApolloPalette.OUTLINE)

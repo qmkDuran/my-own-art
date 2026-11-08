@@ -65,7 +65,7 @@ func _draw() -> void:
 		return
 	var text := COMBO_LABEL + str(_combo_total)
 	var top_left := COMBO_LABEL_OFFSET - Vector2(floorf(PixelFont.width_of(text) / 2.0), 0)
-	PixelFont.draw_text(self, text, top_left, HudPalette.CREAM, HudPalette.OUTLINE)
+	PixelFont.draw_text(self, text, top_left, ApolloPalette.CREAM, ApolloPalette.OUTLINE)
 
 
 # --- Getting hit ----------------------------------------------------------

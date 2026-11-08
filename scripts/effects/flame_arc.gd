@@ -7,13 +7,13 @@ extends Node2D
 ## Every pixel sits on the world grid (the arc is never rotated), so it stays crisp.
 ## Spawn it, call play(), and it removes itself when done.
 
-## Hottest to coolest (Apollo e8c170, de9e41, da863e, cf573c, a53030).
+## Hottest to coolest.
 const FIRE_COLORS: Array[Color] = [
-	Color(0.91, 0.757, 0.439),
-	Color(0.871, 0.62, 0.255),
-	Color(0.855, 0.525, 0.243),
-	Color(0.812, 0.341, 0.235),
-	Color(0.647, 0.188, 0.188),
+	ApolloPalette.GOLD,
+	ApolloPalette.ORANGE,
+	ApolloPalette.ORANGE_MID,
+	ApolloPalette.RED_LIGHT,
+	ApolloPalette.RED,
 ]
 ## How far out the flame front starts and ends, as a share of the reach.
 const FRONT_START := 0.35

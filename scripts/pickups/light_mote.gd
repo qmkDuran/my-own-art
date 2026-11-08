@@ -15,10 +15,14 @@ extends Node2D
 ## Height of the player's body above their feet (where motes fly to).
 @export var body_height: float = -7.0
 
-const CORE := Color(0.91, 0.757, 0.439)       # Apollo e8c170
-const SHINE := Color(0.922, 0.929, 0.914)     # Apollo ebede9
-const TRAIL := Color(0.871, 0.62, 0.255)      # Apollo de9e41
+const CORE := ApolloPalette.GOLD
+const SHINE := ApolloPalette.WHITE
+const TRAIL := ApolloPalette.ORANGE
 const TRAIL_LENGTH := 4
+## How fast it slows down while drifting, in pixels per second squared.
+const DRIFT_FRICTION := 160.0
+## Safety net: a mote this many seconds old is removed, so none lingers forever.
+const MAX_AGE := 4.0
 
 var _velocity: Vector2 = Vector2.ZERO
 var _age: float = 0.0
@@ -37,9 +41,9 @@ func _physics_process(delta: float) -> void:
 	if _trail.size() > TRAIL_LENGTH:
 		_trail.pop_back()
 
-	var player := get_tree().get_first_node_in_group("player") as Node2D
+	var player := PlayerFinder.find(self)
 	if _age < drift_time or player == null:
-		_velocity = _velocity.move_toward(Vector2.ZERO, 160.0 * delta)
+		_velocity = _velocity.move_toward(Vector2.ZERO, DRIFT_FRICTION * delta)
 	else:
 		var target := player.global_position + Vector2(0, body_height)
 		var to_target := target - global_position
@@ -49,8 +53,8 @@ func _physics_process(delta: float) -> void:
 			return
 		_velocity = _velocity.move_toward(to_target.normalized() * max_speed, homing_acceleration * delta)
 	global_position += _velocity * delta
-	if _age > 4.0:
-		queue_free()   # safety: never linger forever
+	if _age > MAX_AGE:
+		queue_free()
 	queue_redraw()
 
 

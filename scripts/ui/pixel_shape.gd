@@ -1,7 +1,8 @@
 class_name PixelShape
 extends RefCounted
-## Helpers for drawing the HUD's pixel art: shapes are sets of pixels, read from text maps
-## (rows of characters) or from images, and drawn with draw_rect one pixel at a time.
+## Helpers for drawing pixel art in code (the HUD, pickups, the tonic): shapes are sets of
+## pixels, read from text maps (rows of characters) or from images, and drawn with draw_rect
+## one pixel at a time.
 ##
 ## A "shape" is a Dictionary whose keys are Vector2i pixels (the values say what each pixel is:
 ## a character from the map, or a Color).
@@ -18,6 +19,14 @@ static func from_rows(rows: Array) -> Dictionary:
 			if row[x] != ".":
 				shape[Vector2i(x, y)] = row[x]
 	return shape
+
+
+## A text-map shape recoloured: each pixel gets the colour its character maps to.
+static func colored(shape: Dictionary, colors: Dictionary) -> Dictionary:
+	var pixels := {}
+	for pixel: Vector2i in shape:
+		pixels[pixel] = colors[shape[pixel]]
+	return pixels
 
 
 ## The visible pixels of an image, each mapped to its colour.
@@ -70,6 +79,23 @@ static func draw_outlined(canvas: CanvasItem, pixels: Dictionary, origin: Vector
 		draw_pixel(canvas, origin + Vector2(pixel), outline)
 	for pixel: Vector2i in pixels:
 		draw_pixel(canvas, origin + Vector2(pixel), pixels[pixel])
+
+
+## Draws a text map as it is (no added outline), each character in its colour from `colors`.
+static func draw_map(canvas: CanvasItem, rows: Array, colors: Dictionary, top_left: Vector2) -> void:
+	var pixels := colored(from_rows(rows), colors)
+	for pixel: Vector2i in pixels:
+		draw_pixel(canvas, top_left + Vector2(pixel), pixels[pixel])
+
+
+## The HUD's square stone frame, `side` pixels across: a dark outline, stone lit on the top
+## and left, and a dark line inside it. Used by the skill slots and the minimap.
+static func draw_stone_frame(canvas: CanvasItem, side: int) -> void:
+	canvas.draw_rect(Rect2(-1, -1, side + 2, side + 2), ApolloPalette.OUTLINE)
+	canvas.draw_rect(Rect2(0, 0, side, side), ApolloPalette.STONE)
+	canvas.draw_rect(Rect2(0, 0, side - 1, 1), ApolloPalette.STONE_LIGHT)
+	canvas.draw_rect(Rect2(0, 0, 1, side - 1), ApolloPalette.STONE_LIGHT)
+	canvas.draw_rect(Rect2(1, 1, side - 2, side - 2), ApolloPalette.OUTLINE)
 
 
 static func draw_pixel(canvas: CanvasItem, at: Vector2, color: Color) -> void:

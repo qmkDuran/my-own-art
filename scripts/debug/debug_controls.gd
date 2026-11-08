@@ -42,4 +42,4 @@ func _refresh_banner() -> void:
 func _draw_banner() -> void:
 	var screen_width := get_viewport().get_visible_rect().size.x
 	var left := floorf((screen_width - PixelFont.width_of(BANNER_TEXT)) / 2.0)
-	PixelFont.draw_text(banner, BANNER_TEXT, Vector2(left, BANNER_TOP), HudPalette.GOLD, HudPalette.OUTLINE)
+	PixelFont.draw_text(banner, BANNER_TEXT, Vector2(left, BANNER_TOP), ApolloPalette.GOLD, ApolloPalette.OUTLINE)

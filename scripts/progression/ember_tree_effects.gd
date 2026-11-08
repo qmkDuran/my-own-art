@@ -21,7 +21,7 @@ var _applied: Dictionary[String, float] = {}
 func _ready() -> void:
 	# Wait one frame so the player has been added to the level (same as the HUD).
 	await get_tree().process_frame
-	_player = get_tree().get_first_node_in_group("player")
+	_player = PlayerFinder.find(self)
 	if _player == null:
 		return
 	EmberTree.changed.connect(_apply_learned_nodes)

@@ -13,10 +13,10 @@ const WORLD_PIXELS_PER_DOT := 6.0
 const REFRESH_SECONDS := 0.1
 ## Emberoo's arrow, pointing up, as [offset from the centre, colour].
 const PLAYER_ARROW := [
-	[Vector2i(0, -2), HudPalette.GOLD],
-	[Vector2i(-1, -1), HudPalette.ORANGE], [Vector2i(0, -1), HudPalette.GOLD], [Vector2i(1, -1), HudPalette.ORANGE],
-	[Vector2i(-1, 0), HudPalette.ORANGE], [Vector2i(0, 0), HudPalette.ORANGE], [Vector2i(1, 0), HudPalette.ORANGE],
-	[Vector2i(-2, 1), HudPalette.ORANGE_DARK], [Vector2i(2, 1), HudPalette.ORANGE_DARK],
+	[Vector2i(0, -2), ApolloPalette.GOLD],
+	[Vector2i(-1, -1), ApolloPalette.ORANGE], [Vector2i(0, -1), ApolloPalette.GOLD], [Vector2i(1, -1), ApolloPalette.ORANGE],
+	[Vector2i(-1, 0), ApolloPalette.ORANGE], [Vector2i(0, 0), ApolloPalette.ORANGE], [Vector2i(1, 0), ApolloPalette.ORANGE],
+	[Vector2i(-2, 1), ApolloPalette.ORANGE_DARK], [Vector2i(2, 1), ApolloPalette.ORANGE_DARK],
 ]
 
 ## Each mark to draw: {radar pixel: colour}.
@@ -38,31 +38,22 @@ func _process(delta: float) -> void:
 
 
 func _draw() -> void:
-	_draw_frame()
-	draw_rect(Rect2(INSIDE), HudPalette.NIGHT)
+	PixelShape.draw_stone_frame(self, MAP_SIZE)
+	draw_rect(Rect2(INSIDE), ApolloPalette.NIGHT)
 	_draw_range_cross()
 	for pixel: Vector2i in _marks:
 		PixelShape.draw_pixel(self, Vector2(pixel), _marks[pixel])
 	for part: Array in PLAYER_ARROW:
 		PixelShape.draw_pixel(self, Vector2(_centre() + (part[0] as Vector2i)), part[1])
 	var north_left := MAP_SIZE / 2 - 1
-	PixelFont.draw_text(self, "N", Vector2(north_left, -1), HudPalette.GREY_LIGHT, HudPalette.OUTLINE)
-
-
-## Dark outline, a stone frame lit on the top and left, and a dark line inside it (like the skill slots).
-func _draw_frame() -> void:
-	draw_rect(Rect2(-1, -1, MAP_SIZE + 2, MAP_SIZE + 2), HudPalette.OUTLINE)
-	draw_rect(Rect2(0, 0, MAP_SIZE, MAP_SIZE), HudPalette.STONE)
-	draw_rect(Rect2(0, 0, MAP_SIZE - 1, 1), HudPalette.STONE_LIGHT)
-	draw_rect(Rect2(0, 0, 1, MAP_SIZE - 1), HudPalette.STONE_LIGHT)
-	draw_rect(Rect2(1, 1, MAP_SIZE - 2, MAP_SIZE - 2), HudPalette.OUTLINE)
+	PixelFont.draw_text(self, "N", Vector2(north_left, -1), ApolloPalette.GREY_LIGHT, ApolloPalette.OUTLINE)
 
 
 ## Faint lines through the centre, so the dots read as "this way, this far".
 func _draw_range_cross() -> void:
 	var centre := _centre()
-	draw_rect(Rect2(INSIDE.position.x, centre.y, INSIDE.size.x, 1), HudPalette.DARK)
-	draw_rect(Rect2(centre.x, INSIDE.position.y, 1, INSIDE.size.y), HudPalette.DARK)
+	draw_rect(Rect2(INSIDE.position.x, centre.y, INSIDE.size.x, 1), ApolloPalette.DARK)
+	draw_rect(Rect2(centre.x, INSIDE.position.y, 1, INSIDE.size.y), ApolloPalette.DARK)
 
 
 func _centre() -> Vector2i:
@@ -71,18 +62,18 @@ func _centre() -> Vector2i:
 
 func _find_marks() -> Dictionary:
 	var marks := {}
-	var player := get_tree().get_first_node_in_group("player") as Node2D
+	var player := PlayerFinder.find(self)
 	if player == null:
 		return marks
 	for berry in _berries_near(player):
-		_add_mark(marks, player, berry, HudPalette.PINK)
-	for enemy in get_tree().get_nodes_in_group("enemies"):
+		_add_mark(marks, player, berry, ApolloPalette.PINK)
+	for enemy in get_tree().get_nodes_in_group(EnemyReactions.ENEMIES_GROUP):
 		if enemy is TrainingDummy:
 			continue  # A practice post, not a threat.
 		if enemy is Handler:
-			_add_mark(marks, player, enemy as Node2D, HudPalette.MAGENTA, 2)
+			_add_mark(marks, player, enemy as Node2D, ApolloPalette.MAGENTA, 2)
 		elif enemy is Node2D:
-			_add_mark(marks, player, enemy as Node2D, HudPalette.RED_LIGHT)
+			_add_mark(marks, player, enemy as Node2D, ApolloPalette.RED_LIGHT)
 	return marks
 
 

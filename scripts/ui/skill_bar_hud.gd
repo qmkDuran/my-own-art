@@ -42,10 +42,7 @@ func _process(delta: float) -> void:
 
 
 func _connect_to_skill_bar() -> void:
-	var player := get_tree().get_first_node_in_group("player")
-	if player == null:
-		return
-	_skill_bar = player.get_node_or_null("SkillBar")
+	_skill_bar = PlayerFinder.find_component(self, "SkillBar")
 	if _skill_bar == null:
 		return
 	if _skill_bar.has_signal("skill_used"):

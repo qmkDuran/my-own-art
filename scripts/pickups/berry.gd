@@ -10,7 +10,14 @@ extends Node2D
 
 ## 7×7 pixel berry: '#' outline, 'r' red, 'd' dark red, 'h' highlight, 'g' leaf.
 const PIXELS := ["...gg..", "..##g..", ".#rrr#.", "#rhrrd#", "#rrrdd#", ".#rdd#.", "..###.."]
-const COLORS := {"#": Color(0.035, 0.039, 0.078), "r": Color(0.812, 0.341, 0.235), "d": Color(0.647, 0.188, 0.188), "h": Color(0.906, 0.835, 0.702), "g": Color(0.459, 0.655, 0.263)}
+const COLORS := {
+	"#": ApolloPalette.OUTLINE, "r": ApolloPalette.RED_LIGHT, "d": ApolloPalette.RED,
+	"h": ApolloPalette.CREAM, "g": ApolloPalette.GREEN,
+}
+## Where the berry's top-left pixel sits, from its spot on the ground (centred, resting on it).
+const TOP_LEFT := Vector2(-3.5, -9.0)
+## Seconds before it disappears in which it blinks.
+const BLINK_SECONDS := 4.0
 
 var _age: float = 0.0
 
@@ -20,24 +27,19 @@ func _process(delta: float) -> void:
 	if _age >= lifetime:
 		queue_free()
 		return
-	# Blink during the last few seconds.
-	visible = _age < lifetime - 4.0 or int(_age * 8.0) % 2 == 0
+	visible = _age < lifetime - BLINK_SECONDS or int(_age * 8.0) % 2 == 0
 	_try_pickup()
 	queue_redraw()
 
 
 func _draw() -> void:
 	var bob := roundf(sin(_age * 4.0))
-	draw_circle(Vector2(0, 1), 3.0, Color(0.035, 0.039, 0.078, 0.35))     # little ground shadow
-	for y in PIXELS.size():
-		for x in 7:
-			var pixel: String = PIXELS[y][x]
-			if pixel != ".":
-				draw_rect(Rect2(Vector2(x - 3.5, y - 9.0 + bob), Vector2.ONE), COLORS[pixel])
+	draw_circle(Vector2(0, 1), 3.0, Color(ApolloPalette.OUTLINE, 0.35))     # little ground shadow
+	PixelShape.draw_map(self, PIXELS, COLORS, TOP_LEFT + Vector2(0, bob))
 
 
 func _try_pickup() -> void:
-	var player := get_tree().get_first_node_in_group("player") as Node2D
+	var player := PlayerFinder.find(self)
 	if player == null or player.global_position.distance_to(global_position) > pickup_radius:
 		return
 	var aid: TrainerAid = player.get_node_or_null("TrainerAid")

@@ -9,7 +9,7 @@ extends Node
 ## Seconds each copy takes to fade away.
 @export var fade_time: float = 0.25
 ## Colour and starting see-through-ness of each copy.
-@export var tint: Color = Color(0.871, 0.62, 0.255, 0.6)
+@export var tint: Color = Color(ApolloPalette.ORANGE, 0.6)
 
 
 func play_for(duration: float) -> void:

@@ -35,9 +35,7 @@ var _side_panel: EmberTreeSidePanel
 var _level_label: Label
 var _xp_label: Label
 var _zoom_hint: Label
-var _saved_scale_size: Vector2i
-var _saved_scale_mode: Window.ContentScaleMode
-var _saved_scale_aspect: Window.ContentScaleAspect
+var _resolution := UiResolutionSwap.new()
 var _paused_by_me: bool = false
 
 
@@ -81,7 +79,7 @@ func open() -> void:
 	if is_open:
 		return
 	is_open = true
-	_use_crisp_ui_resolution()
+	_resolution.switch_to(get_window(), UI_SIZE)
 	_paused_by_me = not get_tree().paused
 	get_tree().paused = true
 	_refresh_level()
@@ -98,28 +96,9 @@ func close() -> void:
 		return
 	is_open = false
 	_root.visible = false
-	_restore_game_resolution()
+	_resolution.restore(get_window())
 	if _paused_by_me:
 		get_tree().paused = false
-
-
-# --- Resolution -----------------------------------------------------------------
-
-func _use_crisp_ui_resolution() -> void:
-	var window := get_window()
-	_saved_scale_size = window.content_scale_size
-	_saved_scale_mode = window.content_scale_mode
-	_saved_scale_aspect = window.content_scale_aspect
-	window.content_scale_mode = Window.CONTENT_SCALE_MODE_CANVAS_ITEMS
-	window.content_scale_size = UI_SIZE
-	window.content_scale_aspect = Window.CONTENT_SCALE_ASPECT_KEEP
-
-
-func _restore_game_resolution() -> void:
-	var window := get_window()
-	window.content_scale_size = _saved_scale_size
-	window.content_scale_mode = _saved_scale_mode
-	window.content_scale_aspect = _saved_scale_aspect
 
 
 # --- Layout -----------------------------------------------------------------------
@@ -170,8 +149,8 @@ func _build_header() -> void:
 	title_block.size = Vector2(SIDE_PANEL_WIDTH, HEADER_HEIGHT)
 	title_block.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_root.add_child(title_block)
-	title_block.add_child(_make_label("EMBEROO", 16, EmberTreePalette.GOLD))
-	title_block.add_child(_make_label("The Ember Tree", 10, EmberTreePalette.GREY))
+	title_block.add_child(UiLabel.make(16, EmberTreePalette.GOLD, "EMBEROO"))
+	title_block.add_child(UiLabel.make(10, EmberTreePalette.GREY, "The Ember Tree"))
 	# Right side: the level, and how far it is to the next one (which brings a skill point).
 	var level_block := VBoxContainer.new()
 	level_block.alignment = BoxContainer.ALIGNMENT_CENTER
@@ -180,10 +159,10 @@ func _build_header() -> void:
 	level_block.size = Vector2(SIDE_PANEL_WIDTH, HEADER_HEIGHT)
 	level_block.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_root.add_child(level_block)
-	_level_label = _make_label("", 13, EmberTreePalette.CREAM)
+	_level_label = UiLabel.make(13, EmberTreePalette.CREAM)
 	_level_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	level_block.add_child(_level_label)
-	_xp_label = _make_label("", 9, EmberTreePalette.GREY)
+	_xp_label = UiLabel.make(9, EmberTreePalette.GREY)
 	_xp_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	level_block.add_child(_xp_label)
 
@@ -219,7 +198,7 @@ func _tree_area_width() -> float:
 ## between the header, the footer and the side panel, with a small margin.
 func _fit_tree_at_home() -> void:
 	var area := Rect2(0, HEADER_HEIGHT, _tree_area_width(), UI_SIZE.y - HEADER_HEIGHT - FOOTER_HEIGHT).grow(-TREE_FIT_MARGIN)
-	var bounds := EmberTreeCanvas.opening_bounds()
+	var bounds := EmberTreeLayout.opening_bounds()
 	var zoom := minf(MAX_START_ZOOM, minf(area.size.x / bounds.size.x, area.size.y / bounds.size.y))
 	_view.home_zoom = zoom
 	_view.home_centre = area.get_center() - bounds.get_center() * zoom
@@ -255,17 +234,8 @@ func _add_bar(rect: Rect2, line_y: float) -> void:
 	_root.add_child(line)
 
 
-func _make_label(text: String, font_size: int, color: Color) -> Label:
-	var label := Label.new()
-	label.text = text
-	label.add_theme_font_size_override("font_size", font_size)
-	label.add_theme_color_override("font_color", color)
-	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	return label
-
-
 func _add_label(rect: Rect2, font_size: int, color: Color, alignment: HorizontalAlignment) -> Label:
-	var label := _make_label("", font_size, color)
+	var label := UiLabel.make(font_size, color)
 	label.position = rect.position
 	label.size = rect.size
 	label.horizontal_alignment = alignment

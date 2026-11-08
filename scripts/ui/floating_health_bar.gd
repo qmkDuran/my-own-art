@@ -6,9 +6,9 @@ extends Node2D
 @export var health: Health
 ## Width of the bar, in pixels.
 @export var bar_width: float = 14.0
-@export var border_color: Color = Color(0.035, 0.039, 0.078)
-@export var empty_color: Color = Color(0.255, 0.114, 0.192)
-@export var fill_color: Color = Color(0.812, 0.341, 0.235)
+@export var border_color: Color = ApolloPalette.OUTLINE
+@export var empty_color: Color = ApolloPalette.PLUM_DARK
+@export var fill_color: Color = ApolloPalette.RED_LIGHT
 
 
 func _ready() -> void:

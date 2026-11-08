@@ -2,9 +2,9 @@ class_name MeleeAttack
 extends Node
 ## A close-range attack, like Emberoo's jab.
 ##
-## Tracks whether an attack is in progress and spawns the impact effect
-## at the moment the fist lands. An attack can be cancelled (e.g. by a dodge);
-## a cancelled attack before the hit lands never hits. Damage will hook in here later.
+## Tracks whether an attack is in progress. At the moment the fist lands it spawns the
+## impact effect and damages every target along the punch. An attack can be cancelled
+## (e.g. by a dodge); a cancelled attack before the hit lands never hits.
 
 ## Fired once per attack when the punch damaged at least one target (e.g. so Heat can build).
 signal hits_landed(hit_count: int)

@@ -16,7 +16,7 @@ const INNER := Rect2i(2, 2, 14, 14)
 ## Icon colours at least this bright turn light grey while recovering; the rest dark grey.
 const BRIGHT_ICON_LUMINANCE := 0.785
 ## Border colour for each step of the "used" flash (one step per shout stage).
-const USED_FLASH_COLORS: Array[Color] = [HudPalette.WHITE, HudPalette.GOLD, HudPalette.ORANGE_DARK]
+const USED_FLASH_COLORS: Array[Color] = [ApolloPalette.WHITE, ApolloPalette.GOLD, ApolloPalette.ORANGE_DARK]
 const REFUSED_FLASH_SECONDS := 0.25
 
 ## Icon pixels per texture, so images are read only once: {texture: {pixel: Color}}.
@@ -90,28 +90,24 @@ func _draw() -> void:
 		_draw_icon(icon)
 	if is_recovering():
 		_draw_cooldown_veil()
-	var key_color := HudPalette.GREY if is_recovering() else HudPalette.CREAM
-	PixelFont.draw_text(self, key_label, Vector2(INNER.position), key_color, HudPalette.OUTLINE)
+	var key_color := ApolloPalette.GREY if is_recovering() else ApolloPalette.CREAM
+	PixelFont.draw_text(self, key_label, Vector2(INNER.position), key_color, ApolloPalette.OUTLINE)
 	_draw_flash_border()
 
 
-## Dark outline, stone frame lit on the top and left, a dark line, then a two-tone inside.
+## The stone frame, then a two-tone inside.
 func _draw_frame() -> void:
-	draw_rect(Rect2(-1, -1, SLOT_SIZE + 2, SLOT_SIZE + 2), HudPalette.OUTLINE)
-	draw_rect(Rect2(0, 0, SLOT_SIZE, SLOT_SIZE), HudPalette.STONE)
-	draw_rect(Rect2(0, 0, SLOT_SIZE - 1, 1), HudPalette.STONE_LIGHT)
-	draw_rect(Rect2(0, 0, 1, SLOT_SIZE - 1), HudPalette.STONE_LIGHT)
-	draw_rect(Rect2(1, 1, SLOT_SIZE - 2, SLOT_SIZE - 2), HudPalette.OUTLINE)
+	PixelShape.draw_stone_frame(self, SLOT_SIZE)
 	var inner := Rect2(INNER)
 	var top_half := Rect2(inner.position, Vector2(inner.size.x, floorf(inner.size.y / 2.0)))
-	draw_rect(inner, HudPalette.DARK)
-	draw_rect(top_half, HudPalette.SLATE)
+	draw_rect(inner, ApolloPalette.DARK)
+	draw_rect(top_half, ApolloPalette.SLATE)
 
 
 ## First frame of the "used" flash: a bright line along the inside top and left edges.
 func _draw_inner_glint() -> void:
-	draw_rect(Rect2(INNER.position.x, INNER.position.y, INNER.size.x, 1), HudPalette.STONE)
-	draw_rect(Rect2(INNER.position.x, INNER.position.y, 1, INNER.size.y), HudPalette.STONE)
+	draw_rect(Rect2(INNER.position.x, INNER.position.y, INNER.size.x, 1), ApolloPalette.STONE)
+	draw_rect(Rect2(INNER.position.x, INNER.position.y, 1, INNER.size.y), ApolloPalette.STONE)
 
 
 ## The icon, centred (nudged one pixel down-right, clear of the key letter), with an outline.
@@ -122,7 +118,7 @@ func _draw_icon(icon: Texture2D) -> void:
 	var pixels := _icon_pixels(icon)
 	if is_recovering():
 		pixels = _greyed(pixels)
-	PixelShape.draw_outlined(self, pixels, top_left, HudPalette.OUTLINE)
+	PixelShape.draw_outlined(self, pixels, top_left, ApolloPalette.OUTLINE)
 
 
 ## A dotted veil over the share still recovering, a sky-blue line on its edge, and the seconds left.
@@ -133,12 +129,12 @@ func _draw_cooldown_veil() -> void:
 	for y in range(INNER.position.y, edge_row):
 		for x in range(INNER.position.x, INNER.end.x):
 			if (x + y + parity) % 2 == 0:
-				PixelShape.draw_pixel(self, Vector2(x, y), HudPalette.NIGHT)
-	draw_rect(Rect2(INNER.position.x, edge_row, INNER.size.x, 1), HudPalette.SKY)
+				PixelShape.draw_pixel(self, Vector2(x, y), ApolloPalette.NIGHT)
+	draw_rect(Rect2(INNER.position.x, edge_row, INNER.size.x, 1), ApolloPalette.SKY)
 	var seconds := str(ceili(_cooldown_left))
 	var left := (SLOT_SIZE - PixelFont.width_of(seconds)) / 2
 	var top := (SLOT_SIZE - PixelFont.GLYPH_HEIGHT) / 2 + 1
-	PixelFont.draw_text(self, seconds, Vector2(left, top), HudPalette.WHITE, HudPalette.OUTLINE)
+	PixelFont.draw_text(self, seconds, Vector2(left, top), ApolloPalette.WHITE, ApolloPalette.OUTLINE)
 
 
 ## The frame's outer ring takes the flash colour while a flash is showing.
@@ -148,7 +144,7 @@ func _draw_flash_border() -> void:
 	if stage >= 0 and stage < USED_FLASH_COLORS.size():
 		color = USED_FLASH_COLORS[stage]
 	elif _refused_flash_left > 0.0:
-		color = HudPalette.GREY
+		color = ApolloPalette.GREY
 	else:
 		return
 	draw_rect(Rect2(0, 0, SLOT_SIZE, 1), color)
@@ -181,5 +177,5 @@ static func _greyed(pixels: Dictionary) -> Dictionary:
 	var grey := {}
 	for pixel: Vector2i in pixels:
 		var color: Color = pixels[pixel]
-		grey[pixel] = HudPalette.STONE_LIGHT if color.get_luminance() >= BRIGHT_ICON_LUMINANCE else HudPalette.STONE
+		grey[pixel] = ApolloPalette.STONE_LIGHT if color.get_luminance() >= BRIGHT_ICON_LUMINANCE else ApolloPalette.STONE
 	return grey

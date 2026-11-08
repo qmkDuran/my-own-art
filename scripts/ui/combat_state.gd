@@ -34,7 +34,7 @@ func note_fighting() -> void:
 
 
 func _find_player() -> void:
-	_player = get_tree().get_first_node_in_group("player") as Node2D
+	_player = PlayerFinder.find(self)
 	if _player == null:
 		return
 	var health := _player.get_node_or_null("Health") as Health
@@ -46,7 +46,7 @@ func _find_player() -> void:
 
 
 func _is_enemy_near() -> bool:
-	for enemy in get_tree().get_nodes_in_group("enemies"):
+	for enemy in get_tree().get_nodes_in_group(EnemyReactions.ENEMIES_GROUP):
 		var enemy_2d := enemy as Node2D
 		if enemy_2d is TrainingDummy:
 			continue

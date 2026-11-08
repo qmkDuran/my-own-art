@@ -10,7 +10,9 @@ extends Node2D
 
 ## 5×7 pixel bottle: '#' outline, 'g' glass, 'l' liquid, 'c' cork.
 const BOTTLE := [".cc..", "#cc#.", "#gg#.", "#ll#.", "#ll#.", "#ll#.", ".##.."]
-const COLORS := {"#": Color(0.035, 0.039, 0.078), "g": Color(0.78, 0.812, 0.8), "l": Color(0.875, 0.518, 0.647), "c": Color(0.678, 0.467, 0.341)}
+const COLORS := {"#": ApolloPalette.OUTLINE, "g": ApolloPalette.SILVER, "l": ApolloPalette.PINK, "c": ApolloPalette.CORK}
+## Where the bottle's top-left pixel sits, so it spins around its middle.
+const TOP_LEFT := Vector2(-2.5, -3.5)
 
 var _from: Vector2
 var _target: Node2D
@@ -38,18 +40,11 @@ func _process(delta: float) -> void:
 
 
 func _draw() -> void:
-	for y in BOTTLE.size():
-		for x in 5:
-			var pixel: String = BOTTLE[y][x]
-			if pixel != ".":
-				draw_rect(Rect2(Vector2(x - 2.5, y - 3.5), Vector2.ONE), COLORS[pixel])
+	PixelShape.draw_map(self, BOTTLE, COLORS, TOP_LEFT)
 
 
 func _land(at: Vector2) -> void:
 	_on_land.call()
 	if ring_scene != null:
-		var ring: Shockwave = ring_scene.instantiate()
-		get_parent().add_child(ring)
-		ring.global_position = at + Vector2(0, 8)
-		ring.play(14.0, 0.35, Color(0.875, 0.518, 0.647, 0.9))
+		Shockwave.spawn(ring_scene, get_parent(), at + Vector2(0, 8), 14.0, 0.35, Color(ApolloPalette.PINK, 0.9))
 	queue_free()

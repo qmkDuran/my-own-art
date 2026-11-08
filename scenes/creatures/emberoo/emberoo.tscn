@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3]
+[gd_scene load_steps=27 format=3]
 
 [ext_resource type="Script" path="res://scripts/creatures/creature.gd" id="1_creature"]
 [ext_resource type="Script" path="res://scripts/animation/creature_animator.gd" id="2_animator"]
@@ -22,6 +22,8 @@
 [ext_resource type="Script" path="res://scripts/skills/flame_uppercut.gd" id="20_uppercut"]
 [ext_resource type="Resource" path="res://data/skills/flame_uppercut.tres" id="21_uppercut_skill"]
 [ext_resource type="Script" path="res://scripts/effects/screen_shake.gd" id="22_shake"]
+[ext_resource type="Script" path="res://scripts/creatures/mouse_orders.gd" id="23_mouse_orders"]
+[ext_resource type="Script" path="res://scripts/creatures/level_up_boost.gd" id="24_level_up"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_body"]
 radius = 5.0
@@ -34,7 +36,6 @@ colors = PackedColorArray(0.909804, 0.756863, 0.439216, 0, 0.921569, 0.929412, 0
 z_index = 1
 motion_mode = 1
 script = ExtResource("1_creature")
-click_marker_scene = ExtResource("14_marker")
 
 [node name="Shadow" type="Polygon2D" parent="."]
 color = Color(0.0352941, 0.0392157, 0.0784314, 0.45)
@@ -120,5 +121,16 @@ skill = ExtResource("21_uppercut_skill")
 slot_index = 2
 animation_name = "uppercut"
 screen_shake = NodePath("../../ScreenShake")
+
+[node name="MouseOrders" type="Node" parent="." node_paths=PackedStringArray("player_input")]
+script = ExtResource("23_mouse_orders")
+player_input = NodePath("../PlayerInput")
+click_marker_scene = ExtResource("14_marker")
+
+[node name="LevelUpBoost" type="Node" parent="." node_paths=PackedStringArray("health", "speech_bubble")]
+script = ExtResource("24_level_up")
+health = NodePath("../Health")
+speech_bubble = NodePath("../SpeechBubble")
+ring_scene = ExtResource("14_marker")
 
 [connection signal="hits_landed" from="MeleeAttack" to="Heat" method="on_hits_landed"]

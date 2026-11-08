@@ -2,7 +2,7 @@ class_name Shockwave
 extends Node2D
 ## An expanding ring that fades out, e.g. the Warden's rod shove.
 ##
-## Spawn it, call play(), and it removes itself when done.
+## Use `spawn`, or add it yourself and call play(); it removes itself when done.
 
 ## Thickness of the ring, in pixels.
 @export var ring_width: float = 1.5
@@ -11,6 +11,14 @@ var _max_radius: float = 0.0
 var _duration: float = 0.0
 var _color: Color = Color.WHITE
 var _elapsed: float = 0.0
+
+
+## Adds a ring from `scene` to `world` at `at` (world coordinates) and plays it.
+static func spawn(scene: PackedScene, world: Node, at: Vector2, max_radius: float, duration: float, color: Color) -> void:
+	var ring: Shockwave = scene.instantiate()
+	world.add_child(ring)
+	ring.global_position = at
+	ring.play(max_radius, duration, color)
 
 
 func play(max_radius: float, duration: float, color: Color) -> void:

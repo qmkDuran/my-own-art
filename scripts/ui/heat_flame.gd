@@ -55,10 +55,7 @@ var _depths: Dictionary = PixelShape.depths(_shape)
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	await get_tree().process_frame
-	var player := get_tree().get_first_node_in_group("player")
-	if player == null:
-		return
-	var heat: Heat = player.get_node_or_null("Heat")
+	var heat := PlayerFinder.find_component(self, "Heat") as Heat
 	if heat == null:
 		return
 	heat.heat_changed.connect(_on_heat_changed)
@@ -89,7 +86,7 @@ func _draw() -> void:
 	PixelShape.draw_outlined(self, _flame_colors(), origin, _outline_color())
 	var numbers := "%d/%d" % [_heat, _max_heat]
 	var left := floori((FLAME_SIZE.x - PixelFont.width_of(numbers)) / 2.0) + 1
-	PixelFont.draw_text(self, numbers, origin + Vector2(left, NUMBERS_TOP), HudPalette.CREAM, HudPalette.OUTLINE)
+	PixelFont.draw_text(self, numbers, origin + Vector2(left, NUMBERS_TOP), ApolloPalette.CREAM, ApolloPalette.OUTLINE)
 
 
 ## Left-right jitter while a refusal is showing: right, left, right... one pixel each step.
@@ -102,7 +99,7 @@ func _shake_offset() -> float:
 
 ## The outline flashes red while a refusal is showing.
 func _outline_color() -> Color:
-	return HudPalette.RED_LIGHT if _refused_left > REFUSED_SECONDS * 0.5 else HudPalette.OUTLINE
+	return ApolloPalette.RED_LIGHT if _refused_left > REFUSED_SECONDS * 0.5 else ApolloPalette.OUTLINE
 
 
 ## The colour of every flame pixel: fire from the bottom up to the Heat share, dark coal above.
@@ -115,9 +112,9 @@ func _flame_colors() -> Dictionary:
 	for pixel: Vector2i in _shape:
 		var depth: int = _depths[pixel]
 		if pixel.y < first_lit_row:
-			colors[pixel] = HudPalette.BRICK if depth == 0 else HudPalette.COAL
+			colors[pixel] = ApolloPalette.BRICK if depth == 0 else ApolloPalette.COAL
 		elif pixel.y == surface_row and depth > 0:
-			colors[pixel] = HudPalette.GOLD
+			colors[pixel] = ApolloPalette.GOLD
 		else:
 			colors[pixel] = _fire_color(pixel, depth)
 	return colors
@@ -126,5 +123,5 @@ func _flame_colors() -> Dictionary:
 ## Lit fire: a red rim, orange just inside, a gold heart.
 func _fire_color(pixel: Vector2i, depth: int) -> Color:
 	if depth == 0:
-		return HudPalette.RED if pixel.y > DEEP_RIM_FROM_ROW else HudPalette.RED_LIGHT
-	return HudPalette.ORANGE if depth < 4 else HudPalette.GOLD
+		return ApolloPalette.RED if pixel.y > DEEP_RIM_FROM_ROW else ApolloPalette.RED_LIGHT
+	return ApolloPalette.ORANGE if depth < 4 else ApolloPalette.GOLD

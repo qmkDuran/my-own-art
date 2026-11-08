@@ -34,10 +34,6 @@ func has_working_effect() -> bool:
 	return not stat_changes.is_empty()
 
 
-func is_stat() -> bool:
-	return kind == Kind.STAT
-
-
 ## Builds a node from one row of EmberTreeData's table.
 static func from_row(row: Dictionary) -> EmberTreeNode:
 	var node := EmberTreeNode.new()

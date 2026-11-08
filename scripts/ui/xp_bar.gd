@@ -34,16 +34,16 @@ func _on_leveled_up(_level: int) -> void:
 func _draw() -> void:
 	var is_flashing := _flash_left > 0.0
 	var label := "LV %d" % Progression.level
-	PixelFont.draw_text(self, label, Vector2.ZERO, HudPalette.WHITE if is_flashing else HudPalette.GOLD, HudPalette.OUTLINE)
+	PixelFont.draw_text(self, label, Vector2.ZERO, ApolloPalette.WHITE if is_flashing else ApolloPalette.GOLD, ApolloPalette.OUTLINE)
 	var bar_left := PixelFont.width_of(label) + LABEL_GAP
 	var bar := Rect2(bar_left, BAR_TOP, BAR_LENGTH, 1)
-	draw_rect(bar.grow(1.0), HudPalette.OUTLINE)
-	draw_rect(bar, HudPalette.SLATE)
+	draw_rect(bar.grow(1.0), ApolloPalette.OUTLINE)
+	draw_rect(bar, ApolloPalette.SLATE)
 	var filled := roundi(BAR_LENGTH * _share_to_next_level())
 	if filled <= 0:
 		return
-	draw_rect(Rect2(bar.position, Vector2(filled, 1)), HudPalette.SKY_LIGHT if is_flashing else HudPalette.SKY)
-	draw_rect(Rect2(bar.position + Vector2(filled - 1, 0), Vector2.ONE), HudPalette.SKY_LIGHT)
+	draw_rect(Rect2(bar.position, Vector2(filled, 1)), ApolloPalette.SKY_LIGHT if is_flashing else ApolloPalette.SKY)
+	draw_rect(Rect2(bar.position + Vector2(filled - 1, 0), Vector2.ONE), ApolloPalette.SKY_LIGHT)
 
 
 func _share_to_next_level() -> float:

@@ -153,6 +153,13 @@ Brightest and busiest first: **player** > **danger cues** (attack tells, project
 - Vertical slice first, placeholder art allowed: 1 creature, 1 enemy type, XP/levelling, 1 evolution, 1 small skill tree (3–5 nodes).
 - If it isn't fun with boxes, better art won't fix it.
 
+## Code rules
+- **Throwaway code goes.** A mockup, demo or prototype is deleted as soon as the real thing replaces it (git keeps the history).
+- **One responsibility per file.** Aim for under ~200 lines; past that, split it into components or helpers.
+- **Readable names.** Say what a thing is or does (`move_direction`, not `dir`); no unexplained magic numbers.
+- **Colours only from the shared Apollo palette** (`scripts/ui/apollo_palette.gd`, `ApolloPalette`). Never a raw `Color(...)` value in a script; screen-specific roles (e.g. `EmberTreePalette`) are built from it.
+- **Components over big classes.** A creature or enemy is a thin coordinator; each job (input, click orders, summoning, a shove, drops on death) lives in its own child node or helper.
+
 ## Open questions
 - Core gameplay loop: draft is hub → link into zone → fight → XP + gems → hub to spend → harder zone → evolve
 - How evolution is triggered and how it ties to the skill tree

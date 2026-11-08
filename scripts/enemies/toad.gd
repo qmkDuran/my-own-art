@@ -9,14 +9,11 @@ extends CharacterBody2D
 ##   PUFFING    -> the warning: holds its puffed-up pose, then glints just before striking
 ##   LASHING    -> tongue shoots out; hits the player if they're still in the way
 ##   RECOVERING -> a short pause after attacking or being hit
-##   DYING      -> fades away
+##   DYING      -> fades away (ToadDeathDrops leaves the goo and maybe a berry)
 ##
 ## While DebugControls.enemies_passive is on, it only sits (RESTING) and reacts to hits.
 
 enum State { RESTING, HOPPING, PUFFING, LASHING, RECOVERING, DYING }
-
-## Height of the player's body above their feet, used to aim and hit with the tongue.
-const PLAYER_BODY_HEIGHT := -6.0
 
 @export_group("Creature info")
 ## Shown when the player first meets this species, and in the Creature Log.
@@ -40,11 +37,10 @@ const PLAYER_BODY_HEIGHT := -6.0
 @export var tongue_reach: float = 40.0
 ## Seconds of warning before the tongue comes out (the attack animation's first frame).
 @export var puff_time: float = 0.80
-## Colour the toad flickers to while winding up, so the attack is easy to see coming.
 ## The toad glints once this many seconds before the tongue fires (the last-moment cue to dodge).
 @export var glint_before_strike: float = 0.12
 ## Colour of that glint.
-@export var glint_color: Color = Color(0.816, 0.855, 0.569)
+@export var glint_color: Color = ApolloPalette.LIME_PALE
 ## Seconds the tongue is out (the rest of the attack animation).
 @export var lash_time: float = 0.32
 ## How close to the tongue the player's body must be to get hit, in pixels.
@@ -60,16 +56,8 @@ const PLAYER_BODY_HEIGHT := -6.0
 @export var knockback_friction: float = 600.0
 ## Seconds to fade out after dying.
 @export var death_fade_time: float = 0.3
-## The toxic goo burst shown when it dies.
-@export var death_splat_scene: PackedScene
-## A berry it sometimes drops (refills one Trainer's Aid charge).
-@export var berry_scene: PackedScene
-## Chance (0 to 1) of dropping a berry on death.
-@export var berry_drop_chance: float = 0.25
 
-var _state: State = State.RESTING
-var _time_in_state: float = 0.0
-var _state_length: float = 0.0
+var _timer := StateTimer.new()
 var _hop_velocity: Vector2 = Vector2.ZERO
 var _lash_direction: Vector2 = Vector2.DOWN
 var _has_hit_this_lash: bool = false
@@ -80,20 +68,21 @@ var _has_glinted: bool = false
 @onready var tongue: ToadTongue = $Tongue
 @onready var hit_flash: HitFlash = $HitFlash
 @onready var collision_shape: CollisionShape2D = $CollisionShape
+@onready var death_drops: ToadDeathDrops = $DeathDrops
 
 
 func _ready() -> void:
 	health.damaged.connect(_on_damaged)
 	health.died.connect(_on_died)
-	_enter(State.RESTING, _random_rest_time())
+	_timer.enter(State.RESTING, _random_rest_time())
 
 
 func _physics_process(delta: float) -> void:
-	_time_in_state += delta
+	_timer.advance(delta)
 	if DebugControls.enemies_passive:
 		_stop_acting()
 
-	match _state:
+	match _timer.state:
 		State.RESTING:
 			_rest()
 		State.HOPPING:
@@ -108,31 +97,36 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 
 
+## Name, element and portrait, for the discovery card and the Creature Log.
+func creature_info() -> Dictionary:
+	return {"species": species_id, "name": display_name, "element": element, "portrait": portrait}
+
+
 # --- States ---------------------------------------------------------------
 
 func _rest() -> void:
 	velocity = Vector2.ZERO
 	sprite.show_animation("idle")
-	if _is_state_over() and not DebugControls.enemies_passive:
+	if _timer.is_over() and not DebugControls.enemies_passive:
 		_choose_next_move()
 
 
 func _hop() -> void:
 	velocity = _hop_velocity
-	sprite.lift(sin(PI * _state_progress()) * hop_height)
-	if _is_state_over():
+	sprite.lift(sin(PI * _timer.progress()) * hop_height)
+	if _timer.is_over():
 		sprite.lift(0.0)
-		_enter(State.RESTING, _random_rest_time())
+		_timer.enter(State.RESTING, _random_rest_time())
 
 
-## The wind-up: the toad flickers toxic green so the player can see the attack coming.
+## The wind-up: the toad holds its puffed-up pose, then glints just before striking.
 func _puff() -> void:
 	velocity = Vector2.ZERO
 	_glint_just_before_strike()
-	if _is_state_over():
+	if _timer.is_over():
 		_has_hit_this_lash = false
 		tongue.lash(_lash_direction, tongue_reach, lash_time)
-		_enter(State.LASHING, lash_time)
+		_timer.enter(State.LASHING, lash_time)
 
 
 func _lash() -> void:
@@ -140,34 +134,34 @@ func _lash() -> void:
 	if tongue.is_fully_extended() and not _has_hit_this_lash:
 		_has_hit_this_lash = true
 		_try_to_hit_player()
-	if _is_state_over():
-		_enter(State.RECOVERING, recover_time)
+	if _timer.is_over():
+		_timer.enter(State.RECOVERING, recover_time)
 
 
 func _slow_down(delta: float) -> void:
-	velocity = velocity.move_toward(Vector2.ZERO, knockback_friction * delta)
-	if _state == State.RECOVERING:
+	velocity = EnemyReactions.slowed_down(velocity, knockback_friction, delta)
+	if _timer.state == State.RECOVERING:
 		sprite.show_animation("idle")
-		if _is_state_over():
-			_enter(State.RESTING, _random_rest_time())
+		if _timer.is_over():
+			_timer.enter(State.RESTING, _random_rest_time())
 
 
 ## Debug (enemies passive): a hop or an attack in progress stops at once and the toad sits.
 ## Recovering from a hit and dying carry on as normal.
 func _stop_acting() -> void:
-	if _state != State.HOPPING and _state != State.PUFFING and _state != State.LASHING:
+	if _timer.state != State.HOPPING and _timer.state != State.PUFFING and _timer.state != State.LASHING:
 		return
 	tongue.retract_now()
 	sprite.lift(0.0)
-	_enter(State.RESTING, _random_rest_time())
+	_timer.enter(State.RESTING, _random_rest_time())
 
 
 # --- Decisions ------------------------------------------------------------
 
 func _choose_next_move() -> void:
-	var player := _find_player()
+	var player := PlayerFinder.find(self)
 	if player == null:
-		_enter(State.RESTING, _random_rest_time())
+		_timer.enter(State.RESTING, _random_rest_time())
 		return
 
 	var to_player := _player_body_position(player) - global_position
@@ -181,7 +175,7 @@ func _start_attack(to_player: Vector2) -> void:
 	_has_glinted = false
 	_lash_direction = to_player.normalized()
 	sprite.replay_animation("attack")
-	_enter(State.PUFFING, puff_time)
+	_timer.enter(State.PUFFING, puff_time)
 
 
 ## Hops toward the player, but not so far that it lands on top of them.
@@ -189,11 +183,11 @@ func _start_hop(to_player: Vector2) -> void:
 	var distance := minf(hop_distance, to_player.length() - tongue_reach * 0.7)
 	_hop_velocity = to_player.normalized() * distance / hop_duration
 	sprite.replay_animation("hop")
-	_enter(State.HOPPING, hop_duration)
+	_timer.enter(State.HOPPING, hop_duration)
 
 
 func _try_to_hit_player() -> void:
-	var player := _find_player()
+	var player := PlayerFinder.find(self)
 	if player == null:
 		return
 	if not tongue.reaches(_player_body_position(player), tongue_hit_radius):
@@ -204,17 +198,25 @@ func _try_to_hit_player() -> void:
 		player_health.take_damage(tongue_damage, global_position)
 
 
+## Like most trash mobs, the toad mainly telegraphs with its pose (the held puff).
+## One quick glint right before the strike is the final cue.
+func _glint_just_before_strike() -> void:
+	if not _has_glinted and _timer.seconds_left() <= glint_before_strike:
+		_has_glinted = true
+		hit_flash.flash(glint_color)
+
+
 # --- Reactions ------------------------------------------------------------
 
 func _on_damaged(_amount: int, source_position: Vector2) -> void:
 	hit_flash.flash()
-	if _state == State.DYING:
+	if _timer.state == State.DYING:
 		return
 
 	tongue.retract_now()
 	sprite.lift(0.0)
-	velocity = (global_position - source_position).normalized() * knockback_speed
-	_enter(State.RECOVERING, recover_time)
+	velocity = EnemyReactions.knockback_velocity(self, source_position, knockback_speed)
+	_timer.enter(State.RECOVERING, recover_time)
 
 
 ## Throws the toad with this velocity, harder than a jab's knockback (e.g. Flame Uppercut).
@@ -224,73 +226,16 @@ func knock_back(push_velocity: Vector2) -> void:
 
 
 func _on_died() -> void:
-	_spawn_death_splat()
-	_maybe_drop_berry()
-	_enter(State.DYING, death_fade_time)
-	remove_from_group("enemies")
-	collision_shape.set_deferred("disabled", true)
-
-	var fade := create_tween()
-	fade.tween_property(sprite, "modulate:a", 0.0, death_fade_time)
-	fade.tween_callback(queue_free)
-
-
-# --- Attack warning -------------------------------------------------------
-
-## Like most trash mobs, the toad mainly telegraphs with its pose (the held puff).
-## One quick glint right before the strike is the final cue.
-func _glint_just_before_strike() -> void:
-	var time_to_strike := _state_length - _time_in_state
-	if not _has_glinted and time_to_strike <= glint_before_strike:
-		_has_glinted = true
-		hit_flash.flash(glint_color)
-
-
-func _maybe_drop_berry() -> void:
-	if berry_scene == null or randf() > berry_drop_chance:
-		return
-	var berry: Node2D = berry_scene.instantiate()
-	get_parent().add_child.call_deferred(berry)
-	berry.set_deferred("global_position", global_position)
-
-
-func _spawn_death_splat() -> void:
-	if death_splat_scene == null:
-		return
-	var splat: ToxicSplat = death_splat_scene.instantiate()
-	get_parent().add_child(splat)
-	splat.global_position = global_position
-	splat.play()
-
-
-func creature_info() -> Dictionary:
-	return {"species": species_id, "name": display_name, "element": element, "portrait": portrait}
+	death_drops.drop()
+	_timer.enter(State.DYING, death_fade_time)
+	EnemyReactions.fade_out_and_free(self, sprite, collision_shape, death_fade_time)
 
 
 # --- Helpers --------------------------------------------------------------
-
-func _enter(new_state: State, length: float) -> void:
-	_state = new_state
-	_time_in_state = 0.0
-	_state_length = length
-
-
-func _is_state_over() -> bool:
-	return _time_in_state >= _state_length
-
-
-## How far through the current state we are, from 0.0 to 1.0.
-func _state_progress() -> float:
-	return clampf(_time_in_state / _state_length, 0.0, 1.0)
-
 
 func _random_rest_time() -> float:
 	return randf_range(rest_time_range.x, rest_time_range.y)
 
 
-func _find_player() -> Node2D:
-	return get_tree().get_first_node_in_group("player")
-
-
 func _player_body_position(player: Node2D) -> Vector2:
-	return player.global_position + Vector2(0, PLAYER_BODY_HEIGHT)
+	return player.global_position + Vector2(0, Creature.BODY_HEIGHT)

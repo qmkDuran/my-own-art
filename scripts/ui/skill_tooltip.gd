@@ -54,16 +54,16 @@ func _build_card() -> void:
 	_card = PanelContainer.new()
 	_card.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var style := StyleBoxFlat.new()
-	style.bg_color = Color(HudPalette.OUTLINE, 0.85)
-	style.border_color = HudPalette.STONE
+	style.bg_color = Color(ApolloPalette.OUTLINE, 0.85)
+	style.border_color = ApolloPalette.STONE
 	style.set_border_width_all(1)
 	style.set_content_margin_all(3)
 	_card.add_theme_stylebox_override("panel", style)
 	var column := VBoxContainer.new()
 	column.add_theme_constant_override("separation", 0)
-	_name = _make_label(HudPalette.GOLD)
-	_numbers = _make_label(HudPalette.GREY)
-	_description = _make_label(HudPalette.CREAM)
+	_name = UiLabel.make(FONT_SIZE, ApolloPalette.GOLD)
+	_numbers = UiLabel.make(FONT_SIZE, ApolloPalette.GREY)
+	_description = UiLabel.make(FONT_SIZE, ApolloPalette.CREAM)
 	_description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_description.custom_minimum_size.x = TEXT_WIDTH
 	column.add_child(_name)
@@ -71,14 +71,6 @@ func _build_card() -> void:
 	column.add_child(_description)
 	_card.add_child(column)
 	add_child(_card)
-
-
-func _make_label(color: Color) -> Label:
-	var label := Label.new()
-	label.add_theme_font_size_override("font_size", FONT_SIZE)
-	label.add_theme_color_override("font_color", color)
-	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	return label
 
 
 static func _property(skill: Resource, property: String, fallback: Variant) -> Variant:

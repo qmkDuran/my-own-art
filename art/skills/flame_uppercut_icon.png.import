@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cbmsqkarlfbvn"
-path="res://.godot/imported/trainer_front.png-e585a49c448d4b53f1e4131602f13db8.ctex"
+uid="uid://32vb5go3c2ue"
+path="res://.godot/imported/flame_uppercut_icon.png-5f3e110ddfac85372503294fc3abe956.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/trainer/trainer_front.png"
-dest_files=["res://.godot/imported/trainer_front.png-e585a49c448d4b53f1e4131602f13db8.ctex"]
+source_file="res://art/skills/flame_uppercut_icon.png"
+dest_files=["res://.godot/imported/flame_uppercut_icon.png-5f3e110ddfac85372503294fc3abe956.ctex"]
 
 [params]
 

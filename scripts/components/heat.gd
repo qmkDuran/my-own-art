@@ -1,6 +1,6 @@
 class_name Heat
 extends Node
-## Emberoo's resource. Landing jabs builds Heat; fire skills will spend it.
+## Emberoo's resource. Landing jabs builds Heat; skills spend it (see SkillBar).
 ## After a few seconds without landing a hit, Heat cools off one pip at a time.
 
 signal heat_changed(heat: int, max_heat: int)

@@ -28,7 +28,7 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	if _target == null:
-		_target = get_tree().get_first_node_in_group("player")
+		_target = PlayerFinder.find(self)
 		return
 	var to_spot := _follow_spot() - global_position
 	var distance := to_spot.length()

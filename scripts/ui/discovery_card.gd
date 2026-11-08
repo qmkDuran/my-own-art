@@ -16,10 +16,10 @@ const FADE_OUT_SECONDS := 0.6
 const SLOW_MOTION_SCALE := 0.3
 const SLOW_MOTION_SECONDS := 0.5     # real seconds
 
-@export var background: Color = Color(0.035, 0.039, 0.078, 0.6)
-@export var title_color: Color = Color(0.871, 0.62, 0.255)
-@export var name_color: Color = Color(0.906, 0.835, 0.702)
-@export var element_color: Color = Color(0.659, 0.792, 0.345)
+@export var background: Color = Color(ApolloPalette.OUTLINE, 0.6)
+@export var title_color: Color = ApolloPalette.ORANGE
+@export var name_color: Color = ApolloPalette.CREAM
+@export var element_color: Color = ApolloPalette.GREEN_LIGHT
 
 var _card: PanelContainer
 var _portrait: TextureRect
@@ -92,16 +92,9 @@ func _build_card() -> void:
 	column.alignment = BoxContainer.ALIGNMENT_CENTER
 	column.add_theme_constant_override("separation", 0)
 	row.add_child(column)
-	_title = _make_label("NEW CREATURE DISCOVERED", 4, title_color)
-	_name = _make_label("", 8, name_color)
-	_element = _make_label("", 5, element_color)
+	_title = UiLabel.make(4, title_color, "NEW CREATURE DISCOVERED")
+	_name = UiLabel.make(8, name_color)
+	_element = UiLabel.make(5, element_color)
 	for item in [_title, _name, _element]:
 		column.add_child(item)
 
-
-func _make_label(text: String, font_size: int, color: Color) -> Label:
-	var label := Label.new()
-	label.text = text
-	label.add_theme_font_size_override("font_size", font_size)
-	label.add_theme_color_override("font_color", color)
-	return label

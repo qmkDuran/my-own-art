@@ -9,8 +9,8 @@ extends Node2D
 @export var puddle_time: float = 1.2
 ## Puddle size in pixels (width, height); it's a flat ellipse on the ground.
 @export var puddle_size: Vector2 = Vector2(14, 5)
-@export var dark_goo: Color = Color(0.459, 0.655, 0.263)
-@export var light_goo: Color = Color(0.659, 0.792, 0.345)
+@export var dark_goo: Color = ApolloPalette.GREEN
+@export var light_goo: Color = ApolloPalette.GREEN_LIGHT
 
 var _elapsed: float = 0.0
 

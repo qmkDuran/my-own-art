@@ -48,10 +48,7 @@ func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	# Wait one frame so the player has been added to the level.
 	await get_tree().process_frame
-	var player := get_tree().get_first_node_in_group("player")
-	if player == null:
-		return
-	_health = player.get_node_or_null("Health")
+	_health = PlayerFinder.find_component(self, "Health") as Health
 	if _health != null:
 		_health.damaged.connect(func(_amount: int, _from: Vector2) -> void: queue_redraw())
 		_health.healed.connect(func(_amount: int) -> void: queue_redraw())
@@ -61,10 +58,10 @@ func _ready() -> void:
 func _draw() -> void:
 	if _health == null:
 		return
-	PixelShape.draw_outlined(self, _heart_colors(_share_of_health_left()), Vector2.ZERO, HudPalette.OUTLINE)
+	PixelShape.draw_outlined(self, _heart_colors(_share_of_health_left()), Vector2.ZERO, ApolloPalette.OUTLINE)
 	var numbers := "%d/%d" % [_health.current_health, _health.max_health]
 	var left := floori((HEART_SIZE.x - PixelFont.width_of(numbers)) / 2.0)
-	PixelFont.draw_text(self, numbers, Vector2(left, NUMBERS_TOP), HudPalette.CREAM, HudPalette.OUTLINE)
+	PixelFont.draw_text(self, numbers, Vector2(left, NUMBERS_TOP), ApolloPalette.CREAM, ApolloPalette.OUTLINE)
 
 
 func _share_of_health_left() -> float:
@@ -79,11 +76,11 @@ func _heart_colors(share_left: float) -> Dictionary:
 	for pixel: Vector2i in _shape:
 		var is_rim: bool = _depths[pixel] == 0
 		if pixel.y < first_filled_row - 0.001:
-			colors[pixel] = HudPalette.COAL_DARK if is_rim else HudPalette.COAL
+			colors[pixel] = ApolloPalette.COAL_DARK if is_rim else ApolloPalette.COAL
 		elif pixel.y == surface_row or (pixel in SHINE_PIXELS and pixel.y >= first_filled_row):
-			colors[pixel] = HudPalette.RED_LIGHT
+			colors[pixel] = ApolloPalette.RED_LIGHT
 		elif is_rim and (pixel.x > SHADOW_FROM.x or pixel.y > SHADOW_FROM.y):
-			colors[pixel] = HudPalette.WINE
+			colors[pixel] = ApolloPalette.WINE
 		else:
-			colors[pixel] = HudPalette.RED
+			colors[pixel] = ApolloPalette.RED
 	return colors

@@ -1,11 +1,14 @@
-class_name HudPalette
+class_name ApolloPalette
 extends RefCounted
-## The Apollo colours the HUD uses, by name, so the drawing code reads like the mockup.
-## Every value here is an Apollo colour (see DESIGN.md).
+## Every colour the code uses, by name. All of them are Apollo colours (see DESIGN.md, "Art").
+##
+## Pick colours from here only, never as raw numbers in a script. Screens that give
+## colours their own roles (e.g. EmberTreePalette) build those roles from these.
 
 const OUTLINE := Color("090a14")
 const NIGHT := Color("10141f")
 const DARK := Color("151d28")
+const NAVY := Color("172038")
 const SLATE := Color("202e37")
 const STONE := Color("394a50")
 const STONE_LIGHT := Color("577277")
@@ -18,13 +21,19 @@ const CREAM := Color("e7d5b3")
 const RED := Color("a53030")
 const RED_LIGHT := Color("cf573c")
 const WINE := Color("752438")
+const PLUM_DARK := Color("411d31")
 const COAL := Color("341c27")
 const COAL_DARK := Color("241527")
 const BRICK := Color("602c2c")
 
 const ORANGE := Color("de9e41")
+const ORANGE_MID := Color("da863e")
 const ORANGE_DARK := Color("be772b")
 const GOLD := Color("e8c170")
+
+const GREEN := Color("75a743")
+const GREEN_LIGHT := Color("a8ca58")
+const LIME_PALE := Color("d0da91")
 
 const SKY := Color("73bed3")
 const SKY_LIGHT := Color("a4dddb")

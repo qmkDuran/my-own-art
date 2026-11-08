@@ -19,7 +19,7 @@ var _is_lashing: bool = false
 var _has_dripped: bool = false
 
 ## Toxic green droplets that fly off the tip when the tongue snaps out.
-@export var droplet_color: Color = Color(0.659, 0.792, 0.345)
+@export var droplet_color: Color = ApolloPalette.GREEN_LIGHT
 
 
 func _ready() -> void:

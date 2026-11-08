@@ -4,9 +4,9 @@ extends Node2D
 ## Fades in, stays for a moment, fades out.
 
 @export var font_size: int = 6
-@export var text_color: Color = Color(0.906, 0.835, 0.702)
+@export var text_color: Color = ApolloPalette.CREAM
 ## Same see-through dark card as the discovery toast, with no border.
-@export var background: Color = Color(0.035, 0.039, 0.078, 0.6)
+@export var background: Color = Color(ApolloPalette.OUTLINE, 0.6)
 
 
 func say(text: String, seconds: float = 1.4) -> void:
@@ -22,11 +22,7 @@ func say(text: String, seconds: float = 1.4) -> void:
 	style.content_margin_top = 1
 	style.content_margin_bottom = 1
 	panel.add_theme_stylebox_override("panel", style)
-	var label := Label.new()
-	label.text = text
-	label.add_theme_font_size_override("font_size", font_size)
-	label.add_theme_color_override("font_color", text_color)
-	panel.add_child(label)
+	panel.add_child(UiLabel.make(font_size, text_color, text))
 	add_child(panel)
 
 	# Centre the bubble above this node once its size is known.

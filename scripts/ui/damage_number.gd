@@ -14,14 +14,14 @@ const FADE_START := 0.45
 const BIG_HIT := 3
 
 var _text: String = ""
-var _color: Color = HudPalette.WHITE
+var _color: Color = ApolloPalette.WHITE
 var _age: float = 0.0
 
 
 ## Starts showing `amount`; call right after adding the number to the tree.
 func pop(amount: int) -> void:
 	_text = str(amount)
-	_color = HudPalette.GOLD if amount >= BIG_HIT else HudPalette.WHITE
+	_color = ApolloPalette.GOLD if amount >= BIG_HIT else ApolloPalette.WHITE
 	queue_redraw()
 
 
@@ -40,4 +40,4 @@ func _draw() -> void:
 	var life_share := clampf(_age / LIFETIME, 0.0, 1.0)
 	var rise := roundf(RISE_HEIGHT * (1.0 - pow(1.0 - life_share, 3.0)))
 	var top_left := Vector2(-floorf(PixelFont.width_of(_text) / 2.0), -PixelFont.GLYPH_HEIGHT - rise)
-	PixelFont.draw_text(self, _text, top_left, _color, HudPalette.OUTLINE)
+	PixelFont.draw_text(self, _text, top_left, _color, ApolloPalette.OUTLINE)

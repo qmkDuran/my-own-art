@@ -11,8 +11,6 @@ signal reset_pressed
 
 const Kind := EmberTreeNode.Kind
 
-const CARD_PADDING := 12
-const CARD_CORNER := 4
 const LINE_GAP := 5
 ## Pulls wrapped lines a little closer than the font's default, so text takes less height.
 const WRAPPED_LINE_SPACING := -1
@@ -21,12 +19,16 @@ const SLIDE_DISTANCE := 8.0
 const SLIDE_SECONDS := 0.16
 
 const KIND_NAMES := {Kind.SKILL: "SKILL", Kind.UPGRADE: "UPGRADE", Kind.STAT: "STAT", Kind.ULTIMATE: "ULTIMATE"}
-## Colour of the status line for each node state (see EmberTreeCanvas.state_of).
-const STATE_COLORS := {"learned": EmberTreePalette.GOLD, "available": EmberTreePalette.CREAM, "locked": EmberTreePalette.GREY, "sealed": EmberTreePalette.GREY}
+## Colour of the status line for each node state (see EmberTreeNodeState).
+const STATE_COLORS := {
+	EmberTreeNodeState.LEARNED: EmberTreePalette.GOLD, EmberTreeNodeState.AVAILABLE: EmberTreePalette.CREAM,
+	EmberTreeNodeState.LOCKED: EmberTreePalette.GREY, EmberTreeNodeState.SEALED: EmberTreePalette.GREY,
+}
 
 const OVERVIEW_TITLE := "How the tree works"
 const OVERVIEW_TEXT := "Ignite embers to change how Emberoo fights. Each costs 1 skill point, and you earn 1 skill point per level.\nThe inner ring is Stage 1. The outer rings unlock when Emberoo evolves."
 const OVERVIEW_TAG := "POINT AT A BRANCH NAME OR AN EMBER"
+## A small badge and a short note, for nodes whose effect is not built yet.
 const COMING_SOON_BADGE := "COMING SOON"
 const COMING_SOON_NOTE := "Effect not in the game yet"
 const POINTS_SOURCE := "+1 per level"
@@ -88,7 +90,7 @@ func _refresh() -> void:
 # --- Building -------------------------------------------------------------------
 
 func _build_info_card() -> void:
-	_info_card = _make_card()
+	_info_card = EmberTreeWidgets.make_card()
 	_info_card.size.x = size.x
 	add_child(_info_card)
 	var column := _make_column(_info_card)
@@ -98,39 +100,13 @@ func _build_info_card() -> void:
 	_description = _add_label(column, 10, EmberTreePalette.CREAM)
 	_legend = EmberTreeLegend.new()
 	column.add_child(_legend)
-	_coming_soon_row = _make_coming_soon_row()
+	_coming_soon_row = EmberTreeWidgets.make_badge_row(COMING_SOON_BADGE, COMING_SOON_NOTE)
 	column.add_child(_coming_soon_row)
 	_status = _add_label(column, 10, EmberTreePalette.GREY)
 
 
-## A small "COMING SOON" badge and a short note, for nodes whose effect is not built yet.
-func _make_coming_soon_row() -> HBoxContainer:
-	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", 6)
-	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var badge := PanelContainer.new()
-	var badge_style := _card_style(EmberTreePalette.EMBER_DARK, Color(EmberTreePalette.ORANGE, 0.7))
-	badge_style.shadow_size = 0
-	badge_style.set_corner_radius_all(3)
-	badge_style.content_margin_left = 5
-	badge_style.content_margin_right = 5
-	badge_style.content_margin_top = 1
-	badge_style.content_margin_bottom = 1
-	badge.add_theme_stylebox_override("panel", badge_style)
-	badge.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var badge_text := _make_label(8, EmberTreePalette.ORANGE)
-	badge_text.text = COMING_SOON_BADGE
-	badge.add_child(badge_text)
-	row.add_child(badge)
-	var note := _make_label(9, EmberTreePalette.GREY)
-	note.text = COMING_SOON_NOTE
-	note.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	row.add_child(note)
-	return row
-
-
 func _build_points_card() -> void:
-	var card := _make_card()
+	var card := EmberTreeWidgets.make_card()
 	card.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE, Control.PRESET_MODE_KEEP_WIDTH)
 	card.grow_vertical = Control.GROW_DIRECTION_BEGIN
 	add_child(card)
@@ -147,17 +123,15 @@ func _build_points_card() -> void:
 	var points_line := HBoxContainer.new()
 	points_line.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	points_column.add_child(points_line)
-	var caption := _make_label(9, EmberTreePalette.GREY)
-	caption.text = "SKILL POINTS"
+	var caption := UiLabel.make(9, EmberTreePalette.GREY, "SKILL POINTS")
 	caption.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	points_line.add_child(caption)
-	_points_value = _make_label(16, EmberTreePalette.GOLD)
+	_points_value = UiLabel.make(16, EmberTreePalette.GOLD)
 	_points_value.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	points_line.add_child(_points_value)
-	var source := _make_label(9, EmberTreePalette.ORANGE)
-	source.text = POINTS_SOURCE
+	var source := UiLabel.make(9, EmberTreePalette.ORANGE, POINTS_SOURCE)
 	points_column.add_child(source)
-	_reset_button = _make_button("Reset  ·  free")
+	_reset_button = EmberTreeWidgets.make_button("Reset  ·  free")
 	_reset_button.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	_reset_button.pressed.connect(reset_pressed.emit)
 	row.add_child(_reset_button)
@@ -185,20 +159,8 @@ func _fill_branch(branch: String) -> void:
 	_description.text = EmberTreeData.branch_playstyle(branch)
 	_legend.visible = false
 	_coming_soon_row.visible = false
-	var ignited := 0
-	var open := 0
-	var sealed := 0
-	for node in EmberTreeData.nodes_in_branch(branch):
-		if EmberTree.is_learned(node.id):
-			ignited += 1
-		if EmberTree.is_stage_open(node.stage):
-			open += 1
-		else:
-			sealed += 1
-	var status := "%d of %d ignited" % [ignited, open]
-	if sealed > 0:
-		status += "  ·  %d more after evolving" % sealed
-	_set_status(status, EmberTreePalette.GOLD if ignited > 0 else EmberTreePalette.GREY)
+	var has_ignited := EmberTreeStatusText.ignited_in_branch(branch) > 0
+	_set_status(EmberTreeStatusText.for_branch(branch), EmberTreePalette.GOLD if has_ignited else EmberTreePalette.GREY)
 
 
 ## A node: name, "BRANCH · TYPE · STAGE", what it does, then where it stands.
@@ -209,8 +171,8 @@ func _fill_node(node: EmberTreeNode) -> void:
 	_description.text = node.description
 	_legend.visible = false
 	_coming_soon_row.visible = not node.has_working_effect()
-	var state := EmberTreeCanvas.state_of(node)
-	_set_status(_status_text(node, state), STATE_COLORS[state])
+	var state := EmberTreeNodeState.of(node)
+	_set_status(EmberTreeStatusText.for_node(node, state), STATE_COLORS[state])
 
 
 func _set_title(text: String, color: Color) -> void:
@@ -222,31 +184,6 @@ func _set_status(text: String, color: Color) -> void:
 	_status.text = text
 	_status.add_theme_color_override("font_color", color)
 	_status.visible = true
-
-
-## One line on where the node stands: Ignited, Can ignite, Not enough points,
-## Needs: <node>, or Locked until evolution.
-func _status_text(node: EmberTreeNode, state: String) -> String:
-	match state:
-		"learned":
-			if EmberTree.can_unlearn(node.id):
-				return "Ignited  ·  right-click to put out (free)"
-			return "Ignited  ·  put out the embers beyond it first"
-		"available":
-			return "Can ignite  ·  click to spend 1 skill point"
-		"sealed":
-			return "Locked  ·  unlocks when Emberoo evolves (Stage %d)" % node.stage
-	if EmberTree.is_reachable(node.id):
-		return "Not enough points  ·  earn 1 each level"
-	return "Needs: %s" % _required_titles(node)
-
-
-## The names of the nodes that lead to this one, e.g. "Meteor Fist or Heat Sink".
-func _required_titles(node: EmberTreeNode) -> String:
-	var titles := PackedStringArray()
-	for required_id in node.requires:
-		titles.append(EmberTreeData.find(required_id).title)
-	return " or ".join(titles)
 
 
 func _refresh_points() -> void:
@@ -264,13 +201,6 @@ func _slide_in() -> void:
 
 # --- Small builders -----------------------------------------------------------------
 
-func _make_card() -> PanelContainer:
-	var card := PanelContainer.new()
-	card.add_theme_stylebox_override("panel", _card_style(EmberTreePalette.PANEL, EmberTreePalette.PANEL_EDGE))
-	card.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	return card
-
-
 func _make_column(card: PanelContainer) -> VBoxContainer:
 	var column := VBoxContainer.new()
 	column.add_theme_constant_override("separation", LINE_GAP)
@@ -280,10 +210,10 @@ func _make_column(card: PanelContainer) -> VBoxContainer:
 
 
 func _add_label(column: VBoxContainer, font_size: int, color: Color) -> Label:
-	var label := _make_label(font_size, color)
+	var label := UiLabel.make(font_size, color)
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	label.add_theme_constant_override("line_spacing", WRAPPED_LINE_SPACING)
-	label.custom_minimum_size.x = size.x - CARD_PADDING * 2
+	label.custom_minimum_size.x = size.x - EmberTreeWidgets.CARD_PADDING * 2
 	column.add_child(label)
 	return label
 
@@ -291,51 +221,6 @@ func _add_label(column: VBoxContainer, font_size: int, color: Color) -> Label:
 func _add_divider(column: VBoxContainer) -> void:
 	var divider := ColorRect.new()
 	divider.color = Color(EmberTreePalette.ORANGE, 0.3)
-	divider.custom_minimum_size = Vector2(size.x - CARD_PADDING * 2, 1)
+	divider.custom_minimum_size = Vector2(size.x - EmberTreeWidgets.CARD_PADDING * 2, 1)
 	divider.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	column.add_child(divider)
-
-
-func _make_label(font_size: int, color: Color) -> Label:
-	var label := Label.new()
-	label.add_theme_font_size_override("font_size", font_size)
-	label.add_theme_color_override("font_color", color)
-	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	return label
-
-
-func _make_button(text: String) -> Button:
-	var button := Button.new()
-	button.text = text
-	# No keyboard focus: Tab toggles the tree and must not move focus to the button instead.
-	button.focus_mode = Control.FOCUS_NONE
-	button.add_theme_font_size_override("font_size", 11)
-	button.add_theme_color_override("font_color", EmberTreePalette.CREAM)
-	button.add_theme_color_override("font_hover_color", EmberTreePalette.GOLD)
-	button.add_theme_color_override("font_pressed_color", EmberTreePalette.GOLD)
-	button.add_theme_color_override("font_disabled_color", EmberTreePalette.DIM)
-	button.add_theme_stylebox_override("normal", _button_style(EmberTreePalette.EMBER_DARK, Color(EmberTreePalette.ORANGE, 0.5)))
-	button.add_theme_stylebox_override("hover", _button_style(EmberTreePalette.DEEP, EmberTreePalette.GOLD))
-	button.add_theme_stylebox_override("pressed", _button_style(EmberTreePalette.DEEP, EmberTreePalette.GOLD))
-	button.add_theme_stylebox_override("disabled", _button_style(EmberTreePalette.COAL, Color(EmberTreePalette.DIM, 0.6)))
-	return button
-
-
-func _card_style(background: Color, border: Color) -> StyleBoxFlat:
-	var style := StyleBoxFlat.new()
-	style.bg_color = background
-	style.border_color = border
-	style.set_border_width_all(1)
-	style.set_corner_radius_all(CARD_CORNER)
-	style.set_content_margin_all(CARD_PADDING)
-	style.shadow_color = Color(EmberTreePalette.BACKGROUND, 0.35)
-	style.shadow_size = 6
-	return style
-
-
-func _button_style(background: Color, border: Color) -> StyleBoxFlat:
-	var style := _card_style(background, border)
-	style.shadow_size = 0
-	style.content_margin_top = 4
-	style.content_margin_bottom = 4
-	return style

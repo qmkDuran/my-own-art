@@ -8,13 +8,13 @@ extends Control
 
 signal look_chosen(look: TrainerLook)
 
-const COLOR_BACKGROUND := Color(0.035, 0.039, 0.078)
-const COLOR_PANEL := Color(0.09, 0.125, 0.22)
-const COLOR_COAL := Color(0.063, 0.078, 0.122)
-const COLOR_CREAM := Color(0.906, 0.835, 0.702)
-const COLOR_GREY := Color(0.506, 0.592, 0.588)
-const COLOR_DIM := Color(0.224, 0.29, 0.314)
-const COLOR_ORANGE := Color(0.871, 0.62, 0.255)
+const COLOR_BACKGROUND := ApolloPalette.OUTLINE
+const COLOR_PANEL := ApolloPalette.NAVY
+const COLOR_COAL := ApolloPalette.NIGHT
+const COLOR_CREAM := ApolloPalette.CREAM
+const COLOR_GREY := ApolloPalette.GREY
+const COLOR_DIM := ApolloPalette.STONE
+const COLOR_ORANGE := ApolloPalette.ORANGE
 const FONT_SIZE := 8
 
 ## The look being edited.

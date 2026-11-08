@@ -23,7 +23,7 @@ extends Node
 @export var drift_distance: float = 5.0
 ## Seconds each line takes to fade away.
 @export var fade_time: float = 0.15
-@export var line_color: Color = Color(0.92, 0.93, 0.91, 0.9)
+@export var line_color: Color = Color(ApolloPalette.WHITE, 0.9)
 @export var line_width: float = 1.0
 
 
