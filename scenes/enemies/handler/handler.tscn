@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://scripts/enemies/handler.gd" id="1_handler"]
 [ext_resource type="Script" path="res://scripts/animation/single_view_animator.gd" id="2_animator"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" path="res://scenes/enemies/toxic_toad/toxic_toad.tscn" id="5_toad"]
 [ext_resource type="PackedScene" path="res://scenes/effects/shockwave.tscn" id="6_shockwave"]
 [ext_resource type="Script" path="res://scripts/effects/charge_particles.gd" id="7_charge"]
+[ext_resource type="Script" path="res://scripts/ui/floating_health_bar.gd" id="8_bar"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_body"]
 radius = 5.0
@@ -63,3 +64,9 @@ max_health = 6
 [node name="HitFlash" type="Node" parent="." node_paths=PackedStringArray("sprite")]
 script = ExtResource("4_flash")
 sprite = NodePath("../Sprite")
+
+[node name="FloatingHealthBar" type="Node2D" parent="." node_paths=PackedStringArray("health")]
+z_index = 2
+position = Vector2(0, -32)
+script = ExtResource("8_bar")
+health = NodePath("../Health")

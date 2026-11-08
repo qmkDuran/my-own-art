@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/creatures/emberoo/emberoo.tscn" id="1_emberoo"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/handler/handler.tscn" id="3_handler"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="4_hud"]
 
 [node name="Main" type="Node2D"]
 
@@ -53,3 +54,5 @@ first_summon_delay = 3.0
 
 [node name="Camera" type="Camera2D" parent="Emberoo"]
 position_smoothing_enabled = true
+
+[node name="Hud" parent="." instance=ExtResource("4_hud")]

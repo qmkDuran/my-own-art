@@ -21,5 +21,9 @@ Good ideas that don't belong in the current milestone. Check here when a milesto
 - **8-direction sprites** (add front-diagonal and back-diagonal views; ~1.7× art). Movement/aim already work at any angle.
 - **Gamepad aiming** with the right stick (attacks currently aim at the mouse).
 
+## Trainer
+- **Trainer walks with Emberoo in the world** (changes the hub-only decision). Lore: Wardens see through their AI-God-linked visors, which only sense creature energy; the trainer came through the portal with no energy signature, so they're invisible to Wardens. Future story beat: the AI God learns to see the trainer. Cost: new 18×28 human sprite (front/back/side idle + walk) and follow behaviour.
+- **Reactive trainer portrait** on the HUD next to the health bar.
+
 ## Later systems
 - Capture = new class: surviving creatures freely join you as new playable classes (after 3–4 classes exist).
