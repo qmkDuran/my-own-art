@@ -13,6 +13,10 @@ extends Control
 ##   tooltip               -> translucent card on the right; all text lives here, never on the tree
 
 const UI_SIZE := Vector2i(640, 360)
+## Space between the screen edge (or a bar) and content, in UI pixels.
+const PAGE_MARGIN := 16.0
+const HEADER_HEIGHT := 48.0
+const FOOTER_HEIGHT := 30.0
 const RING_RADII := [100.0, 185.0, 270.0]
 const NODE_RADIUS := {"skill": 24.0, "stat": 18.0, "ultimate": 28.0}
 const ICON_PIXEL := {"skill": 3.0, "stat": 2.0, "ultimate": 3.0}
@@ -21,7 +25,7 @@ const CENTRE_RADIUS := 46.0
 const MIN_ZOOM := 0.45
 const MAX_ZOOM := 1.6
 const START_ZOOM := 0.56
-const START_CENTRE := Vector2(232, 205)
+const START_CENTRE := Vector2(232, 210)
 ## Mouse travel (pixels) before a press counts as a drag instead of a click.
 const DRAG_THRESHOLD := 4.0
 const HOVER_SCALE := 1.15
@@ -36,7 +40,7 @@ const COLOR_ORANGE := Color(0.871, 0.62, 0.255)
 const COLOR_RED := Color(0.812, 0.341, 0.235)
 const COLOR_GOLD := Color(0.91, 0.757, 0.439)
 const COLOR_DEEP := Color(0.36, 0.11, 0.17)
-const COLOR_PANEL := Color(0.045, 0.055, 0.085, 0.78)
+const COLOR_PANEL := Color(0.075, 0.05, 0.055, 0.8)
 const COLOR_PANEL_EDGE := Color(0.871, 0.62, 0.255, 0.55)
 
 ## 8×8 pixel icons. They're centred by their drawn pixels, not the 8×8 box.
@@ -245,30 +249,32 @@ func _build_vignette() -> void:
 
 
 func _build_header() -> void:
-	var bar := _make_panel(Color(0.03, 0.035, 0.055, 0.7), Color(0, 0, 0, 0), 0)
+	var bar := _make_panel(Color(0.035, 0.03, 0.04, 0.72), Color(0, 0, 0, 0), 0)
 	bar.position = Vector2(0, 0)
-	bar.size = Vector2(UI_SIZE.x, 40)
+	bar.size = Vector2(UI_SIZE.x, HEADER_HEIGHT)
 	add_child(bar)
-	_add_line(Vector2(0, 40), Vector2(UI_SIZE.x, 40), Color(COLOR_ORANGE, 0.25))
-	_add_label("EMBEROO", Vector2(16, 6), Vector2(200, 18), 16, COLOR_GOLD, HORIZONTAL_ALIGNMENT_LEFT)
-	_add_label("The Ember Tree", Vector2(16, 23), Vector2(200, 12), 10, COLOR_GREY, HORIZONTAL_ALIGNMENT_LEFT)
-	_points_label = _add_label("", Vector2(UI_SIZE.x - 216, 12), Vector2(200, 16), 11, COLOR_CREAM, HORIZONTAL_ALIGNMENT_RIGHT)
+	_add_line(Vector2(0, HEADER_HEIGHT), Vector2(UI_SIZE.x, HEADER_HEIGHT), Color(COLOR_ORANGE, 0.25))
+	_add_label("EMBEROO", Vector2(PAGE_MARGIN, 9), Vector2(200, 18), 16, COLOR_GOLD, HORIZONTAL_ALIGNMENT_LEFT)
+	_add_label("The Ember Tree", Vector2(PAGE_MARGIN, 27), Vector2(200, 12), 10, COLOR_GREY, HORIZONTAL_ALIGNMENT_LEFT)
+	_points_label = _add_label("", Vector2(UI_SIZE.x - 200 - PAGE_MARGIN, (HEADER_HEIGHT - 16) / 2.0), Vector2(200, 16), 11, COLOR_CREAM, HORIZONTAL_ALIGNMENT_RIGHT)
 	_update_points_label()
 
 
 func _build_footer() -> void:
-	var bar := _make_panel(Color(0.03, 0.035, 0.055, 0.7), Color(0, 0, 0, 0), 0)
-	bar.position = Vector2(0, UI_SIZE.y - 24)
-	bar.size = Vector2(UI_SIZE.x, 24)
+	var bar := _make_panel(Color(0.035, 0.03, 0.04, 0.72), Color(0, 0, 0, 0), 0)
+	var top := UI_SIZE.y - FOOTER_HEIGHT
+	bar.position = Vector2(0, top)
+	bar.size = Vector2(UI_SIZE.x, FOOTER_HEIGHT)
 	add_child(bar)
-	_add_line(Vector2(0, UI_SIZE.y - 24), Vector2(UI_SIZE.x, UI_SIZE.y - 24), Color(COLOR_ORANGE, 0.2))
-	_add_label("Inner ring: Stage 1   ·   Middle: Stage 2   ·   Outer: Stage 3", Vector2(16, UI_SIZE.y - 18), Vector2(320, 12), 9, COLOR_GREY, HORIZONTAL_ALIGNMENT_LEFT)
-	_add_label("Scroll to zoom  ·  Drag to move", Vector2(UI_SIZE.x - 316, UI_SIZE.y - 18), Vector2(300, 12), 9, COLOR_GREY, HORIZONTAL_ALIGNMENT_RIGHT)
+	_add_line(Vector2(0, top), Vector2(UI_SIZE.x, top), Color(COLOR_ORANGE, 0.2))
+	var text_top := top + (FOOTER_HEIGHT - 12) / 2.0
+	_add_label("Inner ring: Stage 1   ·   Middle: Stage 2   ·   Outer: Stage 3", Vector2(PAGE_MARGIN, text_top), Vector2(320, 12), 9, COLOR_GREY, HORIZONTAL_ALIGNMENT_LEFT)
+	_add_label("Scroll to zoom  ·  Drag to move", Vector2(UI_SIZE.x - 300 - PAGE_MARGIN, text_top), Vector2(300, 12), 9, COLOR_GREY, HORIZONTAL_ALIGNMENT_RIGHT)
 
 
 func _build_tooltip() -> void:
 	_tooltip = _make_panel(COLOR_PANEL, COLOR_PANEL_EDGE, 4)
-	_tooltip.position = Vector2(UI_SIZE.x - 236, 56)
+	_tooltip.position = Vector2(UI_SIZE.x - 220 - PAGE_MARGIN, HEADER_HEIGHT + PAGE_MARGIN)
 	_tooltip.custom_minimum_size = Vector2(220, 0)
 	_tooltip.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_tooltip)
@@ -514,7 +520,7 @@ func _show_tooltip_for(id: String) -> void:
 	_tooltip.reset_size()  # shrink to fit the new text
 
 	# Slide in and fade, instead of popping.
-	var resting_x := UI_SIZE.x - 236.0
+	var resting_x := UI_SIZE.x - 220.0 - PAGE_MARGIN
 	_tooltip.modulate.a = 0.0
 	_tooltip.position.x = resting_x + 8.0
 	var slide := create_tween().set_parallel().set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
