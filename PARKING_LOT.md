@@ -6,6 +6,10 @@ Good ideas that don't belong in the current milestone. Check here when a milesto
 - **Berserk overload:** when a Handler dies, remaining bound creatures go berserk (faster, more aggressive, uncoordinated). Needs a clear visual (collar sparks, red flash).
 - **Freeing creatures** as a story reward (e.g. rescuing them at a camp), not as a combat shortcut.
 
+- **Poison status** on the hyena bite (after the slice, with the status-effect system).
+- **Type chart** (element strengths/weaknesses): only once there are many elements.
+- **Tick** and **vulture** enemies.
+
 ## Emberoo polish
 - Redraw side `jab2` (currently reads more like a low body hook).
 - Back base sprite: 1px outline gap above the right heel.

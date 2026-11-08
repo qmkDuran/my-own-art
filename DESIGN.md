@@ -69,6 +69,17 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
 - Fire kangaroo boxer. Stage 1 sprite done (16×16): idle (with blink), hop, jab, jab2, dodge in front/side/back.
 - Jab: hold to repeat, alternates fists, roots you in place. Dodge: a kangaroo leap that can cancel a jab.
 
+## Elements
+- **Vertical slice: flavour only.** Element sets colours, effects and theme; no damage rules.
+- **Soon after: status effects.** Each element applies its own effect (fire = burn, toxic = poison over time).
+- **No type chart for now.** Revisit only when there are many elements.
+
+### Enemy #1: Toxic Hyena
+- Toxic element (sickly green tones, drool) to contrast Emberoo's orange.
+- Pack mob: runs at you, bites (plain damage in the slice).
+- Side view only (flipped for left), ~9 frames: run 4, bite 3, idle 2. Hurt/death via shader flash and fade.
+- Later enemies, introduced one at a time: tick (drains energy), vulture (circles then dives).
+
 ## Progression
 - Levelling + evolutions + skill trees
 - Skill tree inspiration: Grim Dawn, PoE 2, Last Epoch, Diablo 4
