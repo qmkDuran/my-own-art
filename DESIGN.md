@@ -84,6 +84,15 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
 - **Ability hotbar (later, with the skill tree):** a row of skill slots at the bottom-centre beside the heart and Heat pips, with key labels and cooldown overlays.
 - **No mana yet.** When skills arrive, Emberoo's resource is **Heat**, gained by landing hits and spent on fire skills, shown as **fire pips** next to the heart. Each element class gets its own resource.
 
+## Skill tree presentation
+- **Radial "Ember Tree":** Emberoo's live idle animation sits at the centre; the tree grows outward in rings. Inner ring = stage 1, middle ring opens at the stage 2 evolution, outer ring (Ultimates) at stage 3.
+- Skills are diamond **embers**, stat picks are round **coals**; learned nodes glow, available ones are outlined, locked ones are cold coal. Learned paths are **flame veins**; learning a node sends fire along the vein.
+- Same rules underneath as before (skill → Enhanced → choose 1 of 2; stat nodes between).
+- Each element's tree has its own motif (fire veins for Emberoo; e.g. glowing mycelium for toxic).
+- UI is **hybrid**: pixel-art icons and frames, text rendered at higher resolution for readability.
+- **Premium polish checklist:** eased motion everywhere (no popping), 2D glow on bright pixels, a unique hand-drawn icon per skill, one good licensed pixel font, a custom 9-slice frame, generous spacing, sound for hover/learn/unlock, consistent style across all screens.
+- Mockups: radial ember tree and column tree (session scratchpad; regenerate if needed).
+
 ## Elements
 - **Vertical slice: flavour only.** Element sets colours, effects and theme; no damage rules.
 - **Soon after: status effects.** Each element applies its own effect (fire = burn, toxic = poison over time).
