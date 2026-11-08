@@ -1,7 +1,18 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/pickups/berry.gd" id="1_berry"]
+[ext_resource type="Script" path="res://scripts/effects/pixel_light.gd" id="2_light"]
 
 [node name="Berry" type="Node2D"]
 z_index = 1
 script = ExtResource("1_berry")
+
+[node name="Glow" type="PointLight2D" parent="."]
+position = Vector2(0, -6)
+color = Color(0.854902, 0.52549, 0.243137, 1)
+energy = 0.6
+script = ExtResource("2_light")
+radius = 14
+band_count = 3
+flicker_strength = 0.1
+flicker_speed = 0.8

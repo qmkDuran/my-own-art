@@ -1,9 +1,20 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/effects/impact_effect.gd" id="1_effect"]
 [ext_resource type="Texture2D" path="res://art/fx/fx_fire_impact_sheet.png" id="2_sheet"]
+[ext_resource type="Material" path="res://scenes/effects/unshaded_material.tres" id="3_unshaded"]
+[ext_resource type="Script" path="res://scripts/effects/pixel_light.gd" id="4_light"]
 
 [node name="FireImpact" type="AnimatedSprite2D"]
+material = ExtResource("3_unshaded")
 script = ExtResource("1_effect")
 sheet = ExtResource("2_sheet")
 frame_durations = Array[float]([0.05, 0.06, 0.09, 0.14])
+
+[node name="Flash" type="PointLight2D" parent="."]
+color = Color(0.870588, 0.619608, 0.254902, 1)
+energy = 1.2
+script = ExtResource("4_light")
+radius = 22
+band_count = 3
+fade_out_time = 0.25

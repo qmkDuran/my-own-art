@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3]
+[gd_scene load_steps=23 format=3]
 
 [ext_resource type="Script" path="res://scripts/creatures/creature.gd" id="1_creature"]
 [ext_resource type="Script" path="res://scripts/animation/creature_animator.gd" id="2_animator"]
@@ -18,6 +18,8 @@
 [ext_resource type="Script" path="res://scripts/components/trainer_aid.gd" id="16_aid"]
 [ext_resource type="Script" path="res://scripts/ui/speech_bubble.gd" id="17_speech"]
 [ext_resource type="Script" path="res://scripts/components/heat.gd" id="18_heat"]
+[ext_resource type="Script" path="res://scripts/effects/pixel_light.gd" id="19_light"]
+[ext_resource type="Material" path="res://scenes/effects/unshaded_material.tres" id="20_unshaded"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_body"]
 radius = 5.0
@@ -37,10 +39,20 @@ color = Color(0.0352941, 0.0392157, 0.0784314, 0.45)
 polygon = PackedVector2Array(-5, 0, -4, -1.5, 0, -2, 4, -1.5, 5, 0, 4, 1.5, 0, 2, -4, 1.5)
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
+material = ExtResource("20_unshaded")
 position = Vector2(0, -8)
 script = ExtResource("2_animator")
 creature_name = "emberoo"
 sprite_sheet_folder = "res://art/emberoo"
+
+[node name="GlimraLight" type="PointLight2D" parent="."]
+position = Vector2(0, -8)
+color = Color(0.870588, 0.619608, 0.254902, 1)
+energy = 1.4
+script = ExtResource("19_light")
+radius = 64
+flicker_strength = 0.05
+flicker_speed = 0.6
 
 [node name="CollisionShape" type="CollisionShape2D" parent="."]
 position = Vector2(0, -4)

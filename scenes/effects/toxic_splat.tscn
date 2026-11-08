@@ -1,6 +1,16 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/effects/toxic_splat.gd" id="1_splat"]
+[ext_resource type="Script" path="res://scripts/effects/pixel_light.gd" id="2_light"]
 
 [node name="ToxicSplat" type="Node2D"]
 script = ExtResource("1_splat")
+
+[node name="Flash" type="PointLight2D" parent="."]
+position = Vector2(0, -3)
+color = Color(0.658824, 0.792157, 0.345098, 1)
+energy = 0.6
+script = ExtResource("2_light")
+radius = 16
+band_count = 3
+fade_out_time = 0.4

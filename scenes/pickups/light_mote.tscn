@@ -1,7 +1,17 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/pickups/light_mote.gd" id="1_mote"]
+[ext_resource type="Material" path="res://scenes/effects/unshaded_material.tres" id="2_unshaded"]
+[ext_resource type="Script" path="res://scripts/effects/pixel_light.gd" id="3_light"]
 
 [node name="LightMote" type="Node2D"]
 z_index = 2
+material = ExtResource("2_unshaded")
 script = ExtResource("1_mote")
+
+[node name="Glow" type="PointLight2D" parent="."]
+color = Color(0.909804, 0.756863, 0.439216, 1)
+energy = 0.7
+script = ExtResource("3_light")
+radius = 10
+band_count = 2

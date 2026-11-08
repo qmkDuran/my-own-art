@@ -2,6 +2,8 @@ class_name FloatingHealthBar
 extends Node2D
 ## A small health bar above an enemy. Hidden until the enemy is first hit,
 ## so a crowd of untouched enemies doesn't clutter the screen.
+##
+## It's UI, not part of the world, so the night darkness and lights never touch it.
 
 @export var health: Health
 ## Width of the bar, in pixels.
@@ -10,8 +12,11 @@ extends Node2D
 @export var empty_color: Color = Color(0.255, 0.114, 0.192)
 @export var fill_color: Color = Color(0.812, 0.341, 0.235)
 
+const UNSHADED := preload("res://scenes/effects/unshaded_material.tres")
+
 
 func _ready() -> void:
+	material = UNSHADED
 	visible = false
 	health.damaged.connect(_on_damaged)
 	health.died.connect(hide)

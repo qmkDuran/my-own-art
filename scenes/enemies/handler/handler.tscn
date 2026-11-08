@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3]
+[gd_scene load_steps=15 format=3]
 
 [ext_resource type="Script" path="res://scripts/enemies/handler.gd" id="1_handler"]
 [ext_resource type="Script" path="res://scripts/animation/single_view_animator.gd" id="2_animator"]
@@ -12,6 +12,9 @@
 
 [ext_resource type="Script" path="res://scripts/components/light_drop.gd" id="10_drop"]
 [ext_resource type="PackedScene" path="res://scenes/pickups/light_mote.tscn" id="11_mote"]
+[ext_resource type="Script" path="res://scripts/effects/pixel_light.gd" id="12_light"]
+[ext_resource type="Material" path="res://scenes/effects/unshaded_material.tres" id="13_unshaded"]
+
 [sub_resource type="CircleShape2D" id="CircleShape2D_body"]
 radius = 5.0
 
@@ -51,8 +54,25 @@ animation_settings = {
 }
 }
 
+[node name="VisorGlow" type="PointLight2D" parent="."]
+position = Vector2(-1, -20)
+color = Color(0.45098, 0.745098, 0.827451, 1)
+energy = 0.7
+script = ExtResource("12_light")
+radius = 6
+band_count = 2
+
+[node name="RodFlare" type="PointLight2D" parent="."]
+position = Vector2(6, -26)
+color = Color(0.45098, 0.745098, 0.827451, 1)
+energy = 0.0
+script = ExtResource("12_light")
+radius = 20
+band_count = 3
+
 [node name="ChargeParticles" type="Node2D" parent="."]
 z_index = 1
+material = ExtResource("13_unshaded")
 position = Vector2(4, -27)
 script = ExtResource("7_charge")
 
