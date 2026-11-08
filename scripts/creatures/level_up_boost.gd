@@ -6,7 +6,7 @@ extends Node
 ## Levels live on Progression (which survives a restart), so the boosts for levels
 ## already reached are given again whenever the creature spawns.
 
-## Max health gained per level.
+## Max health gained per level (level 0 is the base, with no bonus).
 const HEALTH_PER_LEVEL := 1
 ## Height of the rings above the creature's feet, in pixels (negative is up).
 const RING_HEIGHT := Creature.BODY_HEIGHT
@@ -25,7 +25,7 @@ func _ready() -> void:
 
 
 func _apply_reached_levels() -> void:
-	health.max_health += HEALTH_PER_LEVEL * (Progression.level - 1)
+	health.max_health += HEALTH_PER_LEVEL * Progression.level
 	health.current_health = health.max_health
 
 

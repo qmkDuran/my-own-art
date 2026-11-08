@@ -35,11 +35,11 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
 - **Heat** (Emberoo's resource): built by landing jabs, spent by skills, cools off out of combat. Shown as fire pips beside the heart.
 
 ## Build system (locked)
-- **Levelling:** a small automatic stat boost (the "ding") + **1 skill point** per level. **Evolution:** a big power jump + a new tree ring + another shard slot.
+- **Levelling:** a small automatic stat boost (the "ding") + **1 skill point** per level. Levels get slower to earn: ~level 1 after the first pack, ~4–5 by the end of Ruins Edge, ~10–12 by the end of Act 1, cap **50** at the end of the game (curve and maths in `scripts/systems/progression.gd`). **Evolution:** a big power jump + a new tree ring + another shard slot.
 - **Ember Tree:** small (fits on one screen) with **2–3 labelled branches** (e.g. Inferno = burn, Flurry = speed/combos, Bruiser = tanky). Players can mix freely.
 - Nodes should **change how you play**, not just add small percentages. Keep to ~5 clear stats (Health, Power, Speed, Heat, Burn).
 - **Crits:** every attack (jab, spin, skills) can crit: **10% base chance, ×2 damage** (rounded), shown as a gold "4!" number and in the Ember Tree stats. No tree nodes change crits yet.
-- **Starting point:** Emberoo starts at level 1 with **1 skill point**, so the first pick (a tier-0 build starter: Searing Jab, Spinning Hook or Ash Guard) happens right away; skills (Flame Uppercut, Spinning Hook, ...) only work once ignited in the tree.
+- **Starting point:** Emberoo starts at **level 0 with no skill points**. The first small pack of enemies brings level 1 and the first point, so the first pick (a tier-0 build starter: Searing Jab, Spinning Hook or Ash Guard) feels earned and comes within the first minute; skills (Flame Uppercut, Spinning Hook, ...) only work once ignited in the tree.
 - **Respec free or nearly free.** 1–2 optional "build starter" suggestions per creature.
 - Lessons from research: PoE 2's huge tree overwhelms; Diablo 4's early tree felt shallow (gear decided builds) and its 2026 rework moved to skill variants that change behaviour; Last Epoch's per-skill trees + cheap respec are loved.
 
