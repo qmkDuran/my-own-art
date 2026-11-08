@@ -64,7 +64,7 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
 - **Handlers don't attack.** Early-game grunts: they keep their distance, back away when approached, and summon. ~5–6 jabs to kill.
 - Handler sprite: **18×24** (humans use taller canvases at the same pixel size; never scale sprites in-game). Holds a **control rod** that signals the creatures' control collars; its tip flares when summoning.
 - Handler look: hooded servant of the AI God, dark navy coat, shadowed face with a glowing cyan visor slit, cyan trim, control rod with a glowing tip.
-- **Handlers:** human trainers serving the AI God. They stay back and send out **waves of ~6 weak bound creatures** (control collars) for a PoE-style power fantasy.
+- **Handlers (called Wardens in-game):** human trainers serving the AI God. They stay back and send out **waves of ~6 weak bound creatures** (control collars) for a PoE-style power fantasy.
 - **Killing the Handler stops new waves.** Creatures already out keep fighting.
 - Handlers use a **small fixed roster** of 2–3 bound creature species across the game (saves art).
 - Vertical slice: 1 Handler + 1 bound creature type (simple: runs at you and bites).
@@ -73,12 +73,17 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
 - Fire kangaroo boxer. Stage 1 sprite done (16×16): idle (with blink), hop, jab, jab2, dodge in front/side/back.
 - Jab: hold to repeat, alternates fists, roots you in place. Dodge: a kangaroo leap that can cancel a jab.
 
+## Naming
+- Creature names blend **[element/trait] + [animal/sound]** into 2–3 fun syllables (e.g. **Emberoo**, **Toxlop**); evolutions get heavier names.
+- Every name must be original and checked (web + later USPTO/EUIPO) before use.
+- Names in use: **Emberoo** (player, fire kangaroo), **Toxlop** (toxic toad), **Wardens** (the Handlers; fine for enemies, not as a game title).
+
 ## Elements
 - **Vertical slice: flavour only.** Element sets colours, effects and theme; no damage rules.
 - **Soon after: status effects.** Each element applies its own effect (fire = burn, toxic = poison over time).
 - **No type chart for now.** Revisit only when there are many elements.
 
-### Enemy #1: Toxic Toad (locked)
+### Enemy #1: Toxlop, the toxic toad (locked)
 - Purple toad with toxic green warts, yellow eyes; 16×16, sprite in `art/toxic_toad/`.
 - **Front view only:** always faces the camera and hops in any direction (like a slime), so one view covers everything.
 - Animations: idle 2, hop 4 (code lifts it in an arc with a ground shadow), attack 3 (mouth opens; the tongue is drawn in code toward the target).
