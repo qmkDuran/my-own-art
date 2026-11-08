@@ -25,12 +25,19 @@ const ANIMATION_SETTINGS := {
 	"jab": { "frame_durations": [0.12, 0.07, 0.11, 0.14], "loops": false },
 	"jab2": { "frame_durations": [0.12, 0.07, 0.11, 0.14], "loops": false },
 	"dodge": { "frame_durations": [0.07, 0.15, 0.11], "loops": false },
+	"blink": { "frame_durations": [0.12], "loops": false },
 }
 
 ## If an animation isn't drawn yet, use a similar one instead of dropping to idle.
 const STAND_IN_FOR_ACTION := {
 	"jab2": "jab",
+	"blink": "idle",
 }
+
+## Shortest and longest wait between blinks while idle, in seconds.
+const BLINK_INTERVAL_RANGE := Vector2(2.0, 5.0)
+## How long the eyes stay shut, in seconds.
+const BLINK_LENGTH := 0.12
 
 ## Used to find this creature's sprite sheets, e.g. "emberoo".
 @export var creature_name: String = "emberoo"
@@ -39,10 +46,13 @@ const STAND_IN_FOR_ACTION := {
 
 ## Where the sprite sits when the creature is on the ground.
 var _ground_offset: Vector2
+var _seconds_until_blink: float = 0.0
+var _blink_seconds_left: float = 0.0
 
 
 func _ready() -> void:
 	_ground_offset = position
+	_schedule_next_blink()
 	sprite_frames = SpriteSheetLoader.build_sprite_frames(
 		sprite_sheet_folder,
 		creature_name,
@@ -66,7 +76,14 @@ func replay_animation(action: String, facing: Facing) -> void:
 	play()
 
 
+func _process(delta: float) -> void:
+	_update_blink_timers(delta)
+
+
 func show_animation(action: String, facing: Facing) -> void:
+	if action == "idle" and _is_blinking():
+		action = "blink"
+
 	var view: String = VIEW_FOR_DIRECTION[facing.direction]
 	flip_h = facing.direction == Facing.Direction.SIDE and facing.is_looking_left
 
@@ -79,6 +96,27 @@ func show_animation(action: String, facing: Facing) -> void:
 
 	if animation_to_play != "" and animation != animation_to_play:
 		play(animation_to_play)
+
+
+## Blinks only show while idle, so the timer runs all the time
+## and a blink that lands mid-action simply isn't seen.
+func _update_blink_timers(delta: float) -> void:
+	if _is_blinking():
+		_blink_seconds_left -= delta
+		return
+
+	_seconds_until_blink -= delta
+	if _seconds_until_blink <= 0.0:
+		_blink_seconds_left = BLINK_LENGTH
+		_schedule_next_blink()
+
+
+func _is_blinking() -> bool:
+	return _blink_seconds_left > 0.0
+
+
+func _schedule_next_blink() -> void:
+	_seconds_until_blink = randf_range(BLINK_INTERVAL_RANGE.x, BLINK_INTERVAL_RANGE.y)
 
 
 func _first_drawn_animation(candidates: Array[String]) -> String:
