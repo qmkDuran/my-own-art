@@ -15,8 +15,14 @@ extends Node
 @export var fist_height: float = -7.0
 ## Effect shown where the hit lands.
 @export var impact_effect: PackedScene
+## Animations used in turn for back-to-back attacks, e.g. left fist then right fist.
+@export var combo_animations: Array[String] = ["jab", "jab2"]
 
 var is_attacking: bool = false
+## The animation for the attack in progress (or the last one).
+var current_animation: String = ""
+
+var _combo_step: int = 0
 
 @onready var attacker: Node2D = get_parent()
 
@@ -27,12 +33,18 @@ func is_ready() -> bool:
 
 func start(attack_direction: Vector2) -> void:
 	is_attacking = true
+	_advance_combo()
 
 	await get_tree().create_timer(hit_delay).timeout
 	_spawn_impact(attack_direction)
 
 	await get_tree().create_timer(attack_duration - hit_delay).timeout
 	is_attacking = false
+
+
+func _advance_combo() -> void:
+	current_animation = combo_animations[_combo_step]
+	_combo_step = (_combo_step + 1) % combo_animations.size()
 
 
 func _spawn_impact(attack_direction: Vector2) -> void:

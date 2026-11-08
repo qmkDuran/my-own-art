@@ -23,7 +23,13 @@ const ANIMATION_SETTINGS := {
 	"idle": { "frame_durations": [0.30, 0.20, 0.30, 0.20], "loops": true },
 	"hop": { "frame_durations": [0.09, 0.16, 0.11, 0.11], "loops": true },
 	"jab": { "frame_durations": [0.12, 0.07, 0.11, 0.14], "loops": false },
+	"jab2": { "frame_durations": [0.12, 0.07, 0.11, 0.14], "loops": false },
 	"dodge": { "frame_durations": [0.07, 0.15, 0.11], "loops": false },
+}
+
+## If an animation isn't drawn yet, use a similar one instead of dropping to idle.
+const STAND_IN_FOR_ACTION := {
+	"jab2": "jab",
 }
 
 ## Used to find this creature's sprite sheets, e.g. "emberoo".
@@ -66,6 +72,7 @@ func show_animation(action: String, facing: Facing) -> void:
 
 	var animation_to_play := _first_drawn_animation([
 		SpriteSheetLoader.animation_name_for(action, view),
+		SpriteSheetLoader.animation_name_for(STAND_IN_FOR_ACTION.get(action, action), view),
 		SpriteSheetLoader.animation_name_for(FALLBACK_ACTION, view),
 		SpriteSheetLoader.animation_name_for(FALLBACK_ACTION, FALLBACK_VIEW),
 	])

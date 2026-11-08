@@ -52,7 +52,7 @@ func _start_requested_action() -> void:
 
 func _start_jab() -> void:
 	melee_attack.start(facing.as_vector())
-	animator.replay_animation("jab", facing)
+	animator.replay_animation(melee_attack.current_animation, facing)
 
 
 func _start_dodge() -> void:
@@ -93,7 +93,7 @@ func _is_busy() -> bool:
 ## The dodge is a big kangaroo hop, so it reuses the hop animation while leaping.
 func _current_action() -> String:
 	if melee_attack.is_attacking:
-		return "jab"
+		return melee_attack.current_animation
 	if dodge.is_dodging or _is_moving():
 		return "hop"
 	return "idle"
