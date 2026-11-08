@@ -41,6 +41,8 @@ const ANIMATION_SETTINGS := {
 	"blink": { "frame_durations": [0.30, 0.20, 0.30, 0.20], "loops": true },
 	# Spinning Hook: the jab's frames, held one at a time by SpinTurn (never played through).
 	"spin": { "sheet": "jab", "frame_durations": [0.12, 0.07, 0.11, 0.14], "loops": false },
+	# Ash Guard: the jab's first frame (gloves up, cocked), held for as long as the guard lasts.
+	"guard": { "sheet": "jab", "frame_durations": [60.0], "loops": false },
 }
 
 ## Pairs of actions drawn frame-for-frame alike. Switching between them keeps

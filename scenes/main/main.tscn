@@ -88,3 +88,4 @@ position_smoothing_enabled = true
 
 [node name="DebugControls" parent="." instance=ExtResource("9_debug")]
 start_with_enemies_paused = true
+uses_save_file = false

@@ -53,3 +53,14 @@ func use() -> void:
 		trainer.toss_tonic(creature, heal)
 	else:
 		heal.call()
+
+
+## What SaveGame writes.
+func to_save_data() -> Dictionary:
+	return {"charges": charges}
+
+
+## Restores the saved charges (an empty save means full).
+func load_save_data(data: Dictionary) -> void:
+	charges = SaveData.read_int(data, "charges", max_charges, 0, max_charges)
+	charges_changed.emit(charges, max_charges)

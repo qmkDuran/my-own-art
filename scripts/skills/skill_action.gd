@@ -26,6 +26,11 @@ func cancel() -> void:
 	is_casting = false
 
 
+## Whether pressing the skill's key again while it plays ends it (e.g. dropping Ash Guard).
+func ends_on_second_press() -> bool:
+	return false
+
+
 ## Whether a dodge may cut the move short right now.
 func can_be_cancelled() -> bool:
 	return true

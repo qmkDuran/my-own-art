@@ -56,9 +56,8 @@ func can_learn(id: String) -> bool:
 
 ## Learns a node, spending one skill point. Returns false if it can't be learned.
 func learn(id: String) -> bool:
-	if not can_learn(id) or not Progression.spend_skill_point():
+	if not _learn_silently(id):
 		return false
-	_learned[id] = true
 	changed.emit()
 	return true
 
@@ -91,6 +90,38 @@ func reset() -> void:
 		Progression.refund_skill_point()
 	_learned.clear()
 	changed.emit()
+
+
+## What SaveGame writes: just the learned node IDs, so nodes added to the tree later need no migration.
+func to_save_data() -> Dictionary:
+	return {"unlocked_stage": unlocked_stage, "learned": learned_ids()}
+
+
+## Restores a save (an empty one means nothing learned). Load Progression first: every
+## saved node is learned again under the usual rules, spending a point each, so unknown IDs,
+## nodes with no path to them and nodes beyond the points owned are simply dropped.
+func load_save_data(data: Dictionary) -> void:
+	unlocked_stage = SaveData.read_int(data, "unlocked_stage", FIRST_STAGE, FIRST_STAGE, SaveData.NO_LIMIT)
+	_learned.clear()
+	var waiting := SaveData.read_strings(data, "learned")
+	# A node can only be learned once a node leading to it is, so pass over the list until nothing more fits.
+	var learned_any := true
+	while learned_any:
+		learned_any = false
+		for id in waiting.duplicate():
+			if _learn_silently(id):
+				waiting.erase(id)
+				learned_any = true
+	for id in waiting:
+		push_warning("Ember Tree: dropped saved node '%s' (unknown, unreachable or no point left)." % id)
+	changed.emit()
+
+
+func _learn_silently(id: String) -> bool:
+	if not can_learn(id) or not Progression.spend_skill_point():
+		return false
+	_learned[id] = true
+	return true
 
 
 func _learned_nodes_that_need(id: String) -> Array[String]:

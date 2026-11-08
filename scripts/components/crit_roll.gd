@@ -15,6 +15,9 @@ const NODE_NAME := "CritRoll"
 ## A critical hit deals this many times the normal damage, rounded to whole damage.
 @export var crit_multiplier: float = 2.0
 
+## While true, every hit is critical (e.g. a Counter Punch is armed). Whoever sets it clears it.
+var is_sure_crit: bool = false
+
 
 ## Damages `target_health` with `base_damage` from `attacker`, rolling the attacker's crit.
 static func deal_damage(attacker: Node2D, target_health: Health, base_damage: int) -> void:
@@ -25,7 +28,7 @@ static func deal_damage(attacker: Node2D, target_health: Health, base_damage: in
 
 
 func rolls_critical() -> bool:
-	return randf() < crit_chance
+	return is_sure_crit or randf() < crit_chance
 
 
 func critical_damage(base_damage: int) -> int:

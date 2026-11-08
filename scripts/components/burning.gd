@@ -13,11 +13,16 @@ extends Node2D
 const NODE_NAME := "Burning"
 ## Seconds between ticks: burn damage is "per second".
 const TICK_INTERVAL := 1.0
+## Nodes in this group are told when a target dies while burning, through
+## `on_burning_target_died(target, damage_per_second, duration)` (e.g. Wildfire spreads it).
+const SPREAD_GROUP := "burn_spreaders"
 
 ## Damage each tick deals.
 var damage_per_tick: int = 0
 
 var _health: Health
+## The burn's full length, in seconds, as last applied (what a spread burn gets).
+var _duration: float = 0.0
 var _ticks_left: int = 0
 var _seconds_to_next_tick: float = TICK_INTERVAL
 
@@ -34,12 +39,14 @@ static func apply_to(target_health: Health, damage_per_second: int, duration: fl
 		burning.name = NODE_NAME
 		burning._health = target_health
 		target.add_child(burning)
+		target_health.died.connect(burning._on_target_died)
 	burning.refresh(damage_per_second, duration)
 
 
 ## The burn's numbers, at full length again. A weaker re-application never weakens it.
 func refresh(damage_per_second: int, duration: float) -> void:
 	damage_per_tick = maxi(damage_per_tick, damage_per_second)
+	_duration = maxf(_duration, duration)
 	_ticks_left = maxi(_ticks_left, ceili(duration / TICK_INTERVAL - 0.001))
 
 
@@ -62,3 +69,8 @@ func _physics_process(delta: float) -> void:
 	_seconds_to_next_tick += TICK_INTERVAL
 	_ticks_left -= 1
 	_health.take_tick_damage(damage_per_tick, Health.DamageType.BURN)
+
+
+func _on_target_died() -> void:
+	if is_inside_tree():
+		get_tree().call_group(SPREAD_GROUP, "on_burning_target_died", get_parent(), damage_per_tick, _duration)

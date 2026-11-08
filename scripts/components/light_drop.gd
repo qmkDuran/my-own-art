@@ -10,16 +10,19 @@ extends Node
 @export var xp_per_mote: int = 1
 ## Where on the body the motes burst from (relative to the feet).
 @export var burst_offset: Vector2 = Vector2(0, -6)
+## Off for a body that frees its light later in its death (e.g. a boss): it calls `burst` itself.
+@export var bursts_on_death: bool = true
 
 @onready var owner_body: Node2D = get_parent()
 
 
 func _ready() -> void:
 	var health: Health = owner_body.get_node("Health")
-	health.died.connect(_burst)
+	if bursts_on_death:
+		health.died.connect(burst)
 
 
-func _burst() -> void:
+func burst() -> void:
 	if mote_scene == null:
 		return
 	for mote_number in mote_count:

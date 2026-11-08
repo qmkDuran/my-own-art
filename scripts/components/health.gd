@@ -23,6 +23,10 @@ signal healed(amount: int)
 
 ## While true, damage is ignored (e.g. mid-dodge).
 var is_invulnerable: bool = false
+## Share of each hit's damage actually taken: 1 = all, 0.5 = half (e.g. while Ash Guard is up).
+## The leftover fraction carries to the next hit, so two 1-damage hits at half cost exactly 1.
+var damage_taken_scale: float = 1.0
+var _damage_fraction_carried: float = 0.0
 
 var current_health: int
 
@@ -35,8 +39,11 @@ func take_damage(amount: int, source_position: Vector2, is_critical: bool = fals
 	if is_invulnerable or is_dead():
 		return
 
+	amount = _scaled_hit(amount)
 	current_health = maxi(0, current_health - amount)
-	hit_taken.emit(amount, is_critical, DamageType.DIRECT)
+	# A fully soaked hit still counts as a hit (flash, guard counters), but shows no number.
+	if amount > 0:
+		hit_taken.emit(amount, is_critical, DamageType.DIRECT)
 	damaged.emit(amount, source_position)
 	if is_dead():
 		died.emit()
@@ -67,6 +74,16 @@ func change_max_health(amount: int) -> void:
 	current_health = clampi(current_health + maxi(0, amount), 1, max_health)
 	# Displays that only redraw on heals (the HUD heart) still pick up the new numbers.
 	healed.emit(0)
+
+
+## The hit's damage after `damage_taken_scale`, carrying the leftover fraction forward.
+func _scaled_hit(amount: int) -> int:
+	if is_equal_approx(damage_taken_scale, 1.0):
+		return amount
+	var scaled := amount * damage_taken_scale + _damage_fraction_carried
+	var taken := floori(scaled + 0.001)
+	_damage_fraction_carried = maxf(0.0, scaled - taken)
+	return taken
 
 
 func is_dead() -> bool:

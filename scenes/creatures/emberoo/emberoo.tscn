@@ -1,4 +1,4 @@
-[gd_scene load_steps=33 format=3]
+[gd_scene load_steps=40 format=3]
 
 [ext_resource type="Script" path="res://scripts/creatures/creature.gd" id="1_creature"]
 [ext_resource type="Script" path="res://scripts/animation/creature_animator.gd" id="2_animator"]
@@ -30,6 +30,12 @@
 [ext_resource type="Script" path="res://scripts/skills/searing_jab.gd" id="28_searing_jab"]
 [ext_resource type="Script" path="res://scripts/creatures/zone_entrance.gd" id="29_zone_entrance"]
 [ext_resource type="PackedScene" path="res://scenes/effects/dust_puff.tscn" id="30_dust_puff"]
+[ext_resource type="Script" path="res://scripts/skills/ash_guard.gd" id="31_ash_guard"]
+[ext_resource type="Resource" path="res://data/skills/ash_guard.tres" id="32_ash_guard_skill"]
+[ext_resource type="Script" path="res://scripts/components/unshakable.gd" id="33_unshakable"]
+[ext_resource type="Script" path="res://scripts/components/counter_punch.gd" id="34_counter_punch"]
+[ext_resource type="Script" path="res://scripts/components/wildfire.gd" id="35_wildfire"]
+[ext_resource type="Script" path="res://scripts/components/ember_hop.gd" id="36_ember_hop"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_body"]
 radius = 5.0
@@ -144,6 +150,33 @@ skill = ExtResource("21_uppercut_skill")
 slot_index = 2
 animation_name = "uppercut"
 screen_shake = NodePath("../../ScreenShake")
+
+[node name="AshGuard" type="Node" parent="SkillBar" node_paths=PackedStringArray("health", "player_input")]
+script = ExtResource("31_ash_guard")
+health = NodePath("../../Health")
+player_input = NodePath("../../PlayerInput")
+skill = ExtResource("32_ash_guard_skill")
+slot_index = 1
+animation_name = "guard"
+
+[node name="Unshakable" type="Node" parent="." node_paths=PackedStringArray("ash_guard")]
+script = ExtResource("33_unshakable")
+ash_guard = NodePath("../SkillBar/AshGuard")
+
+[node name="CounterPunch" type="Node" parent="." node_paths=PackedStringArray("health", "melee_attack", "ash_guard", "crit_roll", "hit_flash")]
+script = ExtResource("34_counter_punch")
+health = NodePath("../Health")
+melee_attack = NodePath("../MeleeAttack")
+ash_guard = NodePath("../SkillBar/AshGuard")
+crit_roll = NodePath("../CritRoll")
+hit_flash = NodePath("../HitFlash")
+
+[node name="Wildfire" type="Node" parent="."]
+script = ExtResource("35_wildfire")
+
+[node name="EmberHop" type="Node" parent="." node_paths=PackedStringArray("dodge")]
+script = ExtResource("36_ember_hop")
+dodge = NodePath("../Dodge")
 
 [node name="MouseOrders" type="Node" parent="." node_paths=PackedStringArray("player_input")]
 script = ExtResource("23_mouse_orders")

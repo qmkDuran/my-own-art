@@ -87,6 +87,9 @@ func try_use(slot_index: int) -> bool:
 	var action := _action_in_slot(slot_index)
 	if action == null or action.skill == null:
 		return false
+	if action == _casting and action.is_casting and action.ends_on_second_press():
+		cancel_cast()
+		return false
 	if cooldown_left(slot_index) > 0.0:
 		skill_refused.emit(slot_index, REFUSED_COOLDOWN)
 		return false

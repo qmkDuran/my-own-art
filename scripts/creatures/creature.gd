@@ -11,6 +11,10 @@ extends CharacterBody2D
 ##   SpinningHook    -> the combo's finisher: a spin that hits all around
 ##   CritRoll        -> critical hits (chance and multiplier) for every attack
 ##   SearingJab      -> once learned, jabs and the spin set enemies Burning
+##   Wildfire        -> once learned, a burning enemy's death sets the nearest one alight
+##   CounterPunch    -> once learned, a hit taken in Ash Guard arms a sure-crit jab
+##   Unshakable      -> how much of a shove moves it (none mid-guard, less once learned)
+##   EmberHop        -> once learned, dodges leave a trail of fire
 ##   ComboPips       -> three tiny pips under the feet showing the combo chain
 ##   Dodge           -> the leap out of danger
 ##   AfterimageTrail -> fading copies during a dodge
@@ -20,7 +24,7 @@ extends CharacterBody2D
 ##   HitFlash        -> flashes white when hit
 ##   FistEmbers      -> sparks rising from the fists
 ##   TrainerAid      -> F: the trainer throws a healing tonic (limited charges)
-##   SkillBar        -> Q/W/E/R: skills that spend Heat (e.g. E = Flame Uppercut), once learned
+##   SkillBar        -> Q/W/E/R: skills that spend Heat (W = Ash Guard, E = Flame Uppercut), once learned
 ##   ScreenShake     -> shakes the camera on big hits
 ##   LevelUpBoost    -> the small health boost and fanfare on each level up
 ##   ZoneEntrance    -> the hop onto the spawn point when a zone starts (drives the creature meanwhile)
@@ -35,6 +39,8 @@ const PUSH_FRICTION := 600.0
 
 ## Seconds left during which a push controls movement instead of the player.
 var _push_seconds_left: float = 0.0
+## How fast the current push slows down; scaled with the push, so a quarter push goes a quarter as far.
+var _push_friction: float = PUSH_FRICTION
 
 @onready var player_input: PlayerInput = $PlayerInput
 @onready var mouse_orders: MouseOrders = $MouseOrders
@@ -52,6 +58,7 @@ var _push_seconds_left: float = 0.0
 @onready var trainer_aid: TrainerAid = $TrainerAid
 @onready var skill_bar: SkillBar = $SkillBar
 @onready var zone_entrance: ZoneEntrance = $ZoneEntrance
+@onready var unshakable: Unshakable = $Unshakable
 
 
 func _ready() -> void:
@@ -93,10 +100,15 @@ func aim_direction() -> Vector2:
 
 ## Shoves the creature: it slides with this velocity for a moment, without player control.
 ## Interrupts a jab or a skill. A dodge can still be used to escape.
+## Unshakable decides how much of it lands: none mid-guard (nothing is interrupted).
 func push(push_velocity: Vector2, duration: float) -> void:
+	var share := unshakable.share_of_push()
+	if share <= 0.0:
+		return
 	melee_attack.cancel()
 	skill_bar.cancel_cast()
-	velocity = push_velocity
+	velocity = push_velocity * share
+	_push_friction = PUSH_FRICTION * share
 	_push_seconds_left = duration
 
 
@@ -173,7 +185,7 @@ func _next_velocity(move_direction: Vector2, delta: float) -> Vector2:
 	if dodge.is_dodging:
 		return dodge.dodge_velocity
 	if _is_being_pushed():
-		return velocity.move_toward(Vector2.ZERO, PUSH_FRICTION * delta)
+		return velocity.move_toward(Vector2.ZERO, _push_friction * delta)
 	if melee_attack.is_attacking:
 		# A quick snap forward into the punch, then planted feet.
 		return melee_attack.lunge_velocity()

@@ -35,6 +35,9 @@ const MAX_LEVEL := 50
 var level: int = 0
 var xp: int = 0
 var skill_points: int = 0
+## Points given outside levelling (DebugControls' F3), kept so a loaded save can work out
+## every point the player owns: one per level plus these.
+var bonus_skill_points: int = 0
 
 
 ## XP needed to go from the current level to the next.
@@ -66,10 +69,33 @@ func spend_skill_point() -> bool:
 
 ## Gives a point back (free respec).
 func refund_skill_point() -> void:
-	add_skill_points(1)
+	skill_points += 1
+	skill_points_changed.emit(skill_points)
 
 
 ## Gives extra points outside levelling (e.g. DebugControls' F3).
 func add_skill_points(amount: int) -> void:
+	bonus_skill_points += amount
 	skill_points += amount
+	skill_points_changed.emit(skill_points)
+
+
+## Every skill point the player owns, spent or not.
+func earned_skill_points() -> int:
+	return level + bonus_skill_points
+
+
+## What SaveGame writes. Spent points aren't stored: they follow from the learned nodes.
+func to_save_data() -> Dictionary:
+	return {"level": level, "xp": xp, "bonus_skill_points": bonus_skill_points}
+
+
+## Restores a save (an empty one means a fresh start). Every point comes back unspent;
+## EmberTree's load_save_data spends them again on the learned nodes, so load this first.
+func load_save_data(data: Dictionary) -> void:
+	level = SaveData.read_int(data, "level", 0, 0, MAX_LEVEL)
+	xp = SaveData.read_int(data, "xp", 0, 0, maxi(0, xp_to_next() - 1))
+	bonus_skill_points = SaveData.read_int(data, "bonus_skill_points", 0, 0, SaveData.NO_LIMIT)
+	skill_points = earned_skill_points()
+	xp_changed.emit(xp, xp_to_next())
 	skill_points_changed.emit(skill_points)

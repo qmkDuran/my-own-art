@@ -19,6 +19,7 @@ config/features=PackedStringArray("4.7")
 CreatureLog="*res://scripts/systems/creature_log.gd"
 Progression="*res://scripts/systems/progression.gd"
 EmberTree="*res://scripts/systems/ember_tree.gd"
+SaveGame="*res://scripts/systems/save_game.gd"
 
 [display]
 
