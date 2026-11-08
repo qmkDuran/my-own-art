@@ -10,7 +10,7 @@ extends SkillAction
 ## Seconds from pressing the key to the flame bursting out (the cocked-fist frame).
 @export var wind_up: float = 0.16
 ## Seconds the whole move takes, start to recovery.
-@export var duration: float = 0.52
+@export var duration: float = 0.45
 ## How far the flame reaches from the caster's feet, in pixels.
 @export var reach: float = 26.0
 ## How wide the flame fans out, in degrees.
