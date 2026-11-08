@@ -74,11 +74,13 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
 - **Soon after: status effects.** Each element applies its own effect (fire = burn, toxic = poison over time).
 - **No type chart for now.** Revisit only when there are many elements.
 
-### Enemy #1: Toxic Hyena
-- Toxic element (sickly green tones, drool) to contrast Emberoo's orange.
-- Pack mob: runs at you, bites (plain damage in the slice).
-- Side view only (flipped for left), ~9 frames: run 4, bite 3, idle 2. Hurt/death via shader flash and fade.
-- Later enemies, introduced one at a time: tick (drains energy), vulture (circles then dives).
+### Enemy #1: Toxic Toad (locked)
+- Purple toad with toxic green warts, yellow eyes; 16×16, sprite in `art/toxic_toad/`.
+- **Front view only:** always faces the camera and hops in any direction (like a slime), so one view covers everything.
+- Animations: idle 2, hop 4 (code lifts it in an arc with a ground shadow), attack 3 (mouth opens; the tongue is drawn in code toward the target).
+- Hurt/death via shader flash and fade.
+- Hyena was dropped as the first enemy (four-legged side view too hard at 16px); it may return later as a bigger enemy.
+- Later enemies, one at a time: tick (drains energy), vulture (circles then dives).
 
 ## Progression
 - Levelling + evolutions + skill trees

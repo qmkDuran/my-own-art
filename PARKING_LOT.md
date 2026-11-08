@@ -9,6 +9,7 @@ Good ideas that don't belong in the current milestone. Check here when a milesto
 - **Poison status** on the hyena bite (after the slice, with the status-effect system).
 - **Type chart** (element strengths/weaknesses): only once there are many elements.
 - **Tick** and **vulture** enemies.
+- **Hyena** as a bigger enemy (e.g. 24×24 canvas, same pixel scale); references in the session scratchpad.
 
 ## Emberoo polish
 - Redraw side `jab2` (currently reads more like a low body hook).
