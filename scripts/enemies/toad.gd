@@ -6,7 +6,8 @@ extends CharacterBody2D
 ## the toad decides what to do next.
 ##   RESTING    -> sits for a moment, then hops closer or starts an attack
 ##   HOPPING    -> one hop toward the player, in an arc
-##   PUFFING    -> the warning: cheeks puff up (the player's cue to dodge)
+##   PUFFING    -> the warning: cheeks puff up, the toad flickers green and an aim line
+##                 grows toward the player (the cue to dodge)
 ##   LASHING    -> tongue shoots out; hits the player if they're still in the way
 ##   RECOVERING -> a short pause after attacking or being hit
 ##   DYING      -> fades away
@@ -30,7 +31,11 @@ const PLAYER_BODY_HEIGHT := -6.0
 ## How far the tongue reaches, in pixels. The toad attacks once the player is this close.
 @export var tongue_reach: float = 26.0
 ## Seconds of warning before the tongue comes out (the attack animation's first frame).
-@export var puff_time: float = 0.40
+@export var puff_time: float = 0.60
+## Colour the toad flickers to while winding up, so the attack is easy to see coming.
+@export var warning_tint: Color = Color(0.75, 1.3, 0.6)
+## Seconds between each flicker of the warning tint.
+@export var warning_flicker_interval: float = 0.08
 ## Seconds the tongue is out (the rest of the attack animation).
 @export var lash_time: float = 0.32
 ## How close to the tongue the player's body must be to get hit, in pixels.
@@ -58,6 +63,7 @@ var _has_hit_this_lash: bool = false
 @onready var sprite: SingleViewAnimator = $Sprite
 @onready var tongue: ToadTongue = $Tongue
 @onready var hit_flash: HitFlash = $HitFlash
+@onready var attack_warning: AttackWarning = $AttackWarning
 @onready var collision_shape: CollisionShape2D = $CollisionShape
 
 
@@ -102,9 +108,12 @@ func _hop() -> void:
 		_enter(State.RESTING, _random_rest_time())
 
 
+## The wind-up: the toad flickers toxic green and a line grows toward where the tongue will strike.
 func _puff() -> void:
 	velocity = Vector2.ZERO
+	_show_attack_warning()
 	if _is_state_over():
+		_clear_attack_warning()
 		_has_hit_this_lash = false
 		tongue.lash(_lash_direction, tongue_reach, lash_time)
 		_enter(State.LASHING, lash_time)
@@ -176,6 +185,7 @@ func _on_damaged(_amount: int, source_position: Vector2) -> void:
 		return
 
 	tongue.retract_now()
+	_clear_attack_warning()
 	sprite.lift(0.0)
 	velocity = (global_position - source_position).normalized() * knockback_speed
 	_enter(State.RECOVERING, recover_time)
@@ -189,6 +199,19 @@ func _on_died() -> void:
 	var fade := create_tween()
 	fade.tween_property(sprite, "modulate:a", 0.0, death_fade_time)
 	fade.tween_callback(queue_free)
+
+
+# --- Attack warning -------------------------------------------------------
+
+func _show_attack_warning() -> void:
+	attack_warning.show_warning(_lash_direction, tongue_reach, _state_progress())
+	var flicker_on := int(_time_in_state / warning_flicker_interval) % 2 == 0
+	sprite.modulate = Color(warning_tint, sprite.modulate.a) if flicker_on else Color(1, 1, 1, sprite.modulate.a)
+
+
+func _clear_attack_warning() -> void:
+	attack_warning.hide_warning()
+	sprite.modulate = Color(1, 1, 1, sprite.modulate.a)
 
 
 # --- Helpers --------------------------------------------------------------

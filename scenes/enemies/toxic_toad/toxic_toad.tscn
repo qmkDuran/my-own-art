@@ -1,10 +1,11 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://scripts/enemies/toad.gd" id="1_toad"]
 [ext_resource type="Script" path="res://scripts/animation/single_view_animator.gd" id="2_animator"]
 [ext_resource type="Script" path="res://scripts/enemies/toad_tongue.gd" id="3_tongue"]
 [ext_resource type="Script" path="res://scripts/components/health.gd" id="4_health"]
 [ext_resource type="Script" path="res://scripts/effects/hit_flash.gd" id="5_flash"]
+[ext_resource type="Script" path="res://scripts/effects/attack_warning.gd" id="6_warning"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_body"]
 radius = 5.0
@@ -33,7 +34,7 @@ sheet_folder = "res://art/toxic_toad"
 sheet_prefix = "toad"
 animation_settings = {
 "attack": {
-"frame_durations": [0.4, 0.2, 0.12],
+"frame_durations": [0.6, 0.2, 0.12],
 "loops": false
 },
 "hop": {
@@ -45,6 +46,11 @@ animation_settings = {
 "loops": true
 }
 }
+
+[node name="AttackWarning" type="Line2D" parent="."]
+width = 1.0
+default_color = Color(0.658824, 0.792157, 0.345098, 0.45)
+script = ExtResource("6_warning")
 
 [node name="Tongue" type="Line2D" parent="."]
 width = 2.0

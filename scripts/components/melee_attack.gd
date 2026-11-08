@@ -11,7 +11,7 @@ extends Node
 ## Seconds the whole attack takes, start to recovery (the jab animation's length).
 @export var attack_duration: float = 0.44
 ## How far in front of the creature the hit lands, in pixels.
-@export var reach: float = 12.0
+@export var reach: float = 16.0
 ## Height of the fist above the creature's feet, in pixels (negative is up).
 @export var fist_height: float = -7.0
 ## Effect shown where the hit lands.
@@ -19,7 +19,7 @@ extends Node
 ## Damage dealt to each target the hit lands on.
 @export var damage: int = 1
 ## How close to the landing spot a target's feet must be to get hit, in pixels.
-@export var hit_radius: float = 10.0
+@export var hit_radius: float = 12.0
 ## Group whose members this attack can hurt (each needs a child node named "Health").
 @export var target_group: String = "enemies"
 ## Animations used in turn for back-to-back attacks, e.g. left fist then right fist.
