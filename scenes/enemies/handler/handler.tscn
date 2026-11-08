@@ -1,10 +1,11 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scripts/enemies/handler.gd" id="1_handler"]
 [ext_resource type="Script" path="res://scripts/animation/single_view_animator.gd" id="2_animator"]
 [ext_resource type="Script" path="res://scripts/components/health.gd" id="3_health"]
 [ext_resource type="Script" path="res://scripts/effects/hit_flash.gd" id="4_flash"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/toxic_toad/toxic_toad.tscn" id="5_toad"]
+[ext_resource type="PackedScene" path="res://scenes/effects/shockwave.tscn" id="6_shockwave"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_body"]
 radius = 5.0
@@ -14,21 +15,26 @@ z_index = 1
 motion_mode = 1
 script = ExtResource("1_handler")
 creature_scene = ExtResource("5_toad")
+shockwave_scene = ExtResource("6_shockwave")
 
 [node name="Shadow" type="Polygon2D" parent="."]
 color = Color(0.0352941, 0.0392157, 0.0784314, 0.45)
 polygon = PackedVector2Array(-6, 0, -5, -1.5, 0, -2, 5, -1.5, 6, 0, 5, 1.5, 0, 2, -5, 1.5)
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
-position = Vector2(0, -12)
+position = Vector2(0, -14)
 script = ExtResource("2_animator")
 sheet_folder = "res://art/handler"
 sheet_prefix = "handler"
-frame_size = Vector2i(18, 24)
+frame_size = Vector2i(18, 28)
 animation_settings = {
 "idle": {
 "frame_durations": [0.5, 0.5],
 "loops": true
+},
+"shove": {
+"frame_durations": [0.25, 0.25, 0.15],
+"loops": false
 },
 "summon": {
 "frame_durations": [0.2, 0.25, 0.15],

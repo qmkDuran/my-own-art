@@ -36,7 +36,10 @@ func show_animation(action: String) -> void:
 
 
 ## Always starts from the first frame, e.g. for a new hop or attack.
-func replay_animation(action: String) -> void:
+## If the action isn't drawn yet, the stand-in is played instead (when given).
+func replay_animation(action: String, stand_in: String = "") -> void:
+	if not sprite_frames.has_animation(action):
+		action = stand_in
 	if not sprite_frames.has_animation(action):
 		return
 	play(action)

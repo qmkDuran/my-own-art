@@ -19,6 +19,11 @@ extends CharacterBody2D
 const STANDING_STILL_SPEED := 1.0
 ## Height of the body's middle above the feet, in pixels (negative is up).
 const BODY_HEIGHT := -6.0
+## How fast a push (e.g. a Warden's shove) slows down, in pixels per second squared.
+const PUSH_FRICTION := 600.0
+
+## Seconds left during which a push controls movement instead of the player.
+var _push_seconds_left: float = 0.0
 
 @onready var player_input: PlayerInput = $PlayerInput
 @onready var movement: Movement = $Movement
@@ -39,6 +44,7 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	_push_seconds_left = maxf(0.0, _push_seconds_left - delta)
 	_start_requested_action()
 	# Leaping out of the way means attacks pass through you.
 	health.is_invulnerable = dodge.is_dodging
@@ -99,6 +105,8 @@ func _dodge_direction() -> Vector2:
 func _next_velocity(move_direction: Vector2, delta: float) -> Vector2:
 	if dodge.is_dodging:
 		return dodge.dodge_velocity
+	if _is_being_pushed():
+		return velocity.move_toward(Vector2.ZERO, PUSH_FRICTION * delta)
 	if melee_attack.is_attacking:
 		# A short step forward into the punch, then planted feet.
 		return melee_attack.lunge_velocity()
@@ -136,3 +144,15 @@ func _on_damaged(_amount: int, _source_position: Vector2) -> void:
 ## For the vertical slice, dying simply restarts the level.
 func _on_died() -> void:
 	get_tree().reload_current_scene.call_deferred()
+
+
+## Shoves the creature: it slides with this velocity for a moment, without player control.
+## Interrupts a jab. A dodge can still be used to escape.
+func push(push_velocity: Vector2, duration: float) -> void:
+	melee_attack.cancel()
+	velocity = push_velocity
+	_push_seconds_left = duration
+
+
+func _is_being_pushed() -> bool:
+	return _push_seconds_left > 0.0

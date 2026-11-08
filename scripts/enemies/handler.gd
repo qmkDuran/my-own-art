@@ -11,10 +11,11 @@ extends CharacterBody2D
 ##   WATCHING  -> stands still, keeping an eye on the player
 ##   RETREATING-> walks away because the player is too close (tires out after a bit)
 ##   SUMMONING -> raises the rod; creatures appear at the end
+##   SHOVING   -> player too close: rod glows, then a shockwave knocks them back
 ##   RECOVERING-> knocked back after being hit
 ##   DYING     -> fades away
 
-enum State { WATCHING, RETREATING, SUMMONING, RECOVERING, DYING }
+enum State { WATCHING, RETREATING, SUMMONING, SHOVING, RECOVERING, DYING }
 
 @export_group("Keeping distance")
 ## If the player gets closer than this (pixels), he backs away.
@@ -45,6 +46,28 @@ enum State { WATCHING, RETREATING, SUMMONING, RECOVERING, DYING }
 ## How far from him new creatures appear, in pixels (min, max).
 @export var summon_radius: Vector2 = Vector2(14, 36)
 
+@export_group("Rod shove")
+## If the player stays this close (pixels), he shoves them away.
+@export var shove_trigger_distance: float = 22.0
+## How far the shockwave reaches, in pixels.
+@export var shove_radius: float = 30.0
+## Seconds the rod glows before the shockwave (the player's chance to dodge).
+@export var shove_windup: float = 0.5
+## Seconds he stays in the pose after the shockwave.
+@export var shove_follow_through: float = 0.15
+## He glints this many seconds before the shockwave (the last-moment cue).
+@export var shove_glint_before: float = 0.12
+@export var shove_glint_color: Color = Color(0.7, 1.0, 1.0)
+@export var shove_damage: int = 1
+## Speed the player is knocked back at, in pixels per second.
+@export var shove_push_speed: float = 170.0
+## Seconds the push controls the player.
+@export var shove_push_time: float = 0.25
+## Seconds before he can shove again.
+@export var shove_cooldown: float = 2.5
+## The ring effect shown when he shoves.
+@export var shockwave_scene: PackedScene
+
 @export_group("Getting hit")
 @export var knockback_speed: float = 80.0
 @export var knockback_friction: float = 500.0
@@ -57,6 +80,9 @@ var _state_length: float = 0.0
 var _seconds_until_summon: float = 0.0
 var _seconds_retreating: float = 0.0
 var _seconds_catching_breath: float = 0.0
+var _seconds_until_shove_ready: float = 0.0
+var _has_released_shove: bool = false
+var _has_glinted: bool = false
 ## Untyped on purpose: it can briefly hold creatures that have already been freed.
 var _summoned_creatures: Array = []
 
@@ -77,10 +103,13 @@ func _physics_process(delta: float) -> void:
 	_time_in_state += delta
 	if _state != State.DYING:
 		_seconds_until_summon -= delta
+		_seconds_until_shove_ready = maxf(0.0, _seconds_until_shove_ready - delta)
 
 	match _state:
 		State.WATCHING, State.RETREATING:
 			_keep_distance_or_summon(delta)
+		State.SHOVING:
+			_shove()
 		State.SUMMONING:
 			_summon()
 		State.RECOVERING, State.DYING:
@@ -92,6 +121,9 @@ func _physics_process(delta: float) -> void:
 # --- States ---------------------------------------------------------------
 
 func _keep_distance_or_summon(delta: float) -> void:
+	if _should_shove():
+		_start_shove()
+		return
 	if _is_time_to_summon():
 		_start_summon()
 		return
@@ -144,6 +176,63 @@ func _slow_down(delta: float) -> void:
 	velocity = velocity.move_toward(Vector2.ZERO, knockback_friction * delta)
 	if _state == State.RECOVERING and _is_state_over():
 		_enter(State.WATCHING, 0.0)
+
+
+# --- Rod shove ------------------------------------------------------------
+
+func _should_shove() -> bool:
+	var player := _find_player()
+	if player == null or _seconds_until_shove_ready > 0.0:
+		return false
+	return global_position.distance_to(player.global_position) <= shove_trigger_distance
+
+
+func _start_shove() -> void:
+	_has_released_shove = false
+	_has_glinted = false
+	sprite.replay_animation("shove", "summon")
+	_enter(State.SHOVING, shove_windup + shove_follow_through)
+
+
+func _shove() -> void:
+	velocity = Vector2.ZERO
+	var time_to_release := shove_windup - _time_in_state
+	if not _has_glinted and time_to_release <= shove_glint_before:
+		_has_glinted = true
+		hit_flash.flash(shove_glint_color)
+	if not _has_released_shove and time_to_release <= 0.0:
+		_has_released_shove = true
+		_release_shockwave()
+	if _is_state_over():
+		_seconds_until_shove_ready = shove_cooldown
+		_enter(State.WATCHING, 0.0)
+
+
+func _release_shockwave() -> void:
+	_spawn_shockwave_effect()
+	var player := _find_player()
+	if player == null:
+		return
+	var from_warden := player.global_position - global_position
+	if from_warden.length() > shove_radius:
+		return
+
+	var player_health: Health = player.get_node_or_null("Health")
+	if player_health == null or player_health.is_invulnerable:
+		return  # dodged through it
+	player_health.take_damage(shove_damage, global_position)
+	if player.has_method("push"):
+		var direction := from_warden.normalized() if from_warden.length() > 0.1 else Vector2.DOWN
+		player.push(direction * shove_push_speed, shove_push_time)
+
+
+func _spawn_shockwave_effect() -> void:
+	if shockwave_scene == null:
+		return
+	var ring: Shockwave = shockwave_scene.instantiate()
+	get_parent().add_child(ring)
+	ring.global_position = global_position + Vector2(0, -6)
+	ring.play(shove_radius, 0.2, Color(0.643, 0.867, 0.859, 0.9))
 
 
 # --- Summoning ------------------------------------------------------------
