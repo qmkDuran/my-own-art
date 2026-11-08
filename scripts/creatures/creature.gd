@@ -23,6 +23,8 @@ const STANDING_STILL_SPEED := 1.0
 const BODY_HEIGHT := -6.0
 ## How fast a push (e.g. a Warden's shove) slows down, in pixels per second squared.
 const PUSH_FRICTION := 600.0
+## Max health gained per level (the small automatic "ding" boost).
+const HEALTH_PER_LEVEL := 1
 
 ## How close (feet to feet, pixels) the creature walks to a clicked enemy before jabbing.
 const ATTACK_APPROACH_DISTANCE := 16.0
@@ -55,11 +57,14 @@ var _attack_target: Node2D = null
 @onready var animator: CreatureAnimator = $Sprite
 @onready var fist_embers: FistEmbers = $FistEmbers
 @onready var trainer_aid: TrainerAid = $TrainerAid
+@onready var speech_bubble: SpeechBubble = $SpeechBubble
 
 
 func _ready() -> void:
 	health.damaged.connect(_on_damaged)
 	health.died.connect(_on_died)
+	Progression.leveled_up.connect(_on_leveled_up)
+	_apply_level_bonuses()
 
 
 func _physics_process(delta: float) -> void:
@@ -268,3 +273,23 @@ func push(push_velocity: Vector2, duration: float) -> void:
 
 func _is_being_pushed() -> bool:
 	return _push_seconds_left > 0.0
+
+
+# --- Levelling ------------------------------------------------------------
+
+## Level bonuses live on Progression (which survives a restart), so re-apply them on spawn.
+func _apply_level_bonuses() -> void:
+	health.max_health += HEALTH_PER_LEVEL * (Progression.level - 1)
+	health.current_health = health.max_health
+
+
+func _on_leveled_up(_new_level: int) -> void:
+	health.max_health += HEALTH_PER_LEVEL
+	health.heal(HEALTH_PER_LEVEL)
+	speech_bubble.say("LEVEL UP!", 1.0)
+	if click_marker_scene != null:
+		for ring_size in [18.0, 28.0]:
+			var ring: Shockwave = click_marker_scene.instantiate()
+			get_parent().add_child(ring)
+			ring.global_position = global_position + Vector2(0, BODY_HEIGHT)
+			ring.play(ring_size, 0.45, Color(0.91, 0.757, 0.439, 0.9))

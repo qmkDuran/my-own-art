@@ -1,7 +1,7 @@
 class_name PixelDigits
 extends RefCounted
 ## A tiny 3×5 pixel font for numbers, drawn pixel by pixel so it stays crisp at any scale.
-## Supports 0–9 and '/'.
+## Supports 0–9, '/', and the letters L and V (for "LV").
 
 const GLYPH_WIDTH := 3
 const GLYPH_HEIGHT := 5
@@ -20,6 +20,8 @@ const GLYPHS := {
 	"8": ["###", "#.#", "###", "#.#", "###"],
 	"9": ["###", "#.#", "###", "..#", "###"],
 	"/": ["..#", "..#", ".#.", "#..", "#.."],
+	"L": ["#..", "#..", "#..", "#..", "###"],
+	"V": ["#.#", "#.#", "#.#", "#.#", ".#."],
 }
 
 

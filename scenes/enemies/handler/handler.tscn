@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene load_steps=13 format=3]
 
 [ext_resource type="Script" path="res://scripts/enemies/handler.gd" id="1_handler"]
 [ext_resource type="Script" path="res://scripts/animation/single_view_animator.gd" id="2_animator"]
@@ -10,6 +10,8 @@
 [ext_resource type="Script" path="res://scripts/ui/floating_health_bar.gd" id="8_bar"]
 [ext_resource type="Script" path="res://scripts/ui/speech_bubble.gd" id="9_speech"]
 
+[ext_resource type="Script" path="res://scripts/components/light_drop.gd" id="10_drop"]
+[ext_resource type="PackedScene" path="res://scenes/pickups/light_mote.tscn" id="11_mote"]
 [sub_resource type="CircleShape2D" id="CircleShape2D_body"]
 radius = 5.0
 
@@ -76,3 +78,9 @@ health = NodePath("../Health")
 z_index = 3
 position = Vector2(0, -36)
 script = ExtResource("9_speech")
+
+[node name="LightDrop" type="Node" parent="."]
+script = ExtResource("10_drop")
+mote_scene = ExtResource("11_mote")
+mote_count = 8
+xp_per_mote = 2

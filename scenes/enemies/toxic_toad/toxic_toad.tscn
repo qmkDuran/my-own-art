@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3]
+[gd_scene load_steps=14 format=3]
 
 [ext_resource type="Script" path="res://scripts/enemies/toad.gd" id="1_toad"]
 [ext_resource type="Script" path="res://scripts/animation/single_view_animator.gd" id="2_animator"]
@@ -9,6 +9,8 @@
 [ext_resource type="Texture2D" path="res://art/toxic_toad/toxlop_portrait_128.png" id="7_portrait"]
 [ext_resource type="PackedScene" path="res://scenes/pickups/berry.tscn" id="8_berry"]
 
+[ext_resource type="Script" path="res://scripts/components/light_drop.gd" id="9_drop"]
+[ext_resource type="PackedScene" path="res://scenes/pickups/light_mote.tscn" id="10_mote"]
 [sub_resource type="CircleShape2D" id="CircleShape2D_body"]
 radius = 5.0
 
@@ -71,3 +73,9 @@ max_health = 1
 [node name="HitFlash" type="Node" parent="." node_paths=PackedStringArray("sprite")]
 script = ExtResource("5_flash")
 sprite = NodePath("../Sprite")
+
+[node name="LightDrop" type="Node" parent="."]
+script = ExtResource("9_drop")
+mote_scene = ExtResource("10_mote")
+mote_count = 3
+xp_per_mote = 1
