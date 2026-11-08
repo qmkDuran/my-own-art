@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3]
 
-[ext_resource type="Script" path="res://scripts/companions/trainer.gd" id="1_trainer"]
+[ext_resource type="Script" path="res://scripts/companions/walking_trainer.gd" id="1_trainer"]
 [ext_resource type="PackedScene" path="res://scenes/companions/layered_trainer_sprite.tscn" id="2_sprite"]
 [ext_resource type="PackedScene" path="res://scenes/companions/tonic_toss.tscn" id="3_tonic"]
 

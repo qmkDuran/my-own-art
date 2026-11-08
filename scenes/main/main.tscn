@@ -1,9 +1,8 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/creatures/emberoo/emberoo.tscn" id="1_emberoo"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/handler/handler.tscn" id="3_handler"]
 [ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="4_hud"]
-[ext_resource type="PackedScene" path="res://scenes/companions/trainer.tscn" id="5_trainer"]
 [ext_resource type="PackedScene" path="res://scenes/ui/ember_tree.tscn" id="6_ember_tree"]
 [ext_resource type="Script" path="res://scripts/progression/ember_tree_effects.gd" id="7_ember_effects"]
 
@@ -63,9 +62,6 @@ position = Vector2(110, -20)
 [node name="Handler2" parent="." instance=ExtResource("3_handler")]
 position = Vector2(-100, 60)
 first_summon_delay = 3.0
-
-[node name="Trainer" parent="." instance=ExtResource("5_trainer")]
-position = Vector2(-18, -16)
 
 [node name="Emberoo" parent="." instance=ExtResource("1_emberoo")]
 

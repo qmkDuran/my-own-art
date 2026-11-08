@@ -1,40 +1,51 @@
 class_name HealthHeart
 extends Control
-## The player's health as one heart at the bottom of the screen.
+## The player's health as one big heart at the left of the skill bar, with the numbers inside it.
 ##
-## The heart is a container of red: it drains from the top down as health is lost.
-## The exact numbers (e.g. 7/10) are shown beside it.
+## The heart is a container of red: it drains from the top down as health is lost,
+## with a brighter line on the surface of what's left.
 
-## Pixel map of the heart. 'x' = inside the heart.
+## Pixel map of the heart (29×23). 'x' = inside the heart.
 const HEART_PIXELS := [
-	"..xxx...xxx..",
-	".xxxxx.xxxxx.",
-	"xxxxxxxxxxxxx",
-	"xxxxxxxxxxxxx",
-	"xxxxxxxxxxxxx",
-	".xxxxxxxxxxx.",
-	"..xxxxxxxxx..",
-	"...xxxxxxx...",
-	"....xxxxx....",
-	".....xxx.....",
-	"......x......",
+	".....xxxxxx.......xxxxxx.....",
+	"...xxxxxxxxxx...xxxxxxxxxx...",
+	"..xxxxxxxxxxxx.xxxxxxxxxxxx..",
+	".xxxxxxxxxxxxxxxxxxxxxxxxxxx.",
+	".xxxxxxxxxxxxxxxxxxxxxxxxxxx.",
+	"xxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+	"xxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+	"xxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+	"xxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+	".xxxxxxxxxxxxxxxxxxxxxxxxxxx.",
+	".xxxxxxxxxxxxxxxxxxxxxxxxxxx.",
+	".xxxxxxxxxxxxxxxxxxxxxxxxxxx.",
+	"..xxxxxxxxxxxxxxxxxxxxxxxxx..",
+	"..xxxxxxxxxxxxxxxxxxxxxxxxx..",
+	"...xxxxxxxxxxxxxxxxxxxxxxx...",
+	"....xxxxxxxxxxxxxxxxxxxxx....",
+	".....xxxxxxxxxxxxxxxxxxx.....",
+	"......xxxxxxxxxxxxxxxxx......",
+	".......xxxxxxxxxxxxxxx.......",
+	".........xxxxxxxxxxx.........",
+	"..........xxxxxxxxx..........",
+	"............xxxxx............",
+	"..............x..............",
 ]
-const HEART_SIZE := Vector2(13, 11)
-## Pixels that catch the light (top-left of each lobe), when filled.
-const SHINE_PIXELS := [Vector2(2, 1), Vector2(1, 2), Vector2(8, 1)]
-
-@export var outline_color: Color = Color(0.035, 0.039, 0.078)
-@export var empty_color: Color = Color(0.204, 0.11, 0.153)
-@export var fill_color: Color = Color(0.647, 0.188, 0.188)
-@export var shine_color: Color = Color(0.812, 0.341, 0.235)
-@export var number_color: Color = Color(0.906, 0.835, 0.702)
-## Gap between the heart and the numbers, in pixels.
-const NUMBER_GAP := 4
+const HEART_SIZE := Vector2i(29, 23)
+## Pixels on the left lobe that catch the light, when filled.
+const SHINE_PIXELS: Array[Vector2i] = [Vector2i(4, 3), Vector2i(5, 3), Vector2i(3, 4), Vector2i(3, 5), Vector2i(4, 4)]
+## Rim pixels right of this column or below this row are in shadow (darker red).
+const SHADOW_FROM := Vector2(HEART_SIZE.x * 0.55, HEART_SIZE.y * 0.6)
+## Top of the numbers, from the top of the heart.
+const NUMBERS_TOP := 9
 
 var _health: Health
+var _shape: Dictionary = PixelShape.from_rows(HEART_PIXELS)
+var _depths: Dictionary = PixelShape.depths(_shape)
 
 
 func _ready() -> void:
+	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	# Wait one frame so the player has been added to the level.
 	await get_tree().process_frame
 	var player := get_tree().get_first_node_in_group("player")
@@ -50,37 +61,29 @@ func _ready() -> void:
 func _draw() -> void:
 	if _health == null:
 		return
+	PixelShape.draw_outlined(self, _heart_colors(_share_of_health_left()), Vector2.ZERO, HudPalette.OUTLINE)
 	var numbers := "%d/%d" % [_health.current_health, _health.max_health]
-	var group_width := HEART_SIZE.x + NUMBER_GAP + PixelDigits.width_of(numbers)
-	var top_left := Vector2(roundf((size.x - group_width) / 2.0), roundf((size.y - HEART_SIZE.y) / 2.0))
-	_draw_outline(top_left)
-	_draw_contents(top_left, _share_of_health_left())
-
-	var numbers_top_left := top_left + Vector2(HEART_SIZE.x + NUMBER_GAP, roundf((HEART_SIZE.y - PixelDigits.GLYPH_HEIGHT) / 2.0))
-	PixelDigits.draw_text(self, numbers, numbers_top_left, number_color, outline_color)
+	var left := floori((HEART_SIZE.x - PixelFont.width_of(numbers)) / 2.0)
+	PixelFont.draw_text(self, numbers, Vector2(left, NUMBERS_TOP), HudPalette.CREAM, HudPalette.OUTLINE)
 
 
 func _share_of_health_left() -> float:
 	return clampf(float(_health.current_health) / float(_health.max_health), 0.0, 1.0)
 
 
-## Dark outline one pixel around the heart, so it reads on any ground.
-func _draw_outline(top_left: Vector2) -> void:
-	for y in HEART_PIXELS.size():
-		for x in int(HEART_SIZE.x):
-			if HEART_PIXELS[y][x] == "x":
-				draw_rect(Rect2(top_left + Vector2(x - 1, y - 1), Vector2(3, 3)), outline_color)
-
-
-## Red fills the heart from the bottom up to the share of health left.
-func _draw_contents(top_left: Vector2, share_left: float) -> void:
+## The colour of every heart pixel: red up to the share of health left, dark coal above it.
+func _heart_colors(share_left: float) -> Dictionary:
 	var first_filled_row := HEART_SIZE.y * (1.0 - share_left)
-	for y in HEART_PIXELS.size():
-		for x in int(HEART_SIZE.x):
-			if HEART_PIXELS[y][x] != "x":
-				continue
-			var is_filled := y >= first_filled_row - 0.001
-			var color := fill_color if is_filled else empty_color
-			if is_filled and Vector2(x, y) in SHINE_PIXELS:
-				color = shine_color
-			draw_rect(Rect2(top_left + Vector2(x, y), Vector2.ONE), color)
+	var surface_row := ceili(first_filled_row) if share_left < 1.0 else -1
+	var colors := {}
+	for pixel: Vector2i in _shape:
+		var is_rim: bool = _depths[pixel] == 0
+		if pixel.y < first_filled_row - 0.001:
+			colors[pixel] = HudPalette.COAL_DARK if is_rim else HudPalette.COAL
+		elif pixel.y == surface_row or (pixel in SHINE_PIXELS and pixel.y >= first_filled_row):
+			colors[pixel] = HudPalette.RED_LIGHT
+		elif is_rim and (pixel.x > SHADOW_FROM.x or pixel.y > SHADOW_FROM.y):
+			colors[pixel] = HudPalette.WINE
+		else:
+			colors[pixel] = HudPalette.RED
+	return colors

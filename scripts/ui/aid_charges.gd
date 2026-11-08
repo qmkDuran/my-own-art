@@ -1,19 +1,32 @@
 class_name AidCharges
 extends Control
-## Trainer's Aid charges as little tonic bottles next to the heart (full = pink, used = dark).
+## Trainer's Aid charges as little tonic flasks lying in a row on top of the heart,
+## with the key (F) to their left. Full flasks are pink; used ones are dark glass.
 
-const BOTTLE := [".cc..", "#cc#.", "#gg#.", "#ll#.", "#ll#.", "#ll#.", ".##.."]
-const SPACING := 7
-
-@export var outline_color: Color = Color(0.035, 0.039, 0.078)
-@export var full_colors: Dictionary = {"g": Color(0.78, 0.812, 0.8), "l": Color(0.875, 0.518, 0.647), "c": Color(0.678, 0.467, 0.341)}
-@export var empty_colors: Dictionary = {"g": Color(0.224, 0.29, 0.314), "l": Color(0.125, 0.18, 0.216), "c": Color(0.224, 0.29, 0.314)}
+## 8×6 flask lying on its side, neck to the right. 'l'/'L' liquid (lit/shaded), 'G' glint,
+## 'g' glass at the neck, 'c'/'C' cork (lit/shaded).
+const FLASK := [".llll...", "lGllll..", "lllllgcc", "LllllgcC", "LLlll...", ".LLL...."]
+const FULL_COLORS := {
+	"l": HudPalette.PINK, "L": HudPalette.MAGENTA, "G": HudPalette.WHITE,
+	"g": HudPalette.SILVER, "c": HudPalette.CORK, "C": HudPalette.CORK_DARK,
+}
+const EMPTY_COLORS := {
+	"l": HudPalette.SLATE, "L": HudPalette.DARK, "G": HudPalette.STONE,
+	"g": HudPalette.STONE, "c": HudPalette.STONE, "C": HudPalette.STONE,
+}
+## Pixels from one flask's left edge to the next.
+const SPACING := 10
+const KEY_LABEL := "F"
+const KEY_LABEL_TOP_LEFT := Vector2(0, 1)
+const FIRST_FLASK_TOP_LEFT := Vector2(7, 0)
 
 var _charges: int = 0
 var _max_charges: int = 0
+var _flask: Dictionary = PixelShape.from_rows(FLASK)
 
 
 func _ready() -> void:
+	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	await get_tree().process_frame
 	var player := get_tree().get_first_node_in_group("player")
 	if player == null:
@@ -32,19 +45,17 @@ func _on_charges_changed(charges: int, max_charges: int) -> void:
 
 
 func _draw() -> void:
-	var width := _max_charges * SPACING - 2
-	var left := roundf((size.x - width) / 2.0)
-	var top := roundf((size.y - BOTTLE.size()) / 2.0)
+	if _max_charges <= 0:
+		return
+	PixelFont.draw_text(self, KEY_LABEL, KEY_LABEL_TOP_LEFT, HudPalette.GREY, HudPalette.OUTLINE)
 	for index in _max_charges:
-		var colors := full_colors if index < _charges else empty_colors
-		_draw_bottle(Vector2(left + index * SPACING, top), colors)
+		var colors := FULL_COLORS if index < _charges else EMPTY_COLORS
+		var top_left := FIRST_FLASK_TOP_LEFT + Vector2(index * SPACING, 0)
+		PixelShape.draw_outlined(self, _colored_flask(colors), top_left, HudPalette.OUTLINE)
 
 
-func _draw_bottle(top_left: Vector2, colors: Dictionary) -> void:
-	for y in BOTTLE.size():
-		for x in 5:
-			var pixel: String = BOTTLE[y][x]
-			if pixel == ".":
-				continue
-			var color: Color = outline_color if pixel == "#" else colors[pixel]
-			draw_rect(Rect2(top_left + Vector2(x, y), Vector2.ONE), color)
+func _colored_flask(colors: Dictionary) -> Dictionary:
+	var pixels := {}
+	for pixel: Vector2i in _flask:
+		pixels[pixel] = colors[_flask[pixel]]
+	return pixels

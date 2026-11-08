@@ -8,7 +8,7 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
 
 ## Story frame
 - **Spirit link:** the trainer stays safe in the hub and guides the creature through a mental bond. This explains why the player directly controls the creature.
-- The trainer appears only in the hub/town (story, menus, gems, skills). The creature is alone in the world.
+- In the field, the trainer is part of the HUD: they stand in the skill bar (between W and E), watching Emberoo from behind during fights, and turn to face the camera after a few calm seconds. They shout each skill command (small tick lines). In towns they appear fully.
 
 ## Story premise
 - **Glimra** (*GLIM-rah*) is the name for the creatures: beings that carry a living light inside them (it "glimmers"). Emberoo is a Glimra.
