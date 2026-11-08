@@ -1,0 +1,33 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/creatures/creature.gd" id="1_creature"]
+[ext_resource type="Script" path="res://scripts/animation/creature_animator.gd" id="2_animator"]
+[ext_resource type="Script" path="res://scripts/components/player_input.gd" id="3_input"]
+[ext_resource type="Script" path="res://scripts/components/movement.gd" id="4_movement"]
+[ext_resource type="Script" path="res://scripts/components/facing.gd" id="5_facing"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_body"]
+radius = 5.0
+
+[node name="Emberoo" type="CharacterBody2D"]
+motion_mode = 1
+script = ExtResource("1_creature")
+
+[node name="Sprite" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -8)
+script = ExtResource("2_animator")
+creature_name = "emberoo"
+sprite_sheet_folder = "res://art/emberoo"
+
+[node name="CollisionShape" type="CollisionShape2D" parent="."]
+position = Vector2(0, -4)
+shape = SubResource("CircleShape2D_body")
+
+[node name="PlayerInput" type="Node" parent="."]
+script = ExtResource("3_input")
+
+[node name="Movement" type="Node" parent="."]
+script = ExtResource("4_movement")
+
+[node name="Facing" type="Node" parent="."]
+script = ExtResource("5_facing")
