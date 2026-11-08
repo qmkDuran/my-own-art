@@ -17,6 +17,8 @@ extends CharacterBody2D
 
 ## Below this speed (pixels per second) the creature counts as standing still.
 const STANDING_STILL_SPEED := 1.0
+## Height of the body's middle above the feet, in pixels (negative is up).
+const BODY_HEIGHT := -6.0
 
 @onready var player_input: PlayerInput = $PlayerInput
 @onready var movement: Movement = $Movement
@@ -61,8 +63,19 @@ func _start_requested_action() -> void:
 
 
 func _start_jab() -> void:
-	melee_attack.start(facing.as_vector())
+	var aim_direction := _aim_direction()
+	facing.look_toward(aim_direction)
+	melee_attack.start(aim_direction)
 	animator.replay_animation(melee_attack.current_animation, facing)
+
+
+## Punches go toward the mouse cursor, at any angle, measured from the body (not the feet).
+func _aim_direction() -> Vector2:
+	var body_center := global_position + Vector2(0, BODY_HEIGHT)
+	var to_cursor := player_input.get_aim_point() - body_center
+	if to_cursor.length() < 1.0:
+		return facing.as_vector()
+	return to_cursor.normalized()
 
 
 func _start_dodge() -> void:

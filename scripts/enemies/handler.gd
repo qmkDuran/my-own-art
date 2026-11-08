@@ -9,7 +9,7 @@ extends CharacterBody2D
 ##
 ## States:
 ##   WATCHING  -> stands still, keeping an eye on the player
-##   RETREATING-> walks away because the player is too close
+##   RETREATING-> walks away because the player is too close (tires out after a bit)
 ##   SUMMONING -> raises the rod; creatures appear at the end
 ##   RECOVERING-> knocked back after being hit
 ##   DYING     -> fades away
@@ -18,15 +18,22 @@ enum State { WATCHING, RETREATING, SUMMONING, RECOVERING, DYING }
 
 @export_group("Keeping distance")
 ## If the player gets closer than this (pixels), he backs away.
-@export var comfortable_distance: float = 70.0
-## Walking speed in pixels per second. Slower than the player, so you can catch him.
-@export var walk_speed: float = 35.0
+@export var comfortable_distance: float = 50.0
+## Walking speed in pixels per second. Much slower than the player, so you can catch him.
+@export var walk_speed: float = 22.0
+## Longest he keeps backing away before he has to stop, in seconds.
+@export var max_retreat_time: float = 1.2
+## Seconds he stands still to catch his breath after retreating that long.
+@export var catch_breath_time: float = 1.5
 
 @export_group("Summoning")
 ## The creature he summons.
 @export var creature_scene: PackedScene
 ## Seconds between summons.
-@export var summon_interval: float = 4.0
+@export var summon_interval: float = 6.0
+## He only summons again once this many of his creatures (or fewer) are left alive,
+## so the player can clear most of a wave first.
+@export var summon_when_alive_at_most: int = 1
 ## Seconds before his first summon.
 @export var first_summon_delay: float = 1.0
 ## Seconds the summon gesture takes; creatures appear at the end (the summon animation's length).
@@ -48,6 +55,8 @@ var _state: State = State.WATCHING
 var _time_in_state: float = 0.0
 var _state_length: float = 0.0
 var _seconds_until_summon: float = 0.0
+var _seconds_retreating: float = 0.0
+var _seconds_catching_breath: float = 0.0
 ## Untyped on purpose: it can briefly hold creatures that have already been freed.
 var _summoned_creatures: Array = []
 
@@ -71,7 +80,7 @@ func _physics_process(delta: float) -> void:
 
 	match _state:
 		State.WATCHING, State.RETREATING:
-			_keep_distance_or_summon()
+			_keep_distance_or_summon(delta)
 		State.SUMMONING:
 			_summon()
 		State.RECOVERING, State.DYING:
@@ -82,20 +91,45 @@ func _physics_process(delta: float) -> void:
 
 # --- States ---------------------------------------------------------------
 
-func _keep_distance_or_summon() -> void:
+func _keep_distance_or_summon(delta: float) -> void:
 	if _is_time_to_summon():
 		_start_summon()
 		return
 
 	var away_from_player := _direction_away_from_player()
-	if away_from_player == Vector2.ZERO:
-		velocity = Vector2.ZERO
-		_state = State.WATCHING
-		sprite.show_animation("idle")
+	if away_from_player == Vector2.ZERO or not _can_keep_retreating(delta):
+		_stand_still()
 	else:
-		velocity = away_from_player * walk_speed
-		_state = State.RETREATING
-		sprite.show_animation("walk")
+		_back_away(away_from_player)
+
+
+func _stand_still() -> void:
+	velocity = Vector2.ZERO
+	_state = State.WATCHING
+	sprite.show_animation("idle")
+
+
+func _back_away(direction: Vector2) -> void:
+	velocity = direction * walk_speed
+	_state = State.RETREATING
+	sprite.show_animation("walk")
+
+
+## He tires out: after backing away for a while he must stop and catch his breath,
+## which is the player's chance to catch him.
+func _can_keep_retreating(delta: float) -> bool:
+	if _seconds_catching_breath > 0.0:
+		_seconds_catching_breath -= delta
+		return false
+	if _state == State.RETREATING:
+		_seconds_retreating += delta
+		if _seconds_retreating >= max_retreat_time:
+			_seconds_retreating = 0.0
+			_seconds_catching_breath = catch_breath_time
+			return false
+	else:
+		_seconds_retreating = 0.0
+	return true
 
 
 func _summon() -> void:
@@ -115,7 +149,7 @@ func _slow_down(delta: float) -> void:
 # --- Summoning ------------------------------------------------------------
 
 func _is_time_to_summon() -> bool:
-	return _seconds_until_summon <= 0.0 and _creatures_alive() < max_creatures
+	return _seconds_until_summon <= 0.0 and _creatures_alive() <= summon_when_alive_at_most
 
 
 func _start_summon() -> void:

@@ -17,3 +17,9 @@ func wants_to_attack() -> bool:
 
 func wants_to_dodge() -> bool:
 	return Input.is_action_just_pressed("dodge")
+
+
+## Where the mouse cursor is in the game world. Attacks aim here.
+func get_aim_point() -> Vector2:
+	var viewport := get_viewport()
+	return viewport.get_canvas_transform().affine_inverse() * viewport.get_mouse_position()
