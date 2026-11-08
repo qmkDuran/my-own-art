@@ -7,11 +7,14 @@ extends Node
 ## (e.g. by a dodge); a cancelled attack before the hit lands never hits.
 ## With a `finisher`, the attack after the last of `combo_animations` is the finisher
 ## (e.g. jab, jab, Spinning Hook): same buffering and cancel rules, its own timing and hit.
+## Until the finisher is learned (SpinningHook.is_unlocked) the chain is just the jabs.
 ## Where the combo is lives in a ComboChain: only its time window ever resets it.
 ## Damage goes through CritRoll, so the attacker's critical hits apply to every punch.
 
 ## Fired once per attack (finisher included) when it damaged at least one target (e.g. so Heat can build).
 signal hits_landed(hit_count: int)
+## Fired for each target a jab or the finisher hit, after its damage (e.g. so Searing Jab can burn it).
+signal target_hit(target_health: Health)
 
 ## Seconds from pressing attack to the fist landing (end of the wind-up frame).
 @export var hit_delay: float = 0.12
@@ -67,7 +70,7 @@ var _is_finisher: bool = false
 
 
 func _ready() -> void:
-	combo = ComboChain.new(combo_animations.size() + (1 if finisher != null else 0), combo_reset_time)
+	combo = ComboChain.new(_chain_length(), combo_reset_time)
 
 
 func _physics_process(delta: float) -> void:
@@ -75,6 +78,11 @@ func _physics_process(delta: float) -> void:
 		_advance_attack(delta)
 	else:
 		combo.wait(delta)
+
+
+## Whether the combo ends in the finisher right now (it exists and is learned).
+func has_finisher() -> bool:
+	return finisher != null and finisher.is_unlocked()
 
 
 func is_ready() -> bool:
@@ -134,23 +142,30 @@ func _hit_delay() -> float:
 	return finisher.hit_delay if _is_finisher else hit_delay
 
 
-## Jab, jab, ..., then the finisher (if any), then back to the first jab.
+## Jab, jab, ..., then the finisher (if learned), then back to the first jab.
 func _advance_combo() -> void:
+	combo.resize(_chain_length())
 	var step := combo.begin_attack()
-	_is_finisher = finisher != null and step == combo_animations.size()
+	_is_finisher = has_finisher() and step == combo_animations.size()
 	current_animation = finisher.animation_name if _is_finisher else combo_animations[step]
+
+
+func _chain_length() -> int:
+	return combo_animations.size() + (1 if has_finisher() else 0)
 
 
 func _land_hit() -> void:
 	combo.note_landed()
-	var hit_count := 0
+	var struck: Array[Health] = []
 	if _is_finisher:
-		hit_count = finisher.strike(attacker)
+		struck = finisher.strike(attacker)
 	else:
 		_spawn_impact(_attack_direction)
-		hit_count = _damage_targets_in_reach(_attack_direction)
-	if hit_count > 0:
-		hits_landed.emit(hit_count)
+		struck = _damage_targets_in_reach(_attack_direction)
+	for target_health in struck:
+		target_hit.emit(target_health)
+	if not struck.is_empty():
+		hits_landed.emit(struck.size())
 
 
 func _spawn_impact(attack_direction: Vector2) -> void:
@@ -167,11 +182,11 @@ func _spawn_impact(attack_direction: Vector2) -> void:
 ## Hits everything along the punch, from the attacker's body out to full reach,
 ## so targets slightly closer or further than the fist still get hit.
 ## Measured at fist height against each target's body centre (not its feet).
-## Returns how many targets were hit.
-func _damage_targets_in_reach(attack_direction: Vector2) -> int:
+## Returns the Health of every target hit.
+func _damage_targets_in_reach(attack_direction: Vector2) -> Array[Health]:
 	var punch_start := attacker.global_position + Vector2(0, fist_height)
 	var punch_end := punch_start + attack_direction * reach
-	var hit_count := 0
+	var struck: Array[Health] = []
 	for target: Node2D in get_tree().get_nodes_in_group(target_group):
 		var body_centre := target.global_position + Vector2(0, target_body_height)
 		var closest := Geometry2D.get_closest_point_to_segment(body_centre, punch_start, punch_end)
@@ -180,8 +195,8 @@ func _damage_targets_in_reach(attack_direction: Vector2) -> int:
 		var target_health: Health = target.get_node_or_null("Health")
 		if target_health != null:
 			CritRoll.deal_damage(attacker, target_health, damage)
-			hit_count += 1
-	return hit_count
+			struck.append(target_health)
+	return struck
 
 
 func _hit_position(attack_direction: Vector2) -> Vector2:

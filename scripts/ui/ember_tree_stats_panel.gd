@@ -88,7 +88,7 @@ func _value_bbcode(sheet: EmberTreeStatSheet, stat: String, preview: Dictionary[
 	if preview.has(stat):
 		var change: Dictionary = preview[stat]
 		return EmberTreeFactText.change_bbcode(stat, change["before"], change["after"], EmberTreePalette.BETTER, false)
-	return EmberTreeFactText.escape(EmberTreeStatSheet.value_text(stat, sheet.value(stat)))
+	return EmberTreeFactText.escape(sheet.shown_value(stat))
 
 
 func _make_row(stat: String) -> HBoxContainer:

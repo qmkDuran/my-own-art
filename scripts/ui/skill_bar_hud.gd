@@ -4,7 +4,8 @@ extends Control
 ## letters (from the InputMap: skill_1..skill_4), skills, cooldowns and whether Emberoo's Heat
 ## covers each skill's cost, presses a slot down whenever its key is pressed, plays the
 ## trainer's shout and the slot flash when a skill is used, shows why a skill was refused,
-## and the tooltip while the mouse hovers a slot.
+## and the tooltip while the mouse hovers a slot (with the Ember Tree's facts for the skill).
+## A skill not learned in the Ember Tree yet leaves its slot empty (SkillBar hides it).
 ##
 ## The SkillBar is read by name and duck typing (has_method / has_signal), so the HUD still
 ## works, with empty slots, while Emberoo has no SkillBar. Without a Heat node every skill
@@ -110,7 +111,18 @@ func _on_skill_refused(slot_index: int, reason: String) -> void:
 func _on_slot_hovered(slot: SkillSlot) -> void:
 	_hovered_slot = slot
 	if tooltip != null:
-		tooltip.show_for(slot.skill, slot.get_global_rect())
+		tooltip.show_for(slot.skill, _facts_for(_slots.find(slot)), slot.get_global_rect())
+
+
+## The Ember Tree's exact-number text for the slot's skill, or "" if the tree has none.
+func _facts_for(index: int) -> String:
+	var action := _call_skill_bar("action_in_slot", index, null) as Node
+	if action == null:
+		return ""
+	var tree_node := EmberTreeData.skill_node_for(action.name)
+	if tree_node == null:
+		return ""
+	return EmberTreeSkillFacts.text_for(tree_node, _skill_bar.get_parent())
 
 
 func _on_slot_unhovered(slot: SkillSlot) -> void:

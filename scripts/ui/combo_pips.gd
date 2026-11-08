@@ -5,6 +5,7 @@ extends Node2D
 ##
 ## Subtle on purpose: hidden until the first jab lands, and fades out as the combo window
 ## runs out (or soon after the finisher lands). Reads the chain from MeleeAttack's ComboChain.
+## Without the Spinning Hook learned there is nothing to build up to, so no pips show.
 
 ## Size of one pip and the gap between pips, in pixels.
 const PIP_SIZE := 2
@@ -26,7 +27,8 @@ var _lit_count: int = 0
 
 func _process(_delta: float) -> void:
 	var combo := melee_attack.combo if melee_attack != null else null
-	var lit_count := combo.landed_steps() if combo != null else 0
+	var has_finisher := melee_attack != null and melee_attack.has_finisher()
+	var lit_count := combo.landed_steps() if combo != null and has_finisher else 0
 	visible = lit_count > 0
 	if not visible:
 		return

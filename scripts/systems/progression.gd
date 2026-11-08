@@ -3,6 +3,7 @@ extends Node
 ##
 ## Light motes add XP. Each level-up gives a small automatic stat boost (handled by
 ## whoever listens to `leveled_up`, e.g. the creature) and 1 skill point for the Ember Tree.
+## The player starts with STARTING_SKILL_POINTS, so the first skill is picked right away.
 ## Kept in an autoload so it survives the level restarting.
 
 signal xp_changed(xp: int, xp_to_next: int)
@@ -14,10 +15,13 @@ const BASE_XP := 10
 ## How steeply the XP needed grows per level.
 const GROWTH := 1.45
 const MAX_LEVEL := 30
+## Points to spend at level 1: one, for a tier-0 "build starter" (Searing Jab, Spinning Hook
+## or Ash Guard). See DESIGN.md, "Build system".
+const STARTING_SKILL_POINTS := 1
 
 var level: int = 1
 var xp: int = 0
-var skill_points: int = 0
+var skill_points: int = STARTING_SKILL_POINTS
 
 
 ## XP needed to go from the current level to the next.
@@ -49,5 +53,10 @@ func spend_skill_point() -> bool:
 
 ## Gives a point back (free respec).
 func refund_skill_point() -> void:
-	skill_points += 1
+	add_skill_points(1)
+
+
+## Gives extra points outside levelling (e.g. DebugControls' F3).
+func add_skill_points(amount: int) -> void:
+	skill_points += amount
 	skill_points_changed.emit(skill_points)

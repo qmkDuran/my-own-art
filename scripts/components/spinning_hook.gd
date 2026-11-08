@@ -7,6 +7,7 @@ extends Node
 ## rules); this node holds the hook's numbers and lands the hit when told to.
 ## Damage goes through CritRoll, so the attacker's critical hits apply.
 ## Keep the turn's look (SpinTurn) roughly in step with `hit_delay` and `attack_duration`.
+## It only ends the combo once its Ember Tree node ("spinning_hook") is learned.
 
 ## Animation the attacker plays while spinning (posed view by view, see SpinTurn).
 @export var animation_name: String = "spin"
@@ -34,14 +35,19 @@ extends Node
 @export var shake_duration: float = 0.1
 
 
+## Whether the hook is learned in the Ember Tree (this node's name is its skill action).
+func is_unlocked() -> bool:
+	return EmberTree.is_skill_unlocked(name)
+
+
 ## Lands the hook all around `attacker`: the fire ring, a small shake, and damage plus
-## knockback to every target in the circle. Returns how many targets were hit.
-func strike(attacker: Node2D) -> int:
+## knockback to every target in the circle. Returns the Health of every target hit.
+func strike(attacker: Node2D) -> Array[Health]:
 	var centre := attacker.global_position + Vector2(0, fist_height)
 	_spawn_fire_ring(attacker, centre)
 	if screen_shake != null:
 		screen_shake.shake(shake_strength, shake_duration)
-	var hit_count := 0
+	var struck: Array[Health] = []
 	for target: Node2D in get_tree().get_nodes_in_group(target_group):
 		var body_centre := target.global_position + Vector2(0, target_body_height)
 		if body_centre.distance_to(centre) > radius:
@@ -51,8 +57,8 @@ func strike(attacker: Node2D) -> int:
 			continue
 		CritRoll.deal_damage(attacker, target_health, damage)
 		_knock_back(target, attacker)
-		hit_count += 1
-	return hit_count
+		struck.append(target_health)
+	return struck
 
 
 func _spawn_fire_ring(attacker: Node2D, centre: Vector2) -> void:

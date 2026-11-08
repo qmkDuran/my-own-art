@@ -5,10 +5,15 @@ extends CanvasLayer
 ##
 ## F2: enemies passive. Toads sit still (no hops, no tongue) and Wardens stand still
 ## (no summons, no shove, no slam). They can still be hit and killed.
-## While it's on, "ENEMIES PAUSED (F2)" shows at the top centre of the screen.
+## F3: DEBUG ONLY, +5 Ember Tree skill points, to try out builds without levelling.
+## While enemies are passive, a banner at the top centre of the screen lists both keys.
 
 const PASSIVE_TOGGLE_KEY := KEY_F2
-const BANNER_TEXT := "ENEMIES PAUSED (F2)"
+const GRANT_POINTS_KEY := KEY_F3
+## Skill points F3 grants (debug only).
+const DEBUG_SKILL_POINTS := 5
+## "%d" is DEBUG_SKILL_POINTS.
+const BANNER_FORMAT := "ENEMIES PAUSED (F2)   F3 +%d POINTS"
 ## Top edge of the banner text, in screen pixels.
 const BANNER_TOP := 3
 
@@ -32,6 +37,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		enemies_passive = not enemies_passive
 		_refresh_banner()
 		get_viewport().set_input_as_handled()
+	elif key.keycode == GRANT_POINTS_KEY:
+		Progression.add_skill_points(DEBUG_SKILL_POINTS)
+		get_viewport().set_input_as_handled()
 
 
 func _refresh_banner() -> void:
@@ -40,6 +48,7 @@ func _refresh_banner() -> void:
 
 
 func _draw_banner() -> void:
+	var banner_text := BANNER_FORMAT % DEBUG_SKILL_POINTS
 	var screen_width := get_viewport().get_visible_rect().size.x
-	var left := floorf((screen_width - PixelFont.width_of(BANNER_TEXT)) / 2.0)
-	PixelFont.draw_text(banner, BANNER_TEXT, Vector2(left, BANNER_TOP), ApolloPalette.GOLD, ApolloPalette.OUTLINE)
+	var left := floorf((screen_width - PixelFont.width_of(banner_text)) / 2.0)
+	PixelFont.draw_text(banner, banner_text, Vector2(left, BANNER_TOP), ApolloPalette.GOLD, ApolloPalette.OUTLINE)

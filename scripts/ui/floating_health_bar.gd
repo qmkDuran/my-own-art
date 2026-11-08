@@ -1,7 +1,7 @@
 class_name FloatingHealthBar
 extends Node2D
 ## A small health bar above an enemy. Hidden until the enemy is first hit,
-## so a crowd of untouched enemies doesn't clutter the screen.
+## so a crowd of untouched enemies doesn't clutter the screen. Burn ticks count too.
 
 @export var health: Health
 ## Width of the bar, in pixels.
@@ -13,11 +13,11 @@ extends Node2D
 
 func _ready() -> void:
 	visible = false
-	health.damaged.connect(_on_damaged)
+	health.hit_taken.connect(_on_hit_taken)
 	health.died.connect(hide)
 
 
-func _on_damaged(_amount: int, _source_position: Vector2) -> void:
+func _on_hit_taken(_amount: int, _is_critical: bool, _damage_type: Health.DamageType) -> void:
 	visible = not health.is_dead()
 	queue_redraw()
 

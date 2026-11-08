@@ -4,10 +4,18 @@ extends Node
 ##
 ## Other components listen to its signals (flash on hit, die at zero)
 ## instead of Health knowing about them.
+## Two kinds of harm: a hit (`take_damage`, fires `damaged`, so the target reacts: flash,
+## knockback, interrupted) and a status-effect tick (`take_tick_damage`, e.g. Burning,
+## which doesn't). Both fire `hit_taken`, so damage numbers and health bars see every point.
 
+## What dealt the damage, so displays can tell them apart (e.g. orange burn numbers).
+enum DamageType { DIRECT, BURN }
+
+## A hit: the target should react to it (flash, knockback, interruption).
 signal damaged(amount: int, source_position: Vector2)
-## Fired with every `damaged`, saying whether the hit was critical (e.g. for damage numbers).
-signal hit_taken(amount: int, is_critical: bool)
+## Fired for every hit and every tick, saying whether it was critical and what dealt it
+## (e.g. for damage numbers).
+signal hit_taken(amount: int, is_critical: bool, damage_type: DamageType)
 signal died
 signal healed(amount: int)
 
@@ -28,8 +36,19 @@ func take_damage(amount: int, source_position: Vector2, is_critical: bool = fals
 		return
 
 	current_health = maxi(0, current_health - amount)
-	hit_taken.emit(amount, is_critical)
+	hit_taken.emit(amount, is_critical, DamageType.DIRECT)
 	damaged.emit(amount, source_position)
+	if is_dead():
+		died.emit()
+
+
+## Damage from a status effect (e.g. a burn tick): it hurts and can kill, but fires no
+## `damaged`, so there is no flash, knockback or interruption.
+func take_tick_damage(amount: int, damage_type: DamageType) -> void:
+	if is_invulnerable or is_dead():
+		return
+	current_health = maxi(0, current_health - amount)
+	hit_taken.emit(amount, false, damage_type)
 	if is_dead():
 		died.emit()
 

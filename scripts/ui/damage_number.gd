@@ -4,6 +4,7 @@ extends Node2D
 ##
 ## Normal hits are small and white. Critical hits are gold with a "!" (e.g. "4!") and bigger,
 ## with a two-step pop: a flash at POP_SCALE, then they settle at CRIT_SCALE.
+## Burn ticks are small and orange, so they read as the fire, not as a punch.
 ## Drawn with PixelFont at whole-pixel offsets and whole-number scales, so it stays crisp.
 
 ## Pixels the number rises over its life.
@@ -18,22 +19,31 @@ const CRIT_MARK := "!"
 const POP_SCALE := 3.0
 const CRIT_SCALE := 2.0
 const POP_TIME := 0.08
+const NORMAL_COLOR := ApolloPalette.WHITE
+const CRIT_COLOR := ApolloPalette.GOLD
+const BURN_COLOR := ApolloPalette.ORANGE
 
 var _text: String = ""
-var _color: Color = ApolloPalette.WHITE
+var _color: Color = NORMAL_COLOR
 var _is_critical: bool = false
 var _start_position: Vector2 = Vector2.ZERO
 var _age: float = 0.0
 
 
 ## Starts showing `amount`; call right after adding the number to the tree and placing it.
-func pop(amount: int, is_critical: bool = false) -> void:
+func pop(amount: int, is_critical: bool = false, damage_type: Health.DamageType = Health.DamageType.DIRECT) -> void:
 	_is_critical = is_critical
 	_text = str(amount) + (CRIT_MARK if is_critical else "")
-	_color = ApolloPalette.GOLD if is_critical else ApolloPalette.WHITE
+	_color = _color_for(is_critical, damage_type)
 	_start_position = position.round()
 	_update_motion()
 	queue_redraw()
+
+
+static func _color_for(is_critical: bool, damage_type: Health.DamageType) -> Color:
+	if is_critical:
+		return CRIT_COLOR
+	return BURN_COLOR if damage_type == Health.DamageType.BURN else NORMAL_COLOR
 
 
 func _process(delta: float) -> void:

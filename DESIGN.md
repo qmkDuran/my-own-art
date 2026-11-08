@@ -39,6 +39,7 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
 - **Ember Tree:** small (fits on one screen) with **2–3 labelled branches** (e.g. Inferno = burn, Flurry = speed/combos, Bruiser = tanky). Players can mix freely.
 - Nodes should **change how you play**, not just add small percentages. Keep to ~5 clear stats (Health, Power, Speed, Heat, Burn).
 - **Crits:** every attack (jab, spin, skills) can crit: **10% base chance, ×2 damage** (rounded), shown as a gold "4!" number and in the Ember Tree stats. No tree nodes change crits yet.
+- **Starting point:** Emberoo starts at level 1 with **1 skill point**, so the first pick (a tier-0 build starter: Searing Jab, Spinning Hook or Ash Guard) happens right away; skills (Flame Uppercut, Spinning Hook, ...) only work once ignited in the tree.
 - **Respec free or nearly free.** 1–2 optional "build starter" suggestions per creature.
 - Lessons from research: PoE 2's huge tree overwhelms; Diablo 4's early tree felt shallow (gear decided builds) and its 2026 rework moved to skill variants that change behaviour; Last Epoch's per-skill trees + cheap respec are loved.
 

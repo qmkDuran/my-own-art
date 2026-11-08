@@ -4,7 +4,8 @@ extends Node
 ## Holds the rules: a node can be learned when its stage is open, a node leading to it
 ## is learned (or it grows from the centre) and there is a skill point to spend.
 ## Respec is free: unlearning gives the point back. Kept in an autoload so it survives
-## the level restarting; EmberTreeEffects listens to `changed` to apply stat nodes.
+## the level restarting; EmberTreeEffects listens to `changed` to apply stat nodes, and
+## skills ask `is_skill_unlocked` each time they would fire, so unlearning takes them away.
 
 signal changed
 
@@ -19,6 +20,13 @@ var _learned: Dictionary[String, bool] = {}
 
 func is_learned(id: String) -> bool:
 	return _learned.has(id)
+
+
+## Whether the player's skill node named `action_name` (e.g. "FlameUppercut") may be used:
+## its Ember Tree skill node is learned. Actions no skill node names are always usable.
+func is_skill_unlocked(action_name: String) -> bool:
+	var node := EmberTreeData.skill_node_for(action_name)
+	return node == null or is_learned(node.id)
 
 
 func learned_ids() -> Array[String]:

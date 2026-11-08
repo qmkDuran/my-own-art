@@ -5,8 +5,8 @@ extends StaticBody2D
 ## It's in the "enemies" group with a child "Health", so jabs, skills and click-to-attack
 ## treat it like any enemy. On a hit it flashes, leans away from the punch and wobbles back
 ## upright (its post stays planted). Its damage numbers come from the level's DamageNumbers,
-## like every enemy's. Under it, the total damage of the current combo (crits included) adds
-## up while hits keep coming.
+## like every enemy's. Under it, the total damage of the current combo (crits and burn ticks
+## included) adds up while hits keep coming. Burn ticks count but don't flash or lean it.
 ## After `calm_reset_time` seconds without a hit, its health refills and the total resets.
 ##
 ## It has no creature_info() and no LightDrop, so it never shows a discovery card,
@@ -42,6 +42,7 @@ var _lean_speed: float = 0.0
 
 
 func _ready() -> void:
+	health.hit_taken.connect(_on_hit_taken)
 	health.damaged.connect(_on_damaged)
 	_seconds_since_hit = calm_reset_time
 
@@ -66,16 +67,20 @@ func _draw() -> void:
 
 # --- Getting hit ----------------------------------------------------------
 
-## Health emits `damaged` before it checks for death, so topping it up here
-## means it can never reach zero and never dies.
-func _on_damaged(amount: int, source_position: Vector2) -> void:
+## Every hit and burn tick. Health emits `hit_taken` before it checks for death, so
+## topping it up here means it can never reach zero and never dies.
+func _on_hit_taken(amount: int, _is_critical: bool, _damage_type: Health.DamageType) -> void:
 	if health.current_health <= 0:
 		health.current_health = health.max_health
-	hit_flash.flash()
-	_lean_away(global_position.x - source_position.x, hit_lean_speed)
 	_seconds_since_hit = 0.0
 	_combo_total += amount
 	queue_redraw()
+
+
+## Only real hits (not burn ticks) make it flash and lean.
+func _on_damaged(_amount: int, source_position: Vector2) -> void:
+	hit_flash.flash()
+	_lean_away(global_position.x - source_position.x, hit_lean_speed)
 
 
 ## Leans away from the side the hit came from (`away_x` > 0 means toward the right).

@@ -4,6 +4,8 @@ extends Resource
 ##
 ## Content only, so the HUD and the Ember Tree can show it without knowing how it plays.
 ## What the skill does when it fires lives in its SkillAction node (e.g. FlameUppercut).
+## What it does in words lives on its Ember Tree node (EmberTreeData), shown by the tree and
+## the HUD tooltip alike.
 
 @export var display_name: String = ""
 ## 16×16 pixel-art icon, shown in the skill bar.
@@ -12,4 +14,3 @@ extends Resource
 @export var heat_cost: int = 0
 ## Seconds after firing before the skill can fire again.
 @export var cooldown: float = 0.0
-@export_multiline var description: String = ""

@@ -7,9 +7,10 @@ extends CharacterBody2D
 ##   MouseOrders     -> click to move, click an enemy to attack it
 ##   Movement        -> how fast to move normally
 ##   Facing          -> which way to look
-##   MeleeAttack     -> the jab combo: jab, jab, then the Spinning Hook
+##   MeleeAttack     -> the jab combo: jab, jab, then the Spinning Hook (once learned)
 ##   SpinningHook    -> the combo's finisher: a spin that hits all around
 ##   CritRoll        -> critical hits (chance and multiplier) for every attack
+##   SearingJab      -> once learned, jabs and the spin set enemies Burning
 ##   ComboPips       -> three tiny pips under the feet showing the combo chain
 ##   Dodge           -> the leap out of danger
 ##   AfterimageTrail -> fading copies during a dodge
@@ -19,7 +20,7 @@ extends CharacterBody2D
 ##   HitFlash        -> flashes white when hit
 ##   FistEmbers      -> sparks rising from the fists
 ##   TrainerAid      -> F: the trainer throws a healing tonic (limited charges)
-##   SkillBar        -> Q/W/E/R: skills that spend Heat (e.g. E = Flame Uppercut)
+##   SkillBar        -> Q/W/E/R: skills that spend Heat (e.g. E = Flame Uppercut), once learned
 ##   ScreenShake     -> shakes the camera on big hits
 ##   LevelUpBoost    -> the small health boost and fanfare on each level up
 ##   Sprite          -> what to show

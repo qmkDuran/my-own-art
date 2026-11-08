@@ -3,7 +3,7 @@ extends RefCounted
 ## A tiny 5-pixel-tall font for the HUD, drawn pixel by pixel so it stays crisp at any scale.
 ## Has the digits, '/', '.', brackets, a space, every capital A-Z (for LV, N for north, the
 ## training dummy's combo total, the debug banner, and whatever keys the skills and Trainer's
-## Aid are bound to), and '!' for critical-hit numbers.
+## Aid are bound to), '!' for critical-hit numbers and '+' (the debug banner's "+5").
 ## Glyphs can be 1 to 5 pixels wide.
 
 const GLYPH_HEIGHT := 5
@@ -51,6 +51,7 @@ const GLYPHS := {
 	"Z": ["###", "..#", ".#.", "#..", "###"],
 	".": [".", ".", ".", ".", "#"],
 	"!": ["#", "#", "#", ".", "#"],
+	"+": ["...", ".#.", "###", ".#.", "..."],
 	"(": [".#", "#.", "#.", "#.", ".#"],
 	")": ["#.", ".#", ".#", ".#", "#."],
 }

@@ -6,6 +6,7 @@ extends Node
 ## with a child "Health") gets numbers as soon as it appears, including ones summoned later,
 ## so new enemies need nothing extra. The player is not in the group; its heart shows its hits.
 ## Numbers are added to the world, not the enemy, so they finish rising after a kill.
+## Burn ticks get orange numbers (see DamageNumber).
 
 ## Enemies in this group get damage numbers.
 @export var target_group: String = "enemies"
@@ -39,7 +40,7 @@ func _watch(health: Health) -> void:
 		health.hit_taken.connect(on_hit)
 
 
-func _on_enemy_hit(amount: int, is_critical: bool, enemy: Node2D) -> void:
+func _on_enemy_hit(amount: int, is_critical: bool, damage_type: Health.DamageType, enemy: Node2D) -> void:
 	var world := enemy.get_parent()
 	if world == null:
 		return
@@ -48,7 +49,7 @@ func _on_enemy_hit(amount: int, is_critical: bool, enemy: Node2D) -> void:
 	world.add_child(number)
 	var spread := randi_range(-horizontal_spread, horizontal_spread)
 	number.global_position = (enemy.global_position + Vector2(spread, -_number_height(enemy))).round()
-	number.pop(amount, is_critical)
+	number.pop(amount, is_critical, damage_type)
 
 
 ## How far above the enemy's feet its numbers start: just over the top of its sprite.

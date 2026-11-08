@@ -3,6 +3,9 @@ extends Control
 ## A small card above a skill slot while the mouse hovers it: the skill's name, its Heat cost
 ## and cooldown, and what it does. A HudCard: the Ember Tree's card style and Monogram font,
 ## laid out at twice the game's resolution (sizes below are in card pixels) and shown at half size.
+## What it does is the Ember Tree's own facts text (EmberTreeSkillFacts), so the two never
+## disagree: its last line (the cost, e.g. "Costs 3 Heat ∙ 2s cooldown") goes in orange
+## under the name, the rest below the divider.
 
 const FONT_SIZE := EmberTreeFonts.TEXT_SIZE
 ## Width the description wraps at, in card pixels (96 game pixels).
@@ -25,16 +28,21 @@ func _ready() -> void:
 	hide_tooltip()
 
 
-## Shows the card for a skill (any Resource with display_name, heat_cost, cooldown, description),
-## just above the slot's rectangle (in screen coordinates).
-func show_for(skill: Resource, slot_rect: Rect2) -> void:
+## Shows the card for a skill (any Resource with display_name, heat_cost, cooldown) and its
+## Ember Tree facts, just above the slot's rectangle (in screen coordinates). Without facts
+## the card shows just the name, Heat cost and cooldown.
+func show_for(skill: Resource, facts: String, slot_rect: Rect2) -> void:
 	if skill == null:
 		hide_tooltip()
 		return
 	_name.text = str(_property(skill, "display_name", "Skill"))
-	var cooldown := String.num(float(_property(skill, "cooldown", 0.0)))
-	_numbers.text = "HEAT %s  ∙  %sS COOLDOWN" % [_property(skill, "heat_cost", 0), cooldown]
-	_description.text = str(_property(skill, "description", ""))
+	var lines := facts.strip_edges().split("\n")
+	if lines.size() > 1:
+		_numbers.text = lines[lines.size() - 1]
+		_description.text = "\n".join(lines.slice(0, lines.size() - 1))
+	else:
+		_numbers.text = _cost_line(skill)
+		_description.text = facts.strip_edges()
 	_description.visible = not _description.text.is_empty()
 	_divider.visible = _description.visible
 	_card.reset_size()
@@ -74,6 +82,11 @@ func _build_card() -> void:
 		column.add_child(part)
 	_card.add_child(column)
 	add_child(_card)
+
+
+static func _cost_line(skill: Resource) -> String:
+	var cooldown := String.num(float(_property(skill, "cooldown", 0.0)))
+	return "Costs %s Heat  ∙  %ss cooldown" % [_property(skill, "heat_cost", 0), cooldown]
 
 
 static func _property(skill: Resource, property: String, fallback: Variant) -> Variant:

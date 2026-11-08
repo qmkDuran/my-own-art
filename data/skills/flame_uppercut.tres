@@ -9,4 +9,3 @@ display_name = "Flame Uppercut"
 icon = ExtResource("2_icon")
 heat_cost = 3
 cooldown = 2.0
-description = "A rising punch that bursts into flame, hitting everything in a small arc in front of you and throwing it back."

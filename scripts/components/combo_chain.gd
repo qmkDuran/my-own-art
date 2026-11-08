@@ -24,6 +24,15 @@ func _init(chain_length: int, chain_reset_time: float) -> void:
 	reset_time = chain_reset_time
 
 
+## Changes how many attacks make the chain (e.g. once the finisher is learned or
+## unlearned). A step past the new end starts the chain over.
+func resize(chain_length: int) -> void:
+	length = maxi(1, chain_length)
+	if _next_step >= length:
+		_next_step = 0
+	_landed_steps = mini(_landed_steps, length)
+
+
 ## Starts the next attack of the chain and returns its step (0 = the first attack).
 func begin_attack() -> int:
 	_current_step = _next_step

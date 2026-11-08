@@ -3,7 +3,8 @@ extends Node
 ## The creature's skill slots (Q, W, E, R): reads the keys, checks Heat and cooldowns,
 ## then hands the move to the slot's SkillAction.
 ##
-## Each SkillAction child says which slot it sits in. Slots without one are empty.
+## Each SkillAction child says which slot it sits in. Slots without one are empty, and so
+## are slots whose skill isn't learned in the Ember Tree yet (see EmberTree.is_skill_unlocked).
 ## The creature only asks "is a skill casting?" (to stop walking and jabbing) and
 ## listens to `skill_used` to face the aim and play the cast animation.
 
@@ -51,7 +52,12 @@ func _physics_process(delta: float) -> void:
 
 # --- Slots (the HUD reads these) --------------------------------------------
 
-## The skill in a slot, or null when the slot is empty.
+## The action in a slot, or null when the slot is empty (or its skill isn't learned).
+func action_in_slot(slot_index: int) -> SkillAction:
+	return _action_in_slot(slot_index)
+
+
+## The skill in a slot, or null when the slot is empty (or its skill isn't learned).
 func skill_in_slot(slot_index: int) -> Skill:
 	var action := _action_in_slot(slot_index)
 	return action.skill if action != null else null
@@ -140,8 +146,14 @@ func _put_in_slot(action: SkillAction) -> void:
 	_actions[action.slot_index] = action
 
 
+## Null for an empty slot and for a skill not learned in the Ember Tree.
 func _action_in_slot(slot_index: int) -> SkillAction:
-	return _actions[slot_index] if _is_valid_slot(slot_index) else null
+	if not _is_valid_slot(slot_index):
+		return null
+	var action := _actions[slot_index]
+	if action == null or not EmberTree.is_skill_unlocked(action.name):
+		return null
+	return action
 
 
 func _is_valid_slot(slot_index: int) -> bool:

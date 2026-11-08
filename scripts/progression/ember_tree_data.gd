@@ -30,8 +30,9 @@ const SPREAD_FAR := 15.0
 const NODE_ROWS := [
 	# --- Inferno: set things on fire and let it spread -------------------------
 	{"id": "searing_jab", "branch": "inferno", "stage": 1, "tier": 0, "kind": Kind.SKILL, "icon": "flame",
+		"skill_action": "SearingJab",
 		"title": "Searing Jab", "text": "Your fists catch fire.",
-		"facts": "Every jab that lands sets the enemy burning: 1 damage per second for 3s."},
+		"facts": "Every jab and Spinning Hook that lands sets the enemy burning: {burn_damage} damage per second for {burn_duration}s.\nNo Heat cost"},
 	{"id": "hot_knuckles", "branch": "inferno", "stage": 1, "tier": 1, "angle": -SPREAD_NEAR, "kind": Kind.STAT, "icon": "fist",
 		"requires": ["searing_jab"], "stats": {EmberTreeEffects.JAB_DAMAGE: 1},
 		"title": "Hot Knuckles", "text": "Heavier fists."},
@@ -40,9 +41,9 @@ const NODE_ROWS := [
 		"title": "Flame Uppercut", "text": "A rising punch that bursts into flame.",
 		"facts": "{damage} damage to every enemy in a {arc_degrees}° arc in front, {reach}px reach, and knocks them back.\nCosts {heat_cost} Heat  ∙  {cooldown}s cooldown"},
 	{"id": "kindling", "branch": "inferno", "stage": 1, "tier": 2, "angle": -SPREAD_FAR, "kind": Kind.STAT, "icon": "spark",
-		"requires": ["hot_knuckles"],
+		"requires": ["hot_knuckles"], "skill_action": "SearingJab",
 		"title": "Kindling", "text": "Slow-burning coals.",
-		"facts": "Burns last twice as long: 3s → 6s."},
+		"facts": "Burns last twice as long: {burn_duration}s → {kindled_duration}s."},
 	{"id": "wildfire", "branch": "inferno", "stage": 1, "tier": 2, "angle": SPREAD_FAR, "kind": Kind.UPGRADE, "icon": "wave",
 		"requires": ["flame_uppercut"],
 		"title": "Wildfire", "text": "The fire looks for more fuel.",
@@ -137,6 +138,16 @@ static func all_nodes() -> Array[EmberTreeNode]:
 static func find(id: String) -> EmberTreeNode:
 	_build_once()
 	return _by_id.get(id)
+
+
+## The skill node played by the player's node named `action_name` (e.g. "FlameUppercut"),
+## or null when no skill node names it. Upgrades and stat nodes that only borrow a
+## skill's numbers for their facts (e.g. Kindling) don't count.
+static func skill_node_for(action_name: String) -> EmberTreeNode:
+	for node in all_nodes():
+		if node.kind == Kind.SKILL and node.skill_action == action_name:
+			return node
+	return null
 
 
 static func branch_title(branch: String) -> String:
