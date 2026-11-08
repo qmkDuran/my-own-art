@@ -91,15 +91,20 @@ var _has_released_shove: bool = false
 var _has_glinted: bool = false
 ## Untyped on purpose: it can briefly hold creatures that have already been freed.
 var _summoned_creatures: Array = []
+## Name, element and portrait of the creature he summons (read from the creature scene).
+var _creature_info: Dictionary = {}
+var _has_called_out: bool = false
 
 @onready var health: Health = $Health
 @onready var sprite: SingleViewAnimator = $Sprite
 @onready var hit_flash: HitFlash = $HitFlash
 @onready var charge_particles: ChargeParticles = $ChargeParticles
+@onready var speech_bubble: SpeechBubble = $SpeechBubble
 @onready var collision_shape: CollisionShape2D = $CollisionShape
 
 
 func _ready() -> void:
+	_read_creature_info()
 	health.damaged.connect(_on_damaged)
 	health.died.connect(_on_died)
 	_seconds_until_summon = first_summon_delay
@@ -251,6 +256,10 @@ func _is_time_to_summon() -> bool:
 
 
 func _start_summon() -> void:
+	# His first summon of the fight comes with a shout.
+	if not _has_called_out and not _creature_info.is_empty():
+		_has_called_out = true
+		speech_bubble.say("Go, %s!" % _creature_info["name"])
 	sprite.replay_animation("summon")
 	_enter(State.SUMMONING, summon_duration)
 
@@ -264,6 +273,9 @@ func _spawn_creatures() -> void:
 		get_parent().add_child(creature)
 		creature.global_position = global_position + _random_spot_nearby()
 		_summoned_creatures.append(creature)
+	# The first time the player ever sees this species, the HUD announces it.
+	if not _creature_info.is_empty():
+		CreatureLog.discover(_creature_info)
 
 
 func _random_spot_nearby() -> Vector2:
@@ -280,6 +292,15 @@ func _creatures_alive() -> int:
 			still_alive.append(creature)
 	_summoned_creatures = still_alive
 	return _summoned_creatures.size()
+
+
+func _read_creature_info() -> void:
+	if creature_scene == null:
+		return
+	var probe := creature_scene.instantiate()
+	if probe.has_method("creature_info"):
+		_creature_info = probe.creature_info()
+	probe.free()
 
 
 # --- Keeping distance -----------------------------------------------------

@@ -16,6 +16,13 @@ enum State { RESTING, HOPPING, PUFFING, LASHING, RECOVERING, DYING }
 ## Height of the player's body above their feet, used to aim and hit with the tongue.
 const PLAYER_BODY_HEIGHT := -6.0
 
+@export_group("Creature info")
+## Shown when the player first meets this species, and in the Creature Log.
+@export var species_id: String = "toxlop"
+@export var display_name: String = "Toxlop"
+@export var element: String = "Toxic"
+@export var portrait: Texture2D
+
 @export_group("Hopping")
 ## Farthest a single hop goes, in pixels.
 @export var hop_distance: float = 22.0
@@ -221,6 +228,10 @@ func _spawn_death_splat() -> void:
 	get_parent().add_child(splat)
 	splat.global_position = global_position
 	splat.play()
+
+
+func creature_info() -> Dictionary:
+	return {"species": species_id, "name": display_name, "element": element, "portrait": portrait}
 
 
 # --- Helpers --------------------------------------------------------------

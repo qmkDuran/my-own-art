@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/health_heart.gd" id="1_heart"]
+[ext_resource type="Script" path="res://scripts/ui/discovery_card.gd" id="2_card"]
 
 [node name="Hud" type="CanvasLayer"]
 
@@ -18,3 +19,13 @@ offset_bottom = -3.0
 grow_horizontal = 2
 grow_vertical = 0
 script = ExtResource("1_heart")
+
+[node name="DiscoveryCard" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("2_card")
