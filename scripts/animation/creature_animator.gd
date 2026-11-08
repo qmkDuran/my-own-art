@@ -10,11 +10,19 @@ const FALLBACK_ACTION := "idle"
 const FALLBACK_VIEW := "side"
 
 ## Which sprite-sheet view is used for each facing direction.
-## Looking left reuses the side view, flipped.
+## Looking left reuses the right-facing views, flipped.
 const VIEW_FOR_DIRECTION := {
 	Facing.Direction.DOWN: "front",
-	Facing.Direction.UP: "back",
+	Facing.Direction.DOWN_SIDE: "frontdiag",
 	Facing.Direction.SIDE: "side",
+	Facing.Direction.UP_SIDE: "backdiag",
+	Facing.Direction.UP: "back",
+}
+
+## If a view isn't drawn yet (e.g. a new diagonal), use the closest one that is.
+const STAND_IN_FOR_VIEW := {
+	"frontdiag": "side",
+	"backdiag": "side",
 }
 
 ## Seconds each frame is shown, in order.
@@ -90,11 +98,13 @@ func show_animation(action: String, facing: Facing) -> void:
 		action = "blink"
 
 	var view: String = VIEW_FOR_DIRECTION[facing.direction]
-	flip_h = facing.direction == Facing.Direction.SIDE and facing.is_looking_left
+	flip_h = facing.is_looking_left and facing.direction != Facing.Direction.DOWN and facing.direction != Facing.Direction.UP
 
 	var animation_to_play := _first_drawn_animation([
 		SpriteSheetLoader.animation_name_for(action, view),
 		SpriteSheetLoader.animation_name_for(STAND_IN_FOR_ACTION.get(action, action), view),
+		SpriteSheetLoader.animation_name_for(action, STAND_IN_FOR_VIEW.get(view, view)),
+		SpriteSheetLoader.animation_name_for(STAND_IN_FOR_ACTION.get(action, action), STAND_IN_FOR_VIEW.get(view, view)),
 		SpriteSheetLoader.animation_name_for(FALLBACK_ACTION, view),
 		SpriteSheetLoader.animation_name_for(FALLBACK_ACTION, FALLBACK_VIEW),
 	])

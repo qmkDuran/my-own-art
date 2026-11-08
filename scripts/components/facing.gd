@@ -1,39 +1,43 @@
 class_name Facing
 extends Node
-## Remembers which way the creature is looking.
+## Remembers which way the creature is looking, in 8 directions.
 ##
+## There are 5 drawn views: front, front-diagonal, side, back-diagonal and back.
+## Left-facing directions reuse the right-facing views, flipped.
 ## The creature keeps facing its last direction after it stops moving,
 ## so it doesn't snap back to looking down every time you let go.
 
-enum Direction { DOWN, UP, SIDE }
+enum Direction { DOWN, DOWN_SIDE, SIDE, UP_SIDE, UP }
 
 var direction: Direction = Direction.DOWN
 var is_looking_left: bool = false
 
+## The exact last direction looked in (any angle), e.g. for dodging "forward".
+var _look_vector: Vector2 = Vector2.DOWN
 
-func look_toward(move_direction: Vector2) -> void:
-	if move_direction == Vector2.ZERO:
+
+func look_toward(look_direction: Vector2) -> void:
+	if look_direction == Vector2.ZERO:
 		return
-
-	if _is_mostly_horizontal(move_direction):
-		direction = Direction.SIDE
-		is_looking_left = move_direction.x < 0.0
-	elif move_direction.y > 0.0:
-		direction = Direction.DOWN
-	else:
-		direction = Direction.UP
+	_look_vector = look_direction.normalized()
+	is_looking_left = _look_vector.x < -0.01
+	direction = _direction_for(_look_vector)
 
 
-## The facing as a unit vector, e.g. Vector2.LEFT when looking left.
+## The facing as a unit vector (the exact angle last looked toward).
 func as_vector() -> Vector2:
-	match direction:
-		Direction.DOWN:
-			return Vector2.DOWN
-		Direction.UP:
-			return Vector2.UP
-		_:
-			return Vector2.LEFT if is_looking_left else Vector2.RIGHT
+	return _look_vector
 
 
-func _is_mostly_horizontal(move_direction: Vector2) -> bool:
-	return absf(move_direction.x) >= absf(move_direction.y)
+## Splits the circle into 8 slices of 45°, each centred on a compass direction.
+func _direction_for(look: Vector2) -> Direction:
+	var degrees_below_horizontal := rad_to_deg(atan2(look.y, absf(look.x)))  # -90 (up) .. 90 (down)
+	if degrees_below_horizontal > 67.5:
+		return Direction.DOWN
+	if degrees_below_horizontal > 22.5:
+		return Direction.DOWN_SIDE
+	if degrees_below_horizontal > -22.5:
+		return Direction.SIDE
+	if degrees_below_horizontal > -67.5:
+		return Direction.UP_SIDE
+	return Direction.UP

@@ -22,8 +22,23 @@ const BODY_HEIGHT := -6.0
 ## How fast a push (e.g. a Warden's shove) slows down, in pixels per second squared.
 const PUSH_FRICTION := 600.0
 
+## How close (feet to feet, pixels) the creature walks to a clicked enemy before jabbing.
+const ATTACK_APPROACH_DISTANCE := 16.0
+## How close to a clicked spot counts as "arrived", in pixels.
+const ARRIVE_DISTANCE := 3.0
+## How close the cursor must be to an enemy's body for a click to target it, in pixels.
+const CLICK_TARGET_RADIUS := 12.0
+
 ## Seconds left during which a push controls movement instead of the player.
 var _push_seconds_left: float = 0.0
+## Where a left-click told the creature to walk.
+var _destination: Vector2 = Vector2.ZERO
+var _has_destination: bool = false
+## The enemy a left-click told the creature to attack (walk up to it, then jab).
+var _attack_target: Node2D = null
+
+## Effect shown where you click to move (a small ring).
+@export var click_marker_scene: PackedScene
 
 @onready var player_input: PlayerInput = $PlayerInput
 @onready var movement: Movement = $Movement
@@ -45,6 +60,7 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	_push_seconds_left = maxf(0.0, _push_seconds_left - delta)
+	_read_mouse_orders()
 	_start_requested_action()
 	# Leaping out of the way means attacks pass through you.
 	health.is_invulnerable = dodge.is_dodging
@@ -58,18 +74,94 @@ func _physics_process(delta: float) -> void:
 	animator.lift(dodge.current_height())
 
 
+# --- Mouse orders (click to move / click to attack) -----------------------
+
+## Left-click on the ground walks there (hold to keep following the cursor);
+## left-click on an enemy walks up to it and jabs (hold to keep jabbing).
+## Using WASD cancels mouse orders.
+func _read_mouse_orders() -> void:
+	if player_input.get_move_direction() != Vector2.ZERO:
+		_clear_mouse_orders()
+		return
+
+	if player_input.just_clicked_to_move():
+		var enemy := _enemy_under_cursor()
+		if enemy != null:
+			_clear_mouse_orders()
+			_attack_target = enemy
+		else:
+			_walk_to(player_input.get_aim_point())
+			_show_click_marker(_destination)
+	elif player_input.is_holding_move_click() and _attack_target == null:
+		_walk_to(player_input.get_aim_point())
+
+	if _attack_target != null and not _is_valid_target(_attack_target):
+		_attack_target = null
+
+
+func _walk_to(point: Vector2) -> void:
+	_attack_target = null
+	_destination = point
+	_has_destination = true
+
+
+func _clear_mouse_orders() -> void:
+	_has_destination = false
+	_attack_target = null
+
+
+func _enemy_under_cursor() -> Node2D:
+	var cursor := player_input.get_aim_point()
+	for enemy: Node2D in get_tree().get_nodes_in_group("enemies"):
+		if cursor.distance_to(enemy.global_position + Vector2(0, BODY_HEIGHT)) <= CLICK_TARGET_RADIUS:
+			return enemy
+	return null
+
+
+func _is_valid_target(enemy: Node2D) -> bool:
+	return is_instance_valid(enemy) and enemy.is_in_group("enemies")
+
+
+func _is_in_reach_of(enemy: Node2D) -> bool:
+	return global_position.distance_to(enemy.global_position) <= ATTACK_APPROACH_DISTANCE
+
+
+## A small ring where you clicked, so you know the order was received.
+func _show_click_marker(point: Vector2) -> void:
+	if click_marker_scene == null:
+		return
+	var marker: Shockwave = click_marker_scene.instantiate()
+	get_parent().add_child(marker)
+	marker.global_position = point
+	marker.play(6.0, 0.25, Color(0.906, 0.835, 0.702, 0.8))
+
+
+# --- Actions --------------------------------------------------------------
+
 ## One action at a time, with one exception: a dodge can cancel a jab mid-punch,
 ## so the player can always escape (like Path of Exile 2's dodge roll).
 func _start_requested_action() -> void:
 	if player_input.wants_to_dodge() and dodge.is_ready():
 		melee_attack.cancel()
 		_start_dodge()
-	elif not _is_busy() and player_input.wants_to_attack() and melee_attack.is_ready():
-		_start_jab()
+	elif _is_busy() or not melee_attack.is_ready():
+		return
+	elif player_input.wants_to_attack():
+		_start_jab(_aim_direction())
+	elif _attack_target != null and _is_in_reach_of(_attack_target):
+		_start_jab(_direction_to(_attack_target))
+		# A single click is a single jab; holding the button keeps jabbing.
+		if not player_input.is_holding_move_click():
+			_attack_target = null
 
 
-func _start_jab() -> void:
-	var aim_direction := _aim_direction()
+func _direction_to(enemy: Node2D) -> Vector2:
+	var to_enemy := enemy.global_position - global_position
+	return to_enemy.normalized() if to_enemy.length() > 0.1 else facing.as_vector()
+
+
+func _start_jab(aim_direction: Vector2) -> void:
+	_has_destination = false
 	facing.look_toward(aim_direction)
 	melee_attack.start(aim_direction)
 	animator.replay_animation(melee_attack.current_animation, facing)
@@ -94,12 +186,13 @@ func _start_dodge() -> void:
 	speed_lines.play_for(dodge.dodge_duration, dodge_direction)
 
 
-## Dodge where the player is steering, or straight ahead if they aren't.
+## Dodge where the player is steering with WASD; otherwise toward the cursor.
 func _dodge_direction() -> Vector2:
 	var steering := player_input.get_move_direction()
-	if steering == Vector2.ZERO:
-		return facing.as_vector()
-	return steering
+	if steering != Vector2.ZERO:
+		return steering
+	_clear_mouse_orders()
+	return _aim_direction()
 
 
 func _next_velocity(move_direction: Vector2, delta: float) -> Vector2:
@@ -114,10 +207,22 @@ func _next_velocity(move_direction: Vector2, delta: float) -> Vector2:
 
 
 ## The creature plants its feet while punching and can't steer mid-dodge.
+## Otherwise WASD steers, or it walks toward a clicked enemy or spot.
 func _chosen_move_direction() -> Vector2:
 	if _is_busy():
 		return Vector2.ZERO
-	return player_input.get_move_direction()
+	var steering := player_input.get_move_direction()
+	if steering != Vector2.ZERO:
+		return steering
+	if _attack_target != null:
+		return Vector2.ZERO if _is_in_reach_of(_attack_target) else _direction_to(_attack_target)
+	if _has_destination:
+		var to_destination := _destination - global_position
+		if to_destination.length() <= ARRIVE_DISTANCE:
+			_has_destination = false
+			return Vector2.ZERO
+		return to_destination.normalized()
+	return Vector2.ZERO
 
 
 func _is_busy() -> bool:
