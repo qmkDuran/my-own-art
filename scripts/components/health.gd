@@ -8,6 +8,7 @@ extends Node
 signal damaged(amount: int, source_position: Vector2)
 signal died
 signal healed(amount: int)
+signal max_health_changed(new_max_health: int)
 
 @export var max_health: int = 3
 
@@ -36,6 +37,16 @@ func heal(amount: int) -> void:
 		return
 	current_health = mini(max_health, current_health + amount)
 	healed.emit(amount)
+
+
+## Raises (or, with a negative amount, lowers) max health, e.g. from an Ember Tree stat.
+## A raise also fills the new room, so the extra hits count straight away; a drop never kills.
+func change_max_health(amount: int) -> void:
+	max_health = maxi(1, max_health + amount)
+	current_health = clampi(current_health + maxi(0, amount), 1, max_health)
+	max_health_changed.emit(max_health)
+	# Displays that only redraw on heals (the HUD heart) still pick up the new numbers.
+	healed.emit(0)
 
 
 func is_dead() -> bool:

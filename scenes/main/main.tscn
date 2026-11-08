@@ -1,9 +1,11 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/creatures/emberoo/emberoo.tscn" id="1_emberoo"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/handler/handler.tscn" id="3_handler"]
 [ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="4_hud"]
 [ext_resource type="PackedScene" path="res://scenes/companions/trainer.tscn" id="5_trainer"]
+[ext_resource type="PackedScene" path="res://scenes/ui/ember_tree.tscn" id="6_ember_tree"]
+[ext_resource type="Script" path="res://scripts/progression/ember_tree_effects.gd" id="7_ember_effects"]
 
 [sub_resource type="Environment" id="Environment_glow"]
 background_mode = 3
@@ -71,3 +73,8 @@ position = Vector2(-18, -16)
 position_smoothing_enabled = true
 
 [node name="Hud" parent="." instance=ExtResource("4_hud")]
+
+[node name="EmberTreeEffects" type="Node" parent="."]
+script = ExtResource("7_ember_effects")
+
+[node name="EmberTreeScreen" parent="." instance=ExtResource("6_ember_tree")]

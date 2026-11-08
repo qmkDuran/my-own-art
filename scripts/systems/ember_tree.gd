@@ -1,0 +1,102 @@
+extends Node
+## Which Ember Tree nodes the player has learned (registered as the "EmberTree" autoload).
+##
+## Holds the rules: a node can be learned when its stage is open, a node leading to it
+## is learned (or it grows from the centre) and there is a skill point to spend.
+## Respec is free: unlearning gives the point back. Kept in an autoload so it survives
+## the level restarting; EmberTreeEffects listens to `changed` to apply stat nodes.
+
+signal changed
+
+## Stage 1 is open from the start; later rings open as Emberoo evolves.
+const FIRST_STAGE := 1
+
+## Highest evolution stage reached. Nothing raises it yet (evolution comes later).
+var unlocked_stage: int = FIRST_STAGE
+
+var _learned: Dictionary[String, bool] = {}
+
+
+func is_learned(id: String) -> bool:
+	return _learned.has(id)
+
+
+func learned_ids() -> Array[String]:
+	return _learned.keys()
+
+
+func is_stage_open(stage: int) -> bool:
+	return stage <= unlocked_stage
+
+
+## True when the node's stage is open and a path leads to it, whether or not a point is free.
+func is_reachable(id: String) -> bool:
+	var node := EmberTreeData.find(id)
+	if node == null or not is_stage_open(node.stage):
+		return false
+	if node.requires.is_empty():
+		return true
+	for required_id in node.requires:
+		if is_learned(required_id):
+			return true
+	return false
+
+
+func can_learn(id: String) -> bool:
+	return not is_learned(id) and is_reachable(id) and Progression.skill_points > 0
+
+
+## Learns a node, spending one skill point. Returns false if it can't be learned.
+func learn(id: String) -> bool:
+	if not can_learn(id) or not Progression.spend_skill_point():
+		return false
+	_learned[id] = true
+	changed.emit()
+	return true
+
+
+## A node can be put out only if nothing learned would be left cut off from the centre.
+func can_unlearn(id: String) -> bool:
+	if not is_learned(id):
+		return false
+	for dependent_id in _learned_nodes_that_need(id):
+		if not _has_other_learned_path(dependent_id, id):
+			return false
+	return true
+
+
+## Unlearns a node and refunds its point (free respec). Returns false if it can't.
+func unlearn(id: String) -> bool:
+	if not can_unlearn(id):
+		return false
+	_learned.erase(id)
+	Progression.refund_skill_point()
+	changed.emit()
+	return true
+
+
+## Unlearns everything and refunds every point.
+func reset() -> void:
+	if _learned.is_empty():
+		return
+	for _id in _learned:
+		Progression.refund_skill_point()
+	_learned.clear()
+	changed.emit()
+
+
+func _learned_nodes_that_need(id: String) -> Array[String]:
+	var dependents: Array[String] = []
+	for learned_id in _learned:
+		if EmberTreeData.find(learned_id).requires.has(id):
+			dependents.append(learned_id)
+	return dependents
+
+
+## Whether `id` still has a learned node leading to it once `removed_id` is gone.
+## Every learned node is itself connected, so checking one step back is enough.
+func _has_other_learned_path(id: String, removed_id: String) -> bool:
+	for required_id in EmberTreeData.find(id).requires:
+		if required_id != removed_id and is_learned(required_id):
+			return true
+	return false
