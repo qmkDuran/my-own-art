@@ -27,3 +27,7 @@ Good ideas that don't belong in the current milestone. Check here when a milesto
 
 ## Later systems
 - Capture = new class: surviving creatures freely join you as new playable classes (after 3–4 classes exist).
+
+## Controls
+- **Key rebinding:** a Controls screen where players remap every action (saved to user settings). Defaults stay as they are now. The HUD key labels already read from the input map, so they'll follow.
+- **Smart move-attack:** while holding left-click to move, auto-jab an enemy that blocks the path within reach (offered, not yet approved).
