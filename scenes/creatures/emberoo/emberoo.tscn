@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3]
+[gd_scene load_steps=14 format=3]
 
 [ext_resource type="Script" path="res://scripts/creatures/creature.gd" id="1_creature"]
 [ext_resource type="Script" path="res://scripts/animation/creature_animator.gd" id="2_animator"]
@@ -10,6 +10,7 @@
 [ext_resource type="Script" path="res://scripts/components/dodge.gd" id="8_dodge"]
 [ext_resource type="Script" path="res://scripts/effects/afterimage_trail.gd" id="9_trail"]
 [ext_resource type="Script" path="res://scripts/effects/speed_trail.gd" id="10_speed"]
+[ext_resource type="Script" path="res://scripts/effects/speed_lines.gd" id="11_lines"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_body"]
 radius = 5.0
@@ -63,4 +64,8 @@ gradient = SubResource("Gradient_streak")
 begin_cap_mode = 2
 end_cap_mode = 2
 script = ExtResource("10_speed")
+target = NodePath("..")
+
+[node name="SpeedLines" type="Node" parent="." node_paths=PackedStringArray("target")]
+script = ExtResource("11_lines")
 target = NodePath("..")

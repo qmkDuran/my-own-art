@@ -10,6 +10,7 @@ extends CharacterBody2D
 ##   Dodge           -> the leap out of danger
 ##   AfterimageTrail -> fading copies during a dodge
 ##   SpeedTrail      -> a streak behind a dodge
+##   SpeedLines      -> anime-style lines behind a dodge
 ##   Sprite          -> what to show
 
 ## Below this speed (pixels per second) the creature counts as standing still.
@@ -22,6 +23,7 @@ const STANDING_STILL_SPEED := 1.0
 @onready var dodge: Dodge = $Dodge
 @onready var afterimage_trail: AfterimageTrail = $AfterimageTrail
 @onready var speed_trail: SpeedTrail = $SpeedTrail
+@onready var speed_lines: SpeedLines = $SpeedLines
 @onready var animator: CreatureAnimator = $Sprite
 
 
@@ -60,6 +62,7 @@ func _start_dodge() -> void:
 	animator.replay_animation("hop", facing)
 	afterimage_trail.play_for(dodge.dodge_duration)
 	speed_trail.play_for(dodge.dodge_duration)
+	speed_lines.play_for(dodge.dodge_duration, dodge_direction)
 
 
 ## Dodge where the player is steering, or straight ahead if they aren't.
