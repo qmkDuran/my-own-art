@@ -8,11 +8,16 @@ extends RefCounted
 
 const Kind := EmberTreeNode.Kind
 
-## Each branch's direction from the centre, in degrees (0 = right, -90 = up).
+## Each branch: its name, what it is about in a few words (`theme`), how it plays
+## (`playstyle`, shown when the player hovers its name) and its direction from the
+## centre, in degrees (0 = right, -90 = up).
 const BRANCHES := {
-	"inferno": {"title": "Inferno", "theme": "Burn", "angle": -90.0},
-	"flurry": {"title": "Flurry", "theme": "Speed and combos", "angle": 30.0},
-	"bruiser": {"title": "Bruiser", "theme": "Tough", "angle": 150.0},
+	"inferno": {"title": "Inferno", "theme": "Burn and fire damage", "angle": -90.0,
+		"playstyle": "Set foes alight and let the fire do the work. Burns keep hurting after you move on, and spread through a crowd."},
+	"flurry": {"title": "Flurry", "theme": "Speed and combos", "angle": 30.0,
+		"playstyle": "Stay on the move and chain punches fast: quicker jabs, faster feet and a dodge that is always ready."},
+	"bruiser": {"title": "Bruiser", "theme": "Toughness", "angle": 150.0,
+		"playstyle": "Stand your ground and take the hits: more health, a brace that soaks damage and punches back."},
 }
 
 ## Siblings on the same tier fan out this many degrees either side of their branch.
@@ -119,8 +124,25 @@ static func branch_title(branch: String) -> String:
 	return BRANCHES[branch]["title"]
 
 
+static func branch_theme(branch: String) -> String:
+	return BRANCHES[branch]["theme"]
+
+
+static func branch_playstyle(branch: String) -> String:
+	return BRANCHES[branch]["playstyle"]
+
+
 static func branch_angle(branch: String) -> float:
 	return BRANCHES[branch]["angle"]
+
+
+## Every node of one branch, inner ones first.
+static func nodes_in_branch(branch: String) -> Array[EmberTreeNode]:
+	var branch_nodes: Array[EmberTreeNode] = []
+	for node in all_nodes():
+		if node.branch == branch:
+			branch_nodes.append(node)
+	return branch_nodes
 
 
 static func _build_once() -> void:

@@ -22,3 +22,9 @@ const BAR := Color(BACKGROUND, 0.72)
 
 ## Each branch's label colour, so the three directions read apart at a glance.
 const BRANCH_COLORS := {"inferno": RED, "flurry": GOLD, "bruiser": CREAM}
+
+## How a node looks in each state (see EmberTreeCanvas.state_of), shared with the legend.
+## "sealed" = its ring has not opened yet (Emberoo must evolve), so it is fainter than "locked".
+const NODE_FILL := {"learned": DEEP, "available": EMBER_DARK, "locked": COAL, "sealed": COAL}
+const NODE_EDGE := {"learned": GOLD, "available": CREAM, "locked": DIM, "sealed": Color(DIM, 0.6)}
+const NODE_ICON := {"learned": GOLD, "available": CREAM, "locked": DIM, "sealed": Color(DIM, 0.45)}

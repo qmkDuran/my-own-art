@@ -4,16 +4,29 @@ extends Node2D
 ##
 ## Drawn in "tree space" with Emberoo at (0, 0); EmberTreeView zooms and pans this node.
 ## Skills and upgrades are diamond embers, stat picks are round coals (DESIGN.md).
-## Learned nodes glow, learnable ones pulse, locked ones stay cold coal.
-## Learning sends fire along the vein, then the ember flares.
+## Learned nodes glow, learnable ones pulse, locked ones stay cold coal, and nodes on a
+## ring that has not opened yet are fainter still, with a padlock.
+## Learning sends fire along the vein, then the ember flares. The branch names can be
+## pointed at too: the pointed-at branch's nodes and veins light up in its colour.
 
 const Kind := EmberTreeNode.Kind
 
 ## Distance from Emberoo for each tier, in tree pixels. Tiers 0-2 = Stage 1, 3 = Stage 2, 4 = Stage 3.
 const TIER_RADII: Array[float] = [92.0, 142.0, 192.0, 266.0, 336.0]
 ## Branch names sit in the gap between the Stage 1 and Stage 2 rings.
-const BRANCH_LABEL_RADIUS := 229.0
+const BRANCH_LABEL_RADIUS := 238.0
 const BRANCH_LABEL_SIZE := 18
+## Room around a branch name that still counts as pointing at it, and that its hover pill fills.
+const BRANCH_LABEL_PADDING := Vector2(8.0, 5.0)
+## Capital letters are about this tall for each pixel of font size; used to centre words on a spot.
+const CAP_HEIGHT_RATIO := 0.72
+## Words written along a closed ring ("STAGE 2 · EVOLVE TO UNLOCK"), per stage.
+const RING_CAPTION_SIZE := 12
+const RING_CAPTIONS := {2: "STAGE 2  ·  EVOLVE TO UNLOCK", 3: "STAGE 3  ·  ULTIMATES"}
+## Where each stage's caption sits, in degrees: in the upper gaps between branches, clear
+## of the nodes. Stage 3 only uses the left gap, nudged up so it stays on screen at the
+## opening zoom (the right-hand one would hide under the side panel).
+const RING_CAPTION_ANGLES := {2: [-30.0, -150.0], 3: [-143.0]}
 const CENTRE_RADIUS := 46.0
 const CENTRE_ID := "centre"
 const NODE_RADIUS := {Kind.SKILL: 24.0, Kind.UPGRADE: 21.0, Kind.STAT: 18.0, Kind.ULTIMATE: 28.0}
@@ -26,6 +39,9 @@ const EDGE_WIDTH := 2.5
 const HIT_MARGIN := 2.0
 
 const HOVER_SCALE := 1.15
+## Gap between a node and the ring drawn around it when it, or its branch, is pointed at.
+const HIGHLIGHT_GAP := 6.0
+const LOCK_BADGE_RADIUS := 8.0
 const LEARN_POP_SCALE := 1.5
 ## How quickly hover and pop sizes ease back (higher = snappier).
 const EASE_RATE := 14.0
@@ -36,6 +52,8 @@ const VEIN_SPARK_SPEED := 0.5
 const EMBEROO_SCALE := 4.0
 
 var hovered_id: String = ""
+## The branch whose name is pointed at, or "" for none.
+var hovered_branch: String = ""
 
 var _positions: Dictionary[String, Vector2] = {}
 ## [from_id, to_id] for every vein, inner end first.
@@ -46,10 +64,14 @@ var _hover_scale: Dictionary[String, float] = {}
 var _shown_learned: Dictionary[String, bool] = {}
 var _time: float = 0.0
 var _label_font: Font
+## Branch -> the pill drawn behind its name while pointed at (built once, in its colour).
+var _label_pills: Dictionary[String, StyleBoxFlat] = {}
 
 
 func _ready() -> void:
 	_label_font = ThemeDB.fallback_font
+	for branch: String in EmberTreeData.BRANCHES:
+		_label_pills[branch] = _make_label_pill(_branch_color(branch))
 	_place_nodes()
 	_build_veins()
 	_add_emberoo()
@@ -76,13 +98,57 @@ func node_at(tree_point: Vector2) -> String:
 	return ""
 
 
+## The branch whose name is under a point given in tree space, or "" if none.
+func branch_at(tree_point: Vector2) -> String:
+	for branch: String in EmberTreeData.BRANCHES:
+		if branch_label_rect(branch).has_point(tree_point):
+			return branch
+	return ""
+
+
+## Where a node sits in tree space: out along its branch, one ring per tier.
+static func node_position(node: EmberTreeNode) -> Vector2:
+	var angle := EmberTreeData.branch_angle(node.branch) + node.angle_offset
+	return Vector2.from_angle(deg_to_rad(angle)) * TIER_RADII[node.tier]
+
+
+## The box around a branch's name in tree space, padding included (what hovering hits).
+static func branch_label_rect(branch: String) -> Rect2:
+	var font := ThemeDB.fallback_font
+	var text_width := font.get_string_size(_branch_label_text(branch), HORIZONTAL_ALIGNMENT_LEFT, -1, BRANCH_LABEL_SIZE).x
+	var text_size := Vector2(text_width, BRANCH_LABEL_SIZE * CAP_HEIGHT_RATIO)
+	var middle := _branch_label_middle(branch)
+	return Rect2(middle - text_size / 2.0, text_size).grow_individual(
+		BRANCH_LABEL_PADDING.x, BRANCH_LABEL_PADDING.y, BRANCH_LABEL_PADDING.x, BRANCH_LABEL_PADDING.y)
+
+
+## What must be on screen when the tree opens: every Stage 1 node (at hover size) and
+## every branch name. Later rings may spill past the edges.
+static func opening_bounds() -> Rect2:
+	var bounds := Rect2(-Vector2.ONE * CENTRE_RADIUS, Vector2.ONE * CENTRE_RADIUS * 2.0)
+	for node in EmberTreeData.all_nodes():
+		if node.stage == EmberTree.FIRST_STAGE:
+			var reach: float = NODE_RADIUS[node.kind] * HOVER_SCALE + OUTLINE_WIDTH
+			bounds = bounds.merge(Rect2(node_position(node) - Vector2.ONE * reach, Vector2.ONE * reach * 2.0))
+	for branch: String in EmberTreeData.BRANCHES:
+		bounds = bounds.merge(branch_label_rect(branch))
+	return bounds
+
+
+static func _branch_label_text(branch: String) -> String:
+	return EmberTreeData.branch_title(branch).to_upper()
+
+
+static func _branch_label_middle(branch: String) -> Vector2:
+	return Vector2.from_angle(deg_to_rad(EmberTreeData.branch_angle(branch))) * BRANCH_LABEL_RADIUS
+
+
 # --- Setup ------------------------------------------------------------------
 
 func _place_nodes() -> void:
 	_positions[CENTRE_ID] = Vector2.ZERO
 	for node in EmberTreeData.all_nodes():
-		var angle := EmberTreeData.branch_angle(node.branch) + node.angle_offset
-		_positions[node.id] = Vector2.from_angle(deg_to_rad(angle)) * TIER_RADII[node.tier]
+		_positions[node.id] = node_position(node)
 		_hover_scale[node.id] = 1.0
 
 
@@ -181,6 +247,7 @@ func _draw() -> void:
 	_draw_rings()
 	for vein in _veins:
 		_draw_vein(vein)
+	_draw_ring_captions()
 	_draw_branch_labels()
 	_draw_centre()
 	for node in EmberTreeData.all_nodes():
@@ -203,6 +270,8 @@ func _draw_rings() -> void:
 func _draw_vein(vein: PackedStringArray) -> void:
 	var from := _positions[vein[0]]
 	var to := _positions[vein[1]]
+	if _is_in_hovered_branch(vein[1]):
+		draw_line(from, to, Color(_branch_color(hovered_branch), 0.3), 8.0)
 	draw_line(from, to, EmberTreePalette.COAL, 3.0)
 	var fill: float = _vein_fill.get(_vein_key(vein), 0.0)
 	if fill <= 0.0:
@@ -217,17 +286,60 @@ func _draw_vein(vein: PackedStringArray) -> void:
 		draw_rect(Rect2(point.round() - Vector2(1.5, 1.5), Vector2(3, 3)), EmberTreePalette.CREAM)
 
 
+## Says what each closed ring is, in small letters that follow the ring's curve.
+func _draw_ring_captions() -> void:
+	for tier in TIER_RADII.size():
+		var stage := _stage_of_tier(tier)
+		if EmberTree.is_stage_open(stage) or not RING_CAPTIONS.has(stage) or _stage_of_tier(tier - 1) == stage:
+			continue
+		for angle: float in RING_CAPTION_ANGLES[stage]:
+			_draw_text_along_ring(RING_CAPTIONS[stage], TIER_RADII[tier], deg_to_rad(angle), EmberTreePalette.GREY)
+
+
+## Writes `text` centred on the ring at `middle_angle`, reading clockwise, one letter at a time.
+func _draw_text_along_ring(text: String, radius: float, middle_angle: float, color: Color) -> void:
+	var width := _label_font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, RING_CAPTION_SIZE).x
+	var travelled := -width / 2.0
+	var half_cap := RING_CAPTION_SIZE * CAP_HEIGHT_RATIO / 2.0
+	for letter_index in text.length():
+		var letter := text.unicode_at(letter_index)
+		var letter_width := _label_font.get_char_size(letter, RING_CAPTION_SIZE).x
+		var angle := middle_angle + (travelled + letter_width / 2.0) / radius
+		draw_set_transform(Vector2.from_angle(angle) * radius, angle + PI / 2.0)
+		var baseline := Vector2(-letter_width / 2.0, half_cap)
+		draw_char_outline(_label_font, baseline, String.chr(letter), RING_CAPTION_SIZE, 4, EmberTreePalette.BACKGROUND)
+		draw_char(_label_font, baseline, String.chr(letter), RING_CAPTION_SIZE, color)
+		travelled += letter_width
+	draw_set_transform(Vector2.ZERO)
+
+
+## Branch names look like something to point at: a faint underline at rest, and a lit pill
+## in the branch's colour while pointed at.
 func _draw_branch_labels() -> void:
 	for branch: String in EmberTreeData.BRANCHES:
-		var text := EmberTreeData.branch_title(branch).to_upper()
-		var direction := Vector2.from_angle(deg_to_rad(EmberTreeData.branch_angle(branch)))
-		var text_size := _label_font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, BRANCH_LABEL_SIZE)
-		# Baseline sits below the text's middle by half the ascent, so the word centres on its spot.
-		var middle := direction * BRANCH_LABEL_RADIUS
-		var baseline := middle + Vector2(-text_size.x / 2.0, _label_font.get_ascent(BRANCH_LABEL_SIZE) / 2.0 - 1.0)
-		var color: Color = EmberTreePalette.BRANCH_COLORS[branch]
+		var text := _branch_label_text(branch)
+		var color := _branch_color(branch)
+		var is_hovered := branch == hovered_branch
+		var box := branch_label_rect(branch)
+		if is_hovered:
+			draw_style_box(_label_pills[branch], box)
+		var text_width := _label_font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, BRANCH_LABEL_SIZE).x
+		var middle := _branch_label_middle(branch)
+		var baseline := middle + Vector2(-text_width / 2.0, BRANCH_LABEL_SIZE * CAP_HEIGHT_RATIO / 2.0)
 		draw_string_outline(_label_font, baseline, text, HORIZONTAL_ALIGNMENT_LEFT, -1, BRANCH_LABEL_SIZE, 6, EmberTreePalette.BACKGROUND)
-		draw_string(_label_font, baseline, text, HORIZONTAL_ALIGNMENT_LEFT, -1, BRANCH_LABEL_SIZE, Color(color, 0.9))
+		draw_string(_label_font, baseline, text, HORIZONTAL_ALIGNMENT_LEFT, -1, BRANCH_LABEL_SIZE, color if is_hovered else Color(color, 0.85))
+		if not is_hovered:  # the pill takes over from the underline
+			var underline_y := baseline.y + 4.0
+			draw_line(Vector2(middle.x - text_width / 2.0, underline_y), Vector2(middle.x + text_width / 2.0, underline_y), Color(color, 0.35), 1.5)
+
+
+func _make_label_pill(color: Color) -> StyleBoxFlat:
+	var pill := StyleBoxFlat.new()
+	pill.bg_color = Color(EmberTreePalette.EMBER_DARK, 0.9)
+	pill.border_color = Color(color, 0.7)
+	pill.set_border_width_all(2)
+	pill.set_corner_radius_all(6)
+	return pill
 
 
 func _draw_centre() -> void:
@@ -240,14 +352,18 @@ func _draw_centre() -> void:
 func _draw_node(node: EmberTreeNode) -> void:
 	var centre := _positions[node.id]
 	var hover: float = _hover_scale[node.id]
-	var state := _state_of(node.id)
+	var state := state_of(node)
 	var radius: float = NODE_RADIUS[node.kind] * hover
 
 	if state == "learned":
 		_draw_halo(centre, radius)
+	if node.id == hovered_id:
+		_draw_outline_shape(node.kind, centre, radius + HIGHLIGHT_GAP, Color(EmberTreePalette.CREAM, 0.5))
+	elif _is_in_hovered_branch(node.id):
+		_draw_outline_shape(node.kind, centre, radius + HIGHLIGHT_GAP, Color(_branch_color(hovered_branch), 0.6))
 
-	var fill: Color = {"learned": EmberTreePalette.DEEP, "available": EmberTreePalette.EMBER_DARK, "locked": EmberTreePalette.COAL}[state]
-	var edge: Color = {"learned": EmberTreePalette.GOLD, "available": EmberTreePalette.CREAM, "locked": EmberTreePalette.DIM}[state]
+	var fill: Color = EmberTreePalette.NODE_FILL[state]
+	var edge: Color = EmberTreePalette.NODE_EDGE[state]
 	if state == "available":
 		edge = Color(edge, 0.55 + 0.45 * sin(_time * 4.0))  # gentle pulse: "you can take this"
 
@@ -262,8 +378,25 @@ func _draw_node(node: EmberTreeNode) -> void:
 		if node.kind == Kind.ULTIMATE:
 			_draw_diamond(centre, radius - OUTLINE_WIDTH * 2.0, Color(edge, 0.5), false)
 
-	var icon_color: Color = {"learned": EmberTreePalette.GOLD, "available": EmberTreePalette.CREAM, "locked": EmberTreePalette.DIM}[state]
-	EmberTreeIcons.draw(self, node.icon, centre, ICON_PIXEL[node.kind] * hover, icon_color)
+	EmberTreeIcons.draw(self, node.icon, centre, ICON_PIXEL[node.kind] * hover, EmberTreePalette.NODE_ICON[state])
+	if state == "sealed":
+		_draw_lock_badge(centre + Vector2.ONE * radius * 0.6)
+
+
+## A small padlock on a node whose ring opens only when Emberoo evolves.
+func _draw_lock_badge(centre: Vector2) -> void:
+	draw_circle(centre, LOCK_BADGE_RADIUS + 2.0, EmberTreePalette.OUTLINE)
+	draw_circle(centre, LOCK_BADGE_RADIUS, EmberTreePalette.COAL)
+	draw_arc(centre, LOCK_BADGE_RADIUS, 0.0, TAU, 24, EmberTreePalette.DIM, 1.5)
+	EmberTreeIcons.draw(self, "lock", centre, 1.5, EmberTreePalette.GREY)
+
+
+## A thin ring around a node in its own shape: a circle for stats, a diamond for the rest.
+func _draw_outline_shape(kind: Kind, centre: Vector2, radius: float, color: Color) -> void:
+	if kind == Kind.STAT:
+		draw_arc(centre, radius, 0.0, TAU, 48, color, 2.0)
+	else:
+		_draw_diamond(centre, radius * 1.1, color, false)
 
 
 func _draw_halo(centre: Vector2, radius: float) -> void:
@@ -286,19 +419,37 @@ func _draw_diamond(centre: Vector2, radius: float, color: Color, filled: bool) -
 
 # --- Helpers -------------------------------------------------------------------
 
-func _state_of(id: String) -> String:
-	if EmberTree.is_learned(id):
+## "learned", "available" (can be ignited now), "locked" (needs a node or a point first)
+## or "sealed" (its ring opens only when Emberoo evolves).
+static func state_of(node: EmberTreeNode) -> String:
+	if EmberTree.is_learned(node.id):
 		return "learned"
-	if EmberTree.can_learn(id):
+	if EmberTree.can_learn(node.id):
 		return "available"
+	if not EmberTree.is_stage_open(node.stage):
+		return "sealed"
 	return "locked"
+
+
+func _is_in_hovered_branch(id: String) -> bool:
+	if hovered_branch == "":
+		return false
+	var node := EmberTreeData.find(id)
+	return node != null and node.branch == hovered_branch
+
+
+func _branch_color(branch: String) -> Color:
+	return EmberTreePalette.BRANCH_COLORS[branch]
 
 
 func _is_lit(id: String) -> bool:
 	return id == CENTRE_ID or EmberTree.is_learned(id)
 
 
+## The evolution stage a tier belongs to (0 for a tier before the first, so it never matches).
 func _stage_of_tier(tier: int) -> int:
+	if tier < 0:
+		return 0
 	for node in EmberTreeData.all_nodes():
 		if node.tier == tier:
 			return node.stage

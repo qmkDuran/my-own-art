@@ -67,6 +67,7 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
   - Darker, muted colours for the world; brighter, saturated colours for creatures, enemies and attacks (readability)
   - No pure black: outlines use `#090A14`; cool darks for world shadows, warm darks (`#241527`, `#341C27`) for the fire creature
 - Silhouette first; one consistent light direction
+- **No night/dark lighting.** Tried a dark tint + 2D point lights; rejected (the banded light rings looked bad). Keep the world bright.
 
 ## Combat
 - Real-time, 2D

@@ -3,11 +3,17 @@ extends Control
 ## The window onto the Ember Tree: zoom with the wheel, drag to move, point at and click nodes.
 ##
 ## Owns the EmberTreeCanvas and moves it smoothly toward the wanted zoom and position.
-## Says what the player points at and clicks through signals; the screen decides what happens.
+## Says what the player points at (a node, a branch name or nothing) and clicks through
+## signals; the screen decides what happens.
 
+## Pointing moved onto a node, or onto nothing when `id` is "".
 signal node_hovered(id: String)
+## Pointing moved onto a branch's name.
+signal branch_hovered(branch: String)
 signal node_clicked(id: String)
 signal node_right_clicked(id: String)
+## The wanted zoom changed (the wheel turned); 1.0 = tree pixels at full size.
+signal zoom_changed(zoom: float)
 
 const MIN_ZOOM := 0.4
 const MAX_ZOOM := 1.6
@@ -37,13 +43,16 @@ func _ready() -> void:
 	snap_home()
 
 
-## Puts the tree back to its starting zoom and position, without easing.
+## Puts the tree back to its starting zoom and position, without easing, and forgets
+## what was pointed at.
 func snap_home() -> void:
 	_target_zoom = home_zoom
 	_target_offset = home_centre
 	if _canvas != null:
 		_canvas.scale = Vector2.ONE * home_zoom
 		_canvas.position = home_centre
+		_canvas.hovered_id = ""
+		_canvas.hovered_branch = ""
 
 
 func _process(delta: float) -> void:
@@ -97,9 +106,24 @@ func _on_mouse_motion(event: InputEventMouseMotion) -> void:
 		_target_offset += event.relative
 		_canvas.position += event.relative
 		return
-	var id := _node_under(event.position)
-	if id != _canvas.hovered_id:
-		_canvas.hovered_id = id
+	_update_hover(event.position)
+
+
+## Tells the canvas and listeners what is under the pointer, when that changes.
+## Nodes win over branch names, though the two never overlap.
+func _update_hover(view_point: Vector2) -> void:
+	var tree_point := _canvas.transform.affine_inverse() * view_point
+	var id := _canvas.node_at(tree_point)
+	var branch := _canvas.branch_at(tree_point) if id == "" else ""
+	if id == _canvas.hovered_id and branch == _canvas.hovered_branch:
+		return
+	_canvas.hovered_id = id
+	_canvas.hovered_branch = branch
+	var points_at_something := id != "" or branch != ""
+	mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND if points_at_something else Control.CURSOR_ARROW
+	if branch != "":
+		branch_hovered.emit(branch)
+	else:
 		node_hovered.emit(id)
 
 
@@ -109,6 +133,7 @@ func _zoom_around(screen_point: Vector2, factor: float) -> void:
 	var applied := new_zoom / _target_zoom
 	_target_offset = screen_point - (screen_point - _target_offset) * applied
 	_target_zoom = new_zoom
+	zoom_changed.emit(new_zoom)
 
 
 func _node_under(view_point: Vector2) -> String:

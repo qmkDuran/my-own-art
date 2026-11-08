@@ -17,12 +17,15 @@ const FOOTER_HEIGHT := 30.0
 const SIDE_PANEL_WIDTH := 220.0
 ## Header text is lifted this much so it looks centred (the font leaves room above capitals).
 const HEADER_TEXT_LIFT := 2.0
-## How zoomed in the tree opens: Stage 1 fills the space left of the side panel.
-const START_ZOOM := 0.66
-## Emberoo sits a little below the middle, since the top branch (Inferno) reaches furthest.
-const START_CENTRE_Y := 203.0
+## Gap kept between the opening tree (Stage 1 and the branch names) and the bars and panel.
+const TREE_FIT_MARGIN := 8.0
+## The opening zoom never goes above this, however much room there is.
+const MAX_START_ZOOM := 0.8
 const FADE_SECONDS := 0.15
 const FOOTER_HINT := "Click: ignite   ·   Right-click: put out   ·   Scroll: zoom   ·   Drag: move   ·   K / Esc: close"
+## Shown under the tree until the player zooms out: the later rings start off-screen.
+const ZOOM_HINT := "Scroll out for Stage 2 and 3"
+const ZOOM_HINT_HEIGHT := 14.0
 
 var is_open: bool = false
 
@@ -30,6 +33,8 @@ var _root: Control
 var _view: EmberTreeView
 var _side_panel: EmberTreeSidePanel
 var _level_label: Label
+var _xp_label: Label
+var _zoom_hint: Label
 var _saved_scale_size: Vector2i
 var _saved_scale_mode: Window.ContentScaleMode
 var _saved_scale_aspect: Window.ContentScaleAspect
@@ -43,6 +48,7 @@ func _ready() -> void:
 	_build_vignette()
 	_build_header()
 	_build_footer()
+	_build_zoom_hint()
 	_build_side_panel()
 	_root.visible = false
 
@@ -78,8 +84,9 @@ func open() -> void:
 	_use_crisp_ui_resolution()
 	_paused_by_me = not get_tree().paused
 	get_tree().paused = true
-	_level_label.text = "Level %d" % Progression.level
+	_refresh_level()
 	_view.snap_home()
+	_zoom_hint.modulate.a = 1.0
 	_side_panel.show_node("")
 	_root.visible = true
 	_root.modulate.a = 0.0
@@ -127,9 +134,10 @@ func _build_root() -> void:
 func _build_view() -> void:
 	_view = EmberTreeView.new()
 	_view.set_anchors_preset(Control.PRESET_FULL_RECT)
-	_view.home_zoom = START_ZOOM
-	_view.home_centre = Vector2(_tree_area_width() / 2.0, START_CENTRE_Y)
+	_fit_tree_at_home()
 	_view.node_hovered.connect(func(id: String) -> void: _side_panel.show_node(id))
+	_view.branch_hovered.connect(func(branch: String) -> void: _side_panel.show_branch(branch))
+	_view.zoom_changed.connect(_on_zoom_changed)
 	_view.node_clicked.connect(func(id: String) -> void: EmberTree.learn(id))
 	_view.node_right_clicked.connect(func(id: String) -> void: EmberTree.unlearn(id))
 	_root.add_child(_view)
@@ -164,7 +172,20 @@ func _build_header() -> void:
 	_root.add_child(title_block)
 	title_block.add_child(_make_label("EMBEROO", 16, EmberTreePalette.GOLD))
 	title_block.add_child(_make_label("The Ember Tree", 10, EmberTreePalette.GREY))
-	_level_label = _add_label(Rect2(UI_SIZE.x - SIDE_PANEL_WIDTH - PAGE_MARGIN, -HEADER_TEXT_LIFT, SIDE_PANEL_WIDTH, HEADER_HEIGHT), 11, EmberTreePalette.CREAM, HORIZONTAL_ALIGNMENT_RIGHT)
+	# Right side: the level, and how far it is to the next one (which brings a skill point).
+	var level_block := VBoxContainer.new()
+	level_block.alignment = BoxContainer.ALIGNMENT_CENTER
+	level_block.add_theme_constant_override("separation", 0)
+	level_block.position = Vector2(UI_SIZE.x - SIDE_PANEL_WIDTH - PAGE_MARGIN, -HEADER_TEXT_LIFT)
+	level_block.size = Vector2(SIDE_PANEL_WIDTH, HEADER_HEIGHT)
+	level_block.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_root.add_child(level_block)
+	_level_label = _make_label("", 13, EmberTreePalette.CREAM)
+	_level_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	level_block.add_child(_level_label)
+	_xp_label = _make_label("", 9, EmberTreePalette.GREY)
+	_xp_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	level_block.add_child(_xp_label)
 
 
 func _build_footer() -> void:
@@ -172,6 +193,13 @@ func _build_footer() -> void:
 	_add_bar(Rect2(0, top, UI_SIZE.x, FOOTER_HEIGHT), top)
 	var hint := _add_label(Rect2(PAGE_MARGIN, top, UI_SIZE.x - PAGE_MARGIN * 2, FOOTER_HEIGHT), 9, EmberTreePalette.GREY, HORIZONTAL_ALIGNMENT_CENTER)
 	hint.text = FOOTER_HINT
+
+
+## A quiet line in the empty gap below Emberoo, between the two lower branches.
+func _build_zoom_hint() -> void:
+	var bottom := UI_SIZE.y - FOOTER_HEIGHT - TREE_FIT_MARGIN
+	_zoom_hint = _add_label(Rect2(0, bottom - ZOOM_HINT_HEIGHT, _tree_area_width(), ZOOM_HINT_HEIGHT), 9, EmberTreePalette.GREY, HORIZONTAL_ALIGNMENT_CENTER)
+	_zoom_hint.text = ZOOM_HINT
 
 
 func _build_side_panel() -> void:
@@ -185,6 +213,30 @@ func _build_side_panel() -> void:
 ## The width left for the tree, between the left edge and the side panel.
 func _tree_area_width() -> float:
 	return UI_SIZE.x - SIDE_PANEL_WIDTH - PAGE_MARGIN
+
+
+## Picks the opening zoom and position so all of Stage 1 and the branch names sit
+## between the header, the footer and the side panel, with a small margin.
+func _fit_tree_at_home() -> void:
+	var area := Rect2(0, HEADER_HEIGHT, _tree_area_width(), UI_SIZE.y - HEADER_HEIGHT - FOOTER_HEIGHT).grow(-TREE_FIT_MARGIN)
+	var bounds := EmberTreeCanvas.opening_bounds()
+	var zoom := minf(MAX_START_ZOOM, minf(area.size.x / bounds.size.x, area.size.y / bounds.size.y))
+	_view.home_zoom = zoom
+	_view.home_centre = area.get_center() - bounds.get_center() * zoom
+
+
+func _refresh_level() -> void:
+	_level_label.text = "Level %d" % Progression.level
+	if Progression.level >= Progression.MAX_LEVEL:
+		_xp_label.text = "Max level"
+	else:
+		_xp_label.text = "%d / %d XP  ·  next skill point at Level %d" % [Progression.xp, Progression.xp_to_next(), Progression.level + 1]
+
+
+## The zoom hint fades away once the player has zoomed out past the opening view.
+func _on_zoom_changed(zoom: float) -> void:
+	var wanted_alpha := 0.0 if zoom < _view.home_zoom else 1.0
+	create_tween().tween_property(_zoom_hint, "modulate:a", wanted_alpha, FADE_SECONDS)
 
 
 ## A translucent bar with a thin warm line along its tree-facing edge (at `line_y`).
