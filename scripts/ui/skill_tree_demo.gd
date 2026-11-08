@@ -3,30 +3,43 @@ extends Control
 ## A playable MOCKUP of the radial "Ember Tree" (see DESIGN.md), to judge the look and feel.
 ## Not wired to real gameplay. Run this scene on its own (F6).
 ##
-## Layout (in a 640×360 UI space, so text renders crisply):
-##   top-left     -> title and skill points
-##   left/centre  -> the tree (Emberoo in the middle, rings grow outward)
-##   right        -> tooltip panel (names and text live here, never on the tree)
-##   bottom       -> legend and hint
+## Controls: scroll to zoom, drag (any mouse button) to move around,
+## hover an ember to read it, click a glowing ember to ignite it.
 ##
-## Hover an ember to see it; click a glowing (available) ember to ignite it.
+## Layers, back to front:
+##   background + vignette -> very dark, so the fire glows
+##   tree canvas           -> the tree itself; zooms and pans as one piece
+##   header / footer bars  -> translucent, always on screen
+##   tooltip               -> translucent card on the right; all text lives here, never on the tree
 
 const UI_SIZE := Vector2i(640, 360)
-const TREE_CENTER := Vector2(220, 190)
-const RING_RADII := [58.0, 104.0, 148.0]
+const RING_RADII := [100.0, 185.0, 270.0]
+const NODE_RADIUS := {"skill": 24.0, "stat": 18.0, "ultimate": 28.0}
+const ICON_PIXEL := {"skill": 3.0, "stat": 2.0, "ultimate": 3.0}
+const CENTRE_RADIUS := 46.0
 
-const COLOR_BACKGROUND := Color(0.055, 0.07, 0.11)
-const COLOR_OUTLINE := Color(0.035, 0.039, 0.078)
+const MIN_ZOOM := 0.45
+const MAX_ZOOM := 1.6
+const START_ZOOM := 0.56
+const START_CENTRE := Vector2(232, 205)
+## Mouse travel (pixels) before a press counts as a drag instead of a click.
+const DRAG_THRESHOLD := 4.0
+const HOVER_SCALE := 1.15
+
+const COLOR_BACKGROUND := Color(0.027, 0.031, 0.051)
+const COLOR_OUTLINE := Color(0.02, 0.022, 0.04)
 const COLOR_CREAM := Color(0.906, 0.835, 0.702)
-const COLOR_GREY := Color(0.341, 0.447, 0.467)
-const COLOR_DIM := Color(0.224, 0.29, 0.314)
-const COLOR_COAL := Color(0.125, 0.157, 0.204)
+const COLOR_GREY := Color(0.42, 0.5, 0.52)
+const COLOR_DIM := Color(0.2, 0.25, 0.28)
+const COLOR_COAL := Color(0.075, 0.09, 0.12)
 const COLOR_ORANGE := Color(0.871, 0.62, 0.255)
 const COLOR_RED := Color(0.812, 0.341, 0.235)
 const COLOR_GOLD := Color(0.91, 0.757, 0.439)
-const COLOR_DEEP := Color(0.459, 0.141, 0.22)
+const COLOR_DEEP := Color(0.36, 0.11, 0.17)
+const COLOR_PANEL := Color(0.045, 0.055, 0.085, 0.78)
+const COLOR_PANEL_EDGE := Color(0.871, 0.62, 0.255, 0.55)
 
-## 8×8 pixel icons, drawn centred on each node.
+## 8×8 pixel icons. They're centred by their drawn pixels, not the 8×8 box.
 const ICONS := {
 	"fist": ["..###...", ".#####..", "########", "########", "#######.", ".######.", ".#####..", "..###..."],
 	"flame": ["...#....", "..##....", "..###...", ".####.#.", ".######.", "########", "########", ".######."],
@@ -54,23 +67,39 @@ const NODES := [
 	{"id": "burn2", "ring": 1, "angle": 160, "kind": "stat", "icon": "flame", "name": "+15% Burn", "tag": "STAT", "text": "Burns deal 15% more damage."},
 	{"id": "meteor", "ring": 1, "angle": 220, "kind": "skill", "icon": "star", "name": "Meteor Fist", "tag": "CORE · CHOICE", "text": "Leap and crash down fist-first in a burst of fire."},
 	{"id": "inferno", "ring": 2, "angle": -90, "kind": "ultimate", "icon": "star", "name": "Inferno Rush", "tag": "ULTIMATE", "text": "A flurry of blazing punches that ends in an explosion."},
-	{"id": "phoenix", "ring": 2, "angle": 30, "kind": "ultimate", "icon": "star", "name": "Rekindle", "tag": "ULTIMATE", "text": "Once per fight, rise from defeat in a burst of flame."},
+	{"id": "rekindle", "ring": 2, "angle": 30, "kind": "ultimate", "icon": "star", "name": "Rekindle", "tag": "ULTIMATE", "text": "Once per fight, rise from defeat in a burst of flame."},
 	{"id": "sun", "ring": 2, "angle": 150, "kind": "ultimate", "icon": "star", "name": "Blazing Sun", "tag": "ULTIMATE", "text": "Become a living sun, burning everything around you."},
 ]
 
 ## Which stage is unlocked (rings above this are locked, like a future evolution).
 const UNLOCKED_RING := 0
 
+
+## The tree is drawn on its own layer so it can zoom and pan as one piece.
+class TreeCanvas:
+	extends Node2D
+	var demo: SkillTreeDemo
+
+	func _draw() -> void:
+		demo.draw_tree(self)
+
+
 var _skill_points: int = 3
 var _learned := {"jab": true, "health": true}
-var _links: Array = []           # [from_id, to_id]
-var _positions := {}             # id -> Vector2
-var _hover_scale := {}           # id -> float, eased toward 1.0 or HOVER_SCALE
-var _vein_fill := {}             # "from>to" -> 0..1, how far fire has travelled
+var _links: Array = []          # [from_id, to_id]
+var _positions := {}            # id -> Vector2, in tree space (centre = 0,0)
+var _hover_scale := {}          # id -> float, eased toward 1.0 or HOVER_SCALE
+var _vein_fill := {}            # "from>to" -> 0..1, how far fire has travelled
+var _icon_centres := {}         # icon name -> centre of its drawn pixels, in icon pixels
 var _hovered_id: String = ""
 var _time: float = 0.0
 
-const HOVER_SCALE := 1.18
+var _canvas: TreeCanvas
+var _target_zoom: float = START_ZOOM
+var _target_offset: Vector2 = START_CENTRE
+var _press_position: Vector2 = Vector2.ZERO
+var _is_pressing: bool = false
+var _is_dragging: bool = false
 
 var _tooltip: PanelContainer
 var _tooltip_name: Label
@@ -85,18 +114,20 @@ func _ready() -> void:
 	_add_glow()
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_STOP
+	clip_contents = true
 
+	_measure_icons()
 	_place_nodes()
 	_build_links()
 	for link in _links:
 		var both_learned: bool = _learned.has(link[0]) and _learned.has(link[1])
 		_vein_fill[_vein_key(link[0], link[1])] = 1.0 if both_learned else 0.0
 
+	_build_tree_canvas()
+	_build_vignette()
 	_build_header()
+	_build_footer()
 	_build_tooltip()
-	_build_legend()
-	_add_centre_portrait()
-	_add_ambient_embers()
 	_show_tooltip_for("")
 
 
@@ -115,23 +146,38 @@ func _add_glow() -> void:
 	var environment := Environment.new()
 	environment.background_mode = Environment.BG_CANVAS
 	environment.glow_enabled = true
-	environment.glow_intensity = 0.9
-	environment.glow_bloom = 0.15
-	environment.glow_hdr_threshold = 0.75
+	environment.glow_intensity = 1.0
+	environment.glow_bloom = 0.12
+	environment.glow_hdr_threshold = 0.7
 	environment.glow_blend_mode = Environment.GLOW_BLEND_MODE_ADDITIVE
 	var world_environment := WorldEnvironment.new()
 	world_environment.environment = environment
 	add_child(world_environment)
 
 
+## Finds the middle of each icon's drawn pixels, so lopsided icons still look centred.
+func _measure_icons() -> void:
+	for icon_name in ICONS:
+		var rows: Array = ICONS[icon_name]
+		var low := Vector2(8, 8)
+		var high := Vector2(-1, -1)
+		for y in rows.size():
+			for x in 8:
+				if rows[y][x] == "#":
+					low = low.min(Vector2(x, y))
+					high = high.max(Vector2(x, y))
+		_icon_centres[icon_name] = (low + high + Vector2.ONE) / 2.0
+
+
 func _place_nodes() -> void:
+	_positions["centre"] = Vector2.ZERO
 	for node in NODES:
 		var radius: float = RING_RADII[node["ring"]]
-		_positions[node["id"]] = TREE_CENTER + Vector2.from_angle(deg_to_rad(node["angle"])) * radius
+		_positions[node["id"]] = Vector2.from_angle(deg_to_rad(node["angle"])) * radius
 		_hover_scale[node["id"]] = 1.0
 
 
-## Veins: centre → first skill; neighbours around each ring; each outer node → nearest inner node.
+## Veins: centre → first skill; neighbours around the first ring; each outer node → nearest inner node.
 func _build_links() -> void:
 	_links.append(["centre", "jab"])
 	for ring in RING_RADII.size():
@@ -142,211 +188,274 @@ func _build_links() -> void:
 		else:
 			for id in ring_nodes:
 				_links.append([_nearest_on_ring(id, ring - 1), id])
-	_positions["centre"] = TREE_CENTER
 
 
-func _build_header() -> void:
-	_add_label("EMBEROO", Vector2(16, 10), Vector2(180, 22), 18, COLOR_GOLD, HORIZONTAL_ALIGNMENT_LEFT)
-	_add_label("The Ember Tree", Vector2(16, 32), Vector2(180, 14), 11, COLOR_CREAM, HORIZONTAL_ALIGNMENT_LEFT)
-	_points_label = _add_label("", Vector2(16, 47), Vector2(180, 14), 10, COLOR_GREY, HORIZONTAL_ALIGNMENT_LEFT)
-	_update_points_label()
+func _build_tree_canvas() -> void:
+	_canvas = TreeCanvas.new()
+	_canvas.demo = self
+	_canvas.position = START_CENTRE
+	_canvas.scale = Vector2.ONE * START_ZOOM
+	add_child(_canvas)
 
-
-func _build_tooltip() -> void:
-	_tooltip = PanelContainer.new()
-	_tooltip.position = Vector2(404, 64)
-	_tooltip.custom_minimum_size = Vector2(220, 0)
-	_tooltip.size = Vector2(220, 0)
-	var frame := StyleBoxFlat.new()
-	frame.bg_color = Color(0.078, 0.094, 0.133)
-	frame.border_color = COLOR_ORANGE
-	frame.set_border_width_all(1)
-	frame.set_content_margin_all(10)
-	frame.shadow_color = Color(0, 0, 0, 0.5)
-	frame.shadow_size = 4
-	_tooltip.add_theme_stylebox_override("panel", frame)
-	add_child(_tooltip)
-
-	var column := VBoxContainer.new()
-	column.add_theme_constant_override("separation", 5)
-	_tooltip.add_child(column)
-	_tooltip_name = _make_label(15, COLOR_CREAM)
-	_tooltip_tag = _make_label(10, COLOR_ORANGE)
-	_tooltip_text = _make_label(11, COLOR_CREAM)
-	_tooltip_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_tooltip_status = _make_label(10, COLOR_GREY)
-	_tooltip_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	for label in [_tooltip_name, _tooltip_tag, _tooltip_text, _tooltip_status]:
-		label.custom_minimum_size = Vector2(200, 0)
-		column.add_child(label)
-
-
-func _build_legend() -> void:
-	_add_label("Inner ring: Stage 1   ·   Middle: Stage 2 (evolve)   ·   Outer: Stage 3", Vector2(16, 334), Vector2(380, 14), 9, COLOR_GREY, HORIZONTAL_ALIGNMENT_LEFT)
-	_add_label("Click a glowing ember to ignite it", Vector2(404, 334), Vector2(220, 14), 9, COLOR_GREY, HORIZONTAL_ALIGNMENT_CENTER)
-
-
-## Emberoo's live idle animation in the middle of the tree.
-func _add_centre_portrait() -> void:
+	# Emberoo's live idle animation in the middle of the tree.
 	var sprite := AnimatedSprite2D.new()
 	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	sprite.sprite_frames = SpriteFrames.new()
 	sprite.sprite_frames.remove_animation("default")
 	var sheet: Texture2D = load("res://art/emberoo/emberoo_front_idle_sheet.png")
 	SpriteSheetLoader.add_animation(sprite.sprite_frames, "idle", sheet, [0.3, 0.2, 0.3, 0.2], true, Vector2i(16, 16))
-	sprite.scale = Vector2(3, 3)
-	sprite.position = TREE_CENTER
-	add_child(sprite)
+	sprite.scale = Vector2(4, 4)
+	_canvas.add_child(sprite)
 	sprite.play("idle")
 
-
-## Slow embers drifting upward around the tree.
-func _add_ambient_embers() -> void:
+	# Slow embers drifting upward around the tree.
 	var embers := CPUParticles2D.new()
-	embers.position = TREE_CENTER
-	embers.amount = 40
-	embers.lifetime = 4.0
-	embers.preprocess = 4.0
+	embers.amount = 60
+	embers.lifetime = 5.0
+	embers.preprocess = 5.0
 	embers.emission_shape = CPUParticles2D.EMISSION_SHAPE_SPHERE
-	embers.emission_sphere_radius = 160.0
+	embers.emission_sphere_radius = 300.0
 	embers.direction = Vector2.UP
 	embers.spread = 25.0
-	embers.gravity = Vector2(0, -6)
-	embers.initial_velocity_min = 2.0
-	embers.initial_velocity_max = 8.0
-	embers.scale_amount_min = 1.0
-	embers.scale_amount_max = 2.0
+	embers.gravity = Vector2(0, -8)
+	embers.initial_velocity_min = 3.0
+	embers.initial_velocity_max = 12.0
+	embers.scale_amount_min = 1.5
+	embers.scale_amount_max = 3.0
 	embers.color_ramp = _fade_ramp([COLOR_GOLD, COLOR_ORANGE, COLOR_RED])
-	add_child(embers)
+	_canvas.add_child(embers)
+
+
+## Darkens the screen edges so the eye goes to the middle and the fire glows.
+func _build_vignette() -> void:
+	var gradient := Gradient.new()
+	gradient.offsets = PackedFloat32Array([0.0, 0.55, 1.0])
+	gradient.colors = PackedColorArray([Color(0, 0, 0, 0), Color(0, 0, 0, 0.15), Color(0, 0, 0, 0.75)])
+	var texture := GradientTexture2D.new()
+	texture.gradient = gradient
+	texture.fill = GradientTexture2D.FILL_RADIAL
+	texture.fill_from = Vector2(0.5, 0.5)
+	texture.fill_to = Vector2(1.05, 1.05)
+	var vignette := TextureRect.new()
+	vignette.texture = texture
+	vignette.set_anchors_preset(Control.PRESET_FULL_RECT)
+	vignette.stretch_mode = TextureRect.STRETCH_SCALE
+	vignette.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(vignette)
+
+
+func _build_header() -> void:
+	var bar := _make_panel(Color(0.03, 0.035, 0.055, 0.7), Color(0, 0, 0, 0), 0)
+	bar.position = Vector2(0, 0)
+	bar.size = Vector2(UI_SIZE.x, 40)
+	add_child(bar)
+	_add_line(Vector2(0, 40), Vector2(UI_SIZE.x, 40), Color(COLOR_ORANGE, 0.25))
+	_add_label("EMBEROO", Vector2(16, 6), Vector2(200, 18), 16, COLOR_GOLD, HORIZONTAL_ALIGNMENT_LEFT)
+	_add_label("The Ember Tree", Vector2(16, 23), Vector2(200, 12), 10, COLOR_GREY, HORIZONTAL_ALIGNMENT_LEFT)
+	_points_label = _add_label("", Vector2(UI_SIZE.x - 216, 12), Vector2(200, 16), 11, COLOR_CREAM, HORIZONTAL_ALIGNMENT_RIGHT)
+	_update_points_label()
+
+
+func _build_footer() -> void:
+	var bar := _make_panel(Color(0.03, 0.035, 0.055, 0.7), Color(0, 0, 0, 0), 0)
+	bar.position = Vector2(0, UI_SIZE.y - 24)
+	bar.size = Vector2(UI_SIZE.x, 24)
+	add_child(bar)
+	_add_line(Vector2(0, UI_SIZE.y - 24), Vector2(UI_SIZE.x, UI_SIZE.y - 24), Color(COLOR_ORANGE, 0.2))
+	_add_label("Inner ring: Stage 1   ·   Middle: Stage 2   ·   Outer: Stage 3", Vector2(16, UI_SIZE.y - 18), Vector2(320, 12), 9, COLOR_GREY, HORIZONTAL_ALIGNMENT_LEFT)
+	_add_label("Scroll to zoom  ·  Drag to move", Vector2(UI_SIZE.x - 316, UI_SIZE.y - 18), Vector2(300, 12), 9, COLOR_GREY, HORIZONTAL_ALIGNMENT_RIGHT)
+
+
+func _build_tooltip() -> void:
+	_tooltip = _make_panel(COLOR_PANEL, COLOR_PANEL_EDGE, 4)
+	_tooltip.position = Vector2(UI_SIZE.x - 236, 56)
+	_tooltip.custom_minimum_size = Vector2(220, 0)
+	_tooltip.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(_tooltip)
+
+	var column := VBoxContainer.new()
+	column.add_theme_constant_override("separation", 6)
+	_tooltip.add_child(column)
+	_tooltip_name = _make_label(15, COLOR_CREAM)
+	_tooltip_tag = _make_label(9, COLOR_ORANGE)
+	var divider := ColorRect.new()
+	divider.color = Color(COLOR_ORANGE, 0.3)
+	divider.custom_minimum_size = Vector2(196, 1)
+	_tooltip_text = _make_label(11, COLOR_CREAM)
+	_tooltip_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_tooltip_status = _make_label(10, COLOR_GREY)
+	_tooltip_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	for item in [_tooltip_name, _tooltip_tag, divider, _tooltip_text, _tooltip_status]:
+		item.custom_minimum_size.x = 196
+		column.add_child(item)
 
 
 # --- Every frame ----------------------------------------------------------
 
 func _process(delta: float) -> void:
 	_time += delta
+	var ease_amount := 1.0 - exp(-14.0 * delta)
 	for id in _hover_scale:
 		var target := HOVER_SCALE if id == _hovered_id else 1.0
-		_hover_scale[id] = lerpf(_hover_scale[id], target, 1.0 - exp(-14.0 * delta))
-	queue_redraw()
+		_hover_scale[id] = lerpf(_hover_scale[id], target, ease_amount)
+	# Smooth zoom and pan toward their targets.
+	var zoom := lerpf(_canvas.scale.x, _target_zoom, ease_amount)
+	_canvas.scale = Vector2.ONE * zoom
+	_canvas.position = _canvas.position.lerp(_target_offset, ease_amount)
+	_canvas.queue_redraw()
 
 
 func _gui_input(event: InputEvent) -> void:
-	if event is InputEventMouseMotion:
-		var id := _node_under(event.position)
-		if id != _hovered_id:
-			_hovered_id = id
-			_show_tooltip_for(id)
-	elif event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		var id := _node_under(event.position)
-		if id != "" and _is_available(id):
-			_ignite(id)
+	if event is InputEventMouseButton:
+		_on_mouse_button(event)
+	elif event is InputEventMouseMotion:
+		_on_mouse_motion(event)
 
 
-# --- Drawing --------------------------------------------------------------
+func _on_mouse_button(event: InputEventMouseButton) -> void:
+	if event.button_index == MOUSE_BUTTON_WHEEL_UP and event.pressed:
+		_zoom_around(event.position, 1.15)
+	elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN and event.pressed:
+		_zoom_around(event.position, 1.0 / 1.15)
+	elif event.pressed:
+		_is_pressing = true
+		_is_dragging = false
+		_press_position = event.position
+	else:
+		var was_click := _is_pressing and not _is_dragging
+		_is_pressing = false
+		_is_dragging = false
+		if was_click and event.button_index == MOUSE_BUTTON_LEFT:
+			var id := _node_under(event.position)
+			if id != "" and _is_available(id):
+				_ignite(id)
 
+
+func _on_mouse_motion(event: InputEventMouseMotion) -> void:
+	if _is_pressing and event.position.distance_to(_press_position) > DRAG_THRESHOLD:
+		_is_dragging = true
+	if _is_dragging:
+		_target_offset += event.relative
+		_canvas.position += event.relative
+		return
+	var id := _node_under(event.position)
+	if id != _hovered_id:
+		_hovered_id = id
+		_show_tooltip_for(id)
+
+
+## Zooms in or out while keeping the point under the cursor where it is.
+func _zoom_around(screen_point: Vector2, factor: float) -> void:
+	var new_zoom := clampf(_target_zoom * factor, MIN_ZOOM, MAX_ZOOM)
+	var applied := new_zoom / _target_zoom
+	_target_offset = screen_point - (screen_point - _target_offset) * applied
+	_target_zoom = new_zoom
+
+
+# --- Drawing ---------------------------------------------------------------
+
+## The very dark backdrop, behind everything else.
 func _draw() -> void:
 	draw_rect(Rect2(Vector2.ZERO, size), COLOR_BACKGROUND)
-	_draw_rings()
+
+
+# --- Drawing the tree (called by TreeCanvas, in tree space) ----------------
+
+func draw_tree(canvas: Node2D) -> void:
+	_draw_rings(canvas)
 	for link in _links:
-		_draw_vein(link[0], link[1])
-	_draw_centre_ring()
+		_draw_vein(canvas, link[0], link[1])
+	_draw_centre(canvas)
 	for node in NODES:
-		_draw_node(node)
+		_draw_node(canvas, node)
 
 
-func _draw_rings() -> void:
+func _draw_rings(canvas: Node2D) -> void:
 	for ring in RING_RADII.size():
 		var radius: float = RING_RADII[ring]
-		var is_open := ring <= UNLOCKED_RING
-		var color := Color(COLOR_DEEP, 0.9) if is_open else Color(COLOR_DIM, 0.6)
-		if is_open:
-			draw_arc(TREE_CENTER, radius, 0.0, TAU, 96, color, 1.0)
+		if ring <= UNLOCKED_RING:
+			canvas.draw_arc(Vector2.ZERO, radius, 0.0, TAU, 128, Color(COLOR_RED, 0.35), 2.0)
 		else:
-			_draw_dashed_circle(radius, color)
+			var dashes := 64
+			for dash in dashes:
+				var start := TAU * dash / dashes
+				canvas.draw_arc(Vector2.ZERO, radius, start, start + TAU / dashes * 0.45, 4, Color(COLOR_DIM, 0.7), 1.5)
 
 
-func _draw_dashed_circle(radius: float, color: Color) -> void:
-	var dashes := 48
-	for dash in dashes:
-		var start := TAU * dash / dashes
-		draw_arc(TREE_CENTER, radius, start, start + TAU / dashes * 0.5, 4, color, 1.0)
-
-
-func _draw_vein(from_id: String, to_id: String) -> void:
+func _draw_vein(canvas: Node2D, from_id: String, to_id: String) -> void:
 	var from: Vector2 = _positions[from_id]
 	var to: Vector2 = _positions[to_id]
-	draw_line(from, to, COLOR_COAL, 2.0)
+	canvas.draw_line(from, to, COLOR_COAL, 3.0)
 	var fill: float = _vein_fill.get(_vein_key(from_id, to_id), 0.0)
 	if fill <= 0.0:
 		return
 	var burning_end := from.lerp(to, fill)
-	draw_line(from, burning_end, Color(COLOR_RED, 0.8), 4.0)
-	draw_line(from, burning_end, COLOR_GOLD, 1.5)
-	# Sparks flicker along the burning part.
-	for spark in 5:
-		var along := fmod(_time * 0.6 + spark / 5.0, 1.0) * fill
+	canvas.draw_line(from, burning_end, Color(COLOR_RED, 0.7), 6.0)
+	canvas.draw_line(from, burning_end, COLOR_GOLD, 2.0)
+	# Sparks travel along the burning part.
+	for spark in 6:
+		var along := fmod(_time * 0.5 + spark / 6.0, 1.0) * fill
 		var point := from.lerp(to, along)
-		draw_rect(Rect2(point.round() - Vector2.ONE, Vector2(2, 2)), Color(1.0, 0.9, 0.6))
+		canvas.draw_rect(Rect2(point.round() - Vector2(1.5, 1.5), Vector2(3, 3)), Color(1.0, 0.92, 0.65))
 
 
-func _draw_centre_ring() -> void:
-	draw_circle(TREE_CENTER, 30.0, Color(0.1, 0.075, 0.11))
-	draw_arc(TREE_CENTER, 30.0, 0.0, TAU, 64, COLOR_RED, 2.0)
+func _draw_centre(canvas: Node2D) -> void:
+	canvas.draw_circle(Vector2.ZERO, CENTRE_RADIUS, Color(0.06, 0.045, 0.07))
+	canvas.draw_arc(Vector2.ZERO, CENTRE_RADIUS, 0.0, TAU, 96, COLOR_RED, 2.5)
 	var pulse := 0.5 + 0.5 * sin(_time * 2.0)
-	draw_arc(TREE_CENTER, 34.0 + pulse * 2.0, 0.0, TAU, 64, Color(COLOR_ORANGE, 0.25 + 0.2 * pulse), 1.0)
+	canvas.draw_arc(Vector2.ZERO, CENTRE_RADIUS + 6.0 + pulse * 3.0, 0.0, TAU, 96, Color(COLOR_ORANGE, 0.2 + 0.2 * pulse), 1.5)
 
 
-func _draw_node(node: Dictionary) -> void:
+func _draw_node(canvas: Node2D, node: Dictionary) -> void:
 	var id: String = node["id"]
-	var center: Vector2 = _positions[id]
-	var scale_now: float = _hover_scale[id]
+	var centre: Vector2 = _positions[id]
+	var hover: float = _hover_scale[id]
 	var state := _state_of(id)
-	var radius := _radius_of(node) * scale_now
+	var radius: float = NODE_RADIUS[node["kind"]] * hover
 
 	if state == "learned":
-		var flicker := 0.85 + 0.15 * sin(_time * 5.0 + center.x)
-		for halo in [[radius + 12.0, 0.08], [radius + 7.0, 0.14], [radius + 3.0, 0.22]]:
-			draw_circle(center, halo[0], Color(COLOR_ORANGE, halo[1] * flicker))
+		var flicker := 0.85 + 0.15 * sin(_time * 5.0 + centre.x)
+		for halo in [[radius + 18.0, 0.07], [radius + 11.0, 0.12], [radius + 5.0, 0.2]]:
+			canvas.draw_circle(centre, halo[0], Color(COLOR_ORANGE, halo[1] * flicker))
 
-	var fill: Color = {"learned": COLOR_DEEP, "available": Color(0.16, 0.12, 0.16), "locked": COLOR_COAL}[state]
+	var fill: Color = {"learned": COLOR_DEEP, "available": Color(0.12, 0.085, 0.12), "locked": COLOR_COAL}[state]
 	var edge: Color = {"learned": COLOR_GOLD, "available": COLOR_CREAM, "locked": COLOR_DIM}[state]
 	if state == "available":
-		edge = Color(edge, 0.6 + 0.4 * sin(_time * 4.0))  # gentle pulse: "you can take this"
+		edge = Color(edge, 0.55 + 0.45 * sin(_time * 4.0))  # gentle pulse: "you can take this"
 
 	if node["kind"] == "stat":
-		draw_circle(center, radius + 2.0, COLOR_OUTLINE)
-		draw_circle(center, radius, fill)
-		draw_arc(center, radius, 0.0, TAU, 32, edge, 2.0)
+		canvas.draw_circle(centre, radius + 3.0, COLOR_OUTLINE)
+		canvas.draw_circle(centre, radius, fill)
+		canvas.draw_arc(centre, radius, 0.0, TAU, 48, edge, 2.5)
 	else:
-		_draw_diamond(center, radius + 2.0, COLOR_OUTLINE, true)
-		_draw_diamond(center, radius, fill, true)
-		_draw_diamond(center, radius, edge, false)
+		_draw_diamond(canvas, centre, radius + 3.0, COLOR_OUTLINE, true)
+		_draw_diamond(canvas, centre, radius, fill, true)
+		_draw_diamond(canvas, centre, radius, edge, false)
 
 	var icon_color: Color = {"learned": COLOR_GOLD, "available": COLOR_CREAM, "locked": COLOR_DIM}[state]
-	var pixel := 1.0 if node["kind"] == "stat" else 2.0
-	_draw_icon(node["icon"], center, pixel * scale_now, icon_color)
+	_draw_icon(canvas, node["icon"], centre, ICON_PIXEL[node["kind"]] * hover, icon_color)
 
 
-func _draw_diamond(center: Vector2, radius: float, color: Color, filled: bool) -> void:
+func _draw_diamond(canvas: Node2D, centre: Vector2, radius: float, color: Color, filled: bool) -> void:
 	var points := PackedVector2Array([
-		center + Vector2(0, -radius), center + Vector2(radius, 0),
-		center + Vector2(0, radius), center + Vector2(-radius, 0),
+		centre + Vector2(0, -radius), centre + Vector2(radius, 0),
+		centre + Vector2(0, radius), centre + Vector2(-radius, 0),
 	])
 	if filled:
-		draw_colored_polygon(points, color)
+		canvas.draw_colored_polygon(points, color)
 	else:
 		points.append(points[0])
-		draw_polyline(points, color, 2.0)
+		canvas.draw_polyline(points, color, 2.5)
 
 
-## Icons are 8×8; this centres them exactly on the node at any scale.
-func _draw_icon(icon_name: String, center: Vector2, pixel: float, color: Color) -> void:
+## Draws an 8×8 icon so the middle of its drawn pixels sits exactly on the node's centre.
+func _draw_icon(canvas: Node2D, icon_name: String, centre: Vector2, pixel: float, color: Color) -> void:
 	var rows: Array = ICONS[icon_name]
-	var top_left := center - Vector2(4, 4) * pixel
+	var top_left: Vector2 = centre - _icon_centres[icon_name] * pixel
 	for y in rows.size():
 		for x in 8:
 			if rows[y][x] == "#":
-				draw_rect(Rect2(top_left + Vector2(x, y) * pixel, Vector2(pixel, pixel)), color)
+				canvas.draw_rect(Rect2(top_left + Vector2(x, y) * pixel, Vector2(pixel, pixel)), color)
 
 
 # --- Learning a node ------------------------------------------------------
@@ -358,12 +467,12 @@ func _ignite(id: String) -> void:
 	_show_tooltip_for(id)
 
 	# Fire travels from a learned neighbour along the vein, then the ember flares.
-	var source := _learned_neighbour_of(id)
+	var source := _learned_neighbour_of(id, id)
 	var key := _vein_key(source, id) if _vein_fill.has(_vein_key(source, id)) else _vein_key(id, source)
 	var travel := create_tween().set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-	travel.tween_method(func(value: float) -> void: _vein_fill[key] = value, 0.0, 1.0, 0.35)
+	travel.tween_method(func(value: float) -> void: _vein_fill[key] = value, 0.0, 1.0, 0.4)
 	travel.tween_callback(_burst_at.bind(_positions[id]))
-	_hover_scale[id] = 1.6  # pop, then eases back
+	_hover_scale[id] = 1.5  # a pop that eases back
 
 
 func _burst_at(point: Vector2) -> void:
@@ -371,18 +480,18 @@ func _burst_at(point: Vector2) -> void:
 	burst.position = point
 	burst.one_shot = true
 	burst.explosiveness = 1.0
-	burst.amount = 18
-	burst.lifetime = 0.6
+	burst.amount = 24
+	burst.lifetime = 0.7
 	burst.spread = 180.0
-	burst.initial_velocity_min = 30.0
-	burst.initial_velocity_max = 70.0
-	burst.gravity = Vector2(0, 40)
-	burst.scale_amount_min = 1.0
-	burst.scale_amount_max = 2.0
+	burst.initial_velocity_min = 50.0
+	burst.initial_velocity_max = 120.0
+	burst.gravity = Vector2(0, 80)
+	burst.scale_amount_min = 2.0
+	burst.scale_amount_max = 4.0
 	burst.color_ramp = _fade_ramp([Color(1, 0.95, 0.7), COLOR_ORANGE, COLOR_RED])
-	add_child(burst)
+	_canvas.add_child(burst)
 	burst.emitting = true
-	get_tree().create_timer(1.0).timeout.connect(burst.queue_free)
+	get_tree().create_timer(1.2).timeout.connect(burst.queue_free)
 
 
 # --- Tooltip --------------------------------------------------------------
@@ -390,23 +499,27 @@ func _burst_at(point: Vector2) -> void:
 func _show_tooltip_for(id: String) -> void:
 	if id == "":
 		_tooltip_name.text = "The Ember Tree"
-		_tooltip_tag.text = "HOVER AN EMBER"
-		_tooltip_text.text = "Learned embers burn. Glowing ones can be ignited. Grey rings open as Emberoo evolves."
+		_tooltip_tag.text = "EMBEROO'S SKILLS"
+		_tooltip_text.text = "Learned embers burn. Glowing ones can be ignited. The grey rings open as Emberoo evolves."
 		_tooltip_status.text = ""
+		_tooltip_status.visible = false
 	else:
 		var node := _node_data(id)
 		_tooltip_name.text = node["name"]
 		_tooltip_tag.text = node["tag"]
 		_tooltip_text.text = node["text"]
 		_tooltip_status.text = _status_text(id)
-	_tooltip.size = Vector2(220, 0)  # shrink to fit the new text
+		_tooltip_status.add_theme_color_override("font_color", _status_color(id))
+		_tooltip_status.visible = true
+	_tooltip.reset_size()  # shrink to fit the new text
 
 	# Slide in and fade, instead of popping.
+	var resting_x := UI_SIZE.x - 236.0
 	_tooltip.modulate.a = 0.0
-	_tooltip.position.x = 412
+	_tooltip.position.x = resting_x + 8.0
 	var slide := create_tween().set_parallel().set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-	slide.tween_property(_tooltip, "modulate:a", 1.0, 0.15)
-	slide.tween_property(_tooltip, "position:x", 404.0, 0.15)
+	slide.tween_property(_tooltip, "modulate:a", 1.0, 0.16)
+	slide.tween_property(_tooltip, "position:x", resting_x, 0.16)
 
 
 func _status_text(id: String) -> String:
@@ -414,7 +527,7 @@ func _status_text(id: String) -> String:
 		"learned":
 			return "Ignited"
 		"available":
-			return "Click to ignite · 1 point" if _skill_points > 0 else "No skill points left"
+			return "Click to ignite  ·  1 point" if _skill_points > 0 else "No skill points left"
 		_:
 			var ring: int = _node_data(id)["ring"]
 			if ring > UNLOCKED_RING:
@@ -422,8 +535,12 @@ func _status_text(id: String) -> String:
 			return "Ignite a neighbouring ember first"
 
 
+func _status_color(id: String) -> Color:
+	return {"learned": COLOR_GOLD, "available": COLOR_CREAM, "locked": COLOR_GREY}[_state_of(id)]
+
+
 func _update_points_label() -> void:
-	_points_label.text = "Level 7  ·  Skill points: %d" % _skill_points
+	_points_label.text = "Level 7   ·   Skill points  %d" % _skill_points
 
 
 # --- Rules ----------------------------------------------------------------
@@ -441,29 +558,28 @@ func _is_available(id: String) -> bool:
 		return false
 	if _node_data(id)["ring"] > UNLOCKED_RING:
 		return false
-	return _learned_neighbour_of(id) != ""
+	return _learned_neighbour_of(id, "") != ""
 
 
-func _learned_neighbour_of(id: String) -> String:
+## A learned node linked to this one (ignoring `except_id`), or "" if none.
+func _learned_neighbour_of(id: String, except_id: String) -> String:
 	for link in _links:
-		if link[1] == id and _learned.has(link[0]):
-			return link[0]
-		if link[0] == id and _learned.has(link[1]):
-			return link[1]
+		for side in [0, 1]:
+			var other: String = link[1 - side]
+			if link[side] == id and other != except_id and (_learned.has(other) or other == "centre"):
+				return other
 	return ""
 
 
 # --- Helpers --------------------------------------------------------------
 
-func _node_under(point: Vector2) -> String:
+## Finds the node under a point given in screen (UI) coordinates.
+func _node_under(screen_point: Vector2) -> String:
+	var tree_point := _canvas.transform.affine_inverse() * screen_point
 	for node in NODES:
-		if point.distance_to(_positions[node["id"]]) <= _radius_of(node) + 3.0:
+		if tree_point.distance_to(_positions[node["id"]]) <= NODE_RADIUS[node["kind"]] + 2.0:
 			return node["id"]
 	return ""
-
-
-func _radius_of(node: Dictionary) -> float:
-	return {"skill": 13.0, "stat": 9.0, "ultimate": 16.0}[node["kind"]]
 
 
 func _node_data(id: String) -> Dictionary:
@@ -503,11 +619,27 @@ func _fade_ramp(colors: Array) -> Gradient:
 	return ramp
 
 
+func _make_panel(background: Color, border: Color, corner_radius: int) -> PanelContainer:
+	var panel := PanelContainer.new()
+	var style := StyleBoxFlat.new()
+	style.bg_color = background
+	style.border_color = border
+	style.set_border_width_all(1 if border.a > 0.0 else 0)
+	style.set_corner_radius_all(corner_radius)
+	style.set_content_margin_all(12)
+	style.shadow_color = Color(0, 0, 0, 0.35 if corner_radius > 0 else 0.0)
+	style.shadow_size = 6 if corner_radius > 0 else 0
+	panel.add_theme_stylebox_override("panel", style)
+	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return panel
+
+
 func _make_label(font_size: int, color: Color) -> Label:
 	var label := Label.new()
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.add_theme_font_size_override("font_size", font_size)
 	label.add_theme_color_override("font_color", color)
+	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return label
 
 
@@ -521,3 +653,12 @@ func _add_label(text: String, at: Vector2, box: Vector2, font_size: int, color: 
 	label.clip_text = true
 	add_child(label)
 	return label
+
+
+func _add_line(from: Vector2, to: Vector2, color: Color) -> void:
+	var line := ColorRect.new()
+	line.color = color
+	line.position = from
+	line.size = Vector2(to.x - from.x, 1)
+	line.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(line)
