@@ -3,13 +3,14 @@ extends CharacterBody2D
 ## A creature the player controls through the spirit link.
 ##
 ## This script only coordinates. Each job lives in its own child component:
-##   PlayerInput    -> what the player wants
-##   Movement       -> how fast to move normally
-##   Facing         -> which way to look
-##   MeleeAttack    -> the jab
-##   Dodge          -> the quick escape
-##   AfterimageTrail -> makes dodges easy to see
-##   Sprite         -> what to show
+##   PlayerInput     -> what the player wants
+##   Movement        -> how fast to move normally
+##   Facing          -> which way to look
+##   MeleeAttack     -> the jab
+##   Dodge           -> the leap out of danger
+##   AfterimageTrail -> fading copies during a dodge
+##   SpeedTrail      -> a streak behind a dodge
+##   Sprite          -> what to show
 
 ## Below this speed (pixels per second) the creature counts as standing still.
 const STANDING_STILL_SPEED := 1.0
@@ -20,6 +21,7 @@ const STANDING_STILL_SPEED := 1.0
 @onready var melee_attack: MeleeAttack = $MeleeAttack
 @onready var dodge: Dodge = $Dodge
 @onready var afterimage_trail: AfterimageTrail = $AfterimageTrail
+@onready var speed_trail: SpeedTrail = $SpeedTrail
 @onready var animator: CreatureAnimator = $Sprite
 
 
@@ -32,6 +34,7 @@ func _physics_process(delta: float) -> void:
 
 	facing.look_toward(move_direction)
 	animator.show_animation(_current_action(), facing)
+	animator.lift(dodge.current_height())
 
 
 ## One action at a time: no punching mid-dodge, no dodging mid-punch.
@@ -40,16 +43,23 @@ func _start_requested_action() -> void:
 		return
 
 	if player_input.wants_to_attack() and melee_attack.is_ready():
-		melee_attack.start(facing.as_vector())
+		_start_jab()
 	elif player_input.wants_to_dodge() and dodge.is_ready():
 		_start_dodge()
+
+
+func _start_jab() -> void:
+	melee_attack.start(facing.as_vector())
+	animator.replay_animation("jab", facing)
 
 
 func _start_dodge() -> void:
 	var dodge_direction := _dodge_direction()
 	facing.look_toward(dodge_direction)
 	dodge.start(dodge_direction)
+	animator.replay_animation("hop", facing)
 	afterimage_trail.play_for(dodge.dodge_duration)
+	speed_trail.play_for(dodge.dodge_duration)
 
 
 ## Dodge where the player is steering, or straight ahead if they aren't.
@@ -77,12 +87,11 @@ func _is_busy() -> bool:
 	return melee_attack.is_attacking or dodge.is_dodging
 
 
+## The dodge is a big kangaroo hop, so it reuses the hop animation while leaping.
 func _current_action() -> String:
 	if melee_attack.is_attacking:
 		return "jab"
-	if dodge.is_dodging:
-		return "dodge"
-	if _is_moving():
+	if dodge.is_dodging or _is_moving():
 		return "hop"
 	return "idle"
 

@@ -15,7 +15,7 @@ See [DESIGN.md](DESIGN.md) for every design decision.
 | `scenes/` | Godot scenes, grouped by thing (`main/`, `creatures/emberoo/`). |
 | `scripts/components/` | Small single-job pieces: input, movement, facing. |
 | `scripts/animation/` | Loading sprite sheets and choosing what to play. |
-| `scripts/effects/` | One-shot visual effects (hit sparks, bursts). |
+| `scripts/effects/` | Visual effects: hit bursts, afterimages, speed trails. |
 | `scripts/creatures/` | The creature itself, which only coordinates its components. |
 
 ## Code rules (Clean Code)

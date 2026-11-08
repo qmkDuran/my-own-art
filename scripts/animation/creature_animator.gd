@@ -31,7 +31,12 @@ const ANIMATION_SETTINGS := {
 @export_dir var sprite_sheet_folder: String = "res://art/emberoo"
 
 
+## Where the sprite sits when the creature is on the ground.
+var _ground_offset: Vector2
+
+
 func _ready() -> void:
+	_ground_offset = position
 	sprite_frames = SpriteSheetLoader.build_sprite_frames(
 		sprite_sheet_folder,
 		creature_name,
@@ -39,6 +44,20 @@ func _ready() -> void:
 		ANIMATION_SETTINGS,
 		FRAME_SIZE
 	)
+
+
+## Raises the sprite off the ground, in pixels. The shadow stays put, which sells the jump.
+func lift(height: float) -> void:
+	position = _ground_offset + Vector2(0, -roundf(height))
+
+
+## Like show_animation, but always starts from the first frame,
+## e.g. so back-to-back jabs each play in full.
+func replay_animation(action: String, facing: Facing) -> void:
+	show_animation(action, facing)
+	frame = 0
+	frame_progress = 0.0
+	play()
 
 
 func show_animation(action: String, facing: Facing) -> void:
