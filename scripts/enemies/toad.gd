@@ -6,7 +6,7 @@ extends CharacterBody2D
 ## the toad decides what to do next.
 ##   RESTING    -> sits for a moment, then hops closer or starts an attack
 ##   HOPPING    -> one hop toward the player, in an arc
-##   PUFFING    -> the warning: cheeks puff up and the toad flickers green (the cue to dodge)
+##   PUFFING    -> the warning: holds its puffed-up pose, then glints just before striking
 ##   LASHING    -> tongue shoots out; hits the player if they're still in the way
 ##   RECOVERING -> a short pause after attacking or being hit
 ##   DYING      -> fades away
@@ -32,9 +32,10 @@ const PLAYER_BODY_HEIGHT := -6.0
 ## Seconds of warning before the tongue comes out (the attack animation's first frame).
 @export var puff_time: float = 0.80
 ## Colour the toad flickers to while winding up, so the attack is easy to see coming.
-@export var warning_tint: Color = Color(0.75, 1.3, 0.6)
-## Seconds between each flicker of the warning tint.
-@export var warning_flicker_interval: float = 0.08
+## The toad glints once this many seconds before the tongue fires (the last-moment cue to dodge).
+@export var glint_before_strike: float = 0.12
+## Colour of that glint.
+@export var glint_color: Color = Color(0.85, 1.0, 0.75)
 ## Seconds the tongue is out (the rest of the attack animation).
 @export var lash_time: float = 0.32
 ## How close to the tongue the player's body must be to get hit, in pixels.
@@ -57,6 +58,7 @@ var _state_length: float = 0.0
 var _hop_velocity: Vector2 = Vector2.ZERO
 var _lash_direction: Vector2 = Vector2.DOWN
 var _has_hit_this_lash: bool = false
+var _has_glinted: bool = false
 
 @onready var health: Health = $Health
 @onready var sprite: SingleViewAnimator = $Sprite
@@ -109,9 +111,8 @@ func _hop() -> void:
 ## The wind-up: the toad flickers toxic green so the player can see the attack coming.
 func _puff() -> void:
 	velocity = Vector2.ZERO
-	_show_attack_warning()
+	_glint_just_before_strike()
 	if _is_state_over():
-		_clear_attack_warning()
 		_has_hit_this_lash = false
 		tongue.lash(_lash_direction, tongue_reach, lash_time)
 		_enter(State.LASHING, lash_time)
@@ -150,6 +151,7 @@ func _choose_next_move() -> void:
 
 
 func _start_attack(to_player: Vector2) -> void:
+	_has_glinted = false
 	_lash_direction = to_player.normalized()
 	sprite.replay_animation("attack")
 	_enter(State.PUFFING, puff_time)
@@ -183,7 +185,6 @@ func _on_damaged(_amount: int, source_position: Vector2) -> void:
 		return
 
 	tongue.retract_now()
-	_clear_attack_warning()
 	sprite.lift(0.0)
 	velocity = (global_position - source_position).normalized() * knockback_speed
 	_enter(State.RECOVERING, recover_time)
@@ -201,13 +202,13 @@ func _on_died() -> void:
 
 # --- Attack warning -------------------------------------------------------
 
-func _show_attack_warning() -> void:
-	var flicker_on := int(_time_in_state / warning_flicker_interval) % 2 == 0
-	sprite.modulate = Color(warning_tint, sprite.modulate.a) if flicker_on else Color(1, 1, 1, sprite.modulate.a)
-
-
-func _clear_attack_warning() -> void:
-	sprite.modulate = Color(1, 1, 1, sprite.modulate.a)
+## Like most trash mobs, the toad mainly telegraphs with its pose (the held puff).
+## One quick glint right before the strike is the final cue.
+func _glint_just_before_strike() -> void:
+	var time_to_strike := _state_length - _time_in_state
+	if not _has_glinted and time_to_strike <= glint_before_strike:
+		_has_glinted = true
+		hit_flash.flash(glint_color)
 
 
 # --- Helpers --------------------------------------------------------------
