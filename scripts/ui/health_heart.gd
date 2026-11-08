@@ -3,6 +3,7 @@ extends Control
 ## The player's health as one heart at the bottom of the screen.
 ##
 ## The heart is a container of red: it drains from the top down as health is lost.
+## The exact numbers (e.g. 7/10) are shown beside it.
 
 ## Pixel map of the heart. 'x' = inside the heart.
 const HEART_PIXELS := [
@@ -26,6 +27,9 @@ const SHINE_PIXELS := [Vector2(2, 1), Vector2(1, 2), Vector2(8, 1)]
 @export var empty_color: Color = Color(0.204, 0.11, 0.153)
 @export var fill_color: Color = Color(0.647, 0.188, 0.188)
 @export var shine_color: Color = Color(0.812, 0.341, 0.235)
+@export var number_color: Color = Color(0.906, 0.835, 0.702)
+## Gap between the heart and the numbers, in pixels.
+const NUMBER_GAP := 4
 
 var _health: Health
 
@@ -45,9 +49,14 @@ func _ready() -> void:
 func _draw() -> void:
 	if _health == null:
 		return
-	var top_left := ((size - HEART_SIZE) / 2.0).round()
+	var numbers := "%d/%d" % [_health.current_health, _health.max_health]
+	var group_width := HEART_SIZE.x + NUMBER_GAP + PixelDigits.width_of(numbers)
+	var top_left := Vector2(roundf((size.x - group_width) / 2.0), roundf((size.y - HEART_SIZE.y) / 2.0))
 	_draw_outline(top_left)
 	_draw_contents(top_left, _share_of_health_left())
+
+	var numbers_top_left := top_left + Vector2(HEART_SIZE.x + NUMBER_GAP, roundf((HEART_SIZE.y - PixelDigits.GLYPH_HEIGHT) / 2.0))
+	PixelDigits.draw_text(self, numbers, numbers_top_left, number_color, outline_color)
 
 
 func _share_of_health_left() -> float:
