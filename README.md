@@ -6,7 +6,7 @@ See [DESIGN.md](DESIGN.md) for every design decision.
 ## Run it
 1. Install Godot 4.7 (standard, not .NET).
 2. Godot → Import → pick this folder's `project.godot`.
-3. Press F5. Move Emberoo with WASD, arrow keys or a gamepad stick.
+3. Press F5. Move Emberoo with WASD, arrow keys or a gamepad stick. Left click (or gamepad X) to jab.
 
 ## Folder layout
 | Folder | What lives there |
@@ -15,6 +15,7 @@ See [DESIGN.md](DESIGN.md) for every design decision.
 | `scenes/` | Godot scenes, grouped by thing (`main/`, `creatures/emberoo/`). |
 | `scripts/components/` | Small single-job pieces: input, movement, facing. |
 | `scripts/animation/` | Loading sprite sheets and choosing what to play. |
+| `scripts/effects/` | One-shot visual effects (hit sparks, bursts). |
 | `scripts/creatures/` | The creature itself, which only coordinates its components. |
 
 ## Code rules (Clean Code)

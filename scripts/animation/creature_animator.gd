@@ -17,11 +17,13 @@ const VIEW_FOR_DIRECTION := {
 	Facing.Direction.SIDE: "side",
 }
 
+## Seconds each frame is shown, in order.
+## Keep "jab" in sync with MeleeAttack's timings on the creature.
 const ANIMATION_SETTINGS := {
-	"idle": { "frames_per_second": 4.0, "loops": true },
-	"hop": { "frames_per_second": 10.0, "loops": true },
-	"jab": { "frames_per_second": 12.0, "loops": false },
-	"dodge": { "frames_per_second": 12.0, "loops": false },
+	"idle": { "frame_durations": [0.30, 0.20, 0.30, 0.20], "loops": true },
+	"hop": { "frame_durations": [0.09, 0.16, 0.11, 0.11], "loops": true },
+	"jab": { "frame_durations": [0.12, 0.07, 0.11, 0.14], "loops": false },
+	"dodge": { "frame_durations": [0.07, 0.15, 0.11], "loops": false },
 }
 
 ## Used to find this creature's sprite sheets, e.g. "emberoo".

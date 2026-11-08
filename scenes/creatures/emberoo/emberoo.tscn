@@ -1,10 +1,12 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://scripts/creatures/creature.gd" id="1_creature"]
 [ext_resource type="Script" path="res://scripts/animation/creature_animator.gd" id="2_animator"]
 [ext_resource type="Script" path="res://scripts/components/player_input.gd" id="3_input"]
 [ext_resource type="Script" path="res://scripts/components/movement.gd" id="4_movement"]
 [ext_resource type="Script" path="res://scripts/components/facing.gd" id="5_facing"]
+[ext_resource type="Script" path="res://scripts/components/melee_attack.gd" id="6_melee"]
+[ext_resource type="PackedScene" path="res://scenes/effects/fire_impact.tscn" id="7_impact"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_body"]
 radius = 5.0
@@ -31,3 +33,7 @@ script = ExtResource("4_movement")
 
 [node name="Facing" type="Node" parent="."]
 script = ExtResource("5_facing")
+
+[node name="MeleeAttack" type="Node" parent="."]
+script = ExtResource("6_melee")
+impact_effect = ExtResource("7_impact")

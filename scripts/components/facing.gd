@@ -24,5 +24,16 @@ func look_toward(move_direction: Vector2) -> void:
 		direction = Direction.UP
 
 
+## The facing as a unit vector, e.g. Vector2.LEFT when looking left.
+func as_vector() -> Vector2:
+	match direction:
+		Direction.DOWN:
+			return Vector2.DOWN
+		Direction.UP:
+			return Vector2.UP
+		_:
+			return Vector2.LEFT if is_looking_left else Vector2.RIGHT
+
+
 func _is_mostly_horizontal(move_direction: Vector2) -> bool:
 	return absf(move_direction.x) >= absf(move_direction.y)
