@@ -11,15 +11,17 @@ extends Node
 ## Seconds the whole attack takes, start to recovery (the jab animation's length).
 @export var attack_duration: float = 0.44
 ## How far in front of the creature the hit lands, in pixels.
-@export var reach: float = 16.0
+@export var reach: float = 20.0
 ## Height of the fist above the creature's feet, in pixels (negative is up).
 @export var fist_height: float = -7.0
 ## Effect shown where the hit lands.
 @export var impact_effect: PackedScene
 ## Damage dealt to each target the hit lands on.
 @export var damage: int = 1
-## How close to the landing spot a target's feet must be to get hit, in pixels.
-@export var hit_radius: float = 12.0
+## How close to the punch line a target's feet must be to get hit, in pixels.
+@export var hit_radius: float = 9.0
+## How far the attacker lunges forward during the wind-up, in pixels.
+@export var lunge_distance: float = 6.0
 ## Group whose members this attack can hurt (each needs a child node named "Health").
 @export var target_group: String = "enemies"
 ## Animations used in turn for back-to-back attacks, e.g. left fist then right fist.
@@ -52,6 +54,13 @@ func start(attack_direction: Vector2) -> void:
 	_time_attacking = 0.0
 	_has_landed_hit = false
 	_advance_combo()
+
+
+## The attacker's speed while lunging forward during the wind-up; zero otherwise.
+func lunge_velocity() -> Vector2:
+	if not is_attacking or _time_attacking >= hit_delay:
+		return Vector2.ZERO
+	return _attack_direction * (lunge_distance / hit_delay)
 
 
 ## Stops the attack right away. Safe to call when not attacking.
@@ -87,10 +96,14 @@ func _spawn_impact(attack_direction: Vector2) -> void:
 	impact.rotation = attack_direction.angle()
 
 
+## Hits everything along the punch, from the attacker's body out to full reach,
+## so targets slightly closer or further than the fist still get hit.
 func _damage_targets_in_reach(attack_direction: Vector2) -> void:
-	var landing_spot := attacker.global_position + attack_direction * reach
+	var punch_start := attacker.global_position
+	var punch_end := attacker.global_position + attack_direction * reach
 	for target: Node2D in get_tree().get_nodes_in_group(target_group):
-		if target.global_position.distance_to(landing_spot) > hit_radius:
+		var closest := Geometry2D.get_closest_point_to_segment(target.global_position, punch_start, punch_end)
+		if target.global_position.distance_to(closest) > hit_radius:
 			continue
 		var target_health: Health = target.get_node_or_null("Health")
 		if target_health != null:

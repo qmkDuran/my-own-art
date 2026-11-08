@@ -99,6 +99,9 @@ func _dodge_direction() -> Vector2:
 func _next_velocity(move_direction: Vector2, delta: float) -> Vector2:
 	if dodge.is_dodging:
 		return dodge.dodge_velocity
+	if melee_attack.is_attacking:
+		# A short step forward into the punch, then planted feet.
+		return melee_attack.lunge_velocity()
 	return movement.calculate_velocity(velocity, move_direction, delta)
 
 
