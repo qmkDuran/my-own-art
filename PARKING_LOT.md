@@ -15,7 +15,6 @@ Good ideas that don't belong in the current milestone. Check here when a milesto
 
 ## Emberoo polish
 - Redraw side `jab2` (currently reads more like a low body hook).
-- Back base sprite: 1px outline gap above the right heel.
 
 ## Controls & visuals
 - **8-direction sprites** (add front-diagonal and back-diagonal views; ~1.7× art). Movement/aim already work at any angle.
