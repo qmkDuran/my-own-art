@@ -7,8 +7,9 @@ extends Control
 const MAP_SIZE := 46
 ## The dark area inside the frame, where the radar is drawn.
 const INSIDE := Rect2i(2, 2, MAP_SIZE - 4, MAP_SIZE - 4)
-## World pixels per radar pixel: the radar reaches about 125 pixels out from Emberoo.
-const WORLD_PIXELS_PER_DOT := 6.0
+## World pixels per radar pixel: the radar reaches about 190 pixels out from Emberoo,
+## a bit past the edges of the 480×270 screen.
+const WORLD_PIXELS_PER_DOT := 9.0
 ## How often the dots are refreshed, in seconds.
 const REFRESH_SECONDS := 0.1
 ## Emberoo's arrow, pointing up, as [offset from the centre, colour].

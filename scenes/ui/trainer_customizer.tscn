@@ -21,7 +21,22 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Title" type="Label" parent="."]
+[node name="Content" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -160.0
+offset_top = -90.0
+offset_right = 160.0
+offset_bottom = 90.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Title" type="Label" parent="Content"]
 layout_mode = 0
 offset_left = 16.0
 offset_top = 6.0
@@ -30,7 +45,7 @@ offset_bottom = 20.0
 theme_override_font_sizes/font_size = 10
 text = "Your Trainer"
 
-[node name="PreviewFrame" type="Panel" parent="."]
+[node name="PreviewFrame" type="Panel" parent="Content"]
 unique_name_in_owner = true
 layout_mode = 0
 offset_left = 16.0
@@ -38,12 +53,12 @@ offset_top = 24.0
 offset_right = 104.0
 offset_bottom = 148.0
 
-[node name="Preview" parent="PreviewFrame" instance=ExtResource("2_preview")]
+[node name="Preview" parent="Content/PreviewFrame" instance=ExtResource("2_preview")]
 unique_name_in_owner = true
 position = Vector2(44, 62)
 scale = Vector2(4, 4)
 
-[node name="Pickers" type="VBoxContainer" parent="."]
+[node name="Pickers" type="VBoxContainer" parent="Content"]
 unique_name_in_owner = true
 layout_mode = 0
 offset_left = 116.0
@@ -52,7 +67,7 @@ offset_right = 304.0
 offset_bottom = 146.0
 theme_override_constants/separation = 3
 
-[node name="Buttons" type="HBoxContainer" parent="."]
+[node name="Buttons" type="HBoxContainer" parent="Content"]
 layout_mode = 0
 offset_left = 116.0
 offset_top = 154.0
@@ -61,12 +76,12 @@ offset_bottom = 168.0
 theme_override_constants/separation = 6
 alignment = 2
 
-[node name="RandomizeButton" type="Button" parent="Buttons"]
+[node name="RandomizeButton" type="Button" parent="Content/Buttons"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Randomize"
 
-[node name="DoneButton" type="Button" parent="Buttons"]
+[node name="DoneButton" type="Button" parent="Content/Buttons"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Done"

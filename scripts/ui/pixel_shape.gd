@@ -73,6 +73,19 @@ static func ring_around(shape: Dictionary) -> Array[Vector2i]:
 	return pixels
 
 
+## The smallest rectangle holding every pixel of a non-empty shape.
+static func bounds_of(shape: Dictionary) -> Rect2i:
+	var bounds := Rect2i()
+	var is_first := true
+	for pixel: Vector2i in shape:
+		if is_first:
+			bounds = Rect2i(pixel, Vector2i.ONE)
+			is_first = false
+		else:
+			bounds = bounds.expand(pixel).expand(pixel + Vector2i.ONE)
+	return bounds
+
+
 ## Draws pixels (Vector2i -> Color) with a one-pixel outline around them, like the game's sprites.
 static func draw_outlined(canvas: CanvasItem, pixels: Dictionary, origin: Vector2, outline: Color) -> void:
 	for pixel in ring_around(pixels):

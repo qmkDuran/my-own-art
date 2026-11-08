@@ -57,10 +57,14 @@ func _process(delta: float) -> void:
 
 ## Seconds left and the share of the cooldown still to go (1 = just used, 0 = ready).
 func set_cooldown(seconds_left: float, fraction_left: float) -> void:
+	var seconds := maxf(0.0, seconds_left)
 	var fraction := clampf(fraction_left, 0.0, 1.0)
-	if is_equal_approx(seconds_left, _cooldown_left) and is_equal_approx(fraction, _cooldown_fraction):
+	# Compared exactly, not with is_equal_approx: a cooldown counted down in 1/60 s steps can
+	# end a hair above zero (about 1e-15 s) for one frame. An approximate check would then
+	# skip the final 0.0, and the slot would stay "recovering" with a 1 on it for good.
+	if seconds == _cooldown_left and fraction == _cooldown_fraction:
 		return
-	_cooldown_left = maxf(0.0, seconds_left)
+	_cooldown_left = seconds
 	_cooldown_fraction = fraction
 	queue_redraw()
 
@@ -110,15 +114,14 @@ func _draw_inner_glint() -> void:
 	draw_rect(Rect2(INNER.position.x, INNER.position.y, 1, INNER.size.y), ApolloPalette.STONE)
 
 
-## The icon, centred (nudged one pixel down-right, clear of the key letter), with an outline.
-## While recovering it turns grey.
+## The icon with an outline, its visible pixels centred in the inner area. Art bigger than
+## the inner area is trimmed at its edges; the outline may sit on the frame's dark line,
+## which is the same colour. While recovering it turns grey.
 func _draw_icon(icon: Texture2D) -> void:
-	var icon_size := Vector2i(icon.get_size())
-	var top_left := Vector2((SLOT_SIZE - icon_size.x) / 2 + 1, (SLOT_SIZE - icon_size.y) / 2 + 1)
 	var pixels := _icon_pixels(icon)
 	if is_recovering():
 		pixels = _greyed(pixels)
-	PixelShape.draw_outlined(self, pixels, top_left, ApolloPalette.OUTLINE)
+	PixelShape.draw_outlined(self, pixels, Vector2.ZERO, ApolloPalette.OUTLINE)
 
 
 ## A dotted veil over the share still recovering, a sky-blue line on its edge, and the seconds left.
@@ -166,11 +169,28 @@ func _icon() -> Texture2D:
 	return skill.get("icon") as Texture2D
 
 
+## The icon's visible pixels, already placed in slot coordinates (see _fitted_in_inner_area).
 static func _icon_pixels(icon: Texture2D) -> Dictionary:
 	if not _icon_pixel_cache.has(icon):
 		var image := icon.get_image()
-		_icon_pixel_cache[icon] = PixelShape.from_image(image) if image != null else {}
+		_icon_pixel_cache[icon] = _fitted_in_inner_area(PixelShape.from_image(image)) if image != null else {}
 	return _icon_pixel_cache[icon]
+
+
+## Moves the pixels so their bounding box (not the image's, which may have empty margins)
+## is centred in INNER, and drops any pixel that would fall outside it.
+static func _fitted_in_inner_area(pixels: Dictionary) -> Dictionary:
+	if pixels.is_empty():
+		return pixels
+	var bounds := PixelShape.bounds_of(pixels)
+	var centring_gap := Vector2(INNER.size - bounds.size) / 2.0
+	var shift := INNER.position + Vector2i(centring_gap.floor()) - bounds.position
+	var fitted := {}
+	for pixel: Vector2i in pixels:
+		var placed := pixel + shift
+		if INNER.has_point(placed):
+			fitted[placed] = pixels[pixel]
+	return fitted
 
 
 static func _greyed(pixels: Dictionary) -> Dictionary:
