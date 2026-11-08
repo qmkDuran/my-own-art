@@ -6,7 +6,7 @@ extends Node2D
 @export var font_size: int = 6
 @export var text_color: Color = Color(0.906, 0.835, 0.702)
 ## Same see-through dark card as the discovery toast, with no border.
-@export var background: Color = Color(0.075, 0.05, 0.055, 0.6)
+@export var background: Color = Color(0.035, 0.039, 0.078, 0.6)
 
 
 func say(text: String, seconds: float = 1.4) -> void:

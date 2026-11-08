@@ -42,7 +42,7 @@ const PLAYER_BODY_HEIGHT := -6.0
 ## The toad glints once this many seconds before the tongue fires (the last-moment cue to dodge).
 @export var glint_before_strike: float = 0.12
 ## Colour of that glint.
-@export var glint_color: Color = Color(0.85, 1.0, 0.75)
+@export var glint_color: Color = Color(0.816, 0.855, 0.569)
 ## Seconds the tongue is out (the rest of the attack animation).
 @export var lash_time: float = 0.32
 ## How close to the tongue the player's body must be to get hit, in pixels.

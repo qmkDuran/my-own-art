@@ -59,7 +59,7 @@ enum State { WATCHING, RETREATING, SUMMONING, SHOVING, RECOVERING, DYING }
 @export var shove_follow_through: float = 0.15
 ## He glints this many seconds before the shockwave (the last-moment cue).
 @export var shove_glint_before: float = 0.12
-@export var shove_glint_color: Color = Color(1.0, 0.55, 0.5)
+@export var shove_glint_color: Color = Color(0.812, 0.341, 0.235)
 ## Colour of the slam's shockwave ring.
 @export var shockwave_color: Color = Color(0.812, 0.341, 0.235, 0.9)
 ## Where the rod hits the ground, relative to his feet. The shockwave starts here.

@@ -17,7 +17,7 @@ const FIST_SPOTS := {
 
 @export var sparks_per_fist: int = 4
 @export var spark_lifetime: float = 0.7
-@export var colors: Array[Color] = [Color(1.0, 0.92, 0.6), Color(0.871, 0.62, 0.255), Color(0.812, 0.341, 0.235)]
+@export var colors: Array[Color] = [Color(0.91, 0.757, 0.439), Color(0.871, 0.62, 0.255), Color(0.812, 0.341, 0.235)]
 
 var _emitters: Array[CPUParticles2D] = []
 

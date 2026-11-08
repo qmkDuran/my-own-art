@@ -32,17 +32,17 @@ const START_CENTRE := Vector2(232, 210)
 const DRAG_THRESHOLD := 4.0
 const HOVER_SCALE := 1.15
 
-const COLOR_BACKGROUND := Color(0.027, 0.031, 0.051)
-const COLOR_OUTLINE := Color(0.02, 0.022, 0.04)
+const COLOR_BACKGROUND := Color(0.035, 0.039, 0.078)
+const COLOR_OUTLINE := Color(0.035, 0.039, 0.078)
 const COLOR_CREAM := Color(0.906, 0.835, 0.702)
-const COLOR_GREY := Color(0.42, 0.5, 0.52)
-const COLOR_DIM := Color(0.2, 0.25, 0.28)
-const COLOR_COAL := Color(0.075, 0.09, 0.12)
+const COLOR_GREY := Color(0.341, 0.447, 0.467)
+const COLOR_DIM := Color(0.224, 0.29, 0.314)
+const COLOR_COAL := Color(0.063, 0.078, 0.122)
 const COLOR_ORANGE := Color(0.871, 0.62, 0.255)
 const COLOR_RED := Color(0.812, 0.341, 0.235)
 const COLOR_GOLD := Color(0.91, 0.757, 0.439)
-const COLOR_DEEP := Color(0.36, 0.11, 0.17)
-const COLOR_PANEL := Color(0.075, 0.05, 0.055, 0.8)
+const COLOR_DEEP := Color(0.376, 0.173, 0.173)
+const COLOR_PANEL := Color(0.035, 0.039, 0.078, 0.8)
 const COLOR_PANEL_EDGE := Color(0.871, 0.62, 0.255, 0.55)
 
 ## 8×8 pixel icons. They're centred by their drawn pixels, not the 8×8 box.
@@ -236,7 +236,7 @@ func _build_tree_canvas() -> void:
 func _build_vignette() -> void:
 	var gradient := Gradient.new()
 	gradient.offsets = PackedFloat32Array([0.0, 0.55, 1.0])
-	gradient.colors = PackedColorArray([Color(0, 0, 0, 0), Color(0, 0, 0, 0.15), Color(0, 0, 0, 0.75)])
+	gradient.colors = PackedColorArray([Color(0.035, 0.039, 0.078, 0), Color(0.035, 0.039, 0.078, 0.15), Color(0.035, 0.039, 0.078, 0.75)])
 	var texture := GradientTexture2D.new()
 	texture.gradient = gradient
 	texture.fill = GradientTexture2D.FILL_RADIAL
@@ -251,7 +251,7 @@ func _build_vignette() -> void:
 
 
 func _build_header() -> void:
-	var bar := _make_panel(Color(0.035, 0.03, 0.04, 0.72), Color(0, 0, 0, 0), 0)
+	var bar := _make_panel(Color(0.035, 0.039, 0.078, 0.72), Color(0.035, 0.039, 0.078, 0), 0)
 	bar.position = Vector2(0, 0)
 	bar.size = Vector2(UI_SIZE.x, HEADER_HEIGHT)
 	add_child(bar)
@@ -275,7 +275,7 @@ func _build_header() -> void:
 
 
 func _build_footer() -> void:
-	var bar := _make_panel(Color(0.035, 0.03, 0.04, 0.72), Color(0, 0, 0, 0), 0)
+	var bar := _make_panel(Color(0.035, 0.039, 0.078, 0.72), Color(0.035, 0.039, 0.078, 0), 0)
 	var top := UI_SIZE.y - FOOTER_HEIGHT
 	bar.position = Vector2(0, top)
 	bar.size = Vector2(UI_SIZE.x, FOOTER_HEIGHT)
@@ -416,11 +416,11 @@ func _draw_vein(canvas: Node2D, from_id: String, to_id: String) -> void:
 	for spark in 6:
 		var along := fmod(_time * 0.5 + spark / 6.0, 1.0) * fill
 		var point := from.lerp(to, along)
-		canvas.draw_rect(Rect2(point.round() - Vector2(1.5, 1.5), Vector2(3, 3)), Color(1.0, 0.92, 0.65))
+		canvas.draw_rect(Rect2(point.round() - Vector2(1.5, 1.5), Vector2(3, 3)), Color(0.906, 0.835, 0.702))
 
 
 func _draw_centre(canvas: Node2D) -> void:
-	canvas.draw_circle(Vector2.ZERO, CENTRE_RADIUS, Color(0.06, 0.045, 0.07))
+	canvas.draw_circle(Vector2.ZERO, CENTRE_RADIUS, Color(0.035, 0.039, 0.078))
 	canvas.draw_arc(Vector2.ZERO, CENTRE_RADIUS, 0.0, TAU, 96, COLOR_RED, 2.5)
 	var pulse := 0.5 + 0.5 * sin(_time * 2.0)
 	canvas.draw_arc(Vector2.ZERO, CENTRE_RADIUS + 6.0 + pulse * 3.0, 0.0, TAU, 96, Color(COLOR_ORANGE, 0.2 + 0.2 * pulse), 1.5)
@@ -438,7 +438,7 @@ func _draw_node(canvas: Node2D, node: Dictionary) -> void:
 		for halo in [[radius + 18.0, 0.07], [radius + 11.0, 0.12], [radius + 5.0, 0.2]]:
 			canvas.draw_circle(centre, halo[0], Color(COLOR_ORANGE, halo[1] * flicker))
 
-	var fill: Color = {"learned": COLOR_DEEP, "available": Color(0.12, 0.085, 0.12), "locked": COLOR_COAL}[state]
+	var fill: Color = {"learned": COLOR_DEEP, "available": Color(0.141, 0.082, 0.153), "locked": COLOR_COAL}[state]
 	var edge: Color = {"learned": COLOR_GOLD, "available": COLOR_CREAM, "locked": COLOR_DIM}[state]
 	if state == "available":
 		edge = Color(edge, 0.55 + 0.45 * sin(_time * 4.0))  # gentle pulse: "you can take this"
@@ -508,7 +508,7 @@ func _burst_at(point: Vector2) -> void:
 	burst.gravity = Vector2(0, 80)
 	burst.scale_amount_min = 2.0
 	burst.scale_amount_max = 4.0
-	burst.color_ramp = _fade_ramp([Color(1, 0.95, 0.7), COLOR_ORANGE, COLOR_RED])
+	burst.color_ramp = _fade_ramp([Color(0.906, 0.835, 0.702), COLOR_ORANGE, COLOR_RED])
 	_canvas.add_child(burst)
 	burst.emitting = true
 	get_tree().create_timer(1.2).timeout.connect(burst.queue_free)
@@ -647,7 +647,7 @@ func _make_panel(background: Color, border: Color, corner_radius: int) -> PanelC
 	style.set_border_width_all(1 if border.a > 0.0 else 0)
 	style.set_corner_radius_all(corner_radius)
 	style.set_content_margin_all(12)
-	style.shadow_color = Color(0, 0, 0, 0.35 if corner_radius > 0 else 0.0)
+	style.shadow_color = Color(0.035, 0.039, 0.078, 0.35 if corner_radius > 0 else 0.0)
 	style.shadow_size = 6 if corner_radius > 0 else 0
 	panel.add_theme_stylebox_override("panel", style)
 	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE

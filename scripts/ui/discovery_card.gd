@@ -16,7 +16,7 @@ const FADE_OUT_SECONDS := 0.6
 const SLOW_MOTION_SCALE := 0.3
 const SLOW_MOTION_SECONDS := 0.5     # real seconds
 
-@export var background: Color = Color(0.075, 0.05, 0.055, 0.6)
+@export var background: Color = Color(0.035, 0.039, 0.078, 0.6)
 @export var title_color: Color = Color(0.871, 0.62, 0.255)
 @export var name_color: Color = Color(0.906, 0.835, 0.702)
 @export var element_color: Color = Color(0.659, 0.792, 0.345)
