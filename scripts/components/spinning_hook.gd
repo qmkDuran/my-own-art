@@ -5,6 +5,7 @@ extends Node
 ##
 ## MeleeAttack plays it as its combo finisher (it owns the timing, buffering and cancel
 ## rules); this node holds the hook's numbers and lands the hit when told to.
+## Damage goes through CritRoll, so the attacker's critical hits apply.
 ## Keep the turn's look (SpinTurn) roughly in step with `hit_delay` and `attack_duration`.
 
 ## Animation the attacker plays while spinning (posed view by view, see SpinTurn).
@@ -48,7 +49,7 @@ func strike(attacker: Node2D) -> int:
 		var target_health: Health = target.get_node_or_null("Health")
 		if target_health == null:
 			continue
-		target_health.take_damage(damage, attacker.global_position)
+		CritRoll.deal_damage(attacker, target_health, damage)
 		_knock_back(target, attacker)
 		hit_count += 1
 	return hit_count

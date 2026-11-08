@@ -4,8 +4,9 @@ extends StaticBody2D
 ##
 ## It's in the "enemies" group with a child "Health", so jabs, skills and click-to-attack
 ## treat it like any enemy. On a hit it flashes, leans away from the punch and wobbles back
-## upright (its post stays planted), and a small damage number pops up. Under it, the total
-## damage of the current combo adds up while hits keep coming.
+## upright (its post stays planted). Its damage numbers come from the level's DamageNumbers,
+## like every enemy's. Under it, the total damage of the current combo (crits included) adds
+## up while hits keep coming.
 ## After `calm_reset_time` seconds without a hit, its health refills and the total resets.
 ##
 ## It has no creature_info() and no LightDrop, so it never shows a discovery card,
@@ -15,10 +16,6 @@ extends StaticBody2D
 const COMBO_LABEL := "TOTAL "
 ## Where the combo total sits, from the dummy's feet (top centre of the text).
 const COMBO_LABEL_OFFSET := Vector2(0, 4)
-## Where damage numbers pop up, from the dummy's feet (just above the straw head).
-const DAMAGE_NUMBER_OFFSET := Vector2(0, -24)
-## Damage numbers start up to this many pixels left or right, so quick hits don't overlap.
-const DAMAGE_NUMBER_SPREAD := 3
 
 ## Seconds without a hit before health refills and the combo total resets.
 @export var calm_reset_time: float = 2.0
@@ -42,7 +39,6 @@ var _lean_speed: float = 0.0
 @onready var health: Health = $Health
 @onready var sprite: Sprite2D = $Sprite
 @onready var hit_flash: HitFlash = $HitFlash
-@onready var damage_numbers: Node2D = $DamageNumbers
 
 
 func _ready() -> void:
@@ -77,7 +73,6 @@ func _on_damaged(amount: int, source_position: Vector2) -> void:
 		health.current_health = health.max_health
 	hit_flash.flash()
 	_lean_away(global_position.x - source_position.x, hit_lean_speed)
-	_pop_damage_number(amount)
 	_seconds_since_hit = 0.0
 	_combo_total += amount
 	queue_redraw()
@@ -89,15 +84,6 @@ func _lean_away(away_x: float, lean_speed: float) -> void:
 	if lean_direction == 0.0:
 		lean_direction = 1.0 if randf() < 0.5 else -1.0
 	_lean_speed += lean_direction * lean_speed
-
-
-func _pop_damage_number(amount: int) -> void:
-	var number := DamageNumber.new()
-	number.z_index = 3
-	damage_numbers.add_child(number)
-	var spread := randi_range(-DAMAGE_NUMBER_SPREAD, DAMAGE_NUMBER_SPREAD)
-	number.position = DAMAGE_NUMBER_OFFSET + Vector2(spread, 0)
-	number.pop(amount)
 
 
 # --- Over time ------------------------------------------------------------

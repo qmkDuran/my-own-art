@@ -38,6 +38,7 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
 - **Levelling:** a small automatic stat boost (the "ding") + **1 skill point** per level. **Evolution:** a big power jump + a new tree ring + another shard slot.
 - **Ember Tree:** small (fits on one screen) with **2–3 labelled branches** (e.g. Inferno = burn, Flurry = speed/combos, Bruiser = tanky). Players can mix freely.
 - Nodes should **change how you play**, not just add small percentages. Keep to ~5 clear stats (Health, Power, Speed, Heat, Burn).
+- **Crits:** every attack (jab, spin, skills) can crit: **10% base chance, ×2 damage** (rounded), shown as a gold "4!" number and in the Ember Tree stats. No tree nodes change crits yet.
 - **Respec free or nearly free.** 1–2 optional "build starter" suggestions per creature.
 - Lessons from research: PoE 2's huge tree overwhelms; Diablo 4's early tree felt shallow (gear decided builds) and its 2026 rework moved to skill variants that change behaviour; Last Epoch's per-skill trees + cheap respec are loved.
 

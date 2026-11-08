@@ -1,7 +1,7 @@
 class_name FlameUppercut
 extends SkillAction
 ## Flame Uppercut: a rising punch that bursts into a fan of flame in front of the caster,
-## hitting every enemy in the arc hard and knocking them away.
+## hitting every enemy in the arc hard and knocking them away. Damage goes through CritRoll.
 ##
 ## Timeline: a short wind-up (a dodge can still cancel it), then the burst lands all at once,
 ## then a short recovery with feet planted. Keep the "uppercut" animation's frame timings
@@ -107,7 +107,7 @@ func _hit_enemies_in_arc() -> void:
 		var target_health: Health = target.get_node_or_null("Health")
 		if target_health == null:
 			continue
-		target_health.take_damage(damage, _caster.global_position)
+		CritRoll.deal_damage(_caster, target_health, damage)
 		_knock_back(target)
 
 

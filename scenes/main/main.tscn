@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=11 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/creatures/emberoo/emberoo.tscn" id="1_emberoo"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/handler/handler.tscn" id="3_handler"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" path="res://scenes/enemies/training_dummy/training_dummy.tscn" id="8_dummy"]
 [ext_resource type="PackedScene" path="res://scenes/debug/debug_controls.tscn" id="9_debug"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/toxic_toad/toxic_toad.tscn" id="10_toad"]
+[ext_resource type="Script" path="res://scripts/ui/damage_numbers.gd" id="11_damage_numbers"]
 
 [sub_resource type="Environment" id="Environment_glow"]
 background_mode = 3
@@ -90,6 +91,9 @@ position_smoothing_enabled = true
 
 [node name="EmberTreeEffects" type="Node" parent="."]
 script = ExtResource("7_ember_effects")
+
+[node name="DamageNumbers" type="Node" parent="."]
+script = ExtResource("11_damage_numbers")
 
 [node name="EmberTreeScreen" parent="." instance=ExtResource("6_ember_tree")]
 

@@ -7,6 +7,8 @@ extends Node
 ## (e.g. by a dodge); a cancelled attack before the hit lands never hits.
 ## With a `finisher`, the attack after the last of `combo_animations` is the finisher
 ## (e.g. jab, jab, Spinning Hook): same buffering and cancel rules, its own timing and hit.
+## Where the combo is lives in a ComboChain: only its time window ever resets it.
+## Damage goes through CritRoll, so the attacker's critical hits apply to every punch.
 
 ## Fired once per attack (finisher included) when it damaged at least one target (e.g. so Heat can build).
 signal hits_landed(hit_count: int)
@@ -36,7 +38,8 @@ signal hits_landed(hit_count: int)
 ## Dodging can cancel at any time; holding attack never cancels, it chains.
 @export var move_cancel_delay: float = 0.07
 ## Seconds without attacking after which the combo starts again from the first fist.
-@export var combo_reset_time: float = 0.6
+## Generous, so the chain carries across kills and short walks between enemies.
+@export var combo_reset_time: float = 2.0
 ## Group whose members this attack can hurt (each needs a child node named "Health").
 @export var target_group: String = "enemies"
 ## Animations used in turn for back-to-back attacks, e.g. left fist then right fist.
@@ -52,21 +55,26 @@ var is_attacking: bool = false
 ## The animation for the attack in progress (or the last one).
 var current_animation: String = ""
 
-var _combo_step: int = 0
+## Where the combo is; read it (e.g. ComboPips) but let this attack drive it.
+var combo: ComboChain
+
 var _attack_direction: Vector2 = Vector2.ZERO
 var _time_attacking: float = 0.0
 var _has_landed_hit: bool = false
-var _seconds_since_attack: float = 0.0
 var _is_finisher: bool = false
 
 @onready var attacker: Node2D = get_parent()
+
+
+func _ready() -> void:
+	combo = ComboChain.new(combo_animations.size() + (1 if finisher != null else 0), combo_reset_time)
 
 
 func _physics_process(delta: float) -> void:
 	if is_attacking:
 		_advance_attack(delta)
 	else:
-		_seconds_since_attack += delta
+		combo.wait(delta)
 
 
 func is_ready() -> bool:
@@ -78,9 +86,6 @@ func start(attack_direction: Vector2) -> void:
 	_attack_direction = attack_direction
 	_time_attacking = 0.0
 	_has_landed_hit = false
-	if _seconds_since_attack >= combo_reset_time:
-		_combo_step = 0
-	_seconds_since_attack = 0.0
 	_advance_combo()
 
 
@@ -101,7 +106,10 @@ func can_cancel_by_moving() -> bool:
 
 
 ## Stops the attack right away. Safe to call when not attacking.
+## Never drops the combo: an attack cut short before its hit is retried on the next press.
 func cancel() -> void:
+	if is_attacking and not _has_landed_hit:
+		combo.note_cancelled_before_landing()
 	is_attacking = false
 
 
@@ -128,13 +136,13 @@ func _hit_delay() -> float:
 
 ## Jab, jab, ..., then the finisher (if any), then back to the first jab.
 func _advance_combo() -> void:
-	_is_finisher = finisher != null and _combo_step == combo_animations.size()
-	current_animation = finisher.animation_name if _is_finisher else combo_animations[_combo_step]
-	var combo_length := combo_animations.size() + (1 if finisher != null else 0)
-	_combo_step = (_combo_step + 1) % combo_length
+	var step := combo.begin_attack()
+	_is_finisher = finisher != null and step == combo_animations.size()
+	current_animation = finisher.animation_name if _is_finisher else combo_animations[step]
 
 
 func _land_hit() -> void:
+	combo.note_landed()
 	var hit_count := 0
 	if _is_finisher:
 		hit_count = finisher.strike(attacker)
@@ -171,7 +179,7 @@ func _damage_targets_in_reach(attack_direction: Vector2) -> int:
 			continue
 		var target_health: Health = target.get_node_or_null("Health")
 		if target_health != null:
-			target_health.take_damage(damage, attacker.global_position)
+			CritRoll.deal_damage(attacker, target_health, damage)
 			hit_count += 1
 	return hit_count
 

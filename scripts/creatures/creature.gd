@@ -9,6 +9,8 @@ extends CharacterBody2D
 ##   Facing          -> which way to look
 ##   MeleeAttack     -> the jab combo: jab, jab, then the Spinning Hook
 ##   SpinningHook    -> the combo's finisher: a spin that hits all around
+##   CritRoll        -> critical hits (chance and multiplier) for every attack
+##   ComboPips       -> three tiny pips under the feet showing the combo chain
 ##   Dodge           -> the leap out of danger
 ##   AfterimageTrail -> fading copies during a dodge
 ##   SpeedTrail      -> a streak behind a dodge

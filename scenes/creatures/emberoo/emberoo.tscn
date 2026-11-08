@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3]
+[gd_scene load_steps=30 format=3]
 
 [ext_resource type="Script" path="res://scripts/creatures/creature.gd" id="1_creature"]
 [ext_resource type="Script" path="res://scripts/animation/creature_animator.gd" id="2_animator"]
@@ -25,6 +25,8 @@
 [ext_resource type="Script" path="res://scripts/creatures/mouse_orders.gd" id="23_mouse_orders"]
 [ext_resource type="Script" path="res://scripts/creatures/level_up_boost.gd" id="24_level_up"]
 [ext_resource type="Script" path="res://scripts/components/spinning_hook.gd" id="25_spinning_hook"]
+[ext_resource type="Script" path="res://scripts/components/crit_roll.gd" id="26_crit_roll"]
+[ext_resource type="Script" path="res://scripts/ui/combo_pips.gd" id="27_combo_pips"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_body"]
 radius = 5.0
@@ -69,6 +71,14 @@ finisher = NodePath("../SpinningHook")
 [node name="SpinningHook" type="Node" parent="." node_paths=PackedStringArray("screen_shake")]
 script = ExtResource("25_spinning_hook")
 screen_shake = NodePath("../ScreenShake")
+
+[node name="CritRoll" type="Node" parent="."]
+script = ExtResource("26_crit_roll")
+
+[node name="ComboPips" type="Node2D" parent="." node_paths=PackedStringArray("melee_attack")]
+position = Vector2(0, 4)
+script = ExtResource("27_combo_pips")
+melee_attack = NodePath("../MeleeAttack")
 
 [node name="Dodge" type="Node" parent="."]
 script = ExtResource("8_dodge")

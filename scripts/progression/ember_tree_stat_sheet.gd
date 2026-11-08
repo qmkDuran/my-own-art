@@ -15,12 +15,18 @@ const JAB_TIME := "jab_time"
 const RUN_SPEED := "run_speed"
 const DODGE_COOLDOWN := "dodge_cooldown"
 const MAX_HEAT := "max_heat"
+## Critical hits (see CritRoll): shown so the numbers are clear; no tree node changes them yet.
+const CRIT_CHANCE := "crit_chance"
+const CRIT_DAMAGE := "crit_damage"
 ## Burn joins this list once the burn effect is built (Searing Jab, Kindling).
-const ORDER: Array[String] = [LEVEL, HEALTH, JAB_DAMAGE, JAB_TIME, RUN_SPEED, DODGE_COOLDOWN, MAX_HEAT]
+const ORDER: Array[String] = [
+	LEVEL, HEALTH, JAB_DAMAGE, JAB_TIME, RUN_SPEED, DODGE_COOLDOWN, MAX_HEAT, CRIT_CHANCE, CRIT_DAMAGE,
+]
 
 const LABELS := {
 	LEVEL: "Level", HEALTH: "Max Health", JAB_DAMAGE: "Jab damage", JAB_TIME: "Time between jabs",
 	RUN_SPEED: "Run speed", DODGE_COOLDOWN: "Dodge cooldown", MAX_HEAT: "Max Heat",
+	CRIT_CHANCE: "Crit chance", CRIT_DAMAGE: "Crit damage",
 }
 ## Which stat each Ember Tree effect (EmberTreeEffects, the "stats" of a node) changes.
 const STAT_FOR_EFFECT := {
@@ -30,6 +36,8 @@ const STAT_FOR_EFFECT := {
 }
 const SECONDS_STATS: Array[String] = [JAB_TIME, DODGE_COOLDOWN]
 const SPEED_UNIT := " px/s"
+const PERCENT_SIGN := "%"
+const TIMES_SIGN := "×"
 const ARROW := " → "
 
 var _player: Node
@@ -68,6 +76,10 @@ func value_with(stat: String, effect_amount: float) -> float:
 			return maxf(0.0, (_player.get_node("Dodge") as Dodge).cooldown - effect_amount)
 		MAX_HEAT:
 			return (_player.get_node("Heat") as Heat).max_heat + effect_amount
+		CRIT_CHANCE:
+			return (_player.get_node("CritRoll") as CritRoll).crit_chance * 100.0 + effect_amount
+		CRIT_DAMAGE:
+			return (_player.get_node("CritRoll") as CritRoll).crit_multiplier + effect_amount
 	push_warning("EmberTreeStatSheet: unknown stat '%s'." % stat)
 	return 0.0
 
@@ -88,9 +100,14 @@ func changes_from(node: EmberTreeNode) -> Array[Dictionary]:
 	return changes
 
 
-## A number as the screen shows it: "12", "0.36s", "72 px/s".
+## A number as the screen shows it: "12", "0.36s", "72 px/s", "10%", "×2".
 static func value_text(stat: String, number: float) -> String:
-	return _number_text(stat, number) + (SPEED_UNIT if stat == RUN_SPEED else "")
+	match stat:
+		RUN_SPEED:
+			return _number_text(stat, number) + SPEED_UNIT
+		CRIT_CHANCE:
+			return _number_text(stat, number) + PERCENT_SIGN
+	return _number_text(stat, number)
 
 
 ## A change in full words, e.g. "Run speed 60 → 72 px/s (+20%)" or "Max Health 10 → 12".
@@ -109,4 +126,7 @@ static func change_text(stat: String, before: float, after: float) -> String:
 static func _number_text(stat: String, number: float) -> String:
 	if SECONDS_STATS.has(stat):
 		return "%.2fs" % number
+	if stat == CRIT_DAMAGE:
+		# Multipliers keep their tenths when they have them, e.g. "×2" or "×2.5".
+		return TIMES_SIGN + str(snappedf(number, 0.1)).trim_suffix(".0")
 	return str(roundi(number))

@@ -6,6 +6,8 @@ extends Node
 ## instead of Health knowing about them.
 
 signal damaged(amount: int, source_position: Vector2)
+## Fired with every `damaged`, saying whether the hit was critical (e.g. for damage numbers).
+signal hit_taken(amount: int, is_critical: bool)
 signal died
 signal healed(amount: int)
 
@@ -21,11 +23,12 @@ func _ready() -> void:
 	current_health = max_health
 
 
-func take_damage(amount: int, source_position: Vector2) -> void:
+func take_damage(amount: int, source_position: Vector2, is_critical: bool = false) -> void:
 	if is_invulnerable or is_dead():
 		return
 
 	current_health = maxi(0, current_health - amount)
+	hit_taken.emit(amount, is_critical)
 	damaged.emit(amount, source_position)
 	if is_dead():
 		died.emit()

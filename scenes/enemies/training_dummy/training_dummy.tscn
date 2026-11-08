@@ -31,6 +31,3 @@ max_health = 999
 [node name="HitFlash" type="Node" parent="." node_paths=PackedStringArray("sprite")]
 script = ExtResource("4_flash")
 sprite = NodePath("../Sprite")
-
-[node name="DamageNumbers" type="Node2D" parent="."]
-z_index = 2
