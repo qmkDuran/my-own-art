@@ -11,11 +11,15 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
 - The trainer appears only in the hub/town (story, menus, gems, skills). The creature is alone in the world.
 
 ## Story premise
-- You pick your starter creature, then you and your trainer **fall through a portal** into another world.
-- In this world, creatures have been **hunted almost to extinction**. Humans harvest their ability energy to power their **AI God**.
-- A few creatures survive, hiding in the wild. Later, they could **freely join you** as new classes (no capture).
-- Humans are the threat. **Your trainer is the exception** and travels with you (moving hub).
-- Use our own word for creatures, never "Pokémon". *(Name TBD.)*
+- **Glimra** (*GLIM-rah*) is the name for the creatures: beings that carry a living light inside them (it "glimmers"). Emberoo is a Glimra.
+- **Two worlds:**
+  - **The home world** (our own original world, never a real franchise's): bright and hopeful; people and Glimra live as partners.
+  - **The portal world** (dark): the trainer and Emberoo fall through a portal into it. Here Glimra have been hunted almost to extinction; humans drain their light to power and feed their **AI God**.
+- **Two words for the same creatures:** the trainer calls them **Glimra**; the Wardens call them **"stock"**. (e.g. *"Fresh stock. Drain it."* vs *"He's not stock. He's my Glimra."*)
+- Warden visors are tuned to see Glimra light; the trainer has no light of their own, so the visors can't see them (supports the parked "trainer walks with you" idea).
+- A few Glimra survive, hiding in the wild; later they could **freely join you** as new classes (no capture).
+- Humans are the threat. **Your trainer is the exception.**
+- **Names to avoid:** *Lumari* (a funded studio's creature-collector game), *Lunari* (a League of Legends faction). Final names still need a formal trademark check (USPTO/EUIPO) before the game is announced.
 
 ## Structure and story
 - **Campaign ARPG** structure (like Grim Dawn / Diablo 4): story split into **acts**; each act is a region of **hand-made zones**. No roguelite randomised runs.
@@ -76,7 +80,7 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
 ## Naming
 - Creature names blend **[element/trait] + [animal/sound]** into 2–3 fun syllables (e.g. **Emberoo**, **Toxlop**); evolutions get heavier names.
 - Every name must be original and checked (web + later USPTO/EUIPO) before use.
-- Names in use: **Emberoo** (player, fire kangaroo), **Toxlop** (toxic toad), **Wardens** (the Handlers; fine for enemies, not as a game title).
+- Names in use: **Glimra** (the creatures), **Emberoo** (player, fire kangaroo), **Toxlop** (toxic toad), **Wardens** (the Handlers; fine for enemies, not as a game title).
 
 ## HUD
 - **Health: one heart** at the bottom-centre, filled with red that drains from the top down as health is lost, with the numbers beside it (e.g. 7/10) in a tiny pixel font.
