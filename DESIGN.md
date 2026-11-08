@@ -37,6 +37,7 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
 - **Heat** (Emberoo's resource): built by landing jabs, spent by skills, cools off out of combat. Shown as fire pips beside the heart.
 
 ## Build system (locked)
+- **Branching evolution (Digimon style):** Stage 1 is always Emberoo. At each evolution the form follows the tree branch with the most points: Inferno → Blaze Champion line, Flurry → Prizefighter line, Bruiser → Heavyweight line (3 Stage 2 forms + 3 Stage 3 forms). The form locks in when Emberoo evolves; later respecs don't change it. Build one line first to prove evolution, then add the others.
 - **Levelling:** a small automatic stat boost (the "ding") + **1 skill point** per level. Levels get slower to earn: ~level 1 after the first pack, ~4–5 by the end of Ruins Edge, ~10–12 by the end of Act 1, cap **50** at the end of the game (curve and maths in `scripts/systems/progression.gd`). **Evolution:** a big power jump + a new tree ring + another shard slot.
 - **Ember Tree:** small (fits on one screen) with **2–3 labelled branches** (e.g. Inferno = burn, Flurry = speed/combos, Bruiser = tanky). Players can mix freely.
 - Nodes should **change how you play**, not just add small percentages. Keep to ~5 clear stats (Health, Power, Speed, Heat, Burn).
@@ -163,6 +164,13 @@ Brightest and busiest first: **player** > **danger cues** (attack tells, project
   - Stat-choice nodes are welcome
   - Keep trees small: dozens of nodes, not hundreds. Depth from combinations, not quantity.
 - **Gems instead of loot:** gems change how attacks work and carry the build-crafting (the role gear plays in D4). No traditional loot system for now.
+
+## Saving
+- One save slot, `user://save_1.json`, written by the `SaveGame` autoload. It has a `version` field; older files are migrated in `SaveGame._migrate`, and damaged or newer-version files are moved to `save_1.unreadable.json` and the game starts fresh.
+- Saved: level, XP and debug bonus points (Progression), learned Ember Tree node IDs and the open stage (EmberTree), species met (CreatureLog), the current zone and Trainer's Aid charges. Spent points aren't stored: loading gives back every point, then re-learns the saved nodes under the normal rules, so unknown IDs or nodes beyond the points owned are dropped.
+- Each system owns its section (`to_save_data` / `load_save_data`); new systems add a section the same way. The tree is saved by node ID only, so nodes added later need no migration.
+- Saves automatically on a level up, on learning or unlearning a node, on meeting a new species, every 60 s and on quitting; writes go to a temp file that is renamed over the save. Loads at game start, before the zone is built.
+- The test arena never loads or writes the save (DebugControls' `uses_save_file` is off there). Debug keys: F5 saves now ("SAVED" toast), F9 deletes the save and restarts fresh.
 
 ## Scope rules
 - Vertical slice first, placeholder art allowed: 1 creature, 1 enemy type, XP/levelling, 1 evolution, 1 small skill tree (3–5 nodes).
