@@ -5,7 +5,7 @@ Good ideas that don't belong in the current milestone. Check here when a milesto
 ## Enemies
 - **Elite monsters (PoE-style rarity):** e.g. an alpha Toxlop with more health and a faster tongue, one per wave (recoloured/scaled art).
 - **Panic summon:** Wardens summon reinforcements instantly when first hit.
-- **Berserk overload:** when a Handler dies, remaining bound creatures go berserk (faster, more aggressive, uncoordinated). Needs a clear visual (collar sparks, red flash).
+- **Berserk overload:** when a Handler dies, remaining bound creatures go berserk (faster, more aggressive, uncoordinated). Needs a clear visual (chip sparks, red flash).
 - **Freeing creatures** as a story reward (e.g. rescuing them at a camp), not as a combat shortcut.
 
 - **Poison status** on the hyena bite (after the slice, with the status-effect system).
