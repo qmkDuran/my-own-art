@@ -1,0 +1,21 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/companions/layered_trainer_sprite.gd" id="1_layers"]
+
+[node name="LayeredTrainerSprite" type="Node2D"]
+script = ExtResource("1_layers")
+
+[node name="Body" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+
+[node name="Bottom" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+
+[node name="Shoes" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+
+[node name="Top" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+
+[node name="Hair" type="AnimatedSprite2D" parent="."]
+texture_filter = 1

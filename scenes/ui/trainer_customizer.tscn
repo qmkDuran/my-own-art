@@ -1,0 +1,72 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/trainer_customizer.gd" id="1_customizer"]
+[ext_resource type="PackedScene" path="res://scenes/companions/layered_trainer_sprite.tscn" id="2_preview"]
+
+[node name="TrainerCustomizer" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_customizer")
+
+[node name="Background" type="ColorRect" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 6.0
+offset_right = 304.0
+offset_bottom = 20.0
+theme_override_font_sizes/font_size = 10
+text = "Your Trainer"
+
+[node name="PreviewFrame" type="Panel" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 16.0
+offset_top = 24.0
+offset_right = 104.0
+offset_bottom = 148.0
+
+[node name="Preview" parent="PreviewFrame" instance=ExtResource("2_preview")]
+unique_name_in_owner = true
+position = Vector2(44, 62)
+scale = Vector2(4, 4)
+
+[node name="Pickers" type="VBoxContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 116.0
+offset_top = 26.0
+offset_right = 304.0
+offset_bottom = 146.0
+theme_override_constants/separation = 3
+
+[node name="Buttons" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 116.0
+offset_top = 154.0
+offset_right = 304.0
+offset_bottom = 168.0
+theme_override_constants/separation = 6
+alignment = 2
+
+[node name="RandomizeButton" type="Button" parent="Buttons"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Randomize"
+
+[node name="DoneButton" type="Button" parent="Buttons"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Done"

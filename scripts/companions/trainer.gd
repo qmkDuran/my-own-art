@@ -12,17 +12,18 @@ extends Node2D
 ## Beyond this distance the trainer hurries to catch up.
 @export var catch_up_distance: float = 70.0
 @export var tonic_scene: PackedScene
+## How the trainer looks; the default look if left empty.
+@export var look: TrainerLook
 
 var _target: Node2D
-var _walk_time: float = 0.0
 
-@onready var sprite: Sprite2D = $Sprite
-var _sprite_rest: Vector2
+@onready var sprite: LayeredTrainerSprite = $Sprite
 
 
 func _ready() -> void:
 	add_to_group("trainer")
-	_sprite_rest = sprite.position
+	if look != null:
+		sprite.apply_look(look)
 
 
 func _physics_process(delta: float) -> void:
@@ -36,8 +37,8 @@ func _physics_process(delta: float) -> void:
 	if is_walking:
 		global_position += to_spot.normalized() * minf(distance, speed * delta)
 		if absf(to_spot.x) > 1.0:
-			sprite.flip_h = to_spot.x < 0.0
-	_bob(delta, is_walking)
+			sprite.set_flipped(to_spot.x < 0.0)
+	sprite.play(&"walk" if is_walking else &"idle")
 
 
 ## Throws a healing tonic at the creature; `on_land` runs when it arrives.
@@ -58,12 +59,3 @@ func _follow_spot() -> Vector2:
 		facing = (_target.get_node("Facing") as Facing).as_vector()
 	return _target.global_position - facing * follow_distance
 
-
-## A small walking bob (placeholder until the trainer has a walk animation).
-func _bob(delta: float, is_walking: bool) -> void:
-	if is_walking:
-		_walk_time += delta
-		sprite.position = _sprite_rest + Vector2(0, -roundf(absf(sin(_walk_time * 12.0))))
-	else:
-		_walk_time = 0.0
-		sprite.position = _sprite_rest

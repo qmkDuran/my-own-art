@@ -24,6 +24,7 @@ Good ideas that don't belong in the current milestone. Check here when a milesto
 ## Trainer
 - ~~Trainer walks with Emberoo~~ (built). Still to do: trainer walk/diagonal animations; future story beat where the AI God learns to see the trainer.
 - **Reactive trainer portrait** on the HUD next to the health bar.
+- Trainer customisation screen built (scenes/ui/trainer_customizer.tscn); hook into new-game flow later.
 
 ## Later systems
 - Capture = new class: surviving creatures freely join you as new playable classes (after 3–4 classes exist).
