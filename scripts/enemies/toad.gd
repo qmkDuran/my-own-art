@@ -6,8 +6,7 @@ extends CharacterBody2D
 ## the toad decides what to do next.
 ##   RESTING    -> sits for a moment, then hops closer or starts an attack
 ##   HOPPING    -> one hop toward the player, in an arc
-##   PUFFING    -> the warning: cheeks puff up, the toad flickers green and an aim line
-##                 grows toward the player (the cue to dodge)
+##   PUFFING    -> the warning: cheeks puff up and the toad flickers green (the cue to dodge)
 ##   LASHING    -> tongue shoots out; hits the player if they're still in the way
 ##   RECOVERING -> a short pause after attacking or being hit
 ##   DYING      -> fades away
@@ -29,9 +28,9 @@ const PLAYER_BODY_HEIGHT := -6.0
 
 @export_group("Tongue attack")
 ## How far the tongue reaches, in pixels. The toad attacks once the player is this close.
-@export var tongue_reach: float = 26.0
+@export var tongue_reach: float = 40.0
 ## Seconds of warning before the tongue comes out (the attack animation's first frame).
-@export var puff_time: float = 0.60
+@export var puff_time: float = 0.80
 ## Colour the toad flickers to while winding up, so the attack is easy to see coming.
 @export var warning_tint: Color = Color(0.75, 1.3, 0.6)
 ## Seconds between each flicker of the warning tint.
@@ -63,7 +62,6 @@ var _has_hit_this_lash: bool = false
 @onready var sprite: SingleViewAnimator = $Sprite
 @onready var tongue: ToadTongue = $Tongue
 @onready var hit_flash: HitFlash = $HitFlash
-@onready var attack_warning: AttackWarning = $AttackWarning
 @onready var collision_shape: CollisionShape2D = $CollisionShape
 
 
@@ -108,7 +106,7 @@ func _hop() -> void:
 		_enter(State.RESTING, _random_rest_time())
 
 
-## The wind-up: the toad flickers toxic green and a line grows toward where the tongue will strike.
+## The wind-up: the toad flickers toxic green so the player can see the attack coming.
 func _puff() -> void:
 	velocity = Vector2.ZERO
 	_show_attack_warning()
@@ -204,13 +202,11 @@ func _on_died() -> void:
 # --- Attack warning -------------------------------------------------------
 
 func _show_attack_warning() -> void:
-	attack_warning.show_warning(_lash_direction, tongue_reach, _state_progress())
 	var flicker_on := int(_time_in_state / warning_flicker_interval) % 2 == 0
 	sprite.modulate = Color(warning_tint, sprite.modulate.a) if flicker_on else Color(1, 1, 1, sprite.modulate.a)
 
 
 func _clear_attack_warning() -> void:
-	attack_warning.hide_warning()
 	sprite.modulate = Color(1, 1, 1, sprite.modulate.a)
 
 
