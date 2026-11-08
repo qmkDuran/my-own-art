@@ -43,6 +43,7 @@ func _ready() -> void:
 	_health = player.get_node_or_null("Health")
 	if _health != null:
 		_health.damaged.connect(func(_amount: int, _from: Vector2) -> void: queue_redraw())
+		_health.healed.connect(func(_amount: int) -> void: queue_redraw())
 	queue_redraw()
 
 

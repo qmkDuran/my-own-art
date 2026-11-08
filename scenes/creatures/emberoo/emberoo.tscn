@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3]
+[gd_scene load_steps=19 format=3]
 
 [ext_resource type="Script" path="res://scripts/creatures/creature.gd" id="1_creature"]
 [ext_resource type="Script" path="res://scripts/animation/creature_animator.gd" id="2_animator"]
@@ -15,6 +15,7 @@
 [ext_resource type="Script" path="res://scripts/effects/hit_flash.gd" id="13_flash"]
 [ext_resource type="PackedScene" path="res://scenes/effects/shockwave.tscn" id="14_marker"]
 [ext_resource type="Script" path="res://scripts/effects/fist_embers.gd" id="15_embers"]
+[ext_resource type="Script" path="res://scripts/components/trainer_aid.gd" id="16_aid"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_body"]
 radius = 5.0
@@ -87,3 +88,6 @@ sprite = NodePath("../Sprite")
 [node name="FistEmbers" type="Node2D" parent="."]
 z_index = 1
 script = ExtResource("15_embers")
+
+[node name="TrainerAid" type="Node" parent="."]
+script = ExtResource("16_aid")

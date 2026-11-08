@@ -3,7 +3,7 @@ extends Node
 ## Reads the player's controls and turns them into intentions.
 ##
 ## Controls: left mouse = move to the cursor (or attack the enemy you click on),
-## right mouse = attack in place toward the cursor, Space = dodge.
+## right mouse = attack in place toward the cursor, Space = dodge, Q = Trainer's Aid (heal).
 ## WASD also moves, for players who prefer it.
 ##
 ## Only this component knows about keys and gamepads. Everything else asks it
@@ -26,6 +26,11 @@ func just_clicked_to_move() -> bool:
 
 func is_holding_move_click() -> bool:
 	return Input.is_action_pressed("move_to_cursor")
+
+
+## Q: the trainer throws a healing tonic.
+func wants_trainer_aid() -> bool:
+	return Input.is_action_just_pressed("trainer_aid")
 
 
 func wants_to_dodge() -> bool:

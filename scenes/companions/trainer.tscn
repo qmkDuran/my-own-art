@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/companions/trainer.gd" id="1_trainer"]
+[ext_resource type="Texture2D" path="res://art/trainer/trainer_front.png" id="2_sprite"]
+[ext_resource type="PackedScene" path="res://scenes/companions/tonic_toss.tscn" id="3_tonic"]
+
+[node name="Trainer" type="Node2D"]
+z_index = 1
+script = ExtResource("1_trainer")
+tonic_scene = ExtResource("3_tonic")
+
+[node name="Shadow" type="Polygon2D" parent="."]
+color = Color(0.035, 0.039, 0.078, 0.45)
+polygon = PackedVector2Array(-5, 0, -4, -1.5, 0, -2, 4, -1.5, 5, 0, 4, 1.5, 0, 2, -4, 1.5)
+
+[node name="Sprite" type="Sprite2D" parent="."]
+position = Vector2(0, -14)
+texture = ExtResource("2_sprite")

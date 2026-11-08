@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene load_steps=12 format=3]
 
 [ext_resource type="Script" path="res://scripts/enemies/toad.gd" id="1_toad"]
 [ext_resource type="Script" path="res://scripts/animation/single_view_animator.gd" id="2_animator"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" path="res://scripts/effects/hit_flash.gd" id="5_flash"]
 [ext_resource type="PackedScene" path="res://scenes/effects/toxic_splat.tscn" id="6_splat"]
 [ext_resource type="Texture2D" path="res://art/toxic_toad/toxlop_portrait_128.png" id="7_portrait"]
+[ext_resource type="PackedScene" path="res://scenes/pickups/berry.tscn" id="8_berry"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_body"]
 radius = 5.0
@@ -25,6 +26,7 @@ motion_mode = 1
 script = ExtResource("1_toad")
 death_splat_scene = ExtResource("6_splat")
 portrait = ExtResource("7_portrait")
+berry_scene = ExtResource("8_berry")
 
 [node name="Shadow" type="Polygon2D" parent="."]
 color = Color(0.0352941, 0.0392157, 0.0784314, 0.45)

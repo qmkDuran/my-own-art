@@ -14,6 +14,7 @@ extends CharacterBody2D
 ##   Health          -> how much damage it can take (dodging makes it invulnerable)
 ##   HitFlash        -> flashes white when hit
 ##   FistEmbers      -> sparks rising from the fists
+##   TrainerAid      -> Q: the trainer throws a healing tonic (limited charges)
 ##   Sprite          -> what to show
 
 ## Below this speed (pixels per second) the creature counts as standing still.
@@ -53,6 +54,7 @@ var _attack_target: Node2D = null
 @onready var hit_flash: HitFlash = $HitFlash
 @onready var animator: CreatureAnimator = $Sprite
 @onready var fist_embers: FistEmbers = $FistEmbers
+@onready var trainer_aid: TrainerAid = $TrainerAid
 
 
 func _ready() -> void:
@@ -63,6 +65,8 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	_push_seconds_left = maxf(0.0, _push_seconds_left - delta)
 	_read_mouse_orders()
+	if player_input.wants_trainer_aid():
+		trainer_aid.use()
 	_start_requested_action()
 	# Leaping out of the way means attacks pass through you.
 	health.is_invulnerable = dodge.is_dodging

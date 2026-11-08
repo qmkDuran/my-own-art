@@ -21,6 +21,26 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
 - Humans are the threat. **Your trainer is the exception.**
 - **Names to avoid:** *Lumari* (a funded studio's creature-collector game), *Lunari* (a League of Legends faction). Final names still need a formal trademark check (USPTO/EUIPO) before the game is announced.
 
+## The trainer (in the world)
+- The trainer **walks with Emberoo**, a few steps behind. Enemies ignore them (Warden visors only see Glimra light).
+- Original look: brown coat, cream shirt, **orange scarf matching Emberoo**, satchel. 18×28 sprite, front view for now (walk/diagonal animations later).
+- **Trainer's Aid (Q):** the trainer throws a healing tonic that arcs to Emberoo (+4 health). **3 charges**; can't be used at full health.
+- **Berries:** toads sometimes drop a glowing berry (25%); walking over it refills one Aid charge (it waits if Aid is full).
+
+## Drops and progression resources
+- **Light motes (almost every kill):** the stolen light bursts out of defeated bound Glimra and flies to Emberoo = **XP**. *(Next to build.)*
+- **Berries (sometimes):** refill Trainer's Aid charges.
+- **No loot.** No gear piles, no inventory clutter.
+- **Glimmer Shards (hand-placed, ~15–20 per game):** rewards from bosses, exploration and story moments, never random drops. First one after the first boss (~1 hour in). Socket into skills to change how they behave (never add a new element). 1 slot per skill, +1 per evolution. Free to swap outside combat.
+- **Heat** (Emberoo's resource): built by landing jabs, spent by skills, cools off out of combat. Shown as fire pips beside the heart.
+
+## Build system (locked)
+- **Levelling:** a small automatic stat boost (the "ding") + **1 skill point** per level. **Evolution:** a big power jump + a new tree ring + another shard slot.
+- **Ember Tree:** small (fits on one screen) with **2–3 labelled branches** (e.g. Inferno = burn, Flurry = speed/combos, Bruiser = tanky). Players can mix freely.
+- Nodes should **change how you play**, not just add small percentages. Keep to ~5 clear stats (Health, Power, Speed, Heat, Burn).
+- **Respec free or nearly free.** 1–2 optional "build starter" suggestions per creature.
+- Lessons from research: PoE 2's huge tree overwhelms; Diablo 4's early tree felt shallow (gear decided builds) and its 2026 rework moved to skill variants that change behaviour; Last Epoch's per-skill trees + cheap respec are loved.
+
 ## Structure and story
 - **Campaign ARPG** structure (like Grim Dawn / Diablo 4): story split into **acts**; each act is a region of **hand-made zones**. No roguelite randomised runs.
 - **Moving hub:** the trainer journeys town to town / camp to camp; each act has a new hub.
