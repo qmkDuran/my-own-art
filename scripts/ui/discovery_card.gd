@@ -1,6 +1,6 @@
 class_name DiscoveryCard
 extends Control
-## The "NEW CREATURE DISCOVERED" toast: a small, see-through card that slides down from
+## The "NEW CREATURE DISCOVERED" toast: a small, see-through card that gently fades in at
 ## the top-centre with the creature's portrait, name and element, then slides away.
 ## (The full-size portrait belongs in the Creature Log, away from the fight.) The game slows down briefly
 ## (never freezes) so the moment registers while the player keeps control.
@@ -9,6 +9,10 @@ const PORTRAIT_SIZE := 32.0          # a 128px portrait at 1:1 screen pixels whe
 const SHOW_SECONDS := 2.0
 ## Gap between the top of the screen and the card, in game pixels.
 const TOP_MARGIN := 4.0
+## How far the card drifts while fading, in game pixels.
+const DRIFT := 4.0
+const FADE_IN_SECONDS := 0.45
+const FADE_OUT_SECONDS := 0.6
 const SLOW_MOTION_SCALE := 0.3
 const SLOW_MOTION_SECONDS := 0.5     # real seconds
 
@@ -45,17 +49,21 @@ func _slow_motion() -> void:
 	Engine.time_scale = 1.0
 
 
+## Fades in while drifting down a few pixels, waits, then fades out while drifting back up.
 func _slide_in_and_out() -> void:
 	_card.reset_size()
 	_card.position.x = roundf((size.x - _card.size.x) / 2.0)
-	var hidden_y := -_card.size.y - 4.0
-	_card.position.y = hidden_y
+	_card.position.y = TOP_MARGIN - DRIFT
+	_card.modulate.a = 0.0
 	_card.visible = true
-	var slide := create_tween().set_ignore_time_scale(true)
-	slide.tween_property(_card, "position:y", TOP_MARGIN, 0.25).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-	slide.tween_interval(SHOW_SECONDS)
-	slide.tween_property(_card, "position:y", hidden_y, 0.25).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
-	slide.tween_callback(func() -> void: _card.visible = false)
+	var show := create_tween().set_ignore_time_scale(true).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	show.set_parallel()
+	show.tween_property(_card, "modulate:a", 1.0, FADE_IN_SECONDS)
+	show.tween_property(_card, "position:y", TOP_MARGIN, FADE_IN_SECONDS)
+	show.chain().tween_interval(SHOW_SECONDS)
+	show.chain().tween_property(_card, "modulate:a", 0.0, FADE_OUT_SECONDS)
+	show.parallel().tween_property(_card, "position:y", TOP_MARGIN - DRIFT, FADE_OUT_SECONDS)
+	show.chain().tween_callback(func() -> void: _card.visible = false)
 
 
 func _build_card() -> void:

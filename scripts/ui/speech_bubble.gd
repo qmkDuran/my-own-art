@@ -1,7 +1,7 @@
 class_name SpeechBubble
 extends Node2D
 ## A short line of speech above a character (e.g. a Warden shouting "Go, Toxlop!").
-## Pops in, stays for a moment, fades out.
+## Fades in, stays for a moment, fades out.
 
 @export var font_size: int = 6
 @export var text_color: Color = Color(0.906, 0.835, 0.702)
@@ -33,9 +33,13 @@ func say(text: String, seconds: float = 1.4) -> void:
 	await get_tree().process_frame
 	panel.position = Vector2(-panel.size.x / 2.0, -panel.size.y)
 	panel.pivot_offset = Vector2(panel.size.x / 2.0, panel.size.y)
-	panel.scale = Vector2(0.6, 0.6)
-	var pop := create_tween().set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	pop.tween_property(panel, "scale", Vector2.ONE, 0.18)
-	pop.tween_interval(seconds)
-	pop.tween_property(panel, "modulate:a", 0.0, 0.25)
-	pop.tween_callback(panel.queue_free)
+	# Fade in while rising slightly, hold, then fade out (no popping).
+	var resting_y := panel.position.y
+	panel.position.y = resting_y + 3.0
+	panel.modulate.a = 0.0
+	var show := create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT).set_parallel()
+	show.tween_property(panel, "modulate:a", 1.0, 0.3)
+	show.tween_property(panel, "position:y", resting_y, 0.3)
+	show.chain().tween_interval(seconds)
+	show.chain().tween_property(panel, "modulate:a", 0.0, 0.4)
+	show.chain().tween_callback(panel.queue_free)
