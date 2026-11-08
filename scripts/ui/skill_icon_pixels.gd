@@ -21,11 +21,15 @@ static func of(icon: Texture2D, inner_area: Rect2i) -> Dictionary:
 
 
 ## Desaturated and dimmed: each colour becomes one of three dark Apollo greys by its brightness.
+## The icon's own dark outline stays as it is, so its inner lines (a thumb, a seam) still show.
 static func greyed(pixels: Dictionary) -> Dictionary:
 	var grey := {}
 	for pixel: Vector2i in pixels:
-		var luminance: float = (pixels[pixel] as Color).get_luminance()
-		if luminance >= BRIGHT_ICON_LUMINANCE:
+		var color: Color = pixels[pixel]
+		var luminance := color.get_luminance()
+		if color.is_equal_approx(ApolloPalette.OUTLINE):
+			grey[pixel] = ApolloPalette.OUTLINE
+		elif luminance >= BRIGHT_ICON_LUMINANCE:
 			grey[pixel] = ApolloPalette.GREY
 		elif luminance >= MID_ICON_LUMINANCE:
 			grey[pixel] = ApolloPalette.STONE_LIGHT

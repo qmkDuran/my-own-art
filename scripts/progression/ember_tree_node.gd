@@ -18,8 +18,6 @@ enum Kind { SKILL, UPGRADE, STAT, ULTIMATE }
 ## Degrees away from its branch's direction, so siblings fan out side by side.
 @export var angle_offset: float = 0.0
 @export var kind: Kind = Kind.SKILL
-## Name of the pixel icon drawn on the node (see EmberTreeIcons).
-@export var icon: String = ""
 @export var title: String = ""
 ## One short flavour clause, e.g. "Heavier fists." The exact effect lives in `facts` or
 ## `stat_changes`, never here.
@@ -55,7 +53,6 @@ static func from_row(row: Dictionary) -> EmberTreeNode:
 	node.tier = row["tier"]
 	node.angle_offset = row.get("angle", 0.0)
 	node.kind = row["kind"]
-	node.icon = row["icon"]
 	node.title = row["title"]
 	node.description = row["text"]
 	node.facts = row.get("facts", "")

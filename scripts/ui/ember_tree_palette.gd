@@ -35,7 +35,8 @@ const NODE_EDGE := {
 	EmberTreeNodeState.LEARNED: GOLD, EmberTreeNodeState.AVAILABLE: CREAM,
 	EmberTreeNodeState.LOCKED: DIM, EmberTreeNodeState.SEALED: Color(DIM, 0.6),
 }
-const NODE_ICON := {
-	EmberTreeNodeState.LEARNED: GOLD, EmberTreeNodeState.AVAILABLE: CREAM,
-	EmberTreeNodeState.LOCKED: DIM, EmberTreeNodeState.SEALED: Color(DIM, 0.45),
+## Tint over a node's icon art: its own colours, faded on a node whose ring is still sealed.
+const NODE_ICON_TINT := {
+	EmberTreeNodeState.LEARNED: Color.WHITE, EmberTreeNodeState.AVAILABLE: Color.WHITE,
+	EmberTreeNodeState.LOCKED: Color.WHITE, EmberTreeNodeState.SEALED: Color(Color.WHITE, 0.45),
 }

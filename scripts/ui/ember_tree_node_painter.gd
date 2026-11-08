@@ -5,10 +5,11 @@ extends RefCounted
 
 const Kind := EmberTreeNode.Kind
 
-## Size of one icon pixel; smaller frames get finer icons so they still fit.
-const ICON_PIXEL := {Kind.SKILL: 3.0, Kind.UPGRADE: 2.5, Kind.STAT: 2.0, Kind.ULTIMATE: 3.0}
+## States whose icon is shown greyed, as the HUD greys a skill that can't be used yet.
+const GREYED_ICON_STATES := [EmberTreeNodeState.LOCKED, EmberTreeNodeState.SEALED]
 const EDGE_WIDTH := 2.5
 const LOCK_BADGE_RADIUS := 8.0
+const LOCK_PIXEL := 1.5
 
 
 ## Draws `node` at `centre`, grown by `hover`. `time` drives the pulse and flicker.
@@ -28,7 +29,7 @@ static func draw_node(canvas: CanvasItem, node: EmberTreeNode, centre: Vector2, 
 		edge = Color(edge, 0.55 + 0.45 * sin(time * 4.0))  # gentle pulse: "you can take this"
 	_draw_body(canvas, node.kind, centre, radius, fill, edge)
 
-	EmberTreeIcons.draw(canvas, node.icon, centre, ICON_PIXEL[node.kind] * hover, EmberTreePalette.NODE_ICON[state])
+	EmberTreeIcons.draw(canvas, node.id, centre, radius, state in GREYED_ICON_STATES, EmberTreePalette.NODE_ICON_TINT[state])
 	if state == EmberTreeNodeState.SEALED:
 		_draw_lock_badge(canvas, centre + Vector2.ONE * radius * 0.6)
 
@@ -66,7 +67,7 @@ static func _draw_lock_badge(canvas: CanvasItem, centre: Vector2) -> void:
 	canvas.draw_circle(centre, LOCK_BADGE_RADIUS + 2.0, EmberTreePalette.OUTLINE)
 	canvas.draw_circle(centre, LOCK_BADGE_RADIUS, EmberTreePalette.COAL)
 	canvas.draw_arc(centre, LOCK_BADGE_RADIUS, 0.0, TAU, 24, EmberTreePalette.DIM, 1.5)
-	EmberTreeIcons.draw(canvas, "lock", centre, 1.5, EmberTreePalette.GREY)
+	EmberTreeIcons.draw_lock(canvas, centre, LOCK_PIXEL, EmberTreePalette.GREY)
 
 
 ## A thin ring around a node in its own shape: a circle for stats, a diamond for the rest.

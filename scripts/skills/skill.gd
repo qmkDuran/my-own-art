@@ -8,7 +8,8 @@ extends Resource
 ## the HUD tooltip alike.
 
 @export var display_name: String = ""
-## 16×16 pixel-art icon, shown in the skill bar.
+## 14×14 pixel-art icon (art/skills/<node id>_icon.png), shown in the skill bar; the Ember
+## Tree draws the same file on the skill's node.
 @export var icon: Texture2D
 ## Heat spent each time the skill fires. It is refused (nothing spent) without enough.
 @export var heat_cost: int = 0
