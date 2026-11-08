@@ -203,6 +203,12 @@ func _on_damaged(_amount: int, source_position: Vector2) -> void:
 	_enter(State.RECOVERING, recover_time)
 
 
+## Throws the toad with this velocity, harder than a jab's knockback (e.g. Flame Uppercut).
+## Works on a toad that just died too, so the body flies while it fades.
+func knock_back(push_velocity: Vector2) -> void:
+	velocity = push_velocity
+
+
 func _on_died() -> void:
 	_spawn_death_splat()
 	_maybe_drop_berry()

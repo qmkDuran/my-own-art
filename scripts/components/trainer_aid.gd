@@ -1,6 +1,6 @@
 class_name TrainerAid
 extends Node
-## Trainer's Aid: the trainer throws a healing tonic (Q). Limited charges,
+## Trainer's Aid: the trainer throws a healing tonic (F). Limited charges,
 ## refilled by picking up berries that enemies sometimes drop.
 
 signal charges_changed(charges: int, max_charges: int)

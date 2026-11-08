@@ -33,6 +33,9 @@ const ANIMATION_SETTINGS := {
 	"jab": { "frame_durations": [0.12, 0.07, 0.11, 0.14], "loops": false },
 	"jab2": { "frame_durations": [0.12, 0.07, 0.11, 0.14], "loops": false },
 	"dodge": { "frame_durations": [0.07, 0.15, 0.11], "loops": false },
+	# Flame Uppercut reuses the jab2 frames: a longer cocked fist, a snap, a held follow-through.
+	# Keep in sync with FlameUppercut's wind_up and duration.
+	"uppercut": { "frame_durations": [0.16, 0.06, 0.16, 0.14], "loops": false, "sheet": "jab2" },
 	# A closed-eyes copy of every idle frame, so a blink never interrupts the breathing.
 	"blink": { "frame_durations": [0.30, 0.20, 0.30, 0.20], "loops": true },
 }
@@ -44,6 +47,7 @@ const FRAME_MATCHED_ACTIONS := [["idle", "blink"]]
 ## If an animation isn't drawn yet, use a similar one instead of dropping to idle.
 const STAND_IN_FOR_ACTION := {
 	"jab2": "jab",
+	"uppercut": "jab",
 	"blink": "idle",
 }
 

@@ -7,7 +7,8 @@ extends RefCounted
 ## Missing sheets are skipped, so animations can be added one at a time.
 ##
 ## Frame timings are given in seconds per frame, so each frame can have its own length
-## (fast wind-ups, lingering follow-throughs).
+## (fast wind-ups, lingering follow-throughs). An action's settings may name another
+## action's sheet as "sheet", to reuse its frames with different timings.
 
 
 static func build_sprite_frames(
@@ -23,7 +24,9 @@ static func build_sprite_frames(
 	for action: String in animation_settings:
 		var settings: Dictionary = animation_settings[action]
 		for view: String in view_names:
-			var sheet_path := "%s/%s_%s_%s_sheet.png" % [sheet_folder, creature_name, view, action]
+			# An action may borrow another action's sheet with its own timings (e.g. "uppercut").
+			var sheet_action: String = settings.get("sheet", action)
+			var sheet_path := "%s/%s_%s_%s_sheet.png" % [sheet_folder, creature_name, view, sheet_action]
 			if not ResourceLoader.exists(sheet_path):
 				continue
 			add_animation(

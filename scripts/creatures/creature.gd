@@ -14,7 +14,9 @@ extends CharacterBody2D
 ##   Health          -> how much damage it can take (dodging makes it invulnerable)
 ##   HitFlash        -> flashes white when hit
 ##   FistEmbers      -> sparks rising from the fists
-##   TrainerAid      -> Q: the trainer throws a healing tonic (limited charges)
+##   TrainerAid      -> F: the trainer throws a healing tonic (limited charges)
+##   SkillBar        -> Q/W/E/R: skills that spend Heat (e.g. E = Flame Uppercut)
+##   ScreenShake     -> shakes the camera on big hits
 ##   Sprite          -> what to show
 
 ## Below this speed (pixels per second) the creature counts as standing still.
@@ -58,12 +60,14 @@ var _attack_target: Node2D = null
 @onready var fist_embers: FistEmbers = $FistEmbers
 @onready var trainer_aid: TrainerAid = $TrainerAid
 @onready var speech_bubble: SpeechBubble = $SpeechBubble
+@onready var skill_bar: SkillBar = $SkillBar
 
 
 func _ready() -> void:
 	health.damaged.connect(_on_damaged)
 	health.died.connect(_on_died)
 	Progression.leveled_up.connect(_on_leveled_up)
+	skill_bar.skill_used.connect(_on_skill_used)
 	_apply_level_bonuses()
 
 
@@ -82,7 +86,7 @@ func _physics_process(delta: float) -> void:
 
 	facing.look_toward(move_direction)
 	animator.show_animation(_current_action(), facing)
-	animator.lift(dodge.current_height())
+	animator.lift(dodge.current_height() + skill_bar.cast_lift())
 	fist_embers.follow(animator.view_for(facing), animator.flip_h, animator.position)
 
 
@@ -90,7 +94,7 @@ func _physics_process(delta: float) -> void:
 
 ## Left-click on the ground walks there (hold to keep following the cursor);
 ## left-click on an enemy walks up to it and jabs (hold to keep jabbing).
-## Using WASD cancels mouse orders.
+## Steering with the arrow keys cancels mouse orders.
 func _read_mouse_orders() -> void:
 	if player_input.get_move_direction() != Vector2.ZERO:
 		_clear_mouse_orders()
@@ -150,16 +154,18 @@ func _show_click_marker(point: Vector2) -> void:
 
 # --- Actions --------------------------------------------------------------
 
-## One action at a time, with one exception: a dodge can cancel a jab mid-punch,
-## so the player can always escape (like Path of Exile 2's dodge roll).
+## One action at a time, with one exception: a dodge can cancel a jab mid-punch (and a
+## skill during its wind-up), so the player can usually escape (like Path of Exile 2's dodge roll).
+## Skills are started by the SkillBar itself (see _on_skill_used).
 func _start_requested_action() -> void:
-	if player_input.wants_to_dodge() and dodge.is_ready():
+	if player_input.wants_to_dodge() and dodge.is_ready() and skill_bar.allows_dodge():
 		melee_attack.cancel()
+		skill_bar.cancel_cast()
 		_start_dodge()
 	elif _is_busy() or not melee_attack.is_ready():
 		return
 	elif player_input.wants_to_attack():
-		_start_jab(_aim_direction())
+		_start_jab(aim_direction())
 	elif _attack_target != null and _is_in_reach_of(_attack_target):
 		_start_jab(_direction_to(_attack_target))
 		# A single click is a single jab; holding the button keeps jabbing.
@@ -179,8 +185,8 @@ func _start_jab(aim_direction: Vector2) -> void:
 	animator.replay_animation(melee_attack.current_animation, facing)
 
 
-## Punches go toward the mouse cursor, at any angle, measured from the body (not the feet).
-func _aim_direction() -> Vector2:
+## Punches and skills go toward the mouse cursor, at any angle, measured from the body (not the feet).
+func aim_direction() -> Vector2:
 	var body_center := global_position + Vector2(0, BODY_HEIGHT)
 	var to_cursor := player_input.get_aim_point() - body_center
 	if to_cursor.length() < 1.0:
@@ -198,13 +204,13 @@ func _start_dodge() -> void:
 	speed_lines.play_for(dodge.dodge_duration, dodge_direction)
 
 
-## Dodge where the player is steering with WASD; otherwise toward the cursor.
+## Dodge where the player is steering with the arrow keys; otherwise toward the cursor.
 func _dodge_direction() -> Vector2:
 	var steering := player_input.get_move_direction()
 	if steering != Vector2.ZERO:
 		return steering
 	_clear_mouse_orders()
-	return _aim_direction()
+	return aim_direction()
 
 
 func _next_velocity(move_direction: Vector2, delta: float) -> Vector2:
@@ -215,11 +221,13 @@ func _next_velocity(move_direction: Vector2, delta: float) -> Vector2:
 	if melee_attack.is_attacking:
 		# A short step forward into the punch, then planted feet.
 		return melee_attack.lunge_velocity()
+	if skill_bar.is_casting():
+		return skill_bar.cast_velocity()
 	return movement.calculate_velocity(velocity, move_direction, delta)
 
 
 ## The creature plants its feet while punching and can't steer mid-dodge.
-## Otherwise WASD steers, or it walks toward a clicked enemy or spot.
+## Otherwise the arrow keys steer, or it walks toward a clicked enemy or spot.
 func _chosen_move_direction() -> Vector2:
 	if _is_busy():
 		return Vector2.ZERO
@@ -238,11 +246,13 @@ func _chosen_move_direction() -> Vector2:
 
 
 func _is_busy() -> bool:
-	return melee_attack.is_attacking or dodge.is_dodging
+	return melee_attack.is_attacking or dodge.is_dodging or skill_bar.is_casting()
 
 
 ## The dodge is a big kangaroo hop, so it reuses the hop animation while leaping.
 func _current_action() -> String:
+	if skill_bar.is_casting():
+		return skill_bar.cast_animation()
 	if melee_attack.is_attacking:
 		return melee_attack.current_animation
 	if dodge.is_dodging or _is_moving():
@@ -264,15 +274,32 @@ func _on_died() -> void:
 
 
 ## Shoves the creature: it slides with this velocity for a moment, without player control.
-## Interrupts a jab. A dodge can still be used to escape.
+## Interrupts a jab or a skill. A dodge can still be used to escape.
 func push(push_velocity: Vector2, duration: float) -> void:
 	melee_attack.cancel()
+	skill_bar.cancel_cast()
 	velocity = push_velocity
 	_push_seconds_left = duration
 
 
 func _is_being_pushed() -> bool:
 	return _push_seconds_left > 0.0
+
+
+# --- Skills (the SkillBar decides when; the creature just acts it out) -----
+
+## The SkillBar asks this before firing: not mid-leap and not being shoved.
+## A jab in progress doesn't block a skill; the skill cuts it short.
+func can_start_skill() -> bool:
+	return not dodge.is_dodging and not _is_being_pushed() and not health.is_dead()
+
+
+## A skill just fired: stop walking or jabbing, face the aim and play its animation.
+func _on_skill_used(_slot_index: int) -> void:
+	_has_destination = false
+	melee_attack.cancel()
+	facing.look_toward(aim_direction())
+	animator.replay_animation(skill_bar.cast_animation(), facing)
 
 
 # --- Levelling ------------------------------------------------------------

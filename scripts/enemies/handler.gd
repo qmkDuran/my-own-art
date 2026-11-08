@@ -330,6 +330,14 @@ func _on_damaged(_amount: int, source_position: Vector2) -> void:
 	_enter(State.RECOVERING, recover_time)
 
 
+## Throws the Warden with this velocity, harder than a jab's knockback (e.g. Flame Uppercut).
+## Super armour still holds: a slam that is winding up isn't pushed.
+func knock_back(push_velocity: Vector2) -> void:
+	if _state == State.SHOVING:
+		return
+	velocity = push_velocity
+
+
 func _on_died() -> void:
 	charge_particles.stop_charging()
 	_enter(State.DYING, death_fade_time)

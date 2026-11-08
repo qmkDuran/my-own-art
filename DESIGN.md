@@ -24,7 +24,7 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
 ## The trainer (in the world)
 - The trainer **walks with Emberoo**, a few steps behind. Enemies ignore them (Warden visors only see Glimra light).
 - Original look: brown coat, cream shirt, **orange scarf matching Emberoo**, satchel. 18×28 sprite, front view for now (walk/diagonal animations later).
-- **Trainer's Aid (Q):** the trainer throws a healing tonic that arcs to Emberoo (+4 health). **3 charges**; can't be used at full health.
+- **Trainer's Aid (F):** the trainer throws a healing tonic that arcs to Emberoo (+4 health). **3 charges**; can't be used at full health.
 - **Berries:** toads sometimes drop a glowing berry (25%); walking over it refills one Aid charge (it waits if Aid is full).
 
 ## Drops and progression resources
@@ -99,6 +99,8 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
 ### Creature #1 (player): Emberoo
 - Fire kangaroo boxer. Stage 1 sprite done (16×16): idle (with blink), hop, jab, jab2, dodge in front/side/back.
 - Jab: hold to repeat, alternates fists, roots you in place. Dodge: a kangaroo leap that can cancel a jab.
+- **Skills on Q/W/E/R** (the skill bar), paid with Heat. **Flame Uppercut (E):** 3 Heat, 2s cooldown; a rising punch that bursts into a ~100° arc of flame (~26px), 3 damage + strong knockback to everything in it. Roots you; the dodge can cancel only its wind-up. Q, W and R are empty for now.
+- **Controls:** mouse is the main control; arrow keys also move (no WASD, since W is a skill key). Space = dodge, F = Trainer's Aid.
 
 ## Naming
 - Creature names blend **[element/trait] + [animal/sound]** into 2–3 fun syllables (e.g. **Emberoo**, **Toxlop**); evolutions get heavier names.

@@ -6,7 +6,7 @@ See [DESIGN.md](DESIGN.md) for every design decision.
 ## Run it
 1. Install Godot 4.7 (standard, not .NET).
 2. Godot → Import → pick this folder's `project.godot`.
-3. Press F5. Move Emberoo with WASD, arrow keys or a gamepad stick. Left click (or gamepad X) to jab, Space (or gamepad A) to dodge.
+3. Press F5. Left click to move (or click an enemy to attack it), right click to jab toward the cursor; arrow keys or a gamepad stick also move. Space (or gamepad A) to dodge, F for Trainer's Aid, E for Flame Uppercut (needs 3 Heat).
 
 ## Folder layout
 | Folder | What lives there |

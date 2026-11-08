@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3]
+[gd_scene load_steps=25 format=3]
 
 [ext_resource type="Script" path="res://scripts/creatures/creature.gd" id="1_creature"]
 [ext_resource type="Script" path="res://scripts/animation/creature_animator.gd" id="2_animator"]
@@ -18,6 +18,10 @@
 [ext_resource type="Script" path="res://scripts/components/trainer_aid.gd" id="16_aid"]
 [ext_resource type="Script" path="res://scripts/ui/speech_bubble.gd" id="17_speech"]
 [ext_resource type="Script" path="res://scripts/components/heat.gd" id="18_heat"]
+[ext_resource type="Script" path="res://scripts/skills/skill_bar.gd" id="19_skill_bar"]
+[ext_resource type="Script" path="res://scripts/skills/flame_uppercut.gd" id="20_uppercut"]
+[ext_resource type="Resource" path="res://data/skills/flame_uppercut.tres" id="21_uppercut_skill"]
+[ext_resource type="Script" path="res://scripts/effects/screen_shake.gd" id="22_shake"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_body"]
 radius = 5.0
@@ -101,5 +105,20 @@ script = ExtResource("17_speech")
 
 [node name="Heat" type="Node" parent="."]
 script = ExtResource("18_heat")
+
+[node name="ScreenShake" type="Node" parent="."]
+script = ExtResource("22_shake")
+
+[node name="SkillBar" type="Node" parent="." node_paths=PackedStringArray("heat", "player_input")]
+script = ExtResource("19_skill_bar")
+heat = NodePath("../Heat")
+player_input = NodePath("../PlayerInput")
+
+[node name="FlameUppercut" type="Node" parent="SkillBar" node_paths=PackedStringArray("screen_shake")]
+script = ExtResource("20_uppercut")
+skill = ExtResource("21_uppercut_skill")
+slot_index = 2
+animation_name = "uppercut"
+screen_shake = NodePath("../../ScreenShake")
 
 [connection signal="hits_landed" from="MeleeAttack" to="Heat" method="on_hits_landed"]
