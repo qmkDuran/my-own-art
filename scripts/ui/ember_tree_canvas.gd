@@ -8,7 +8,9 @@ extends Node2D
 ## nodes on a ring that has not opened yet are fainter still, with a padlock.
 ## Learning sends fire along the vein, then the ember flares. The branch names can be
 ## pointed at too: the pointed-at branch's nodes and veins light up in its colour.
-## The nodes and the words are drawn by EmberTreeNodePainter and EmberTreeLabelPainter.
+## The veins, nodes and words are drawn by EmberTreeVeins, EmberTreeNodePainter and
+## EmberTreeLabelPainter. Back to front: rings, veins, words, Emberoo, every glow, every
+## node, and last the pointed-at node, so its highlight is never under a neighbour.
 
 const CENTRE_ID := EmberTreeLayout.CENTRE_ID
 ## Extra pixels around a node that still count as pointing at it.
@@ -16,10 +18,6 @@ const HIT_MARGIN := 2.0
 const LEARN_POP_SCALE := 1.5
 ## How quickly hover and pop sizes ease back (higher = snappier).
 const EASE_RATE := 14.0
-const VEIN_FILL_SECONDS := 0.4
-const VEIN_DRAIN_SECONDS := 0.25
-const VEIN_SPARKS := 6
-const VEIN_SPARK_SPEED := 0.5
 const EMBEROO_SCALE := 4.0
 const EMBEROO_IDLE_SHEET := "res://art/emberoo/emberoo_front_idle_sheet.png"
 
@@ -28,10 +26,7 @@ var hovered_id: String = ""
 var hovered_branch: String = ""
 
 var _positions: Dictionary[String, Vector2] = {}
-## [from_id, to_id] for every vein, inner end first.
-var _veins: Array[PackedStringArray] = []
-## "from>to" -> 0..1, how far fire has travelled along the vein.
-var _vein_fill: Dictionary[String, float] = {}
+var _veins: EmberTreeVeins
 var _hover_scale: Dictionary[String, float] = {}
 var _shown_learned: Dictionary[String, bool] = {}
 var _time: float = 0.0
@@ -41,7 +36,7 @@ var _label_painter: EmberTreeLabelPainter
 func _ready() -> void:
 	_label_painter = EmberTreeLabelPainter.new()
 	_place_nodes()
-	_build_veins()
+	_veins = EmberTreeVeins.new(_positions)
 	_add_emberoo()
 	add_child(EmberTreeParticles.make_drifting_embers(EmberTreeLayout.TIER_RADII[-1]))
 	_sync_with_learned(false)
@@ -83,13 +78,6 @@ func _place_nodes() -> void:
 		_hover_scale[node.id] = 1.0
 
 
-func _build_veins() -> void:
-	for node in EmberTreeData.all_nodes():
-		var sources: PackedStringArray = node.requires if not node.requires.is_empty() else PackedStringArray([CENTRE_ID])
-		for source in sources:
-			_veins.append(PackedStringArray([source, node.id]))
-
-
 ## Emberoo's live idle animation in the middle of the tree.
 func _add_emberoo() -> void:
 	var sprite := AnimatedSprite2D.new()
@@ -109,29 +97,16 @@ func _add_emberoo() -> void:
 ## Brings veins and glows in line with what EmberTree says is learned.
 ## When `animate` is false (opening the screen), everything snaps into place.
 func _sync_with_learned(animate: bool) -> void:
-	for vein in _veins:
-		var key := _vein_key(vein)
-		var target := 1.0 if _is_lit(vein[0]) and _is_lit(vein[1]) else 0.0
-		var current: float = _vein_fill.get(key, 0.0)
-		if not animate:
-			_vein_fill[key] = target
-		elif not is_equal_approx(current, target):
-			_tween_vein(key, current, target)
+	_veins.sync(self, animate)
 	for node in EmberTreeData.all_nodes():
 		var learned_now := EmberTree.is_learned(node.id)
 		if animate and learned_now and not _shown_learned.has(node.id):
 			_hover_scale[node.id] = LEARN_POP_SCALE
-			get_tree().create_timer(VEIN_FILL_SECONDS).timeout.connect(_burst_at.bind(_positions[node.id]))
+			get_tree().create_timer(EmberTreeVeins.FILL_SECONDS).timeout.connect(_burst_at.bind(_positions[node.id]))
 		if learned_now:
 			_shown_learned[node.id] = true
 		else:
 			_shown_learned.erase(node.id)
-
-
-func _tween_vein(key: String, from: float, to: float) -> void:
-	var seconds := VEIN_FILL_SECONDS if to > from else VEIN_DRAIN_SECONDS
-	var tween := create_tween().set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-	tween.tween_method(func(value: float) -> void: _vein_fill[key] = value, from, to, seconds)
 
 
 func _burst_at(point: Vector2) -> void:
@@ -144,13 +119,23 @@ func _burst_at(point: Vector2) -> void:
 
 func _draw() -> void:
 	_draw_rings()
-	for vein in _veins:
-		_draw_vein(vein)
+	var branch_glow: Color = EmberTreePalette.BRANCH_COLORS.get(hovered_branch, Color.TRANSPARENT)
+	_veins.draw(self, _time, hovered_branch, branch_glow)
 	_label_painter.draw_ring_captions(self)
 	_label_painter.draw_branch_labels(self, hovered_branch)
 	_draw_centre()
 	for node in EmberTreeData.all_nodes():
-		EmberTreeNodePainter.draw_node(self, node, _positions[node.id], _hover_scale[node.id], _time, _highlight_for(node.id))
+		if EmberTree.is_learned(node.id):
+			EmberTreeNodePainter.draw_halo(self, node, _positions[node.id], _hover_scale[node.id], _time)
+	for node in EmberTreeData.all_nodes():
+		if node.id != hovered_id:
+			_draw_node(node)
+	if EmberTreeData.find(hovered_id) != null:
+		_draw_node(EmberTreeData.find(hovered_id))
+
+
+func _draw_node(node: EmberTreeNode) -> void:
+	EmberTreeNodePainter.draw_node(self, node, _positions[node.id], _hover_scale[node.id], _time, _highlight_for(node.id))
 
 
 ## One ring per tier: solid and warm where the stage is open, dashed and cold where it isn't.
@@ -165,25 +150,6 @@ func _draw_rings() -> void:
 		for dash in dashes:
 			var start := TAU * dash / dashes
 			draw_arc(Vector2.ZERO, radius, start, start + TAU / dashes * 0.45, 4, Color(EmberTreePalette.DIM, 0.7), 1.5)
-
-
-func _draw_vein(vein: PackedStringArray) -> void:
-	var from := _positions[vein[0]]
-	var to := _positions[vein[1]]
-	if _is_in_hovered_branch(vein[1]):
-		draw_line(from, to, Color(_hovered_branch_color(), 0.3), 8.0)
-	draw_line(from, to, EmberTreePalette.COAL, 3.0)
-	var fill: float = _vein_fill.get(_vein_key(vein), 0.0)
-	if fill <= 0.0:
-		return
-	var burning_end := from.lerp(to, fill)
-	draw_line(from, burning_end, Color(EmberTreePalette.RED, 0.7), 6.0)
-	draw_line(from, burning_end, EmberTreePalette.GOLD, 2.0)
-	# Sparks travel along the burning part.
-	for spark in VEIN_SPARKS:
-		var along := fmod(_time * VEIN_SPARK_SPEED + float(spark) / VEIN_SPARKS, 1.0) * fill
-		var point := from.lerp(to, along)
-		draw_rect(Rect2(point.round() - Vector2(1.5, 1.5), Vector2(3, 3)), EmberTreePalette.CREAM)
 
 
 func _draw_centre() -> void:
@@ -215,11 +181,3 @@ func _is_in_hovered_branch(id: String) -> bool:
 
 func _hovered_branch_color() -> Color:
 	return EmberTreePalette.BRANCH_COLORS[hovered_branch]
-
-
-func _is_lit(id: String) -> bool:
-	return id == CENTRE_ID or EmberTree.is_learned(id)
-
-
-func _vein_key(vein: PackedStringArray) -> String:
-	return "%s>%s" % [vein[0], vein[1]]

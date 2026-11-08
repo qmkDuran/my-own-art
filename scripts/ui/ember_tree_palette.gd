@@ -14,9 +14,11 @@ const ORANGE := ApolloPalette.ORANGE
 const RED := ApolloPalette.RED_LIGHT
 const GOLD := ApolloPalette.GOLD
 const DEEP := ApolloPalette.BRICK
+## A number that gets better if the pointed-at ember is ignited.
+const BETTER := ApolloPalette.GREEN_LIGHT
 
 ## See-through versions of the dark background for panels laid over the tree.
-const PANEL := Color(BACKGROUND, 0.8)
+const PANEL := Color(BACKGROUND, 0.92)
 const PANEL_EDGE := Color(ORANGE, 0.55)
 const BAR := Color(BACKGROUND, 0.72)
 

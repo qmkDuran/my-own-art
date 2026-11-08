@@ -3,13 +3,12 @@ extends RefCounted
 ## Draws the Ember Tree's words: the branch names (which can be pointed at) and the
 ## captions that follow the curve of rings that have not opened yet.
 
-const RING_CAPTION_SIZE := 12
+const RING_CAPTION_SIZE := EmberTreeFonts.TEXT_SIZE
 ## Words written along a closed ring, per stage.
-const RING_CAPTIONS := {2: "STAGE 2  ·  EVOLVE TO UNLOCK", 3: "STAGE 3  ·  ULTIMATES"}
-## Where each stage's caption sits, in degrees: in the upper gaps between branches, clear
-## of the nodes. Stage 3 only uses the left gap, nudged up so it stays on screen at the
-## opening zoom (the right-hand one would hide under the side panel).
-const RING_CAPTION_ANGLES := {2: [-30.0, -150.0], 3: [-143.0]}
+const RING_CAPTIONS := {2: "STAGE 2  ∙  EVOLVE TO UNLOCK", 3: "STAGE 3  ∙  ULTIMATES"}
+## Where each stage's caption sits, in degrees: in the two upper gaps between branches,
+## clear of the nodes (the lower gap would read upside down).
+const RING_CAPTION_ANGLES := {2: [-30.0, -150.0], 3: [-30.0, -150.0]}
 
 var _font: Font
 ## Branch -> the pill drawn behind its name while pointed at (built once, in its colour).
@@ -17,7 +16,7 @@ var _label_pills: Dictionary[String, StyleBoxFlat] = {}
 
 
 func _init() -> void:
-	_font = ThemeDB.fallback_font
+	_font = EmberTreeFonts.smooth()
 	for branch: String in EmberTreeData.BRANCHES:
 		_label_pills[branch] = _make_label_pill(EmberTreePalette.BRANCH_COLORS[branch])
 
@@ -45,7 +44,7 @@ func draw_branch_labels(canvas: CanvasItem, hovered_branch: String) -> void:
 			canvas.draw_style_box(_label_pills[branch], EmberTreeLayout.branch_label_rect(branch))
 		var text_width := _font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x
 		var middle := EmberTreeLayout.branch_label_middle(branch)
-		var baseline := middle + Vector2(-text_width / 2.0, font_size * EmberTreeLayout.CAP_HEIGHT_RATIO / 2.0)
+		var baseline := middle + Vector2(-text_width / 2.0, font_size * EmberTreeFonts.CAP_HEIGHT_RATIO / 2.0)
 		canvas.draw_string_outline(_font, baseline, text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, 6, EmberTreePalette.BACKGROUND)
 		canvas.draw_string(_font, baseline, text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, color if is_hovered else Color(color, 0.85))
 		if not is_hovered:  # the pill takes over from the underline
@@ -57,7 +56,7 @@ func draw_branch_labels(canvas: CanvasItem, hovered_branch: String) -> void:
 func _draw_text_along_ring(canvas: CanvasItem, text: String, radius: float, middle_angle: float, color: Color) -> void:
 	var width := _font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, RING_CAPTION_SIZE).x
 	var travelled := -width / 2.0
-	var half_cap := RING_CAPTION_SIZE * EmberTreeLayout.CAP_HEIGHT_RATIO / 2.0
+	var half_cap := RING_CAPTION_SIZE * EmberTreeFonts.CAP_HEIGHT_RATIO / 2.0
 	for letter_index in text.length():
 		var letter := text.unicode_at(letter_index)
 		var letter_width := _font.get_char_size(letter, RING_CAPTION_SIZE).x

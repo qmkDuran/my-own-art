@@ -3,37 +3,36 @@ extends CanvasLayer
 ## The in-game Ember Tree screen. K (or Tab) opens it; K, Tab or Escape closes it.
 ##
 ## Opening pauses the game; this layer keeps running (process mode Always) so the tree
-## stays alive. Builds the layout, back to front: tree view, vignette, header and footer
-## bars, side panel. Learning goes through the EmberTree autoload; this only asks it.
+## stays alive. Back to front: the tree view, the frame (vignette, header and footer bars),
+## the stats card on the left and the side panel on the right. Everything is anchored to
+## the screen's edges, and the opening zoom is worked out from the room left between them,
+## so the layout fits whatever size the screen is. Learning goes through the EmberTree
+## autoload; this only asks it.
 
-
-## The world renders at 320×180; this screen uses 640×360 while open so text stays crisp
-## (the hybrid approach in DESIGN.md). The game's own scale comes back on close.
-const UI_SIZE := Vector2i(640, 360)
-## Space between the screen edge (or a bar) and content, in UI pixels.
-const PAGE_MARGIN := 16.0
-const HEADER_HEIGHT := 48.0
-const FOOTER_HEIGHT := 30.0
-const SIDE_PANEL_WIDTH := 220.0
-## Header text is lifted this much so it looks centred (the font leaves room above capitals).
-const HEADER_TEXT_LIFT := 2.0
-## Gap kept between the opening tree (Stage 1 and the branch names) and the bars and panel.
+## While open, the screen draws at a whole multiple of the game's own resolution, so its
+## pixel font stays crisp (the hybrid approach in DESIGN.md): the smallest multiple at
+## least this wide, which leaves the tree room between the two cards. The game's own
+## scale comes back on close.
+const MIN_UI_WIDTH := 960
+## Space between the screen edge (or a bar) and the cards.
+const PAGE_MARGIN := 12.0
+const STATS_PANEL_WIDTH := 232.0
+const SIDE_PANEL_WIDTH := 256.0
+## Gap kept between the opening tree (Stage 1 and the branch names) and the bars and cards.
 const TREE_FIT_MARGIN := 8.0
 ## The opening zoom never goes above this, however much room there is.
 const MAX_START_ZOOM := 0.8
 const FADE_SECONDS := 0.15
-const FOOTER_HINT := "Click: ignite   ·   Right-click: put out   ·   Scroll: zoom   ·   Drag: move   ·   K / Esc: close"
 ## Shown under the tree until the player zooms out: the later rings start off-screen.
 const ZOOM_HINT := "Scroll out for Stage 2 and 3"
-const ZOOM_HINT_HEIGHT := 14.0
 
 var is_open: bool = false
 
 var _root: Control
 var _view: EmberTreeView
+var _frame: EmberTreeFrame
+var _stats_panel: EmberTreeStatsPanel
 var _side_panel: EmberTreeSidePanel
-var _level_label: Label
-var _xp_label: Label
 var _zoom_hint: Label
 var _resolution := UiResolutionSwap.new()
 var _paused_by_me: bool = false
@@ -43,12 +42,13 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_build_root()
 	_build_view()
-	_build_vignette()
-	_build_header()
-	_build_footer()
+	_frame = EmberTreeFrame.new()
+	_root.add_child(_frame)
 	_build_zoom_hint()
+	_build_stats_panel()
 	_build_side_panel()
 	_root.visible = false
+	_root.resized.connect(_on_resized)
 
 
 func _exit_tree() -> void:
@@ -79,13 +79,15 @@ func open() -> void:
 	if is_open:
 		return
 	is_open = true
-	_resolution.switch_to(get_window(), UI_SIZE)
+	_resolution.switch_to(get_window(), ui_size())
 	_paused_by_me = not get_tree().paused
 	get_tree().paused = true
-	_refresh_level()
+	_frame.refresh_level()
+	_stats_panel.preview_node("")
+	_side_panel.show_node("")
+	_fit_tree_at_home()
 	_view.snap_home()
 	_zoom_hint.modulate.a = 1.0
-	_side_panel.show_node("")
 	_root.visible = true
 	_root.modulate.a = 0.0
 	create_tween().tween_property(_root, "modulate:a", 1.0, FADE_SECONDS)
@@ -101,145 +103,108 @@ func close() -> void:
 		get_tree().paused = false
 
 
+## The canvas size used while open (see MIN_UI_WIDTH), e.g. 960×540 for a 480×270 game.
+static func ui_size() -> Vector2i:
+	var game_size := Vector2i(
+		ProjectSettings.get_setting("display/window/size/viewport_width"),
+		ProjectSettings.get_setting("display/window/size/viewport_height"))
+	return game_size * ceili(float(MIN_UI_WIDTH) / game_size.x)
+
+
 # --- Layout -----------------------------------------------------------------------
 
 func _build_root() -> void:
 	_root = Control.new()
-	_root.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_root.mouse_filter = Control.MOUSE_FILTER_STOP
+	_root.theme = EmberTreeFonts.ui_theme()
 	add_child(_root)
+	_root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 
 
 func _build_view() -> void:
 	_view = EmberTreeView.new()
-	_view.set_anchors_preset(Control.PRESET_FULL_RECT)
-	_fit_tree_at_home()
-	_view.node_hovered.connect(func(id: String) -> void: _side_panel.show_node(id))
-	_view.branch_hovered.connect(func(branch: String) -> void: _side_panel.show_branch(branch))
+	_view.node_hovered.connect(_on_node_hovered)
+	_view.branch_hovered.connect(_on_branch_hovered)
 	_view.zoom_changed.connect(_on_zoom_changed)
 	_view.node_clicked.connect(func(id: String) -> void: EmberTree.learn(id))
 	_view.node_right_clicked.connect(func(id: String) -> void: EmberTree.unlearn(id))
 	_root.add_child(_view)
+	_view.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 
 
-## Darkens the screen edges so the eye goes to the middle and the fire glows.
-func _build_vignette() -> void:
-	var gradient := Gradient.new()
-	gradient.offsets = PackedFloat32Array([0.0, 0.55, 1.0])
-	gradient.colors = PackedColorArray([Color(EmberTreePalette.BACKGROUND, 0.0), Color(EmberTreePalette.BACKGROUND, 0.15), Color(EmberTreePalette.BACKGROUND, 0.75)])
-	var texture := GradientTexture2D.new()
-	texture.gradient = gradient
-	texture.fill = GradientTexture2D.FILL_RADIAL
-	texture.fill_from = Vector2(0.5, 0.5)
-	texture.fill_to = Vector2(1.05, 1.05)
-	var vignette := TextureRect.new()
-	vignette.texture = texture
-	vignette.set_anchors_preset(Control.PRESET_FULL_RECT)
-	vignette.stretch_mode = TextureRect.STRETCH_SCALE
-	vignette.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_root.add_child(vignette)
-
-
-func _build_header() -> void:
-	_add_bar(Rect2(0, 0, UI_SIZE.x, HEADER_HEIGHT), HEADER_HEIGHT)
-	var title_block := VBoxContainer.new()
-	title_block.alignment = BoxContainer.ALIGNMENT_CENTER
-	title_block.add_theme_constant_override("separation", 0)
-	title_block.position = Vector2(PAGE_MARGIN, -HEADER_TEXT_LIFT)
-	title_block.size = Vector2(SIDE_PANEL_WIDTH, HEADER_HEIGHT)
-	title_block.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_root.add_child(title_block)
-	title_block.add_child(UiLabel.make(16, EmberTreePalette.GOLD, "EMBEROO"))
-	title_block.add_child(UiLabel.make(10, EmberTreePalette.GREY, "The Ember Tree"))
-	# Right side: the level, and how far it is to the next one (which brings a skill point).
-	var level_block := VBoxContainer.new()
-	level_block.alignment = BoxContainer.ALIGNMENT_CENTER
-	level_block.add_theme_constant_override("separation", 0)
-	level_block.position = Vector2(UI_SIZE.x - SIDE_PANEL_WIDTH - PAGE_MARGIN, -HEADER_TEXT_LIFT)
-	level_block.size = Vector2(SIDE_PANEL_WIDTH, HEADER_HEIGHT)
-	level_block.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_root.add_child(level_block)
-	_level_label = UiLabel.make(13, EmberTreePalette.CREAM)
-	_level_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	level_block.add_child(_level_label)
-	_xp_label = UiLabel.make(9, EmberTreePalette.GREY)
-	_xp_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	level_block.add_child(_xp_label)
-
-
-func _build_footer() -> void:
-	var top := UI_SIZE.y - FOOTER_HEIGHT
-	_add_bar(Rect2(0, top, UI_SIZE.x, FOOTER_HEIGHT), top)
-	var hint := _add_label(Rect2(PAGE_MARGIN, top, UI_SIZE.x - PAGE_MARGIN * 2, FOOTER_HEIGHT), 9, EmberTreePalette.GREY, HORIZONTAL_ALIGNMENT_CENTER)
-	hint.text = FOOTER_HINT
-
-
-## A quiet line in the empty gap below Emberoo, between the two lower branches.
+## A quiet line along the bottom of the tree area, between the two lower branches.
 func _build_zoom_hint() -> void:
-	var bottom := UI_SIZE.y - FOOTER_HEIGHT - TREE_FIT_MARGIN
-	_zoom_hint = _add_label(Rect2(0, bottom - ZOOM_HINT_HEIGHT, _tree_area_width(), ZOOM_HINT_HEIGHT), 9, EmberTreePalette.GREY, HORIZONTAL_ALIGNMENT_CENTER)
-	_zoom_hint.text = ZOOM_HINT
+	_zoom_hint = UiLabel.make(EmberTreeFonts.TEXT_SIZE, EmberTreePalette.GREY, ZOOM_HINT)
+	_zoom_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_zoom_hint.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE, Control.PRESET_MODE_MINSIZE)
+	_zoom_hint.offset_left = PAGE_MARGIN * 2.0 + STATS_PANEL_WIDTH
+	_zoom_hint.offset_right = -(PAGE_MARGIN * 2.0 + SIDE_PANEL_WIDTH)
+	_zoom_hint.offset_bottom = -(EmberTreeFrame.FOOTER_HEIGHT + TREE_FIT_MARGIN)
+	_zoom_hint.offset_top = _zoom_hint.offset_bottom - EmberTreeFonts.TEXT_SIZE
+	_root.add_child(_zoom_hint)
 
 
+## Emberoo's stats, in the top-left corner under the header.
+func _build_stats_panel() -> void:
+	_stats_panel = EmberTreeStatsPanel.new(STATS_PANEL_WIDTH)
+	_stats_panel.position = Vector2(PAGE_MARGIN, EmberTreeFrame.HEADER_HEIGHT + PAGE_MARGIN)
+	_root.add_child(_stats_panel)
+
+
+## The info and skill-points cards, down the right edge between the bars.
 func _build_side_panel() -> void:
 	_side_panel = EmberTreeSidePanel.new()
-	_side_panel.position = Vector2(UI_SIZE.x - SIDE_PANEL_WIDTH - PAGE_MARGIN, HEADER_HEIGHT + PAGE_MARGIN)
-	_side_panel.size = Vector2(SIDE_PANEL_WIDTH, UI_SIZE.y - HEADER_HEIGHT - FOOTER_HEIGHT - PAGE_MARGIN * 2)
+	_side_panel.size.x = SIDE_PANEL_WIDTH
 	_side_panel.reset_pressed.connect(EmberTree.reset)
+	_side_panel.anchor_left = 1.0
+	_side_panel.anchor_right = 1.0
+	_side_panel.anchor_bottom = 1.0
+	_side_panel.offset_left = -(SIDE_PANEL_WIDTH + PAGE_MARGIN)
+	_side_panel.offset_right = -PAGE_MARGIN
+	_side_panel.offset_top = EmberTreeFrame.HEADER_HEIGHT + PAGE_MARGIN
+	_side_panel.offset_bottom = -(EmberTreeFrame.FOOTER_HEIGHT + PAGE_MARGIN)
 	_root.add_child(_side_panel)
 
 
-## The width left for the tree, between the left edge and the side panel.
-func _tree_area_width() -> float:
-	return UI_SIZE.x - SIDE_PANEL_WIDTH - PAGE_MARGIN
+## The part of the screen the tree has to itself: between the bars and the two cards.
+func _tree_area() -> Rect2:
+	var screen := _root.get_viewport_rect().size
+	var left := PAGE_MARGIN * 2.0 + STATS_PANEL_WIDTH
+	var right := screen.x - PAGE_MARGIN * 2.0 - SIDE_PANEL_WIDTH
+	var top := EmberTreeFrame.HEADER_HEIGHT
+	var bottom := screen.y - EmberTreeFrame.FOOTER_HEIGHT
+	return Rect2(left, top, right - left, bottom - top).grow(-TREE_FIT_MARGIN)
 
 
 ## Picks the opening zoom and position so all of Stage 1 and the branch names sit
-## between the header, the footer and the side panel, with a small margin.
+## inside the tree area.
 func _fit_tree_at_home() -> void:
-	var area := Rect2(0, HEADER_HEIGHT, _tree_area_width(), UI_SIZE.y - HEADER_HEIGHT - FOOTER_HEIGHT).grow(-TREE_FIT_MARGIN)
+	var area := _tree_area()
 	var bounds := EmberTreeLayout.opening_bounds()
 	var zoom := minf(MAX_START_ZOOM, minf(area.size.x / bounds.size.x, area.size.y / bounds.size.y))
 	_view.home_zoom = zoom
-	_view.home_centre = area.get_center() - bounds.get_center() * zoom
+	_view.home_centre = (area.get_center() - bounds.get_center() * zoom).round()
 
 
-func _refresh_level() -> void:
-	_level_label.text = "Level %d" % Progression.level
-	if Progression.level >= Progression.MAX_LEVEL:
-		_xp_label.text = "Max level"
-	else:
-		_xp_label.text = "%d / %d XP  ·  next skill point at Level %d" % [Progression.xp, Progression.xp_to_next(), Progression.level + 1]
+## A new screen size gets a new opening view.
+func _on_resized() -> void:
+	if not is_open:
+		return
+	_fit_tree_at_home()
+	_view.snap_home()
+
+
+func _on_node_hovered(id: String) -> void:
+	_side_panel.show_node(id)
+	_stats_panel.preview_node(id)
+
+
+func _on_branch_hovered(branch: String) -> void:
+	_side_panel.show_branch(branch)
+	_stats_panel.preview_node("")
 
 
 ## The zoom hint fades away once the player has zoomed out past the opening view.
 func _on_zoom_changed(zoom: float) -> void:
 	var wanted_alpha := 0.0 if zoom < _view.home_zoom else 1.0
 	create_tween().tween_property(_zoom_hint, "modulate:a", wanted_alpha, FADE_SECONDS)
-
-
-## A translucent bar with a thin warm line along its tree-facing edge (at `line_y`).
-func _add_bar(rect: Rect2, line_y: float) -> void:
-	var bar := ColorRect.new()
-	bar.color = EmberTreePalette.BAR
-	bar.position = rect.position
-	bar.size = rect.size
-	bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_root.add_child(bar)
-	var line := ColorRect.new()
-	line.color = Color(EmberTreePalette.ORANGE, 0.25)
-	line.position = Vector2(0, line_y)
-	line.size = Vector2(UI_SIZE.x, 1)
-	line.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_root.add_child(line)
-
-
-func _add_label(rect: Rect2, font_size: int, color: Color, alignment: HorizontalAlignment) -> Label:
-	var label := UiLabel.make(font_size, color)
-	label.position = rect.position
-	label.size = rect.size
-	label.horizontal_alignment = alignment
-	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	label.clip_text = true
-	_root.add_child(label)
-	return label

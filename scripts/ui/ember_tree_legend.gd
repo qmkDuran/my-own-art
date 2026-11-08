@@ -7,12 +7,12 @@ extends Control
 
 const Kind := EmberTreeNode.Kind
 
-const ROW_HEIGHT := 14.0
-const SWATCH_RADIUS := 5.0
+const ROW_HEIGHT := 18.0
+const SWATCH_RADIUS := 6.0
 ## Space between a swatch and its word, and between one entry and the next.
 const SWATCH_GAP := 4.0
 const ENTRY_GAP := 10.0
-const FONT_SIZE := 9
+const FONT_SIZE := EmberTreeFonts.TEXT_SIZE
 
 ## Each row: [word, shape, state]. Shape rows show the "available" look; state rows use coals.
 const ROWS := [
@@ -29,7 +29,7 @@ var _font: Font
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_font = ThemeDB.fallback_font
+	_font = EmberTreeFonts.pixel()
 	custom_minimum_size.y = ROW_HEIGHT * ROWS.size()
 
 
@@ -41,7 +41,8 @@ func _draw() -> void:
 			var word: String = entry[0]
 			_draw_swatch(Vector2(x, middle_y), entry[1], entry[2])
 			var text_x := x + SWATCH_RADIUS + SWATCH_GAP
-			draw_string(_font, Vector2(text_x, middle_y + FONT_SIZE * EmberTreeLayout.CAP_HEIGHT_RATIO / 2.0), word, HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE, EmberTreePalette.CREAM)
+			var baseline_y := roundf(middle_y + FONT_SIZE * EmberTreeFonts.CAP_HEIGHT_RATIO / 2.0)
+			draw_string(_font, Vector2(roundf(text_x), baseline_y), word, HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE, EmberTreePalette.CREAM)
 			x = text_x + _font.get_string_size(word, HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE).x + ENTRY_GAP + SWATCH_RADIUS
 
 

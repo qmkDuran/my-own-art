@@ -15,7 +15,7 @@ signal node_right_clicked(id: String)
 ## The wanted zoom changed (the wheel turned); 1.0 = tree pixels at full size.
 signal zoom_changed(zoom: float)
 
-const MIN_ZOOM := 0.4
+const MIN_ZOOM := 0.35
 const MAX_ZOOM := 1.6
 const ZOOM_STEP := 1.15
 ## Mouse travel (pixels) before a press counts as a drag instead of a click.

@@ -9,18 +9,18 @@ static func for_node(node: EmberTreeNode, state: String) -> String:
 	match state:
 		EmberTreeNodeState.LEARNED:
 			if EmberTree.can_unlearn(node.id):
-				return "Ignited  ·  right-click to put out (free)"
-			return "Ignited  ·  put out the embers beyond it first"
+				return "Ignited  ∙  right-click to put out (free)"
+			return "Ignited  ∙  put out the embers beyond it first"
 		EmberTreeNodeState.AVAILABLE:
-			return "Can ignite  ·  click to spend 1 skill point"
+			return "Can ignite  ∙  click to spend 1 skill point"
 		EmberTreeNodeState.SEALED:
-			return "Locked  ·  unlocks when Emberoo evolves (Stage %d)" % node.stage
+			return "Locked  ∙  unlocks when Emberoo evolves (Stage %d)" % node.stage
 	if EmberTree.is_reachable(node.id):
-		return "Not enough points  ·  earn 1 each level"
+		return "Not enough points  ∙  earn 1 each level"
 	return "Needs: %s" % _required_titles(node)
 
 
-## How much of a branch is ignited, e.g. "2 of 5 ignited  ·  6 more after evolving".
+## How much of a branch is ignited, e.g. "2 of 5 ignited  ∙  6 more after evolving".
 static func for_branch(branch: String) -> String:
 	var open := 0
 	var sealed := 0
@@ -31,7 +31,7 @@ static func for_branch(branch: String) -> String:
 			sealed += 1
 	var status := "%d of %d ignited" % [ignited_in_branch(branch), open]
 	if sealed > 0:
-		status += "  ·  %d more after evolving" % sealed
+		status += "  ∙  %d more after evolving" % sealed
 	return status
 
 

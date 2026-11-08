@@ -3,6 +3,7 @@ extends Node
 ## Applies the learned Ember Tree stat nodes to the player creature.
 ##
 ## Lives in the level (not on the creature), so the creature script stays untouched.
+## EmberTreeStatSheet shows the same numbers on the tree screen; keep the two in step.
 ## It remembers how much it has already added, so learning, unlearning and the level
 ## restarting all end up with exactly the learned total, never counted twice.
 
@@ -12,6 +13,7 @@ const JAB_DAMAGE := "jab_damage"
 const JAB_RECOVERY_CUT := "jab_recovery_cut"
 const MOVE_SPEED := "move_speed"
 const DODGE_COOLDOWN_CUT := "dodge_cooldown_cut"
+const MAX_HEAT := "max_heat"
 
 var _player: Node
 ## Stat name -> amount this component has added to the player so far.
@@ -68,5 +70,7 @@ func _change_stat(stat: String, change: float) -> void:
 			(_player.get_node("Movement") as Movement).top_speed += change
 		DODGE_COOLDOWN_CUT:
 			(_player.get_node("Dodge") as Dodge).cooldown -= change
+		MAX_HEAT:
+			(_player.get_node("Heat") as Heat).max_heat += roundi(change)
 		_:
 			push_warning("Ember Tree: no effect is wired up for stat '%s'." % stat)

@@ -1,0 +1,16 @@
+monogram-extended.ttf
+=====================
+
+Font:     monogram (extended), version 1.1.0
+Author:   Vinícius Menézio (datagoblin), https://menez.io/
+Source:   https://datagoblin.itch.io/monogram
+License:  Creative Commons Zero v1.0 Universal (CC0 1.0), public domain
+          https://creativecommons.org/publicdomain/zero/1.0/
+
+The licence is also embedded in the font file itself (name table: "Creative Commons
+Zero v1.0 Universal"). No attribution is required; this note credits the author anyway.
+
+The file was taken from a public GitHub mirror of the itch.io download (two separate
+mirrors had byte-identical copies), because itch.io downloads need a browser.
+
+Pixel grid: 16 px per em, so use it at 16, 32 or 48 px for crisp pixels.
