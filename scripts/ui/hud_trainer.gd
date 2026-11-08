@@ -13,11 +13,12 @@ extends Trainer
 ## How long each step of the shout lasts (the skill slot's flash keeps the same beat).
 const SHOUT_STAGE_SECONDS := 0.0875
 ## The shout's three ticks, as [start relative to the head's top centre, direction]:
-## up-left, straight up, up-right.
+## up-left, straight up, up-right. They start just outside the gold outline of the
+## 6-pixel-wide head (12×18 stand-in art).
 const SHOUT_TICKS := [
-	[Vector2i(-7, 0), Vector2i(-1, -1)],
+	[Vector2i(-6, 0), Vector2i(-1, -1)],
 	[Vector2i(0, -4), Vector2i(0, -1)],
-	[Vector2i(6, 0), Vector2i(1, -1)],
+	[Vector2i(5, 0), Vector2i(1, -1)],
 ]
 ## Each step of the shout: how far out the ticks start, how long they are, and their colour.
 const SHOUT_STAGES := [
@@ -32,8 +33,8 @@ const TURN_FRAME_SECONDS := 0.07
 const BOB_STEP_SECONDS := 0.15
 ## Emberoo counts as walking above this speed, in pixels per second.
 const WALKING_SPEED := 5.0
-## Where the tonic leaves the trainer's hands, from his feet.
-const HANDS_OFFSET := Vector2(0, -14)
+## Where the tonic leaves the trainer's hands, from his feet (the hands' row of the 12×18 art).
+const HANDS_OFFSET := Vector2(0, -6)
 
 ## The trainer's look: a "back" and a "front" animation (one frame each is enough;
 ## more frames play while Emberoo walks).

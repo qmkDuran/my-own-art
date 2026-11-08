@@ -1,8 +1,9 @@
 class_name PixelFont
 extends RefCounted
 ## A tiny 5-pixel-tall font for the HUD, drawn pixel by pixel so it stays crisp at any scale.
-## Has the digits, '/', a space and the capitals the HUD needs (LV, the skill keys Q W E R,
-## F for Trainer's Aid, N for north). Glyphs can be 1 to 5 pixels wide.
+## Has the digits, '/', '.', brackets, a space and the capitals the HUD needs (LV, the skill
+## keys Q W E R, F for Trainer's Aid, N for north, and the words of the training dummy's
+## combo total and the debug "ENEMIES PAUSED" banner). Glyphs can be 1 to 5 pixels wide.
 
 const GLYPH_HEIGHT := 5
 ## Empty pixels between two characters.
@@ -29,6 +30,18 @@ const GLYPHS := {
 	"R": ["##.", "#.#", "##.", "#.#", "#.#"],
 	"F": ["###", "#..", "##.", "#..", "#.."],
 	"N": ["#..#", "##.#", "#.##", "#..#", "#..#"],
+	"A": [".#.", "#.#", "###", "#.#", "#.#"],
+	"D": ["##.", "#.#", "#.#", "#.#", "##."],
+	"I": ["###", ".#.", ".#.", ".#.", "###"],
+	"M": ["#...#", "##.##", "#.#.#", "#...#", "#...#"],
+	"O": [".#.", "#.#", "#.#", "#.#", ".#."],
+	"P": ["##.", "#.#", "##.", "#..", "#.."],
+	"S": [".##", "#..", ".#.", "..#", "##."],
+	"T": ["###", ".#.", ".#.", ".#.", ".#."],
+	"U": ["#.#", "#.#", "#.#", "#.#", "###"],
+	".": [".", ".", ".", ".", "#"],
+	"(": [".#", "#.", "#.", "#.", ".#"],
+	")": ["#.", ".#", ".#", ".#", "#."],
 }
 
 

@@ -4,6 +4,7 @@ extends Node
 ##
 ## Emberoo is "in combat" while an enemy is close, and for a few seconds after he last
 ## dealt or took damage (or used a skill). After that many seconds of calm, he's out of combat.
+## A training dummy nearby doesn't count as a fight; hitting it does.
 
 ## An enemy closer than this to Emberoo (in pixels) means a fight is on.
 const ENEMY_NEAR_DISTANCE := 110.0
@@ -47,6 +48,8 @@ func _find_player() -> void:
 func _is_enemy_near() -> bool:
 	for enemy in get_tree().get_nodes_in_group("enemies"):
 		var enemy_2d := enemy as Node2D
+		if enemy_2d is TrainingDummy:
+			continue
 		if enemy_2d != null and enemy_2d.global_position.distance_to(_player.global_position) < ENEMY_NEAR_DISTANCE:
 			return true
 	return false

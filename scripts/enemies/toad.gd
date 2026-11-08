@@ -10,6 +10,8 @@ extends CharacterBody2D
 ##   LASHING    -> tongue shoots out; hits the player if they're still in the way
 ##   RECOVERING -> a short pause after attacking or being hit
 ##   DYING      -> fades away
+##
+## While DebugControls.enemies_passive is on, it only sits (RESTING) and reacts to hits.
 
 enum State { RESTING, HOPPING, PUFFING, LASHING, RECOVERING, DYING }
 
@@ -88,6 +90,8 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	_time_in_state += delta
+	if DebugControls.enemies_passive:
+		_stop_acting()
 
 	match _state:
 		State.RESTING:
@@ -109,7 +113,7 @@ func _physics_process(delta: float) -> void:
 func _rest() -> void:
 	velocity = Vector2.ZERO
 	sprite.show_animation("idle")
-	if _is_state_over():
+	if _is_state_over() and not DebugControls.enemies_passive:
 		_choose_next_move()
 
 
@@ -146,6 +150,16 @@ func _slow_down(delta: float) -> void:
 		sprite.show_animation("idle")
 		if _is_state_over():
 			_enter(State.RESTING, _random_rest_time())
+
+
+## Debug (enemies passive): a hop or an attack in progress stops at once and the toad sits.
+## Recovering from a hit and dying carry on as normal.
+func _stop_acting() -> void:
+	if _state != State.HOPPING and _state != State.PUFFING and _state != State.LASHING:
+		return
+	tongue.retract_now()
+	sprite.lift(0.0)
+	_enter(State.RESTING, _random_rest_time())
 
 
 # --- Decisions ------------------------------------------------------------

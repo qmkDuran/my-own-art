@@ -16,6 +16,8 @@ extends CharacterBody2D
 ##                (hits don't interrupt it: super armour)
 ##   RECOVERING-> knocked back after being hit
 ##   DYING     -> fades away
+##
+## While DebugControls.enemies_passive is on, he only stands (WATCHING) and reacts to hits.
 
 enum State { WATCHING, RETREATING, SUMMONING, SHOVING, RECOVERING, DYING }
 
@@ -117,9 +119,15 @@ func _physics_process(delta: float) -> void:
 		_seconds_until_summon -= delta
 		_seconds_until_shove_ready = maxf(0.0, _seconds_until_shove_ready - delta)
 
+	if DebugControls.enemies_passive:
+		_stop_acting()
+
 	match _state:
 		State.WATCHING, State.RETREATING:
-			_keep_distance_or_summon(delta)
+			if DebugControls.enemies_passive:
+				_stand_still()
+			else:
+				_keep_distance_or_summon(delta)
 		State.SHOVING:
 			_shove()
 		State.SUMMONING:
@@ -188,6 +196,15 @@ func _slow_down(delta: float) -> void:
 	velocity = velocity.move_toward(Vector2.ZERO, knockback_friction * delta)
 	if _state == State.RECOVERING and _is_state_over():
 		_enter(State.WATCHING, 0.0)
+
+
+## Debug (enemies passive): a summon or a slam in progress is called off and he just stands.
+## Recovering from a hit and dying carry on as normal.
+func _stop_acting() -> void:
+	if _state != State.SUMMONING and _state != State.SHOVING:
+		return
+	charge_particles.stop_charging()
+	_enter(State.WATCHING, 0.0)
 
 
 # --- Rod shove ------------------------------------------------------------

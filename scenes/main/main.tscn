@@ -1,10 +1,13 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/creatures/emberoo/emberoo.tscn" id="1_emberoo"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/handler/handler.tscn" id="3_handler"]
 [ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="4_hud"]
 [ext_resource type="PackedScene" path="res://scenes/ui/ember_tree.tscn" id="6_ember_tree"]
 [ext_resource type="Script" path="res://scripts/progression/ember_tree_effects.gd" id="7_ember_effects"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/training_dummy/training_dummy.tscn" id="8_dummy"]
+[ext_resource type="PackedScene" path="res://scenes/debug/debug_controls.tscn" id="9_debug"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/toxic_toad/toxic_toad.tscn" id="10_toad"]
 
 [sub_resource type="Environment" id="Environment_glow"]
 background_mode = 3
@@ -63,6 +66,21 @@ position = Vector2(110, -20)
 position = Vector2(-100, 60)
 first_summon_delay = 3.0
 
+[node name="PracticeToad1" parent="." instance=ExtResource("10_toad")]
+position = Vector2(50, -30)
+
+[node name="PracticeToad2" parent="." instance=ExtResource("10_toad")]
+position = Vector2(65, -10)
+
+[node name="PracticeToad3" parent="." instance=ExtResource("10_toad")]
+position = Vector2(45, 10)
+
+[node name="PracticeToad4" parent="." instance=ExtResource("10_toad")]
+position = Vector2(70, 15)
+
+[node name="TrainingDummy" parent="." instance=ExtResource("8_dummy")]
+position = Vector2(-60, 20)
+
 [node name="Emberoo" parent="." instance=ExtResource("1_emberoo")]
 
 [node name="Camera" type="Camera2D" parent="Emberoo"]
@@ -74,3 +92,5 @@ position_smoothing_enabled = true
 script = ExtResource("7_ember_effects")
 
 [node name="EmberTreeScreen" parent="." instance=ExtResource("6_ember_tree")]
+
+[node name="DebugControls" parent="." instance=ExtResource("9_debug")]

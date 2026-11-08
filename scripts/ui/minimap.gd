@@ -77,6 +77,8 @@ func _find_marks() -> Dictionary:
 	for berry in _berries_near(player):
 		_add_mark(marks, player, berry, HudPalette.PINK)
 	for enemy in get_tree().get_nodes_in_group("enemies"):
+		if enemy is TrainingDummy:
+			continue  # A practice post, not a threat.
 		if enemy is Handler:
 			_add_mark(marks, player, enemy as Node2D, HudPalette.MAGENTA, 2)
 		elif enemy is Node2D:
