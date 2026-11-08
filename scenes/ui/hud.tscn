@@ -106,7 +106,6 @@ offset_top = -24.0
 offset_right = -35.0
 offset_bottom = -6.0
 script = ExtResource("8_slot")
-key_label = "Q"
 
 [node name="SlotW" type="Control" parent="BottomCluster/SkillSlots"]
 layout_mode = 3
@@ -116,7 +115,6 @@ offset_top = -24.0
 offset_right = -14.0
 offset_bottom = -6.0
 script = ExtResource("8_slot")
-key_label = "W"
 
 [node name="SlotE" type="Control" parent="BottomCluster/SkillSlots"]
 layout_mode = 3
@@ -126,7 +124,6 @@ offset_top = -24.0
 offset_right = 36.0
 offset_bottom = -6.0
 script = ExtResource("8_slot")
-key_label = "E"
 
 [node name="SlotR" type="Control" parent="BottomCluster/SkillSlots"]
 layout_mode = 3
@@ -136,7 +133,6 @@ offset_top = -24.0
 offset_right = 57.0
 offset_bottom = -6.0
 script = ExtResource("8_slot")
-key_label = "R"
 
 [node name="SkillTooltip" type="Control" parent="."]
 layout_mode = 3

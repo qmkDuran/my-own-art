@@ -13,7 +13,10 @@ const PIP_GAP := 1
 const FADE_TIME := 0.3
 ## Seconds a finished chain stays lit before it fades.
 const FINISHED_HOLD_TIME := 0.25
-const LIT_COLOR := ApolloPalette.ORANGE
+## Lit pips are silver, the finisher's a brighter white: never orange, so they can't be
+## mistaken for Heat.
+const LIT_COLOR := ApolloPalette.SILVER
+const FINISHER_LIT_COLOR := ApolloPalette.WHITE
 const UNLIT_COLOR := ApolloPalette.STONE
 
 @export var melee_attack: MeleeAttack
@@ -46,6 +49,8 @@ func _draw() -> void:
 	var row_width := pip_count * PIP_SIZE + (pip_count - 1) * PIP_GAP
 	var left := -floori(row_width / 2.0)
 	for pip in pip_count:
-		var color := LIT_COLOR if pip < _lit_count else UNLIT_COLOR
+		var color := UNLIT_COLOR
+		if pip < _lit_count:
+			color = FINISHER_LIT_COLOR if pip == pip_count - 1 else LIT_COLOR
 		var top_left := Vector2(left + pip * (PIP_SIZE + PIP_GAP), 0)
 		draw_rect(Rect2(top_left, Vector2(PIP_SIZE, PIP_SIZE)), color)
