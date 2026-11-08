@@ -28,12 +28,8 @@ const PUSH_FRICTION := 600.0
 ## Max health gained per level (the small automatic "ding" boost).
 const HEALTH_PER_LEVEL := 1
 
-## How close (feet to feet, pixels) the creature walks to a clicked enemy before jabbing.
-const ATTACK_APPROACH_DISTANCE := 16.0
 ## How close to a clicked spot counts as "arrived", in pixels.
 const ARRIVE_DISTANCE := 3.0
-## How close the cursor must be to an enemy's body for a click to target it, in pixels.
-const CLICK_TARGET_RADIUS := 12.0
 
 ## Seconds left during which a push controls movement instead of the player.
 var _push_seconds_left: float = 0.0
@@ -42,9 +38,19 @@ var _destination: Vector2 = Vector2.ZERO
 var _has_destination: bool = false
 ## The enemy a left-click told the creature to attack (walk up to it, then jab).
 var _attack_target: Node2D = null
+## Whether the creature has already jabbed its attack target since it was clicked.
+## Letting go of the button after that ends the order (so one click = one jab).
+var _has_jabbed_attack_target: bool = false
 
 ## Effect shown where you click to move (a small ring).
 @export var click_marker_scene: PackedScene
+## How close (feet to feet, pixels) the creature walks to a clicked enemy before jabbing.
+## The jab connects up to MeleeAttack's reach + hit_radius away, so this stops a little
+## inside that and jabs at once, instead of walking into the enemy first.
+@export var attack_approach_distance: float = 20.0
+## How close the cursor must be to an enemy's body centre for a click to target it, in pixels.
+## The nearest enemy within this distance is picked, so near-misses still count.
+@export var click_target_radius: float = 12.0
 
 @onready var player_input: PlayerInput = $PlayerInput
 @onready var movement: Movement = $Movement
@@ -76,6 +82,7 @@ func _physics_process(delta: float) -> void:
 	_read_mouse_orders()
 	if player_input.wants_trainer_aid():
 		trainer_aid.use()
+	_cancel_jab_recovery_to_move()
 	_start_requested_action()
 	# Leaping out of the way means attacks pass through you.
 	health.is_invulnerable = dodge.is_dodging
@@ -94,9 +101,10 @@ func _physics_process(delta: float) -> void:
 
 ## Left-click on the ground walks there (hold to keep following the cursor);
 ## left-click on an enemy walks up to it and jabs (hold to keep jabbing).
+## Shift + left-click stops and jabs in place instead (PlayerInput reports it as an attack).
 ## Steering with the arrow keys cancels mouse orders.
 func _read_mouse_orders() -> void:
-	if player_input.get_move_direction() != Vector2.ZERO:
+	if player_input.get_move_direction() != Vector2.ZERO or player_input.is_attacking_in_place_with_move_click():
 		_clear_mouse_orders()
 		return
 
@@ -105,6 +113,7 @@ func _read_mouse_orders() -> void:
 		if enemy != null:
 			_clear_mouse_orders()
 			_attack_target = enemy
+			_has_jabbed_attack_target = false
 		else:
 			_walk_to(player_input.get_aim_point())
 			_show_click_marker(_destination)
@@ -112,6 +121,9 @@ func _read_mouse_orders() -> void:
 		_walk_to(player_input.get_aim_point())
 
 	if _attack_target != null and not _is_valid_target(_attack_target):
+		_attack_target = null
+	# A single click is a single jab; holding the button keeps jabbing.
+	if _has_jabbed_attack_target and not player_input.is_holding_move_click():
 		_attack_target = null
 
 
@@ -126,12 +138,17 @@ func _clear_mouse_orders() -> void:
 	_attack_target = null
 
 
+## The enemy whose body centre is nearest the cursor, if any is within click_target_radius.
 func _enemy_under_cursor() -> Node2D:
 	var cursor := player_input.get_aim_point()
+	var nearest: Node2D = null
+	var nearest_distance := click_target_radius
 	for enemy: Node2D in get_tree().get_nodes_in_group("enemies"):
-		if cursor.distance_to(enemy.global_position + Vector2(0, BODY_HEIGHT)) <= CLICK_TARGET_RADIUS:
-			return enemy
-	return null
+		var distance := cursor.distance_to(enemy.global_position + Vector2(0, BODY_HEIGHT))
+		if distance <= nearest_distance:
+			nearest = enemy
+			nearest_distance = distance
+	return nearest
 
 
 func _is_valid_target(enemy: Node2D) -> bool:
@@ -139,7 +156,7 @@ func _is_valid_target(enemy: Node2D) -> bool:
 
 
 func _is_in_reach_of(enemy: Node2D) -> bool:
-	return global_position.distance_to(enemy.global_position) <= ATTACK_APPROACH_DISTANCE
+	return global_position.distance_to(enemy.global_position) <= attack_approach_distance
 
 
 ## A small ring where you clicked, so you know the order was received.
@@ -153,6 +170,21 @@ func _show_click_marker(point: Vector2) -> void:
 
 
 # --- Actions --------------------------------------------------------------
+
+## Animation cancel: once the jab's hit has landed, a fresh order to move cuts the
+## rest of its recovery short, so walking away after a punch feels instant.
+## Not while the player is still asking to attack, so holding attack chains full jabs.
+func _cancel_jab_recovery_to_move() -> void:
+	if not melee_attack.can_cancel_by_moving() or not _wants_to_move():
+		return
+	if player_input.wants_to_attack() or _attack_target != null:
+		return
+	melee_attack.cancel()
+
+
+func _wants_to_move() -> bool:
+	return player_input.get_move_direction() != Vector2.ZERO or _has_destination
+
 
 ## One action at a time, with one exception: a dodge can cancel a jab mid-punch (and a
 ## skill during its wind-up), so the player can usually escape (like Path of Exile 2's dodge roll).
@@ -168,9 +200,7 @@ func _start_requested_action() -> void:
 		_start_jab(aim_direction())
 	elif _attack_target != null and _is_in_reach_of(_attack_target):
 		_start_jab(_direction_to(_attack_target))
-		# A single click is a single jab; holding the button keeps jabbing.
-		if not player_input.is_holding_move_click():
-			_attack_target = null
+		_has_jabbed_attack_target = true
 
 
 func _direction_to(enemy: Node2D) -> Vector2:
@@ -180,6 +210,7 @@ func _direction_to(enemy: Node2D) -> Vector2:
 
 func _start_jab(aim_direction: Vector2) -> void:
 	_has_destination = false
+	player_input.consume_attack_buffer()
 	facing.look_toward(aim_direction)
 	melee_attack.start(aim_direction)
 	animator.replay_animation(melee_attack.current_animation, facing)
@@ -219,7 +250,7 @@ func _next_velocity(move_direction: Vector2, delta: float) -> Vector2:
 	if _is_being_pushed():
 		return velocity.move_toward(Vector2.ZERO, PUSH_FRICTION * delta)
 	if melee_attack.is_attacking:
-		# A short step forward into the punch, then planted feet.
+		# A quick snap forward into the punch, then planted feet.
 		return melee_attack.lunge_velocity()
 	if skill_bar.is_casting():
 		return skill_bar.cast_velocity()

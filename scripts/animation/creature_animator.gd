@@ -26,7 +26,8 @@ const STAND_IN_FOR_VIEW := {
 }
 
 ## Seconds each frame is shown, in order.
-## Keep "jab" in sync with MeleeAttack's timings on the creature.
+## Keep "jab" in sync with MeleeAttack's timings on the creature: the hit lands
+## (hit_delay) as frame 2 (fist out) starts, and attack_duration is the total.
 const ANIMATION_SETTINGS := {
 	"idle": { "frame_durations": [0.30, 0.20, 0.30, 0.20], "loops": true },
 	"hop": { "frame_durations": [0.09, 0.16, 0.11, 0.11], "loops": true },

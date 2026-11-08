@@ -21,10 +21,20 @@ signal hits_landed(hit_count: int)
 @export var impact_effect: PackedScene
 ## Damage dealt to each target the hit lands on.
 @export var damage: int = 1
-## How close to the punch line a target's feet must be to get hit, in pixels.
-@export var hit_radius: float = 9.0
+## How close to the punch line a target's body centre must be to get hit, in pixels.
+## Generous on purpose, so a jab that looks like it connects does (like Path of Exile).
+@export var hit_radius: float = 12.0
+## Height of a target's body centre above its feet, in pixels (negative is up).
+@export var target_body_height: float = -6.0
 ## How far the attacker lunges forward during the wind-up, in pixels.
+## The lunge starts fast and eases to a stop as the fist lands, so it reads as a snap forward.
 @export var lunge_distance: float = 6.0
+## Seconds after the hit lands before moving may cut the rest of the attack short
+## (an "animation cancel"), so the extended fist is still seen for a moment.
+## Dodging can cancel at any time; holding attack never cancels, it chains.
+@export var move_cancel_delay: float = 0.07
+## Seconds without attacking after which the combo starts again from the first fist.
+@export var combo_reset_time: float = 0.6
 ## Group whose members this attack can hurt (each needs a child node named "Health").
 @export var target_group: String = "enemies"
 ## Animations used in turn for back-to-back attacks, e.g. left fist then right fist.
@@ -42,6 +52,7 @@ var _combo_step: int = 0
 var _attack_direction: Vector2 = Vector2.ZERO
 var _time_attacking: float = 0.0
 var _has_landed_hit: bool = false
+var _seconds_since_attack: float = 0.0
 
 @onready var attacker: Node2D = get_parent()
 
@@ -49,6 +60,8 @@ var _has_landed_hit: bool = false
 func _physics_process(delta: float) -> void:
 	if is_attacking:
 		_advance_attack(delta)
+	else:
+		_seconds_since_attack += delta
 
 
 func is_ready() -> bool:
@@ -60,14 +73,26 @@ func start(attack_direction: Vector2) -> void:
 	_attack_direction = attack_direction
 	_time_attacking = 0.0
 	_has_landed_hit = false
+	if _seconds_since_attack >= combo_reset_time:
+		_combo_step = 0
+	_seconds_since_attack = 0.0
 	_advance_combo()
 
 
 ## The attacker's speed while lunging forward during the wind-up; zero otherwise.
+## Starts at twice the average speed and slows evenly to zero as the fist lands,
+## which still covers exactly `lunge_distance`.
 func lunge_velocity() -> Vector2:
 	if not is_attacking or _time_attacking >= hit_delay:
 		return Vector2.ZERO
-	return _attack_direction * (lunge_distance / hit_delay)
+	var wind_up_left := 1.0 - _time_attacking / hit_delay
+	return _attack_direction * (2.0 * lunge_distance / hit_delay) * wind_up_left
+
+
+## Whether moving may cut the rest of this attack short: only after the hit has landed
+## and the extended fist has been shown for `move_cancel_delay` seconds.
+func can_cancel_by_moving() -> bool:
+	return is_attacking and _has_landed_hit and _time_attacking >= hit_delay + move_cancel_delay
 
 
 ## Stops the attack right away. Safe to call when not attacking.
@@ -110,13 +135,15 @@ func _spawn_impact(attack_direction: Vector2) -> void:
 
 ## Hits everything along the punch, from the attacker's body out to full reach,
 ## so targets slightly closer or further than the fist still get hit.
+## Measured at fist height against each target's body centre (not its feet).
 func _damage_targets_in_reach(attack_direction: Vector2) -> void:
-	var punch_start := attacker.global_position
-	var punch_end := attacker.global_position + attack_direction * reach
+	var punch_start := attacker.global_position + Vector2(0, fist_height)
+	var punch_end := punch_start + attack_direction * reach
 	var hit_count := 0
 	for target: Node2D in get_tree().get_nodes_in_group(target_group):
-		var closest := Geometry2D.get_closest_point_to_segment(target.global_position, punch_start, punch_end)
-		if target.global_position.distance_to(closest) > hit_radius:
+		var body_centre := target.global_position + Vector2(0, target_body_height)
+		var closest := Geometry2D.get_closest_point_to_segment(body_centre, punch_start, punch_end)
+		if body_centre.distance_to(closest) > hit_radius:
 			continue
 		var target_health: Health = target.get_node_or_null("Health")
 		if target_health != null:
