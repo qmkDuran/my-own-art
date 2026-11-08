@@ -47,7 +47,8 @@ func _spawn_line(direction: Vector2) -> void:
 	line.top_level = true
 	line.width = line_width
 	line.default_color = line_color
-	line.z_index = -1
+	# Same layer as the ground but added later, so it draws on the ground and under creatures.
+	line.z_index = 0
 
 	var start := _random_start_point(direction)
 	var length := randf_range(line_length_range.x, line_length_range.y)

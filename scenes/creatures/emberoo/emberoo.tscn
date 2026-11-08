@@ -20,6 +20,7 @@ offsets = PackedFloat32Array(0, 1)
 colors = PackedColorArray(0.909804, 0.756863, 0.439216, 0, 0.921569, 0.929412, 0.913725, 0.8)
 
 [node name="Emberoo" type="CharacterBody2D"]
+z_index = 1
 motion_mode = 1
 script = ExtResource("1_creature")
 

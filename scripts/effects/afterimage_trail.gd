@@ -28,8 +28,8 @@ func _spawn_copy() -> void:
 	# Added to the world so the copy stays behind while the creature moves on.
 	sprite.owner.get_parent().add_child(copy)
 	copy.global_position = sprite.global_position
-	# Drawn behind the creature.
-	copy.z_index = sprite.z_index - 1
+	# Same layer as the ground (drawn on top of it); creatures sit one layer higher.
+	copy.z_index = 0
 
 	var fade := copy.create_tween()
 	fade.tween_property(copy, "modulate:a", 0.0, fade_time)
