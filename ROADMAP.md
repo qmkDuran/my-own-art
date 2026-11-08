@@ -4,25 +4,33 @@
 > Rule when lost: find the current milestone below and do the smallest next task.
 
 ## Milestone 1: Vertical slice (current)
-Goal: one fun fight loop with placeholder-level art, before any more content.
+Goal: one fun zone (Ruins Edge, about 5 min) with real art, a full Stage 1 build, a boss and evolution.
 
 | Item | Status |
 |---|---|
-| Emberoo stage 1 art: idle (breath + blink), hop, jab, jab2, dodge in front/side/back | ✅ |
-| Movement, jab (hold to repeat, alternating fists, aims at mouse, lunge), hop-dodge (cancels jab, invulnerable) | ✅ |
-| Toxlop (toxic toad): hops, puffs + glints, tongue lash; dies in 1 hit | ✅ |
-| Warden (Handler): keeps distance, tires out, summons toads, red-charged ground slam (super armour) | ✅ |
-| Health: heart + numbers for the player, floating bar on Wardens | ✅ |
-| **XP and levelling** | ⬜ **← next (start with a design talk: what does a level give?)** |
-| 1 evolution (story-milestone or level based, see DESIGN.md) | ⬜ |
-| Small skill tree (3–5 nodes) + Heat resource (fire pips) + ability hotbar | ⬜ |
+| Emberoo stage 1 art in 5 views (idle, blink, hop, jab x2, dodge, uppercut) | ✅ |
+| Combat feel: jab chain, input buffer, move-cancel, Shift to stand still, forgiving hitboxes | ✅ |
+| Enemies: Toxlop (swarm), Warden (summoner), Zephoot (wind, ranged), Gruntite (stone, charger) | ✅ |
+| XP motes, levelling (start at level 0, curve to cap 50), crits, damage numbers | ✅ |
+| Heat resource + skills: Flame Uppercut (E), Spinning Hook (jab, jab, spin), Searing Jab burn | ✅ |
+| Ember Tree: radial tree, exact before → after numbers, stats panel, icon set, tree-gated skills | ✅ |
+| HUD (Last Epoch style, trainer in the bar), Monogram font, HUD juice | ✅ |
+| First zone: Ruins Edge (own tileset, 7 areas), zone entrance hop | ✅ |
+| Bruiser branch + remaining Stage 1 nodes (Ash Guard on W, Counter Punch, Unshakable, Wildfire, Ember Hop) | 🔄 in progress |
+| Mini-boss: Warden Captain in the Final Arena | 🔄 in progress |
+| Save system | 🔄 in progress |
+| Evolution: Emberoo Stage 2 (concept review in progress) | 🔄 |
+| Enemy pathfinding (they get stuck on walls) | ⬜ |
+| Trainer final design (waiting on user references) | ⬜ |
+| Music and sound (waiting on user's packs) | ⬜ |
 
 ## Where we left off (2026-11-08)
-- Combat feels good: "strong, but enemies aren't pushovers". Two Wardens in the test level.
-- Toad/Warden numbers were just tuned (4 toads per summon, max 5 alive, every 7s).
-- Next session: design XP and levelling together, *then* code it.
-- Open idea (parked): the trainer walking with Emberoo; see PARKING_LOT.md.
+- Huge session: the slice is mostly built. See the table above.
+- Decisions today: 480x270 resolution, no night lighting, no capture device or collars (implanted chips),
+  8 elements (Fire, Toxic, Wind, Stone, Tide, Frost, Spark, Bloom), 6 acts of about 1-1.5h, Last Epoch-light story.
+- Next: finish the in-progress rows, then pathfinding, then the evolution build once a direction is picked.
 
 ## Later milestones (rough)
-2. First playable zone (hand-made, act 1 start) + hub
-3. Demo for Steam (store page, wishlists)
+2. Act 1 (demo, about 1-1.5h): more zones, a hub town with NPCs, a light story
+3. Intro (home world) and starter choice, once there are 3 playable Glimra
+4. Demo for Steam (store page, wishlists)
