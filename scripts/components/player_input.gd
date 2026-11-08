@@ -62,6 +62,11 @@ func is_holding_move_click() -> bool:
 	return Input.is_action_pressed("move_to_cursor") and not _is_holding_attack_in_place_modifier()
 
 
+## Shift: stand still. Pressing it stops a walk order on the spot (like PoE).
+func is_holding_stand_still() -> bool:
+	return _is_holding_attack_in_place_modifier()
+
+
 func _is_holding_attack_in_place_modifier() -> bool:
 	return Input.is_action_pressed("attack_in_place_modifier")
 

@@ -37,7 +37,7 @@ var _has_jabbed_attack_target: bool = false
 
 ## Reads this frame's clicks into orders. Call once per physics frame, before acting on them.
 func update() -> void:
-	if player_input.get_move_direction() != Vector2.ZERO or player_input.is_attacking_in_place_with_move_click():
+	if player_input.get_move_direction() != Vector2.ZERO or player_input.is_holding_stand_still():
 		clear()
 		return
 
