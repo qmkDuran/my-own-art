@@ -59,6 +59,16 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
 - Melee brawler: fast claw combos
 - Hits stack **burn** on enemies
 
+## Enemies
+- **Handlers:** human trainers serving the AI God. They stay back and send out **waves of ~6 weak bound creatures** (control collars) for a PoE-style power fantasy.
+- **Killing the Handler stops new waves.** Creatures already out keep fighting.
+- Handlers use a **small fixed roster** of 2–3 bound creature species across the game (saves art).
+- Vertical slice: 1 Handler + 1 bound creature type (simple: runs at you and bites).
+
+### Creature #1 (player): Emberoo
+- Fire kangaroo boxer. Stage 1 sprite done (16×16): idle (with blink), hop, jab, jab2, dodge in front/side/back.
+- Jab: hold to repeat, alternates fists, roots you in place. Dodge: a kangaroo leap that can cancel a jab.
+
 ## Progression
 - Levelling + evolutions + skill trees
 - Skill tree inspiration: Grim Dawn, PoE 2, Last Epoch, Diablo 4
