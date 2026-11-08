@@ -45,6 +45,10 @@ color = Color(0.223529, 0.290196, 0.313725, 1)
 [node name="Handler" parent="." instance=ExtResource("3_handler")]
 position = Vector2(110, -20)
 
+[node name="Handler2" parent="." instance=ExtResource("3_handler")]
+position = Vector2(-100, 60)
+first_summon_delay = 3.0
+
 [node name="Emberoo" parent="." instance=ExtResource("1_emberoo")]
 
 [node name="Camera" type="Camera2D" parent="Emberoo"]
