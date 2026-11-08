@@ -17,6 +17,7 @@ config/features=PackedStringArray("4.7")
 [autoload]
 
 CreatureLog="*res://scripts/systems/creature_log.gd"
+Progression="*res://scripts/systems/progression.gd"
 
 [display]
 
