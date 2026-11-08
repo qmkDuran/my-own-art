@@ -3,21 +3,14 @@ extends Node2D
 ## An expanding ring that fades out, e.g. the Warden's rod shove.
 ##
 ## Spawn it, call play(), and it removes itself when done.
-## Rings are cues (click marker, shove, level up), so they ignore the night darkness.
 
 ## Thickness of the ring, in pixels.
 @export var ring_width: float = 1.5
-
-const UNSHADED := preload("res://scenes/effects/unshaded_material.tres")
 
 var _max_radius: float = 0.0
 var _duration: float = 0.0
 var _color: Color = Color.WHITE
 var _elapsed: float = 0.0
-
-
-func _ready() -> void:
-	material = UNSHADED
 
 
 func play(max_radius: float, duration: float, color: Color) -> void:

@@ -2,19 +2,11 @@ class_name SpeechBubble
 extends Node2D
 ## A short line of speech above a character (e.g. a Warden shouting "Go, Toxlop!").
 ## Fades in, stays for a moment, fades out.
-##
-## It's UI, not part of the world, so the night darkness and lights never touch it.
 
 @export var font_size: int = 6
 @export var text_color: Color = Color(0.906, 0.835, 0.702)
 ## Same see-through dark card as the discovery toast, with no border.
 @export var background: Color = Color(0.035, 0.039, 0.078, 0.6)
-
-const UNSHADED := preload("res://scenes/effects/unshaded_material.tres")
-
-
-func _ready() -> void:
-	material = UNSHADED
 
 
 func say(text: String, seconds: float = 1.4) -> void:
@@ -30,9 +22,7 @@ func say(text: String, seconds: float = 1.4) -> void:
 	style.content_margin_top = 1
 	style.content_margin_bottom = 1
 	panel.add_theme_stylebox_override("panel", style)
-	panel.use_parent_material = true
 	var label := Label.new()
-	label.use_parent_material = true
 	label.text = text
 	label.add_theme_font_size_override("font_size", font_size)
 	label.add_theme_color_override("font_color", text_color)

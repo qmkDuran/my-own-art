@@ -47,8 +47,6 @@ enum State { WATCHING, RETREATING, SUMMONING, SHOVING, RECOVERING, DYING }
 @export var max_creatures: int = 5
 ## How far from him new creatures appear, in pixels (min, max).
 @export var summon_radius: Vector2 = Vector2(14, 36)
-## How bright his rod tip flares while he summons.
-@export var rod_flare_energy: float = 1.3
 
 @export_group("Rod shove")
 ## If the player stays this close (pixels), he shoves them away.
@@ -101,8 +99,6 @@ var _has_called_out: bool = false
 @onready var sprite: SingleViewAnimator = $Sprite
 @onready var hit_flash: HitFlash = $HitFlash
 @onready var charge_particles: ChargeParticles = $ChargeParticles
-@onready var rod_flare: PixelLight = $RodFlare
-@onready var visor_glow: PixelLight = $VisorGlow
 @onready var speech_bubble: SpeechBubble = $SpeechBubble
 @onready var collision_shape: CollisionShape2D = $CollisionShape
 
@@ -265,7 +261,6 @@ func _start_summon() -> void:
 		_has_called_out = true
 		speech_bubble.say("Go, %s!" % _creature_info["name"])
 	sprite.replay_animation("summon")
-	rod_flare.flash(rod_flare_energy, summon_duration)
 	_enter(State.SUMMONING, summon_duration)
 
 
@@ -344,7 +339,6 @@ func _on_died() -> void:
 	var fade := create_tween()
 	fade.tween_property(sprite, "modulate:a", 0.0, death_fade_time)
 	fade.tween_callback(queue_free)
-	visor_glow.fade_out(death_fade_time)
 
 
 # --- Helpers --------------------------------------------------------------
