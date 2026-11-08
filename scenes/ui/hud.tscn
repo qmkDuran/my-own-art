@@ -53,9 +53,9 @@ mouse_filter = 2
 [node name="AidCharges" type="Control" parent="BottomCluster"]
 layout_mode = 3
 anchors_preset = 0
-offset_left = -93.0
+offset_left = -98.0
 offset_top = -38.0
-offset_right = -58.0
+offset_right = -63.0
 offset_bottom = -32.0
 mouse_filter = 2
 script = ExtResource("3_aid")
@@ -63,9 +63,9 @@ script = ExtResource("3_aid")
 [node name="HealthHeart" type="Control" parent="BottomCluster"]
 layout_mode = 3
 anchors_preset = 0
-offset_left = -87.0
+offset_left = -92.0
 offset_top = -29.0
-offset_right = -58.0
+offset_right = -63.0
 offset_bottom = -6.0
 mouse_filter = 2
 script = ExtResource("1_heart")
@@ -82,9 +82,9 @@ script = ExtResource("10_combat")
 [node name="HeatFlame" type="Control" parent="BottomCluster"]
 layout_mode = 3
 anchors_preset = 0
-offset_left = 62.0
+offset_left = 66.0
 offset_top = -30.0
-offset_right = 87.0
+offset_right = 91.0
 offset_bottom = -4.0
 mouse_filter = 2
 script = ExtResource("5_heat")
@@ -101,17 +101,17 @@ tooltip = NodePath("../../SkillTooltip")
 [node name="SlotQ" type="Control" parent="BottomCluster/SkillSlots"]
 layout_mode = 3
 anchors_preset = 0
-offset_left = -53.0
-offset_top = -24.0
-offset_right = -35.0
+offset_left = -57.0
+offset_top = -26.0
+offset_right = -37.0
 offset_bottom = -6.0
 script = ExtResource("8_slot")
 
 [node name="SlotW" type="Control" parent="BottomCluster/SkillSlots"]
 layout_mode = 3
 anchors_preset = 0
-offset_left = -32.0
-offset_top = -24.0
+offset_left = -34.0
+offset_top = -26.0
 offset_right = -14.0
 offset_bottom = -6.0
 script = ExtResource("8_slot")
@@ -120,17 +120,17 @@ script = ExtResource("8_slot")
 layout_mode = 3
 anchors_preset = 0
 offset_left = 18.0
-offset_top = -24.0
-offset_right = 36.0
+offset_top = -26.0
+offset_right = 38.0
 offset_bottom = -6.0
 script = ExtResource("8_slot")
 
 [node name="SlotR" type="Control" parent="BottomCluster/SkillSlots"]
 layout_mode = 3
 anchors_preset = 0
-offset_left = 39.0
-offset_top = -24.0
-offset_right = 57.0
+offset_left = 41.0
+offset_top = -26.0
+offset_right = 61.0
 offset_bottom = -6.0
 script = ExtResource("8_slot")
 

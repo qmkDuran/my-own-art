@@ -7,26 +7,30 @@ extends RefCounted
 const Kind := EmberTreeNode.Kind
 
 ## Distance from Emberoo for each tier, in tree pixels. Tiers 0-2 = Stage 1, 3 = Stage 2, 4 = Stage 3.
-## Rings sit 90 apart (130 around the branch names), so even two glowing, pointed-at
-## neighbours keep clear of each other (see `node_reach`).
-const TIER_RADII: Array[float] = [110.0, 200.0, 290.0, 420.0, 520.0]
+## Rings sit far enough apart that even two glowing, pointed-at neighbours keep clear of
+## each other (see `node_reach`).
+const TIER_RADII: Array[float] = [120.0, 253.0, 393.0, 550.0, 660.0]
 ## Branch names sit in the gap between the Stage 1 and Stage 2 rings.
-const BRANCH_LABEL_RADIUS := 355.0
+const BRANCH_LABEL_RADIUS := 443.0
 const BRANCH_LABEL_SIZE := EmberTreeFonts.LARGE_SIZE
 ## Room around a branch name that still counts as pointing at it, and that its hover pill fills.
 const BRANCH_LABEL_PADDING := Vector2(8.0, 5.0)
 const CENTRE_RADIUS := 46.0
 ## The id the veins use for Emberoo in the middle.
 const CENTRE_ID := "centre"
-const NODE_RADIUS := {Kind.SKILL: 24.0, Kind.UPGRADE: 21.0, Kind.STAT: 18.0, Kind.ULTIMATE: 28.0}
+## Big enough that, at the opening zoom, each icon is drawn at least 3 screen pixels per
+## icon pixel with room to spare inside its frame (see EmberTreeIcons).
+const NODE_RADIUS := {Kind.SKILL: 48.0, Kind.UPGRADE: 46.0, Kind.STAT: 34.5, Kind.ULTIMATE: 56.0}
 ## Dark rim drawn outside every node so it stands off the veins behind it.
-const OUTLINE_WIDTH := 3.0
+const OUTLINE_WIDTH := 3.5
 ## How much bigger a node grows while pointed at.
 const HOVER_SCALE := 1.15
-## How far a learned node's glow reaches past its edge (see EmberTreeNodePainter).
-const HALO_REACH := 18.0
-## Gap between a node and the ring drawn around it when it, or its branch, is pointed at.
-const HIGHLIGHT_GAP := 6.0
+## How far a learned node's glow reaches past its edge, as a share of its radius (see
+## EmberTreeNodePainter), so the glow grows with the frame.
+const HALO_REACH_PER_RADIUS := 0.4
+## Gap between a node and the ring drawn around it when it, or its branch, is pointed at,
+## as a share of its radius.
+const HIGHLIGHT_GAP_PER_RADIUS := 0.1
 ## Diamonds' highlight rings sit a little wider, so they clear the diamond's corners.
 const DIAMOND_HIGHLIGHT_WIDEN := 1.1
 
@@ -74,8 +78,19 @@ static func opening_bounds() -> Rect2:
 ## pointed-at size with the highlight ring, whichever is bigger.
 static func node_reach(node: EmberTreeNode) -> float:
 	var radius: float = NODE_RADIUS[node.kind]
-	var highlight := (radius * HOVER_SCALE + HIGHLIGHT_GAP) * DIAMOND_HIGHLIGHT_WIDEN
-	return maxf(radius + HALO_REACH, highlight + OUTLINE_WIDTH)
+	var hovered := radius * HOVER_SCALE
+	var highlight := (hovered + highlight_gap(hovered)) * DIAMOND_HIGHLIGHT_WIDEN
+	return maxf(radius + halo_reach(radius), highlight + OUTLINE_WIDTH)
+
+
+## How far the glow of a node `radius` across reaches past its edge.
+static func halo_reach(radius: float) -> float:
+	return radius * HALO_REACH_PER_RADIUS
+
+
+## The gap between a node `radius` across and its pointed-at ring.
+static func highlight_gap(radius: float) -> float:
+	return radius * HIGHLIGHT_GAP_PER_RADIUS
 
 
 ## The evolution stage a tier belongs to (0 for a tier before the first, so it never matches).

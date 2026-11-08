@@ -1,6 +1,6 @@
 class_name SkillSlot
 extends Control
-## One 18×18 skill slot in the bottom bar: a stone frame, the key letter in the corner,
+## One 20×20 skill slot in the bottom bar: a stone frame, the key letter in the corner,
 ## the skill's icon and its Heat cost in the bottom-right corner.
 ##
 ## States: while the skill can't be used (recovering, or not enough Heat) the icon is greyed,
@@ -15,11 +15,17 @@ extends Control
 signal hovered(slot: SkillSlot)
 signal unhovered(slot: SkillSlot)
 
-const SLOT_SIZE := 18
-## The inner area (inside the frame and its dark line), where the icon and the veil go.
-const INNER := Rect2i(2, 2, 14, 14)
-## Top of the cooldown seconds (centred across the slot, clear of the Heat badge below).
-const SECONDS_TOP := 7
+const SLOT_SIZE := 20
+## The inner area (inside the frame and its dark line), where the icon and the veil go:
+## room for a 14×14 icon, its added outline and nothing more, so the icon sits exactly
+## in the middle.
+const INNER := Rect2i(2, 2, 16, 16)
+## The key letter's top-left and the Heat badge's last pixel: on the frame's dark inner line,
+## a pixel out from the inner area, so they cover as little of the icon as they can.
+const KEY_LABEL_TOP_LEFT := Vector2i(1, 1)
+const HEAT_BADGE_BOTTOM_RIGHT := Vector2i(SLOT_SIZE - 2, SLOT_SIZE - 2)
+## Top of the cooldown seconds (centred in the slot both ways, clear of the Heat badge below).
+const SECONDS_TOP := 8
 
 ## The letter of the key that fires this slot (SkillBarHud reads it from the InputMap).
 var key_label: String = "":
@@ -122,11 +128,11 @@ func _draw() -> void:
 	if is_recovering():
 		_draw_cooldown_veil()
 	if skill != null:
-		HeatCostBadge.draw(self, _heat_cost(), has_enough_heat, INNER.end - Vector2i.ONE)
+		HeatCostBadge.draw(self, _heat_cost(), has_enough_heat, HEAT_BADGE_BOTTOM_RIGHT)
 	if is_recovering():
 		_draw_seconds_left()
 	var key_color := ApolloPalette.CREAM if is_usable() or skill == null else ApolloPalette.GREY
-	PixelFont.draw_text(self, key_label, Vector2(INNER.position), key_color, ApolloPalette.OUTLINE)
+	PixelFont.draw_text(self, key_label, Vector2(KEY_LABEL_TOP_LEFT), key_color, ApolloPalette.OUTLINE)
 	draw_set_transform(Vector2.ZERO)
 	_flashes.draw_border(self, SLOT_SIZE)
 

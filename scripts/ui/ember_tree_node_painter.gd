@@ -7,21 +7,27 @@ const Kind := EmberTreeNode.Kind
 
 ## States whose icon is shown greyed, as the HUD greys a skill that can't be used yet.
 const GREYED_ICON_STATES := [EmberTreeNodeState.LOCKED, EmberTreeNodeState.SEALED]
-const EDGE_WIDTH := 2.5
+const EDGE_WIDTH := 3.0
+## An Ultimate's inner diamond, as a share of its radius; its icon fits inside that one.
+const ULTIMATE_INNER_SHARE := 0.85
 const LOCK_BADGE_RADIUS := 8.0
 const LOCK_PIXEL := 1.5
+## A learned node's glow: rings reaching this share of the full glow, each this opaque.
+const HALO_LAYERS := [[1.0, 0.07], [0.6, 0.12], [0.28, 0.2]]
 
 
-## Draws `node` at `centre`, grown by `hover`. `time` drives the pulse and flicker.
+## Draws `node` at `tree_position` (snapped to a whole screen pixel, the same middle its
+## icon uses), grown by `hover`. `time` drives the pulse and flicker.
 ## `highlight` is the colour of the ring around it while it or its branch is pointed at
 ## (fully see-through for none). The glow of a learned node is drawn separately, by
 ## `draw_halo`, underneath every node, so a glow never covers a neighbour.
-static func draw_node(canvas: CanvasItem, node: EmberTreeNode, centre: Vector2, hover: float, time: float, highlight: Color) -> void:
+static func draw_node(canvas: CanvasItem, node: EmberTreeNode, tree_position: Vector2, hover: float, time: float, highlight: Color) -> void:
 	var state := EmberTreeNodeState.of(node)
 	var radius: float = EmberTreeLayout.NODE_RADIUS[node.kind] * hover
+	var centre := EmberTreeIcons.snapped_to_screen(canvas, tree_position)
 
 	if highlight.a > 0.0:
-		_draw_outline_shape(canvas, node.kind, centre, radius + EmberTreeLayout.HIGHLIGHT_GAP, highlight)
+		_draw_outline_shape(canvas, node.kind, centre, radius + EmberTreeLayout.highlight_gap(radius), highlight)
 
 	var fill: Color = EmberTreePalette.NODE_FILL[state]
 	var edge: Color = EmberTreePalette.NODE_EDGE[state]
@@ -29,7 +35,8 @@ static func draw_node(canvas: CanvasItem, node: EmberTreeNode, centre: Vector2, 
 		edge = Color(edge, 0.55 + 0.45 * sin(time * 4.0))  # gentle pulse: "you can take this"
 	_draw_body(canvas, node.kind, centre, radius, fill, edge)
 
-	EmberTreeIcons.draw(canvas, node.id, centre, radius, state in GREYED_ICON_STATES, EmberTreePalette.NODE_ICON_TINT[state])
+	EmberTreeIcons.draw(canvas, node.id, centre, _icon_room(node.kind, radius), node.kind == Kind.STAT,
+		state in GREYED_ICON_STATES, EmberTreePalette.NODE_ICON_TINT[state])
 	if state == EmberTreeNodeState.SEALED:
 		_draw_lock_badge(canvas, centre + Vector2.ONE * radius * 0.6)
 
@@ -59,7 +66,12 @@ static func _draw_body(canvas: CanvasItem, kind: Kind, centre: Vector2, radius: 
 	draw_diamond(canvas, centre, radius, fill, true)
 	draw_diamond(canvas, centre, radius, edge, false)
 	if kind == Kind.ULTIMATE:
-		draw_diamond(canvas, centre, radius - outline_width * 2.0, Color(edge, 0.5), false)
+		draw_diamond(canvas, centre, radius * ULTIMATE_INNER_SHARE, Color(edge, 0.5), false)
+
+
+## The radius of the innermost line of a node's frame, which its icon must fit inside.
+static func _icon_room(kind: Kind, radius: float) -> float:
+	return radius * ULTIMATE_INNER_SHARE if kind == Kind.ULTIMATE else radius
 
 
 ## A small padlock on a node whose ring opens only when Emberoo evolves.
@@ -79,8 +91,10 @@ static func _draw_outline_shape(canvas: CanvasItem, kind: Kind, centre: Vector2,
 
 
 ## The flickering orange glow around a learned node, `hover` times its size.
-static func draw_halo(canvas: CanvasItem, node: EmberTreeNode, centre: Vector2, hover: float, time: float) -> void:
+static func draw_halo(canvas: CanvasItem, node: EmberTreeNode, tree_position: Vector2, hover: float, time: float) -> void:
 	var radius: float = EmberTreeLayout.NODE_RADIUS[node.kind] * hover
-	var flicker := 0.85 + 0.15 * sin(time * 5.0 + centre.x)
-	for halo: Array in [[EmberTreeLayout.HALO_REACH, 0.07], [11.0, 0.12], [5.0, 0.2]]:
-		canvas.draw_circle(centre, radius + halo[0], Color(EmberTreePalette.ORANGE, halo[1] * flicker))
+	var centre := EmberTreeIcons.snapped_to_screen(canvas, tree_position)
+	var reach := EmberTreeLayout.halo_reach(radius)
+	var flicker := 0.85 + 0.15 * sin(time * 5.0 + tree_position.x)
+	for halo: Array in HALO_LAYERS:
+		canvas.draw_circle(centre, radius + reach * halo[0], Color(EmberTreePalette.ORANGE, halo[1] * flicker))
