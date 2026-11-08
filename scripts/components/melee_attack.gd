@@ -3,7 +3,8 @@ extends Node
 ## A close-range attack, like Emberoo's jab.
 ##
 ## Tracks whether an attack is in progress and spawns the impact effect
-## at the moment the fist lands. Damage will hook in here later.
+## at the moment the fist lands. An attack can be cancelled (e.g. by a dodge);
+## a cancelled attack before the hit lands never hits. Damage will hook in here later.
 
 ## Seconds from pressing attack to the fist landing (end of the wind-up frame).
 @export var hit_delay: float = 0.12
@@ -23,8 +24,16 @@ var is_attacking: bool = false
 var current_animation: String = ""
 
 var _combo_step: int = 0
+var _attack_direction: Vector2 = Vector2.ZERO
+var _time_attacking: float = 0.0
+var _has_landed_hit: bool = false
 
 @onready var attacker: Node2D = get_parent()
+
+
+func _physics_process(delta: float) -> void:
+	if is_attacking:
+		_advance_attack(delta)
 
 
 func is_ready() -> bool:
@@ -33,13 +42,26 @@ func is_ready() -> bool:
 
 func start(attack_direction: Vector2) -> void:
 	is_attacking = true
+	_attack_direction = attack_direction
+	_time_attacking = 0.0
+	_has_landed_hit = false
 	_advance_combo()
 
-	await get_tree().create_timer(hit_delay).timeout
-	_spawn_impact(attack_direction)
 
-	await get_tree().create_timer(attack_duration - hit_delay).timeout
+## Stops the attack right away. Safe to call when not attacking.
+func cancel() -> void:
 	is_attacking = false
+
+
+func _advance_attack(delta: float) -> void:
+	_time_attacking += delta
+
+	if not _has_landed_hit and _time_attacking >= hit_delay:
+		_has_landed_hit = true
+		_spawn_impact(_attack_direction)
+
+	if _time_attacking >= attack_duration:
+		is_attacking = false
 
 
 func _advance_combo() -> void:

@@ -39,15 +39,14 @@ func _physics_process(delta: float) -> void:
 	animator.lift(dodge.current_height())
 
 
-## One action at a time: no punching mid-dodge, no dodging mid-punch.
+## One action at a time, with one exception: a dodge can cancel a jab mid-punch,
+## so the player can always escape (like Path of Exile 2's dodge roll).
 func _start_requested_action() -> void:
-	if _is_busy():
-		return
-
-	if player_input.wants_to_attack() and melee_attack.is_ready():
-		_start_jab()
-	elif player_input.wants_to_dodge() and dodge.is_ready():
+	if player_input.wants_to_dodge() and dodge.is_ready():
+		melee_attack.cancel()
 		_start_dodge()
+	elif not _is_busy() and player_input.wants_to_attack() and melee_attack.is_ready():
+		_start_jab()
 
 
 func _start_jab() -> void:
