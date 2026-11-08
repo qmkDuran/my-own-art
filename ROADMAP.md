@@ -15,7 +15,7 @@ Goal: one fun fight loop with placeholder-level art, before any more content.
 | Health: heart + numbers for the player, floating bar on Wardens | ✅ |
 | **XP and levelling** | ⬜ **← next (start with a design talk: what does a level give?)** |
 | 1 evolution (story-milestone or level based, see DESIGN.md) | ⬜ |
-| Small skill tree (3–5 nodes) + Heat resource (fire pips) | ⬜ |
+| Small skill tree (3–5 nodes) + Heat resource (fire pips) + ability hotbar | ⬜ |
 
 ## Where we left off (2026-11-08)
 - Combat feels good: "strong, but enemies aren't pushovers". Two Wardens in the test level.

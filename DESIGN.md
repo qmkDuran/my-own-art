@@ -81,6 +81,7 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
 ## HUD
 - **Health: one heart** at the bottom-centre, filled with red that drains from the top down as health is lost, with the numbers beside it (e.g. 7/10) in a tiny pixel font.
 - **Enemy health:** Wardens show a small bar once hit; one-hit mobs show none.
+- **Ability hotbar (later, with the skill tree):** a row of skill slots at the bottom-centre beside the heart and Heat pips, with key labels and cooldown overlays.
 - **No mana yet.** When skills arrive, Emberoo's resource is **Heat**, gained by landing hits and spent on fire skills, shown as **fire pips** next to the heart. Each element class gets its own resource.
 
 ## Elements
