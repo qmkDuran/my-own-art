@@ -17,14 +17,18 @@ const BANNER_FORMAT := "ENEMIES PAUSED (F2)   F3 +%d POINTS"
 ## Top edge of the banner text, in screen pixels.
 const BANNER_TOP := 3
 
-## Read by the enemies every frame. A static var, so it survives a level restart.
-## On by default for now, while the training dummy is being tuned.
-static var enemies_passive: bool = true
+## Read by the enemies every frame. A static var, so every enemy can read it without a reference.
+static var enemies_passive: bool = false
+
+## Whether enemies start paused in this level: on in the test arena (for tuning against the
+## training dummy), off in real zones.
+@export var start_with_enemies_paused: bool = false
 
 @onready var banner: Node2D = $Banner
 
 
 func _ready() -> void:
+	enemies_passive = start_with_enemies_paused
 	banner.draw.connect(_draw_banner)
 	_refresh_banner()
 

@@ -69,6 +69,9 @@ func _spawn_creatures() -> void:
 		var creature: Node2D = creature_scene.instantiate()
 		handler.get_parent().add_child(creature)
 		creature.global_position = handler.global_position + _random_spot_nearby()
+		# Summoned creatures come out already hunting the player.
+		if creature.has_method("notice_player"):
+			creature.notice_player()
 		_summoned_creatures.append(creature)
 	# The first time the player ever sees this species, the HUD announces it.
 	if not _creature_info.is_empty():

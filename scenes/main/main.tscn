@@ -1,27 +1,13 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/creatures/emberoo/emberoo.tscn" id="1_emberoo"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/handler/handler.tscn" id="3_handler"]
-[ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="4_hud"]
-[ext_resource type="PackedScene" path="res://scenes/ui/ember_tree.tscn" id="6_ember_tree"]
-[ext_resource type="Script" path="res://scripts/progression/ember_tree_effects.gd" id="7_ember_effects"]
+[ext_resource type="PackedScene" path="res://scenes/game/game_layer.tscn" id="7_game_layer"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/training_dummy/training_dummy.tscn" id="8_dummy"]
 [ext_resource type="PackedScene" path="res://scenes/debug/debug_controls.tscn" id="9_debug"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/toxic_toad/toxic_toad.tscn" id="10_toad"]
-[ext_resource type="Script" path="res://scripts/ui/damage_numbers.gd" id="11_damage_numbers"]
-
-[sub_resource type="Environment" id="Environment_glow"]
-background_mode = 3
-glow_enabled = true
-glow_intensity = 0.6
-glow_bloom = 0.0
-glow_blend_mode = 0
-glow_hdr_threshold = 0.85
 
 [node name="Main" type="Node2D"]
-
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_glow")
 
 [node name="Ground" type="ColorRect" parent="."]
 offset_left = -400.0
@@ -87,14 +73,7 @@ position = Vector2(-60, 20)
 [node name="Camera" type="Camera2D" parent="Emberoo"]
 position_smoothing_enabled = true
 
-[node name="Hud" parent="." instance=ExtResource("4_hud")]
-
-[node name="EmberTreeEffects" type="Node" parent="."]
-script = ExtResource("7_ember_effects")
-
-[node name="DamageNumbers" type="Node" parent="."]
-script = ExtResource("11_damage_numbers")
-
-[node name="EmberTreeScreen" parent="." instance=ExtResource("6_ember_tree")]
+[node name="GameLayer" parent="." instance=ExtResource("7_game_layer")]
 
 [node name="DebugControls" parent="." instance=ExtResource("9_debug")]
+start_with_enemies_paused = true

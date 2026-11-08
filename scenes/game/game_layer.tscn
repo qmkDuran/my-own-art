@@ -1,0 +1,29 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="1_hud"]
+[ext_resource type="PackedScene" path="res://scenes/ui/ember_tree.tscn" id="2_ember_tree"]
+[ext_resource type="Script" path="res://scripts/progression/ember_tree_effects.gd" id="3_ember_effects"]
+[ext_resource type="Script" path="res://scripts/ui/damage_numbers.gd" id="4_damage_numbers"]
+
+[sub_resource type="Environment" id="Environment_glow"]
+background_mode = 3
+glow_enabled = true
+glow_intensity = 0.6
+glow_bloom = 0.0
+glow_blend_mode = 0
+glow_hdr_threshold = 0.85
+
+[node name="GameLayer" type="Node"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_glow")
+
+[node name="Hud" parent="." instance=ExtResource("1_hud")]
+
+[node name="EmberTreeEffects" type="Node" parent="."]
+script = ExtResource("3_ember_effects")
+
+[node name="DamageNumbers" type="Node" parent="."]
+script = ExtResource("4_damage_numbers")
+
+[node name="EmberTreeScreen" parent="." instance=ExtResource("2_ember_tree")]

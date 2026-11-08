@@ -20,9 +20,16 @@ extends CharacterBody2D
 ##   RECOVERING-> knocked back after being hit
 ##   DYING     -> fades away
 ##
-## While DebugControls.enemies_passive is on, he only stands (WATCHING) and reacts to hits.
+## He only starts once he notices the player (they come within `notice_distance`, or he gets
+## hit); until then he stands watching. While DebugControls.enemies_passive is on, he only
+## stands (WATCHING) and reacts to hits.
 
 enum State { WATCHING, RETREATING, SUMMONING, SHOVING, RECOVERING, DYING }
+
+@export_group("Noticing the player")
+## He notices the player this close, in pixels. Further than a toad: his visor is tuned to
+## see Glimra light.
+@export var notice_distance: float = 150.0
 
 @export_group("Keeping distance")
 ## If the player gets closer than this (pixels), he backs away.
@@ -47,6 +54,7 @@ enum State { WATCHING, RETREATING, SUMMONING, SHOVING, RECOVERING, DYING }
 var _timer := StateTimer.new()
 var _seconds_retreating: float = 0.0
 var _seconds_catching_breath: float = 0.0
+var _awareness := PlayerAwareness.new()
 
 @onready var health: Health = $Health
 @onready var sprite: SingleViewAnimator = $Sprite
@@ -67,7 +75,8 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	_timer.advance(delta)
-	if _timer.state != State.DYING:
+	var is_alert := _awareness.has_noticed_player(self, notice_distance)
+	if _timer.state != State.DYING and is_alert:
 		summoner.count_down(delta)
 		rod_shove.count_down(delta)
 
@@ -76,7 +85,7 @@ func _physics_process(delta: float) -> void:
 
 	match _timer.state:
 		State.WATCHING, State.RETREATING:
-			if DebugControls.enemies_passive:
+			if DebugControls.enemies_passive or not is_alert:
 				_stand_still()
 			else:
 				_keep_distance_or_summon(delta)
@@ -194,10 +203,16 @@ func _stop_acting() -> void:
 
 # --- Reactions ------------------------------------------------------------
 
+## Wakes him up (e.g. a packmate spotted the player).
+func notice_player() -> void:
+	_awareness.notice(self)
+
+
 func _on_damaged(_amount: int, source_position: Vector2) -> void:
 	hit_flash.flash()
 	if _timer.state == State.DYING:
 		return
+	notice_player()
 	# Super armour: once the shove is winding up, hits hurt but don't interrupt it.
 	# Otherwise holding attack would cancel it every time.
 	if _timer.state == State.SHOVING:

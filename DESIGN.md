@@ -52,6 +52,14 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
 - Scope: ~1 act for the demo, ~3 acts for the full game.
 - Write the story **after** the vertical slice is fun.
 
+## Zones
+- **First zone: Ruins Edge** (`scenes/zones/ruins_edge/`), overgrown ruins at the edge of the AI God's territory. The game starts here; `scenes/main/main.tscn` stays as the test arena (enemies start paused there).
+- One winding path through hand-made areas: Start Glade (dummy, berries), Mossy Steps, Fallen Courtyard, Sunken Garden (+ optional Berry Hollow), Conduit Hall, Warden Gate, Final Arena (open, kept for a future mini-boss). Aim: ~4–5 minutes per early zone. Enemy density rises toward the end.
+- Tiles are 16×16 from `art/tiles/ruins_edge_tileset.tres`: Ground, Decoration, and an Obstacles layer y-sorted with the creatures (`World` node). Dense forest walls the map in. Dead cyan conduits in the stone are the only tech hint; use them sparingly.
+- **Enemies wait until they notice you:** toads within ~7 tiles, Wardens within ~9 (their visors see Glimra light). Noticing (or being hit) alerts the rest of the pack; summoned toads come out already hunting.
+- `FutureEnemySpot` markers (under `Areas/`) mark where new enemy types will go.
+- The HUD and game systems live in one shared scene (`scenes/game/game_layer.tscn`) that every level instances.
+
 ## Platform
 - Engine: Godot
 - Release: Steam (PC)

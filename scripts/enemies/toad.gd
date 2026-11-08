@@ -11,7 +11,9 @@ extends CharacterBody2D
 ##   RECOVERING -> a short pause after attacking or being hit
 ##   DYING      -> fades away (ToadDeathDrops leaves the goo and maybe a berry)
 ##
-## While DebugControls.enemies_passive is on, it only sits (RESTING) and reacts to hits.
+## Until it notices the player (they come within `notice_distance`, it gets hit, or a Warden
+## summons it), it just sits. While DebugControls.enemies_passive is on, it only sits (RESTING)
+## and reacts to hits.
 
 enum State { RESTING, HOPPING, PUFFING, LASHING, RECOVERING, DYING }
 
@@ -21,6 +23,10 @@ enum State { RESTING, HOPPING, PUFFING, LASHING, RECOVERING, DYING }
 @export var display_name: String = "Toxlop"
 @export var element: String = "Toxic"
 @export var portrait: Texture2D
+
+@export_group("Noticing the player")
+## It wakes up once the player comes this close, in pixels (then alerts its pack).
+@export var notice_distance: float = 110.0
 
 @export_group("Hopping")
 ## Farthest a single hop goes, in pixels.
@@ -62,6 +68,7 @@ var _hop_velocity: Vector2 = Vector2.ZERO
 var _lash_direction: Vector2 = Vector2.DOWN
 var _has_hit_this_lash: bool = false
 var _has_glinted: bool = false
+var _awareness := PlayerAwareness.new()
 
 @onready var health: Health = $Health
 @onready var sprite: SingleViewAnimator = $Sprite
@@ -97,6 +104,11 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 
 
+## Wakes it up (e.g. a Warden just summoned it, or a packmate spotted the player).
+func notice_player() -> void:
+	_awareness.notice(self)
+
+
 ## Name, element and portrait, for the discovery card and the Creature Log.
 func creature_info() -> Dictionary:
 	return {"species": species_id, "name": display_name, "element": element, "portrait": portrait}
@@ -107,8 +119,12 @@ func creature_info() -> Dictionary:
 func _rest() -> void:
 	velocity = Vector2.ZERO
 	sprite.show_animation("idle")
-	if _timer.is_over() and not DebugControls.enemies_passive:
+	if not _timer.is_over() or DebugControls.enemies_passive:
+		return
+	if _awareness.has_noticed_player(self, notice_distance):
 		_choose_next_move()
+	else:
+		_timer.enter(State.RESTING, _random_rest_time())
 
 
 func _hop() -> void:
@@ -212,6 +228,7 @@ func _on_damaged(_amount: int, source_position: Vector2) -> void:
 	hit_flash.flash()
 	if _timer.state == State.DYING:
 		return
+	notice_player()
 
 	tongue.retract_now()
 	sprite.lift(0.0)
