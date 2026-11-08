@@ -25,8 +25,13 @@ const ANIMATION_SETTINGS := {
 	"jab": { "frame_durations": [0.12, 0.07, 0.11, 0.14], "loops": false },
 	"jab2": { "frame_durations": [0.12, 0.07, 0.11, 0.14], "loops": false },
 	"dodge": { "frame_durations": [0.07, 0.15, 0.11], "loops": false },
-	"blink": { "frame_durations": [0.12], "loops": false },
+	# A closed-eyes copy of every idle frame, so a blink never interrupts the breathing.
+	"blink": { "frame_durations": [0.30, 0.20, 0.30, 0.20], "loops": true },
 }
+
+## Pairs of actions drawn frame-for-frame alike. Switching between them keeps
+## the current frame, so the swap is invisible apart from what changed (the eyes).
+const FRAME_MATCHED_ACTIONS := [["idle", "blink"]]
 
 ## If an animation isn't drawn yet, use a similar one instead of dropping to idle.
 const STAND_IN_FOR_ACTION := {
@@ -94,8 +99,34 @@ func show_animation(action: String, facing: Facing) -> void:
 		SpriteSheetLoader.animation_name_for(FALLBACK_ACTION, FALLBACK_VIEW),
 	])
 
-	if animation_to_play != "" and animation != animation_to_play:
+	if animation_to_play == "" or animation == animation_to_play:
+		return
+
+	if _are_frame_matched(animation, animation_to_play):
+		_swap_keeping_frame(animation_to_play)
+	else:
 		play(animation_to_play)
+
+
+func _swap_keeping_frame(animation_name: String) -> void:
+	var current_frame := frame
+	var current_progress := frame_progress
+	play(animation_name)
+	set_frame_and_progress(current_frame, current_progress)
+
+
+func _are_frame_matched(from_animation: String, to_animation: String) -> bool:
+	for pair in FRAME_MATCHED_ACTIONS:
+		var from_matches := from_animation.begins_with(pair[0] + "_") or from_animation.begins_with(pair[1] + "_")
+		var to_matches := to_animation.begins_with(pair[0] + "_") or to_animation.begins_with(pair[1] + "_")
+		if from_matches and to_matches and _view_of(from_animation) == _view_of(to_animation):
+			return true
+	return false
+
+
+## The view part of an animation name, e.g. "side" from "idle_side".
+func _view_of(animation_name: String) -> String:
+	return animation_name.get_slice("_", animation_name.get_slice_count("_") - 1)
 
 
 ## Blinks only show while idle, so the timer runs all the time
