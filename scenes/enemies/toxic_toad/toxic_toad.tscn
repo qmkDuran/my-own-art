@@ -60,7 +60,7 @@ shape = SubResource("CircleShape2D_body")
 
 [node name="Health" type="Node" parent="."]
 script = ExtResource("4_health")
-max_health = 2
+max_health = 1
 
 [node name="HitFlash" type="Node" parent="." node_paths=PackedStringArray("sprite")]
 script = ExtResource("5_flash")

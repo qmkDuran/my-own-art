@@ -30,20 +30,20 @@ enum State { WATCHING, RETREATING, SUMMONING, RECOVERING, DYING }
 ## The creature he summons.
 @export var creature_scene: PackedScene
 ## Seconds between summons.
-@export var summon_interval: float = 6.0
+@export var summon_interval: float = 5.0
 ## He only summons again once this many of his creatures (or fewer) are left alive,
 ## so the player can clear most of a wave first.
-@export var summon_when_alive_at_most: int = 1
+@export var summon_when_alive_at_most: int = 2
 ## Seconds before his first summon.
 @export var first_summon_delay: float = 1.0
 ## Seconds the summon gesture takes; creatures appear at the end (the summon animation's length).
 @export var summon_duration: float = 0.6
 ## Creatures per summon.
-@export var creatures_per_summon: int = 3
+@export var creatures_per_summon: int = 6
 ## Most of his creatures allowed alive at once.
-@export var max_creatures: int = 6
+@export var max_creatures: int = 10
 ## How far from him new creatures appear, in pixels (min, max).
-@export var summon_radius: Vector2 = Vector2(14, 26)
+@export var summon_radius: Vector2 = Vector2(14, 36)
 
 @export_group("Getting hit")
 @export var knockback_speed: float = 80.0
