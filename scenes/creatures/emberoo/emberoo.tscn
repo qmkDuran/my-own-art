@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=11 format=3]
 
 [ext_resource type="Script" path="res://scripts/creatures/creature.gd" id="1_creature"]
 [ext_resource type="Script" path="res://scripts/animation/creature_animator.gd" id="2_animator"]
@@ -7,6 +7,8 @@
 [ext_resource type="Script" path="res://scripts/components/facing.gd" id="5_facing"]
 [ext_resource type="Script" path="res://scripts/components/melee_attack.gd" id="6_melee"]
 [ext_resource type="PackedScene" path="res://scenes/effects/fire_impact.tscn" id="7_impact"]
+[ext_resource type="Script" path="res://scripts/components/dodge.gd" id="8_dodge"]
+[ext_resource type="Script" path="res://scripts/effects/afterimage_trail.gd" id="9_trail"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_body"]
 radius = 5.0
@@ -37,3 +39,10 @@ script = ExtResource("5_facing")
 [node name="MeleeAttack" type="Node" parent="."]
 script = ExtResource("6_melee")
 impact_effect = ExtResource("7_impact")
+
+[node name="Dodge" type="Node" parent="."]
+script = ExtResource("8_dodge")
+
+[node name="AfterimageTrail" type="Node" parent="." node_paths=PackedStringArray("sprite")]
+script = ExtResource("9_trail")
+sprite = NodePath("../Sprite")

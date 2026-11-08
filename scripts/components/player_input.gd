@@ -12,3 +12,7 @@ func get_move_direction() -> Vector2:
 
 func wants_to_attack() -> bool:
 	return Input.is_action_just_pressed("attack")
+
+
+func wants_to_dodge() -> bool:
+	return Input.is_action_just_pressed("dodge")

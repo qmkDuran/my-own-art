@@ -3,11 +3,13 @@ extends CharacterBody2D
 ## A creature the player controls through the spirit link.
 ##
 ## This script only coordinates. Each job lives in its own child component:
-##   PlayerInput -> what the player wants
-##   Movement    -> how fast to move
-##   Facing      -> which way to look
-##   MeleeAttack -> the jab
-##   Sprite      -> what to show
+##   PlayerInput    -> what the player wants
+##   Movement       -> how fast to move normally
+##   Facing         -> which way to look
+##   MeleeAttack    -> the jab
+##   Dodge          -> the quick escape
+##   AfterimageTrail -> makes dodges easy to see
+##   Sprite         -> what to show
 
 ## Below this speed (pixels per second) the creature counts as standing still.
 const STANDING_STILL_SPEED := 1.0
@@ -16,32 +18,70 @@ const STANDING_STILL_SPEED := 1.0
 @onready var movement: Movement = $Movement
 @onready var facing: Facing = $Facing
 @onready var melee_attack: MeleeAttack = $MeleeAttack
+@onready var dodge: Dodge = $Dodge
+@onready var afterimage_trail: AfterimageTrail = $AfterimageTrail
 @onready var animator: CreatureAnimator = $Sprite
 
 
 func _physics_process(delta: float) -> void:
-	if player_input.wants_to_attack() and melee_attack.is_ready():
-		melee_attack.start(facing.as_vector())
+	_start_requested_action()
 
 	var move_direction := _chosen_move_direction()
-
-	velocity = movement.calculate_velocity(velocity, move_direction, delta)
+	velocity = _next_velocity(move_direction, delta)
 	move_and_slide()
 
 	facing.look_toward(move_direction)
 	animator.show_animation(_current_action(), facing)
 
 
-## The creature plants its feet while punching.
+## One action at a time: no punching mid-dodge, no dodging mid-punch.
+func _start_requested_action() -> void:
+	if _is_busy():
+		return
+
+	if player_input.wants_to_attack() and melee_attack.is_ready():
+		melee_attack.start(facing.as_vector())
+	elif player_input.wants_to_dodge() and dodge.is_ready():
+		_start_dodge()
+
+
+func _start_dodge() -> void:
+	var dodge_direction := _dodge_direction()
+	facing.look_toward(dodge_direction)
+	dodge.start(dodge_direction)
+	afterimage_trail.play_for(dodge.dodge_duration)
+
+
+## Dodge where the player is steering, or straight ahead if they aren't.
+func _dodge_direction() -> Vector2:
+	var steering := player_input.get_move_direction()
+	if steering == Vector2.ZERO:
+		return facing.as_vector()
+	return steering
+
+
+func _next_velocity(move_direction: Vector2, delta: float) -> Vector2:
+	if dodge.is_dodging:
+		return dodge.dodge_velocity
+	return movement.calculate_velocity(velocity, move_direction, delta)
+
+
+## The creature plants its feet while punching and can't steer mid-dodge.
 func _chosen_move_direction() -> Vector2:
-	if melee_attack.is_attacking:
+	if _is_busy():
 		return Vector2.ZERO
 	return player_input.get_move_direction()
+
+
+func _is_busy() -> bool:
+	return melee_attack.is_attacking or dodge.is_dodging
 
 
 func _current_action() -> String:
 	if melee_attack.is_attacking:
 		return "jab"
+	if dodge.is_dodging:
+		return "dodge"
 	if _is_moving():
 		return "hop"
 	return "idle"
