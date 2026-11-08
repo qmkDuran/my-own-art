@@ -93,6 +93,12 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
 - **Premium polish checklist:** eased motion everywhere (no popping), 2D glow on bright pixels, a unique hand-drawn icon per skill, one good licensed pixel font, a custom 9-slice frame, generous spacing, sound for hover/learn/unlock, consistent style across all screens.
 - Mockups: radial ember tree and column tree (session scratchpad; regenerate if needed).
 
+## Visual hierarchy (applies to every enemy)
+Brightest and busiest first: **player** > **danger cues** (attack tells, projectiles) > **elites/bosses** (auras, glows) > **trash mobs** (readable but quiet) > **world**.
+- Trash mobs get no ambient particles; their monster feel comes from design (silhouette, one signature feature, expression).
+- Trash effects only on **events**: e.g. Toxlop's toxic splat on death and droplets on its tongue lash.
+- Ambient auras are reserved for elites, so an aura means "this one's dangerous".
+
 ## Elements
 - **Vertical slice: flavour only.** Element sets colours, effects and theme; no damage rules.
 - **Soon after: status effects.** Each element applies its own effect (fire = burn, toxic = poison over time).

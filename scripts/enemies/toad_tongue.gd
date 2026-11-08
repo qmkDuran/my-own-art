@@ -16,6 +16,10 @@ var _reach: float = 0.0
 var _duration: float = 0.0
 var _elapsed: float = 0.0
 var _is_lashing: bool = false
+var _has_dripped: bool = false
+
+## Toxic green droplets that fly off the tip when the tongue snaps out.
+@export var droplet_color: Color = Color(0.659, 0.792, 0.345)
 
 
 func _ready() -> void:
@@ -28,6 +32,7 @@ func lash(direction: Vector2, reach: float, duration: float) -> void:
 	_duration = duration
 	_elapsed = 0.0
 	_is_lashing = true
+	_has_dripped = false
 	visible = true
 
 
@@ -57,6 +62,9 @@ func _process(delta: float) -> void:
 
 	_elapsed += delta
 	points = PackedVector2Array([mouth_offset, _tip_position()])
+	if not _has_dripped and _extension() >= 1.0:
+		_has_dripped = true
+		_spray_droplets(to_global(_tip_position()))
 	if _elapsed >= _duration:
 		retract_now()
 
@@ -73,3 +81,24 @@ func _extension() -> float:
 	if progress < HOLD_UNTIL_SHARE:
 		return 1.0
 	return 1.0 - (progress - HOLD_UNTIL_SHARE) / (1.0 - HOLD_UNTIL_SHARE)
+
+
+## A few droplets flick off the tip at full reach. Added to the world so they don't follow the tongue.
+func _spray_droplets(at: Vector2) -> void:
+	var droplets := CPUParticles2D.new()
+	droplets.one_shot = true
+	droplets.explosiveness = 0.9
+	droplets.amount = 5
+	droplets.lifetime = 0.35
+	droplets.direction = _direction
+	droplets.spread = 50.0
+	droplets.initial_velocity_min = 20.0
+	droplets.initial_velocity_max = 45.0
+	droplets.gravity = Vector2(0, 160)
+	var ramp := Gradient.new()
+	ramp.colors = PackedColorArray([droplet_color, Color(droplet_color, 0.0)])
+	droplets.color_ramp = ramp
+	owner.get_parent().add_child(droplets)
+	droplets.global_position = at
+	droplets.emitting = true
+	get_tree().create_timer(0.6).timeout.connect(droplets.queue_free)

@@ -51,6 +51,8 @@ const PLAYER_BODY_HEIGHT := -6.0
 @export var knockback_friction: float = 600.0
 ## Seconds to fade out after dying.
 @export var death_fade_time: float = 0.3
+## The toxic goo burst shown when it dies.
+@export var death_splat_scene: PackedScene
 
 var _state: State = State.RESTING
 var _time_in_state: float = 0.0
@@ -191,6 +193,7 @@ func _on_damaged(_amount: int, source_position: Vector2) -> void:
 
 
 func _on_died() -> void:
+	_spawn_death_splat()
 	_enter(State.DYING, death_fade_time)
 	remove_from_group("enemies")
 	collision_shape.set_deferred("disabled", true)
@@ -209,6 +212,15 @@ func _glint_just_before_strike() -> void:
 	if not _has_glinted and time_to_strike <= glint_before_strike:
 		_has_glinted = true
 		hit_flash.flash(glint_color)
+
+
+func _spawn_death_splat() -> void:
+	if death_splat_scene == null:
+		return
+	var splat: ToxicSplat = death_splat_scene.instantiate()
+	get_parent().add_child(splat)
+	splat.global_position = global_position
+	splat.play()
 
 
 # --- Helpers --------------------------------------------------------------
