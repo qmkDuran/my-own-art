@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3]
+[gd_scene load_steps=21 format=3]
 
 [ext_resource type="Script" path="res://scripts/creatures/creature.gd" id="1_creature"]
 [ext_resource type="Script" path="res://scripts/animation/creature_animator.gd" id="2_animator"]
@@ -17,6 +17,7 @@
 [ext_resource type="Script" path="res://scripts/effects/fist_embers.gd" id="15_embers"]
 [ext_resource type="Script" path="res://scripts/components/trainer_aid.gd" id="16_aid"]
 [ext_resource type="Script" path="res://scripts/ui/speech_bubble.gd" id="17_speech"]
+[ext_resource type="Script" path="res://scripts/components/heat.gd" id="18_heat"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_body"]
 radius = 5.0
@@ -97,3 +98,8 @@ script = ExtResource("16_aid")
 z_index = 3
 position = Vector2(0, -22)
 script = ExtResource("17_speech")
+
+[node name="Heat" type="Node" parent="."]
+script = ExtResource("18_heat")
+
+[connection signal="hits_landed" from="MeleeAttack" to="Heat" method="on_hits_landed"]

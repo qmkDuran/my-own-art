@@ -6,6 +6,9 @@ extends Node
 ## at the moment the fist lands. An attack can be cancelled (e.g. by a dodge);
 ## a cancelled attack before the hit lands never hits. Damage will hook in here later.
 
+## Fired once per attack when the punch damaged at least one target (e.g. so Heat can build).
+signal hits_landed(hit_count: int)
+
 ## Seconds from pressing attack to the fist landing (end of the wind-up frame).
 @export var hit_delay: float = 0.12
 ## Seconds the whole attack takes, start to recovery (the jab animation's length).
@@ -26,6 +29,10 @@ extends Node
 @export var target_group: String = "enemies"
 ## Animations used in turn for back-to-back attacks, e.g. left fist then right fist.
 @export var combo_animations: Array[String] = ["jab", "jab2"]
+
+## Seconds trimmed off the end of every attack by upgrades (e.g. Quick Hands).
+## Only the recovery is cut, so the fist still lands on the same animation frame.
+var recovery_cut: float = 0.0
 
 var is_attacking: bool = false
 ## The animation for the attack in progress (or the last one).
@@ -76,8 +83,13 @@ func _advance_attack(delta: float) -> void:
 		_spawn_impact(_attack_direction)
 		_damage_targets_in_reach(_attack_direction)
 
-	if _time_attacking >= attack_duration:
+	if _time_attacking >= attack_length():
 		is_attacking = false
+
+
+## How long the attack takes after upgrades; never ends before the hit lands.
+func attack_length() -> float:
+	return maxf(hit_delay, attack_duration - recovery_cut)
 
 
 func _advance_combo() -> void:
@@ -101,6 +113,7 @@ func _spawn_impact(attack_direction: Vector2) -> void:
 func _damage_targets_in_reach(attack_direction: Vector2) -> void:
 	var punch_start := attacker.global_position
 	var punch_end := attacker.global_position + attack_direction * reach
+	var hit_count := 0
 	for target: Node2D in get_tree().get_nodes_in_group(target_group):
 		var closest := Geometry2D.get_closest_point_to_segment(target.global_position, punch_start, punch_end)
 		if target.global_position.distance_to(closest) > hit_radius:
@@ -108,6 +121,9 @@ func _damage_targets_in_reach(attack_direction: Vector2) -> void:
 		var target_health: Health = target.get_node_or_null("Health")
 		if target_health != null:
 			target_health.take_damage(damage, attacker.global_position)
+			hit_count += 1
+	if hit_count > 0:
+		hits_landed.emit(hit_count)
 
 
 func _hit_position(attack_direction: Vector2) -> Vector2:
