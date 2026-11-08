@@ -49,7 +49,7 @@ animation_settings = {
 
 [node name="ChargeParticles" type="Node2D" parent="."]
 z_index = 1
-position = Vector2(1, -26)
+position = Vector2(4, -27)
 script = ExtResource("7_charge")
 
 [node name="CollisionShape" type="CollisionShape2D" parent="."]

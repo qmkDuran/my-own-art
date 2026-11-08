@@ -63,7 +63,7 @@ enum State { WATCHING, RETREATING, SUMMONING, SHOVING, RECOVERING, DYING }
 ## Colour of the slam's shockwave ring.
 @export var shockwave_color: Color = Color(0.812, 0.341, 0.235, 0.9)
 ## Where the rod hits the ground, relative to his feet. The shockwave starts here.
-@export var slam_point: Vector2 = Vector2(0, -1)
+@export var slam_point: Vector2 = Vector2(0, -2)
 @export var shove_damage: int = 1
 ## Speed the player is knocked back at, in pixels per second.
 @export var shove_push_speed: float = 170.0
