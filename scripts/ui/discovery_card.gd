@@ -13,7 +13,6 @@ const SLOW_MOTION_SCALE := 0.3
 const SLOW_MOTION_SECONDS := 0.5     # real seconds
 
 @export var background: Color = Color(0.075, 0.05, 0.055, 0.6)
-@export var border: Color = Color(0.871, 0.62, 0.255, 0.45)
 @export var title_color: Color = Color(0.871, 0.62, 0.255)
 @export var name_color: Color = Color(0.906, 0.835, 0.702)
 @export var element_color: Color = Color(0.659, 0.792, 0.345)
@@ -64,8 +63,6 @@ func _build_card() -> void:
 	_card.visible = false
 	var style := StyleBoxFlat.new()
 	style.bg_color = background
-	style.border_color = border
-	style.set_border_width_all(1)
 	style.set_corner_radius_all(3)
 	style.set_content_margin_all(3)
 	style.content_margin_right = 6
