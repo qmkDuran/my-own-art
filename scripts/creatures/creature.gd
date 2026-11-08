@@ -13,6 +13,7 @@ extends CharacterBody2D
 ##   SpeedLines      -> anime-style lines behind a dodge
 ##   Health          -> how much damage it can take (dodging makes it invulnerable)
 ##   HitFlash        -> flashes white when hit
+##   FistEmbers      -> sparks rising from the fists
 ##   Sprite          -> what to show
 
 ## Below this speed (pixels per second) the creature counts as standing still.
@@ -51,6 +52,7 @@ var _attack_target: Node2D = null
 @onready var health: Health = $Health
 @onready var hit_flash: HitFlash = $HitFlash
 @onready var animator: CreatureAnimator = $Sprite
+@onready var fist_embers: FistEmbers = $FistEmbers
 
 
 func _ready() -> void:
@@ -72,6 +74,7 @@ func _physics_process(delta: float) -> void:
 	facing.look_toward(move_direction)
 	animator.show_animation(_current_action(), facing)
 	animator.lift(dodge.current_height())
+	fist_embers.follow(animator.view_for(facing), animator.flip_h, animator.position)
 
 
 # --- Mouse orders (click to move / click to attack) -----------------------

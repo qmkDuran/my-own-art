@@ -93,6 +93,11 @@ func _process(delta: float) -> void:
 	_update_blink_timers(delta)
 
 
+## The view (e.g. "front", "side") that matches the given facing.
+func view_for(facing: Facing) -> String:
+	return VIEW_FOR_DIRECTION[facing.direction]
+
+
 func show_animation(action: String, facing: Facing) -> void:
 	if action == "idle" and _is_blinking():
 		action = "blink"
