@@ -4,10 +4,10 @@ extends AnimatedSprite2D
 ##
 ## Sheets are named "<prefix>_<action>_sheet.png", e.g. "toad_hop_sheet.png".
 
-const FRAME_SIZE := Vector2i(16, 16)
-
 @export_dir var sheet_folder: String
 @export var sheet_prefix: String
+## Size of one frame in the sheets, e.g. 16×16 for creatures, 18×24 for humans.
+@export var frame_size: Vector2i = Vector2i(16, 16)
 ## For each action: { "frame_durations": [seconds per frame], "loops": bool }.
 @export var animation_settings: Dictionary = {}
 
@@ -26,7 +26,7 @@ func _ready() -> void:
 			continue
 		var settings: Dictionary = animation_settings[action]
 		SpriteSheetLoader.add_animation(
-			sprite_frames, action, load(sheet_path), settings["frame_durations"], settings["loops"], FRAME_SIZE
+			sprite_frames, action, load(sheet_path), settings["frame_durations"], settings["loops"], frame_size
 		)
 
 
