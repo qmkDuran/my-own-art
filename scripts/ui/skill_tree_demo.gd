@@ -17,6 +17,8 @@ const UI_SIZE := Vector2i(640, 360)
 const PAGE_MARGIN := 16.0
 const HEADER_HEIGHT := 48.0
 const FOOTER_HEIGHT := 30.0
+## Header text is lifted this much so it looks centred (measured from screenshots).
+const HEADER_TEXT_LIFT := 2.0
 const RING_RADII := [100.0, 185.0, 270.0]
 const NODE_RADIUS := {"skill": 24.0, "stat": 18.0, "ultimate": 28.0}
 const ICON_PIXEL := {"skill": 3.0, "stat": 2.0, "ultimate": 3.0}
@@ -254,9 +256,21 @@ func _build_header() -> void:
 	bar.size = Vector2(UI_SIZE.x, HEADER_HEIGHT)
 	add_child(bar)
 	_add_line(Vector2(0, HEADER_HEIGHT), Vector2(UI_SIZE.x, HEADER_HEIGHT), Color(COLOR_ORANGE, 0.25))
-	_add_label("EMBEROO", Vector2(PAGE_MARGIN, 9), Vector2(200, 18), 16, COLOR_GOLD, HORIZONTAL_ALIGNMENT_LEFT)
-	_add_label("The Ember Tree", Vector2(PAGE_MARGIN, 27), Vector2(200, 12), 10, COLOR_GREY, HORIZONTAL_ALIGNMENT_LEFT)
-	_points_label = _add_label("", Vector2(UI_SIZE.x - 200 - PAGE_MARGIN, (HEADER_HEIGHT - 16) / 2.0), Vector2(200, 16), 11, COLOR_CREAM, HORIZONTAL_ALIGNMENT_RIGHT)
+	# Title and subtitle as one block, centred vertically in the header.
+	var title_block := VBoxContainer.new()
+	title_block.alignment = BoxContainer.ALIGNMENT_CENTER
+	title_block.add_theme_constant_override("separation", 0)
+	# The font leaves extra room above capitals, so lift the text slightly to look centred.
+	title_block.position = Vector2(PAGE_MARGIN, -HEADER_TEXT_LIFT)
+	title_block.size = Vector2(240, HEADER_HEIGHT)
+	title_block.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(title_block)
+	for line in [["EMBEROO", 16, COLOR_GOLD], ["The Ember Tree", 10, COLOR_GREY]]:
+		var label := _make_label(line[1], line[2])
+		label.text = line[0]
+		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+		title_block.add_child(label)
+	_points_label = _add_label("", Vector2(UI_SIZE.x - 240 - PAGE_MARGIN, -HEADER_TEXT_LIFT), Vector2(240, HEADER_HEIGHT), 11, COLOR_CREAM, HORIZONTAL_ALIGNMENT_RIGHT)
 	_update_points_label()
 
 
@@ -267,9 +281,9 @@ func _build_footer() -> void:
 	bar.size = Vector2(UI_SIZE.x, FOOTER_HEIGHT)
 	add_child(bar)
 	_add_line(Vector2(0, top), Vector2(UI_SIZE.x, top), Color(COLOR_ORANGE, 0.2))
-	var text_top := top + (FOOTER_HEIGHT - 12) / 2.0
-	_add_label("Inner ring: Stage 1   ·   Middle: Stage 2   ·   Outer: Stage 3", Vector2(PAGE_MARGIN, text_top), Vector2(320, 12), 9, COLOR_GREY, HORIZONTAL_ALIGNMENT_LEFT)
-	_add_label("Scroll to zoom  ·  Drag to move", Vector2(UI_SIZE.x - 300 - PAGE_MARGIN, text_top), Vector2(300, 12), 9, COLOR_GREY, HORIZONTAL_ALIGNMENT_RIGHT)
+	# Labels fill the bar's full height and centre their text in it.
+	_add_label("Inner ring: Stage 1   ·   Middle: Stage 2   ·   Outer: Stage 3", Vector2(PAGE_MARGIN, top), Vector2(320, FOOTER_HEIGHT), 9, COLOR_GREY, HORIZONTAL_ALIGNMENT_LEFT)
+	_add_label("Scroll to zoom  ·  Drag to move", Vector2(UI_SIZE.x - 300 - PAGE_MARGIN, top), Vector2(300, FOOTER_HEIGHT), 9, COLOR_GREY, HORIZONTAL_ALIGNMENT_RIGHT)
 
 
 func _build_tooltip() -> void:
