@@ -16,6 +16,12 @@ extends Node
 @export var fist_height: float = -7.0
 ## Effect shown where the hit lands.
 @export var impact_effect: PackedScene
+## Damage dealt to each target the hit lands on.
+@export var damage: int = 1
+## How close to the landing spot a target's feet must be to get hit, in pixels.
+@export var hit_radius: float = 10.0
+## Group whose members this attack can hurt (each needs a child node named "Health").
+@export var target_group: String = "enemies"
 ## Animations used in turn for back-to-back attacks, e.g. left fist then right fist.
 @export var combo_animations: Array[String] = ["jab", "jab2"]
 
@@ -59,6 +65,7 @@ func _advance_attack(delta: float) -> void:
 	if not _has_landed_hit and _time_attacking >= hit_delay:
 		_has_landed_hit = true
 		_spawn_impact(_attack_direction)
+		_damage_targets_in_reach(_attack_direction)
 
 	if _time_attacking >= attack_duration:
 		is_attacking = false
@@ -78,6 +85,16 @@ func _spawn_impact(attack_direction: Vector2) -> void:
 	attacker.get_parent().add_child(impact)
 	impact.global_position = _hit_position(attack_direction)
 	impact.rotation = attack_direction.angle()
+
+
+func _damage_targets_in_reach(attack_direction: Vector2) -> void:
+	var landing_spot := attacker.global_position + attack_direction * reach
+	for target: Node2D in get_tree().get_nodes_in_group(target_group):
+		if target.global_position.distance_to(landing_spot) > hit_radius:
+			continue
+		var target_health: Health = target.get_node_or_null("Health")
+		if target_health != null:
+			target_health.take_damage(damage, attacker.global_position)
 
 
 func _hit_position(attack_direction: Vector2) -> Vector2:

@@ -16,7 +16,8 @@ See [DESIGN.md](DESIGN.md) for every design decision.
 | `scripts/components/` | Small single-job pieces: input, movement, facing. |
 | `scripts/animation/` | Loading sprite sheets and choosing what to play. |
 | `scripts/effects/` | Visual effects: hit bursts, afterimages, speed trails. |
-| `scripts/creatures/` | The creature itself, which only coordinates its components. |
+| `scripts/creatures/` | The player creature, which only coordinates its components. |
+| `scripts/enemies/` | Enemy behaviour (e.g. the toad's hop-puff-lash state machine). |
 
 ## Code rules (Clean Code)
 - **One job per script.** If you need "and" to describe it, split it.

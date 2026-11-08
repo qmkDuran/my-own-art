@@ -11,6 +11,8 @@ extends CharacterBody2D
 ##   AfterimageTrail -> fading copies during a dodge
 ##   SpeedTrail      -> a streak behind a dodge
 ##   SpeedLines      -> anime-style lines behind a dodge
+##   Health          -> how much damage it can take (dodging makes it invulnerable)
+##   HitFlash        -> flashes white when hit
 ##   Sprite          -> what to show
 
 ## Below this speed (pixels per second) the creature counts as standing still.
@@ -24,11 +26,20 @@ const STANDING_STILL_SPEED := 1.0
 @onready var afterimage_trail: AfterimageTrail = $AfterimageTrail
 @onready var speed_trail: SpeedTrail = $SpeedTrail
 @onready var speed_lines: SpeedLines = $SpeedLines
+@onready var health: Health = $Health
+@onready var hit_flash: HitFlash = $HitFlash
 @onready var animator: CreatureAnimator = $Sprite
+
+
+func _ready() -> void:
+	health.damaged.connect(_on_damaged)
+	health.died.connect(_on_died)
 
 
 func _physics_process(delta: float) -> void:
 	_start_requested_action()
+	# Leaping out of the way means attacks pass through you.
+	health.is_invulnerable = dodge.is_dodging
 
 	var move_direction := _chosen_move_direction()
 	velocity = _next_velocity(move_direction, delta)
@@ -100,3 +111,12 @@ func _current_action() -> String:
 
 func _is_moving() -> bool:
 	return velocity.length() > STANDING_STILL_SPEED
+
+
+func _on_damaged(_amount: int, _source_position: Vector2) -> void:
+	hit_flash.flash()
+
+
+## For the vertical slice, dying simply restarts the level.
+func _on_died() -> void:
+	get_tree().reload_current_scene.call_deferred()

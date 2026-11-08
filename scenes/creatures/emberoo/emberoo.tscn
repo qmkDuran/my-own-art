@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3]
+[gd_scene load_steps=16 format=3]
 
 [ext_resource type="Script" path="res://scripts/creatures/creature.gd" id="1_creature"]
 [ext_resource type="Script" path="res://scripts/animation/creature_animator.gd" id="2_animator"]
@@ -11,6 +11,8 @@
 [ext_resource type="Script" path="res://scripts/effects/afterimage_trail.gd" id="9_trail"]
 [ext_resource type="Script" path="res://scripts/effects/speed_trail.gd" id="10_speed"]
 [ext_resource type="Script" path="res://scripts/effects/speed_lines.gd" id="11_lines"]
+[ext_resource type="Script" path="res://scripts/components/health.gd" id="12_health"]
+[ext_resource type="Script" path="res://scripts/effects/hit_flash.gd" id="13_flash"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_body"]
 radius = 5.0
@@ -19,7 +21,7 @@ radius = 5.0
 offsets = PackedFloat32Array(0, 1)
 colors = PackedColorArray(0.909804, 0.756863, 0.439216, 0, 0.921569, 0.929412, 0.913725, 0.8)
 
-[node name="Emberoo" type="CharacterBody2D"]
+[node name="Emberoo" type="CharacterBody2D" groups=["player"]]
 z_index = 1
 motion_mode = 1
 script = ExtResource("1_creature")
@@ -70,3 +72,11 @@ target = NodePath("..")
 [node name="SpeedLines" type="Node" parent="." node_paths=PackedStringArray("target")]
 script = ExtResource("11_lines")
 target = NodePath("..")
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("12_health")
+max_health = 10
+
+[node name="HitFlash" type="Node" parent="." node_paths=PackedStringArray("sprite")]
+script = ExtResource("13_flash")
+sprite = NodePath("../Sprite")
