@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://scripts/enemies/handler.gd" id="1_handler"]
 [ext_resource type="Script" path="res://scripts/animation/single_view_animator.gd" id="2_animator"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" path="res://scripts/effects/hit_flash.gd" id="4_flash"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/toxic_toad/toxic_toad.tscn" id="5_toad"]
 [ext_resource type="PackedScene" path="res://scenes/effects/shockwave.tscn" id="6_shockwave"]
+[ext_resource type="Script" path="res://scripts/effects/charge_particles.gd" id="7_charge"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_body"]
 radius = 5.0
@@ -45,6 +46,11 @@ animation_settings = {
 "loops": true
 }
 }
+
+[node name="ChargeParticles" type="Node2D" parent="."]
+z_index = 1
+position = Vector2(1, -26)
+script = ExtResource("7_charge")
 
 [node name="CollisionShape" type="CollisionShape2D" parent="."]
 position = Vector2(0, -4)

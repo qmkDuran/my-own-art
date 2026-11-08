@@ -11,7 +11,8 @@ extends CharacterBody2D
 ##   WATCHING  -> stands still, keeping an eye on the player
 ##   RETREATING-> walks away because the player is too close (tires out after a bit)
 ##   SUMMONING -> raises the rod; creatures appear at the end
-##   SHOVING   -> player too close: rod glows, then a shockwave knocks them back
+##   SHOVING   -> player too close: raises the rod overhead while red energy gathers into it,
+##                then slams it into the ground; the shockwave knocks the player back
 ##                (hits don't interrupt it: super armour)
 ##   RECOVERING-> knocked back after being hit
 ##   DYING     -> fades away
@@ -58,7 +59,11 @@ enum State { WATCHING, RETREATING, SUMMONING, SHOVING, RECOVERING, DYING }
 @export var shove_follow_through: float = 0.15
 ## He glints this many seconds before the shockwave (the last-moment cue).
 @export var shove_glint_before: float = 0.12
-@export var shove_glint_color: Color = Color(0.7, 1.0, 1.0)
+@export var shove_glint_color: Color = Color(1.0, 0.55, 0.5)
+## Colour of the slam's shockwave ring.
+@export var shockwave_color: Color = Color(0.812, 0.341, 0.235, 0.9)
+## Where the rod hits the ground, relative to his feet. The shockwave starts here.
+@export var slam_point: Vector2 = Vector2(0, -1)
 @export var shove_damage: int = 1
 ## Speed the player is knocked back at, in pixels per second.
 @export var shove_push_speed: float = 170.0
@@ -90,6 +95,7 @@ var _summoned_creatures: Array = []
 @onready var health: Health = $Health
 @onready var sprite: SingleViewAnimator = $Sprite
 @onready var hit_flash: HitFlash = $HitFlash
+@onready var charge_particles: ChargeParticles = $ChargeParticles
 @onready var collision_shape: CollisionShape2D = $CollisionShape
 
 
@@ -192,6 +198,7 @@ func _start_shove() -> void:
 	_has_released_shove = false
 	_has_glinted = false
 	sprite.replay_animation("shove", "summon")
+	charge_particles.start_charging()
 	_enter(State.SHOVING, shove_windup + shove_follow_through)
 
 
@@ -210,11 +217,12 @@ func _shove() -> void:
 
 
 func _release_shockwave() -> void:
+	charge_particles.stop_charging()
 	_spawn_shockwave_effect()
 	var player := _find_player()
 	if player == null:
 		return
-	var from_warden := player.global_position - global_position
+	var from_warden := player.global_position - (global_position + slam_point)
 	if from_warden.length() > shove_radius:
 		return
 
@@ -232,8 +240,8 @@ func _spawn_shockwave_effect() -> void:
 		return
 	var ring: Shockwave = shockwave_scene.instantiate()
 	get_parent().add_child(ring)
-	ring.global_position = global_position + Vector2(0, -6)
-	ring.play(shove_radius, 0.2, Color(0.643, 0.867, 0.859, 0.9))
+	ring.global_position = global_position + slam_point
+	ring.play(shove_radius, 0.2, shockwave_color)
 
 
 # --- Summoning ------------------------------------------------------------
@@ -302,6 +310,7 @@ func _on_damaged(_amount: int, source_position: Vector2) -> void:
 
 
 func _on_died() -> void:
+	charge_particles.stop_charging()
 	_enter(State.DYING, death_fade_time)
 	remove_from_group("enemies")
 	collision_shape.set_deferred("disabled", true)
