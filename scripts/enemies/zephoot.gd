@@ -1,22 +1,22 @@
 class_name Zephoot
-extends SpeciesEnemy
-## A Zephoot: a bound wind Glimra that floats on a little cloud and shoots from range.
+extends Machine
+## A Gusteret (Wind machine; the scene and code keep the old Zephoot name): a hovering fan turret
+## that shoots gusts from range.
 ##
-## It keeps its distance from the player (ZephootFloat), puffs up, then blows a slow gust orb
+## It keeps its distance from the player (ZephootFloat), spins up, then blows a slow gust orb
 ## at them (ZephootGustShot). Right after a shot it is slow to move: that's the player's
 ## chance to close in.
 ##
 ## States:
 ##   HOVERING   -> keeps a comfortable distance, drifting gently
-##   WINDING_UP -> stops and puffs up, glints, then the orb comes out
+##   WINDING_UP -> stops and spins up its fan, glints, then the orb comes out
 ##   RECOVERING -> just fired (or got hit): drifts slowly, can't shoot
-##   DYING      -> fades away
 ##
 ## Until it notices the player (they come within `notice_distance`, or it gets hit), it just
 ## hovers in place. While DebugControls.enemies_passive is on, it only hovers in place and
 ## reacts to hits.
 
-enum State { HOVERING, WINDING_UP, RECOVERING, DYING }
+enum State { HOVERING, WINDING_UP, RECOVERING }
 
 @export_group("After a shot")
 ## Seconds after firing when it is slow to back away (the counterplay window).
@@ -30,7 +30,6 @@ enum State { HOVERING, WINDING_UP, RECOVERING, DYING }
 
 @onready var floating: ZephootFloat = $Float
 @onready var gust_shot: ZephootGustShot = $GustShot
-@onready var death_drops: DeathDrops = $DeathDrops
 
 
 func _ready() -> void:
@@ -42,7 +41,7 @@ func _physics_process(delta: float) -> void:
 	_timer.advance(delta)
 	floating.drift_and_bob(delta)
 	var is_alert := _is_alert()
-	if _timer.state != State.DYING and is_alert:
+	if is_alert:
 		gust_shot.count_down(delta)
 	if DebugControls.enemies_passive:
 		_stop_acting()
@@ -54,8 +53,6 @@ func _physics_process(delta: float) -> void:
 			_wind_up()
 		State.RECOVERING:
 			_recover(delta)
-		State.DYING:
-			_slow_down_by(knockback_friction, delta)
 
 	move_and_slide()
 
@@ -114,6 +111,5 @@ func _react_to_hit(source_position: Vector2) -> void:
 	_timer.enter(State.RECOVERING, maxf(hit_recover_time, still_slow_for))
 
 
-func _die() -> void:
-	death_drops.drop()
-	_enter_dying_and_fade(State.DYING)
+func _call_off_attacks() -> void:
+	gust_shot.cancel()

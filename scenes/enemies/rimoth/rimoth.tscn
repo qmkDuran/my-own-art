@@ -5,7 +5,7 @@
 [ext_resource type="Script" path="res://scripts/components/health.gd" id="3_health"]
 [ext_resource type="Script" path="res://scripts/effects/hit_flash.gd" id="4_flash"]
 [ext_resource type="Script" path="res://scripts/components/light_drop.gd" id="5_light_drop"]
-[ext_resource type="PackedScene" path="res://scenes/pickups/light_mote.tscn" id="6_mote"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/machines/stolen_light_mote_cyan.tscn" id="6_mote"]
 [ext_resource type="Script" path="res://scripts/components/path_mover.gd" id="90_path_mover"]
 [ext_resource type="Script" path="res://scripts/enemies/offscreen_sleep.gd" id="91_offscreen_sleep"]
 [ext_resource type="Script" path="res://scripts/effects/reach_marker.gd" id="92_reach_marker"]
@@ -24,33 +24,37 @@ motion_mode = 1
 script = ExtResource("1_main")
 notice_distance = 140.0
 knockback_speed = 110.0
-species_id = "rimoth"
-display_name = "Rimoth"
+species_id = "chillvane"
+display_name = "Chillvane"
 element = "Frost"
+light_color = Color(0.643137, 0.866667, 0.858824, 1)
+core_offset = Vector2(0, -17)
+blast_size = 12.0
 
 [node name="Shadow" type="Polygon2D" parent="."]
 color = Color(0.0352941, 0.0392157, 0.0784314, 0.45)
-polygon = PackedVector2Array(-6, 0, -5, -1.5, 0, -2, 5, -1.5, 6, 0, 5, 1.5, 0, 2, -5, 1.5)
+polygon = PackedVector2Array(-8, 0, -7, -1.5, 0, -2, 7, -1.5, 8, 0, 7, 1.5, 0, 2, -7, 1.5)
 
 [node name="ReachMarker" type="Node2D" parent="."]
 script = ExtResource("92_reach_marker")
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
-position = Vector2(0, -8)
+position = Vector2(0, -15)
 script = ExtResource("2_animator")
-sheet_folder = "res://art/rimoth"
-sheet_prefix = "rimoth"
+sheet_folder = "res://art/machines/chillvane"
+sheet_prefix = "chillvane"
+frame_size = Vector2i(32, 32)
 animation_settings = {
 "cast": {
 "frame_durations": [0.3, 0.4],
 "loops": false
 },
 "idle": {
-"frame_durations": [0.3, 0.3],
+"frame_durations": [0.12, 0.12],
 "loops": true
 },
 "move": {
-"frame_durations": [0.12, 0.12],
+"frame_durations": [0.08, 0.08],
 "loops": true
 }
 }
@@ -72,7 +76,7 @@ script = ExtResource("5_light_drop")
 mote_scene = ExtResource("6_mote")
 mote_count = 5
 xp_per_mote = 1
-burst_offset = Vector2(0, -11)
+burst_offset = Vector2(0, -17)
 
 [node name="DeathDrops" type="Node2D" parent="."]
 script = ExtResource("7_death_drops")

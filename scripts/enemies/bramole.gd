@@ -1,23 +1,22 @@
 class_name Bramole
-extends SpeciesEnemy
-## A Bramole: a bound Bloom Glimra, a mole whose leafy hood passes for a bush. It sits hidden
-## until the player walks close, its eyes peek out, then it bursts up claws-first and slams
-## roots into the ground (BramoleRootSlam). After a slam it stands exposed for a moment (the
+extends Machine
+## An Augrub (Bloom machine; the scene and code keep the old Bramole name): a drill bot buried
+## in the ground. It sits hidden until the player walks close, its eye peeks out, then it bursts
+## up claws-first and slams the ground, tearing up a snare of roots (BramoleRootSlam). After a slam it stands exposed for a moment (the
 ## punish window), then burrows after the player to ambush again.
 ##
 ## States:
-##   HIDDEN     -> a bush; only the pink bud gives it away. Waits for the player to come close
-##   PEEKING    -> the late tell: its eyes peek out of the bush
-##   WINDING_UP -> claws up, bud open, the snare's reach on the ground (super armour)
+##   HIDDEN     -> a dirt mound; only the drill tip gives it away. Waits for the player
+##   PEEKING    -> the late tell: its eye peeks out of the mound
+##   WINDING_UP -> claws up, eye ablaze, the snare's reach on the ground (super armour)
 ##   EXPOSED    -> just slammed: stands there, open to hits
 ##   BURROWING  -> half sunk, scoots after the player along the path; pops again once close
 ##                 enough for the snare to reach
 ##   RECOVERING -> knocked back by a hit
-##   DYING      -> fades away
 ##
 ## While DebugControls.enemies_passive is on, it stays (or goes back) hidden and only reacts to hits.
 
-enum State { HIDDEN, PEEKING, WINDING_UP, EXPOSED, BURROWING, RECOVERING, DYING }
+enum State { HIDDEN, PEEKING, WINDING_UP, EXPOSED, BURROWING, RECOVERING }
 
 @export_group("Ambush")
 ## It pops out once the player is this close, in pixels.
@@ -37,7 +36,6 @@ enum State { HIDDEN, PEEKING, WINDING_UP, EXPOSED, BURROWING, RECOVERING, DYING 
 @export var hit_recover_time: float = 0.3
 
 @onready var root_slam: BramoleRootSlam = $RootSlam
-@onready var death_drops: DeathDrops = $DeathDrops
 
 
 func _ready() -> void:
@@ -62,7 +60,7 @@ func _physics_process(delta: float) -> void:
 			_stand_exposed()
 		State.BURROWING:
 			_burrow(can_act)
-		State.RECOVERING, State.DYING:
+		State.RECOVERING:
 			_slide_then(State.RECOVERING, State.BURROWING, delta)
 
 	move_and_slide()
@@ -127,7 +125,7 @@ func _burrow(can_act: bool) -> void:
 
 ## Debug (enemies passive): an attack in progress is called off and it hides again.
 func _stop_acting() -> void:
-	if _timer.state == State.DYING or _timer.state == State.HIDDEN:
+	if _timer.state == State.HIDDEN:
 		return
 	root_slam.cancel()
 	_timer.enter(State.HIDDEN, 0.0)
@@ -157,7 +155,5 @@ func _react_to_hit(source_position: Vector2) -> void:
 	_timer.enter(State.RECOVERING, hit_recover_time)
 
 
-func _die() -> void:
+func _call_off_attacks() -> void:
 	root_slam.cancel()
-	death_drops.drop()
-	_enter_dying_and_fade(State.DYING)

@@ -1,6 +1,7 @@
 class_name Rimoth
-extends SpeciesEnemy
-## A Rimoth: a bound Frost Glimra, a frost moth that hangs back and props up the others. It
+extends Machine
+## A Chillvane (Frost machine; the scene and code keep the old Rimoth name): a moth-winged frost
+## drone that hangs back and props up the others. It
 ## keeps its distance from the player, and every few seconds shells one ally in frost with a
 ## chill beam (RimothFrostShellCast). Cornered, it puffs frost (RimothFrostPuff). Kill it first.
 ##
@@ -9,11 +10,10 @@ extends SpeciesEnemy
 ##   CASTING    -> wings up, pouring the chill beam into an ally
 ##   PUFFING    -> cornered: beats its wings (the tell), then puffs frost
 ##   RECOVERING -> knocked back by a hit
-##   DYING      -> fades away
 ##
 ## While DebugControls.enemies_passive is on, it only hovers in place and reacts to hits.
 
-enum State { HOVERING, CASTING, PUFFING, RECOVERING, DYING }
+enum State { HOVERING, CASTING, PUFFING, RECOVERING }
 
 @export_group("Keeping distance")
 ## It likes to stay between these distances from the player, in pixels (closest, farthest).
@@ -32,7 +32,6 @@ var _seconds_hovering: float = 0.0
 
 @onready var shell_cast: RimothFrostShellCast = $ShellCast
 @onready var frost_puff: RimothFrostPuff = $FrostPuff
-@onready var death_drops: DeathDrops = $DeathDrops
 
 
 func _ready() -> void:
@@ -45,7 +44,7 @@ func _physics_process(delta: float) -> void:
 	_timer.advance(delta)
 	_bob(delta)
 	var is_alert := _is_alert()
-	if _timer.state != State.DYING and is_alert:
+	if is_alert:
 		shell_cast.count_down(delta)
 		frost_puff.count_down(delta)
 	if DebugControls.enemies_passive:
@@ -58,7 +57,7 @@ func _physics_process(delta: float) -> void:
 			_cast()
 		State.PUFFING:
 			_puff()
-		State.RECOVERING, State.DYING:
+		State.RECOVERING:
 			_slide_then(State.RECOVERING, State.HOVERING, delta)
 
 	move_and_slide()
@@ -132,7 +131,5 @@ func _react_to_hit(source_position: Vector2) -> void:
 	_timer.enter(State.RECOVERING, hit_recover_time)
 
 
-func _die() -> void:
+func _call_off_attacks() -> void:
 	_call_off_spells()
-	death_drops.drop()
-	_enter_dying_and_fade(State.DYING)

@@ -9,7 +9,6 @@
 [ext_resource type="Script" path="res://scripts/pickups/berry.gd" id="7_0qmsh"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/toxic_toad/toxic_toad.tscn" id="8_0ktw3"]
 [ext_resource type="Script" path="res://scripts/enemies/toad.gd" id="9_rhgum"]
-[ext_resource type="Texture2D" path="res://art/toxic_toad/toxlop_portrait_128.png" id="10_k2t23"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/handler/handler.tscn" id="11_ugfhl"]
 [ext_resource type="Script" path="res://scripts/enemies/handler.gd" id="12_lnaqi"]
 [ext_resource type="PackedScene" path="res://scenes/game/game_layer.tscn" id="13_jewaq"]
@@ -114,21 +113,18 @@ z_index = 1
 position = Vector2(310, 496)
 motion_mode = 1
 script = ExtResource("9_rhgum")
-portrait = ExtResource("10_k2t23")
 
 [node name="MossyStepsToad2" type="CharacterBody2D" parent="World" unique_id=506349954 groups=["enemies"] instance=ExtResource("8_0ktw3")]
 z_index = 1
 position = Vector2(276, 500)
 motion_mode = 1
 script = ExtResource("9_rhgum")
-portrait = ExtResource("10_k2t23")
 
 [node name="MossyStepsToad3" type="CharacterBody2D" parent="World" unique_id=1846885538 groups=["enemies"] instance=ExtResource("8_0ktw3")]
 z_index = 1
 position = Vector2(294, 468)
 motion_mode = 1
 script = ExtResource("9_rhgum")
-portrait = ExtResource("10_k2t23")
 
 [node name="FallenCourtyardWarden1" type="CharacterBody2D" parent="World" unique_id=1183347216 groups=["enemies"] instance=ExtResource("11_ugfhl")]
 z_index = 1
@@ -141,21 +137,18 @@ z_index = 1
 position = Vector2(646, 272)
 motion_mode = 1
 script = ExtResource("9_rhgum")
-portrait = ExtResource("10_k2t23")
 
 [node name="FallenCourtyardToad2" type="CharacterBody2D" parent="World" unique_id=772335590 groups=["enemies"] instance=ExtResource("8_0ktw3")]
 z_index = 1
 position = Vector2(612, 276)
 motion_mode = 1
 script = ExtResource("9_rhgum")
-portrait = ExtResource("10_k2t23")
 
 [node name="FallenCourtyardToad3" type="CharacterBody2D" parent="World" unique_id=1136429152 groups=["enemies"] instance=ExtResource("8_0ktw3")]
 z_index = 1
 position = Vector2(630, 244)
 motion_mode = 1
 script = ExtResource("9_rhgum")
-portrait = ExtResource("10_k2t23")
 
 [node name="SunkenGardenWarden1" type="CharacterBody2D" parent="World" unique_id=1280058590 groups=["enemies"] instance=ExtResource("11_ugfhl")]
 z_index = 1
@@ -169,70 +162,60 @@ z_index = 1
 position = Vector2(822, 672)
 motion_mode = 1
 script = ExtResource("9_rhgum")
-portrait = ExtResource("10_k2t23")
 
 [node name="SunkenGardenToad2" type="CharacterBody2D" parent="World" unique_id=259006884 groups=["enemies"] instance=ExtResource("8_0ktw3")]
 z_index = 1
 position = Vector2(798, 683)
 motion_mode = 1
 script = ExtResource("9_rhgum")
-portrait = ExtResource("10_k2t23")
 
 [node name="SunkenGardenToad3" type="CharacterBody2D" parent="World" unique_id=704849361 groups=["enemies"] instance=ExtResource("8_0ktw3")]
 z_index = 1
 position = Vector2(794, 656)
 motion_mode = 1
 script = ExtResource("9_rhgum")
-portrait = ExtResource("10_k2t23")
 
 [node name="SunkenGardenToad4" type="CharacterBody2D" parent="World" unique_id=1829018707 groups=["enemies"] instance=ExtResource("8_0ktw3")]
 z_index = 1
 position = Vector2(818, 645)
 motion_mode = 1
 script = ExtResource("9_rhgum")
-portrait = ExtResource("10_k2t23")
 
 [node name="SunkenGardenToad5" type="CharacterBody2D" parent="World" unique_id=559196079 groups=["enemies"] instance=ExtResource("8_0ktw3")]
 z_index = 1
 position = Vector2(854, 816)
 motion_mode = 1
 script = ExtResource("9_rhgum")
-portrait = ExtResource("10_k2t23")
 
 [node name="SunkenGardenToad6" type="CharacterBody2D" parent="World" unique_id=20116252 groups=["enemies"] instance=ExtResource("8_0ktw3")]
 z_index = 1
 position = Vector2(820, 820)
 motion_mode = 1
 script = ExtResource("9_rhgum")
-portrait = ExtResource("10_k2t23")
 
 [node name="SunkenGardenToad7" type="CharacterBody2D" parent="World" unique_id=1586329147 groups=["enemies"] instance=ExtResource("8_0ktw3")]
 z_index = 1
 position = Vector2(838, 788)
 motion_mode = 1
 script = ExtResource("9_rhgum")
-portrait = ExtResource("10_k2t23")
 
 [node name="BerryHollowToad1" type="CharacterBody2D" parent="World" unique_id=786380514 groups=["enemies"] instance=ExtResource("8_0ktw3")]
 z_index = 1
 position = Vector2(547, 846)
 motion_mode = 1
 script = ExtResource("9_rhgum")
-portrait = ExtResource("10_k2t23")
 
 [node name="BerryHollowToad2" type="CharacterBody2D" parent="World" unique_id=1233941265 groups=["enemies"] instance=ExtResource("8_0ktw3")]
 z_index = 1
 position = Vector2(519, 850)
 motion_mode = 1
 script = ExtResource("9_rhgum")
-portrait = ExtResource("10_k2t23")
 
 [node name="BerryHollowToad3" type="CharacterBody2D" parent="World" unique_id=1792056514 groups=["enemies"] instance=ExtResource("8_0ktw3")]
 z_index = 1
 position = Vector2(534, 823)
 motion_mode = 1
 script = ExtResource("9_rhgum")
-portrait = ExtResource("10_k2t23")
 
 [node name="BerryHollowBerry1" type="Node2D" parent="World" unique_id=2146566484 instance=ExtResource("6_0ms7i")]
 z_index = 1
@@ -264,28 +247,24 @@ z_index = 1
 position = Vector2(1238, 400)
 motion_mode = 1
 script = ExtResource("9_rhgum")
-portrait = ExtResource("10_k2t23")
 
 [node name="ConduitHallToad2" type="CharacterBody2D" parent="World" unique_id=1724332998 groups=["enemies"] instance=ExtResource("8_0ktw3")]
 z_index = 1
 position = Vector2(1214, 411)
 motion_mode = 1
 script = ExtResource("9_rhgum")
-portrait = ExtResource("10_k2t23")
 
 [node name="ConduitHallToad3" type="CharacterBody2D" parent="World" unique_id=908591105 groups=["enemies"] instance=ExtResource("8_0ktw3")]
 z_index = 1
 position = Vector2(1210, 384)
 motion_mode = 1
 script = ExtResource("9_rhgum")
-portrait = ExtResource("10_k2t23")
 
 [node name="ConduitHallToad4" type="CharacterBody2D" parent="World" unique_id=19243004 groups=["enemies"] instance=ExtResource("8_0ktw3")]
 z_index = 1
 position = Vector2(1234, 373)
 motion_mode = 1
 script = ExtResource("9_rhgum")
-portrait = ExtResource("10_k2t23")
 
 [node name="WardenGateWarden1" type="CharacterBody2D" parent="World" unique_id=985614354 groups=["enemies"] instance=ExtResource("11_ugfhl")]
 z_index = 1
@@ -298,28 +277,24 @@ z_index = 1
 position = Vector2(1382, 640)
 motion_mode = 1
 script = ExtResource("9_rhgum")
-portrait = ExtResource("10_k2t23")
 
 [node name="WardenGateToad2" type="CharacterBody2D" parent="World" unique_id=177540618 groups=["enemies"] instance=ExtResource("8_0ktw3")]
 z_index = 1
 position = Vector2(1358, 651)
 motion_mode = 1
 script = ExtResource("9_rhgum")
-portrait = ExtResource("10_k2t23")
 
 [node name="WardenGateToad3" type="CharacterBody2D" parent="World" unique_id=693973756 groups=["enemies"] instance=ExtResource("8_0ktw3")]
 z_index = 1
 position = Vector2(1354, 624)
 motion_mode = 1
 script = ExtResource("9_rhgum")
-portrait = ExtResource("10_k2t23")
 
 [node name="WardenGateToad4" type="CharacterBody2D" parent="World" unique_id=106506848 groups=["enemies"] instance=ExtResource("8_0ktw3")]
 z_index = 1
 position = Vector2(1378, 613)
 motion_mode = 1
 script = ExtResource("9_rhgum")
-portrait = ExtResource("10_k2t23")
 
 [node name="MossyStepsZephoot1" type="CharacterBody2D" parent="World" unique_id=758618299 groups=["enemies"] instance=ExtResource("16_zeph")]
 position = Vector2(216, 504)
@@ -369,7 +344,7 @@ position = Vector2(1216, 138)
 
 [node name="EliteModifier" type="Node" parent="World/BoarDenEliteGruntite" unique_id=1900000006]
 script = ExtResource("23_elite")
-name_tag_height = 30.0
+name_tag_height = 36.0
 
 [node name="BoarDenBerry1" type="Node2D" parent="World" unique_id=1900000007 instance=ExtResource("6_0ms7i")]
 z_index = 1

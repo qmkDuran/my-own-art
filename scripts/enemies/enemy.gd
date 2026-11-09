@@ -2,13 +2,13 @@ class_name Enemy
 extends CharacterBody2D
 ## What every enemy has in common, so each enemy script only says what makes it different:
 ## its state clock, noticing the player (and alerting the pack), flashing and being knocked
-## back by hits and big shoves, and fading out when it dies.
+## back by hits and big shoves, and fading out when it dies (machines blow up instead).
 ##
 ## An enemy script runs its own state machine on top of this and overrides:
 ##   _react_to_hit(source_position) -> what a hit does to its state (it has already flashed
 ##                                     and noticed the player; dying enemies skip this)
 ##   _has_super_armour()           -> while true, hits and shoves don't move it
-##   _die()                        -> its death (most call _fade_out_and_free)
+##   _die()                        -> its death (Wardens fade out; the trash machines blow up, see Machine)
 ##   _stop_acting()                -> calls off an attack or move in progress (debug pause, respawn)
 ##   _on_returned_to_spawn()       -> anything else to put back after `return_to_spawn`
 ## and calls super._ready() from its own _ready. Each enemy's first State is its idle one

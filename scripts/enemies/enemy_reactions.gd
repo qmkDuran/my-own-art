@@ -46,9 +46,14 @@ static func slowed_down(velocity: Vector2, friction: float, delta: float) -> Vec
 ## Takes a dead enemy out of play at once (it can no longer be hit, targeted or bumped
 ## into), fades its sprite out over `seconds` and then frees it.
 static func fade_out_and_free(body: Node2D, sprite: CanvasItem, collision_shape: CollisionShape2D, seconds: float) -> void:
-	body.remove_from_group(ENEMIES_GROUP)
-	body.remove_from_group(SUMMONED_GROUP)
-	collision_shape.set_deferred("disabled", true)
+	take_out_of_play(body, collision_shape)
 	var fade := body.create_tween()
 	fade.tween_property(sprite, "modulate:a", 0.0, seconds)
 	fade.tween_callback(body.queue_free)
+
+
+## A dead enemy can no longer be hit, targeted, counted as a summon or bumped into.
+static func take_out_of_play(body: Node2D, collision_shape: CollisionShape2D) -> void:
+	body.remove_from_group(ENEMIES_GROUP)
+	body.remove_from_group(SUMMONED_GROUP)
+	collision_shape.set_deferred("disabled", true)

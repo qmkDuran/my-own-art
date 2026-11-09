@@ -1,7 +1,8 @@
 class_name Toad
-extends SpeciesEnemy
-## A toxic toad: hops toward the player, puffs up as a warning, then lashes its tongue
-## (the attack lives in ToadTongueAttack).
+extends Machine
+## A Seepcan (Toxic machine; the scene and code keep the old Toxlop "toad" names): a squat,
+## leaking sludge canister that hops toward the player, swells as a warning, then whips out its
+## sludge hose (the attack lives in ToadTongueAttack; the hose is the ToadTongue line).
 ##
 ## Behaviour is a small state machine. Each state has a length; when it runs out,
 ## the toad decides what to do next.
@@ -10,13 +11,12 @@ extends SpeciesEnemy
 ##   PUFFING    -> the warning: holds its puffed-up pose, then glints just before striking
 ##   LASHING    -> tongue shoots out; hits the player if they're still in the way
 ##   RECOVERING -> a short pause after attacking or being hit
-##   DYING      -> fades away (DeathDrops leaves the goo and maybe a berry)
 ##
 ## Until it notices the player (they come within `notice_distance`, it gets hit, or a Warden
 ## summons it), it just sits. While DebugControls.enemies_passive is on, it only sits (RESTING)
 ## and reacts to hits.
 
-enum State { RESTING, HOPPING, PUFFING, LASHING, RECOVERING, DYING }
+enum State { RESTING, HOPPING, PUFFING, LASHING, RECOVERING }
 
 @export_group("Hopping")
 ## Farthest a single hop goes, in pixels.
@@ -37,7 +37,6 @@ enum State { RESTING, HOPPING, PUFFING, LASHING, RECOVERING, DYING }
 var _hop_velocity: Vector2 = Vector2.ZERO
 
 @onready var tongue_attack: ToadTongueAttack = $TongueAttack
-@onready var death_drops: DeathDrops = $DeathDrops
 
 
 func _ready() -> void:
@@ -59,7 +58,7 @@ func _physics_process(delta: float) -> void:
 			_puff()
 		State.LASHING:
 			_lash()
-		State.RECOVERING, State.DYING:
+		State.RECOVERING:
 			_slow_down(delta)
 
 	move_and_slide()
@@ -165,6 +164,5 @@ func _react_to_hit(source_position: Vector2) -> void:
 	_timer.enter(State.RECOVERING, recover_time)
 
 
-func _die() -> void:
-	death_drops.drop()
-	_enter_dying_and_fade(State.DYING)
+func _call_off_attacks() -> void:
+	tongue_attack.cancel()

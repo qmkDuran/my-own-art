@@ -124,7 +124,7 @@ position = Vector2(488, 1088)
 
 [node name="EliteModifier" type="Node" parent="World/MireHollowEliteBrinelob" unique_id=2100000021]
 script = ExtResource("8_elite_modifi")
-name_tag_height = 26.0
+name_tag_height = 38.0
 
 [node name="MireHollowBerry1" type="Node2D" parent="World" unique_id=2100000022 instance=ExtResource("4_berry")]
 z_index = 1

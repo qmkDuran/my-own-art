@@ -1,17 +1,16 @@
 class_name Fizzbug
-extends SpeciesEnemy
-## A Fizzbug: a bound Spark Glimra, a beetle full of static. It rushes at the player, stops
-## close, glows for a moment and bursts (FizzbugBurst), hurting the player and any other enemy
-## in the ring; the burst is its end. One jab kills it first.
+extends Machine
+## A Zapmite (Spark machine; the scene and code keep the old Fizzbug name): a tiny spark drone.
+## It rushes at the player, stops close, glows for a moment and bursts (FizzbugBurst), hurting
+## the player and any other enemy in the ring; the burst blows it apart. One jab kills it first.
 ##
 ## States:
 ##   WAITING  -> sits (hasn't noticed the player, or enemies are paused)
 ##   RUSHING  -> scuttles at the player along the path, fast
 ##   GLOWING  -> stopped, flashing faster and faster, the burst's reach on the ground
 ##   STUNNED  -> knocked back by a hit (one usually kills it)
-##   DYING    -> burst, or killed: gone
 
-enum State { WAITING, RUSHING, GLOWING, STUNNED, DYING }
+enum State { WAITING, RUSHING, GLOWING, STUNNED }
 
 @export_group("Rushing")
 ## Speed it rushes at, in pixels per second: about 1.6× a Toxlop's hopping speed.
@@ -21,7 +20,6 @@ enum State { WAITING, RUSHING, GLOWING, STUNNED, DYING }
 @export var hit_recover_time: float = 0.3
 
 @onready var burst: FizzbugBurst = $Burst
-@onready var death_drops: DeathDrops = $DeathDrops
 
 
 func _ready() -> void:
@@ -40,7 +38,7 @@ func _physics_process(delta: float) -> void:
 			_rush(can_act)
 		State.GLOWING:
 			_glow()
-		State.STUNNED, State.DYING:
+		State.STUNNED:
 			_slide_then(State.STUNNED, State.RUSHING, delta)
 
 	move_and_slide()
@@ -74,13 +72,10 @@ func _glow() -> void:
 		_burst()
 
 
-## Its end: the ring goes off and the bug is gone (no light: it wasn't beaten).
+## Its end: the ring goes off and the drone blows apart (no light: it wasn't beaten).
 func _burst() -> void:
 	burst.burst()
-	_is_dying = true
-	sprite.replay_animation("burst")
-	_timer.enter(State.DYING, 0.0)
-	_fade_out_and_free()
+	blow_up(false)
 
 
 ## Debug (enemies passive): a glow is called off and it just sits.
@@ -103,7 +98,5 @@ func _react_to_hit(source_position: Vector2) -> void:
 	_timer.enter(State.STUNNED, hit_recover_time)
 
 
-func _die() -> void:
+func _call_off_attacks() -> void:
 	burst.cancel()
-	death_drops.drop()
-	_enter_dying_and_fade(State.DYING)
