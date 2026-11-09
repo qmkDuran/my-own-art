@@ -31,6 +31,8 @@ var _hover_scale: Dictionary[String, float] = {}
 var _shown_learned: Dictionary[String, bool] = {}
 var _time: float = 0.0
 var _label_painter: EmberTreeLabelPainter
+## Emberoo in the middle of the tree, recoloured when his Awakening stage changes.
+var _emberoo_sprite: AnimatedSprite2D
 
 
 func _ready() -> void:
@@ -78,7 +80,7 @@ func _place_nodes() -> void:
 		_hover_scale[node.id] = 1.0
 
 
-## Emberoo's live idle animation in the middle of the tree.
+## Emberoo's live idle animation in the middle of the tree, in his Awakened look.
 func _add_emberoo() -> void:
 	var sprite := AnimatedSprite2D.new()
 	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
@@ -88,6 +90,11 @@ func _add_emberoo() -> void:
 	var sheet: Texture2D = load(EMBEROO_IDLE_SHEET)
 	SpriteSheetLoader.add_animation(sprite.sprite_frames, "idle", sheet, settings["frame_durations"], true, CreatureAnimator.FRAME_SIZE)
 	sprite.scale = Vector2.ONE * EMBEROO_SCALE
+	EmberooFlameMarker.mark_frames(sprite.sprite_frames)
+	AwakeningPalette.apply(sprite, Awakening.stage)
+	_emberoo_sprite = sprite
+	# A method (not a lambda) so Godot drops the connection when this canvas is freed.
+	Awakening.stage_changed.connect(_on_awakening_stage_changed)
 	add_child(sprite)
 	sprite.play("idle")
 
@@ -181,3 +188,8 @@ func _is_in_hovered_branch(id: String) -> bool:
 
 func _hovered_branch_color() -> Color:
 	return EmberTreePalette.BRANCH_COLORS[hovered_branch]
+
+
+func _on_awakening_stage_changed(stage: int) -> void:
+	if is_instance_valid(_emberoo_sprite):
+		AwakeningPalette.apply(_emberoo_sprite, stage)

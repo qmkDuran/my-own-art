@@ -6,17 +6,24 @@ extends CanvasLayer
 ## F2: enemies passive. Toads sit still (no hops, no tongue) and Wardens stand still
 ## (no summons, no shove, no slam). They can still be hit and killed.
 ## F3: DEBUG ONLY, +5 Ember Tree skill points, to try out builds without levelling.
-## F5: save now (a "SAVED" toast confirms it). F9: delete the save and restart the zone fresh.
+## F4: cycles Emberoo's Awakening stage (0, 1, 2, then back to 0) to see each look at once;
+## stepping up plays the short awakening moment too.
+## F5: save now (a "SAVED" toast confirms it). F6: Emberoo falls at once (to test death and respawn).
+## F7: DEBUG ONLY, a random tier-2 hacked chip and 50 scrap (see DebugChipGrant).
+## F9: delete the save and restart the zone fresh.
 ## While enemies are passive, a banner at the top centre of the screen lists the keys.
 
 const PASSIVE_TOGGLE_KEY := KEY_F2
 const GRANT_POINTS_KEY := KEY_F3
+const AWAKENING_KEY := KEY_F4
 const SAVE_KEY := KEY_F5
+const FALL_KEY := KEY_F6
+const CHIP_KEY := KEY_F7
 const DELETE_SAVE_KEY := KEY_F9
 ## Skill points F3 grants (debug only).
 const DEBUG_SKILL_POINTS := 5
 ## "%d" is DEBUG_SKILL_POINTS.
-const BANNER_FORMAT := "ENEMIES PAUSED (F2)   F3 +%d POINTS   F5 SAVE   F9 WIPE SAVE"
+const BANNER_FORMAT := "ENEMIES PAUSED (F2)   F3 +%d POINTS   F4 AWAKEN   F5 SAVE   F6 FALL   F7 CHIP   F9 WIPE SAVE"
 ## Top edge of the banner text, in screen pixels.
 const BANNER_TOP := 3
 
@@ -59,13 +66,37 @@ func _unhandled_input(event: InputEvent) -> void:
 	elif key.keycode == GRANT_POINTS_KEY:
 		Progression.add_skill_points(DEBUG_SKILL_POINTS)
 		get_viewport().set_input_as_handled()
+	elif key.keycode == AWAKENING_KEY:
+		_cycle_awakening()
+		get_viewport().set_input_as_handled()
 	elif key.keycode == SAVE_KEY:
 		if SaveGame.save_now():
 			_save_toast.show_toast()
 		get_viewport().set_input_as_handled()
+	elif key.keycode == FALL_KEY:
+		_make_player_fall()
+		get_viewport().set_input_as_handled()
+	elif key.keycode == CHIP_KEY:
+		DebugChipGrant.grant()
+		get_viewport().set_input_as_handled()
 	elif key.keycode == DELETE_SAVE_KEY:
 		SaveGame.delete_save_and_restart()
 		get_viewport().set_input_as_handled()
+
+
+## The next Awakening stage, wrapping from the last back to none.
+func _cycle_awakening() -> void:
+	var next_stage := (Awakening.stage + 1) % (AwakeningStage.LAST + 1)
+	Awakening.set_stage(next_stage, next_stage > Awakening.stage)
+
+
+## Takes all of Emberoo's health at once, past a dodge's or the entrance hop's invulnerability.
+func _make_player_fall() -> void:
+	var health := PlayerFinder.find_component(self, "Health") as Health
+	if health == null or health.is_dead():
+		return
+	health.is_invulnerable = false
+	health.take_tick_damage(health.current_health, Health.DamageType.DIRECT)
 
 
 func _refresh_banner() -> void:

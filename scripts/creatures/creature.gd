@@ -14,6 +14,8 @@ extends CharacterBody2D
 ##             StatusResistance (which enemy status effects land), TrainerAid (F: a healing tonic)
 ##   Show:     Sprite (CreatureAnimator), HitFlash, FistEmbers, ComboPips, ScreenShake,
 ##             SpeechBubble, LevelUpBoost
+##   Awakening: AwakeningLook (recoloured sprite, AwakeningAura), AwakeningBoost (stat bump),
+##             AwakeningMoment (the short flare when he Awakens; he stands still meanwhile)
 ##   Arriving: ZoneEntrance (the hop onto the spawn point; it drives the creature meanwhile)
 ## A shove it takes is a Pushback. Enemy status effects (Poisoned, Staggered, Buffeted) are
 ## attached to it at runtime; a stagger stops it acting for a moment.
@@ -43,6 +45,7 @@ var _actions := CreatureActions.new(self)
 @onready var skill_bar: SkillBar = $SkillBar
 @onready var zone_entrance: ZoneEntrance = $ZoneEntrance
 @onready var unshakable: Unshakable = $Unshakable
+@onready var awakening_moment: AwakeningMoment = $AwakeningMoment
 
 
 func _ready() -> void:
@@ -52,7 +55,12 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
-	if zone_entrance.is_playing:
+	# Fallen: the Respawner plays the fall and brings it back up at a checkpoint.
+	if zone_entrance.is_playing or health.is_dead():
+		return
+	if awakening_moment.is_playing:
+		velocity = Vector2.ZERO
+		fist_embers.follow(animator.view_for(facing), animator.flip_h, animator.position)
 		return
 	_pushback.count_down(delta)
 	mouse_orders.update()
@@ -155,9 +163,10 @@ func _on_damaged(_amount: int, _source_position: Vector2) -> void:
 	hit_flash.flash()
 
 
-## For the vertical slice, dying simply restarts the level.
+## Falling stops whatever it was doing; the Respawner (in the GameLayer) takes it from there.
 func _on_died() -> void:
-	get_tree().reload_current_scene.call_deferred()
+	velocity = Vector2.ZERO
+	interrupt()
 
 
 ## A skill just fired (the SkillBar decides when): stop walking or jabbing, face the aim

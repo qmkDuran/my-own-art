@@ -11,7 +11,8 @@ enum Kind { SKILL, UPGRADE, STAT, ULTIMATE }
 @export var id: String = ""
 ## Which branch it belongs to (see EmberTreeData.BRANCHES).
 @export var branch: String = ""
-## Evolution stage that opens it: 1 = inner ring, 2 = middle ring, 3 = outer ring.
+## Tree stage (ring) it sits in: 1 = inner ring (open from the start), 2 = middle ring
+## (opens at Awakening I), 3 = outer ring (Awakening II).
 @export var stage: int = 1
 ## Steps out from the centre, counted across every ring (0 = closest to Emberoo).
 @export var tier: int = 0

@@ -26,7 +26,7 @@ const BAR := Color(BACKGROUND, 0.72)
 const BRANCH_COLORS := {"inferno": RED, "flurry": GOLD, "bruiser": CREAM}
 
 ## How a node looks in each state (see EmberTreeNodeState), shared with the legend.
-## SEALED = its ring has not opened yet (Emberoo must evolve), so it is fainter than LOCKED.
+## SEALED = its ring has not opened yet (Emberoo must Awaken), so it is fainter than LOCKED.
 const NODE_FILL := {
 	EmberTreeNodeState.LEARNED: DEEP, EmberTreeNodeState.AVAILABLE: EMBER_DARK,
 	EmberTreeNodeState.LOCKED: COAL, EmberTreeNodeState.SEALED: COAL,

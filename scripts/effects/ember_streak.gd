@@ -2,14 +2,10 @@ class_name EmberStreak
 extends Node2D
 ## A quick streak of fire racing from one point to another (Wildfire's burn jumping to the
 ## next enemy), drawn in code pixel by pixel: a hot head shoots along a short arc, leaving
-## a tail that cools from gold to red and breaks up behind it.
+## a tail that cools from gold to red (blue-white to blue once Awakened) and breaks up behind it.
 ##
 ## Spawn it in the world, call play(), and it removes itself when done.
 
-## Hottest to coolest.
-const FIRE_COLORS: Array[Color] = [
-	ApolloPalette.GOLD, ApolloPalette.ORANGE, ApolloPalette.ORANGE_MID, ApolloPalette.RED_LIGHT, ApolloPalette.RED,
-]
 ## How high the streak arcs above the straight line, as a share of its length.
 const ARC_HEIGHT := 0.25
 ## How long the tail is, as a share of the whole path.
@@ -18,6 +14,8 @@ const TAIL_LENGTH := 0.45
 ## Seconds for the head to reach the far end; the tail then fades for as long again.
 @export var travel_time: float = 0.16
 
+## Hottest to coolest: Emberoo's fire colours when this started (see EmberooFlameColors).
+var _fire_colors: Array[Color] = EmberooFlameColors.fire_ramp()
 var _path := PackedVector2Array()
 var _elapsed: float = 0.0
 
@@ -46,8 +44,8 @@ func _draw() -> void:
 		var behind_head := (head - along) / TAIL_LENGTH
 		if behind_head < 0.0 or behind_head > 1.0 - fade:
 			continue
-		var color_index := clampi(floori(behind_head * FIRE_COLORS.size()), 0, FIRE_COLORS.size() - 1)
-		draw_rect(Rect2(_path[index], Vector2.ONE), FIRE_COLORS[color_index])
+		var color_index := clampi(floori(behind_head * _fire_colors.size()), 0, _fire_colors.size() - 1)
+		draw_rect(Rect2(_path[index], Vector2.ONE), _fire_colors[color_index])
 
 
 ## One pixel per step along a shallow arc from here to `offset`.

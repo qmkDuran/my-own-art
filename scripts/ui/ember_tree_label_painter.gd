@@ -5,7 +5,7 @@ extends RefCounted
 
 const RING_CAPTION_SIZE := EmberTreeFonts.TEXT_SIZE
 ## Words written along a closed ring, per stage.
-const RING_CAPTIONS := {2: "STAGE 2  ∙  EVOLVE TO UNLOCK", 3: "STAGE 3  ∙  ULTIMATES"}
+const RING_CAPTIONS := {2: "STAGE 2  ∙  AWAKENS AT LEVEL %d" % AwakeningStage.ONE_LEVEL, 3: "STAGE 3  ∙  ULTIMATES"}
 ## Where each stage's caption sits, in degrees: in the two upper gaps between branches,
 ## clear of the nodes (the lower gap would read upside down).
 const RING_CAPTION_ANGLES := {2: [-30.0, -150.0], 3: [-30.0, -150.0]}

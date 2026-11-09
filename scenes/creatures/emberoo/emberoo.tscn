@@ -1,4 +1,4 @@
-[gd_scene load_steps=42 format=3]
+[gd_scene load_steps=46 format=3]
 
 [ext_resource type="Script" path="res://scripts/creatures/creature.gd" id="1_creature"]
 [ext_resource type="Script" path="res://scripts/animation/creature_animator.gd" id="2_animator"]
@@ -38,6 +38,10 @@
 [ext_resource type="Script" path="res://scripts/components/ember_hop.gd" id="36_ember_hop"]
 [ext_resource type="Script" path="res://scripts/components/path_mover.gd" id="90_path_mover"]
 [ext_resource type="Script" path="res://scripts/components/status_resistance.gd" id="37_status_resistance"]
+[ext_resource type="Script" path="res://scripts/creatures/awakening_look.gd" id="38_awakening_look"]
+[ext_resource type="Script" path="res://scripts/effects/awakening_aura.gd" id="39_awakening_aura"]
+[ext_resource type="Script" path="res://scripts/creatures/awakening_moment.gd" id="40_awakening_moment"]
+[ext_resource type="Script" path="res://scripts/creatures/awakening_boost.gd" id="41_awakening_boost"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_body"]
 radius = 5.0
@@ -205,6 +209,34 @@ dust_puff_scene = ExtResource("30_dust_puff")
 animator = NodePath("../Sprite")
 facing = NodePath("../Facing")
 health = NodePath("../Health")
+screen_shake = NodePath("../ScreenShake")
+
+[node name="AwakeningAura" type="Node2D" parent="." node_paths=PackedStringArray("sprite")]
+visible = false
+z_index = 1
+position = Vector2(0, -8)
+script = ExtResource("39_awakening_aura")
+sprite = NodePath("../Sprite")
+
+[node name="AwakeningLook" type="Node" parent="." node_paths=PackedStringArray("sprite", "aura", "awakening_moment")]
+script = ExtResource("38_awakening_look")
+sprite = NodePath("../Sprite")
+aura = NodePath("../AwakeningAura")
+awakening_moment = NodePath("../AwakeningMoment")
+
+[node name="AwakeningBoost" type="Node" parent="." node_paths=PackedStringArray("health", "melee_attack")]
+script = ExtResource("41_awakening_boost")
+health = NodePath("../Health")
+melee_attack = NodePath("../MeleeAttack")
+
+[node name="AwakeningMoment" type="Node" parent="." node_paths=PackedStringArray("look", "animator", "facing", "health", "hit_flash", "screen_shake")]
+script = ExtResource("40_awakening_moment")
+ring_scene = ExtResource("14_marker")
+look = NodePath("../AwakeningLook")
+animator = NodePath("../Sprite")
+facing = NodePath("../Facing")
+health = NodePath("../Health")
+hit_flash = NodePath("../HitFlash")
 screen_shake = NodePath("../ScreenShake")
 
 [node name="PathMover" type="NavigationAgent2D" parent="."]

@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3]
+[gd_scene load_steps=19 format=3]
 
 [ext_resource type="Script" path="res://scripts/enemies/handler.gd" id="1_handler"]
 [ext_resource type="Script" path="res://scripts/animation/single_view_animator.gd" id="2_animator"]
@@ -16,6 +16,7 @@
 [ext_resource type="Script" path="res://scripts/components/path_mover.gd" id="90_path_mover"]
 [ext_resource type="Script" path="res://scripts/enemies/offscreen_sleep.gd" id="91_offscreen_sleep"]
 [ext_resource type="Script" path="res://scripts/enemies/handler_retreat.gd" id="14_retreat"]
+[ext_resource type="Script" path="res://scripts/enemies/chip_drop.gd" id="95_chip_drop"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_body"]
 radius = 5.0
@@ -111,3 +112,6 @@ script = ExtResource("90_path_mover")
 [node name="OffscreenSleep" type="Node" parent="." node_paths=PackedStringArray("health")]
 script = ExtResource("91_offscreen_sleep")
 health = NodePath("../Health")
+
+[node name="ChipDrop" type="Node" parent="."]
+script = ExtResource("95_chip_drop")

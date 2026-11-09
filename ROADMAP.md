@@ -4,7 +4,7 @@
 > Rule when lost: find the current milestone below and do the smallest next task.
 
 ## Milestone 1: Vertical slice (current)
-Goal: one fun zone (Ruins Edge, about 5 min) with real art, a full Stage 1 build, a boss and evolution.
+Goal: one fun zone (Ruins Edge, about 5 min) with real art, a full Stage 1 build, a boss and Emberoo's first Awakening.
 
 | Item | Status |
 |---|---|
@@ -19,7 +19,7 @@ Goal: one fun zone (Ruins Edge, about 5 min) with real art, a full Stage 1 build
 | Bruiser branch + remaining Stage 1 nodes (Ash Guard on W, Counter Punch, Unshakable, Wildfire, Ember Hop) | 🔄 in progress |
 | Mini-boss: Warden Captain in the Final Arena | 🔄 in progress |
 | Save system | 🔄 in progress |
-| Evolution: Emberoo Stage 2 (concept review in progress) | 🔄 |
+| Awakening (replaces evolution): level 10 Awakening I "Blue Flame" (recolour, blue fire, +3 health/+1 jab, opens tree Stage 2), Awakening II planned at 25, awakening moment, saved, F4 debug | ✅ |
 | Enemy pathfinding (they get stuck on walls) | ⬜ |
 | Trainer final design (waiting on user references) | ⬜ |
 | Music and sound (waiting on user's packs) | ⬜ |
@@ -28,7 +28,9 @@ Goal: one fun zone (Ruins Edge, about 5 min) with real art, a full Stage 1 build
 - Huge session: the slice is mostly built. See the table above.
 - Decisions today: 480x270 resolution, no night lighting, no capture device or collars (implanted chips),
   8 elements (Fire, Toxic, Wind, Stone, Tide, Frost, Spark, Bloom), 6 acts of about 1-1.5h, Last Epoch-light story.
-- Next: finish the in-progress rows, then pathfinding, then the evolution build once a direction is picked.
+- Next: finish the in-progress rows, then pathfinding.
+- 2026-11-09: the user chose **Awakening** over evolution art (see DESIGN.md, Build system). Evolution art is parked.
+  The Stage 2 ring now opens at Awakening I, but its skill nodes (Meteor Fist, Blur Step, Molten Armour) are not built yet.
 
 ## Later milestones (rough)
 2. Act 1 (demo, about 1-1.5h): more zones, a hub town with NPCs, a light story

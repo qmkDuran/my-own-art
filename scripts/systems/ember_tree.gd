@@ -9,10 +9,10 @@ extends Node
 
 signal changed
 
-## Stage 1 is open from the start; later rings open as Emberoo evolves.
-const FIRST_STAGE := 1
+## Stage 1 is open from the start; later rings open as Emberoo Awakens.
+const FIRST_STAGE := AwakeningStage.FIRST_TREE_STAGE
 
-## Highest evolution stage reached. Nothing raises it yet (evolution comes later).
+## The outermost ring open. Set by the Awakening autoload (Awakening I opens Stage 2).
 var unlocked_stage: int = FIRST_STAGE
 
 var _learned: Dictionary[String, bool] = {}
@@ -35,6 +35,20 @@ func learned_ids() -> Array[String]:
 
 func is_stage_open(stage: int) -> bool:
 	return stage <= unlocked_stage
+
+
+## Opens (or closes) the rings up to `stage`. Closing a ring (only DebugControls' F4 does)
+## puts out the nodes learned in it and refunds their points.
+func set_unlocked_stage(stage: int) -> void:
+	stage = maxi(FIRST_STAGE, stage)
+	if stage == unlocked_stage:
+		return
+	unlocked_stage = stage
+	for id in learned_ids():
+		if not is_stage_open(EmberTreeData.find(id).stage):
+			_learned.erase(id)
+			Progression.refund_skill_point()
+	changed.emit()
 
 
 ## True when the node's stage is open and a path leads to it, whether or not a point is free.
@@ -92,16 +106,17 @@ func reset() -> void:
 	changed.emit()
 
 
-## What SaveGame writes: just the learned node IDs, so nodes added to the tree later need no migration.
+## What SaveGame writes: just the learned node IDs, so nodes added to the tree later need no
+## migration. The open rings follow from the Awakening stage, which is saved on its own.
 func to_save_data() -> Dictionary:
-	return {"unlocked_stage": unlocked_stage, "learned": learned_ids()}
+	return {"learned": learned_ids()}
 
 
-## Restores a save (an empty one means nothing learned). Load Progression first: every
-## saved node is learned again under the usual rules, spending a point each, so unknown IDs,
-## nodes with no path to them and nodes beyond the points owned are simply dropped.
+## Restores a save (an empty one means nothing learned). Load Progression and Awakening
+## (which opens the rings) first: every saved node is learned again under the usual rules,
+## spending a point each, so unknown IDs, nodes with no path to them, nodes in a ring that
+## isn't open and nodes beyond the points owned are simply dropped.
 func load_save_data(data: Dictionary) -> void:
-	unlocked_stage = SaveData.read_int(data, "unlocked_stage", FIRST_STAGE, FIRST_STAGE, SaveData.NO_LIMIT)
 	_learned.clear()
 	var waiting := SaveData.read_strings(data, "learned")
 	# A node can only be learned once a node leading to it is, so pass over the list until nothing more fits.

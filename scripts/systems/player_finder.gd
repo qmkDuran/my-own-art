@@ -16,6 +16,9 @@ static var _player: Variant = null
 ## The player creature, or null while there is none (e.g. before the level has loaded it).
 static func find(asker: Node) -> Node2D:
 	if not _is_still_the_player():
+		# A node that has just left the tree (e.g. during a zone change) has no tree to search.
+		if not asker.is_inside_tree():
+			return null
 		_player = asker.get_tree().get_first_node_in_group(GROUP) as Node2D
 	return _player as Node2D
 

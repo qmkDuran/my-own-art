@@ -1,9 +1,7 @@
 class_name ShardFoundToast
 extends BossDefeatedBanner
-## The top-centre card shown when a Glimmer Shard is picked up. Shards can't be socketed
-## yet, so it says so.
-
-const TEXT := "GLIMMER SHARD FOUND (shards coming soon)"
+## The top-centre card shown when a Glimmer Shard is picked up, saying exactly what it
+## gave, e.g. "GLIMMER SHARD: +1 chip slot" (see ShardReward).
 
 
 func _init() -> void:
@@ -15,5 +13,7 @@ func _ready() -> void:
 	ShardInventory.collected.connect(_on_shard_collected)
 
 
-func _on_shard_collected(_shard_id: String) -> void:
-	announce(TEXT)
+func _on_shard_collected(shard_id: String) -> void:
+	var reward := ShardInventory.reward_of(shard_id)
+	if reward != ShardInventory.NO_REWARD:
+		announce(ShardReward.toast_text(reward))

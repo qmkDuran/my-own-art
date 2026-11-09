@@ -45,6 +45,7 @@ func _ready() -> void:
 	# Deferred, so stat changes from EmberTreeEffects land before the numbers are read.
 	EmberTree.changed.connect(refresh, CONNECT_DEFERRED)
 	Progression.leveled_up.connect(func(_level: int) -> void: refresh())
+	Awakening.stage_changed.connect(refresh.unbind(1), CONNECT_DEFERRED)
 	refresh()
 
 

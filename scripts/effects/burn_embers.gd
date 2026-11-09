@@ -20,15 +20,16 @@ const SPAWN_HIGH := -11
 ## How far an ember sways sideways as it rises, in pixels, and how fast.
 const SWAY := 1.0
 const SWAY_SPEED := 9.0
-## Hot when born, cooling as it rises; every so often a frame flickers a shade brighter.
-const HOT_COLOR := ApolloPalette.GOLD
-const WARM_COLOR := ApolloPalette.ORANGE
-const COOL_COLOR := ApolloPalette.RED_LIGHT
+## Every so often a frame flickers a shade brighter.
 const FLICKER_CHANCE := 0.25
 
 ## Each ember: {"start": Vector2, "age": float}.
 var _embers: Array[Dictionary] = []
 var _seconds_to_spawn: float = 0.0
+## Hot when born, cooling as it rises: Emberoo's fire colours (see EmberooFlameColors).
+var _hot_color := EmberooFlameColors.hot()
+var _warm_color := EmberooFlameColors.warm()
+var _cool_color := EmberooFlameColors.cool()
 
 
 func _process(delta: float) -> void:
@@ -59,7 +60,7 @@ func _random_start() -> Vector2:
 
 
 func _ember_color(life_share: float) -> Color:
-	var color := HOT_COLOR if life_share < 0.3 else (WARM_COLOR if life_share < 0.7 else COOL_COLOR)
+	var color := _hot_color if life_share < 0.3 else (_warm_color if life_share < 0.7 else _cool_color)
 	if randf() < FLICKER_CHANCE:
-		return HOT_COLOR if color != HOT_COLOR else WARM_COLOR
+		return _hot_color if color != _hot_color else _warm_color
 	return color

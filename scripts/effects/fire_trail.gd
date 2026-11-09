@@ -7,10 +7,6 @@ extends Node2D
 ## Drawn in code, pixel by pixel, on the world grid. Lay patches with `lay_patch_at`; the
 ## trail removes itself once its last patch has gone out.
 
-## Hottest to coolest.
-const FIRE_COLORS: Array[Color] = [
-	ApolloPalette.GOLD, ApolloPalette.ORANGE, ApolloPalette.ORANGE_MID, ApolloPalette.RED_LIGHT, ApolloPalette.RED,
-]
 ## Pixels each patch covers, around its centre (a small flame shape, taller than wide).
 const PATCH_PIXELS: Array[Vector2i] = [
 	Vector2i(-1, 0), Vector2i(0, 0), Vector2i(1, 0), Vector2i(-2, 0), Vector2i(2, 0),
@@ -32,6 +28,8 @@ var touch_radius: float = 6.0
 var patch_spacing: float = 5.0
 
 ## Where each patch is (global, on the pixel grid) and how long it has burned.
+## Hottest to coolest: Emberoo's fire colours when this started (see EmberooFlameColors).
+var _fire_colors: Array[Color] = EmberooFlameColors.fire_ramp()
 var _patch_positions := PackedVector2Array()
 var _patch_ages := PackedFloat32Array()
 var _elapsed: float = 0.0
@@ -89,5 +87,5 @@ func _draw() -> void:
 			var noise := float(absi(hash(Vector3i(index, pixel_index, flicker_step))) % 100) / 100.0
 			# Half from age, half from flicker: fresh patches are gold and orange, old ones red.
 			var heat_lost := clampf((age_share + noise) / 2.0, 0.0, 0.999)
-			var color := FIRE_COLORS[floori(heat_lost * FIRE_COLORS.size())]
+			var color := _fire_colors[floori(heat_lost * _fire_colors.size())]
 			draw_rect(Rect2(_patch_positions[index] + Vector2(PATCH_PIXELS[pixel_index]), Vector2.ONE), color)

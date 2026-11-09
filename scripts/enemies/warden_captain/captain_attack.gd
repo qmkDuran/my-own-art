@@ -47,6 +47,11 @@ func count_down(delta: float) -> void:
 	_seconds_until_ready = maxf(0.0, _seconds_until_ready - delta)
 
 
+## A fresh fight (e.g. after the player fell): waits `first_use_delay` again.
+func start_over() -> void:
+	_seconds_until_ready = first_use_delay
+
+
 ## Ready, allowed in this phase, and the player is where this attack wants them.
 func is_ready(is_phase_two: bool, distance_to_player: float) -> bool:
 	if _seconds_until_ready > 0.0 or (phase_two_only and not is_phase_two):

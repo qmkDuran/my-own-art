@@ -9,6 +9,9 @@ extends RefCounted
 
 ## The stats, in the order the stats panel lists them.
 const LEVEL := "level"
+## Emberoo's Awakening stage and the flat bonus it gives (see AwakeningBoost): "I (+3 health,
+## +1 jab)", or NOT_LEARNED before the first. The bonus is already in Max Health and Jab damage.
+const AWAKENING := "awakening"
 const HEALTH := "health"
 const JAB_DAMAGE := "jab_damage"
 const JAB_TIME := "jab_time"
@@ -26,12 +29,12 @@ const GUARD := "guard"
 ## How far enemy shoves push, in percent: 100%, or less with Unshakable (see Unshakable).
 const SHOVES := "shoves"
 const ORDER: Array[String] = [
-	LEVEL, HEALTH, JAB_DAMAGE, BURN, JAB_TIME, RUN_SPEED, DODGE_COOLDOWN, MAX_HEAT, CRIT_CHANCE, CRIT_DAMAGE,
+	LEVEL, AWAKENING, HEALTH, JAB_DAMAGE, BURN, JAB_TIME, RUN_SPEED, DODGE_COOLDOWN, MAX_HEAT, CRIT_CHANCE, CRIT_DAMAGE,
 	GUARD, SHOVES,
 ]
 
 const LABELS := {
-	LEVEL: "Level", HEALTH: "Max Health", JAB_DAMAGE: "Jab damage", JAB_TIME: "Time between jabs",
+	LEVEL: "Level", AWAKENING: "Awakening", HEALTH: "Max Health", JAB_DAMAGE: "Jab damage", JAB_TIME: "Time between jabs",
 	RUN_SPEED: "Run speed", DODGE_COOLDOWN: "Dodge cooldown", MAX_HEAT: "Max Heat",
 	CRIT_CHANCE: "Crit chance", CRIT_DAMAGE: "Crit damage", BURN: "Burn", GUARD: "Guard",
 	SHOVES: "Shoves taken",
@@ -77,6 +80,8 @@ func value_with(stat: String, effect_amount: float) -> float:
 	match stat:
 		LEVEL:
 			return Progression.level
+		AWAKENING:
+			return Awakening.stage
 		HEALTH:
 			return (_player.get_node("Health") as Health).max_health + effect_amount
 		JAB_DAMAGE:
@@ -111,6 +116,8 @@ func value_with(stat: String, effect_amount: float) -> float:
 func shown_value(stat: String) -> String:
 	if stat == GUARD:
 		return _guard_text()
+	if stat == AWAKENING:
+		return _awakening_text()
 	if stat != BURN:
 		return value_text(stat, value(stat))
 	var searing_jab := _learned_searing_jab()
@@ -118,6 +125,13 @@ func shown_value(stat: String) -> String:
 		return NOT_LEARNED
 	var duration := EmberTreeSkillFacts.number_text(searing_jab.current_burn_duration())
 	return "%d/s for %ss" % [searing_jab.burn_damage, duration]
+
+
+## "I (+3 health, +1 jab)", or NOT_LEARNED before the first Awakening.
+func _awakening_text() -> String:
+	if Awakening.stage == AwakeningStage.NONE:
+		return NOT_LEARNED
+	return "%s (%s)" % [AwakeningStage.NUMERALS[Awakening.stage], AwakeningBoost.bonus_text(Awakening.stage)]
 
 
 ## The player's Searing Jab, or null while it isn't learned.

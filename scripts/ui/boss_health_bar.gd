@@ -5,8 +5,8 @@ extends Control
 ## leaves a pale segment that drains after a moment, so big hits read. A notch marks half
 ## health, where bosses change phase. The victory text is its DefeatedBanner child.
 ##
-## Bosses reach it through the static `show_boss` / `announce_defeat` (a group call), so a
-## boss needs no reference to the HUD.
+## Bosses reach it through the static `show_boss` / `announce_defeat` / `hide_boss` (a group
+## call), so a boss needs no reference to the HUD.
 
 const GROUP := "boss_health_bar"
 ## Length of the bar, in game pixels.
@@ -42,6 +42,11 @@ static func announce_defeat(asker: Node, boss_name: String) -> void:
 	asker.get_tree().call_group(GROUP, "show_defeat", boss_name)
 
 
+## Fades the bar out without a victory (the fight reset after the player fell).
+static func hide_boss(asker: Node) -> void:
+	asker.get_tree().call_group(GROUP, "untrack")
+
+
 func _ready() -> void:
 	add_to_group(GROUP)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -53,9 +58,15 @@ func track(boss_name: String, health: Health) -> void:
 	_boss_name = boss_name.to_upper()
 	_health = health
 	_shown_share = _share_left()
-	health.hit_taken.connect(_on_hit_taken)
+	if not health.hit_taken.is_connected(_on_hit_taken):
+		health.hit_taken.connect(_on_hit_taken)
 	_fade_in_when_card_gone()
 	queue_redraw()
+
+
+func untrack() -> void:
+	_fade_to(0.0, 0.0)
+	_health = null
 
 
 func show_defeat(boss_name: String) -> void:

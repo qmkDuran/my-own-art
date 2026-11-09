@@ -8,7 +8,7 @@ const LEARNED := "learned"
 const AVAILABLE := "available"
 ## Needs a node leading to it, or a skill point, first.
 const LOCKED := "locked"
-## Its ring opens only when Emberoo evolves.
+## Its ring opens only when Emberoo Awakens.
 const SEALED := "sealed"
 
 

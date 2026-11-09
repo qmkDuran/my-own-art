@@ -25,6 +25,7 @@ const PLUM_DARK := Color("411d31")
 const COAL := Color("341c27")
 const COAL_DARK := Color("241527")
 const BRICK := Color("602c2c")
+const RUST := Color("884b2b")
 
 const ORANGE := Color("de9e41")
 const ORANGE_MID := Color("da863e")
@@ -35,6 +36,8 @@ const GREEN := Color("75a743")
 const GREEN_LIGHT := Color("a8ca58")
 const LIME_PALE := Color("d0da91")
 
+const BLUE_DEEP := Color("3c5e8b")
+const BLUE := Color("4f8fba")
 const SKY := Color("73bed3")
 const SKY_LIGHT := Color("a4dddb")
 

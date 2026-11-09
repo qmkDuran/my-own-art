@@ -93,7 +93,7 @@ static func highlight_gap(radius: float) -> float:
 	return radius * HIGHLIGHT_GAP_PER_RADIUS
 
 
-## The evolution stage a tier belongs to (0 for a tier before the first, so it never matches).
+## The tree stage (ring) a tier belongs to (0 for a tier before the first, so it never matches).
 static func stage_of_tier(tier: int) -> int:
 	if tier < 0:
 		return 0

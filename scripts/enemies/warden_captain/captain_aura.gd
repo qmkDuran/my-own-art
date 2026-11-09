@@ -25,12 +25,22 @@ var _elapsed: float = 0.0
 ## Each pixel: { "x": float, "age": float, "color": Color }
 var _pixels: Array[Dictionary] = []
 var _active_pixels: int = 0
+## `max_alpha` before phase 2 strengthened it.
+var _calm_max_alpha: float = 0.0
 
 
 func _ready() -> void:
+	_calm_max_alpha = max_alpha
 	_active_pixels = pixel_count
 	for pixel_number in _active_pixels:
 		_pixels.append(_new_pixel(randf() * pixel_lifetime))
+
+
+## Back to the phase-1 aura (the fight reset after the player fell).
+func calm() -> void:
+	_active_pixels = pixel_count
+	max_alpha = _calm_max_alpha
+	_pixels.resize(mini(_pixels.size(), _active_pixels))
 
 
 ## Phase 2: twice the data-pixels and a stronger pulse.

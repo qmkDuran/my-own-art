@@ -24,7 +24,7 @@ static func apply_to(target_health: Health, damage_per_tick: int, seconds_betwee
 	var poisoned := _find_or_add(target_health, NODE_NAME, make) as Poisoned
 	if poisoned == null:
 		return false
-	poisoned.refresh(damage_per_tick, duration)
+	poisoned.refresh(damage_per_tick, _resisted_length(target_health, NODE_NAME, duration))
 	return true
 
 

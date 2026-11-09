@@ -3,18 +3,10 @@ extends Node2D
 ## A burst of flame fanning out in an arc (Flame Uppercut), drawn in code pixel by pixel.
 ##
 ## The flame front races outward while the fire burns out from the inside, cooling from
-## gold to deep red, then breaks up into flickering pixels. A few embers drift up from it.
+## gold to deep red (blue-white to blue once Awakened), then breaks up into flickering pixels. A few embers drift up from it.
 ## Every pixel sits on the world grid (the arc is never rotated), so it stays crisp.
 ## Spawn it, call play(), and it removes itself when done.
 
-## Hottest to coolest.
-const FIRE_COLORS: Array[Color] = [
-	ApolloPalette.GOLD,
-	ApolloPalette.ORANGE,
-	ApolloPalette.ORANGE_MID,
-	ApolloPalette.RED_LIGHT,
-	ApolloPalette.RED,
-]
 ## How far out the flame front starts and ends, as a share of the reach.
 const FRONT_START := 0.35
 ## Share of the flame's life spent racing out to full reach.
@@ -37,6 +29,8 @@ const TONGUE_FLICKER_SECONDS := 0.05
 
 ## Each cell is one pixel the arc may cover: where it is, how far out (share of the reach),
 ## where across the arc (-1 = one edge, 1 = the other) and a fixed random value.
+## Hottest to coolest: Emberoo's fire colours when this started (see EmberooFlameColors).
+var _fire_colors: Array[Color] = EmberooFlameColors.fire_ramp()
 var _cell_offsets: PackedVector2Array = PackedVector2Array()
 var _cell_distances: PackedFloat32Array = PackedFloat32Array()
 var _cell_sides: PackedFloat32Array = PackedFloat32Array()
@@ -69,7 +63,7 @@ func _draw() -> void:
 	for index in _cell_offsets.size():
 		var color_index := _color_index_at(index, progress, front, back, flicker_step)
 		if color_index >= 0:
-			draw_rect(Rect2(_cell_offsets[index], Vector2.ONE), FIRE_COLORS[color_index])
+			draw_rect(Rect2(_cell_offsets[index], Vector2.ONE), _fire_colors[color_index])
 
 
 ## The fire colour of one pixel right now, or -1 when that pixel is not burning.
@@ -86,7 +80,7 @@ func _color_index_at(index: int, progress: float, front: float, back: float, fli
 	# 0 at the leading edge (hottest), 1 at the trailing edge; everything cools with time.
 	var depth := (cell_front - distance) / maxf(cell_front - cell_back, 0.05)
 	var heat_lost := depth * 0.6 + progress * 1.0 + side * 0.15
-	return clampi(floori(heat_lost * FIRE_COLORS.size()), 0, FIRE_COLORS.size() - 1)
+	return clampi(floori(heat_lost * _fire_colors.size()), 0, _fire_colors.size() - 1)
 
 
 ## Flame tongues licking out past the front: a random length per slice of the arc,
@@ -134,7 +128,7 @@ func _spawn_embers(direction: Vector2, reach: float) -> void:
 	embers.scale_amount_min = 1.0
 	embers.scale_amount_max = 2.0
 	var ramp := Gradient.new()
-	ramp.colors = PackedColorArray([FIRE_COLORS[0], FIRE_COLORS[1], FIRE_COLORS[3], Color(FIRE_COLORS[4], 0.0)])
+	ramp.colors = PackedColorArray([_fire_colors[0], _fire_colors[1], _fire_colors[3], Color(_fire_colors[4], 0.0)])
 	ramp.offsets = PackedFloat32Array([0.0, 0.3, 0.7, 1.0])
 	embers.color_ramp = ramp
 	add_child(embers)

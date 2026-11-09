@@ -74,7 +74,7 @@ static func _icon_room(kind: Kind, radius: float) -> float:
 	return radius * ULTIMATE_INNER_SHARE if kind == Kind.ULTIMATE else radius
 
 
-## A small padlock on a node whose ring opens only when Emberoo evolves.
+## A small padlock on a node whose ring opens only when Emberoo Awakens.
 static func _draw_lock_badge(canvas: CanvasItem, centre: Vector2) -> void:
 	canvas.draw_circle(centre, LOCK_BADGE_RADIUS + 2.0, EmberTreePalette.OUTLINE)
 	canvas.draw_circle(centre, LOCK_BADGE_RADIUS, EmberTreePalette.COAL)

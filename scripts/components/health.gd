@@ -68,6 +68,15 @@ func heal(amount: int) -> void:
 	healed.emit(amount)
 
 
+## Back to full health, even from dead (e.g. the player getting back up at a checkpoint,
+## or an enemy returning to its spawn after the player falls).
+func revive() -> void:
+	var missing := max_health - current_health
+	current_health = max_health
+	_damage_fraction_carried = 0.0
+	healed.emit(missing)
+
+
 ## Raises (or, with a negative amount, lowers) max health, e.g. from an Ember Tree stat.
 ## A raise also fills the new room, so the extra hits count straight away; a drop never kills.
 func change_max_health(amount: int) -> void:

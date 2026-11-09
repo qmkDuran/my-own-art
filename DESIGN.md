@@ -34,20 +34,33 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
 ## Drops and progression resources
 - **Light motes (almost every kill):** the stolen light bursts out of defeated bound Glimra and flies to Emberoo = **XP**. *(Next to build.)*
 - **Berries (sometimes):** refill Trainer's Aid charges.
-- **No loot.** No gear piles, no inventory clutter.
-- **Glimmer Shards (hand-placed, ~15–20 per game):** rewards from bosses, exploration and story moments, never random drops. The first sits in Ruins Edge's Overgrown Shrine; for now it's a placeholder pickup (`scenes/pickups/glimmer_shard.tscn`, each with its own `shard_id`) that shows "GLIMMER SHARD FOUND (shards coming soon)" and is recorded in the `ShardInventory` autoload. Each shard gives a permanent upgrade (+1 Link Rod chip slot, +1 skill point, +max Heat or a tonic charge); see the Loot plan. Skill-changing effects come from chips, not shards.
+- **No gear loot.** No gear piles, no inventory clutter: the only drops that last are hacked chips from Wardens (see "Loot: hacked chips") and scrap to hack them.
+- **Glimmer Shards (hand-placed, ~15–20 per game):** rewards from bosses, exploration and story moments, never random drops. Each shard (`scenes/pickups/glimmer_shard.tscn`, its own `shard_id`) gives one **permanent upgrade**, set by its `reward` export (`ShardReward`): `CHIP_SLOT` (+1 Link Rod slot, up to 4), `SKILL_POINT` (+1 skill point), `MAX_HEAT` (+1 max Heat) or `AID_CHARGE` (+1 Trainer's Aid charge). The toast says exactly what you got ("GLIMMER SHARD: +1 chip slot"). `ShardInventory` saves each found shard with its reward, so the upgrade comes back on load and the shard never respawns or pays twice (a shard found in an older save, before rewards, pays out once when its zone loads). Skill-changing effects come from chips, not shards.
+  - **The Overgrown Shrine shard (Ruins Edge) gives `CHIP_SLOT`:** the rod starts with one slot and Ruins Edge's Wardens and Captain are the first chip drops, so a second slot in zone 1 doubles the build space right when chips arrive; skill points already come every level (~5 in Ruins Edge), so one more would barely be felt.
 - **Heat** (Emberoo's resource): built by landing jabs, spent by skills, cools off out of combat. Shown as fire pips beside the heart.
 
-## Loot plan: hacked chips (build after the vertical slice)
-- **The Link Rod:** the trainer carries a stolen, hacked Warden control rod with a few chip slots (1-2 at first, more through the story).
-- **Chips drop only from humans** (Wardens, captains, other servants of the AI God), never from Glimra, so loot stays rare and hunting Wardens is the chase.
-- **Hacking:** chips drop "locked" with 1-3 modifiers; hack them with scrap from broken rods to reveal, reroll or upgrade mods (crafting).
-- **Mods:** simple, with exact numbers like the Ember Tree (stats, effects, rare "overclocked" mods that change a skill).
-- **Glimmer Shards are permanent exploration rewards** (hand-placed in side pockets and from optional elites), each giving a lasting upgrade: +1 Link Rod chip slot, +1 skill point, +max Heat or a tonic charge (like PoE 2's optional-boss rewards). Skill-changing effects belong to chips. No gear on Emberoo, no clothes, no inventory grid.
+## Loot: hacked chips (built)
+- **The Link Rod** (`LinkRod` autoload): the trainer's stolen, hacked Warden control rod. **1 chip slot** at the start, +1 per `CHIP_SLOT` Glimmer Shard, **up to 4**. Storage holds **20 chips** (equipped ones included); salvage to make room (a chip on the ground waits, with a "CHIP STORAGE FULL" toast).
+- **Drops only from humans** (`ChipDrop` on the Warden and Warden Captain scenes; future Warden types get one too), never from Glimra: a Warden drops a chip **25%** of the time and always **2–4 scrap**; the Captain always drops a chip (2–3 mods, better tiers) and **12–15 scrap**. The chip pops out as a small cyan 16×16 chip (`art/pickups/hacked_chip.png`); scrap bits fly to Emberoo like motes. Ruins Edge holds ~35 scrap and ~2–3 chips.
+- **Each chip:** its tier is the act it dropped in (Ruins Edge = Act 1). Its **1–3 mods** roll at that tier (20% a tier higher, 50% from the Captain) and can be upgraded to tier act + 1, so **Act 1 chips hold tier 1–2 mods**. Mods drop **locked ("???") and do nothing until revealed.**
+- **Hacking with scrap** (`ChipHacking`): **reveal** a locked mod **5**, **reroll** a revealed mod into another of the same tier **12**, **upgrade** a revealed mod one tier **30** (never past the chip's max tier; overclocked mods stay at tier 2). **Salvage** gives 3 + 2 per mod tier.
+- **Mods** (one table, `scripts/chips/chip_mod_table.gd`, tier 1 / 2 / 3): +1/2/3 jab damage, +2/3/5 max health, +1/2/3 max Heat, -0.3/0.5/0.8s Flame Uppercut cooldown (floor 0.5s), +3/5/8% crit chance, burn lasts +0.5/1/1.5s, +1/2/3 Aid heal, poison 25/50/75% shorter (floor 20%), +4/6/10 run speed, -0.05/0.1/0.15s dodge cooldown (floor 0.1s). **Overclocked** (tier 2 only, 12% of tier-2 rolls): "Jabs hit a second enemy behind the first" (24px past the furthest hit), "Dodge leaves a short fire trail" (0.8s, 1 burn/s for 1s; quiet if Ember Hop is learned), "Flame Uppercut pulls enemies in" (to 10px, from up to reach + 20px).
+- **Exact numbers, never vague percentages:** every revealed mod shows its stat as before → after against Emberoo's live stats (`ChipStatSheet`), e.g. "Crit chance 10% → 15%", "Max Health 10 → 12"; upgrades show theirs too ("Upgrade to T2: Max Health 12 → 13"). Burn and uppercut mods note "(needs Searing Jab / Flame Uppercut)".
+- **`ChipEffects`** (GameLayer) applies the equipped chips' revealed mods to Emberoo, re-applying on every change and on load and tracking what it added, so totals stay exact; overclocked mods add a small component to the player (`scripts/chips/overclocks/`).
+- **The Link Rod screen (C, `link_rod` action):** pauses, Ember Tree style (Monogram, card frames, 960×540). Left: the rod (`art/ui/link_rod.png`, sockets lit cyan when filled, faint when open, crossed when not found yet) with its slots, and "The rod gives Emberoo" (without chips → now). Middle: storage as a list (no grid), "IN ROD" marked. Right: the selected chip, each mod with its numbers and Reveal / Reroll / Upgrade buttons (greyed with the reason when not possible), Put in rod / Take out and Salvage. Header: scrap and costs. Click selects; right-click a chip puts it in or takes it out.
+- **Saved:** chips (mods, tiers, revealed), equipped serials, scrap (`link_rod` section).
+- **Debug:** F7 gives a random tier-2 chip (3 mods) and 50 scrap.
+- No gear on Emberoo, no clothes, no inventory grid.
 
 ## Build system (locked)
-- **One evolution line:** Emberoo → Furnaroo (Stage 2, ~24×24) → Emperoo (Stage 3, ~32×32), the same for every build (reference: art/reference/emberoo_inferno_line_concept.png). Builds differ through the Ember Tree and show through skills and effects, not body shape. (Branching evolution was considered and dropped: about 3× the art.)
-- **Levelling:** a small automatic stat boost (the "ding") + **1 skill point** per level. Levels get slower to earn: ~level 1 after the first pack, ~4–5 by the end of Ruins Edge, ~10–12 by the end of Act 1, cap **50** at the end of the game (curve and maths in `scripts/systems/progression.gd`). **Evolution:** a big power jump + a new tree ring + another shard slot.
+- **Awakening, not evolution (decided 2026-11-09):** no evolution art. Emberoo keeps his 16×16 sprite and **Awakens**: the same sprite transformed by colour and effects, plus new power. The same for every build; builds still differ through the Ember Tree, skills and effects. (Evolution art stays parked as an open option in PARKING_LOT.md.)
+  - **Trigger:** a level threshold, `AwakeningStage.ONE_LEVEL` = **10** (about the end of Act 1) for **Awakening I**, `TWO_LEVEL` = **25** (planned, mid-game) for **Awakening II** (`scripts/systems/awakening_stage.gd`; the `Awakening` autoload holds the stage).
+  - **The awakening moment** (~1.2 s): Emberoo stops and faces the camera, light gathers (a flash and a small ring), then a flare: a ring of his new blue fire, three shockwaves, a screen shake, a brief white screen flash and a "EMBEROO AWAKENED" banner (top-centre); the new look sticks. He can't be hurt meanwhile (`AwakeningMoment`, HUD `AwakeningAnnouncement`).
+  - **The look** (palette-swap shader `scripts/shaders/palette_swap.gdshader`, colours in `AwakeningPalette`): **Awakening I, "Blue Flame"**: fur a deeper ember orange (`#be772b`, shade `#884b2b`), the flames on his ears and tail tip blue (`#73bed3`), the gold highlights on ears, tail and fists blue-white (`#a4dddb`); the gloves stay red. **Awakening II**: darker again (shade `#602c2c`, a night-blue `#172038` outline), white-hot highlights and a quiet, low-alpha blue flame shimmer rising off his body (`AwakeningAura`; not an elite-style aura). The cream belly never changes, so he stays the brightest, clearest thing on screen. Ear/tail flames and gloves share one red in the art, so `EmberooFlameMarker` tells them apart at load (small red patches at the ear tips and tail tip) without touching the art files.
+  - **His fire turns blue too:** fist embers, the Flame Uppercut arc, the Spinning Hook fire ring, Ember Hop's trail, Wildfire's streak, burn embers on enemies and the dodge afterimages all read `EmberooFlameColors` (gold → red before; white → sky → blue after; deeper blue at Awakening II).
+  - **Power:** each Awakening opens the next Ember Tree ring (Awakening I → Stage 2, Awakening II → Stage 3 Ultimates) and gives a flat bump: **+3 Max Health and +1 jab damage** per Awakening (`AwakeningBoost`), shown as an "Awakening" row in the tree's stats panel.
+  - **Debug:** F4 cycles the stage (0 → I → II → 0); stepping up plays the moment.
+- **Levelling:** a small automatic stat boost (the "ding") + **1 skill point** per level. Levels get slower to earn: ~level 1 after the first pack, ~4–5 by the end of Ruins Edge, ~10–12 by the end of Act 1, cap **50** at the end of the game (curve and maths in `scripts/systems/progression.gd`). **Awakening** (levels 10 and 25): a new look, a flat stat bump and a new tree ring (see above).
 - **Ember Tree:** small (fits on one screen) with **2–3 labelled branches** (e.g. Inferno = burn, Flurry = speed/combos, Bruiser = tanky). Players can mix freely.
 - Nodes should **change how you play**, not just add small percentages. Keep to ~5 clear stats (Health, Power, Speed, Heat, Burn).
 - **Crits:** every attack (jab, spin, skills) can crit: **10% base chance, ×2 damage** (rounded), shown as a gold "4!" number and in the Ember Tree stats. No tree nodes change crits yet.
@@ -82,7 +95,7 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
   - **Boar Den** (through the gap in Conduit Hall's north wall): an elite Gruntite and a cache of 3 berries.
   - **Broken Tower** (the landmark, between the Fallen Courtyard, the Sunken Garden trail and Conduit Hall): a lore stone at its foot. Its clearing is the **loop**: a shortcut from Conduit Hall's south-west mouth back down to the Fallen Courtyard → Sunken Garden trail and the middle meadow.
   - **Berry Hollow** (west of the Sunken Garden, now larger) keeps its toads and berries.
-  - **Boss-gate checkpoint** (east of the trail between Conduit Hall and the Warden Gate): a waystone, lit conduits, Warden banners and 2 berries. Its `Areas/BossGateCheckpoint/Checkpoint_BossGate` Marker2D (group `checkpoints`) is where a respawn system should put you; there is none yet (dying still reloads the zone). The Warden Gate pack stands 3 tiles further south so the clearing stays out of their sight.
+  - **Boss-gate checkpoint** (east of the trail between Conduit Hall and the Warden Gate): a waystone, lit conduits, Warden banners and 2 berries. Its waystone's flame glyph lights up once you reach `Areas/BossGateCheckpoint/Checkpoint_BossGate` (a `Checkpoint`, group `checkpoints`); see "Death and respawn". The Warden Gate pack stands 3 tiles further south so the clearing stays out of their sight.
 - Hand-placed berries never expire (`lifetime = 0`); dropped ones still fade after 25 s.
 - Tiles are 16×16 from `art/tiles/ruins_edge_tileset.tres`: Ground, Decoration, and an Obstacles layer y-sorted with the creatures (`World` node). Dense forest walls the map in. Cyan conduits in the stone are the only tech hint: dead and dark-blue in the open ruins, lit in Conduit Hall and near the boss. Rows 28+ of the atlas hold the revamp's tiles (water by side mask, terrace steps, lit conduits, the statue, shrine, standing stones, Warden banner, gate arch and broken tower); nothing above row 28 moved.
 - **Enemies wait until they notice you:** toads and Gruntites within ~7 tiles, Zephoots ~8, Wardens ~9 (their visors see Glimra light). Noticing (or being hit) alerts the rest of the pack; summoned toads come out already hunting. Noticing a species for the first time brings up its discovery card.
@@ -106,7 +119,7 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
 ## Art
 - 2D pixel art, made by the developer in Aseprite (studying *Pixel Logic*)
 - Tiles and world: 16×16
-- Creature size grows with evolution: stage 1 = 16×16, stage 2 ≈ 24×24, stage 3 = 32×32
+- Emberoo stays 16×16: he Awakens (recolour + effects) instead of evolving into bigger sprites
 - **Palette: Apollo** (46 colours, Lospec), chosen for its dark tone and clear ramps. Swappable later via Aseprite colour remap.
   - **Every colour we pick comes from Apollo**: art files *and* colours set in code (UI, particles, effects). Checked by script: all art is 100% Apollo; code colours snapped to Apollo.
   - On screen, transparency, fades and glow blend Apollo colours into in-between shades; that's expected and fine.
@@ -156,10 +169,10 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
 - Fire kangaroo boxer. Stage 1 sprite done (16×16): idle (with blink), hop, jab, jab2, dodge in front/side/back.
 - Jab: hold to repeat, alternates fists, roots you in place. Dodge: a kangaroo leap that can cancel a jab.
 - **Skills on Q/W/E/R** (the skill bar), paid with Heat. **Flame Uppercut (E):** 3 Heat, 2s cooldown; a rising punch that bursts into a ~100° arc of flame (~26px), 3 damage + strong knockback to everything in it. Roots you; the dodge can cancel only its wind-up. Q, W and R are empty for now.
-- **Controls:** mouse is the main control; arrow keys also move (no WASD, since W is a skill key). Space = dodge, F = Trainer's Aid.
+- **Controls:** mouse is the main control; arrow keys also move (no WASD, since W is a skill key). Space = dodge, F = Trainer's Aid, K = Ember Tree, C = Link Rod.
 
 ## Naming
-- Creature names blend **[element/trait] + [animal/sound]** into 2–3 fun syllables (e.g. **Emberoo**, **Toxlop**); evolutions get heavier names.
+- Creature names blend **[element/trait] + [animal/sound]** into 2–3 fun syllables (e.g. **Emberoo**, **Toxlop**); an Awakening keeps the name (no evolutions).
 - Every name must be original and checked (web + later USPTO/EUIPO) before use.
 - Names in use: **Glimra** (the creatures), **Emberoo** (player, fire kangaroo), **Toxlop** (toxic toad), **Zephoot** (wind puff-owl) and **Gruntite** (stone boar), both pending the trademark check, **Wardens** (the Handlers; fine for enemies, not as a game title).
 
@@ -170,13 +183,19 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
 - **No mana yet.** When skills arrive, Emberoo's resource is **Heat**, gained by landing hits and spent on fire skills, shown as **fire pips** next to the heart. Each element class gets its own resource.
 
 ## Skill tree presentation
-- **Radial "Ember Tree":** Emberoo's live idle animation sits at the centre; the tree grows outward in rings. Inner ring = stage 1, middle ring opens at the stage 2 evolution, outer ring (Ultimates) at stage 3.
+- **Radial "Ember Tree":** Emberoo's live idle animation sits at the centre; the tree grows outward in rings. Inner ring = stage 1, middle ring opens at Awakening I (level 10), outer ring (Ultimates) at Awakening II (level 25).
 - Skills are diamond **embers**, stat picks are round **coals**; learned nodes glow, available ones are outlined, locked ones are cold coal. Learned paths are **flame veins**; learning a node sends fire along the vein.
 - Same rules underneath as before (skill → Enhanced → choose 1 of 2; stat nodes between).
 - Each element's tree has its own motif (fire veins for Emberoo; e.g. glowing mycelium for toxic).
 - UI is **hybrid**: pixel-art icons and frames, text rendered at higher resolution for readability.
 - **Premium polish checklist:** eased motion everywhere (no popping), 2D glow on bright pixels, a unique hand-drawn icon per skill, one good licensed pixel font, a custom 9-slice frame, generous spacing, sound for hover/learn/unlock, consistent style across all screens.
 - Mockups: radial ember tree and column tree (session scratchpad; regenerate if needed).
+
+## Creature Log (the bestiary)
+- **Why we track creatures:** the Creature Log is Emberoo's **bestiary**. The `CreatureLog` autoload records each species the first time you meet it (the discovery card pops up) and SaveGame keeps that list.
+- **What it will show, per species met:** its name, element and portrait; **what it does**: its attacks and the status effects they bring (e.g. "Tongue lash poisons: 1 damage every 1.5 s for 3 s"; "Charge ram staggers"); and **tips** for fighting it (e.g. "Dodge through the gust orb"; "A missed charge leaves it dazed: punish it").
+- Unmet species stay hidden (a silhouette at most), so the log fills up as you explore. Elites and bosses can get their own entries.
+- **No screen yet:** the data is recorded now; the Creature Log screen is parked (PARKING_LOT.md).
 
 ## Visual hierarchy (applies to every enemy)
 Brightest and busiest first: **player** > **danger cues** (attack tells, projectiles) > **elites/bosses** (auras, glows) > **trash mobs** (readable but quiet) > **world**.
@@ -210,7 +229,7 @@ Enemies give the player mild elemental effects, **sparingly**: they must never g
 - Later enemies, one at a time: tick (drains energy), vulture (circles then dives).
 
 ## Progression
-- Levelling + evolutions + skill trees
+- Levelling + Awakenings + skill trees
 - Skill tree inspiration: Grim Dawn, PoE 2, Last Epoch, Diablo 4
   - Leaning toward D4-style skill tiers + "pick one of two" modifier choices
   - Stat-choice nodes are welcome
@@ -219,13 +238,22 @@ Enemies give the player mild elemental effects, **sparingly**: they must never g
 
 ## Saving
 - One save slot, `user://save_1.json`, written by the `SaveGame` autoload. It has a `version` field; older files are migrated in `SaveGame._migrate`, and damaged or newer-version files are moved to `save_1.unreadable.json` and the game starts fresh.
-- Saved: level, XP and debug bonus points (Progression), learned Ember Tree node IDs and the open stage (EmberTree), species met (CreatureLog), Glimmer Shards found by ID (ShardInventory; a found shard never appears again), the current zone and Trainer's Aid charges. Spent points aren't stored: loading gives back every point, then re-learns the saved nodes under the normal rules, so unknown IDs or nodes beyond the points owned are dropped.
+- Saved: level, XP and debug bonus points (Progression), the Awakening stage (Awakening; it decides which tree rings are open, and a save without one gets the stage its level has earned), learned Ember Tree node IDs (EmberTree), species met (CreatureLog), Glimmer Shards found by ID with their rewards (ShardInventory; a found shard never appears again), the Link Rod's chips, equipped chips and scrap (LinkRod), the last checkpoint reached with its zone (Checkpoints), the current zone and Trainer's Aid charges. Spent points aren't stored: loading gives back every point, then re-learns the saved nodes under the normal rules, so unknown IDs or nodes beyond the points owned are dropped.
 - Each system owns its section (`to_save_data` / `load_save_data`); new systems add a section the same way. The tree is saved by node ID only, so nodes added later need no migration.
-- Saves automatically on a level up, on learning or unlearning a node, on meeting a new species, on finding a shard, every 60 s and on quitting; writes go to a temp file that is renamed over the save. Loads at game start, before the zone is built.
-- The test arena never loads or writes the save (DebugControls' `uses_save_file` is off there). Debug keys: F5 saves now ("SAVED" toast), F9 deletes the save and restarts fresh.
+- Saves automatically on a level up, on Awakening, on learning or unlearning a node, on meeting a new species, on finding a shard, every 60 s and on quitting; writes go to a temp file that is renamed over the save. Loads at game start, before the zone is built.
+- The test arena never loads or writes the save (DebugControls' `uses_save_file` is off there). Debug keys: F4 cycles the Awakening stage, F5 saves now ("SAVED" toast), F6 makes Emberoo fall (tests death and respawn), F7 gives a tier-2 chip and 50 scrap, F9 deletes the save and restarts fresh.
+
+## Death and respawn
+- **Forgiving, ARPG style** (PoE / Last Epoch campaign checkpoints). No XP or progress is lost for now; a penalty (e.g. some XP toward the next level) could come later, once the game has the depth to make it fair.
+- **The fall (about a second):** Emberoo freezes on his crouched hop frame, sags, darkens and fades (`CreatureFall`) in brief slow motion; then the screen fades to dark with a small "EMBEROO FELL" in the HUD's pixel font (`DeathScreen`). `Respawner` (in the GameLayer) runs the sequence.
+- **In the dark** (`WorldReset`): enemies already killed stay dead; living ones heal to full, lose their status effects and go back to their spawn points, unaware (`Enemy.return_to_spawn`); summoned creatures vanish. Emberoo gets back up at full health, with no Heat, every Trainer's Aid charge and no status effects, and bounds in with the zone-entrance hop.
+- **Checkpoints** (`Checkpoint`, a Marker2D in group `checkpoints`): walking within ~40 px makes one the last reached, with a small "CHECKPOINT" toast (`CheckpointToast`); a waystone's flame glyph glows while it's the current one (`WaystoneGlow`). Each zone has a start checkpoint at the spawn (`is_zone_start`), reached silently when the zone starts and never by walking back. The `Checkpoints` autoload keeps the last one (with its zone) and saves it, so loading a game starts you there.
+- **Ruins Edge:** `Checkpoint_Start` at the spawn and `Checkpoint_BossGate` at the waystone before the Final Arena.
+- **Bosses:** falling in the Warden Captain fight starts it over: he heals to full, goes back to phase 1 and his spawn, his bar hides, the gates open (`BossArena.start_over`), and you get up at the boss-gate checkpoint (starting the fight counts as reaching it, silently).
+- **The test arena** has no checkpoints, so you get back up where you fell.
 
 ## Scope rules
-- Vertical slice first, placeholder art allowed: 1 creature, 1 enemy type, XP/levelling, 1 evolution, 1 small skill tree (3–5 nodes).
+- Vertical slice first, placeholder art allowed: 1 creature, 1 enemy type, XP/levelling, 1 Awakening, 1 small skill tree (3–5 nodes).
 - If it isn't fun with boxes, better art won't fix it.
 
 ## Code rules
@@ -236,8 +264,7 @@ Enemies give the player mild elemental effects, **sparingly**: they must never g
 - **Components over big classes.** A creature or enemy is a thin coordinator; each job (input, click orders, summoning, a shove, drops on death) lives in its own child node or helper.
 
 ## Open questions
-- Core gameplay loop: draft is hub → link into zone → fight → XP + gems → hub to spend → harder zone → evolve
-- How evolution is triggered and how it ties to the skill tree
+- Core gameplay loop: draft is hub → link into zone → fight → XP + gems → hub to spend → harder zone → Awaken
 - Gem system details
 
 ## Reference games

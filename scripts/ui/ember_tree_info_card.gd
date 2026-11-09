@@ -20,7 +20,7 @@ const STATE_COLORS := {
 const KINDS_WITH_PREVIEW: Array[Kind] = [Kind.SKILL, Kind.ULTIMATE]
 
 const OVERVIEW_TITLE := "How the tree works"
-const OVERVIEW_TEXT := "Ignite embers to change how Emberoo fights. Each costs 1 skill point; you earn 1 per level.\nThe inner ring is Stage 1. The outer rings open when Emberoo evolves."
+const OVERVIEW_TEXT := "Ignite embers to change how Emberoo fights. Each costs 1 skill point; you earn 1 per level.\nThe inner ring is Stage 1. The outer rings open when Emberoo Awakens (level %d and %d)." % [AwakeningStage.ONE_LEVEL, AwakeningStage.TWO_LEVEL]
 const OVERVIEW_TAG := "POINT AT A BRANCH NAME OR AN EMBER"
 ## A small badge and a short note, for nodes whose effect is not built yet.
 const COMING_SOON_BADGE := "COMING SOON"

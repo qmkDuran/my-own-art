@@ -1,11 +1,13 @@
 class_name GlimmerShard
 extends Node2D
-## A hand-placed Glimmer Shard (placeholder until shards can be socketed): a small glowing
-## crystal that floats over its spot. Walking over it records it in ShardInventory, which
-## shows the "found" toast and keeps it from appearing again.
+## A hand-placed Glimmer Shard: a small glowing crystal that floats over its spot. Walking
+## over it gives its permanent upgrade (`reward`, see ShardReward) and records it in
+## ShardInventory, which shows the toast and keeps it from appearing (or paying) again.
 
 ## Unique across the game (e.g. "ruins_edge_shrine"): the save remembers shards by this ID.
 @export var shard_id: String = ""
+## The permanent upgrade it gives (see ShardReward).
+@export var reward: ShardReward.Kind = ShardReward.Kind.CHIP_SLOT
 ## How close the player must be to pick it up, in pixels.
 @export var pickup_radius: float = 10.0
 
@@ -28,6 +30,9 @@ func _ready() -> void:
 	if shard_id.is_empty():
 		push_warning("GlimmerShard at %s has no shard_id; it can't be saved." % global_position)
 	if ShardInventory.has_found(shard_id):
+		# Found in an older save, before shards gave upgrades: it pays out now, once.
+		ShardInventory.fill_in_reward(shard_id, reward)
+		set_process(false)
 		queue_free()
 
 
@@ -53,5 +58,6 @@ func _try_pickup() -> void:
 	var player := PlayerFinder.find(self)
 	if player == null or player.global_position.distance_to(global_position) > pickup_radius:
 		return
-	ShardInventory.collect(shard_id)
+	if ShardInventory.collect(shard_id, reward):
+		ShardReward.apply_live(player, reward)
 	queue_free()

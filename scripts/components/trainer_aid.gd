@@ -22,6 +22,8 @@ var _is_in_flight: bool = false
 
 
 func _ready() -> void:
+	# Glimmer Shards found so far each add a charge for good (see ShardReward).
+	max_charges += ShardInventory.count_of(ShardReward.Kind.AID_CHARGE)
 	charges = max_charges
 
 
@@ -35,6 +37,12 @@ func has_room() -> bool:
 
 func add_charge() -> void:
 	charges = mini(max_charges, charges + 1)
+	charges_changed.emit(charges, max_charges)
+
+
+## Every charge back (e.g. getting back up at a checkpoint).
+func refill() -> void:
+	charges = max_charges
 	charges_changed.emit(charges, max_charges)
 
 

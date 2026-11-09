@@ -15,6 +15,10 @@ const GUARD_BLOCKS: Array[String] = [Poisoned.NODE_NAME, Staggered.NODE_NAME, Bu
 @export var ash_guard: AshGuard
 @export var unshakable: Unshakable
 
+## Share of a poison's length that lands: 1 = all, 0.5 = half as long (e.g. a poison
+## resistance chip, see ChipEffects).
+var poison_share: float = 1.0
+
 
 ## True when the effect called `effect_name` doesn't land on the player right now.
 func resists(effect_name: String) -> bool:
@@ -25,4 +29,6 @@ func resists(effect_name: String) -> bool:
 func length_of(effect_name: String, seconds: float) -> float:
 	if effect_name == Staggered.NODE_NAME and unshakable != null:
 		return seconds * unshakable.stagger_share()
+	if effect_name == Poisoned.NODE_NAME:
+		return seconds * poison_share
 	return seconds

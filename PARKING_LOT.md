@@ -26,6 +26,7 @@ Good ideas that don't belong in the current milestone. Check here when a milesto
 - Trainer customisation screen built (scenes/ui/trainer_customizer.tscn); hook into new-game flow later.
 
 ## Later systems
+- **Creature Log screen (bestiary).** A screen listing every species met (CreatureLog already records them): portrait, name, element, what it does (attacks and status effects, e.g. "tongue lash poisons"), and tips. Unmet species show as silhouettes. Needs per-species text in the creature data (e.g. alongside `CreatureInfo`).
 - Capture = new class: surviving creatures freely join you as new playable classes (after 3–4 classes exist).
 
 ## Controls
@@ -33,7 +34,7 @@ Good ideas that don't belong in the current milestone. Check here when a milesto
 - **Smart move-attack:** while holding left-click to move, auto-jab an enemy that blocks the path within reach (offered, not yet approved).
 
 ## Art
-- **Emberoo evolution art (open problem).** About 7 attempts so far (hand-drawn, ChatGPT concept, PixelLab, a hybrid cleanup, chibi, grown-from-base); none hit the bar. What we learned:
+- **Emberoo evolution art (parked, optional).** Replaced for now by **Awakening** (same sprite, recoloured, blue fire; see DESIGN.md). Evolution art stays an open option for later, e.g. as a late-game form or if a commission becomes possible. About 7 attempts so far (hand-drawn, ChatGPT concept, PixelLab, a hybrid cleanup, chibi, grown-from-base); none hit the bar. What we learned:
   - the original 16px Emberoo is the style anchor (it reads as a kangaroo);
   - HGSS follower bodies are about 14x19, 17x24 and 25x25 with about 14 colours, with one bold signature shape per stage;
   - keep the kangaroo identity first;

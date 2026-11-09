@@ -2,14 +2,14 @@ extends Node
 ## Keeps the player's progress between sessions (registered as the "SaveGame" autoload).
 ##
 ## One JSON file, SAVE_PATH, holds a `version` (for future migrations), the current zone
-## and a section per system: Progression, EmberTree, CreatureLog, ShardInventory and the
-## player's TrainerAid. Each system writes and reads its own section (`to_save_data` /
+## and a section per system: Progression, Awakening, EmberTree, CreatureLog, ShardInventory,
+## LinkRod (chips and scrap), Checkpoints (the last checkpoint reached) and the player's TrainerAid. Each system writes and reads its own section (`to_save_data` /
 ## `load_save_data`), so this file never knows their insides.
 ##
 ## Loads in `_ready`, before the first zone is built, so everything that reads Progression
 ## or EmberTree in its own `_ready` (LevelUpBoost, the HUD, EmberTreeEffects) sees the
-## loaded values. Saves on a level up, on learning or unlearning a node, on meeting a new
-## species, on finding a Glimmer Shard, every AUTOSAVE_SECONDS and on quitting. Writes go to a temp file that is then
+## loaded values. Saves on a level up, on Awakening, on learning or unlearning a node, on meeting a new
+## species, on finding a Glimmer Shard, on reaching a checkpoint, every AUTOSAVE_SECONDS and on quitting. Writes go to a temp file that is then
 ## renamed over the save, so a crash mid-write never leaves half a file.
 ##
 ## The test arena turns saving off (DebugControls' `uses_save_file`), so it never loads
@@ -38,9 +38,12 @@ var _pending_aid_data: Dictionary = {}
 func _ready() -> void:
 	_load_from_disk()
 	Progression.leveled_up.connect(_queue_autosave.unbind(1))
+	Awakening.stage_changed.connect(_queue_autosave.unbind(1))
 	EmberTree.changed.connect(_queue_autosave)
 	CreatureLog.discovered.connect(_queue_autosave.unbind(1))
 	ShardInventory.collected.connect(_queue_autosave.unbind(1))
+	LinkRod.changed.connect(_queue_autosave)
+	Checkpoints.changed.connect(_queue_autosave)
 	get_tree().node_added.connect(_on_node_added)
 	_start_autosave_timer()
 	_go_to_saved_zone.call_deferred()
@@ -89,9 +92,12 @@ func _build_save() -> Dictionary:
 		"version": VERSION,
 		"zone": _current_zone_path(),
 		"progression": Progression.to_save_data(),
+		"awakening": Awakening.to_save_data(),
 		"ember_tree": EmberTree.to_save_data(),
 		"creature_log": CreatureLog.to_save_data(),
 		"shards": ShardInventory.to_save_data(),
+		"link_rod": LinkRod.to_save_data(),
+		"checkpoint": Checkpoints.to_save_data(),
 	}
 	var aid := PlayerFinder.find_component(self, TRAINER_AID_NAME) as TrainerAid
 	if aid != null:
@@ -99,14 +105,18 @@ func _build_save() -> Dictionary:
 	return data
 
 
-## Order matters: Progression first (it hands back every owned point), then EmberTree
-## (which spends them again on the saved nodes).
+## Order matters: Progression first (it hands back every owned point), then Awakening
+## (it opens the tree's rings, and an older save's stage follows from the level), then
+## EmberTree (which spends the points again on the saved nodes).
 func _apply(data: Dictionary) -> void:
 	_is_loading = true
 	Progression.load_save_data(SaveData.read_section(data, "progression"))
+	Awakening.load_save_data(SaveData.read_section(data, "awakening"))
 	EmberTree.load_save_data(SaveData.read_section(data, "ember_tree"))
 	CreatureLog.load_save_data(SaveData.read_section(data, "creature_log"))
 	ShardInventory.load_save_data(SaveData.read_section(data, "shards"))
+	LinkRod.load_save_data(SaveData.read_section(data, "link_rod"))  # after the shards: they add its slots
+	Checkpoints.load_save_data(SaveData.read_section(data, "checkpoint"))
 	_pending_aid_data = SaveData.read_section(data, "trainer_aid")
 	var zone: Variant = data.get("zone")
 	_saved_zone_path = zone if zone is String else ""
@@ -191,7 +201,7 @@ func _on_node_added(node: Node) -> void:
 		node.ready.connect(_restore_aid.bind(node), CONNECT_ONE_SHOT)
 
 
-## Only the first Trainer's Aid after loading gets the saved charges; after a death it starts full as before.
+## Only the first Trainer's Aid after loading gets the saved charges (a fall refills it anyway: CreatureFall).
 func _restore_aid(aid: TrainerAid) -> void:
 	if enabled and not _pending_aid_data.is_empty():
 		aid.load_save_data(_pending_aid_data)

@@ -19,6 +19,9 @@ const KINDLING_ID := "kindling"
 ## How many times longer burns last with Kindling.
 @export var kindling_multiplier: float = 2.0
 
+## Seconds added to every burn on top (e.g. a "Burn lasts +1s" chip, see ChipEffects).
+var bonus_burn_seconds: float = 0.0
+
 ## How long a burn lasts with Kindling, in seconds (shown in Kindling's facts).
 var kindled_duration: float:
 	get:
@@ -34,9 +37,10 @@ func is_unlocked() -> bool:
 	return EmberTree.is_skill_unlocked(name)
 
 
-## How long a burn lasts right now, counting Kindling.
+## How long a burn lasts right now, counting Kindling and chip bonuses.
 func current_burn_duration() -> float:
-	return kindled_duration if EmberTree.is_learned(KINDLING_ID) else burn_duration
+	var duration := kindled_duration if EmberTree.is_learned(KINDLING_ID) else burn_duration
+	return duration + bonus_burn_seconds
 
 
 func _on_target_hit(target_health: Health) -> void:

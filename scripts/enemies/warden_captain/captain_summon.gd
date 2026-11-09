@@ -22,6 +22,11 @@ func count_down(delta: float) -> void:
 	summoner.count_down(delta)
 
 
+func start_over() -> void:
+	super.start_over()
+	summoner.start_over(first_use_delay)
+
+
 func _is_wanted(distance_to_player: float) -> bool:
 	return distance_to_player >= minimum_distance and summoner.is_time_to_summon()
 

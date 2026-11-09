@@ -18,6 +18,11 @@ var _seconds_since_last_hit: float = 0.0
 var _seconds_until_next_pip_lost: float = 0.0
 
 
+func _ready() -> void:
+	# Glimmer Shards found so far each add a pip for good (see ShardReward).
+	max_heat += ShardInventory.count_of(ShardReward.Kind.MAX_HEAT)
+
+
 func _process(delta: float) -> void:
 	_seconds_since_last_hit += delta
 	if heat == 0 or _seconds_since_last_hit < cool_off_delay:
@@ -33,6 +38,13 @@ func on_hits_landed(_hit_count: int) -> void:
 	_seconds_since_last_hit = 0.0
 	_seconds_until_next_pip_lost = 0.0
 	_set_heat(heat + heat_per_landed_jab)
+
+
+## Back to no Heat at once (e.g. getting back up at a checkpoint).
+func cool_down_fully() -> void:
+	_seconds_since_last_hit = 0.0
+	_seconds_until_next_pip_lost = 0.0
+	_set_heat(0)
 
 
 func has(amount: int) -> bool:

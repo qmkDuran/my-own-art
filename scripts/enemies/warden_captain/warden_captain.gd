@@ -8,7 +8,8 @@ extends SpeciesEnemy
 ## telegraphed and has super armour while it winds up; afterwards he recovers for a moment
 ## (the punish window) and a hit can stagger him. At half health CaptainPhaseTwo starts:
 ## faster wind-ups and new moves. His death plays out in CaptainDefeat; the boss bar on the HUD
-## shows his health once the fight starts.
+## shows his health once the fight starts. If the player falls, the fight starts over
+## (`_on_returned_to_spawn`): full health, phase 1, the bar hidden.
 ##
 ## States:
 ##   WAITING    -> stands (hasn't noticed the player, or enemies are paused)
@@ -176,6 +177,15 @@ func _react_to_hit(source_position: Vector2) -> void:
 	sprite.replay_animation("stagger")
 	var still_recovering_for := _timer.seconds_left() if _timer.state == State.RECOVERING else 0.0
 	_timer.enter(State.STAGGERED, maxf(stagger_time, still_recovering_for))
+
+
+func _on_returned_to_spawn() -> void:
+	_end_attack()
+	_has_started_fight = false
+	phase_two.reset()
+	for attack in _attacks:
+		attack.start_over()
+	BossHealthBar.hide_boss(self)
 
 
 func _die() -> void:

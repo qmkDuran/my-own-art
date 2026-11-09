@@ -2,7 +2,9 @@ extends Node
 ## Every creature species the player has met (registered as the "CreatureLog" autoload).
 ##
 ## The first time a species is met, `discovered` fires so the HUD can show the
-## "new creature" card. SaveGame keeps the species met between sessions; later they will show on a Creature Log screen.
+## "new creature" card. SaveGame keeps the species met between sessions. This is the
+## bestiary's data: a Creature Log screen (parked) will list each species met with what it
+## does and tips (see DESIGN.md, "Creature Log").
 
 ## info = { "species": String, "name": String, "element": String, "portrait": Texture2D }
 signal discovered(info: Dictionary)

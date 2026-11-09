@@ -1,9 +1,13 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="1_hud"]
 [ext_resource type="PackedScene" path="res://scenes/ui/ember_tree.tscn" id="2_ember_tree"]
 [ext_resource type="Script" path="res://scripts/progression/ember_tree_effects.gd" id="3_ember_effects"]
 [ext_resource type="Script" path="res://scripts/ui/damage_numbers.gd" id="4_damage_numbers"]
+[ext_resource type="Script" path="res://scripts/ui/death_screen.gd" id="5_death_screen"]
+[ext_resource type="Script" path="res://scripts/world/respawner.gd" id="6_respawner"]
+[ext_resource type="Script" path="res://scripts/chips/chip_effects.gd" id="20_chip_effects"]
+[ext_resource type="PackedScene" path="res://scenes/ui/link_rod.tscn" id="21_link_rod"]
 
 [sub_resource type="Environment" id="Environment_glow"]
 background_mode = 3
@@ -27,3 +31,16 @@ script = ExtResource("3_ember_effects")
 script = ExtResource("4_damage_numbers")
 
 [node name="EmberTreeScreen" parent="." instance=ExtResource("2_ember_tree")]
+
+[node name="DeathScreen" type="CanvasLayer" parent="."]
+layer = 4
+script = ExtResource("5_death_screen")
+
+[node name="Respawner" type="Node" parent="." node_paths=PackedStringArray("death_screen")]
+script = ExtResource("6_respawner")
+death_screen = NodePath("../DeathScreen")
+
+[node name="ChipEffects" type="Node" parent="."]
+script = ExtResource("20_chip_effects")
+
+[node name="LinkRodScreen" parent="." instance=ExtResource("21_link_rod")]

@@ -10,7 +10,6 @@ const SHEET_FOLDER := "res://art/trainer/kit"
 const FRAME_SIZE := Vector2i(18, 28)
 const IDLE_SECONDS_PER_FRAME := 1.0 / 3.0
 const WALK_SECONDS_PER_FRAME := 1.0 / 8.0
-const PALETTE_SWAP := preload("res://scripts/shaders/palette_swap.gdshader")
 
 ## SpriteFrames already built, by layer sheet name (e.g. "hair_2"); shared by every trainer.
 static var _frames_by_layer: Dictionary = {}
@@ -29,7 +28,7 @@ var _animation: StringName = &"idle"
 
 func _ready() -> void:
 	for layer in _layers():
-		layer.material = _new_palette_material()
+		layer.material = PaletteSwap.make_material()
 	apply_look(look if look != null else TrainerLook.new())
 
 
@@ -68,13 +67,7 @@ func _dress(layer: AnimatedSprite2D, layer_name: String, key: PackedColorArray, 
 	var frames := _frames_for(layer_name)
 	if layer.sprite_frames != frames:
 		layer.sprite_frames = frames
-	var swap_material := layer.material as ShaderMaterial
-	swap_material.set_shader_parameter("key_light", key[0])
-	swap_material.set_shader_parameter("key_mid", key[1])
-	swap_material.set_shader_parameter("key_dark", key[2])
-	swap_material.set_shader_parameter("target_light", target[0])
-	swap_material.set_shader_parameter("target_mid", target[1])
-	swap_material.set_shader_parameter("target_dark", target[2])
+	PaletteSwap.set_swaps(layer.material as ShaderMaterial, key, target)
 
 
 ## Restarts any swapped layer on the body's current frame, so it doesn't fall out of step.
@@ -88,12 +81,6 @@ func _keep_layers_in_step() -> void:
 
 func _ramp(group: String, ramp_name: StringName) -> PackedColorArray:
 	return TrainerPresets.ramp(group, ramp_name)
-
-
-static func _new_palette_material() -> ShaderMaterial:
-	var swap_material := ShaderMaterial.new()
-	swap_material.shader = PALETTE_SWAP
-	return swap_material
 
 
 static func _frames_for(layer_name: String) -> SpriteFrames:

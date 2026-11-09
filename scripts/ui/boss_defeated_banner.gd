@@ -15,6 +15,8 @@ const FADE_OUT_SECONDS := 0.6
 
 var _card: PanelContainer
 var _label: Label
+## The card's running fade, cut short when a new announcement comes in.
+var _tween: Tween
 
 
 func _ready() -> void:
@@ -33,6 +35,8 @@ func announce(text: String) -> void:
 	_card.position.y = TOP_MARGIN - DRIFT
 	_card.modulate.a = 0.0
 	_card.visible = true
+	if _tween != null:
+		_tween.kill()
 	var show := create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	show.set_parallel()
 	show.tween_property(_card, "modulate:a", 1.0, FADE_IN_SECONDS)
@@ -41,3 +45,4 @@ func announce(text: String) -> void:
 	show.chain().tween_property(_card, "modulate:a", 0.0, FADE_OUT_SECONDS)
 	show.parallel().tween_property(_card, "position:y", TOP_MARGIN - DRIFT, FADE_OUT_SECONDS)
 	show.chain().tween_callback(_card.hide)
+	_tween = show

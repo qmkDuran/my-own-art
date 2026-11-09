@@ -161,6 +161,12 @@ func _react_to_hit(source_position: Vector2) -> void:
 	_timer.enter(State.RECOVERING, recover_time)
 
 
+## Back at his spawn after the player fell: his first summon of the next fight waits again.
+func _on_returned_to_spawn() -> void:
+	charge_particles.stop_charging()
+	summoner.start_over(first_summon_delay)
+
+
 func _die() -> void:
 	charge_particles.stop_charging()
 	_timer.enter(State.DYING, death_fade_time)

@@ -36,6 +36,12 @@ func current_speed_scale() -> float:
 	return speed_scale if is_active else 1.0
 
 
+## Back to phase 1 (the fight reset after the player fell).
+func reset() -> void:
+	is_active = false
+	aura.calm()
+
+
 func _check() -> void:
 	if is_active or health.is_dead() or health.current_health * 2 > health.max_health:
 		return

@@ -7,6 +7,7 @@ extends Node
 ## While it plays, the creature ignores its controls (it asks `is_playing`) and can't be
 ## hurt. Any key, click or button press ends it early, so it never gets in the way.
 ## Turn `enabled` off where a level should start instantly (e.g. the test arena).
+## `play_at` plays it again onto another spot (getting back up at a checkpoint, or a loaded save's).
 
 ## The fire burst sheets are drawn pointing right; this turns one to point up.
 const POINTING_UP := -PI / 2.0
@@ -72,6 +73,13 @@ func _physics_process(delta: float) -> void:
 		_advance_hop()
 	elif _elapsed >= hop_duration + stance_duration:
 		_finish()
+
+
+## Moves the creature to `spawn_point` and, when enabled, bounds in onto it again.
+func play_at(spawn_point: Vector2) -> void:
+	_creature.global_position = spawn_point
+	if enabled:
+		_begin()
 
 
 ## Any key, click or button press skips straight to play.

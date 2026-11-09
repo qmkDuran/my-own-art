@@ -9,7 +9,10 @@ extends CharacterBody2D
 ##                                     and noticed the player; dying enemies skip this)
 ##   _has_super_armour()           -> while true, hits and shoves don't move it
 ##   _die()                        -> its death (most call _fade_out_and_free)
-## and calls super._ready() from its own _ready.
+##   _stop_acting()                -> calls off an attack or move in progress (debug pause, respawn)
+##   _on_returned_to_spawn()       -> anything else to put back after `return_to_spawn`
+## and calls super._ready() from its own _ready. Each enemy's first State is its idle one
+## (`return_to_spawn` goes back to it).
 ## Each enemy scene sets these values on its root node.
 
 @export_group("Noticing the player")
@@ -27,6 +30,8 @@ extends CharacterBody2D
 var _timer := StateTimer.new()
 var _awareness := PlayerAwareness.new()
 var _is_dying: bool = false
+## Where the zone placed it; it walks back here (in an instant) after the player falls.
+var _spawn_position: Vector2
 
 @onready var health: Health = $Health
 @onready var sprite: SingleViewAnimator = $Sprite
@@ -38,6 +43,7 @@ var _is_dying: bool = false
 func _ready() -> void:
 	health.damaged.connect(_on_damaged)
 	health.died.connect(_on_died)
+	_spawn_position = global_position
 
 
 ## Wakes it up (e.g. a Warden just summoned it, or a packmate spotted the player).
@@ -50,6 +56,22 @@ func notice_player() -> void:
 func knock_back(push_velocity: Vector2) -> void:
 	if not _has_super_armour():
 		velocity = push_velocity
+
+
+## After the player falls (see WorldReset): back on its spawn point at full health and unaware,
+## as if it had never been fought. A dying enemy stays dead.
+func return_to_spawn() -> void:
+	if _is_dying:
+		return
+	_stop_acting()
+	StatusEffect.clear_from(self)
+	health.revive()
+	global_position = _spawn_position
+	velocity = Vector2.ZERO
+	_awareness = PlayerAwareness.new()
+	sprite.lift(0.0)
+	_timer.enter(0, 0.0)
+	_on_returned_to_spawn()
 
 
 ## True once the player has come within `notice_distance` (or it was hit, summoned or alerted).
@@ -99,3 +121,11 @@ func _has_super_armour() -> bool:
 
 func _die() -> void:
 	_fade_out_and_free()
+
+
+func _stop_acting() -> void:
+	pass
+
+
+func _on_returned_to_spawn() -> void:
+	pass

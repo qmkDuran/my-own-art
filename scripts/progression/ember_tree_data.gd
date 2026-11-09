@@ -88,7 +88,7 @@ const NODE_ROWS := [
 		"title": "Unshakable", "text": "Feet like roots.",
 		"facts": "Enemy shoves and rams (Warden rods, Gruntite charges, gusts) push you only {push_percent}% as far, and staggers last {stagger_percent}% as long."},
 
-	# --- Stage 2: opens at the first evolution ----------------------------------
+	# --- Stage 2: opens at Awakening I ------------------------------------------
 	{"id": "meteor_fist", "branch": "inferno", "stage": 2, "tier": 3, "angle": -SPREAD_FAR, "kind": Kind.SKILL,
 		"requires": ["kindling"],
 		"title": "Meteor Fist", "text": "Fall like a meteor.",
@@ -111,7 +111,7 @@ const NODE_ROWS := [
 		"requires": ["unshakable"], "stats": {EmberTreeEffects.MAX_HEALTH: 3},
 		"title": "Big Heart", "text": "Bigger body, bigger heart."},
 
-	# --- Stage 3: Ultimates, at the final evolution -----------------------------
+	# --- Stage 3: Ultimates, at Awakening II ------------------------------------
 	{"id": "blazing_sun", "branch": "inferno", "stage": 3, "tier": 4, "kind": Kind.ULTIMATE,
 		"requires": ["meteor_fist", "heat_sink"],
 		"title": "Blazing Sun", "text": "Become a living sun.",

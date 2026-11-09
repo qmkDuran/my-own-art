@@ -45,6 +45,12 @@ func wait_before_next_summon(seconds: float) -> void:
 	_seconds_until_summon = seconds
 
 
+## A fresh fight (e.g. after the player fell): the next summon waits `seconds` and comes with a shout again.
+func start_over(seconds: float) -> void:
+	wait_before_next_summon(seconds)
+	_has_called_out = false
+
+
 func count_down(delta: float) -> void:
 	_seconds_until_summon -= delta
 

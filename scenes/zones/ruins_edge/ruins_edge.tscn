@@ -24,6 +24,7 @@
 [ext_resource type="PackedScene" path="res://scenes/pickups/glimmer_shard.tscn" id="22_shard"]
 [ext_resource type="Script" path="res://scripts/components/elite_modifier.gd" id="23_elite"]
 [ext_resource type="Script" path="res://scripts/world/lore_stone.gd" id="24_lore"]
+[ext_resource type="Script" path="res://scripts/world/checkpoint.gd" id="25_checkpoint"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_arena"]
 size = Vector2(384, 256)
@@ -336,6 +337,7 @@ width = 80.0
 [node name="OvergrownShrineGlimmerShard" type="Node2D" parent="World" unique_id=1900000002 instance=ExtResource("22_shard")]
 position = Vector2(432, 602)
 shard_id = "ruins_edge_overgrown_shrine"
+reward = 0
 
 [node name="OvergrownShrineEliteToad" type="CharacterBody2D" parent="World" unique_id=1900000003 groups=["enemies"] instance=ExtResource("8_0ktw3")]
 position = Vector2(474, 614)
@@ -385,6 +387,11 @@ text = "The Wardens drained the first light here. The tower saw it all."
 [node name="StartGlade" type="Node2D" parent="Areas" unique_id=789296234]
 position = Vector2(224, 912)
 
+[node name="Checkpoint_Start" type="Marker2D" parent="Areas/StartGlade" unique_id=1900000018 groups=["checkpoints"]]
+position = Vector2(-56, 40)
+script = ExtResource("25_checkpoint")
+is_zone_start = true
+
 [node name="MossySteps" type="Node2D" parent="Areas" unique_id=1783154215]
 position = Vector2(272, 432)
 
@@ -403,10 +410,11 @@ position = Vector2(1376, 672)
 [node name="FinalArena" type="Node2D" parent="Areas" unique_id=1173766368]
 position = Vector2(1504, 944)
 
-[node name="BossArena" type="Area2D" parent="Areas/FinalArena" unique_id=1846201736 node_paths=PackedStringArray("boss", "gates")]
+[node name="BossArena" type="Area2D" parent="Areas/FinalArena" unique_id=1846201736 node_paths=PackedStringArray("boss", "gates", "checkpoint")]
 script = ExtResource("19_arena")
 boss = NodePath("../../../World/FinalArenaWardenCaptain")
 gates = [NodePath("../../../World/FinalArenaGateWest"), NodePath("../../../World/FinalArenaGateMain")]
+checkpoint = NodePath("../../BossGateCheckpoint/Checkpoint_BossGate")
 
 [node name="Floor" type="CollisionShape2D" parent="Areas/FinalArena/BossArena" unique_id=1846201737]
 position = Vector2(-16, 32)
@@ -428,6 +436,8 @@ position = Vector2(920, 480)
 position = Vector2(1528, 528)
 
 [node name="Checkpoint_BossGate" type="Marker2D" parent="Areas/BossGateCheckpoint" unique_id=1900000017 groups=["checkpoints"]]
+script = ExtResource("25_checkpoint")
+has_waystone = true
 
 [node name="GameLayer" type="Node" parent="." unique_id=2125940884 instance=ExtResource("13_jewaq")]
 

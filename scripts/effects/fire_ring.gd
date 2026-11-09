@@ -5,18 +5,11 @@ extends Node2D
 ##
 ## The ring snaps outward to full size while a hot streak races round it the way the
 ## attacker turns (down, right, up, left); behind the streak the fire cools from gold to
-## deep red, then the ring breaks up into flickering pixels. A few embers float up from it.
+## deep red (blue-white to blue once Awakened), then the ring breaks up into flickering
+## pixels. A few embers float up from it.
 ## Every pixel sits on the world grid, so it stays crisp.
 ## Spawn it, call play(), and it removes itself when done.
 
-## Hottest to coolest.
-const FIRE_COLORS: Array[Color] = [
-	ApolloPalette.GOLD,
-	ApolloPalette.ORANGE,
-	ApolloPalette.ORANGE_MID,
-	ApolloPalette.RED_LIGHT,
-	ApolloPalette.RED,
-]
 ## Where the ring's outer edge starts, as a share of the radius, before snapping out to full size.
 const START_SIZE := 0.55
 ## Share of the ring's life spent growing to full size.
@@ -42,6 +35,8 @@ const COOLING_INWARD := 0.35
 
 ## Each cell is one pixel the ring may cover: where it is, how far out (share of the radius),
 ## its angle around the centre and a fixed random value.
+## Hottest to coolest: Emberoo's fire colours when this started (see EmberooFlameColors).
+var _fire_colors: Array[Color] = EmberooFlameColors.fire_ramp()
 var _cell_offsets: PackedVector2Array = PackedVector2Array()
 var _cell_distances: PackedFloat32Array = PackedFloat32Array()
 var _cell_angles: PackedFloat32Array = PackedFloat32Array()
@@ -74,7 +69,7 @@ func _draw() -> void:
 	for index in _cell_offsets.size():
 		var color_index := _color_index_at(index, progress, inner, outer, streak_angle)
 		if color_index >= 0:
-			draw_rect(Rect2(_cell_offsets[index], Vector2.ONE), FIRE_COLORS[color_index])
+			draw_rect(Rect2(_cell_offsets[index], Vector2.ONE), _fire_colors[color_index])
 
 
 ## The fire colour of one pixel right now, or -1 when that pixel is not burning.
@@ -89,7 +84,7 @@ func _color_index_at(index: int, progress: float, inner: float, outer: float, st
 	var behind_streak := fposmod(_cell_angles[index] - streak_angle, TAU) / TAU
 	var inward := (outer - distance) / maxf(outer - inner, 0.05)
 	var heat_lost := behind_streak * COOLING_BEHIND_STREAK + progress * COOLING_OVER_TIME + inward * COOLING_INWARD
-	return clampi(floori(heat_lost * FIRE_COLORS.size()), 0, FIRE_COLORS.size() - 1)
+	return clampi(floori(heat_lost * _fire_colors.size()), 0, _fire_colors.size() - 1)
 
 
 ## Works out once which pixels lie within the ring's reach, so drawing each frame is just a lookup.
@@ -128,7 +123,7 @@ func _spawn_embers(radius: float) -> void:
 	embers.scale_amount_min = 1.0
 	embers.scale_amount_max = 2.0
 	var ramp := Gradient.new()
-	ramp.colors = PackedColorArray([FIRE_COLORS[0], FIRE_COLORS[1], FIRE_COLORS[3], Color(FIRE_COLORS[4], 0.0)])
+	ramp.colors = PackedColorArray([_fire_colors[0], _fire_colors[1], _fire_colors[3], Color(_fire_colors[4], 0.0)])
 	ramp.offsets = PackedFloat32Array([0.0, 0.3, 0.7, 1.0])
 	embers.color_ramp = ramp
 	add_child(embers)

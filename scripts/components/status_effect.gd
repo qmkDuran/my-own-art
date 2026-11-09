@@ -58,6 +58,13 @@ static func _resisted_length(target_health: Health, effect_name: String, seconds
 	return resistance.length_of(effect_name, seconds) if resistance != null else seconds
 
 
+## Ends every status effect on `target` at once, immunities included (e.g. a respawn).
+static func clear_from(target: Node) -> void:
+	for child in target.get_children():
+		if child is StatusEffect:
+			(child as StatusEffect)._finish()
+
+
 ## True once the effect has ended but the target is still immune to it.
 func is_immune() -> bool:
 	return _has_ended and _immunity_left > 0.0
