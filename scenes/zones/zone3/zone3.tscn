@@ -44,7 +44,6 @@ ground = NodePath("../Ground")
 [node name="GroundShadows" type="Node2D" parent="." node_paths=PackedStringArray("caster_layers")]
 script = ExtResource("polish_shadows")
 caster_layers = [NodePath("../World/Obstacles")]
-core_alpha = 0.62
 
 [node name="World" type="Node2D" parent="." unique_id=3100000005]
 y_sort_enabled = true

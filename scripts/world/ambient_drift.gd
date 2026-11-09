@@ -1,7 +1,7 @@
 class_name AmbientDrift
 extends CPUParticles2D
-## Quiet weather for a zone: a few specks drifting across the view (snow in a frosty pass,
-## blossom petals and leaves in an orchard). A child of the zone's camera: specks are born
+## Quiet weather for a zone: a few specks drifting across the view (grey ash-snow in a frosty
+## pass, withered petals and leaves in an orchard). A child of the zone's camera: specks are born
 ## around the view but live in the world, so they stay put while the camera moves.
 ## Decoration only, kept faint so it never competes with the fight.
 
@@ -33,7 +33,7 @@ func _ready() -> void:
 	emitting = true
 
 
-## Fine snow on a steady wind from the east.
+## Fine grey ash-snow on a steady wind from the east.
 func _set_up_snow() -> void:
 	amount = SNOW_AMOUNT
 	lifetime = SNOW_LIFETIME
@@ -44,7 +44,8 @@ func _set_up_snow() -> void:
 	gravity = Vector2(0.0, 3.0)
 	scale_amount_min = 1.0
 	scale_amount_max = 1.0
-	color = Color(ApolloPalette.WHITE, 0.55)
+	color = Color(ApolloPalette.WHITE, 0.45)
+	color_initial_ramp = _tints([ApolloPalette.GREY_LIGHT, ApolloPalette.GREY, ApolloPalette.SILVER])
 	color_ramp = _fade_in_and_out(ApolloPalette.WHITE)
 
 
@@ -61,7 +62,7 @@ func _set_up_petals() -> void:
 	angular_velocity_max = 90.0
 	scale_amount_min = 1.0
 	scale_amount_max = 2.0
-	color = Color(ApolloPalette.WHITE, 0.85)
+	color = Color(ApolloPalette.WHITE, 0.7)
 	color_initial_ramp = _petal_tints()
 	color_ramp = _fade_in_and_out(ApolloPalette.WHITE)
 
@@ -74,10 +75,22 @@ func _fade_in_and_out(tint: Color) -> Gradient:
 	return ramp
 
 
-## Mostly pink petals, some pale ones and a few green leaves.
+## Mostly withered plum petals, some pale ones and a few grey leaves.
 func _petal_tints() -> Gradient:
 	var tints := Gradient.new()
 	tints.interpolation_mode = Gradient.GRADIENT_INTERPOLATE_CONSTANT
 	tints.offsets = PackedFloat32Array([0.0, 0.55, 0.8])
-	tints.colors = PackedColorArray([ApolloPalette.PINK, ApolloPalette.WHITE, ApolloPalette.GREEN_LIGHT])
+	tints.colors = PackedColorArray([ApolloPalette.PURPLE, ApolloPalette.GREY_LIGHT, ApolloPalette.STONE_LIGHT])
+	return tints
+
+
+## Each speck picks one of the given colours when it is born.
+func _tints(colors: Array[Color]) -> Gradient:
+	var tints := Gradient.new()
+	tints.interpolation_mode = Gradient.GRADIENT_INTERPOLATE_CONSTANT
+	var offsets := PackedFloat32Array()
+	for index in colors.size():
+		offsets.append(float(index) / colors.size())
+	tints.offsets = offsets
+	tints.colors = PackedColorArray(colors)
 	return tints

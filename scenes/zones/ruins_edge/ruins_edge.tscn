@@ -51,7 +51,7 @@ ground = NodePath("../Ground")
 [node name="GroundShadows" type="Node2D" parent="." node_paths=PackedStringArray("caster_layers")]
 script = ExtResource("polish_shadows")
 caster_layers = [NodePath("../World/Obstacles")]
-core_alpha = 0.66
+core_alpha = 0.58
 
 [node name="WaterGlints" type="Node2D" parent="." node_paths=PackedStringArray("water_layer")]
 script = ExtResource("polish_glints")

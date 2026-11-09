@@ -191,6 +191,15 @@ Grade B colour table (world art only; colours not listed stay the same):
 
 (Water's 253a5e is kept so ponds don't vanish into the floor.)
 
+Applied to the world tiles, NPCs, the trainer kit, the handler and the Wardens. Exceptions to the table:
+- **All zone tilesets:** pond/lake water rows (28, and 37–38 in the fen and orchard) keep their `3c5e8b` ripples; the checkpoint post, lore stone and waystone tiles (row 30, columns 0–2) stay ungraded, so they sit a step brighter than the world.
+- **Hometown** (the safe place, a touch warmer): paving and plaster go one warm step down (`d7b594`→`ad7757`, `e7d5b3`→`c09473`) instead of to grey; grass `468232`→`19332d`.
+- **Galebloom Orchard:** blossoms wither to plum/rust (`df84a5`→`7a367b`, `c65197`/`a23e8c`→`4d2b32`, `7a367b`→`341c27`) so they don't compete with enemies; hay and other orange props go one extra step down (`e8c170`→`be772b`, `de9e41`→`884b2b`, `be772b`→`602c2c`).
+- **Shockwire Quarry:** rock heaps (rows 13–26) one extra step down (`884b2b`→`4d2b32`, `7a4841`→`341c27`, `4d2b32`→`241527`), so blocking rock stays darker than the floor.
+- **Townsfolk and the trainer:** skin goes one warm step down (`e7d5b3`→`d7b594`, `d7b594`→`c09473`, `c09473`→`ad7757`), not grey.
+- **Handler and Wardens:** keep their blue cloth and cyan chip/visor (`3c5e8b`, `4f8fba`, `73bed3`, `a4dddb`; the marksman's `cf573c` visor too).
+- Ambient: `AmbientLife` pollen became grey ash with the odd dim ember (`Kind.ASH`), leaves are dead greys/rust, fen motes and quarry dust are fainter; `AmbientDrift` snow is grey ash-snow and orchard petals are withered plum; `WaterGlints` are dimmer. Shadow `core_alpha` on dark ground is 0.58 (was 0.66); the quarry uses the default 0.5.
+
 ## Art
 - 2D pixel art, made by the developer in Aseprite (studying *Pixel Logic*)
 - Tiles and world: 16×16

@@ -1,19 +1,20 @@
 class_name AmbientLife
 extends CPUParticles2D
-## A little life in the air of a zone: pollen over a sunny meadow, leaves let go by an old wood,
-## fireflies over a fen, grit dust over a quarry. A child of the zone's camera: specks are born around the view but live
-## in the world, so they stay put while the camera moves. Decoration only: few, small and
-## faint, so they never compete with creatures, enemies or pickups.
+## A little life in the air of a zone: ash and the odd ember drifting over a town, dead leaves let
+## go by an old wood, pale marsh-lights over a fen, grit dust over a quarry. A child of the zone's
+## camera: specks are born around the view but live in the world, so they stay put while the
+## camera moves. Decoration only: few, small and faint, so they never compete with creatures,
+## enemies or pickups.
 
-enum Kind { POLLEN, LEAVES, FIREFLIES, DUST }
+enum Kind { ASH, LEAVES, FIREFLIES, DUST }
 
 ## A little more than half the 480×270 view, so specks drift in from beyond its edges.
 const SPAWN_HALF_EXTENTS := Vector2(260.0, 150.0)
 ## Specks sit above the world and the canopy, below the HUD.
 const DRAW_LAYER := 20
 
-const POLLEN_AMOUNT := 14
-const POLLEN_LIFETIME := 9.0
+const ASH_AMOUNT := 14
+const ASH_LIFETIME := 10.0
 const LEAF_AMOUNT := 7
 const LEAF_LIFETIME := 11.0
 const FIREFLY_AMOUNT := 16
@@ -21,7 +22,7 @@ const FIREFLY_LIFETIME := 7.0
 const DUST_AMOUNT := 12
 const DUST_LIFETIME := 8.0
 
-@export var kind: Kind = Kind.POLLEN
+@export var kind: Kind = Kind.ASH
 
 
 func _ready() -> void:
@@ -31,8 +32,8 @@ func _ready() -> void:
 	emission_shape = CPUParticles2D.EMISSION_SHAPE_RECTANGLE
 	emission_rect_extents = SPAWN_HALF_EXTENTS
 	match kind:
-		Kind.POLLEN:
-			_set_up_pollen()
+		Kind.ASH:
+			_set_up_ash()
 		Kind.LEAVES:
 			_set_up_leaves()
 		Kind.FIREFLIES:
@@ -43,23 +44,23 @@ func _ready() -> void:
 	emitting = true
 
 
-## Pale specks of pollen lifting lazily on a warm breeze from the west.
-func _set_up_pollen() -> void:
-	amount = POLLEN_AMOUNT
-	lifetime = POLLEN_LIFETIME
-	direction = Vector2(1.0, -0.35)
-	spread = 35.0
+## Grey ash drifting down on a slow wind from the west, now and then a dim ember among it.
+func _set_up_ash() -> void:
+	amount = ASH_AMOUNT
+	lifetime = ASH_LIFETIME
+	direction = Vector2(1.0, 0.2)
+	spread = 30.0
 	initial_velocity_min = 3.0
 	initial_velocity_max = 7.0
-	gravity = Vector2(0.0, -0.6)
+	gravity = Vector2(0.0, 0.8)
 	scale_amount_min = 1.0
 	scale_amount_max = 1.0
-	color = Color(ApolloPalette.WHITE, 0.7)
-	color_initial_ramp = _tints([ApolloPalette.LIME_PALE, ApolloPalette.GOLD, ApolloPalette.WHITE])
+	color = Color(ApolloPalette.WHITE, 0.5)
+	color_initial_ramp = _tints([ApolloPalette.GREY, ApolloPalette.GREY_LIGHT, ApolloPalette.STONE_LIGHT, ApolloPalette.GREY, ApolloPalette.ORANGE_DARK])
 	color_ramp = _fade_in_and_out(ApolloPalette.WHITE, 1.0)
 
 
-## A few leaves tumbling down out of the canopy, drifting east.
+## A few dead leaves tumbling down out of the canopy, drifting east.
 func _set_up_leaves() -> void:
 	amount = LEAF_AMOUNT
 	lifetime = LEAF_LIFETIME
@@ -72,12 +73,12 @@ func _set_up_leaves() -> void:
 	angular_velocity_max = 120.0
 	scale_amount_min = 1.0
 	scale_amount_max = 2.0
-	color = Color(ApolloPalette.WHITE, 0.75)
-	color_initial_ramp = _tints([ApolloPalette.GREEN, ApolloPalette.GREEN_LIGHT, ApolloPalette.ORANGE_DARK])
+	color = Color(ApolloPalette.WHITE, 0.6)
+	color_initial_ramp = _tints([ApolloPalette.STONE_LIGHT, ApolloPalette.GREY, ApolloPalette.RUST])
 	color_ramp = _fade_in_and_out(ApolloPalette.WHITE, 1.0)
 
 
-## Fen fireflies: slow wandering motes that glow up and dim again.
+## Fen marsh-lights: slow wandering motes that glow up and dim again, cold and faint.
 func _set_up_fireflies() -> void:
 	amount = FIREFLY_AMOUNT
 	lifetime = FIREFLY_LIFETIME
@@ -90,8 +91,8 @@ func _set_up_fireflies() -> void:
 	orbit_velocity_max = 0.04
 	scale_amount_min = 1.0
 	scale_amount_max = 1.0
-	color = Color(ApolloPalette.WHITE, 0.9)
-	color_initial_ramp = _tints([ApolloPalette.SKY_LIGHT, ApolloPalette.LIME_PALE])
+	color = Color(ApolloPalette.WHITE, 0.6)
+	color_initial_ramp = _tints([ApolloPalette.SKY, ApolloPalette.GREY])
 	color_ramp = _glow_pulse(ApolloPalette.WHITE)
 	var additive := CanvasItemMaterial.new()
 	additive.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
@@ -109,8 +110,8 @@ func _set_up_dust() -> void:
 	gravity = Vector2(0.0, 1.0)
 	scale_amount_min = 1.0
 	scale_amount_max = 1.0
-	color = Color(ApolloPalette.WHITE, 0.6)
-	color_initial_ramp = _tints([ApolloPalette.GREY_LIGHT, ApolloPalette.CREAM, ApolloPalette.GREY])
+	color = Color(ApolloPalette.WHITE, 0.5)
+	color_initial_ramp = _tints([ApolloPalette.GREY, ApolloPalette.GREY_LIGHT, ApolloPalette.STONE_LIGHT])
 	color_ramp = _fade_in_and_out(ApolloPalette.WHITE, 1.0)
 
 

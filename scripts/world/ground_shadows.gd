@@ -22,7 +22,7 @@ const SHADOW_COLOR := ApolloPalette.OUTLINE
 const RIM_SHARE := 0.48
 ## Core strength for bright ground (towns); dark grass needs more to read (see `core_alpha`).
 const BRIGHT_GROUND_ALPHA := 0.5
-const DARK_GROUND_ALPHA := 0.66
+const DARK_GROUND_ALPHA := 0.58
 ## How far a shadow leans down-right, in pixels per pixel of object height, and its limits.
 const LEAN_PER_HEIGHT := 0.08
 const MIN_LEAN := 2

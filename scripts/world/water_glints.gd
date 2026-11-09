@@ -1,6 +1,6 @@
 class_name WaterGlints
 extends Node2D
-## Sunlight catching ripples: short pale glints that flicker on open water near the camera,
+## Grey daylight catching ripples: short pale glints that flicker on open water near the camera,
 ## so ponds and pools read as water, not flat blue floor. Decoration only, a handful at a time.
 ## Glints only appear on cells whose four neighbours are water too, so never on a bank.
 
@@ -10,7 +10,7 @@ const GLINT_SECONDS := 1.4
 ## Glint lengths in pixels (a short horizontal dash) and their brightness at the peak.
 const MIN_LENGTH := 2
 const MAX_LENGTH := 4
-const GLINT_ALPHA := 0.8
+const GLINT_ALPHA := 0.6
 ## Random cells in view tried per glint before it waits for its next turn.
 const SPAWN_ATTEMPTS := 12
 ## Only water this close to the view's centre gets glints (a little more than the 480×270 view).
@@ -50,8 +50,8 @@ func _draw() -> void:
 		var progress: float = glint["age"] / GLINT_SECONDS
 		var alpha := sin(PI * progress) * GLINT_ALPHA
 		var spot: Vector2 = glint["spot"]
-		draw_rect(Rect2(spot, Vector2(glint["length"], 1)), Color(ApolloPalette.SKY_LIGHT, alpha))
-		draw_rect(Rect2(spot + Vector2(1, 0), Vector2(maxi(1, glint["length"] - 2), 1)), Color(ApolloPalette.WHITE, alpha))
+		draw_rect(Rect2(spot, Vector2(glint["length"], 1)), Color(ApolloPalette.SKY, alpha))
+		draw_rect(Rect2(spot + Vector2(1, 0), Vector2(maxi(1, glint["length"] - 2), 1)), Color(ApolloPalette.GREY_LIGHT, alpha))
 
 
 func _find_open_water() -> void:
