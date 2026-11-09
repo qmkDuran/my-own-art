@@ -24,6 +24,8 @@
 [ext_resource type="Script" path="res://scripts/world/crew_encounter.gd" id="22_crew_encount"]
 [ext_resource type="PackedScene" path="res://scenes/game/game_layer.tscn" id="23_game_layer"]
 [ext_resource type="PackedScene" path="res://scenes/debug/debug_controls.tscn" id="24_debug_contro"]
+[ext_resource type="Script" path="res://scripts/world/ground_shadows.gd" id="polish_shadows"]
+[ext_resource type="Script" path="res://scripts/world/water_glints.gd" id="polish_glints"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_frozenglimra"]
 atlas = ExtResource("15_frostveil_pa")
@@ -47,6 +49,15 @@ collision_enabled = false
 [node name="Navigation" type="NavigationRegion2D" parent="." unique_id=4100000005 node_paths=PackedStringArray("ground")]
 script = ExtResource("2_zone_navigat")
 ground = NodePath("../Ground")
+
+[node name="GroundShadows" type="Node2D" parent="." node_paths=PackedStringArray("caster_layers")]
+script = ExtResource("polish_shadows")
+caster_layers = [NodePath("../World/Obstacles")]
+
+[node name="WaterGlints" type="Node2D" parent="." node_paths=PackedStringArray("water_layer")]
+script = ExtResource("polish_glints")
+water_layer = NodePath("../Water")
+water_atlas_rows = PackedInt32Array(37)
 
 [node name="World" type="Node2D" parent="." unique_id=4100000006]
 y_sort_enabled = true

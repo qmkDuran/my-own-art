@@ -20,6 +20,8 @@
 [ext_resource type="Script" path="res://scripts/world/boss_arena.gd" id="18_boss_arena"]
 [ext_resource type="PackedScene" path="res://scenes/game/game_layer.tscn" id="19_game_layer"]
 [ext_resource type="PackedScene" path="res://scenes/debug/debug_controls.tscn" id="20_debug_contro"]
+[ext_resource type="Script" path="res://scripts/world/ground_shadows.gd" id="polish_shadows"]
+[ext_resource type="Script" path="res://scripts/world/ambient_life.gd" id="polish_ambient"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_bullpit"]
 size = Vector2(256, 208)
@@ -38,6 +40,11 @@ collision_enabled = false
 [node name="Navigation" type="NavigationRegion2D" parent="." unique_id=3100000004 node_paths=PackedStringArray("ground")]
 script = ExtResource("2_zone_navigat")
 ground = NodePath("../Ground")
+
+[node name="GroundShadows" type="Node2D" parent="." node_paths=PackedStringArray("caster_layers")]
+script = ExtResource("polish_shadows")
+caster_layers = [NodePath("../World/Obstacles")]
+core_alpha = 0.62
 
 [node name="World" type="Node2D" parent="." unique_id=3100000005]
 y_sort_enabled = true
@@ -66,6 +73,10 @@ limit_top = 0
 limit_right = 2048
 limit_bottom = 1280
 position_smoothing_enabled = true
+
+[node name="AmbientLife" type="CPUParticles2D" parent="World/Emberoo/Camera"]
+script = ExtResource("polish_ambient")
+kind = 3
 
 [node name="TailingsGateBerry1" type="Node2D" parent="World" unique_id=3100000010 instance=ExtResource("4_berry")]
 z_index = 1

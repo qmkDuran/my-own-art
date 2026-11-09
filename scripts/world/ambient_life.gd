@@ -1,11 +1,11 @@
 class_name AmbientLife
 extends CPUParticles2D
 ## A little life in the air of a zone: pollen over a sunny meadow, leaves let go by an old wood,
-## fireflies over a fen. A child of the zone's camera: specks are born around the view but live
+## fireflies over a fen, grit dust over a quarry. A child of the zone's camera: specks are born around the view but live
 ## in the world, so they stay put while the camera moves. Decoration only: few, small and
 ## faint, so they never compete with creatures, enemies or pickups.
 
-enum Kind { POLLEN, LEAVES, FIREFLIES }
+enum Kind { POLLEN, LEAVES, FIREFLIES, DUST }
 
 ## A little more than half the 480×270 view, so specks drift in from beyond its edges.
 const SPAWN_HALF_EXTENTS := Vector2(260.0, 150.0)
@@ -18,6 +18,8 @@ const LEAF_AMOUNT := 7
 const LEAF_LIFETIME := 11.0
 const FIREFLY_AMOUNT := 16
 const FIREFLY_LIFETIME := 7.0
+const DUST_AMOUNT := 12
+const DUST_LIFETIME := 8.0
 
 @export var kind: Kind = Kind.POLLEN
 
@@ -35,6 +37,8 @@ func _ready() -> void:
 			_set_up_leaves()
 		Kind.FIREFLIES:
 			_set_up_fireflies()
+		Kind.DUST:
+			_set_up_dust()
 	preprocess = lifetime
 	emitting = true
 
@@ -92,6 +96,22 @@ func _set_up_fireflies() -> void:
 	var additive := CanvasItemMaterial.new()
 	additive.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
 	material = additive
+
+
+## Fine grit lifted off the quarry floor, blown slowly east and settling again.
+func _set_up_dust() -> void:
+	amount = DUST_AMOUNT
+	lifetime = DUST_LIFETIME
+	direction = Vector2(1.0, -0.15)
+	spread = 20.0
+	initial_velocity_min = 6.0
+	initial_velocity_max = 12.0
+	gravity = Vector2(0.0, 1.0)
+	scale_amount_min = 1.0
+	scale_amount_max = 1.0
+	color = Color(ApolloPalette.WHITE, 0.6)
+	color_initial_ramp = _tints([ApolloPalette.GREY_LIGHT, ApolloPalette.CREAM, ApolloPalette.GREY])
+	color_ramp = _fade_in_and_out(ApolloPalette.WHITE, 1.0)
 
 
 ## Each speck picks one of the given colours when it is born.
