@@ -14,8 +14,9 @@ extends CharacterBody2D
 ##             StatusResistance (which enemy status effects land), TrainerAid (F: a healing tonic)
 ##   Show:     Sprite (CreatureAnimator), HitFlash, FistEmbers, ComboPips, ScreenShake,
 ##             SpeechBubble, LevelUpBoost
-##   Awakening: AwakeningLook (recoloured sprite, AwakeningAura), AwakeningBoost (stat bump),
-##             AwakeningMoment (the short flare when he Awakens; he stands still meanwhile)
+##   Awakening: HeroFormSwitch (his evolution form: sprite sheets, body size and reach),
+##             AwakeningBoost (stat bump), AwakeningMoment (the short evolve flash when he
+##             Awakens; he stands still meanwhile)
 ##   Arriving: ZoneEntrance (the hop onto the spawn point; it drives the creature meanwhile)
 ## A shove it takes is a Pushback. Enemy status effects (Poisoned, Staggered, Buffeted, Rooted,
 ## Soaked, Chilled, Jolted) are attached to it at runtime; a stagger stops it acting for a
@@ -23,7 +24,8 @@ extends CharacterBody2D
 
 ## Below this speed (pixels per second) the creature counts as standing still.
 const STANDING_STILL_SPEED := 1.0
-## Height of the body's middle above the feet, in pixels (negative is up).
+## Height of a small creature's body middle above its feet, in pixels (negative is up).
+## The player's own body grows with his evolution form: use `body_height()` for him.
 const BODY_HEIGHT := -6.0
 
 var _pushback := Pushback.new()
@@ -47,6 +49,7 @@ var _actions := CreatureActions.new(self)
 @onready var zone_entrance: ZoneEntrance = $ZoneEntrance
 @onready var unshakable: Unshakable = $Unshakable
 @onready var awakening_moment: AwakeningMoment = $AwakeningMoment
+@onready var form_switch: HeroFormSwitch = $HeroFormSwitch
 
 
 func _ready() -> void:
@@ -86,11 +89,16 @@ func _physics_process(delta: float) -> void:
 
 ## Punches and skills go toward the mouse cursor, at any angle, measured from the body (not the feet).
 func aim_direction() -> Vector2:
-	var body_center := global_position + Vector2(0, BODY_HEIGHT)
+	var body_center := global_position + Vector2(0, body_height())
 	var to_cursor := player_input.get_aim_point() - body_center
 	if to_cursor.length() < 1.0:
 		return facing.as_vector()
 	return to_cursor.normalized()
+
+
+## Height of the middle of his body above his feet in his current form (negative is up).
+func body_height() -> float:
+	return form_switch.current_form.body_height
 
 
 ## Shoves the creature: it slides with this velocity for a moment, without player control.
@@ -144,13 +152,15 @@ func _chosen_move_direction() -> Vector2:
 	return mouse_orders.move_direction()
 
 
-## The dodge is a big kangaroo hop, so it reuses the hop animation while leaping.
+## Walking is a run of kangaroo hops; the dodge has its own bound.
 func _current_action() -> String:
 	if skill_bar.is_casting():
 		return skill_bar.cast_animation()
 	if melee_attack.is_attacking:
 		return melee_attack.current_animation
-	if dodge.is_dodging or _is_moving():
+	if dodge.is_dodging:
+		return "dodge"
+	if _is_moving():
 		return "hop"
 	return "idle"
 

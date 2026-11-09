@@ -1,12 +1,13 @@
 class_name AwakeningStage
 extends RefCounted
 ## The Awakening stages and the levels that trigger them (the Awakening autoload holds
-## which one Emberoo has reached). Stage 2 of the old evolution plan is now Awakening I.
+## which one Emberoo has reached). Each stage is an evolution form (HeroFormSwitch).
 
+## The joey, where every run starts.
 const NONE := 0
-## Awakening I, "Blue Flame": about the end of Act 1 (see Progression's XP curve).
+## Awakening I: he grows into Emberoo, about the end of Act 1 (see Progression's XP curve).
 const ONE := 1
-## Awakening II: darker still, a richer blue flame and a quiet aura (the mid game).
+## Awakening II: his final form, flame mane and magma gauntlets (the mid game).
 const TWO := 2
 const LAST := TWO
 

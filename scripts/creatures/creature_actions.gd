@@ -68,13 +68,13 @@ func _start_jab(jab_direction: Vector2) -> void:
 	_creature.animator.replay_animation(_creature.melee_attack.current_animation, _creature.facing)
 
 
-## The dodge is a big kangaroo hop, so it reuses the hop animation, with its trails.
+## The dodge is a quick bound (its height is drawn into the frames), with its trails.
 func _start_dodge() -> void:
 	var dodge := _creature.dodge
 	var dodge_direction := _dodge_direction()
 	_creature.facing.look_toward(dodge_direction)
 	dodge.start(dodge_direction)
-	_creature.animator.replay_animation("hop", _creature.facing)
+	_creature.animator.replay_animation("dodge", _creature.facing)
 	_creature.afterimage_trail.play_for(dodge.dodge_duration)
 	_creature.speed_trail.play_for(dodge.dodge_duration)
 	_creature.speed_lines.play_for(dodge.dodge_duration, dodge_direction)

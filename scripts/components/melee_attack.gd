@@ -20,21 +20,25 @@ signal target_hit(target_health: Health)
 const NODE_NAME := "MeleeAttack"
 
 ## Seconds from pressing attack to the fist landing (end of the wind-up frame).
-@export var hit_delay: float = 0.12
+@export var hit_delay: float = 0.10
 ## Seconds the whole attack takes, start to recovery (the jab animation's length).
-@export var attack_duration: float = 0.44
-## How far in front of the creature the hit lands, in pixels.
+@export var attack_duration: float = 0.40
+## How far in front of the creature's feet the hit lands, in pixels.
+## The player's evolution form sets this, `hit_radius`, `fist_height` and `lunge_distance`
+## (HeroFormSwitch).
 @export var reach: float = 20.0
-## Height of the fist above the creature's feet, in pixels (negative is up).
+## Height of the fist above the creature's feet, in pixels (negative is up): where the
+## impact is drawn. Hits are measured on the ground, so a tall body still hits small enemies.
 @export var fist_height: float = -7.0
 ## Effect shown where the hit lands.
 @export var impact_effect: PackedScene
 ## Damage dealt to each target the hit lands on.
 @export var damage: int = 1
-## How close to the punch line a target's body centre must be to get hit, in pixels.
+## How close to the punch line (on the ground) a target's feet must be to get hit, in pixels.
 ## Generous on purpose, so a jab that looks like it connects does (like Path of Exile).
 @export var hit_radius: float = 12.0
-## Height of a target's body centre above its feet, in pixels (negative is up).
+## Height of a target's body centre above its feet, in pixels (negative is up): where
+## effects on a struck target are drawn.
 @export var target_body_height: float = -6.0
 ## How far the attacker lunges forward during the wind-up, in pixels.
 ## The lunge starts fast and eases to a stop as the fist lands, so it reads as a snap forward.

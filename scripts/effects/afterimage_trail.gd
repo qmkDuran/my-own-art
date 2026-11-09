@@ -1,7 +1,7 @@
 class_name AfterimageTrail
 extends Node
 ## Leaves fading, fire-tinted copies of a sprite behind it, so fast moves are easy to read.
-## The copies keep the sprite's Awakened look and take Emberoo's fire tint (EmberooFlameColors).
+## The copies sit exactly where the sprite draws and take Emberoo's fire tint (EmberooFlameColors).
 
 ## The sprite to copy.
 @export var sprite: AnimatedSprite2D
@@ -23,8 +23,9 @@ func _spawn_copy() -> void:
 	var copy := Sprite2D.new()
 	copy.texture = sprite.sprite_frames.get_frame_texture(sprite.animation, sprite.frame)
 	copy.flip_h = sprite.flip_h
-	copy.material = sprite.material
-	copy.modulate = EmberooFlameColors.afterimage_tint()
+	copy.centered = sprite.centered
+	copy.offset = sprite.offset
+	copy.modulate = EmberooFlameColors.AFTERIMAGE_TINT
 	# Added to the world so the copy stays behind while the creature moves on.
 	sprite.owner.get_parent().add_child(copy)
 	copy.global_position = sprite.global_position

@@ -53,14 +53,23 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
 - No gear on Emberoo, no clothes, no inventory grid.
 
 ## Build system (locked)
-- **Awakening, not evolution (decided 2026-11-09):** no evolution art. Emberoo keeps his 16×16 sprite and **Awakens**: the same sprite transformed by colour and effects, plus new power. The same for every build; builds still differ through the Ember Tree, skills and effects. (Evolution art stays parked as an open option in PARKING_LOT.md.)
+- **Awakening = evolution (Art direction v2, 2026-11-09):** each Awakening is an evolution stage with its own PixelLab art (`art/emberoo_v2/`): the **joey** (start, ~35 px, cloth hand-wraps), **Emberoo** (Awakening I, ~46 px, obsidian gauntlets with glowing cracks) and his **final form** (Awakening II, ~63 px, flame mane, red sash, magma gauntlets). No recolour, rim or aura: the new art is the change, and his fire stays gold → orange → red (`EmberooFlameColors`). The same for every build; builds still differ through the Ember Tree, skills and effects.
   - **Trigger:** a level threshold, `AwakeningStage.ONE_LEVEL` = **10** (about the end of Act 1) for **Awakening I**, `TWO_LEVEL` = **25** (planned, mid-game) for **Awakening II** (`scripts/systems/awakening_stage.gd`; the `Awakening` autoload holds the stage).
-  - **The awakening moment** (~1.2 s): Emberoo stops and faces the camera, light gathers (a flash and a small ring), then a flare: a ring of his new blue fire, three shockwaves, a screen shake, a brief white screen flash and a "EMBEROO AWAKENED" banner (top-centre); the new look sticks. He can't be hurt meanwhile (`AwakeningMoment`, HUD `AwakeningAnnouncement`).
-  - **The look** (palette-swap shader `scripts/shaders/palette_swap.gdshader`, colours and rim in `AwakeningPalette`): **Awakening I, "Blue Flame"**: fur a deeper ember orange (`#be772b`, shade `#884b2b`), the flames on his ears and tail tip blue (`#73bed3`), the gold highlights on ears, tail and fists blue-white (`#a4dddb`); the gloves stay red. **Awakening II**: darker again (shade `#602c2c`), white-hot highlights, his normal dark `#090a14` outline kept with a **1px outer rim in sky `#73bed3`** around his whole silhouette (`SilhouetteRim`, a child drawn behind the sprite by `scripts/shaders/silhouette_rim.gdshader`; it follows every frame, flip, lift and fade, also on the Ember Tree's centre Emberoo; hit flashes stay on his body), and a quiet, low-alpha blue flame shimmer rising off his body (`AwakeningAura`; not an elite-style aura). The cream belly never changes, so he stays the brightest, clearest thing on screen. Ear/tail flames and gloves share one red in the art, so `EmberooFlameMarker` tells them apart at load (small red patches at the ear tips and tail tip) without touching the art files.
-  - **His fire turns blue too:** fist embers, the Flame Uppercut arc, the Spinning Hook fire ring, Ember Hop's trail, Wildfire's streak, burn embers on enemies and the dodge afterimages all read `EmberooFlameColors` (gold → red before; white → sky → blue after; deeper blue at Awakening II).
+  - **The evolve moment** (~1.2 s): Emberoo stops and faces the camera, light gathers (a warm flash and a small ring), then the flare: a white flash on his body as the new form appears, an ember burst, a fire ring, three shockwaves, a screen shake, a brief white screen flash and a "EMBEROO AWAKENED" banner (top-centre). He can't be hurt meanwhile (`AwakeningMoment`, HUD `AwakeningAnnouncement`). Loading and F4 stepping down swap the form at once.
+  - **Forms** (`HeroForm` resources in `data/hero_forms/`, put on the creature by `HeroFormSwitch`): each holds the sheet folder, canvas (64/64/96) and sprite offset (feet on the node: -27/-27/-35), the fist spots for the fist sparks, and the body and reach numbers, so gameplay grows with the body:
+
+    | | joey | Emberoo | final |
+    |---|---|---|---|
+    | jab reach / hit radius / fist height | 24 / 13 / -14 | 30 / 16 / -22 | 38 / 19 / -32 |
+    | Spinning Hook radius | 36 | 48 | 60 |
+    | Flame Uppercut reach | 40 | 52 | 64 |
+    | feet collision radius / body middle | 5 / -16 | 6 / -22 | 7 / -30 |
+    | dodge speed (× 0.33 s) | 180 | 190 | 205 |
+
+    Hits (jab, hook, uppercut) are measured on the ground, feet to feet, so a tall hero still hits small machines; the effects are drawn at fist height and as big as the real hit area (`HeroFxScale.SKILL_SIZE_SCALE` = 1).
   - **Power:** each Awakening opens the next Ember Tree ring (Awakening I → Stage 2, Awakening II → Stage 3 Ultimates) and gives a flat bump: **+3 Max Health and +1 jab damage** per Awakening (`AwakeningBoost`), shown as an "Awakening" row in the tree's stats panel.
   - **Debug:** F4 cycles the stage (0 → I → II → 0); stepping up plays the moment.
-- **Levelling:** a small automatic stat boost (the "ding") + **1 skill point** per level. Levels get slower to earn: ~level 1 after the first pack, ~4–5 by the end of Ruins Edge, ~10–12 by the end of Act 1, cap **50** at the end of the game (curve and maths in `scripts/systems/progression.gd`). **Awakening** (levels 10 and 25): a new look, a flat stat bump and a new tree ring (see above).
+- **Levelling:** a small automatic stat boost (the "ding") + **1 skill point** per level. Levels get slower to earn: ~level 1 after the first pack, ~4–5 by the end of Ruins Edge, ~10–12 by the end of Act 1, cap **50** at the end of the game (curve and maths in `scripts/systems/progression.gd`). **Awakening** (levels 10 and 25): the next evolution form, a flat stat bump and a new tree ring (see above).
 - **Ember Tree:** small (fits on one screen) with **2–3 labelled branches** (e.g. Inferno = burn, Flurry = speed/combos, Bruiser = tanky). Players can mix freely.
 - Nodes should **change how you play**, not just add small percentages. Keep to ~5 clear stats (Health, Power, Speed, Heat, Burn).
 - **Crits:** every attack (jab, spin, skills) can crit: **10% base chance, ×2 damage** (rounded), shown as a gold "4!" number (twice the size, popping in white) and in the Ember Tree stats. **Damage numbers never overlap:** hits on the same target within 0.3 s merge into one rising total, a new number whose path up would cross another's moves above it, and at most 8 show at once (oldest first). No tree nodes change crits yet.
@@ -203,7 +212,7 @@ Applied to the world tiles, NPCs, the trainer kit, the handler and the Wardens. 
 ## Art
 - 2D pixel art, made by the developer in Aseprite (studying *Pixel Logic*)
 - Tiles and world: 16×16
-- Emberoo stays 16×16: he Awakens (recolour + effects) instead of evolving into bigger sprites
+- Emberoo evolves by Awakening into bigger sprites (joey ~35 px, Emberoo ~46 px, final ~63 px; see Art direction v2 and Awakening)
 - **Palette: Apollo** (46 colours, Lospec), chosen for its dark tone and clear ramps. Swappable later via Aseprite colour remap.
   - **Every colour we pick comes from Apollo**: art files *and* colours set in code (UI, particles, effects). Checked by script: all art is 100% Apollo; code colours snapped to Apollo.
   - On screen, transparency, fades and glow blend Apollo colours into in-between shades; that's expected and fine.
@@ -273,13 +282,13 @@ Applied to the world tiles, NPCs, the trainer kit, the handler and the Wardens. 
   - **Test arena:** `scenes/enemies/shalendrill/shalendrill_test_arena.tscn` (no save; `BossTestLoadout` makes Emberoo level 11, Awakened, with an 11-point build), walk north through the gate to start.
 
 ### Creature #1 (player): Emberoo
-- Fire kangaroo boxer. Stage 1 sprite done (16×16): idle (with blink), hop, jab, jab2, dodge in front/side/back.
+- Fire kangaroo boxer. Three evolution forms (`art/emberoo_v2/stage1..3`): idle (with blink), hop (his walk), jab, jab2, uppercut and dodge in five views (front, frontdiag, side, backdiag, back; the left side mirrored). Missing jab2/uppercut views fall back to the jab sheet. The jab lands as its fist-out frame 1 starts (0.10 s, 0.40 s in all); Flame Uppercut bursts as the fist-up frame 2 starts (0.17 s).
 - Jab: hold to repeat, alternates fists, roots you in place. Dodge: a kangaroo leap that can cancel a jab.
-- **Skills on Q/W/E/R** (the skill bar), paid with Heat. **Flame Uppercut (E):** 3 Heat, 2s cooldown; a rising punch that bursts into a ~100° arc of flame (~26px), 3 damage + strong knockback to everything in it. Roots you; the dodge can cancel only its wind-up. Q, W and R are empty for now.
+- **Skills on Q/W/E/R** (the skill bar), paid with Heat. **Flame Uppercut (E):** 3 Heat, 2s cooldown; a rising punch that bursts into a ~100° fan of crisp pixel flame tongues (reach grows with his form: 40/52/64 px), 3 damage + strong knockback to everything in it. Roots you; the dodge can cancel only its wind-up. Q, W and R are empty for now.
 - **Controls:** mouse is the main control; arrow keys also move (no WASD, since W is a skill key). Space = dodge, F = Trainer's Aid, K = Ember Tree, C = Link Rod (once the Tinkerer has made it). Next to a townsperson, F or E talks instead.
 
 ## Naming
-- Creature names blend **[element/trait] + [animal/sound]** into 2–3 fun syllables (e.g. **Emberoo**, **Toxlop**); an Awakening keeps the name (no evolutions).
+- Creature names blend **[element/trait] + [animal/sound]** into 2–3 fun syllables (e.g. **Emberoo**, **Toxlop**); an evolution keeps the name.
 - Every name must be original and checked (web + later USPTO/EUIPO) before use.
 - Names in use: **Glimra** (the creatures), **Emberoo** (player, fire kangaroo), **Toxlop** (toxic toad), **Zephoot** (wind puff-owl) and **Gruntite** (stone boar), both pending the trademark check; **Bramole** (bush mole), **Brinelob** (shield crab), **Fizzbug** (spark beetle) and **Rimoth** (frost moth), also pending the trademark check; **Shalendrill** (shale mandrill boss; no web hits, pending the formal check); **Wardens** (the Handlers; fine for enemies, not as a game title).
 
