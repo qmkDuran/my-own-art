@@ -1,7 +1,7 @@
 extends Node
 ## How far Emberoo has Awakened (registered as the "Awakening" autoload).
 ##
-## Each Awakening is an evolution: Emberoo takes his next form (HeroFormSwitch: the joey,
+## Each Awakening is an evolution: Emberoo takes his next form (HeroFormSwitch: stage 1,
 ## then Emberoo, then his final form, each with its own art, size and reach), gains a flat
 ## stat bump (AwakeningBoost) and the Ember Tree opens its next ring. Reaching a level
 ## threshold (AwakeningStage) triggers it; `awakened` then plays the short evolve moment
