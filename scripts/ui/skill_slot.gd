@@ -129,7 +129,7 @@ func _on_mouse_hover_changed(is_hovered: bool) -> void:
 func _draw() -> void:
 	SkillSlotPainter.draw_frame(self, is_usable())
 	if _is_hovered:
-		PixelShape.draw_rounded_ring(self, Rect2(-1, -1, SLOT_SIZE + 2, SLOT_SIZE + 2), ApolloPalette.ORANGE)
+		PixelShape.draw_rounded_ring(self, Rect2(-1, -1, SLOT_SIZE + 2, SLOT_SIZE + 2), HudPalette.HOVER_RING)
 	if _flashes.used_stage() == 0:
 		SkillSlotPainter.draw_inner_glint(self)
 	draw_set_transform(_flashes.press_offset())

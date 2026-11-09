@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene load_steps=12 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="1_hud"]
 [ext_resource type="PackedScene" path="res://scenes/ui/ember_tree.tscn" id="2_ember_tree"]
@@ -9,6 +9,7 @@
 [ext_resource type="Script" path="res://scripts/chips/chip_effects.gd" id="20_chip_effects"]
 [ext_resource type="PackedScene" path="res://scenes/ui/link_rod.tscn" id="21_link_rod"]
 [ext_resource type="Script" path="res://scripts/ui/dialogue_box.gd" id="22_dialogue_box"]
+[ext_resource type="Script" path="res://scripts/effects/crit_flares.gd" id="23_crit_flares"]
 
 [sub_resource type="Environment" id="Environment_glow"]
 background_mode = 3
@@ -30,6 +31,9 @@ script = ExtResource("3_ember_effects")
 
 [node name="DamageNumbers" type="Node" parent="."]
 script = ExtResource("4_damage_numbers")
+
+[node name="CritFlares" type="Node" parent="."]
+script = ExtResource("23_crit_flares")
 
 [node name="EmberTreeScreen" parent="." instance=ExtResource("2_ember_tree")]
 

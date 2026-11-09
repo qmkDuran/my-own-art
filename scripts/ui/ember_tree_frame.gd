@@ -86,7 +86,7 @@ func _add_bar(edge: Control.LayoutPreset, height: float, line_edge: Control.Layo
 	else:
 		bar.offset_top = -height
 	var line := ColorRect.new()
-	line.color = Color(EmberTreePalette.ORANGE, 0.25)
+	line.color = EmberTreePalette.DIVIDER
 	line.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	bar.add_child(line)
 	line.set_anchors_and_offsets_preset(line_edge, Control.PRESET_MODE_MINSIZE)

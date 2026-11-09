@@ -40,7 +40,7 @@ func _process(delta: float) -> void:
 
 func _draw() -> void:
 	PixelShape.draw_stone_frame(self, MAP_SIZE)
-	draw_rect(Rect2(INSIDE), ApolloPalette.NIGHT)
+	draw_rect(Rect2(INSIDE), HudPalette.WELL)
 	_draw_range_cross()
 	for pixel: Vector2i in _marks:
 		PixelShape.draw_pixel(self, Vector2(pixel), _marks[pixel])

@@ -3,7 +3,9 @@ extends PixelFire
 ## A burst of flame fanning out in an arc (Flame Uppercut), see PixelFire.
 ##
 ## The flame front races outward while the fire burns out from the inside, then breaks up
-## into flickering pixels. The arc is never rotated, so every pixel stays on the world grid.
+## into flickering pixels. A white-hot streak shoots straight up from the fist with it (the
+## uppercut). The arc is never rotated, so every pixel stays on the world grid. It is drawn
+## HeroFxScale.SKILL_SIZE_SCALE times the reach it is given (sized for the bigger hero).
 
 ## How far out the flame front starts, as a share of the reach (it ends at the full reach).
 const FRONT_START := 0.35
@@ -18,7 +20,7 @@ const INNER_GAP := 0.12
 const BURN_OUT_END := 0.95
 const BURN_OUT_POWER := 1.4
 ## Flame tongues: how many across the arc, how long (share of reach), how often they flicker.
-const TONGUE_COUNT := 7.0
+const TONGUE_COUNT := 13.0
 const TONGUE_LENGTH := 0.16
 const TONGUE_FLICKER_SECONDS := 0.05
 ## A tongue's random length runs from this share below to the rest above TONGUE_LENGTH's span.
@@ -37,11 +39,16 @@ const BEHIND_Z_INDEX := 0
 ## Embers: how hard and how fast they're thrown (pixels per second), how far out along the
 ## flame they start, how much they lean upward and the cone (degrees) and blob they fill.
 const EMBER_EXPLOSIVENESS := 0.85
-const EMBER_SPEED := Vector2(25.0, 60.0)
+const EMBER_SPEED := Vector2(50.0, 120.0)
 const EMBER_START_SHARE := 0.55
 const EMBER_LIFT := 0.6
 const EMBER_SPREAD_DEGREES := 50.0
 const EMBER_BLOB_SHARE := 0.25
+## The uppercut streak rising from the fist: its height as a share of the reach, the share
+## of the flame's life it shows, and how thick it starts.
+const STREAK_HEIGHT_SHARE := 0.9
+const STREAK_SHARE := 0.4
+const STREAK_THICKNESS := 5
 
 ## Each cell's place across the arc (-1 = one edge, 1 = the other), matching PixelFire's cells.
 var _cell_sides: PackedFloat32Array = PackedFloat32Array()
@@ -49,21 +56,49 @@ var _cell_sides: PackedFloat32Array = PackedFloat32Array()
 var _front: float = 0.0
 var _back: float = 0.0
 var _flicker_step: int = 0
+## How long the uppercut streak is drawn, in pixels.
+var _streak_height: float = 0.0
 
 
 func _init() -> void:
-	duration = 0.3
-	ember_count = 10
-	ember_lifetime = 0.55
+	duration = 0.32
+	ember_count = 18
+	ember_lifetime = 0.6
 	break_up_start = 0.55
 
 
-## Bursts the flame toward `direction` (a unit vector), `reach` pixels out, `arc_degrees` wide.
+## Bursts the flame toward `direction` (a unit vector), `reach` pixels out (times
+## HeroFxScale.SKILL_SIZE_SCALE), `arc_degrees` wide.
 func play(direction: Vector2, reach: float, arc_degrees: float) -> void:
+	var drawn_reach := reach * HeroFxScale.SKILL_SIZE_SCALE
 	z_index = FRONT_Z_INDEX if direction.y > BEHIND_BELOW_Y else BEHIND_Z_INDEX
-	_collect_cells(direction, reach, deg_to_rad(arc_degrees) / 2.0)
-	_spawn_embers(direction, reach)
+	_streak_height = drawn_reach * STREAK_HEIGHT_SHARE
+	_collect_cells(direction, drawn_reach, deg_to_rad(arc_degrees) / 2.0)
+	_add_glow(drawn_reach)
+	_spawn_embers(direction, drawn_reach)
 	_free_when_done()
+
+
+func _draw() -> void:
+	super()
+	var progress := _elapsed / duration
+	if progress < STREAK_SHARE:
+		_draw_rising_streak(progress / STREAK_SHARE)
+
+
+## The uppercut: a flame streak shooting up from the fist, white-hot at its head and
+## cooling toward its foot, thinning as its foot climbs after it.
+func _draw_rising_streak(progress: float) -> void:
+	var head := roundi(_streak_height * ease(minf(1.0, progress * 2.0), 0.3))
+	var tail := roundi(_streak_height * progress)
+	var thickness := maxi(1, roundi(STREAK_THICKNESS * (1.0 - progress)))
+	var left := -floori(thickness / 2.0)
+	for rise in range(tail, head):
+		var below_head := float(head - rise) / maxf(1.0, head - tail)
+		var color := _fire_colors[_color_index_for_heat_lost(below_head * 0.7 + progress * 0.5)]
+		# Narrower toward the head, like a flame's tip.
+		var width := thickness if below_head > 0.3 else maxi(1, thickness - 2)
+		draw_rect(Rect2(left + floori((thickness - width) / 2.0), -rise - 1, width, 1), color)
 
 
 func _prepare_frame(progress: float) -> void:
@@ -82,7 +117,7 @@ func _color_index_at(index: int, progress: float) -> int:
 		return -1
 	# 0 at the leading edge (hottest), 1 at the trailing edge; everything cools with time.
 	var depth := (cell_front - distance) / maxf(cell_front - cell_back, MIN_DEPTH)
-	return _color_index_for_heat_lost(depth * COOLING_INWARD + progress * COOLING_OVER_TIME + side * COOLING_SIDEWAYS)
+	return _flickering_color_index(index, depth * COOLING_INWARD + progress * COOLING_OVER_TIME + side * COOLING_SIDEWAYS)
 
 
 ## Flame tongues licking out past the front: a random length per slice of the arc,

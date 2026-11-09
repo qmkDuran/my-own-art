@@ -20,9 +20,9 @@ extends StyleBox
 @export var unit: int = 2
 @export var bg_color: Color = ApolloPalette.OUTLINE
 ## The lit bevel, on the top and left.
-@export var border_color: Color = ApolloPalette.ORANGE_DARK
+@export var border_color: Color = ApolloPalette.STONE_LIGHT
 ## The shaded bevel, on the bottom and right.
-@export var border_dark_color: Color = ApolloPalette.BRICK
+@export var border_dark_color: Color = ApolloPalette.SLATE
 @export var outline_color: Color = ApolloPalette.OUTLINE
 ## Fully transparent for no shadow (e.g. a badge sitting inside a card).
 @export var shadow_color: Color = PixelShape.DROP_SHADOW

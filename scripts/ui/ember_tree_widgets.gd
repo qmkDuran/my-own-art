@@ -1,7 +1,7 @@
 class_name EmberTreeWidgets
 extends RefCounted
-## Builds the Ember Tree screen's standard pieces (cards, buttons, badges) in its warm,
-## dark style, so the screen and its side panel look the same and say it only once.
+## Builds the Ember Tree screen's standard pieces (cards, buttons, badges) in its cold
+## stone style with ember highlights (EmberTreePalette), so the screen and its side panel look the same and say it only once.
 ## Every piece ignores the mouse unless it is meant to be clicked.
 
 const CARD_PADDING := 12
@@ -14,7 +14,7 @@ const PREVIEW_MAX_HEIGHT := 64.0
 const PREVIEW_PLACEHOLDER := "Video preview coming soon"
 
 
-## A see-through dark card with a warm bevelled edge.
+## A see-through slate card with a bevelled stone edge.
 static func make_card() -> PanelContainer:
 	var card := PanelContainer.new()
 	card.add_theme_stylebox_override("panel", card_style())
@@ -44,26 +44,26 @@ static func make_button(text: String) -> Button:
 	button.add_theme_color_override("font_hover_color", EmberTreePalette.GOLD)
 	button.add_theme_color_override("font_pressed_color", EmberTreePalette.GOLD)
 	button.add_theme_color_override("font_disabled_color", EmberTreePalette.GREY)
-	button.add_theme_stylebox_override("normal", _button_style(EmberTreePalette.EMBER_DARK, EmberTreePalette.BUTTON_EDGE, EmberTreePalette.BUTTON_EDGE_DARK))
-	button.add_theme_stylebox_override("hover", _button_style(EmberTreePalette.DEEP, EmberTreePalette.GOLD, EmberTreePalette.ORANGE_DARK))
-	var pressed := _button_style(EmberTreePalette.DEEP, EmberTreePalette.GOLD, EmberTreePalette.ORANGE_DARK)
+	button.add_theme_stylebox_override("normal", _button_style(EmberTreePalette.BUTTON_FILL, EmberTreePalette.BUTTON_EDGE, EmberTreePalette.BUTTON_EDGE_DARK))
+	button.add_theme_stylebox_override("hover", _button_style(EmberTreePalette.HOT_FILL, EmberTreePalette.HOT_EDGE, EmberTreePalette.HOT_EDGE_DARK))
+	var pressed := _button_style(EmberTreePalette.HOT_FILL, EmberTreePalette.HOT_EDGE, EmberTreePalette.HOT_EDGE_DARK)
 	# Pushed in: the bevel flips and the words sink by one frame pixel.
 	pressed.is_inset = true
 	pressed.shadow_color = Color.TRANSPARENT
 	pressed.content_margin_top += pressed.unit
 	pressed.content_margin_bottom -= pressed.unit
 	button.add_theme_stylebox_override("pressed", pressed)
-	var disabled := _button_style(EmberTreePalette.COAL, EmberTreePalette.DIM, EmberTreePalette.SLATE)
+	var disabled := _button_style(EmberTreePalette.OFF_FILL, EmberTreePalette.OFF_EDGE, EmberTreePalette.OFF_EDGE_DARK)
 	disabled.shadow_color = Color.TRANSPARENT
 	button.add_theme_stylebox_override("disabled", disabled)
 	return button
 
 
-## Gives a scroll bar the panels' look: a dark inset track and a warm bevelled grabber
+## Gives a scroll bar the panels' look: a dark inset track and a stone grabber that lights up
 ## (Godot's default grey bar would be the one thing on the screen not in the game's style).
 static func style_scroll_bar(bar: ScrollBar) -> void:
 	bar.custom_minimum_size.x = SCROLL_BAR_WIDTH
-	var track := card_style(EmberTreePalette.COAL, EmberTreePalette.EMBER_DARK, EmberTreePalette.DIM)
+	var track := card_style(EmberTreePalette.WELL, EmberTreePalette.OFF_EDGE, EmberTreePalette.DIM)
 	track.is_inset = true
 	track.shadow_color = Color.TRANSPARENT
 	track.set_content_margin_all(0)
@@ -71,8 +71,9 @@ static func style_scroll_bar(bar: ScrollBar) -> void:
 	bar.add_theme_stylebox_override("scroll_focus", track)
 	for state: String in ["grabber", "grabber_highlight", "grabber_pressed"]:
 		var is_lit := state != "grabber"
-		var grabber := card_style(EmberTreePalette.DEEP, EmberTreePalette.GOLD if is_lit else EmberTreePalette.ORANGE_DARK,
-				EmberTreePalette.ORANGE_DARK if is_lit else EmberTreePalette.EMBER_DARK)
+		var grabber := card_style(EmberTreePalette.HOT_FILL if is_lit else EmberTreePalette.BUTTON_FILL,
+				EmberTreePalette.HOT_EDGE if is_lit else EmberTreePalette.PANEL_EDGE,
+				EmberTreePalette.HOT_EDGE_DARK if is_lit else EmberTreePalette.BUTTON_EDGE_DARK)
 		grabber.shadow_color = Color.TRANSPARENT
 		grabber.set_content_margin_all(SCROLL_BAR_WIDTH / 2.0)
 		bar.add_theme_stylebox_override(state, grabber)
@@ -84,7 +85,7 @@ static func make_badge_row(badge_text: String, note_text: String) -> HBoxContain
 	row.add_theme_constant_override("separation", 6)
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var badge := PanelContainer.new()
-	var badge_style := card_style(EmberTreePalette.EMBER_DARK, EmberTreePalette.ORANGE, EmberTreePalette.DEEP)
+	var badge_style := card_style(EmberTreePalette.HOT_FILL, EmberTreePalette.ORANGE, EmberTreePalette.DEEP)
 	badge_style.shadow_color = Color.TRANSPARENT
 	badge_style.content_margin_left = 6
 	badge_style.content_margin_right = 6
@@ -100,10 +101,10 @@ static func make_badge_row(badge_text: String, note_text: String) -> HBoxContain
 	return row
 
 
-## A thin warm line across a card, `width` long.
+## A thin stone line across a card, `width` long.
 static func make_divider(width: float) -> ColorRect:
 	var divider := ColorRect.new()
-	divider.color = Color(EmberTreePalette.ORANGE, 0.3)
+	divider.color = EmberTreePalette.DIVIDER
 	divider.custom_minimum_size = Vector2(width, 1)
 	divider.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return divider
@@ -126,7 +127,7 @@ static func make_rich_text(width: float) -> RichTextLabel:
 static func make_preview_frame(width: float) -> PanelContainer:
 	var frame := PanelContainer.new()
 	# Inset (shaded on top), like a screen set into the card.
-	var style := card_style(EmberTreePalette.EMBER_DARK, EmberTreePalette.GREY, EmberTreePalette.SLATE)
+	var style := card_style(EmberTreePalette.WELL, EmberTreePalette.DIM, EmberTreePalette.SLATE)
 	style.is_inset = true
 	style.shadow_color = Color.TRANSPARENT
 	style.set_content_margin_all(0)
