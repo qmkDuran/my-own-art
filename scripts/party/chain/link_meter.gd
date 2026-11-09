@@ -2,7 +2,7 @@ class_name LinkMeter
 extends Node
 ## The team's Link meter (see PROJECT_B.md, "The Link meter"): it fills from hits landed,
 ## reactions and Signal Skills. When it's full, the next Signal Skill is a Link Finisher
-## (double damage, slow-mo) and the meter empties. Lives under the Party; the HUD's
+## (double damage, slow-mo) and, once it has hit something, the meter empties. Lives under the Party; the HUD's
 ## LinkMeterBar draws it.
 
 const GROUP := "link_meter"
@@ -20,9 +20,21 @@ func _ready() -> void:
 
 ## Adds `amount` to the level's Link meter, if it has one.
 static func add_from(asker: Node, amount: float) -> void:
-	var meter := asker.get_tree().get_first_node_in_group(GROUP) as LinkMeter
+	var meter := of(asker)
 	if meter != null:
 		meter.add(amount)
+
+
+## Empties the level's Link meter, if it has one (a Link Finisher just hit).
+static func spend_from(asker: Node) -> void:
+	var meter := of(asker)
+	if meter != null:
+		meter.spend()
+
+
+## The level's Link meter (null when it has none).
+static func of(asker: Node) -> LinkMeter:
+	return asker.get_tree().get_first_node_in_group(GROUP) as LinkMeter
 
 
 func add(amount: float) -> void:

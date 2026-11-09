@@ -74,6 +74,9 @@ func _fire(member: PlayableCreature) -> void:
 	var targets := _strike_targets(member)
 	if targets.is_empty():
 		return
+	if is_link_finisher:
+		# Spent only now: a finisher that hits nothing keeps the meter full for the next one.
+		LinkMeter.spend_from(member)
 	var strike_damage := damage * (LINK_DAMAGE_MULTIPLIER if is_link_finisher else 1)
 	_before_strike(member, targets)
 	ElementStrike.hit(member, targets, strike_damage, HitFeel.Weight.HEAVY, poise_damage)

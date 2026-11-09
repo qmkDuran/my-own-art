@@ -105,7 +105,7 @@ func _swap_to(slot_index: int) -> void:
 	active_slot = slot_index
 	_bring_on(incoming, spot, intro)
 	if is_signal and intro is SignalSkill:
-		_spend_full_link_meter_on(intro as SignalSkill)
+		_make_link_finisher_if_meter_full(intro as SignalSkill)
 	_play_swap_move(incoming, INTRO_NODE, outgoing)
 	_cooldown_left = swap_cooldown
 	if camera != null:
@@ -128,10 +128,10 @@ func _bring_on(incoming: PlayableCreature, spot: Vector2, intro: SwapMove) -> vo
 	SwapFlourish.play_entrance(incoming, ring_scene)
 
 
-## A full Link meter turns the Signal Skill about to fire into a Link Finisher.
-func _spend_full_link_meter_on(signal_skill: SignalSkill) -> void:
+## A full Link meter turns the Signal Skill about to fire into a Link Finisher. The meter
+## is only spent if the finisher hits something (see SignalSkill).
+func _make_link_finisher_if_meter_full(signal_skill: SignalSkill) -> void:
 	if link_meter != null and link_meter.is_full():
-		link_meter.spend()
 		signal_skill.is_link_finisher = true
 
 

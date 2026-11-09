@@ -188,7 +188,8 @@ Poisoned + Wind = Miasma, Staggered + Wind = Shatter Gust.
   Signal Skills (+8) (`LinkMeter`).
 - Full (the bar and its label pulse gold in a gold glow): the next Signal Skill is a **Link
   Finisher**: double damage, a gold flash, an impact frame, big gold rings and **slow-mo at 0.3×
-  for 20 game frames**. The meter empties. A plain (unlit) swap never spends it.
+  for 20 game frames**. The meter empties once the finisher hits; a finisher that hits nothing,
+  or a plain (unlit) swap, never spends it.
 
 ## Flashy combat: the hit-feel kit
 Project B leans into spectacle. Built as `scripts/hit_feel/` (HitFeel, TimeControl, ImpactStar,
