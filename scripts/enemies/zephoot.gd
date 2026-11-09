@@ -3,7 +3,7 @@ extends CharacterBody2D
 ## A Zephoot: a bound wind Glimra that floats on a little cloud and shoots from range.
 ##
 ## It keeps its distance from the player (backing off when they come close, drifting in when
-## they're far), puffs up, then blows a slow gust orb at them. Right after a shot it is slow
+## they're far, both around walls and obstacles via PathMover), puffs up, then blows a slow gust orb at them. Right after a shot it is slow
 ## to move: that's the player's chance to close in. The shot itself lives in ZephootGustShot.
 ##
 ## States:
@@ -75,6 +75,7 @@ var _seconds_hovering: float = 0.0
 @onready var collision_shape: CollisionShape2D = $CollisionShape
 @onready var gust_shot: ZephootGustShot = $GustShot
 @onready var death_drops: DeathDrops = $DeathDrops
+@onready var path_mover: PathMover = $PathMover
 
 
 func _ready() -> void:
@@ -171,9 +172,9 @@ func _preferred_direction() -> Vector2:
 	var to_player := player.global_position - global_position
 	var distance := to_player.length()
 	if distance < preferred_distance.x:
-		return -to_player.normalized()
+		return path_mover.direction_away_from(player.global_position)
 	if distance > preferred_distance.y:
-		return to_player.normalized()
+		return path_mover.direction_toward(player.global_position)
 	return to_player.normalized().orthogonal() * _drift_sign * (drift_speed / float_speed)
 
 

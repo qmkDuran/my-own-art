@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3]
+[gd_scene load_steps=26 format=3]
 
 [ext_resource type="Script" path="res://scripts/enemies/warden_captain/warden_captain.gd" id="1_captain"]
 [ext_resource type="Script" path="res://scripts/animation/single_view_animator.gd" id="2_animator"]
@@ -22,6 +22,7 @@
 [ext_resource type="Script" path="res://scripts/enemies/warden_captain/captain_defeat.gd" id="20_defeat"]
 [ext_resource type="PackedScene" path="res://scenes/effects/shockwave.tscn" id="21_shockwave"]
 [ext_resource type="Script" path="res://scripts/enemies/warden_captain/captain_phase_two.gd" id="22_phase"]
+[ext_resource type="Script" path="res://scripts/components/path_mover.gd" id="90_path_mover"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_body"]
 radius = 7.0
@@ -213,3 +214,6 @@ light_drop = NodePath("../LightDrop")
 aura = NodePath("../Aura")
 screen_shake = NodePath("../ScreenShake")
 shockwave_scene = ExtResource("21_shockwave")
+
+[node name="PathMover" type="NavigationAgent2D" parent="."]
+script = ExtResource("90_path_mover")

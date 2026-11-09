@@ -5,7 +5,7 @@ extends CharacterBody2D
 ## Behaviour is a small state machine. Each state has a length; when it runs out,
 ## the toad decides what to do next.
 ##   RESTING    -> sits for a moment, then hops closer or starts an attack
-##   HOPPING    -> one hop toward the player, in an arc
+##   HOPPING    -> one hop toward the player (along the path around obstacles), in an arc
 ##   PUFFING    -> the warning: holds its puffed-up pose, then glints just before striking
 ##   LASHING    -> tongue shoots out; hits the player if they're still in the way
 ##   RECOVERING -> a short pause after attacking or being hit
@@ -76,6 +76,7 @@ var _awareness := PlayerAwareness.new()
 @onready var hit_flash: HitFlash = $HitFlash
 @onready var collision_shape: CollisionShape2D = $CollisionShape
 @onready var death_drops: DeathDrops = $DeathDrops
+@onready var path_mover: PathMover = $PathMover
 
 
 func _ready() -> void:
@@ -180,11 +181,14 @@ func _choose_next_move() -> void:
 		_timer.enter(State.RESTING, _random_rest_time())
 		return
 
-	var to_player := _player_body_position(player) - global_position
-	if to_player.length() <= tongue_reach:
-		_start_attack(to_player)
+	# Measured along the path: a player just across a wall is not in tongue reach.
+	var player_body := _player_body_position(player)
+	var hop_direction := path_mover.direction_toward(player_body)
+	var distance_to_player := path_mover.distance_to(player_body)
+	if distance_to_player <= tongue_reach:
+		_start_attack(player_body - global_position)
 	else:
-		_start_hop(to_player)
+		_start_hop(hop_direction, distance_to_player)
 
 
 func _start_attack(to_player: Vector2) -> void:
@@ -195,9 +199,9 @@ func _start_attack(to_player: Vector2) -> void:
 
 
 ## Hops toward the player, but not so far that it lands on top of them.
-func _start_hop(to_player: Vector2) -> void:
-	var distance := minf(hop_distance, to_player.length() - tongue_reach * 0.7)
-	_hop_velocity = to_player.normalized() * distance / hop_duration
+func _start_hop(direction: Vector2, distance_to_player: float) -> void:
+	var distance := minf(hop_distance, distance_to_player - tongue_reach * 0.7)
+	_hop_velocity = direction * distance / hop_duration
 	sprite.replay_animation("hop")
 	_timer.enter(State.HOPPING, hop_duration)
 

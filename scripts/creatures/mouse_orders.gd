@@ -7,12 +7,15 @@ extends Node
 ## Shift + left-click stops and jabs in place instead (PlayerInput reports it as an attack).
 ## Steering with the arrow keys cancels mouse orders.
 ##
-## This only remembers the orders and where they lead; the creature walks and jabs.
+## This only remembers the orders and where they lead (along the path around obstacles, from
+## PathMover); the creature walks and jabs. A click into a wall walks to the nearest spot in front of it.
 
 ## How close to a clicked spot counts as "arrived", in pixels.
 const ARRIVE_DISTANCE := 3.0
 
 @export var player_input: PlayerInput
+## Finds the way around walls, ruins, rocks and trees to the clicked spot or enemy.
+@export var path_mover: PathMover
 ## Effect shown where you click to move (a small ring).
 @export var click_marker_scene: PackedScene
 ## How close (feet to feet, pixels) the creature walks to a clicked enemy before jabbing.
@@ -43,6 +46,8 @@ func update() -> void:
 
 	if player_input.just_clicked_to_move():
 		var enemy := _enemy_under_cursor()
+		# A fresh click finds its way at once, instead of on the next regular repath.
+		path_mover.repath_now()
 		if enemy != null:
 			clear()
 			_attack_target = enemy
@@ -94,24 +99,24 @@ func note_jabbed_attack_target() -> void:
 	_has_jabbed_attack_target = true
 
 
-## Where the orders lead: toward the attack target until in reach, or toward the clicked spot
-## until arrived (which ends that order). Zero with nowhere to go. `fallback` is used when
-## standing right on the target.
-func move_direction(fallback: Vector2) -> Vector2:
+## Where the orders lead, along the path: toward the attack target until in reach, or toward
+## the clicked spot until arrived (which ends that order). Zero with nowhere to go.
+func move_direction() -> Vector2:
 	if _attack_target != null:
-		return Vector2.ZERO if _is_in_reach_of(_attack_target) else direction_to_attack_target(fallback)
+		if _is_in_reach_of(_attack_target):
+			return Vector2.ZERO
+		return path_mover.direction_toward(_attack_target.global_position)
 	if _has_destination:
-		var to_destination := _destination - creature.global_position
-		if to_destination.length() <= ARRIVE_DISTANCE:
+		if creature.global_position.distance_to(_destination) <= ARRIVE_DISTANCE:
 			_has_destination = false
 			return Vector2.ZERO
-		return to_destination.normalized()
+		return path_mover.direction_toward(_destination)
 	return Vector2.ZERO
 
 
 func _walk_to(point: Vector2) -> void:
 	_attack_target = null
-	_destination = point
+	_destination = path_mover.nearest_reachable_point(point)
 	_has_destination = true
 
 

@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene load_steps=12 format=3]
 
 [ext_resource type="Script" path="res://scripts/enemies/gruntite.gd" id="1_gruntite"]
 [ext_resource type="Script" path="res://scripts/animation/single_view_animator.gd" id="2_animator"]
@@ -10,6 +10,7 @@
 [ext_resource type="Script" path="res://scripts/components/light_drop.gd" id="8_drop"]
 [ext_resource type="PackedScene" path="res://scenes/pickups/light_mote.tscn" id="9_mote"]
 [ext_resource type="Texture2D" path="res://art/gruntite/gruntite_portrait_128.png" id="10_portrait"]
+[ext_resource type="Script" path="res://scripts/components/path_mover.gd" id="90_path_mover"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_body"]
 radius = 6.0
@@ -71,3 +72,6 @@ script = ExtResource("8_drop")
 mote_scene = ExtResource("9_mote")
 mote_count = 4
 xp_per_mote = 2
+
+[node name="PathMover" type="NavigationAgent2D" parent="."]
+script = ExtResource("90_path_mover")

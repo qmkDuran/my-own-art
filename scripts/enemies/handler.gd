@@ -3,7 +3,7 @@ extends CharacterBody2D
 ## A Handler: an early-game grunt who serves the AI God.
 ##
 ## He never attacks. He keeps his distance from the player, backing away when
-## they get close, and every few seconds raises his control rod to summon
+## they get close (turning aside from walls, see PathMover), and every few seconds raises his control rod to summon
 ## bound creatures (toads), up to a limit. Killing him stops the summoning;
 ## creatures already out keep fighting.
 ##
@@ -64,6 +64,7 @@ var _awareness := PlayerAwareness.new()
 @onready var collision_shape: CollisionShape2D = $CollisionShape
 @onready var summoner: HandlerSummoner = $Summoner
 @onready var rod_shove: HandlerRodShove = $RodShove
+@onready var path_mover: PathMover = $PathMover
 
 
 func _ready() -> void:
@@ -145,15 +146,15 @@ func _can_keep_retreating(delta: float) -> bool:
 	return true
 
 
-## Points away from the player when they're too close; zero when he's comfortable.
+## Points away from the player when they're too close (but not into a wall); zero when
+## he's comfortable, or pinned with nowhere to back away to.
 func _direction_away_from_player() -> Vector2:
 	var player := PlayerFinder.find(self)
 	if player == null:
 		return Vector2.ZERO
-	var from_player := global_position - player.global_position
-	if from_player.length() >= comfortable_distance:
+	if global_position.distance_to(player.global_position) >= comfortable_distance:
 		return Vector2.ZERO
-	return from_player.normalized()
+	return path_mover.direction_away_from(player.global_position)
 
 
 func _start_summon() -> void:

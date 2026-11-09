@@ -1,4 +1,4 @@
-[gd_scene load_steps=40 format=3]
+[gd_scene load_steps=41 format=3]
 
 [ext_resource type="Script" path="res://scripts/creatures/creature.gd" id="1_creature"]
 [ext_resource type="Script" path="res://scripts/animation/creature_animator.gd" id="2_animator"]
@@ -36,6 +36,7 @@
 [ext_resource type="Script" path="res://scripts/components/counter_punch.gd" id="34_counter_punch"]
 [ext_resource type="Script" path="res://scripts/components/wildfire.gd" id="35_wildfire"]
 [ext_resource type="Script" path="res://scripts/components/ember_hop.gd" id="36_ember_hop"]
+[ext_resource type="Script" path="res://scripts/components/path_mover.gd" id="90_path_mover"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_body"]
 radius = 5.0
@@ -178,9 +179,10 @@ script = ExtResource("35_wildfire")
 script = ExtResource("36_ember_hop")
 dodge = NodePath("../Dodge")
 
-[node name="MouseOrders" type="Node" parent="." node_paths=PackedStringArray("player_input")]
+[node name="MouseOrders" type="Node" parent="." node_paths=PackedStringArray("player_input", "path_mover")]
 script = ExtResource("23_mouse_orders")
 player_input = NodePath("../PlayerInput")
+path_mover = NodePath("../PathMover")
 click_marker_scene = ExtResource("14_marker")
 
 [node name="LevelUpBoost" type="Node" parent="." node_paths=PackedStringArray("health", "speech_bubble")]
@@ -198,5 +200,8 @@ animator = NodePath("../Sprite")
 facing = NodePath("../Facing")
 health = NodePath("../Health")
 screen_shake = NodePath("../ScreenShake")
+
+[node name="PathMover" type="NavigationAgent2D" parent="."]
+script = ExtResource("90_path_mover")
 
 [connection signal="hits_landed" from="MeleeAttack" to="Heat" method="on_hits_landed"]

@@ -12,7 +12,7 @@ extends CharacterBody2D
 ##
 ## States:
 ##   WAITING    -> stands (hasn't noticed the player, or enemies are paused)
-##   CHASING    -> walks toward the player until close enough to attack
+##   CHASING    -> walks toward the player (along the path around obstacles) until close enough to attack
 ##   ATTACKING  -> an attack in progress (super armour until it lands)
 ##   RECOVERING -> just attacked: the punish window
 ##   STAGGERED  -> flinching from a hit
@@ -56,6 +56,7 @@ var _has_started_fight: bool = false
 @onready var hit_flash: HitFlash = $HitFlash
 @onready var phase_two: CaptainPhaseTwo = $PhaseTwo
 @onready var defeat: CaptainDefeat = $Defeat
+@onready var path_mover: PathMover = $PathMover
 
 
 func _ready() -> void:
@@ -120,7 +121,7 @@ func _chase_or_attack(can_act: bool) -> void:
 	if distance <= stop_distance:
 		_stand()
 		return
-	velocity = global_position.direction_to(player.global_position) * walk_speed * phase_two.current_speed_scale()
+	velocity = path_mover.direction_toward(player.global_position) * walk_speed * phase_two.current_speed_scale()
 	sprite.show_animation("walk")
 	_timer.state = State.CHASING
 

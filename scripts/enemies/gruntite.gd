@@ -9,7 +9,8 @@ extends CharacterBody2D
 ##
 ## States:
 ##   STANDING   -> waits (hasn't noticed the player, or enemies are paused)
-##   PLODDING   -> walks slowly toward the player (or backs off to make room for a charge)
+##   PLODDING   -> walks slowly toward the player along the path around obstacles (or backs off
+##                 to make room for a charge). The charge itself stays a straight line: it bonks.
 ##   WINDING_UP -> crest bristles, eyes go red, head down and a hoof scrape
 ##   CHARGING   -> thunders along the locked direction
 ##   RECOVERING -> slides to a stop: after a hit, a ram, a missed charge (dazed) or a bonk
@@ -59,6 +60,7 @@ var _slide_friction: float = 0.0
 @onready var hit_flash: HitFlash = $HitFlash
 @onready var collision_shape: CollisionShape2D = $CollisionShape
 @onready var charge: GruntiteCharge = $Charge
+@onready var path_mover: PathMover = $PathMover
 
 
 func _ready() -> void:
@@ -110,9 +112,9 @@ func _plod_or_charge(can_act: bool) -> void:
 	elif charge.should_charge():
 		_start_wind_up()
 	else:
-		var toward_player := global_position.direction_to(player.global_position)
 		# Too close to charge: it backs off a few steps to make room.
-		var walk_direction := -toward_player if charge.is_player_too_close() else toward_player
+		var walk_direction := path_mover.direction_away_from(player.global_position) \
+				if charge.is_player_too_close() else path_mover.direction_toward(player.global_position)
 		velocity = walk_direction * walk_speed
 		sprite.show_animation("move")
 		_timer.state = State.PLODDING

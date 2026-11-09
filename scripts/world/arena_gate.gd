@@ -3,6 +3,7 @@ extends StaticBody2D
 ## An energy gate across an arena entrance: open, it's just two dim emitter studs on the
 ## ground; closed, cyan energy bars rise between them and a barrier blocks the way (for the
 ## player and enemies alike). A BossArena closes it when a fight starts and opens it on victory.
+## Closed, it is also carved out of the zone's navmesh (ZoneNavigation rebakes when it changes).
 ## Its origin is the middle of the gate, on the ground.
 
 ## Width of the entrance, in pixels.
@@ -28,6 +29,7 @@ var _collision := CollisionShape2D.new()
 
 
 func _ready() -> void:
+	add_to_group(ZoneNavigation.OBSTACLES_GROUP)
 	var shape := RectangleShape2D.new()
 	shape.size = Vector2(width, depth)
 	_collision.shape = shape
@@ -46,6 +48,7 @@ func open() -> void:
 func _move_to(closed: bool) -> void:
 	is_closed = closed
 	_collision.set_deferred("disabled", not closed)
+	get_tree().call_group(ZoneNavigation.GROUP, "rebake")
 	var bars := create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	bars.tween_property(self, "_raised", 1.0 if closed else 0.0, move_seconds)
 

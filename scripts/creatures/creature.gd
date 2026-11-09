@@ -5,6 +5,7 @@ extends CharacterBody2D
 ## This script only coordinates. Each job lives in its own child component:
 ##   PlayerInput     -> what the player wants
 ##   MouseOrders     -> click to move, click an enemy to attack it
+##   PathMover       -> finds the way around obstacles for click orders (arrow keys stay direct)
 ##   Movement        -> how fast to move normally
 ##   Facing          -> which way to look
 ##   MeleeAttack     -> the jab combo: jab, jab, then the Spinning Hook (once learned)
@@ -202,7 +203,7 @@ func _chosen_move_direction() -> Vector2:
 	var steering := player_input.get_move_direction()
 	if steering != Vector2.ZERO:
 		return steering
-	return mouse_orders.move_direction(facing.as_vector())
+	return mouse_orders.move_direction()
 
 
 func _is_busy() -> bool:
