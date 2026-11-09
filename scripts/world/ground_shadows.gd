@@ -13,6 +13,10 @@ extends Node2D
 ## A tile stacked on top of another tile of the same layer casts nothing (only bases touch the
 ## ground), and tiles whose art already carries a dithered shadow are skipped.
 ##
+## With `contact_only` (Ruins Edge's big pieces and dark ground) a shadow is only a thin contact
+## line right under the pixels that touch the ground: no lean, no side sliver, nothing under an
+## overhang or a canopy, so nothing looks like it floats.
+##
 ## Every shadow is painted into one texture, so where shadows overlap they don't get darker.
 ## Sit this node above the ground and decoration layers and below `World`.
 
@@ -37,11 +41,30 @@ const NARROW_FOOT_SHARE := 0.55
 const FOOT_ROWS := 4
 ## Objects at least this tall also shade the ground along their right side.
 const TALL_HEIGHT := 24
+## Contact shadows: only columns whose lowest pixel is within this many rows of the object's
+## lowest row touch the ground, and they darken this many rows right under it.
+const CONTACT_REACH := 3
+const CONTACT_DEPTH := 2
 
 ## The layers whose tiles stand on the ground and cast shadows.
 @export var caster_layers: Array[TileMapLayer] = []:
 	set(value):
 		caster_layers = value
+		if is_inside_tree():
+			rebuild()
+
+## Nodes whose Sprite2D children (big set pieces, see SetPiece) cast shadows too, read from
+## their textures the same way as tiles.
+@export var caster_pieces: Array[Node2D] = []:
+	set(value):
+		caster_pieces = value
+		if is_inside_tree():
+			rebuild()
+
+## Only thin contact shadows right at the base (see the class description).
+@export var contact_only: bool = false:
+	set(value):
+		contact_only = value
 		if is_inside_tree():
 			rebuild()
 
@@ -55,7 +78,8 @@ const TALL_HEIGHT := 24
 
 var _texture: ImageTexture = null
 var _texture_origin := Vector2.ZERO
-## Shape facts per tile, keyed by "tileset:source:atlas:alternative", so each tile is read once.
+## Shape facts per tile, keyed by "tileset:source:atlas:alternative" (or by texture for a
+## sprite), so each is read once.
 var _shape_cache: Dictionary = {}
 ## Each atlas texture's pixels, read once per rebuild.
 var _atlas_images: Dictionary = {}
@@ -79,6 +103,8 @@ func rebuild() -> void:
 	for layer in caster_layers:
 		if layer != null and layer.tile_set != null:
 			_collect_layer_spans(layer, core_spans, rim_spans)
+	for sprite in _caster_sprites():
+		_collect_sprite_spans(sprite, core_spans, rim_spans)
 	var image := Image.create_empty(bounds.size.x, bounds.size.y, false, Image.FORMAT_RGBA8)
 	var image_rect := Rect2i(Vector2i.ZERO, bounds.size)
 	for span in rim_spans:
@@ -95,7 +121,7 @@ func _draw() -> void:
 		draw_texture(_texture, _texture_origin)
 
 
-## The pixel rectangle (in this node's space) that the caster layers cover, with room to lean.
+## The pixel rectangle (in this node's space) that the casters cover, with room to lean.
 func _caster_bounds() -> Rect2i:
 	var bounds := Rect2i()
 	for layer in caster_layers:
@@ -108,7 +134,44 @@ func _caster_bounds() -> Rect2i:
 		var offset := Vector2i(layer.global_position - global_position)
 		var layer_rect := Rect2i(used.position * tile_size + offset, used.size * tile_size).grow(tile_size.x * 2)
 		bounds = layer_rect if bounds.size == Vector2i.ZERO else bounds.merge(layer_rect)
+	for sprite in _caster_sprites():
+		var sprite_rect := _sprite_rect(sprite).grow(MAX_DEPTH + MAX_LEAN)
+		bounds = sprite_rect if bounds.size == Vector2i.ZERO else bounds.merge(sprite_rect)
 	return bounds
+
+
+## Every textured Sprite2D child of the caster pieces.
+func _caster_sprites() -> Array[Sprite2D]:
+	var sprites: Array[Sprite2D] = []
+	for root in caster_pieces:
+		if root == null:
+			continue
+		for child in root.get_children():
+			var sprite := child as Sprite2D
+			if sprite != null and sprite.texture != null:
+				sprites.append(sprite)
+	return sprites
+
+
+## A sprite's drawn rectangle in this node's space.
+func _sprite_rect(sprite: Sprite2D) -> Rect2i:
+	var to_here := get_global_transform().affine_inverse() * sprite.get_global_transform()
+	var rect := to_here * sprite.get_rect()
+	return Rect2i(rect.position.round(), rect.size.round())
+
+
+func _collect_sprite_spans(sprite: Sprite2D, core_spans: Array[Rect2i], rim_spans: Array[Rect2i]) -> void:
+	var key := "%d:%s" % [sprite.texture.get_instance_id(), sprite.flip_h]
+	if not _shape_cache.has(key):
+		var pixels := _atlas_image(sprite.texture).duplicate() as Image
+		if sprite.flip_h:
+			pixels.flip_x()
+		_shape_cache[key] = _measure_pixels(pixels)
+	var shape: Dictionary = _shape_cache[key]
+	if shape.is_empty() or shape["has_baked_shadow"]:
+		return
+	var top_left := _sprite_rect(sprite).position
+	_add_shadow(shape, top_left, core_spans, rim_spans)
 
 
 func _collect_layer_spans(layer: TileMapLayer, core_spans: Array[Rect2i], rim_spans: Array[Rect2i]) -> void:
@@ -121,10 +184,7 @@ func _collect_layer_spans(layer: TileMapLayer, core_spans: Array[Rect2i], rim_sp
 		if is_single_cell and _is_stacked_on(layer, cell):
 			continue
 		var top_left := Vector2i((layer.map_to_local(cell) + offset - shape["draw_offset"]).round())
-		if shape["is_narrow_foot"]:
-			_add_foot_oval(shape, top_left, core_spans, rim_spans)
-		else:
-			_add_base_band(shape, top_left, core_spans, rim_spans)
+		_add_shadow(shape, top_left, core_spans, rim_spans)
 
 
 ## True when the cell just below holds another tile of the layer (this one is not a base).
@@ -154,6 +214,15 @@ func _measure_tile(source: TileSetAtlasSource, atlas_coords: Vector2i, alternati
 	var pixels := _atlas_image(source.texture).get_region(region)
 	if tile_data.flip_h:
 		pixels.flip_x()
+	var shape := _measure_pixels(pixels)
+	if not shape.is_empty():
+		shape["draw_offset"] = Vector2(region.size) / 2.0 + Vector2(tile_data.texture_origin)
+		shape["is_single_cell"] = source.get_tile_size_in_atlas(atlas_coords) == Vector2i.ONE
+	return shape
+
+
+## An object's shape from its pixels: its bottom edge per column, its foot and how tall it stands.
+func _measure_pixels(pixels: Image) -> Dictionary:
 	var width := pixels.get_width()
 	var height := pixels.get_height()
 	var bottom_per_column := PackedInt32Array()
@@ -189,8 +258,6 @@ func _measure_tile(source: TileSetAtlasSource, atlas_coords: Vector2i, alternati
 	var object_width := right - left + 1
 	var foot_width := foot_right - foot_left + 1
 	return {
-		"draw_offset": Vector2(region.size) / 2.0 + Vector2(tile_data.texture_origin),
-		"is_single_cell": source.get_tile_size_in_atlas(atlas_coords) == Vector2i.ONE,
 		"has_baked_shadow": _has_dithered_base(pixels, bottom),
 		"is_narrow_foot": object_width > 8 and foot_width < object_width * NARROW_FOOT_SHARE,
 		"bottom_per_column": bottom_per_column,
@@ -227,6 +294,29 @@ func _has_dithered_base(pixels: Image, bottom: int) -> bool:
 		if pixels.get_pixel(x - 1, bottom).a <= 0.5 and pixels.get_pixel(x + 1, bottom).a <= 0.5:
 			isolated += 1
 	return opaque >= 4 and isolated * 2 >= opaque
+
+
+func _add_shadow(shape: Dictionary, top_left: Vector2i, core_spans: Array[Rect2i], rim_spans: Array[Rect2i]) -> void:
+	if contact_only:
+		_add_contact_line(shape, top_left, core_spans, rim_spans)
+	elif shape["is_narrow_foot"]:
+		_add_foot_oval(shape, top_left, core_spans, rim_spans)
+	else:
+		_add_base_band(shape, top_left, core_spans, rim_spans)
+
+
+## A thin line right under the columns that reach the ground (within CONTACT_REACH rows of the
+## object's lowest row), touching the art: no gap, no offset, nothing under an overhang.
+func _add_contact_line(shape: Dictionary, top_left: Vector2i, core_spans: Array[Rect2i], rim_spans: Array[Rect2i]) -> void:
+	var bottom_per_column: PackedInt32Array = shape["bottom_per_column"]
+	var lowest: int = shape["bottom"]
+	for x in bottom_per_column.size():
+		var column_bottom := bottom_per_column[x]
+		if column_bottom < lowest - CONTACT_REACH + 1:
+			continue
+		var start := top_left + Vector2i(x, column_bottom)
+		core_spans.append(Rect2i(start, Vector2i(1, CONTACT_DEPTH - 1)))
+		rim_spans.append(Rect2i(start, Vector2i(1, CONTACT_DEPTH)))
 
 
 ## An oval at the foot of a tree-like object, as wide as most of its crown, leaning right.
