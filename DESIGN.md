@@ -38,6 +38,13 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
 - **Glimmer Shards (hand-placed, ~15–20 per game):** rewards from bosses, exploration and story moments, never random drops. First one after the first boss (~1 hour in). Socket into skills to change how they behave (never add a new element). 1 slot per skill, +1 per evolution. Free to swap outside combat.
 - **Heat** (Emberoo's resource): built by landing jabs, spent by skills, cools off out of combat. Shown as fire pips beside the heart.
 
+## Loot plan: hacked chips (build after the vertical slice)
+- **The Link Rod:** the trainer carries a stolen, hacked Warden control rod with a few chip slots (1-2 at first, more through the story).
+- **Chips drop only from humans** (Wardens, captains, other servants of the AI God), never from Glimra, so loot stays rare and hunting Wardens is the chase.
+- **Hacking:** chips drop "locked" with 1-3 modifiers; hack them with scrap from broken rods to reveal, reroll or upgrade mods (crafting).
+- **Mods:** simple, with exact numbers like the Ember Tree (stats, effects, rare "overclocked" mods that change a skill).
+- **Glimmer Shards stay separate:** hand-placed finds that change how skills behave. No gear on Emberoo, no clothes, no inventory grid.
+
 ## Build system (locked)
 - **One evolution line:** Emberoo → Furnaroo (Stage 2, ~24×24) → Emperoo (Stage 3, ~32×32), the same for every build (reference: art/reference/emberoo_inferno_line_concept.png). Builds differ through the Ember Tree and show through skills and effects, not body shape. (Branching evolution was considered and dropped: about 3× the art.)
 - **Levelling:** a small automatic stat boost (the "ding") + **1 skill point** per level. Levels get slower to earn: ~level 1 after the first pack, ~4–5 by the end of Ruins Edge, ~10–12 by the end of Act 1, cap **50** at the end of the game (curve and maths in `scripts/systems/progression.gd`). **Evolution:** a big power jump + a new tree ring + another shard slot.
