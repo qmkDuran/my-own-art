@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="Dialogue" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/npcs/dialogue.gd" id="1_dialogue"]
+
+[resource]
+script = ExtResource("1_dialogue")
+lines = PackedStringArray("You beat the Warden Captain?! The BIG one?!", "Elder Bram keeps staring down the west road. He won't say why.")
+sets_flag = ""
+announcement = ""

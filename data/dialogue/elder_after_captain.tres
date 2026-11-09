@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="Dialogue" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/npcs/dialogue.gd" id="1_dialogue"]
+
+[resource]
+script = ExtResource("1_dialogue")
+lines = PackedStringArray("The Captain knew our town? A scar over his left eye, from the old well?", "...Varn. My boy. The Wardens took him twenty winters ago.", "If his chip can crack, so can the others. Keep going. Please. Bring them home.")
+sets_flag = ""
+announcement = ""

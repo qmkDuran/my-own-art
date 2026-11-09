@@ -27,6 +27,8 @@
 [ext_resource type="Script" path="res://scripts/debug/debug_controls.gd" id="25_wrpfo"]
 [ext_resource type="Script" path="res://scripts/world/ground_shadows.gd" id="polish_shadows"]
 [ext_resource type="Script" path="res://scripts/world/ambient_life.gd" id="polish_ambient"]
+[ext_resource type="Resource" path="res://data/dialogue/elder_after_captain.tres" id="story_elder_after_captain"]
+[ext_resource type="Resource" path="res://data/dialogue/kid_after_captain.tres" id="story_kid_after_captain"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_sckbb"]
 size = Vector2(928, 32)
@@ -131,6 +133,8 @@ script = ExtResource("8_yt1jw")
 display_name = "Elder Bram"
 sprite_sheet = ExtResource("12_g3mk5")
 dialogue = ExtResource("13_3newo")
+later_dialogue = ExtResource("story_elder_after_captain")
+later_flag = "warden_captain_spared"
 
 [node name="Kid" type="StaticBody2D" parent="World" unique_id=2066632747]
 z_index = 1
@@ -139,6 +143,8 @@ script = ExtResource("8_yt1jw")
 display_name = "Pip"
 sprite_sheet = ExtResource("14_hoa34")
 dialogue = ExtResource("15_v5ib5")
+later_dialogue = ExtResource("story_kid_after_captain")
+later_flag = "warden_captain_spared"
 
 [node name="GateGuard" type="StaticBody2D" parent="World" unique_id=801420835]
 z_index = 1

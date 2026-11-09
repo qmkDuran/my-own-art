@@ -1,7 +1,7 @@
 extends Node
 ## Story moments that have happened (registered as the "StoryFlags" autoload), each a name
 ## that is either set or not: the arrival raid won, the Link Rod handed over, the Warden
-## Captain beaten. Things in the world ask `has` and change when a flag is set; SaveGame saves
+## Captain beaten and spared. Things in the world ask `has` and change when a flag is set; SaveGame saves
 ## them like any other system (`to_save_data` / `load_save_data`).
 
 ## Fired when a flag is set for the first time (SaveGame saves then).
@@ -11,6 +11,10 @@ signal changed(flag: String)
 const ARRIVAL_RAID_WON := "arrival_raid_won"
 ## The Tinkerer hacked the stolen Warden rod into the Link Rod (the C key works from then on).
 const LINK_ROD_GIVEN := "link_rod_given"
+## The Warden Captain lived through his defeat: his chip cracked and he walked off, dazed (set
+## alongside the Ruins Edge arena's `ruins_edge_captain_defeated`). Elder Bram and Pip in the
+## hub speak of him from then on: he is Varn, Bram's son, taken by the Wardens as a boy.
+const WARDEN_CAPTAIN_SPARED := "warden_captain_spared"
 
 var _flags: Dictionary = {}
 

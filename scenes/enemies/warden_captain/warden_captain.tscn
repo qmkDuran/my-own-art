@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3]
+[gd_scene load_steps=32 format=3]
 
 [ext_resource type="Script" path="res://scripts/enemies/warden_captain/warden_captain.gd" id="1_captain"]
 [ext_resource type="Script" path="res://scripts/animation/single_view_animator.gd" id="2_animator"]
@@ -25,6 +25,13 @@
 [ext_resource type="Script" path="res://scripts/components/path_mover.gd" id="90_path_mover"]
 [ext_resource type="Script" path="res://scripts/enemies/offscreen_sleep.gd" id="91_offscreen_sleep"]
 [ext_resource type="Script" path="res://scripts/enemies/chip_drop.gd" id="95_chip_drop"]
+[ext_resource type="Script" path="res://scripts/effects/chip_glint.gd" id="23_glint"]
+[ext_resource type="Resource" path="res://data/dialogue/captain_waking.tres" id="24_waking"]
+[ext_resource type="Texture2D" path="res://art/warden_captain/warden_captain_kneel_sheet.png" id="25_kneel"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_portrait"]
+atlas = ExtResource("25_kneel")
+region = Rect2(4, 6, 16, 26)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_body"]
 radius = 7.0
@@ -59,6 +66,10 @@ animation_settings = {
 },
 "idle": {
 "frame_durations": [0.5, 0.5],
+"loops": true
+},
+"kneel": {
+"frame_durations": [0.7, 0.5],
 "loops": true
 },
 "slam": {
@@ -214,8 +225,15 @@ first_use_delay = 1.5
 phase_two_only = true
 hit_flash = NodePath("../HitFlash")
 
-[node name="Defeat" type="Node" parent="." node_paths=PackedStringArray("sprite", "collision_shape", "light_drop", "aura", "screen_shake")]
+[node name="ChipGlint" type="Node2D" parent="."]
+position = Vector2(-6, -18)
+script = ExtResource("23_glint")
+
+[node name="Defeat" type="Node" parent="." node_paths=PackedStringArray("sprite", "collision_shape", "light_drop", "aura", "screen_shake", "chip_glint")]
 script = ExtResource("20_defeat")
+waking_words = ExtResource("24_waking")
+portrait = SubResource("AtlasTexture_portrait")
+chip_glint = NodePath("../ChipGlint")
 sprite = NodePath("../Sprite")
 collision_shape = NodePath("../CollisionShape")
 light_drop = NodePath("../LightDrop")

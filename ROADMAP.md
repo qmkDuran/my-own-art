@@ -48,6 +48,8 @@ Goal: one fun zone (Ruins Edge, about 5 min) with real art, a full Stage 1 build
 
 - 2026-11-09: zones 4 (Frostveil Pass) and 5 (Galebloom Orchard) built (see DESIGN.md, Zones); quarry → pass → orchard travel works both ways. The Shalendrill now stands in the Blossom Court. Next for them: playtest timing and XP by hand (level 11 at the boss door).
 
+- 2026-11-09: story beat: the **Warden Captain lives**. Beaten, he kneels, his chip cracks, he says three dazed lines and staggers off; he is **Varn, Elder Bram's son** (Bram and Pip get new lines once `warden_captain_spared` is set). See DESIGN.md, "Act 1 outline", for the lines and the threads for later acts. Next: a lore line about the taken children on a new lore stone (the existing stones hold one line each).
+
 ## Later milestones (rough)
 2. Act 1 (demo, about 1-1.5h): more zones, a hub town with NPCs, a light story
 3. Intro (home world) and starter choice, once there are 3 playable Glimra

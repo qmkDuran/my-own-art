@@ -5,7 +5,8 @@ extends Node
 ## can't be hit or bumped into), plays its own beats (`_play_beats`: a stagger, a sink to its
 ## knees...), then the AI God's chip shorts in a burst of cyan sparks and shockwave rings
 ## (`_spawn_burst_rings`), the stolen light bursts out of it as a shower of XP motes, the HUD
-## announces the victory and the boss fades away.
+## announces the victory and the boss leaves (`_leave`: by default it fades away; the Warden
+## Captain lives through it and walks off).
 
 ## How hard the screen shakes at the chip burst.
 const BURST_SHAKE_STRENGTH := 3.0
@@ -34,9 +35,8 @@ func play() -> void:
 	@warning_ignore("redundant_await")  # every BossDefeat's beats are a coroutine
 	await _play_beats()
 	_burst()
-	var fade := boss.create_tween()
-	fade.tween_property(sprite, "modulate:a", 0.0, fade_seconds)
-	fade.tween_callback(boss.queue_free)
+	await _leave()
+	boss.queue_free()
 
 
 ## The boss's own beats before the chip bursts (poses, shakes and pauses).
@@ -45,6 +45,13 @@ func play() -> void:
 
 ## The burst's shockwave rings, from the chip at `chip_position` (only with a shockwave_scene).
 @abstract func _spawn_burst_rings(chip_position: Vector2) -> void
+
+
+## How the boss leaves after the burst; it is freed once this returns. By default it fades away.
+func _leave() -> void:
+	var fade := boss.create_tween()
+	fade.tween_property(sprite, "modulate:a", 0.0, fade_seconds)
+	await fade.finished
 
 
 func _burst() -> void:

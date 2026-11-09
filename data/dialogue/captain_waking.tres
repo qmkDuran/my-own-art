@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="Dialogue" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/npcs/dialogue.gd" id="1_dialogue"]
+
+[resource]
+script = ExtResource("1_dialogue")
+lines = PackedStringArray("...The light. It's gone quiet. First time in twenty years.", "Hometown? I... know that name. There was a well. I split my brow on it.", "Go, little flame. It'll send others now. Worse than me.")
+sets_flag = ""
+announcement = ""
