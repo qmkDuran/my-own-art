@@ -87,6 +87,20 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
 - Scope: ~1 act for the demo, ~3 acts for the full game.
 - Write the story **after** the vertical slice is fun.
 
+## Zone sweet spot (2026-11-09, applies to every zone)
+
+The game is about beating up packs, flashy skills, effects and loot: the more of that per minute, the better. Size serves density, never the other way round.
+
+- **Size (in 480×270 screens):** linear 4–6 screens long; open 6–9 across; maze 6–8. Boss arena 1–1.5 screens so the whole fight fits the camera. Ruins Edge (about 6 × 6.6) is a medium open zone.
+- **Time:** 5–7 minutes per zone including fights; about 2 minutes of pure walking.
+- **Density (the important part):**
+  - A pack every **6–12 seconds** of walking; never more than ~3 seconds without something to hit, break or pick up on the main path.
+  - Packs of **6–14 trash** that die in 1–2 hits and explode in chains; a Warden relay in the bigger packs.
+  - About **one elite every 60–90 s**, and one rare "named" pack or mini-boss per zone (plus the zone boss where there is one).
+  - Breakables (crates, scrap, wrecks) along the path that drop small loot.
+- **Loot rhythm:** something drops from almost every pack; a notable drop (chip, core, shard, gem) every 1–2 minutes; one guaranteed good drop from each zone's boss or event.
+- **Layout:** one loop or branch, 25–35% optional space with a reward in every pocket, no dead ends without a reward, no long empty corridors, a checkpoint before bosses.
+
 ## Zones
 - **Zone design rules** (from our zone research):
   - **5–8 minutes** per zone on a first run.
