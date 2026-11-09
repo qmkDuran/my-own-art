@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="Dialogue" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/npcs/dialogue.gd" id="1_dialogue"]
+
+[resource]
+script = ExtResource("1_dialogue")
+lines = PackedStringArray("They come every week for 'stock'. Nobody ever fights back... until today.", "Go on into town. The Tinkerer will want to see this. She'll want to see HIM.")
+sets_flag = ""
+announcement = ""

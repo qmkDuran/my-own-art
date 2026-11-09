@@ -77,14 +77,15 @@ func _just_pressed_attack_in_place() -> bool:
 	return _is_holding_attack_in_place_modifier() and Input.is_action_just_pressed("move_to_cursor")
 
 
-## F: the trainer throws a healing tonic.
+## F: the trainer throws a healing tonic (not while F talks to someone nearby: TalkFocus).
 func wants_trainer_aid() -> bool:
-	return Input.is_action_just_pressed("trainer_aid")
+	return Input.is_action_just_pressed("trainer_aid") and not TalkFocus.takes_action("trainer_aid")
 
 
-## Q, W, E or R: use the skill in slot 0, 1, 2 or 3.
+## Q, W, E or R: use the skill in slot 0, 1, 2 or 3 (not while that key talks to someone nearby).
 func wants_skill(slot_index: int) -> bool:
-	return Input.is_action_just_pressed("skill_%d" % (slot_index + 1))
+	var action := "skill_%d" % (slot_index + 1)
+	return Input.is_action_just_pressed(action) and not TalkFocus.takes_action(action)
 
 
 func wants_to_dodge() -> bool:

@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=11 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="1_hud"]
 [ext_resource type="PackedScene" path="res://scenes/ui/ember_tree.tscn" id="2_ember_tree"]
@@ -8,6 +8,7 @@
 [ext_resource type="Script" path="res://scripts/world/respawner.gd" id="6_respawner"]
 [ext_resource type="Script" path="res://scripts/chips/chip_effects.gd" id="20_chip_effects"]
 [ext_resource type="PackedScene" path="res://scenes/ui/link_rod.tscn" id="21_link_rod"]
+[ext_resource type="Script" path="res://scripts/ui/dialogue_box.gd" id="22_dialogue_box"]
 
 [sub_resource type="Environment" id="Environment_glow"]
 background_mode = 3
@@ -44,3 +45,7 @@ death_screen = NodePath("../DeathScreen")
 script = ExtResource("20_chip_effects")
 
 [node name="LinkRodScreen" parent="." instance=ExtResource("21_link_rod")]
+
+[node name="DialogueBox" type="CanvasLayer" parent="."]
+layer = 3
+script = ExtResource("22_dialogue_box")

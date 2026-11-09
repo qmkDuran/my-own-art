@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="my-own-art"
-run/main_scene="res://scenes/zones/ruins_edge/ruins_edge.tscn"
+run/main_scene="res://scenes/zones/hometown_outskirts/hometown_outskirts.tscn"
 config/features=PackedStringArray("4.7")
 
 [autoload]
@@ -23,7 +23,9 @@ Awakening="*res://scripts/systems/awakening.gd"
 ShardInventory="*res://scripts/systems/shard_inventory.gd"
 LinkRod="*res://scripts/systems/link_rod.gd"
 Checkpoints="*res://scripts/systems/checkpoints.gd"
+StoryFlags="*res://scripts/systems/story_flags.gd"
 SaveGame="*res://scripts/systems/save_game.gd"
+ZoneTravel="*res://scripts/systems/zone_travel.gd"
 
 [display]
 

@@ -1,6 +1,8 @@
 class_name LinkRodScreen
 extends CanvasLayer
 ## The Link Rod screen (see DESIGN.md, "Loot: hacked chips"). C opens it; C or Escape closes.
+## C does nothing until the Tinkerer in Hometown has hacked the rod (StoryFlags.LINK_ROD_GIVEN);
+## the test arena, which never saves, always has it.
 ##
 ## Opening pauses the game; this layer keeps running (process mode Always). It draws at the
 ## Ember Tree's crisp UI resolution and in its style: three columns between the header and
@@ -52,6 +54,8 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_echo():
 		return
 	if event.is_action_pressed("link_rod"):
+		if not is_open and not is_rod_in_hand():
+			return
 		toggle()
 	elif is_open and event.is_action_pressed("ui_cancel"):
 		close()
@@ -60,6 +64,11 @@ func _unhandled_input(event: InputEvent) -> void:
 	else:
 		return
 	get_viewport().set_input_as_handled()
+
+
+## True once the Tinkerer has handed over the Link Rod (always in the test arena).
+static func is_rod_in_hand() -> bool:
+	return StoryFlags.has(StoryFlags.LINK_ROD_GIVEN) or not SaveGame.enabled
 
 
 func toggle() -> void:

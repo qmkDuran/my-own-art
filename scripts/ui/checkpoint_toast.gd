@@ -20,3 +20,8 @@ func _init() -> void:
 func _ready() -> void:
 	super._ready()
 	add_to_group(GROUP)
+
+
+## Shows `text` in the same card, e.g. "PATH BLOCKED (COMING SOON)" at a closed zone exit.
+static func show_message(asker: Node, text: String) -> void:
+	asker.get_tree().call_group(GROUP, "announce", text)

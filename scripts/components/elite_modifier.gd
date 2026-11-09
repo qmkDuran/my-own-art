@@ -12,6 +12,8 @@ extends Node
 @export var mote_multiplier: int = 3
 ## The word in front of the species name on its tag.
 @export var title: String = "Bristling"
+## The whole name on its tag instead of title + species (e.g. "Quarry Bull" for a stand-in boss).
+@export var name_override: String = ""
 ## Used when the enemy has no `display_name` of its own.
 @export var fallback_name: String = "Glimra"
 ## Height of the name tag above the feet, in pixels (above the sprite and its health bar).
@@ -33,6 +35,8 @@ func _ready() -> void:
 
 
 func elite_name() -> String:
+	if name_override != "":
+		return name_override
 	var species_name: Variant = enemy.get("display_name")
 	if not species_name is String or (species_name as String).is_empty():
 		species_name = fallback_name

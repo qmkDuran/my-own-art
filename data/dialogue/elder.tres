@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="Dialogue" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/npcs/dialogue.gd" id="1_dialogue"]
+
+[resource]
+script = ExtResource("1_dialogue")
+lines = PackedStringArray("A hundred years ago this was a happy town. Then the AI God switched itself on and decided it knew best.", "Its Wardens hunt Glimra and drain their light into 'stock' to feed its machines. Those dead pylons? Its eyes.", "Every Glimra they keep gets a chip implanted. Then it does as it's told. Your friend has no chip. Keep it that way.")
+sets_flag = ""
+announcement = ""

@@ -3,7 +3,7 @@ extends Node
 ##
 ## One JSON file, SAVE_PATH, holds a `version` (for future migrations), the current zone
 ## and a section per system: Progression, Awakening, EmberTree, CreatureLog, ShardInventory,
-## LinkRod (chips and scrap), Checkpoints (the last checkpoint reached) and the player's TrainerAid. Each system writes and reads its own section (`to_save_data` /
+## LinkRod (chips and scrap), Checkpoints (the last checkpoint reached), StoryFlags (story moments) and the player's TrainerAid. Each system writes and reads its own section (`to_save_data` /
 ## `load_save_data`), so this file never knows their insides.
 ##
 ## Loads in `_ready`, before the first zone is built, so everything that reads Progression
@@ -20,7 +20,7 @@ const TEMP_PATH := SAVE_PATH + ".tmp"
 ## Where an unreadable save is moved, so it isn't overwritten and can still be looked at.
 const UNREADABLE_PATH := "user://save_1.unreadable.json"
 ## Raise this when the layout changes, and teach `_migrate` to bring older files up to it.
-const VERSION := 1
+const VERSION := 2
 const AUTOSAVE_SECONDS := 60.0
 const TRAINER_AID_NAME := "TrainerAid"
 
@@ -44,6 +44,7 @@ func _ready() -> void:
 	ShardInventory.collected.connect(_queue_autosave.unbind(1))
 	LinkRod.changed.connect(_queue_autosave)
 	Checkpoints.changed.connect(_queue_autosave)
+	StoryFlags.changed.connect(_queue_autosave.unbind(1))
 	get_tree().node_added.connect(_on_node_added)
 	_start_autosave_timer()
 	_go_to_saved_zone.call_deferred()
@@ -98,6 +99,7 @@ func _build_save() -> Dictionary:
 		"shards": ShardInventory.to_save_data(),
 		"link_rod": LinkRod.to_save_data(),
 		"checkpoint": Checkpoints.to_save_data(),
+		"story_flags": StoryFlags.to_save_data(),
 	}
 	var aid := PlayerFinder.find_component(self, TRAINER_AID_NAME) as TrainerAid
 	if aid != null:
@@ -117,6 +119,7 @@ func _apply(data: Dictionary) -> void:
 	ShardInventory.load_save_data(SaveData.read_section(data, "shards"))
 	LinkRod.load_save_data(SaveData.read_section(data, "link_rod"))  # after the shards: they add its slots
 	Checkpoints.load_save_data(SaveData.read_section(data, "checkpoint"))
+	StoryFlags.load_save_data(SaveData.read_section(data, "story_flags"))
 	_pending_aid_data = SaveData.read_section(data, "trainer_aid")
 	var zone: Variant = data.get("zone")
 	_saved_zone_path = zone if zone is String else ""
@@ -146,9 +149,13 @@ func _read_save() -> Dictionary:
 	return _migrate(parsed, version)
 
 
-## Brings an older save up to VERSION. Version 0 (no "version" field) has the same layout
-## as version 1, so nothing changes yet; add a step per version as the layout changes.
-func _migrate(data: Dictionary, _from_version: int) -> Dictionary:
+## Brings an older save up to VERSION, one step per version. Version 0 (no "version" field)
+## has the same layout as version 1.
+## 1 → 2: story flags arrived with the hub. Older saves already had the Link Rod (before the
+## Tinkerer handed it over), so they keep it.
+func _migrate(data: Dictionary, from_version: int) -> Dictionary:
+	if from_version < 2 and not data.has("story_flags"):
+		data["story_flags"] = {"flags": [StoryFlags.LINK_ROD_GIVEN]}
 	data["version"] = VERSION
 	return data
 

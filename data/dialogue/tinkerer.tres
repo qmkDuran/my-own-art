@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="Dialogue" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/npcs/dialogue.gd" id="1_dialogue"]
+
+[resource]
+script = ExtResource("1_dialogue")
+lines = PackedStringArray("Well, burn my bolts. A free Glimra! No chip, no cyan glow. Hello, handsome.", "See this? A Warden's control rod. I 'borrowed' it. It's how they boss their chipped Glimra around.", "I've rewired it backwards: now it reads chips instead of obeying them. I call it the Link Rod. Catchy, no?", "Pull chips off Wardens, slot them in, and Emberoo gets their tricks. Press C to open it. It won't bite. Much.")
+sets_flag = "link_rod_given"
+announcement = "LINK ROD: PRESS C"

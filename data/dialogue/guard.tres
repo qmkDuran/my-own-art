@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="Dialogue" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/npcs/dialogue.gd" id="1_dialogue"]
+
+[resource]
+script = ExtResource("1_dialogue")
+lines = PackedStringArray("The west road goes to Ruins Edge. Wardens everywhere, and a Captain who thinks he's the AI God's favourite.", "Heading out? Bring that kangaroo back in one piece. We've only got the one.")
+sets_flag = ""
+announcement = ""

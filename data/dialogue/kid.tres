@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="Dialogue" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/npcs/dialogue.gd" id="1_dialogue"]
+
+[resource]
+script = ExtResource("1_dialogue")
+lines = PackedStringArray("Whoa! Is he REAL? He's on fire! Is he supposed to be on fire?!", "Grandpa says Glimra used to walk around everywhere. I thought he made that up.", "Can I touch his ear? ...Ow. Okay. Worth it.")
+sets_flag = ""
+announcement = ""

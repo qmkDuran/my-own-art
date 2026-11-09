@@ -25,6 +25,8 @@
 [ext_resource type="Script" path="res://scripts/components/elite_modifier.gd" id="23_elite"]
 [ext_resource type="Script" path="res://scripts/world/lore_stone.gd" id="24_lore"]
 [ext_resource type="Script" path="res://scripts/world/checkpoint.gd" id="25_checkpoint"]
+[ext_resource type="Script" path="res://scripts/world/zone_entry.gd" id="26_zone_entry"]
+[ext_resource type="Script" path="res://scripts/world/zone_exit.gd" id="27_zone_exit"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_arena"]
 size = Vector2(384, 256)
@@ -415,6 +417,7 @@ script = ExtResource("19_arena")
 boss = NodePath("../../../World/FinalArenaWardenCaptain")
 gates = [NodePath("../../../World/FinalArenaGateWest"), NodePath("../../../World/FinalArenaGateMain")]
 checkpoint = NodePath("../../BossGateCheckpoint/Checkpoint_BossGate")
+defeated_flag = "ruins_edge_captain_defeated"
 
 [node name="Floor" type="CollisionShape2D" parent="Areas/FinalArena/BossArena" unique_id=1846201737]
 position = Vector2(-16, 32)
@@ -438,6 +441,33 @@ position = Vector2(1528, 528)
 [node name="Checkpoint_BossGate" type="Marker2D" parent="Areas/BossGateCheckpoint" unique_id=1900000017 groups=["checkpoints"]]
 script = ExtResource("25_checkpoint")
 has_waystone = true
+
+[node name="Entry_FromHometown" type="Marker2D" parent="Areas/StartGlade" unique_id=1900000019 groups=["checkpoints"]]
+position = Vector2(-56, 40)
+script = ExtResource("26_zone_entry")
+checkpoint_id = "from_hometown"
+
+[node name="Exit_Hometown" type="Area2D" parent="Areas/StartGlade" unique_id=1900000020]
+position = Vector2(-120, 60)
+script = ExtResource("27_zone_exit")
+target_zone = "res://scenes/zones/hometown/hometown.tscn"
+target_entry_id = "from_ruins_edge"
+size = Vector2(24, 40)
+
+[node name="Entry_FromZone2" type="Marker2D" parent="Areas/FinalArena" unique_id=1900000021 groups=["checkpoints"]]
+position = Vector2(8, 86)
+script = ExtResource("26_zone_entry")
+checkpoint_id = "from_zone2"
+
+[node name="Exit_Zone2" type="Area2D" parent="Areas/FinalArena" unique_id=1900000022]
+position = Vector2(8, 140)
+script = ExtResource("27_zone_exit")
+target_zone = "res://scenes/zones/zone2/zone2.tscn"
+target_entry_id = "from_ruins_edge"
+required_flag = "ruins_edge_captain_defeated"
+locked_text = "THE WARDEN CAPTAIN BARS THE WAY"
+size = Vector2(48, 16)
+direction = Vector2(0, 1)
 
 [node name="GameLayer" type="Node" parent="." unique_id=2125940884 instance=ExtResource("13_jewaq")]
 

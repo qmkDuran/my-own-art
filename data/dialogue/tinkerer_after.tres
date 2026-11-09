@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="Dialogue" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/npcs/dialogue.gd" id="1_dialogue"]
+
+[resource]
+script = ExtResource("1_dialogue")
+lines = PackedStringArray("Chips go in the rod, scrap pays for hacking them. Press C whenever you like.", "Bring me a Warden Captain's chip and I'll make tea. Terrible tea. But tea.")
+sets_flag = ""
+announcement = ""

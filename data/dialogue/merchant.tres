@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="Dialogue" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/npcs/dialogue.gd" id="1_dialogue"]
+
+[resource]
+script = ExtResource("1_dialogue")
+lines = PackedStringArray("Berries! Scrap! Slightly used bolts! ...Oh. You're a Glimra. Do Glimra pay?", "No? Then the berries by the waystone are on the house. Don't tell anyone I've gone soft.")
+sets_flag = ""
+announcement = ""
