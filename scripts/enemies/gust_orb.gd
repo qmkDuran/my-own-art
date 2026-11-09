@@ -60,12 +60,9 @@ func _on_body_entered(body: Node2D) -> void:
 
 
 func _try_to_hit_player(player: Node2D) -> void:
-	var player_health: Health = player.get_node_or_null("Health")
-	if player_health == null or player_health.is_invulnerable:
+	if not PlayerHit.try_to_hurt(player, damage, global_position):
 		return  # dodged through it
-	player_health.take_damage(damage, global_position)
-	if player.has_method("push"):
-		player.push(_direction * push_speed, push_time)
+	PlayerHit.shove(player, _direction * push_speed, push_time)
 	_burst()
 
 

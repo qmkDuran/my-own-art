@@ -1,0 +1,12 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/pickups/glimmer_shard.gd" id="1_shard"]
+[ext_resource type="Texture2D" path="res://art/pickups/glimmer_shard.png" id="2_crystal"]
+
+[node name="GlimmerShard" type="Node2D"]
+z_index = 1
+script = ExtResource("1_shard")
+
+[node name="Crystal" type="Sprite2D" parent="."]
+position = Vector2(0, -10)
+texture = ExtResource("2_crystal")

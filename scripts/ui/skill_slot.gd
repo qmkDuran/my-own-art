@@ -10,7 +10,7 @@ extends Control
 ## shout), and dimly when refused because it's still recovering. Whenever its key is pressed
 ## (used or refused) the contents dip a pixel, like a pressed button.
 ## The skill is any Resource with an `icon: Texture2D` and a `heat_cost: int` (see SkillBarHud);
-## none = an empty slot.
+## none = an empty slot. SkillSlotPainter draws the frame, the veil and the seconds.
 
 signal hovered(slot: SkillSlot)
 signal unhovered(slot: SkillSlot)
@@ -24,8 +24,6 @@ const INNER := Rect2i(2, 2, 16, 16)
 ## a pixel out from the inner area, so they cover as little of the icon as they can.
 const KEY_LABEL_TOP_LEFT := Vector2i(1, 1)
 const HEAT_BADGE_BOTTOM_RIGHT := Vector2i(SLOT_SIZE - 2, SLOT_SIZE - 2)
-## Top of the cooldown seconds (centred in the slot both ways, clear of the Heat badge below).
-const SECONDS_TOP := 8
 
 ## The letter of the key that fires this slot (SkillBarHud reads it from the InputMap).
 var key_label: String = "":
@@ -118,40 +116,23 @@ func _on_usable_maybe_changed() -> void:
 
 
 func _draw() -> void:
-	_draw_frame()
+	SkillSlotPainter.draw_frame(self, is_usable())
 	if _flashes.used_stage() == 0:
-		_draw_inner_glint()
+		SkillSlotPainter.draw_inner_glint(self)
 	draw_set_transform(_flashes.press_offset())
 	var icon := _icon()
 	if icon != null:
 		_draw_icon(icon)
 	if is_recovering():
-		_draw_cooldown_veil()
+		SkillSlotPainter.draw_cooldown_veil(self, _cooldown_fraction)
 	if skill != null:
 		HeatCostBadge.draw(self, _heat_cost(), has_enough_heat, HEAT_BADGE_BOTTOM_RIGHT)
 	if is_recovering():
-		_draw_seconds_left()
+		SkillSlotPainter.draw_seconds_left(self, _cooldown_left)
 	var key_color := ApolloPalette.CREAM if is_usable() or skill == null else ApolloPalette.GREY
 	PixelFont.draw_text(self, key_label, Vector2(KEY_LABEL_TOP_LEFT), key_color, ApolloPalette.OUTLINE)
 	draw_set_transform(Vector2.ZERO)
 	_flashes.draw_border(self, SLOT_SIZE)
-
-
-## The stone frame (with a gold top edge while usable), then a two-tone inside.
-func _draw_frame() -> void:
-	PixelShape.draw_stone_frame(self, SLOT_SIZE)
-	if is_usable():
-		draw_rect(Rect2(0, 0, SLOT_SIZE - 1, 1), ApolloPalette.GOLD)
-	var inner := Rect2(INNER)
-	var top_half := Rect2(inner.position, Vector2(inner.size.x, floorf(inner.size.y / 2.0)))
-	draw_rect(inner, ApolloPalette.DARK)
-	draw_rect(top_half, ApolloPalette.SLATE)
-
-
-## First frame of the "used" flash: a bright line along the inside top and left edges.
-func _draw_inner_glint() -> void:
-	draw_rect(Rect2(INNER.position.x, INNER.position.y, INNER.size.x, 1), ApolloPalette.STONE)
-	draw_rect(Rect2(INNER.position.x, INNER.position.y, 1, INNER.size.y), ApolloPalette.STONE)
 
 
 ## The icon with an outline, centred in the inner area: greyed while it can't be used, and
@@ -167,24 +148,6 @@ func _draw_icon(icon: Texture2D) -> void:
 	elif glow_stage > 0:
 		outline = _flashes.ready_color()
 	PixelShape.draw_outlined(self, pixels, Vector2.ZERO, outline)
-
-
-## A dotted veil over the share still recovering, with a sky-blue line on its edge.
-func _draw_cooldown_veil() -> void:
-	var veil_rows := roundi(INNER.size.y * _cooldown_fraction)
-	var edge_row := mini(INNER.position.y + veil_rows, INNER.end.y - 1)
-	var parity := roundi(global_position.x + global_position.y)
-	for y in range(INNER.position.y, edge_row):
-		for x in range(INNER.position.x, INNER.end.x):
-			if (x + y + parity) % 2 == 0:
-				PixelShape.draw_pixel(self, Vector2(x, y), ApolloPalette.NIGHT)
-	draw_rect(Rect2(INNER.position.x, edge_row, INNER.size.x, 1), ApolloPalette.SKY)
-
-
-func _draw_seconds_left() -> void:
-	var seconds := str(ceili(_cooldown_left))
-	var left := (SLOT_SIZE - PixelFont.width_of(seconds)) / 2
-	PixelFont.draw_text(self, seconds, Vector2(left, SECONDS_TOP), ApolloPalette.WHITE, ApolloPalette.OUTLINE)
 
 
 func _icon() -> Texture2D:

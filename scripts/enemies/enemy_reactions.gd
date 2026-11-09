@@ -4,6 +4,8 @@ extends RefCounted
 
 ## The group enemies are in while they can be hit and targeted.
 const ENEMIES_GROUP := "enemies"
+## The group summoned creatures are in while they're alive (see HandlerSummoner's zone limit).
+const SUMMONED_GROUP := "summoned"
 
 
 ## The velocity a hit from `source_position` throws `body` away with.
@@ -20,6 +22,7 @@ static func slowed_down(velocity: Vector2, friction: float, delta: float) -> Vec
 ## into), fades its sprite out over `seconds` and then frees it.
 static func fade_out_and_free(body: Node2D, sprite: CanvasItem, collision_shape: CollisionShape2D, seconds: float) -> void:
 	body.remove_from_group(ENEMIES_GROUP)
+	body.remove_from_group(SUMMONED_GROUP)
 	collision_shape.set_deferred("disabled", true)
 	var fade := body.create_tween()
 	fade.tween_property(sprite, "modulate:a", 0.0, seconds)

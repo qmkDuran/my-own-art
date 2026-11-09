@@ -45,7 +45,7 @@ func should_shoot() -> bool:
 	var player := PlayerFinder.find(self)
 	if player == null or _seconds_until_ready > 0.0:
 		return false
-	return zephoot.global_position.distance_to(player.global_position) <= shooting_range
+	return zephoot.global_position.distance_squared_to(player.global_position) <= shooting_range * shooting_range
 
 
 func start() -> void:

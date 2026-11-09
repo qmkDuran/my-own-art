@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3]
+[gd_scene load_steps=14 format=3]
 
 [ext_resource type="Script" path="res://scripts/enemies/gruntite.gd" id="1_gruntite"]
 [ext_resource type="Script" path="res://scripts/animation/single_view_animator.gd" id="2_animator"]
@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" path="res://scenes/pickups/light_mote.tscn" id="9_mote"]
 [ext_resource type="Texture2D" path="res://art/gruntite/gruntite_portrait_128.png" id="10_portrait"]
 [ext_resource type="Script" path="res://scripts/components/path_mover.gd" id="90_path_mover"]
+[ext_resource type="Script" path="res://scripts/enemies/offscreen_sleep.gd" id="91_offscreen_sleep"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_body"]
 radius = 6.0
@@ -19,6 +20,11 @@ radius = 6.0
 z_index = 1
 motion_mode = 1
 script = ExtResource("1_gruntite")
+knockback_speed = 60.0
+death_fade_time = 0.4
+species_id = "gruntite"
+display_name = "Gruntite"
+element = "Stone"
 portrait = ExtResource("10_portrait")
 
 [node name="Shadow" type="Polygon2D" parent="."]
@@ -75,3 +81,7 @@ xp_per_mote = 2
 
 [node name="PathMover" type="NavigationAgent2D" parent="."]
 script = ExtResource("90_path_mover")
+
+[node name="OffscreenSleep" type="Node" parent="." node_paths=PackedStringArray("health")]
+script = ExtResource("91_offscreen_sleep")
+health = NodePath("../Health")

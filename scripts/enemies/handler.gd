@@ -1,14 +1,14 @@
 class_name Handler
-extends CharacterBody2D
+extends Enemy
 ## A Handler: an early-game grunt who serves the AI God.
 ##
-## He never attacks. He keeps his distance from the player, backing away when
-## they get close (turning aside from walls, see PathMover), and every few seconds raises his control rod to summon
-## bound creatures (toads), up to a limit. Killing him stops the summoning;
-## creatures already out keep fighting.
+## He never attacks. He keeps his distance from the player (HandlerRetreat), and every few
+## seconds raises his control rod to summon bound creatures (toads), up to a limit. Killing
+## him stops the summoning; creatures already out keep fighting.
 ##
-## This script runs his state machine; the summoning and the rod shove are child
-## components (HandlerSummoner, HandlerRodShove).
+## This script runs his state machine; keeping his distance, the summoning and the rod shove
+## are child components (HandlerRetreat, HandlerSummoner, HandlerRodShove). He notices the
+## player further away than a toad: his visor is tuned to see Glimra light.
 ##
 ## States:
 ##   WATCHING  -> stands still, keeping an eye on the player
@@ -26,57 +26,29 @@ extends CharacterBody2D
 
 enum State { WATCHING, RETREATING, SUMMONING, SHOVING, RECOVERING, DYING }
 
-@export_group("Noticing the player")
-## He notices the player this close, in pixels. Further than a toad: his visor is tuned to
-## see Glimra light.
-@export var notice_distance: float = 150.0
-
-@export_group("Keeping distance")
-## If the player gets closer than this (pixels), he backs away.
-@export var comfortable_distance: float = 50.0
-## Walking speed in pixels per second. Much slower than the player, so you can catch him.
-@export var walk_speed: float = 22.0
-## Longest he keeps backing away before he has to stop, in seconds.
-@export var max_retreat_time: float = 1.2
-## Seconds he stands still to catch his breath after retreating that long.
-@export var catch_breath_time: float = 1.5
-
 @export_group("Summoning")
 ## Seconds before his first summon (the rest of the summoning is set on his Summoner).
 @export var first_summon_delay: float = 1.0
 
 @export_group("Getting hit")
-@export var knockback_speed: float = 80.0
-@export var knockback_friction: float = 500.0
 @export var recover_time: float = 0.25
-@export var death_fade_time: float = 0.4
 
-var _timer := StateTimer.new()
-var _seconds_retreating: float = 0.0
-var _seconds_catching_breath: float = 0.0
-var _awareness := PlayerAwareness.new()
-
-@onready var health: Health = $Health
-@onready var sprite: SingleViewAnimator = $Sprite
-@onready var hit_flash: HitFlash = $HitFlash
 @onready var charge_particles: ChargeParticles = $ChargeParticles
 @onready var speech_bubble: SpeechBubble = $SpeechBubble
-@onready var collision_shape: CollisionShape2D = $CollisionShape
+@onready var retreat: HandlerRetreat = $Retreat
 @onready var summoner: HandlerSummoner = $Summoner
 @onready var rod_shove: HandlerRodShove = $RodShove
-@onready var path_mover: PathMover = $PathMover
 
 
 func _ready() -> void:
-	health.damaged.connect(_on_damaged)
-	health.died.connect(_on_died)
+	super._ready()
 	summoner.wait_before_next_summon(first_summon_delay)
 	_timer.enter(State.WATCHING, 0.0)
 
 
 func _physics_process(delta: float) -> void:
 	_timer.advance(delta)
-	var is_alert := _awareness.has_noticed_player(self, notice_distance)
+	var is_alert := _is_alert()
 	if _timer.state != State.DYING and is_alert:
 		summoner.count_down(delta)
 		rod_shove.count_down(delta)
@@ -86,10 +58,10 @@ func _physics_process(delta: float) -> void:
 
 	match _timer.state:
 		State.WATCHING, State.RETREATING:
-			if DebugControls.enemies_passive or not is_alert:
-				_stand_still()
-			else:
+			if _can_act(is_alert):
 				_keep_distance_or_summon(delta)
+			else:
+				_stand_still()
 		State.SHOVING:
 			_shove()
 		State.SUMMONING:
@@ -110,11 +82,11 @@ func _keep_distance_or_summon(delta: float) -> void:
 		_start_summon()
 		return
 
-	var away_from_player := _direction_away_from_player()
-	if away_from_player == Vector2.ZERO or not _can_keep_retreating(delta):
+	var retreat_velocity := retreat.next_velocity(_timer.state == State.RETREATING, delta)
+	if retreat_velocity == Vector2.ZERO:
 		_stand_still()
 	else:
-		_back_away(away_from_player)
+		_back_away(retreat_velocity)
 
 
 func _stand_still() -> void:
@@ -123,38 +95,10 @@ func _stand_still() -> void:
 	sprite.show_animation("idle")
 
 
-func _back_away(direction: Vector2) -> void:
-	velocity = direction * walk_speed
+func _back_away(retreat_velocity: Vector2) -> void:
+	velocity = retreat_velocity
 	_timer.state = State.RETREATING
 	sprite.show_animation("walk")
-
-
-## He tires out: after backing away for a while he must stop and catch his breath,
-## which is the player's chance to catch him.
-func _can_keep_retreating(delta: float) -> bool:
-	if _seconds_catching_breath > 0.0:
-		_seconds_catching_breath -= delta
-		return false
-	if _timer.state == State.RETREATING:
-		_seconds_retreating += delta
-		if _seconds_retreating >= max_retreat_time:
-			_seconds_retreating = 0.0
-			_seconds_catching_breath = catch_breath_time
-			return false
-	else:
-		_seconds_retreating = 0.0
-	return true
-
-
-## Points away from the player when they're too close (but not into a wall); zero when
-## he's comfortable, or pinned with nowhere to back away to.
-func _direction_away_from_player() -> Vector2:
-	var player := PlayerFinder.find(self)
-	if player == null:
-		return Vector2.ZERO
-	if global_position.distance_to(player.global_position) >= comfortable_distance:
-		return Vector2.ZERO
-	return path_mover.direction_away_from(player.global_position)
 
 
 func _start_summon() -> void:
@@ -188,7 +132,7 @@ func _shove() -> void:
 
 
 func _slow_down(delta: float) -> void:
-	velocity = EnemyReactions.slowed_down(velocity, knockback_friction, delta)
+	_slow_down_by(knockback_friction, delta)
 	if _timer.state == State.RECOVERING and _timer.is_over():
 		_timer.enter(State.WATCHING, 0.0)
 
@@ -204,33 +148,20 @@ func _stop_acting() -> void:
 
 # --- Reactions ------------------------------------------------------------
 
-## Wakes him up (e.g. a packmate spotted the player).
-func notice_player() -> void:
-	_awareness.notice(self)
+## Super armour: once the shove is winding up, hits hurt but don't interrupt or push it.
+## Otherwise holding attack would cancel it every time.
+func _has_super_armour() -> bool:
+	return _timer.state == State.SHOVING
 
 
-func _on_damaged(_amount: int, source_position: Vector2) -> void:
-	hit_flash.flash()
-	if _timer.state == State.DYING:
+func _react_to_hit(source_position: Vector2) -> void:
+	if _has_super_armour():
 		return
-	notice_player()
-	# Super armour: once the shove is winding up, hits hurt but don't interrupt it.
-	# Otherwise holding attack would cancel it every time.
-	if _timer.state == State.SHOVING:
-		return
-	velocity = EnemyReactions.knockback_velocity(self, source_position, knockback_speed)
+	_knock_back_from(source_position)
 	_timer.enter(State.RECOVERING, recover_time)
 
 
-## Throws the Warden with this velocity, harder than a jab's knockback (e.g. Flame Uppercut).
-## Super armour still holds: a slam that is winding up isn't pushed.
-func knock_back(push_velocity: Vector2) -> void:
-	if _timer.state == State.SHOVING:
-		return
-	velocity = push_velocity
-
-
-func _on_died() -> void:
+func _die() -> void:
 	charge_particles.stop_charging()
 	_timer.enter(State.DYING, death_fade_time)
-	EnemyReactions.fade_out_and_free(self, sprite, collision_shape, death_fade_time)
+	_fade_out_and_free()

@@ -1,8 +1,9 @@
 class_name ShockRing
 extends Node2D
 ## The Captain's slam shockwave: a thick ring that rolls outward along the ground with one
-## gap in it. It hurts the player once as it passes over them, unless they stand in the gap
-## or dodge-hop over it (invulnerable). Plays once and removes itself.
+## gap in it, the gap's edges marked in gold like the slam's telegraph. It hurts the player
+## once as it passes over them, unless they stand in the gap or dodge-hop over it
+## (invulnerable). Plays once and removes itself.
 
 var max_radius: float = 96.0
 ## Seconds the ring takes to reach `max_radius`.
@@ -56,13 +57,10 @@ func _try_to_hit_player() -> void:
 		return
 	if absf(angle_difference(from_centre.angle(), gap_angle)) <= gap_width / 2.0:
 		return  # standing in the gap
-	var player_health: Health = player.get_node_or_null("Health")
-	if player_health == null or player_health.is_invulnerable:
+	if not PlayerHit.try_to_hurt(player, damage, global_position):
 		return  # hopped over it
 	_has_hit = true
-	player_health.take_damage(damage, global_position)
-	if player.has_method("push"):
-		player.push(from_centre.normalized() * push_speed, push_time)
+	PlayerHit.shove(player, from_centre.normalized() * push_speed, push_time)
 
 
 func _draw() -> void:
@@ -72,3 +70,4 @@ func _draw() -> void:
 	var to := gap_angle + TAU - gap_width / 2.0
 	draw_arc(Vector2.ZERO, radius, from, to, 48, Color(color, 0.85 * fade), band_width)
 	draw_arc(Vector2.ZERO, radius + band_width / 2.0, from, to, 48, Color(edge_color, fade), 1.0)
+	TelegraphPainter.draw_gap_marks(self, Vector2.ZERO, radius, gap_angle, gap_width, fade)

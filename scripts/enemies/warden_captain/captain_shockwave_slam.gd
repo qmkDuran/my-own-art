@@ -1,9 +1,11 @@
 class_name CaptainShockwaveSlam
 extends CaptainAttack
 ## The Captain's shockwave slam, a bigger Warden slam: he raises the halberd-rod overhead while
-## red energy gathers into it, and a faint ring on the ground shows how far the wave will roll
-## and where its gap is. Then he slams it down: a ShockRing rolls outward. Stand in the gap or
-## dodge-hop over the ring. Afterwards he stays bent over his rod for a moment (punish him).
+## red energy gathers into it, and the ground shows what's coming (see TelegraphPainter): a
+## faint red danger zone as far as the wave will roll, a bold pulsing ring at its edge, and
+## the safe gap left clear, marked with gold end-caps. Then he slams it down: a ShockRing rolls
+## outward. Stand in the gap or dodge-hop over the ring. Afterwards he stays bent over his rod
+## for a moment (punish him). Drawn on the ground, under every creature (z_index in the scene).
 
 ## He slams when the player is within this distance, in pixels.
 @export var trigger_distance: float = 90.0
@@ -17,13 +19,18 @@ extends CaptainAttack
 ## have to move to reach it.
 @export var gap_offset_degrees: Vector2 = Vector2(50, 130)
 @export var damage: int = 2
-@export var telegraph_color: Color = ApolloPalette.RED
 ## Where the rod hits the ground, relative to his feet.
 @export var slam_point: Vector2 = Vector2(0, -1)
 @export var charge_particles: ChargeParticles
 @export var screen_shake: ScreenShake
 ## Dust kicked up by the slam.
 @export var dust_scene: PackedScene
+
+## The danger zone's fill, faint at the start of the wind-up and a little stronger by the slam.
+const FILL_ALPHA := Vector2(0.08, 0.2)
+## The ring's opacity at the start and end of the wind-up, and how much the pulse adds.
+const RING_ALPHA := Vector2(0.55, 0.85)
+const RING_PULSE_ALPHA := 0.15
 
 var _gap_angle: float = 0.0
 var _wind_up_progress: float = 0.0
@@ -70,8 +77,13 @@ func _on_finish() -> void:
 func _draw() -> void:
 	if not is_winding_up() or _wind_up_progress <= 0.0:
 		return
-	# The ring to come, gap included, fading in as the slam gets closer.
 	var gap := deg_to_rad(gap_degrees)
-	var alpha := 0.3 + 0.5 * _wind_up_progress
-	draw_arc(slam_point, ring_radius, _gap_angle + gap / 2.0, _gap_angle + TAU - gap / 2.0, 48, Color(telegraph_color, alpha), 1.0)
-	draw_arc(slam_point, ring_radius * _wind_up_progress, 0.0, TAU, 32, Color(telegraph_color, alpha * 0.5), 1.0)
+	var pulse := TelegraphPainter.pulse(_wind_up_progress * current_wind_up)
+	var fill := Color(TelegraphPainter.DANGER_COLOR, lerpf(FILL_ALPHA.x, FILL_ALPHA.y, _wind_up_progress))
+	TelegraphPainter.fill_wedge(self, slam_point, ring_radius, _gap_angle + gap / 2.0, _gap_angle + TAU - gap / 2.0, fill)
+	var ring_alpha := lerpf(RING_ALPHA.x, RING_ALPHA.y, _wind_up_progress) + RING_PULSE_ALPHA * pulse
+	var ring_color := TelegraphPainter.outline_color(pulse, ring_alpha)
+	TelegraphPainter.draw_gapped_ring(self, slam_point, ring_radius, _gap_angle, gap, ring_color, TelegraphPainter.OUTLINE_WIDTH)
+	TelegraphPainter.draw_gap_marks(self, slam_point, ring_radius, _gap_angle, gap, ring_alpha)
+	# The wave's front-to-be grows toward the ring as the slam gets closer.
+	TelegraphPainter.draw_gapped_ring(self, slam_point, ring_radius * _wind_up_progress, _gap_angle, gap, Color(ring_color, ring_alpha * 0.5), 1.0)

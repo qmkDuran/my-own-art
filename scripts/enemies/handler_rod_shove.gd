@@ -51,7 +51,7 @@ func should_shove() -> bool:
 	var player := PlayerFinder.find(self)
 	if player == null or _seconds_until_ready > 0.0:
 		return false
-	return handler.global_position.distance_to(player.global_position) <= trigger_distance
+	return handler.global_position.distance_squared_to(player.global_position) <= trigger_distance * trigger_distance
 
 
 ## Seconds the whole shove takes, wind-up and follow-through.
@@ -91,13 +91,10 @@ func _release_shockwave() -> void:
 	if from_slam.length() > shockwave_radius:
 		return
 
-	var player_health: Health = player.get_node_or_null("Health")
-	if player_health == null or player_health.is_invulnerable:
+	if not PlayerHit.try_to_hurt(player, damage, handler.global_position):
 		return  # dodged through it
-	player_health.take_damage(damage, handler.global_position)
-	if player.has_method("push"):
-		var direction := from_slam.normalized() if from_slam.length() > 0.1 else Vector2.DOWN
-		player.push(direction * push_speed, push_time)
+	var direction := from_slam.normalized() if from_slam.length() > 0.1 else Vector2.DOWN
+	PlayerHit.shove(player, direction * push_speed, push_time)
 
 
 func _spawn_shockwave_effect() -> void:

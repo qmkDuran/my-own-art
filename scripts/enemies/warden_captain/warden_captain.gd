@@ -1,5 +1,5 @@
 class_name WardenCaptain
-extends CharacterBody2D
+extends SpeciesEnemy
 ## The Warden Captain: the first mini-boss, an elite Warden who leads the others.
 ##
 ## Unlike a Warden he fights: he walks the player down and picks one of his attacks (child
@@ -13,7 +13,7 @@ extends CharacterBody2D
 ## States:
 ##   WAITING    -> stands (hasn't noticed the player, or enemies are paused)
 ##   CHASING    -> walks toward the player (along the path around obstacles) until close enough to attack
-##   ATTACKING  -> an attack in progress (super armour until it lands)
+##   ATTACKING  -> an attack in progress (a hit never interrupts it; super armour while winding up)
 ##   RECOVERING -> just attacked: the punish window
 ##   STAGGERED  -> flinching from a hit
 ##   DYING      -> CaptainDefeat plays out
@@ -22,61 +22,44 @@ signal fight_started
 
 enum State { WAITING, CHASING, ATTACKING, RECOVERING, STAGGERED, DYING }
 
-@export_group("Creature info")
-@export var species_id: String = "warden_captain"
-@export var display_name: String = "Warden Captain"
-@export var element: String = "Elite Warden"
-## None painted yet: the discovery card shows his sprite instead.
-@export var portrait: Texture2D
-
 @export_group("Fighting")
-## He notices the player this close, in pixels (a boss arena wakes him as the player enters).
-@export var notice_distance: float = 110.0
 @export var walk_speed: float = 24.0
 ## He stops walking once the player is this close, in pixels.
 @export var stop_distance: float = 22.0
 
 @export_group("Getting hit")
-## Seconds a hit staggers him (only outside his wind-ups), and how long before he can be staggered again.
+## Seconds a hit staggers him (only outside his attacks), and how long before he can be staggered again.
 @export var stagger_time: float = 0.35
 @export var stagger_cooldown: float = 2.0
-@export var knockback_speed: float = 40.0
-@export var knockback_friction: float = 400.0
 ## Share of a big knockback (e.g. Flame Uppercut) that moves him: he's heavy.
 @export var knockback_share: float = 0.35
 
-var _timer := StateTimer.new()
-var _awareness := PlayerAwareness.new()
 var _attack: CaptainAttack = null
+var _attacks: Array[CaptainAttack] = []
 var _seconds_until_staggerable: float = 0.0
 var _has_started_fight: bool = false
 
-@onready var health: Health = $Health
-@onready var sprite: SingleViewAnimator = $Sprite
-@onready var hit_flash: HitFlash = $HitFlash
 @onready var phase_two: CaptainPhaseTwo = $PhaseTwo
 @onready var defeat: CaptainDefeat = $Defeat
-@onready var path_mover: PathMover = $PathMover
 
 
 func _ready() -> void:
-	health.damaged.connect(_on_damaged)
-	health.died.connect(_on_died)
+	super._ready()
+	for child in get_children():
+		if child is CaptainAttack:
+			_attacks.append(child)
 	_timer.enter(State.WAITING, 0.0)
 
 
 func _physics_process(delta: float) -> void:
 	_timer.advance(delta)
 	_seconds_until_staggerable = maxf(0.0, _seconds_until_staggerable - delta)
-	var is_alert := _awareness.has_noticed_player(self, notice_distance)
-	if is_alert and not _has_started_fight and _timer.state != State.DYING:
+	var is_alert := _is_alert()
+	if is_alert and not _has_started_fight and not _is_dying:
 		_start_fight()
-	var can_act := is_alert and not DebugControls.enemies_passive
-	if can_act and _timer.state != State.DYING:
-		for attack in _attacks():
-			# Phase-2 moves only start counting down once phase 2 has begun.
-			if phase_two.is_active or not attack.phase_two_only:
-				attack.count_down(delta)
+	var can_act := _can_act(is_alert)
+	if can_act and not _is_dying:
+		_count_down_attacks(delta)
 	if DebugControls.enemies_passive:
 		_stop_acting()
 
@@ -90,14 +73,10 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 
 
-## Wakes him up (e.g. the player walked into his arena).
-func notice_player() -> void:
-	_awareness.notice(self)
-
-
-## Name, element and picture, for the discovery card and the Creature Log.
-func creature_info() -> Dictionary:
-	return CreatureInfo.describe(species_id, display_name, element, portrait, sprite)
+## Throws him a little (e.g. Flame Uppercut): he's heavy, and super armour holds.
+func knock_back(push_velocity: Vector2) -> void:
+	if not _has_super_armour() and not _is_dying:
+		velocity = push_velocity * knockback_share
 
 
 # --- States ---------------------------------------------------------------
@@ -108,13 +87,20 @@ func _start_fight() -> void:
 	fight_started.emit()
 
 
+## Phase-2 moves only start counting down once phase 2 has begun.
+func _count_down_attacks(delta: float) -> void:
+	for attack in _attacks:
+		if phase_two.is_active or not attack.phase_two_only:
+			attack.count_down(delta)
+
+
 func _chase_or_attack(can_act: bool) -> void:
 	var player := PlayerFinder.find(self)
 	if not can_act or player == null:
 		_stand()
 		return
 	var distance := global_position.distance_to(player.global_position)
-	for attack in _attacks():
+	for attack in _attacks:
 		if attack.is_ready(phase_two.is_active, distance):
 			_start_attack(attack)
 			return
@@ -162,7 +148,7 @@ func _end_attack() -> void:
 
 
 func _slide(delta: float) -> void:
-	velocity = EnemyReactions.slowed_down(velocity, knockback_friction, delta)
+	_slow_down_by(knockback_friction, delta)
 	if _timer.state != State.DYING and _timer.is_over():
 		_timer.enter(State.WAITING, 0.0)
 
@@ -174,42 +160,25 @@ func _stop_acting() -> void:
 		_stand()
 
 
+# --- Reactions ------------------------------------------------------------
+
 func _has_super_armour() -> bool:
 	return _timer.state == State.ATTACKING and _attack != null and _attack.is_winding_up()
 
 
-func _attacks() -> Array[CaptainAttack]:
-	var attacks: Array[CaptainAttack] = []
-	for child in get_children():
-		if child is CaptainAttack:
-			attacks.append(child)
-	return attacks
-
-
-# --- Reactions ------------------------------------------------------------
-
-func _on_damaged(_amount: int, source_position: Vector2) -> void:
-	hit_flash.flash()
-	if _timer.state == State.DYING:
+## A hit never interrupts an attack. Otherwise it can stagger him, but not again straight
+## away (no stun-lock).
+func _react_to_hit(source_position: Vector2) -> void:
+	if _timer.state == State.ATTACKING or _seconds_until_staggerable > 0.0:
 		return
-	notice_player()
-	if _has_super_armour() or _timer.state == State.ATTACKING or _seconds_until_staggerable > 0.0:
-		return
-	# Out of his wind-ups a hit can stagger him, but not again straight away (no stun-lock).
 	_seconds_until_staggerable = stagger_cooldown
-	velocity = EnemyReactions.knockback_velocity(self, source_position, knockback_speed)
+	_knock_back_from(source_position)
 	sprite.replay_animation("stagger")
 	var still_recovering_for := _timer.seconds_left() if _timer.state == State.RECOVERING else 0.0
 	_timer.enter(State.STAGGERED, maxf(stagger_time, still_recovering_for))
 
 
-## Throws him a little (e.g. Flame Uppercut): he's heavy, and super armour holds.
-func knock_back(push_velocity: Vector2) -> void:
-	if not _has_super_armour() and _timer.state != State.DYING:
-		velocity = push_velocity * knockback_share
-
-
-func _on_died() -> void:
+func _die() -> void:
 	_end_attack()
 	velocity = Vector2.ZERO
 	_timer.enter(State.DYING, 0.0)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3]
+[gd_scene load_steps=16 format=3]
 
 [ext_resource type="Script" path="res://scripts/enemies/zephoot.gd" id="1_zephoot"]
 [ext_resource type="Script" path="res://scripts/animation/single_view_animator.gd" id="2_animator"]
@@ -12,6 +12,8 @@
 [ext_resource type="PackedScene" path="res://scenes/pickups/berry.tscn" id="10_berry"]
 [ext_resource type="Texture2D" path="res://art/zephoot/zephoot_portrait_128.png" id="11_portrait"]
 [ext_resource type="Script" path="res://scripts/components/path_mover.gd" id="90_path_mover"]
+[ext_resource type="Script" path="res://scripts/enemies/offscreen_sleep.gd" id="91_offscreen_sleep"]
+[ext_resource type="Script" path="res://scripts/enemies/zephoot_float.gd" id="12_float"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_body"]
 radius = 5.0
@@ -20,6 +22,11 @@ radius = 5.0
 z_index = 1
 motion_mode = 1
 script = ExtResource("1_zephoot")
+notice_distance = 130.0
+knockback_speed = 110.0
+species_id = "zephoot"
+display_name = "Zephoot"
+element = "Wind"
 portrait = ExtResource("11_portrait")
 
 [node name="Shadow" type="Polygon2D" parent="."]
@@ -77,3 +84,12 @@ berry_drop_chance = 0.1
 
 [node name="PathMover" type="NavigationAgent2D" parent="."]
 script = ExtResource("90_path_mover")
+
+[node name="Float" type="Node" parent="." node_paths=PackedStringArray("sprite", "path_mover")]
+script = ExtResource("12_float")
+sprite = NodePath("../Sprite")
+path_mover = NodePath("../PathMover")
+
+[node name="OffscreenSleep" type="Node" parent="." node_paths=PackedStringArray("health")]
+script = ExtResource("91_offscreen_sleep")
+health = NodePath("../Health")

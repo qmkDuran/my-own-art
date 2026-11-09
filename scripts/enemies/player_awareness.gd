@@ -18,7 +18,7 @@ var has_noticed: bool = false
 func has_noticed_player(body: Node2D, notice_distance: float) -> bool:
 	if not has_noticed:
 		var player := PlayerFinder.find(body)
-		if player != null and body.global_position.distance_to(player.global_position) <= notice_distance:
+		if player != null and body.global_position.distance_squared_to(player.global_position) <= notice_distance * notice_distance:
 			notice(body)
 	return has_noticed
 
@@ -34,5 +34,5 @@ func notice(body: Node2D) -> void:
 		var other := enemy as Node2D
 		if other == null or other == body or not other.has_method("notice_player"):
 			continue
-		if body.global_position.distance_to(other.global_position) <= PACK_ALERT_RADIUS:
+		if body.global_position.distance_squared_to(other.global_position) <= PACK_ALERT_RADIUS * PACK_ALERT_RADIUS:
 			other.notice_player()

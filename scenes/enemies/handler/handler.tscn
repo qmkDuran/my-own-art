@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3]
+[gd_scene load_steps=18 format=3]
 
 [ext_resource type="Script" path="res://scripts/enemies/handler.gd" id="1_handler"]
 [ext_resource type="Script" path="res://scripts/animation/single_view_animator.gd" id="2_animator"]
@@ -9,12 +9,14 @@
 [ext_resource type="Script" path="res://scripts/effects/charge_particles.gd" id="7_charge"]
 [ext_resource type="Script" path="res://scripts/ui/floating_health_bar.gd" id="8_bar"]
 [ext_resource type="Script" path="res://scripts/ui/speech_bubble.gd" id="9_speech"]
-
 [ext_resource type="Script" path="res://scripts/components/light_drop.gd" id="10_drop"]
 [ext_resource type="PackedScene" path="res://scenes/pickups/light_mote.tscn" id="11_mote"]
 [ext_resource type="Script" path="res://scripts/enemies/handler_summoner.gd" id="12_summoner"]
 [ext_resource type="Script" path="res://scripts/enemies/handler_rod_shove.gd" id="13_shove"]
 [ext_resource type="Script" path="res://scripts/components/path_mover.gd" id="90_path_mover"]
+[ext_resource type="Script" path="res://scripts/enemies/offscreen_sleep.gd" id="91_offscreen_sleep"]
+[ext_resource type="Script" path="res://scripts/enemies/handler_retreat.gd" id="14_retreat"]
+
 [sub_resource type="CircleShape2D" id="CircleShape2D_body"]
 radius = 5.0
 
@@ -22,6 +24,9 @@ radius = 5.0
 z_index = 1
 motion_mode = 1
 script = ExtResource("1_handler")
+notice_distance = 150.0
+knockback_speed = 80.0
+death_fade_time = 0.4
 
 [node name="Shadow" type="Polygon2D" parent="."]
 color = Color(0.0352941, 0.0392157, 0.0784314, 0.45)
@@ -86,6 +91,10 @@ mote_scene = ExtResource("11_mote")
 mote_count = 8
 xp_per_mote = 2
 
+[node name="Retreat" type="Node" parent="." node_paths=PackedStringArray("path_mover")]
+script = ExtResource("14_retreat")
+path_mover = NodePath("../PathMover")
+
 [node name="Summoner" type="Node" parent="."]
 script = ExtResource("12_summoner")
 creature_scene = ExtResource("5_toad")
@@ -98,3 +107,7 @@ hit_flash = NodePath("../HitFlash")
 
 [node name="PathMover" type="NavigationAgent2D" parent="."]
 script = ExtResource("90_path_mover")
+
+[node name="OffscreenSleep" type="Node" parent="." node_paths=PackedStringArray("health")]
+script = ExtResource("91_offscreen_sleep")
+health = NodePath("../Health")

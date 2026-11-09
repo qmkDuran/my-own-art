@@ -1,5 +1,5 @@
 class_name Gruntite
-extends CharacterBody2D
+extends SpeciesEnemy
 ## A Gruntite: a bound stone Glimra, a tanky boar that plods toward the player and charges.
 ##
 ## From mid range it winds up and charges in a straight line (GruntiteCharge). Ramming the
@@ -18,18 +18,6 @@ extends CharacterBody2D
 
 enum State { STANDING, PLODDING, WINDING_UP, CHARGING, RECOVERING, DYING }
 
-@export_group("Creature info")
-## Shown when the player first meets this species, and in the Creature Log.
-@export var species_id: String = "gruntite"
-@export var display_name: String = "Gruntite"
-@export var element: String = "Stone"
-## None painted yet: the discovery card shows its sprite instead.
-@export var portrait: Texture2D
-
-@export_group("Noticing the player")
-## It wakes up once the player comes this close, in pixels (then alerts its pack).
-@export var notice_distance: float = 110.0
-
 @export_group("Plodding")
 ## Walking speed, in pixels per second. Slow; the charge is three times this.
 @export var walk_speed: float = 28.0
@@ -45,38 +33,27 @@ enum State { STANDING, PLODDING, WINDING_UP, CHARGING, RECOVERING, DYING }
 @export var bonk_bounce_speed: float = 40.0
 
 @export_group("Getting hit")
-@export var knockback_speed: float = 60.0
-@export var knockback_friction: float = 500.0
 @export var hit_recover_time: float = 0.25
-@export var death_fade_time: float = 0.4
 
-var _timer := StateTimer.new()
-var _awareness := PlayerAwareness.new()
 ## How fast the current slide (knockback, skid or bounce) slows down.
 var _slide_friction: float = 0.0
 
-@onready var health: Health = $Health
-@onready var sprite: SingleViewAnimator = $Sprite
-@onready var hit_flash: HitFlash = $HitFlash
-@onready var collision_shape: CollisionShape2D = $CollisionShape
 @onready var charge: GruntiteCharge = $Charge
-@onready var path_mover: PathMover = $PathMover
 
 
 func _ready() -> void:
-	health.damaged.connect(_on_damaged)
-	health.died.connect(_on_died)
+	super._ready()
 	_timer.enter(State.STANDING, 0.0)
 
 
 func _physics_process(delta: float) -> void:
 	_timer.advance(delta)
-	var is_alert := _awareness.has_noticed_player(self, notice_distance)
+	var is_alert := _is_alert()
 	if _timer.state != State.DYING and is_alert:
 		charge.count_down(delta)
 	if DebugControls.enemies_passive:
 		_stop_acting()
-	var can_act := is_alert and not DebugControls.enemies_passive
+	var can_act := _can_act(is_alert)
 
 	match _timer.state:
 		State.STANDING, State.PLODDING:
@@ -91,16 +68,6 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 	if _timer.state == State.CHARGING and get_slide_collision_count() > 0:
 		_bonk()
-
-
-## Wakes it up (e.g. a packmate spotted the player).
-func notice_player() -> void:
-	_awareness.notice(self)
-
-
-## Name, element and picture, for the discovery card and the Creature Log.
-func creature_info() -> Dictionary:
-	return CreatureInfo.describe(species_id, display_name, element, portrait, sprite)
 
 
 # --- States ---------------------------------------------------------------
@@ -164,7 +131,7 @@ func _end_charge(recover_time: float, friction: float) -> void:
 
 
 func _slide(delta: float) -> void:
-	velocity = EnemyReactions.slowed_down(velocity, _slide_friction, delta)
+	_slow_down_by(_slide_friction, delta)
 	if _timer.state != State.RECOVERING:
 		return
 	if velocity.length() < 1.0:
@@ -181,35 +148,26 @@ func _stop_acting() -> void:
 	_stand()
 
 
+# --- Reactions ------------------------------------------------------------
+
+## While winding up and charging, hits hurt but don't push or stop it.
 func _has_super_armour() -> bool:
 	return _timer.state == State.WINDING_UP or _timer.state == State.CHARGING
 
 
-# --- Reactions ------------------------------------------------------------
-
-func _on_damaged(_amount: int, source_position: Vector2) -> void:
-	hit_flash.flash()
-	if _timer.state == State.DYING:
-		return
-	notice_player()
+func _react_to_hit(source_position: Vector2) -> void:
 	if _has_super_armour():
 		return  # hurts, but doesn't stop the charge
-	velocity = EnemyReactions.knockback_velocity(self, source_position, knockback_speed)
+	_knock_back_from(source_position)
 	_slide_friction = knockback_friction
 	# A hit never cuts a daze short (that would make punishing a missed charge backfire).
 	var dazed_for := _timer.seconds_left() if _timer.state == State.RECOVERING else 0.0
 	_timer.enter(State.RECOVERING, maxf(hit_recover_time, dazed_for))
 
 
-## Throws it with this velocity (e.g. Flame Uppercut). Super armour still holds.
-func knock_back(push_velocity: Vector2) -> void:
-	if not _has_super_armour():
-		velocity = push_velocity
-
-
-func _on_died() -> void:
+func _die() -> void:
 	if _has_super_armour():
 		charge.finish()
 	_timer.enter(State.DYING, death_fade_time)
 	_slide_friction = skid_friction
-	EnemyReactions.fade_out_and_free(self, sprite, collision_shape, death_fade_time)
+	_fade_out_and_free()

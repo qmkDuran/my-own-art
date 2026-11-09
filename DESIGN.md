@@ -35,7 +35,7 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
 - **Light motes (almost every kill):** the stolen light bursts out of defeated bound Glimra and flies to Emberoo = **XP**. *(Next to build.)*
 - **Berries (sometimes):** refill Trainer's Aid charges.
 - **No loot.** No gear piles, no inventory clutter.
-- **Glimmer Shards (hand-placed, ~15–20 per game):** rewards from bosses, exploration and story moments, never random drops. First one after the first boss (~1 hour in). Socket into skills to change how they behave (never add a new element). 1 slot per skill, +1 per evolution. Free to swap outside combat.
+- **Glimmer Shards (hand-placed, ~15–20 per game):** rewards from bosses, exploration and story moments, never random drops. The first sits in Ruins Edge's Overgrown Shrine; for now it's a placeholder pickup (`scenes/pickups/glimmer_shard.tscn`, each with its own `shard_id`) that shows "GLIMMER SHARD FOUND (shards coming soon)" and is recorded in the `ShardInventory` autoload. Socket into skills to change how they behave (never add a new element). 1 slot per skill, +1 per evolution. Free to swap outside combat.
 - **Heat** (Emberoo's resource): built by landing jabs, spent by skills, cools off out of combat. Shown as fire pips beside the heart.
 
 ## Loot plan: hacked chips (build after the vertical slice)
@@ -66,9 +66,25 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
 - Write the story **after** the vertical slice is fun.
 
 ## Zones
+- **Zone design rules** (from our zone research):
+  - **5–8 minutes** per zone on a first run.
+  - **3–5 points of interest** (a fight area with its own look, a landmark, a pocket, a vista), and never more than about one screen of plain trees along the path without something: a fork, a pack, a prop or a view.
+  - **25–35% optional space**: side pockets cut into the forest, each visible from the main path (a gap in the trees or a short trail) and each with a reward (berries, a shard, an elite, a lore stone). No dead end without a reward.
+  - **One loop** per zone, so the player never walks the same corridor twice; a one-way drop or breakable wall is fine.
+  - **A checkpoint before each boss:** a small safe clearing out of every enemy's notice range, with 1–2 berries and a "boss ahead" warning (lit cyan conduits, Warden banners).
+  - **A Glimmer Shard every 1–2 zones**, hand-placed in a pocket or behind a boss.
+  - **Elites guard side pockets**, never the main path: `EliteModifier` (`scripts/components/elite_modifier.gd`) attached as a child of an enemy in the zone scene gives 2.5× health (rounded up), 3× light motes, a quiet cyan aura at its feet and a gold name tag ("BRISTLING TOXLOP") that shows when you're near. Never scaled up.
+  - Each fight area gets its **own identity** (a prop, a floor, a light), not just another grey courtyard, and each zone has **one tall landmark** you can see from several areas.
 - **First zone: Ruins Edge** (`scenes/zones/ruins_edge/`), overgrown ruins at the edge of the AI God's territory. The game starts here; `scenes/main/main.tscn` stays as the test arena (enemies start paused there).
-- One winding path through hand-made areas: Start Glade (dummy, berries), Mossy Steps, Fallen Courtyard, Sunken Garden (+ optional Berry Hollow), Conduit Hall, Warden Gate, Final Arena (the Warden Captain's boss room). Aim: ~4–5 minutes per early zone. Enemy density rises toward the end.
-- Tiles are 16×16 from `art/tiles/ruins_edge_tileset.tres`: Ground, Decoration, and an Obstacles layer y-sorted with the creatures (`World` node). Dense forest walls the map in. Dead cyan conduits in the stone are the only tech hint; use them sparingly.
+- Main path through hand-made areas, each with its own look: Start Glade (dummy, berries), **Mossy Steps** (three terraced stone steps), **Fallen Courtyard** (a toppled statue, its head rolled away), **Sunken Garden** (flooded stone beds with lilies and reeds; the water is decoration for now, maybe slowing later), **Conduit Hall** (its conduits lit cyan again), the **Warden Gate** (a stone arch with the Wardens' lit visor slit, closed in by a wall, Warden banners either side), Final Arena (the Warden Captain's boss room). Aim: ~5–6 minutes. Enemy density rises toward the end.
+- Ruins Edge's points of interest off the main path:
+  - **Overgrown Shrine** (gap east of the Start Glade → Mossy Steps trail): a stone shrine, the zone's **Glimmer Shard** and an elite Toxlop.
+  - **Boar Den** (through the gap in Conduit Hall's north wall): an elite Gruntite and a cache of 3 berries.
+  - **Broken Tower** (the landmark, between the Fallen Courtyard, the Sunken Garden trail and Conduit Hall): a lore stone at its foot. Its clearing is the **loop**: a shortcut from Conduit Hall's south-west mouth back down to the Fallen Courtyard → Sunken Garden trail and the middle meadow.
+  - **Berry Hollow** (west of the Sunken Garden, now larger) keeps its toads and berries.
+  - **Boss-gate checkpoint** (east of the trail between Conduit Hall and the Warden Gate): a waystone, lit conduits, Warden banners and 2 berries. Its `Areas/BossGateCheckpoint/Checkpoint_BossGate` Marker2D (group `checkpoints`) is where a respawn system should put you; there is none yet (dying still reloads the zone). The Warden Gate pack stands 3 tiles further south so the clearing stays out of their sight.
+- Hand-placed berries never expire (`lifetime = 0`); dropped ones still fade after 25 s.
+- Tiles are 16×16 from `art/tiles/ruins_edge_tileset.tres`: Ground, Decoration, and an Obstacles layer y-sorted with the creatures (`World` node). Dense forest walls the map in. Cyan conduits in the stone are the only tech hint: dead and dark-blue in the open ruins, lit in Conduit Hall and near the boss. Rows 28+ of the atlas hold the revamp's tiles (water by side mask, terrace steps, lit conduits, the statue, shrine, standing stones, Warden banner, gate arch and broken tower); nothing above row 28 moved.
 - **Enemies wait until they notice you:** toads and Gruntites within ~7 tiles, Zephoots ~8, Wardens ~9 (their visors see Glimra light). Noticing (or being hit) alerts the rest of the pack; summoned toads come out already hunting. Noticing a species for the first time brings up its discovery card.
 - Zephoots stand behind the toad packs (Mossy Steps, Sunken Garden), Gruntites hold the open stone areas (Fallen Courtyard, Conduit Hall); one of each guards the approach to the Final Arena. The Final Arena holds only the Warden Captain (its old Warden + toad pack was removed; his summons and XP burst replace it). Walking in (`Areas/FinalArena/BossArena`) wakes him and closes two cyan energy gates behind you (`ArenaGate`); they open when he falls.
 - **Navigation:** each zone has a `ZoneNavigation` region that bakes a navmesh at load from the Obstacles layer's tile collision (plus closed arena gates; a gate rebakes when it opens or closes), shrunk by a 6 px agent radius so walkers clear corners. Baking from collision, not tile navigation polygons, keeps the tiles' collision the one source of truth and gives that margin. Enemies and click-to-move walk it through one shared `PathMover` (repaths every 0.25 s, staggered); Wardens and Zephoots back away by turning aside from walls; the Gruntite's charge and arrow-key movement stay straight. Without a navmesh (the test arena) everything walks straight.
@@ -184,9 +200,9 @@ Brightest and busiest first: **player** > **danger cues** (attack tells, project
 
 ## Saving
 - One save slot, `user://save_1.json`, written by the `SaveGame` autoload. It has a `version` field; older files are migrated in `SaveGame._migrate`, and damaged or newer-version files are moved to `save_1.unreadable.json` and the game starts fresh.
-- Saved: level, XP and debug bonus points (Progression), learned Ember Tree node IDs and the open stage (EmberTree), species met (CreatureLog), the current zone and Trainer's Aid charges. Spent points aren't stored: loading gives back every point, then re-learns the saved nodes under the normal rules, so unknown IDs or nodes beyond the points owned are dropped.
+- Saved: level, XP and debug bonus points (Progression), learned Ember Tree node IDs and the open stage (EmberTree), species met (CreatureLog), Glimmer Shards found by ID (ShardInventory; a found shard never appears again), the current zone and Trainer's Aid charges. Spent points aren't stored: loading gives back every point, then re-learns the saved nodes under the normal rules, so unknown IDs or nodes beyond the points owned are dropped.
 - Each system owns its section (`to_save_data` / `load_save_data`); new systems add a section the same way. The tree is saved by node ID only, so nodes added later need no migration.
-- Saves automatically on a level up, on learning or unlearning a node, on meeting a new species, every 60 s and on quitting; writes go to a temp file that is renamed over the save. Loads at game start, before the zone is built.
+- Saves automatically on a level up, on learning or unlearning a node, on meeting a new species, on finding a shard, every 60 s and on quitting; writes go to a temp file that is renamed over the save. Loads at game start, before the zone is built.
 - The test arena never loads or writes the save (DebugControls' `uses_save_file` is off there). Debug keys: F5 saves now ("SAVED" toast), F9 deletes the save and restarts fresh.
 
 ## Scope rules

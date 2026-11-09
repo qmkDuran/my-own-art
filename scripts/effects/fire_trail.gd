@@ -72,7 +72,7 @@ func _burn_touching_targets() -> void:
 
 func _is_touching_fire(feet: Vector2) -> bool:
 	for index in _patch_positions.size():
-		if _patch_ages[index] < patch_lifetime and _patch_positions[index].distance_to(feet) <= touch_radius:
+		if _patch_ages[index] < patch_lifetime and _patch_positions[index].distance_squared_to(feet) <= touch_radius * touch_radius:
 			return true
 	return false
 

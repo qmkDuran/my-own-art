@@ -49,8 +49,8 @@ func should_charge() -> bool:
 	var player := PlayerFinder.find(self)
 	if player == null or _seconds_until_ready > 0.0:
 		return false
-	var distance := gruntite.global_position.distance_to(player.global_position)
-	return distance >= charge_range.x and distance <= charge_range.y
+	var distance_squared := gruntite.global_position.distance_squared_to(player.global_position)
+	return distance_squared >= charge_range.x * charge_range.x and distance_squared <= charge_range.y * charge_range.y
 
 
 ## True when the player is too close to charge at (it backs off to make room).
@@ -58,7 +58,7 @@ func is_player_too_close() -> bool:
 	var player := PlayerFinder.find(self)
 	if player == null:
 		return false
-	return gruntite.global_position.distance_to(player.global_position) < charge_range.x
+	return gruntite.global_position.distance_squared_to(player.global_position) < charge_range.x * charge_range.x
 
 
 ## Locks the direction toward the player: the charge goes there, wherever they move.
@@ -87,7 +87,7 @@ func start_charge(walk_speed: float) -> Vector2:
 
 ## True once it has gone the full distance.
 func has_gone_full_distance() -> bool:
-	return gruntite.global_position.distance_to(_start_position) >= charge_distance
+	return gruntite.global_position.distance_squared_to(_start_position) >= charge_distance * charge_distance
 
 
 ## Rams the player if they're in the way. True on the frame it lands.
@@ -95,15 +95,12 @@ func try_to_ram_player() -> bool:
 	var player := PlayerFinder.find(self)
 	if _has_hit or player == null:
 		return false
-	if gruntite.global_position.distance_to(player.global_position) > hit_radius:
+	if gruntite.global_position.distance_squared_to(player.global_position) > hit_radius * hit_radius:
 		return false
-	var player_health: Health = player.get_node_or_null("Health")
-	if player_health == null or player_health.is_invulnerable:
+	if not PlayerHit.try_to_hurt(player, damage, gruntite.global_position):
 		return false  # leaping through it
 	_has_hit = true
-	player_health.take_damage(damage, gruntite.global_position)
-	if player.has_method("push"):
-		player.push(direction * push_speed, push_time)
+	PlayerHit.shove(player, direction * push_speed, push_time)
 	return true
 
 

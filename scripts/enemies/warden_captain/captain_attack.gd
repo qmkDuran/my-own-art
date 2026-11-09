@@ -96,11 +96,6 @@ func finish() -> void:
 	queue_redraw()
 
 
-func _distance_to_player() -> float:
-	var player := PlayerFinder.find(self)
-	return INF if player == null else captain.global_position.distance_to(player.global_position)
-
-
 # --- For each attack to fill in -------------------------------------------
 
 func _is_wanted(_distance_to_player: float) -> bool:

@@ -5,7 +5,8 @@ extends Node2D
 
 ## How close the player must be to pick it up, in pixels.
 @export var pickup_radius: float = 10.0
-## Seconds before it disappears if nobody picks it up (it blinks first).
+## Seconds before it disappears if nobody picks it up (it blinks first). 0 = it stays
+## (berries placed in a level as a reward).
 @export var lifetime: float = 25.0
 
 ## 7×7 pixel berry: '#' outline, 'r' red, 'd' dark red, 'h' highlight, 'g' leaf.
@@ -24,10 +25,11 @@ var _age: float = 0.0
 
 func _process(delta: float) -> void:
 	_age += delta
-	if _age >= lifetime:
-		queue_free()
-		return
-	visible = _age < lifetime - BLINK_SECONDS or int(_age * 8.0) % 2 == 0
+	if lifetime > 0.0:
+		if _age >= lifetime:
+			queue_free()
+			return
+		visible = _age < lifetime - BLINK_SECONDS or int(_age * 8.0) % 2 == 0
 	_try_pickup()
 	queue_redraw()
 

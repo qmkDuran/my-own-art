@@ -3,6 +3,12 @@ extends Node
 ## A Handler's summoning: when a new wave is due, how many bound creatures appear and where,
 ## and keeping count of the ones still alive. The Handler decides when to raise his rod;
 ## this says whether it's time and spawns the wave at the end of the gesture.
+##
+## Two caps keep long fights from snowballing: each Warden has at most `max_creatures` of his
+## own out, and the whole zone at most ZONE_LIMIT summoned creatures, from every Warden together.
+
+## Most summoned creatures alive in the zone at once.
+const ZONE_LIMIT := 24
 
 ## The creature he summons.
 @export var creature_scene: PackedScene
@@ -43,8 +49,11 @@ func count_down(delta: float) -> void:
 	_seconds_until_summon -= delta
 
 
+## Due, few enough of his creatures left, and room in the zone for more.
 func is_time_to_summon() -> bool:
-	return _seconds_until_summon <= 0.0 and _creatures_alive() <= summon_when_alive_at_most
+	if _seconds_until_summon > 0.0 or _creatures_alive() > summon_when_alive_at_most:
+		return false
+	return _room_left_in_zone() > 0
 
 
 ## His shout for the first summon of the fight, e.g. "Go, Toxlop!"; "" after that.
@@ -64,9 +73,10 @@ func finish_summon() -> void:
 func _spawn_creatures() -> void:
 	if creature_scene == null:
 		return
-	var room_left := max_creatures - _creatures_alive()
+	var room_left := mini(max_creatures - _creatures_alive(), _room_left_in_zone())
 	for creature_number in mini(creatures_per_summon, room_left):
 		var creature: Node2D = creature_scene.instantiate()
+		creature.add_to_group(EnemyReactions.SUMMONED_GROUP)
 		handler.get_parent().add_child(creature)
 		creature.global_position = handler.global_position + _random_spot_nearby()
 		# Summoned creatures come out already hunting the player.
@@ -92,6 +102,10 @@ func _creatures_alive() -> int:
 			still_alive.append(creature)
 	_summoned_creatures = still_alive
 	return _summoned_creatures.size()
+
+
+func _room_left_in_zone() -> int:
+	return ZONE_LIMIT - get_tree().get_node_count_in_group(EnemyReactions.SUMMONED_GROUP)
 
 
 func _read_creature_info() -> void:

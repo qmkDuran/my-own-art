@@ -2,7 +2,7 @@ class_name MeleeAttack
 extends Node
 ## A close-range attack, like Emberoo's jab.
 ##
-## Tracks whether an attack is in progress. At the moment the fist lands it spawns the
+## Tracks whether an attack is in progress. At the moment the fist lands, JabStrike spawns the
 ## impact effect and damages every target along the punch. An attack can be cancelled
 ## (e.g. by a dodge); a cancelled attack before the hit lands never hits.
 ## With a `finisher`, the attack after the last of `combo_animations` is the finisher
@@ -160,45 +160,8 @@ func _land_hit() -> void:
 	if _is_finisher:
 		struck = finisher.strike(attacker)
 	else:
-		_spawn_impact(_attack_direction)
-		struck = _damage_targets_in_reach(_attack_direction)
+		struck = JabStrike.land(self, _attack_direction)
 	for target_health in struck:
 		target_hit.emit(target_health)
 	if not struck.is_empty():
 		hits_landed.emit(struck.size())
-
-
-func _spawn_impact(attack_direction: Vector2) -> void:
-	if impact_effect == null:
-		return
-
-	var impact: Node2D = impact_effect.instantiate()
-	# Added to the world, not the attacker, so the effect stays where the hit landed.
-	attacker.get_parent().add_child(impact)
-	impact.global_position = _hit_position(attack_direction)
-	impact.rotation = attack_direction.angle()
-
-
-## Hits everything along the punch, from the attacker's body out to full reach,
-## so targets slightly closer or further than the fist still get hit.
-## Measured at fist height against each target's body centre (not its feet).
-## Returns the Health of every target hit.
-func _damage_targets_in_reach(attack_direction: Vector2) -> Array[Health]:
-	var punch_start := attacker.global_position + Vector2(0, fist_height)
-	var punch_end := punch_start + attack_direction * reach
-	var struck: Array[Health] = []
-	for target: Node2D in get_tree().get_nodes_in_group(target_group):
-		var body_centre := target.global_position + Vector2(0, target_body_height)
-		var closest := Geometry2D.get_closest_point_to_segment(body_centre, punch_start, punch_end)
-		if body_centre.distance_to(closest) > hit_radius:
-			continue
-		var target_health: Health = target.get_node_or_null("Health")
-		if target_health != null:
-			CritRoll.deal_damage(attacker, target_health, damage)
-			struck.append(target_health)
-	return struck
-
-
-func _hit_position(attack_direction: Vector2) -> Vector2:
-	var fist_origin := attacker.global_position + Vector2(0, fist_height)
-	return fist_origin + attack_direction * reach
