@@ -16,6 +16,9 @@ signal hits_landed(hit_count: int)
 ## Fired for each target a jab or the finisher hit, after its damage (e.g. so Searing Jab can burn it).
 signal target_hit(target_health: Health)
 
+## The child node name the player's MeleeAttack goes by.
+const NODE_NAME := "MeleeAttack"
+
 ## Seconds from pressing attack to the fist landing (end of the wind-up frame).
 @export var hit_delay: float = 0.12
 ## Seconds the whole attack takes, start to recovery (the jab animation's length).

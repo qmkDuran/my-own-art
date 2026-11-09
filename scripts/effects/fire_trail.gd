@@ -65,7 +65,7 @@ func _physics_process(delta: float) -> void:
 func _burn_touching_targets() -> void:
 	for target: Node2D in get_tree().get_nodes_in_group(TARGET_GROUP):
 		if _is_touching_fire(target.global_position):
-			Burning.apply_to(target.get_node_or_null("Health") as Health, burn_damage, burn_duration)
+			Burning.apply_to(Health.of(target), burn_damage, burn_duration)
 
 
 func _is_touching_fire(feet: Vector2) -> bool:

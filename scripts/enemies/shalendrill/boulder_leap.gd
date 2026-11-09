@@ -1,10 +1,19 @@
 class_name BoulderLeap
-extends ShalendrillAttack
+extends BossAttack
 ## The Shalendrill's leap, its answer to a player who keeps away: it crouches while a red
 ## circle fills on the ground where the player stood (locked when the crouch starts), then
 ## bounds through the air and lands on it like a dropped boulder. Anyone in the circle is
 ## hurt, thrown out and staggered. Leave the circle (walk or dodge) before it lands. In the
 ## air it can't be hit and passes over the player; it lands heavily (the punish window).
+
+## The landing circle: its fill's opacity as the crouch goes on (start, end), and its outline's.
+const FILL_ALPHA := Vector2(0.1, 0.3)
+const OUTLINE_ALPHA := 0.8
+## The landing: its ring's spread time and colour, and the screen shake.
+const LANDING_RING_SECONDS := 0.3
+const LANDING_RING_COLOR := Color(ApolloPalette.GREY_LIGHT, 0.8)
+const LANDING_SHAKE_STRENGTH := 3.0
+const LANDING_SHAKE_SECONDS := 0.3
 
 ## It leaps when the player is between these distances, in pixels.
 @export var leap_range: Vector2 = Vector2(64, 170)
@@ -22,16 +31,11 @@ extends ShalendrillAttack
 @export var dust_scene: PackedScene
 @export var shockwave_scene: PackedScene
 
-const FILL_ALPHA := Vector2(0.1, 0.3)
-const OUTLINE_ALPHA := 0.8
-
 var _target: Vector2
 var _take_off: Vector2
 var _wind_up_progress: float = 0.0
 var _is_airborne: bool = false
 var _flight_progress: float = 0.0
-
-@onready var boss: Enemy = get_parent()
 
 
 func movement_velocity(_seconds_attacking: float) -> Vector2:
@@ -76,9 +80,9 @@ func _land() -> void:
 	_set_airborne(false)
 	DustPuff.spawn(dust_scene, boss.get_parent(), boss.global_position)
 	if shockwave_scene != null:
-		Shockwave.spawn(shockwave_scene, boss.get_parent(), boss.global_position, landing_radius, 0.3, Color(ApolloPalette.GREY_LIGHT, 0.8))
+		Shockwave.spawn(shockwave_scene, boss.get_parent(), boss.global_position, landing_radius, LANDING_RING_SECONDS, LANDING_RING_COLOR)
 	if screen_shake != null:
-		screen_shake.shake(3.0, 0.3)
+		screen_shake.shake(LANDING_SHAKE_STRENGTH, LANDING_SHAKE_SECONDS)
 	var player := PlayerFinder.find(self)
 	if player == null:
 		return

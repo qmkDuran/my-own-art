@@ -37,7 +37,7 @@ func _ready() -> void:
 		if boss.has_signal("fight_started"):
 			boss.connect("fight_started", _close_gates)
 		boss.health.died.connect(_on_boss_died)
-		(boss.get_node("Health") as Health).died.connect(StoryFlags.set_flag.bind(defeated_flag))
+		Health.of(boss).died.connect(StoryFlags.set_flag.bind(defeated_flag))
 
 
 func _on_body_entered(body: Node2D) -> void:

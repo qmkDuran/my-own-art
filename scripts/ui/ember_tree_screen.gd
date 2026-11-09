@@ -1,52 +1,34 @@
 class_name EmberTreeScreen
-extends CanvasLayer
-## The in-game Ember Tree screen. K (or Tab) opens it; K, Tab or Escape closes it.
+extends PausingScreen
+## The in-game Ember Tree screen (a PausingScreen). K (or Tab) opens it; K, Tab or Escape
+## closes it.
 ##
-## Opening pauses the game; this layer keeps running (process mode Always) so the tree
-## stays alive. Back to front: the tree view, the frame (vignette, header and footer bars),
+## Back to front: the tree view, the frame (vignette, header and footer bars),
 ## the stats card on the left and the side panel on the right (placed by EmberTreeScreenLayout).
 ## The opening zoom is worked out from the room left between them, so the layout fits whatever
 ## size the screen is. Learning goes through the EmberTree autoload; this only asks it.
 
-## While open, the screen draws at a whole multiple of the game's own resolution, so its
-## pixel font stays crisp (the hybrid approach in DESIGN.md): the smallest multiple at
-## least this wide, which leaves the tree room between the two cards. The game's own
-## scale comes back on close.
-const MIN_UI_WIDTH := 960
 ## The opening zoom never goes above this, however much room there is.
 const MAX_START_ZOOM := 0.8
-const FADE_SECONDS := 0.15
 ## Shown under the tree until the player zooms out: the later rings start off-screen.
 const ZOOM_HINT := "Scroll out for Stage 2 and 3"
 
-var is_open: bool = false
-
-var _root: Control
 var _view: EmberTreeView
 var _frame: EmberTreeFrame
 var _stats_panel: EmberTreeStatsPanel
 var _side_panel: EmberTreeSidePanel
 var _zoom_hint: Label
-var _resolution := UiResolutionSwap.new()
-var _paused_by_me: bool = false
 
 
 func _ready() -> void:
-	process_mode = Node.PROCESS_MODE_ALWAYS
-	_build_root()
+	super._ready()
 	_build_view()
 	_frame = EmberTreeFrame.new()
 	_root.add_child(_frame)
 	_build_zoom_hint()
 	_build_stats_panel()
 	_build_side_panel()
-	_root.visible = false
 	_root.resized.connect(_on_resized)
-
-
-func _exit_tree() -> void:
-	if is_open:
-		close()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -61,58 +43,16 @@ func _unhandled_input(event: InputEvent) -> void:
 	get_viewport().set_input_as_handled()
 
 
-func toggle() -> void:
-	if is_open:
-		close()
-	else:
-		open()
-
-
-func open() -> void:
-	if is_open:
-		return
-	is_open = true
-	_resolution.switch_to(get_window(), ui_size())
-	_paused_by_me = not get_tree().paused
-	get_tree().paused = true
+func _on_open() -> void:
 	_frame.refresh_level()
 	_stats_panel.preview_node("")
 	_side_panel.show_node("")
 	_fit_tree_at_home()
 	_view.snap_home()
 	_zoom_hint.modulate.a = 1.0
-	_root.visible = true
-	_root.modulate.a = 0.0
-	create_tween().tween_property(_root, "modulate:a", 1.0, FADE_SECONDS)
-
-
-func close() -> void:
-	if not is_open:
-		return
-	is_open = false
-	_root.visible = false
-	_resolution.restore(get_window())
-	if _paused_by_me:
-		get_tree().paused = false
-
-
-## The canvas size used while open (see MIN_UI_WIDTH), e.g. 960×540 for a 480×270 game.
-static func ui_size() -> Vector2i:
-	var game_size := Vector2i(
-		ProjectSettings.get_setting("display/window/size/viewport_width"),
-		ProjectSettings.get_setting("display/window/size/viewport_height"))
-	return game_size * ceili(float(MIN_UI_WIDTH) / game_size.x)
 
 
 # --- Layout -----------------------------------------------------------------------
-
-func _build_root() -> void:
-	_root = Control.new()
-	_root.mouse_filter = Control.MOUSE_FILTER_STOP
-	_root.theme = EmberTreeFonts.ui_theme()
-	add_child(_root)
-	_root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-
 
 func _build_view() -> void:
 	_view = EmberTreeView.new()

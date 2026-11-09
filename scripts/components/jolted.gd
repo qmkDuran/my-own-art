@@ -11,7 +11,6 @@ extends ImpairingEffect
 const NODE_NAME := "Jolted"
 
 var _jab_delay: float = 0.0
-var _tint: StatusTint
 
 
 ## Jolts the target with `target_health` for `seconds`: its next jab in that time is late by
@@ -34,11 +33,5 @@ static func take_jab_delay(attacker: Node) -> float:
 	return jolted._jab_delay
 
 
-func _ready() -> void:
-	_tint = StatusTint.new(target().get_node_or_null("Sprite") as CanvasItem, StatusColors.JOLT)
-	add_child(_tint)
-
-
-func _end() -> void:
-	if is_instance_valid(_tint):
-		_tint.queue_free()
+func _tint_color() -> Color:
+	return StatusColors.JOLT

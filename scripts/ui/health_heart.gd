@@ -70,7 +70,7 @@ func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	# Wait one frame so the player has been added to the level.
 	await get_tree().process_frame
-	_health = PlayerFinder.find_component(self, "Health") as Health
+	_health = PlayerFinder.find_component(self, Health.NODE_NAME) as Health
 	if _health != null:
 		_last_health = _health.current_health
 		_ghost_health = _last_health

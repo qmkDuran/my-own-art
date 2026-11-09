@@ -24,7 +24,7 @@ static func make_row_button() -> Button:
 ## A small button for a hack or an action on the chip card.
 static func make_small_button(text: String) -> Button:
 	var button := EmberTreeWidgets.make_button(text)
-	for state in ["normal", "hover", "pressed", "disabled"]:
+	for state: String in ["normal", "hover", "pressed", "disabled"]:
 		var style := button.get_theme_stylebox(state).duplicate() as PixelPanelStyle
 		style.content_margin_left = SMALL_PADDING
 		style.content_margin_right = SMALL_PADDING

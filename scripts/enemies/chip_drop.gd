@@ -8,6 +8,8 @@ extends Node
 
 enum Quality { WARDEN, CAPTAIN }
 
+const QUALITIES := {Quality.WARDEN: ChipRoller.WARDEN_QUALITY, Quality.CAPTAIN: ChipRoller.CAPTAIN_QUALITY}
+
 ## Chance (0 to 1) of dropping a chip: about 1 in 4 for a Warden, 1 for the Captain.
 @export_range(0.0, 1.0, 0.01) var chip_chance: float = 0.25
 ## How good its chips are (see ChipRoller's qualities).
@@ -20,8 +22,6 @@ enum Quality { WARDEN, CAPTAIN }
 ## Where on the body the drops pop out, relative to its feet.
 @export var burst_offset: Vector2 = Vector2(0, -8)
 
-const QUALITIES := {Quality.WARDEN: ChipRoller.WARDEN_QUALITY, Quality.CAPTAIN: ChipRoller.CAPTAIN_QUALITY}
-
 ## Seeded by a test driver to check the drop rate; random otherwise.
 static var rng := RandomNumberGenerator.new()
 
@@ -33,7 +33,7 @@ static func _static_init() -> void:
 
 
 func _ready() -> void:
-	(_body.get_node("Health") as Health).died.connect(drop)
+	Health.of(_body).died.connect(drop)
 
 
 ## Drops the scrap and maybe a chip. Returns the chip dropped, or null.

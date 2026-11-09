@@ -52,7 +52,7 @@ func strike(attacker: Node2D) -> Array[Health]:
 		var body_centre := target.global_position + Vector2(0, target_body_height)
 		if body_centre.distance_to(centre) > radius:
 			continue
-		var target_health: Health = target.get_node_or_null("Health")
+		var target_health: Health = Health.of(target)
 		if target_health == null:
 			continue
 		# A sweep: it comes round a shell guard (see BrinelobShellGuard).
@@ -73,9 +73,4 @@ func _spawn_fire_ring(attacker: Node2D, centre: Vector2) -> void:
 ## Enemies that know how (a `knock_back(velocity)` method) are thrown straight away from
 ## the attacker. Others keep their normal hit reaction.
 func _knock_back(target: Node2D, attacker: Node2D) -> void:
-	if not target.has_method("knock_back"):
-		return
-	var away := target.global_position - attacker.global_position
-	if away.length() < 0.1:
-		away = Vector2.DOWN
-	target.call("knock_back", away.normalized() * knockback_speed)
+	EnemyReactions.throw_away_from(target, attacker.global_position, knockback_speed, Vector2.DOWN)

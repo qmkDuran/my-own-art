@@ -16,5 +16,5 @@ static func apply_to(target_health: Health, push_velocity: Vector2, seconds: flo
 	if buffeted == null or buffeted.is_active():
 		return false
 	buffeted.start(seconds)
-	PlayerHit.shove(buffeted.target() as Node2D, push_velocity, seconds)
+	PlayerHit.shove(buffeted.get_target() as Node2D, push_velocity, seconds)
 	return true

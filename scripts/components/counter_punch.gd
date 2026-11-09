@@ -68,12 +68,8 @@ func _on_target_hit(target_health: Health) -> void:
 	if not is_armed():
 		return
 	var target := target_health.get_parent() as Node2D
-	if target == null or not target.has_method("knock_back"):
-		return
-	var away := target.global_position - _owner_body.global_position
-	if away.length() < 0.1:
-		away = Vector2.RIGHT
-	target.call("knock_back", away.normalized() * knockback_speed)
+	if target != null:
+		EnemyReactions.throw_away_from(target, _owner_body.global_position, knockback_speed, Vector2.RIGHT)
 
 
 func _pulse() -> void:

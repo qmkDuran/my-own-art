@@ -9,17 +9,16 @@ extends Control
 ## (twice the game's resolution) and shown at half size.
 
 const GROUP := "discovery_card"
+## Nodes in this group are told through `on_discovery_card_changed()` whenever a card shows
+## or hides (e.g. the boss bar makes way for it).
+const WATCHERS_GROUP := "discovery_card_watchers"
 ## A 128px portrait at 1:1 screen pixels when the game is scaled 4x (32 game pixels).
 const PORTRAIT_SIZE := 64.0
 ## Gap between the portrait and the words, in card pixels.
 const PORTRAIT_GAP := 8
-const SHOW_SECONDS := 2.0
 ## Gap between the top of the screen and the card, in game pixels.
 const TOP_MARGIN := 4.0
-## How far the card drifts while fading, in game pixels.
-const DRIFT := 4.0
 const FADE_IN_SECONDS := 0.45
-const FADE_OUT_SECONDS := 0.6
 const SLOW_MOTION_SCALE := 0.3
 const SLOW_MOTION_SECONDS := 0.5     # real seconds
 
@@ -34,6 +33,8 @@ var _name: Label
 var _element: Label
 ## Species met while a card is still showing (e.g. two new kinds noticed together) wait here.
 var _waiting: Array[Dictionary] = []
+## True during the slow motion, so a card freed mid-way (the zone changed) still ends it.
+var _is_slowing_time: bool = false
 
 
 ## Whether a discovery card is up on the HUD of `asker`'s level (others make way for it).
@@ -49,6 +50,10 @@ func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_build_card()
 	CreatureLog.discovered.connect(_on_discovered)
+
+
+func _exit_tree() -> void:
+	_end_slow_motion()
 
 
 func _on_discovered(info: Dictionary) -> void:
@@ -77,37 +82,36 @@ func _show_picture(info: Dictionary) -> void:
 
 
 func _slow_motion() -> void:
+	_is_slowing_time = true
 	Engine.time_scale = SLOW_MOTION_SCALE
-	# A timer that ignores time scale, so it lasts half a real second.
-	await get_tree().create_timer(SLOW_MOTION_SECONDS, true, false, true).timeout
-	Engine.time_scale = 1.0
+	await Wait.seconds(self, SLOW_MOTION_SECONDS, true)
+	_end_slow_motion()
+
+
+func _end_slow_motion() -> void:
+	if _is_slowing_time:
+		_is_slowing_time = false
+		Engine.time_scale = 1.0
 
 
 ## Fades in while drifting down a few pixels, waits, then fades out while drifting back up.
 func _slide_in_and_out() -> void:
 	_card.reset_size()
-	var card_size := HudCard.size_on_screen(_card)
-	_card.position.x = roundf((size.x - card_size.x) / 2.0)
-	var resting_top := TopCentreStack.reserve(_card, TOP_MARGIN, card_size)
-	_card.position.y = resting_top - DRIFT
-	_card.modulate.a = 0.0
-	_card.visible = true
-	var show := create_tween().set_ignore_time_scale(true).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	show.set_parallel()
-	show.tween_property(_card, "modulate:a", 1.0, FADE_IN_SECONDS)
-	show.tween_property(_card, "position:y", resting_top, FADE_IN_SECONDS)
-	show.chain().tween_interval(SHOW_SECONDS)
-	# A card on its way out gives up its place: the next one can take the top spot.
-	show.chain().tween_callback(TopCentreStack.release.bind(_card))
-	show.chain().tween_property(_card, "modulate:a", 0.0, FADE_OUT_SECONDS)
-	show.parallel().tween_property(_card, "position:y", resting_top - DRIFT, FADE_OUT_SECONDS)
-	show.chain().tween_callback(_finish_showing)
+	var tween := TopCentreStack.show_card(_card, size.x, TOP_MARGIN, FADE_IN_SECONDS, true)
+	tween.chain().tween_callback(_finish_showing)
+	_tell_watchers()
 
 
 func _finish_showing() -> void:
 	_card.visible = false
-	if not _waiting.is_empty():
+	if _waiting.is_empty():
+		_tell_watchers()
+	else:
 		_announce(_waiting.pop_front())
+
+
+func _tell_watchers() -> void:
+	get_tree().call_group(WATCHERS_GROUP, "on_discovery_card_changed")
 
 
 func _build_card() -> void:
@@ -133,6 +137,6 @@ func _build_card() -> void:
 	_title = UiLabel.make(EmberTreeFonts.TEXT_SIZE, title_color, "NEW CREATURE DISCOVERED")
 	_name = UiLabel.make(EmberTreeFonts.LARGE_SIZE, name_color)
 	_element = UiLabel.make(EmberTreeFonts.TEXT_SIZE, element_color)
-	for item in [_title, _name, _element]:
+	for item: Label in [_title, _name, _element]:
 		column.add_child(item)
 

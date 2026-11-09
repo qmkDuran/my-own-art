@@ -3,14 +3,14 @@ extends Node2D
 ## An elite's name above its head in the tiny pixel font (e.g. "BRISTLING TOXLOP"). It shows
 ## only while the player is near, so a quiet pocket stays quiet until you walk in.
 
+const VISIBLE_Z := 10
+
 @export var text: String = ""
 ## How close the player must be for the tag to show, in pixels (about half a screen).
 @export var show_distance: float = 150.0
 @export var text_color: Color = ApolloPalette.GOLD
 ## Seconds to fade in or out.
 @export var fade_seconds: float = 0.3
-
-const VISIBLE_Z := 10
 
 
 func _ready() -> void:

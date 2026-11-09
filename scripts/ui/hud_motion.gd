@@ -20,10 +20,6 @@ func start() -> void:
 	_left = seconds
 
 
-func stop() -> void:
-	_left = 0.0
-
-
 func is_running() -> bool:
 	return _left > 0.0
 

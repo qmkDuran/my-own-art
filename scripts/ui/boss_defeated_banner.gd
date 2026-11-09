@@ -4,13 +4,9 @@ extends Control
 ## discovery card's style that fades in, stays for a couple of seconds and drifts away.
 ## It rests below any other top-centre card already showing (TopCentreStack).
 
-const SHOW_SECONDS := 2.0
 ## Gap between the top of the screen and the card, in game pixels.
 const TOP_MARGIN := 10.0
-## How far the card drifts while fading, in game pixels.
-const DRIFT := 4.0
 const FADE_IN_SECONDS := 0.35
-const FADE_OUT_SECONDS := 0.6
 ## Room kept between the card and the screen's sides, in game pixels. Text too long for the
 ## big font within it drops to the normal size instead of running off the screen.
 const SIDE_MARGIN := 8.0
@@ -45,22 +41,7 @@ func announce(text: String) -> void:
 	if HudCard.size_on_screen(_card).x > get_viewport_rect().size.x - SIDE_MARGIN * 2.0:
 		_label.add_theme_font_size_override("font_size", EmberTreeFonts.TEXT_SIZE)
 		_card.reset_size()
-	var card_size := HudCard.size_on_screen(_card)
-	_card.position.x = roundf((get_viewport_rect().size.x - card_size.x) / 2.0)
-	var resting_top := TopCentreStack.reserve(_card, TOP_MARGIN, card_size)
-	_card.position.y = resting_top - DRIFT
-	_card.modulate.a = 0.0
-	_card.visible = true
 	if _tween != null:
 		_tween.kill()
-	var show := create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	show.set_parallel()
-	show.tween_property(_card, "modulate:a", 1.0, FADE_IN_SECONDS)
-	show.tween_property(_card, "position:y", resting_top, FADE_IN_SECONDS)
-	show.chain().tween_interval(SHOW_SECONDS)
-	# A card on its way out gives up its place: the next one can take the top spot.
-	show.chain().tween_callback(TopCentreStack.release.bind(_card))
-	show.chain().tween_property(_card, "modulate:a", 0.0, FADE_OUT_SECONDS)
-	show.parallel().tween_property(_card, "position:y", resting_top - DRIFT, FADE_OUT_SECONDS)
-	show.chain().tween_callback(_card.hide)
-	_tween = show
+	_tween = TopCentreStack.show_card(_card, get_viewport_rect().size.x, TOP_MARGIN, FADE_IN_SECONDS)
+	_tween.chain().tween_callback(_card.hide)

@@ -18,7 +18,7 @@ const DIAMOND_ROOM := 14.0
 const CIRCLE_ROOM := 10.5
 
 const LOCK_FILLED := "#"
-const LOCK_PIXELS := ["..###..", ".#...#.", ".#...#.", "#######", "###.###", "###.###", "#######"]
+const LOCK_PIXELS: Array[String] = ["..###..", ".#...#.", ".#...#.", "#######", "###.###", "###.###", "#######"]
 
 ## Node id -> {"normal": its icon, "greyed": its greyed twin, "middle": the middle of its
 ## drawn pixels, in icon pixels}; empty when the node has no icon file. Built on first use.

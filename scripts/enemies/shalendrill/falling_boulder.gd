@@ -11,6 +11,9 @@ const VISIBLE_SHARE := 0.35
 const DROP_HEIGHT := 70.0
 const FILL_ALPHA := Vector2(0.08, 0.32)
 const OUTLINE_ALPHA := 0.8
+## The small screen shake as it hits the ground.
+const IMPACT_SHAKE_STRENGTH := 1.5
+const IMPACT_SHAKE_SECONDS := 0.15
 
 var radius: float = 13.0
 ## Seconds from the marker appearing to the impact.
@@ -56,7 +59,7 @@ func _process(delta: float) -> void:
 func _impact() -> void:
 	DustPuff.spawn(dust_scene, get_parent(), global_position)
 	if screen_shake != null:
-		screen_shake.shake(1.5, 0.15)
+		screen_shake.shake(IMPACT_SHAKE_STRENGTH, IMPACT_SHAKE_SECONDS)
 	var player := PlayerFinder.find(self)
 	if player != null and player.global_position.distance_to(global_position) <= radius:
 		PlayerHit.try_to_hurt(player, damage, global_position)

@@ -22,7 +22,6 @@ const UNREADABLE_PATH := "user://save_1.unreadable.json"
 ## Raise this when the layout changes, and teach `_migrate` to bring older files up to it.
 const VERSION := 2
 const AUTOSAVE_SECONDS := 60.0
-const TRAINER_AID_NAME := "TrainerAid"
 
 ## Off for a session that must not touch the real save (the test arena).
 var enabled: bool = true
@@ -101,7 +100,7 @@ func _build_save() -> Dictionary:
 		"checkpoint": Checkpoints.to_save_data(),
 		"story_flags": StoryFlags.to_save_data(),
 	}
-	var aid := PlayerFinder.find_component(self, TRAINER_AID_NAME) as TrainerAid
+	var aid := PlayerFinder.find_component(self, TrainerAid.NODE_NAME) as TrainerAid
 	if aid != null:
 		data["trainer_aid"] = aid.to_save_data()
 	return data

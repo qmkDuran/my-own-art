@@ -58,7 +58,7 @@ static func marked_sheet(sheet: Texture2D) -> Texture2D:
 static func _mark_frame(image: Image, corner: Vector2i) -> void:
 	for patch in _fire_patches(image, corner):
 		if _is_flame_tip(image, patch, corner):
-			for pixel in patch:
+			for pixel: Vector2i in patch:
 				if _is_color(image, pixel, GLOVE_RED):
 					image.set_pixelv(pixel, FLAME_RED_MARK)
 

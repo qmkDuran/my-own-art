@@ -45,7 +45,7 @@ var _refilled_index: int = -1
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	await get_tree().process_frame
-	var aid := PlayerFinder.find_component(self, "TrainerAid") as TrainerAid
+	var aid := PlayerFinder.find_component(self, TrainerAid.NODE_NAME) as TrainerAid
 	if aid == null:
 		return
 	aid.charges_changed.connect(_on_charges_changed)

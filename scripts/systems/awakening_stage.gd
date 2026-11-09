@@ -15,7 +15,6 @@ const ONE_LEVEL := 10
 const TWO_LEVEL := 25
 const LEVEL_FOR_STAGE := {ONE: ONE_LEVEL, TWO: TWO_LEVEL}
 
-const NAMES := {NONE: "Not awakened", ONE: "Blue Flame", TWO: "Blue Inferno"}
 const NUMERALS := {NONE: "", ONE: "I", TWO: "II"}
 ## Stage 1 of the Ember Tree is open from the start; each Awakening opens the next ring.
 const FIRST_TREE_STAGE := 1

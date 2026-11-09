@@ -8,7 +8,7 @@ extends RefCounted
 ## arc_degrees, plus its Skill resource's heat_cost and cooldown) or, failing that, a
 ## direct child of the player (e.g. SpinningHook, the jab combo's finisher).
 
-const SKILL_BAR := "SkillBar"
+const SKILL_BAR := SkillBar.NODE_NAME
 
 
 ## The node's facts with every placeholder filled in. Nodes without a skill come back as

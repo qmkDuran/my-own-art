@@ -32,7 +32,7 @@ func play_for(duration: float, travel_direction: Vector2) -> void:
 	var time_left := duration
 	while time_left > 0.0:
 		_spawn_burst(direction)
-		await get_tree().create_timer(spawn_interval).timeout
+		await Wait.seconds(self, spawn_interval)
 		time_left -= spawn_interval
 
 

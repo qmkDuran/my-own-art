@@ -10,16 +10,16 @@ extends RefCounted
 ## shown is property / scale, e.g. crit_chance 0.1 / 0.01 = 10 (%).
 
 const STATS := {
-	ChipModTable.JAB_DAMAGE: ["MeleeAttack", "damage", 1.0, "Jab damage", ""],
-	ChipModTable.MAX_HEALTH: ["Health", "max_health", 1.0, "Max Health", ""],
-	ChipModTable.MAX_HEAT: ["Heat", "max_heat", 1.0, "Max Heat", ""],
-	ChipModTable.UPPERCUT_COOLDOWN: ["SkillBar/FlameUppercut", "", -1.0, "Flame Uppercut cooldown", "s"],
-	ChipModTable.CRIT_CHANCE: ["CritRoll", "crit_chance", 0.01, "Crit chance", "%"],
+	ChipModTable.JAB_DAMAGE: [MeleeAttack.NODE_NAME, "damage", 1.0, "Jab damage", ""],
+	ChipModTable.MAX_HEALTH: [Health.NODE_NAME, "max_health", 1.0, "Max Health", ""],
+	ChipModTable.MAX_HEAT: [Heat.NODE_NAME, "max_heat", 1.0, "Max Heat", ""],
+	ChipModTable.UPPERCUT_COOLDOWN: [FlameUppercut.NODE_PATH, "", -1.0, "Flame Uppercut cooldown", "s"],
+	ChipModTable.CRIT_CHANCE: [CritRoll.NODE_NAME, "crit_chance", 0.01, "Crit chance", "%"],
 	ChipModTable.BURN_SECONDS: ["SearingJab", "bonus_burn_seconds", 1.0, "Burn length", "s"],
-	ChipModTable.AID_HEAL: ["TrainerAid", "heal_amount", 1.0, "Aid heal", ""],
-	ChipModTable.POISON_RESIST: ["StatusResistance", "poison_share", -0.01, "Poison length", "%"],
-	ChipModTable.RUN_SPEED: ["Movement", "top_speed", 1.0, "Run speed", " px/s"],
-	ChipModTable.DODGE_COOLDOWN: ["Dodge", "cooldown", -1.0, "Dodge cooldown", "s"],
+	ChipModTable.AID_HEAL: [TrainerAid.NODE_NAME, "heal_amount", 1.0, "Aid heal", ""],
+	ChipModTable.POISON_RESIST: [StatusEffect.RESISTANCE_NODE, "poison_share", -0.01, "Poison length", "%"],
+	ChipModTable.RUN_SPEED: [Movement.NODE_NAME, "top_speed", 1.0, "Run speed", " px/s"],
+	ChipModTable.DODGE_COOLDOWN: [Dodge.NODE_NAME, "cooldown", -1.0, "Dodge cooldown", "s"],
 }
 ## Floors, in display units, so stacked chips never break a stat (cooldowns stay above 0).
 const FLOORS := {

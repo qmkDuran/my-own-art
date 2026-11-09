@@ -10,20 +10,19 @@ extends ImpairingEffect
 ## Share of its speed the target keeps while slowed (0.8 = 20% slower).
 var speed_share: float = 1.0
 
-var _tint_color: Color
-var _tint: StatusTint
+var _slow_color: Color
 
 
 func _init(kept_speed_share: float, tint_color: Color) -> void:
 	super._init()
 	speed_share = kept_speed_share
-	_tint_color = tint_color
+	_slow_color = tint_color
 
 
-## Share of its walking speed `target` has left after every slow on it (1.0 = unslowed).
-static func speed_share_of(target: Node) -> float:
+## Share of its walking speed `slowed` has left after every slow on it (1.0 = unslowed).
+static func speed_share_of(slowed: Node) -> float:
 	var share := 1.0
-	for child in target.get_children():
+	for child in slowed.get_children():
 		var slow := child as SlowingEffect
 		if slow != null and slow.is_active():
 			share *= slow.speed_share
@@ -40,11 +39,5 @@ static func _apply(target_health: Health, effect_name: String, seconds: float, m
 	return true
 
 
-func _ready() -> void:
-	_tint = StatusTint.new(target().get_node_or_null("Sprite") as CanvasItem, _tint_color)
-	add_child(_tint)
-
-
-func _end() -> void:
-	if is_instance_valid(_tint):
-		_tint.queue_free()
+func _tint_color() -> Color:
+	return _slow_color

@@ -9,6 +9,11 @@ extends HitShield
 ## drawn as a thin arc on the ground in front of it while the guard is up (the only cue a
 ## front-view sprite can give), and a plink shows a small ring where the hit bounced.
 
+const ARC_COLOR := ApolloPalette.SKY
+const ARC_ALPHA := 0.7
+## Squash, so the arc lies flat on the ground.
+const GROUND_SQUASH := 0.6
+
 ## Half the width of the guarded front, in degrees (hits within this of its facing bounce).
 @export var front_half_angle: float = 55.0
 ## How fast it turns to face the player, in degrees per second.
@@ -22,11 +27,6 @@ extends HitShield
 @export var plink_time: float = 0.12
 ## Radius of the facing arc on the ground, in pixels.
 @export var arc_radius: float = 9.0
-
-const ARC_COLOR := ApolloPalette.SKY
-const ARC_ALPHA := 0.7
-## Squash, so the arc lies flat on the ground.
-const GROUND_SQUASH := 0.6
 
 ## Which way the shell faces (unit vector).
 var facing: Vector2 = Vector2.DOWN

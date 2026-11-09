@@ -1,7 +1,7 @@
 class_name DebugControls
 extends CanvasLayer
-## Developer switches for testing, toggled with keys checked directly here
-## (no input actions, so the project settings stay untouched).
+## Developer switches for testing (every debug key lives here), toggled with keys checked
+## directly (no input actions, so the project settings stay untouched). One per level scene.
 ##
 ## F2: enemies passive. Toads sit still (no hops, no tongue) and Wardens stand still
 ## (no summons, no shove, no slam). They can still be hit and killed.
@@ -59,29 +59,40 @@ func _unhandled_input(event: InputEvent) -> void:
 	var key := event as InputEventKey
 	if key == null or not key.pressed or key.echo:
 		return
-	if key.keycode == PASSIVE_TOGGLE_KEY:
-		enemies_passive = not enemies_passive
-		_refresh_banner()
+	var action := _action_for_key(key.keycode)
+	if action.is_valid():
+		action.call()
 		get_viewport().set_input_as_handled()
-	elif key.keycode == GRANT_POINTS_KEY:
-		Progression.add_skill_points(DEBUG_SKILL_POINTS)
-		get_viewport().set_input_as_handled()
-	elif key.keycode == AWAKENING_KEY:
-		_cycle_awakening()
-		get_viewport().set_input_as_handled()
-	elif key.keycode == SAVE_KEY:
-		if SaveGame.save_now():
-			_save_toast.show_toast()
-		get_viewport().set_input_as_handled()
-	elif key.keycode == FALL_KEY:
-		_make_player_fall()
-		get_viewport().set_input_as_handled()
-	elif key.keycode == CHIP_KEY:
-		DebugChipGrant.grant()
-		get_viewport().set_input_as_handled()
-	elif key.keycode == DELETE_SAVE_KEY:
-		SaveGame.delete_save_and_restart()
-		get_viewport().set_input_as_handled()
+
+
+## What each debug key does (an empty Callable for any other key).
+func _action_for_key(keycode: Key) -> Callable:
+	match keycode:
+		PASSIVE_TOGGLE_KEY:
+			return _toggle_enemies_passive
+		GRANT_POINTS_KEY:
+			return Progression.add_skill_points.bind(DEBUG_SKILL_POINTS)
+		AWAKENING_KEY:
+			return _cycle_awakening
+		SAVE_KEY:
+			return _save_now
+		FALL_KEY:
+			return _make_player_fall
+		CHIP_KEY:
+			return DebugChipGrant.grant
+		DELETE_SAVE_KEY:
+			return SaveGame.delete_save_and_restart
+	return Callable()
+
+
+func _toggle_enemies_passive() -> void:
+	enemies_passive = not enemies_passive
+	_refresh_banner()
+
+
+func _save_now() -> void:
+	if SaveGame.save_now():
+		_save_toast.show_toast()
 
 
 ## The next Awakening stage, wrapping from the last back to none.
@@ -92,7 +103,7 @@ func _cycle_awakening() -> void:
 
 ## Takes all of Emberoo's health at once, past a dodge's or the entrance hop's invulnerability.
 func _make_player_fall() -> void:
-	var health := PlayerFinder.find_component(self, "Health") as Health
+	var health := PlayerFinder.find_component(self, Health.NODE_NAME) as Health
 	if health == null or health.is_dead():
 		return
 	health.is_invulnerable = false

@@ -36,10 +36,6 @@ func locked_count() -> int:
 	return mods.filter(func(mod: ChipMod) -> bool: return not mod.is_revealed).size()
 
 
-func has_overclock() -> bool:
-	return mods.any(func(mod: ChipMod) -> bool: return mod.is_revealed and mod.is_overclocked())
-
-
 func has_mod(mod_id: String) -> bool:
 	return mods.any(func(mod: ChipMod) -> bool: return mod.mod_id == mod_id)
 

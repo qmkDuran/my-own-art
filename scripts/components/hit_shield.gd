@@ -15,7 +15,7 @@ var health: Health
 
 func _enter_tree() -> void:
 	if health == null:
-		health = get_parent().get_node_or_null("Health") as Health
+		health = Health.of(get_parent())
 	if health != null and not health.shields.has(self):
 		health.shields.append(self)
 

@@ -1,10 +1,19 @@
 class_name CaptainRodSweep
-extends CaptainAttack
+extends BossAttack
 ## The Captain's rod sweep: he cocks the halberd-rod back while a red wedge on the ground
 ## fills in front of him (toward where the player stood), then swings it in a wide arc.
 ## Anyone in the wedge is hurt and shoved away. A dodge, or a step back out of reach, avoids it.
 ## The whole wedge shows faintly from the first frame of the wind-up, with a bold pulsing
 ## outline (see TelegraphPainter); the fill sweeping outward times the swing.
+
+## The faint fill showing the whole wedge, and the growing fill's opacity from start to swing.
+const ZONE_ALPHA := 0.1
+const GROWING_FILL_ALPHA := Vector2(0.12, 0.32)
+## The outline's opacity, and how much the pulse adds.
+const OUTLINE_ALPHA := 0.7
+const OUTLINE_PULSE_ALPHA := 0.25
+## The outline's sides start this far out, in pixels, so they don't cross his feet.
+const OUTLINE_INNER_RADIUS := 6.0
 
 ## He sweeps when the player is this close, in pixels.
 @export var trigger_distance: float = 34.0
@@ -20,15 +29,6 @@ extends CaptainAttack
 @export var slash_color: Color = ApolloPalette.SILVER
 ## Seconds the slash stays visible after the swing.
 @export var slash_time: float = 0.15
-
-## The faint fill showing the whole wedge, and the growing fill's opacity from start to swing.
-const ZONE_ALPHA := 0.1
-const GROWING_FILL_ALPHA := Vector2(0.12, 0.32)
-## The outline's opacity, and how much the pulse adds.
-const OUTLINE_ALPHA := 0.7
-const OUTLINE_PULSE_ALPHA := 0.25
-## The outline's sides start this far out, in pixels, so they don't cross his feet.
-const OUTLINE_INNER_RADIUS := 6.0
 
 ## Locked when the wind-up starts: the sweep goes there, wherever the player moves.
 var _direction: Vector2 = Vector2.DOWN
@@ -48,8 +48,8 @@ func _is_wanted(distance_to_player: float) -> bool:
 
 func _on_start() -> void:
 	var player := PlayerFinder.find(self)
-	if player != null and player.global_position != captain.global_position:
-		_direction = captain.global_position.direction_to(player.global_position)
+	if player != null and player.global_position != boss.global_position:
+		_direction = boss.global_position.direction_to(player.global_position)
 	_wind_up_progress = 0.0
 
 
@@ -62,11 +62,11 @@ func _release() -> void:
 	var player := PlayerFinder.find(self)
 	if player == null:
 		return
-	var to_player := player.global_position - captain.global_position
+	var to_player := player.global_position - boss.global_position
 	var is_in_arc := absf(_direction.angle_to(to_player)) <= deg_to_rad(half_arc_degrees)
 	if to_player.length() > reach or not is_in_arc:
 		return
-	if PlayerHit.try_to_hurt(player, damage, captain.global_position):
+	if PlayerHit.try_to_hurt(player, damage, boss.global_position):
 		PlayerHit.shove(player, to_player.normalized() * push_speed, push_time)
 
 

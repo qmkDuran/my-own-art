@@ -116,5 +116,4 @@ func _react_to_hit(source_position: Vector2) -> void:
 
 func _die() -> void:
 	death_drops.drop()
-	_timer.enter(State.DYING, death_fade_time)
-	_fade_out_and_free()
+	_enter_dying_and_fade(State.DYING)

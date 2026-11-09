@@ -3,12 +3,6 @@ extends Node2D
 ## A glowing berry an enemy dropped. Walking over it refills one Trainer's Aid charge.
 ## If the player's Aid is already full, the berry waits on the ground.
 
-## How close the player must be to pick it up, in pixels.
-@export var pickup_radius: float = 10.0
-## Seconds before it disappears if nobody picks it up (it blinks first). 0 = it stays
-## (berries placed in a level as a reward).
-@export var lifetime: float = 25.0
-
 ## 7×7 pixel berry: '#' outline, 'r' red, 'd' dark red, 'h' highlight, 'g' leaf.
 const PIXELS := ["...gg..", "..##g..", ".#rrr#.", "#rhrrd#", "#rrrdd#", ".#rdd#.", "..###.."]
 const COLORS := {
@@ -19,6 +13,12 @@ const COLORS := {
 const TOP_LEFT := Vector2(-3.5, -9.0)
 ## Seconds before it disappears in which it blinks.
 const BLINK_SECONDS := 4.0
+
+## How close the player must be to pick it up, in pixels.
+@export var pickup_radius: float = 10.0
+## Seconds before it disappears if nobody picks it up (it blinks first). 0 = it stays
+## (berries placed in a level as a reward).
+@export var lifetime: float = 25.0
 
 var _age: float = 0.0
 
@@ -44,7 +44,7 @@ func _try_pickup() -> void:
 	var player := PlayerFinder.find(self)
 	if player == null or player.global_position.distance_to(global_position) > pickup_radius:
 		return
-	var aid: TrainerAid = player.get_node_or_null("TrainerAid")
+	var aid: TrainerAid = player.get_node_or_null(TrainerAid.NODE_NAME)
 	if aid == null or not aid.has_room():
 		return
 	aid.add_charge()

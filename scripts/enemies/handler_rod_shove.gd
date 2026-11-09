@@ -6,6 +6,9 @@ extends Node
 ##
 ## The Handler decides when to start it and plays the pose; this does the timing and the hit.
 
+## Seconds the slam's ring takes to spread.
+const SHOCKWAVE_SECONDS := 0.2
+
 ## If the player stays this close (pixels), he shoves them away.
 @export var trigger_distance: float = 22.0
 ## How far the shockwave reaches, in pixels.
@@ -100,4 +103,4 @@ func _release_shockwave() -> void:
 func _spawn_shockwave_effect() -> void:
 	if shockwave_scene == null:
 		return
-	Shockwave.spawn(shockwave_scene, handler.get_parent(), handler.global_position + slam_point, shockwave_radius, 0.2, shockwave_color)
+	Shockwave.spawn(shockwave_scene, handler.get_parent(), handler.global_position + slam_point, shockwave_radius, SHOCKWAVE_SECONDS, shockwave_color)

@@ -1,5 +1,5 @@
 class_name CaptainChipPulse
-extends CaptainAttack
+extends BossAttack
 ## Phase 2's chip pulse: the Captain raises his rod, cyan energy gathers at its tip, then he
 ## fires three orbs in a spread toward the player (the Zephoot's gust orbs, sped up). Step
 ## between them or dodge through.
@@ -34,12 +34,12 @@ func _release() -> void:
 	var player := PlayerFinder.find(self)
 	if orb_scene == null or player == null:
 		return
-	var muzzle := captain.global_position + muzzle_offset
+	var muzzle := boss.global_position + muzzle_offset
 	var aim := (player.global_position - muzzle).angle()
 	for orb_number in orb_count:
 		var orb: GustOrb = orb_scene.instantiate()
 		orb.speed = orb_speed
-		captain.get_parent().add_child(orb)
+		boss.get_parent().add_child(orb)
 		orb.global_position = muzzle
 		var spread_step := orb_number - (orb_count - 1) / 2.0
 		orb.launch(Vector2.from_angle(aim + deg_to_rad(spread_degrees) * spread_step))

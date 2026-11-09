@@ -19,8 +19,8 @@ var _seconds_to_pull: float = -1.0
 var _aim: Vector2 = Vector2.RIGHT
 
 @onready var _caster: Node2D = get_parent()
-@onready var _skill_bar: SkillBar = get_parent().get_node("SkillBar")
-@onready var _uppercut: FlameUppercut = get_parent().get_node("SkillBar/FlameUppercut")
+@onready var _skill_bar: SkillBar = get_parent().get_node(SkillBar.NODE_NAME)
+@onready var _uppercut: FlameUppercut = get_parent().get_node(FlameUppercut.NODE_PATH)
 
 
 func _ready() -> void:
@@ -49,8 +49,8 @@ func _pull_enemies_in() -> void:
 		var distance := to_target.length()
 		if distance > _uppercut.reach + EXTRA_REACH or distance <= PULL_STOP_DISTANCE:
 			continue
-		if absf(_aim.angle_to(to_target)) > half_arc or not target.has_method("knock_back"):
+		if absf(_aim.angle_to(to_target)) > half_arc or not EnemyReactions.can_be_thrown(target):
 			continue
 		var friction: float = target.get("knockback_friction") if "knockback_friction" in target else DEFAULT_FRICTION
 		var speed := sqrt(2.0 * friction * (distance - PULL_STOP_DISTANCE))
-		target.call("knock_back", -to_target.normalized() * speed)
+		EnemyReactions.throw(target, -to_target.normalized() * speed)

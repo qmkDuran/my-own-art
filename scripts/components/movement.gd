@@ -5,6 +5,9 @@ extends Node
 ## Speeds up toward the direction it is given, and slows to a stop when given
 ## no direction. It never moves anything itself; the owner applies the result.
 
+## The child node name the player's Movement goes by.
+const NODE_NAME := "Movement"
+
 ## Fastest the body can move, in pixels per second.
 @export var top_speed: float = 60.0
 ## How quickly the body reaches top speed, in pixels per second squared.

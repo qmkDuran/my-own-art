@@ -26,7 +26,7 @@ var _seconds_shattering: float = -1.0
 
 ## Shells `body` (an enemy with a Health) to soak `damage`. False if it has one already or can't.
 static func apply_to(body: Node2D, damage: int) -> bool:
-	var body_health := body.get_node_or_null("Health") as Health
+	var body_health := Health.of(body)
 	if body_health == null or body_health.is_dead() or has_shell(body):
 		return false
 	var shell := FrostShell.new()

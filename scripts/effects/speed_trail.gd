@@ -24,7 +24,7 @@ func _ready() -> void:
 
 func play_for(duration: float) -> void:
 	_is_recording = true
-	await get_tree().create_timer(duration).timeout
+	await Wait.seconds(self, duration)
 	_is_recording = false
 
 

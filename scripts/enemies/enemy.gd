@@ -96,6 +96,20 @@ func _fade_out_and_free() -> void:
 	EnemyReactions.fade_out_and_free(self, sprite, collision_shape, death_fade_time)
 
 
+## The usual death: into `dying_state` (its State.DYING) while it fades out and is freed.
+func _enter_dying_and_fade(dying_state: int) -> void:
+	_timer.enter(dying_state, death_fade_time)
+	_fade_out_and_free()
+
+
+## Slides to a stop (e.g. after a knockback); once `recovering_state` has run its time, it
+## goes on to `next_state`.
+func _slide_then(recovering_state: int, next_state: int, delta: float) -> void:
+	_slow_down_by(knockback_friction, delta)
+	if _timer.state == recovering_state and _timer.is_over():
+		_timer.enter(next_state, 0.0)
+
+
 func _on_damaged(_amount: int, source_position: Vector2) -> void:
 	hit_flash.flash()
 	if _is_dying:

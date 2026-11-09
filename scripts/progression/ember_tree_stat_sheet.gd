@@ -54,7 +54,7 @@ const NOT_LEARNED := "—"
 ## The player's node with the burn's numbers.
 const SEARING_JAB := "SearingJab"
 ## The player's nodes with the guard's and the shoves' numbers.
-const ASH_GUARD := "SkillBar/AshGuard"
+const ASH_GUARD := AshGuard.NODE_PATH
 const UNSHAKABLE := "Unshakable"
 
 var _player: Node
@@ -83,22 +83,22 @@ func value_with(stat: String, effect_amount: float) -> float:
 		AWAKENING:
 			return Awakening.stage
 		HEALTH:
-			return (_player.get_node("Health") as Health).max_health + effect_amount
+			return Health.of(_player).max_health + effect_amount
 		JAB_DAMAGE:
-			return (_player.get_node("MeleeAttack") as MeleeAttack).damage + effect_amount
+			return (_player.get_node(MeleeAttack.NODE_NAME) as MeleeAttack).damage + effect_amount
 		JAB_TIME:
-			var melee: MeleeAttack = _player.get_node("MeleeAttack")
+			var melee: MeleeAttack = _player.get_node(MeleeAttack.NODE_NAME)
 			return maxf(melee.hit_delay, melee.attack_duration - melee.recovery_cut - effect_amount)
 		RUN_SPEED:
-			return (_player.get_node("Movement") as Movement).top_speed + effect_amount
+			return (_player.get_node(Movement.NODE_NAME) as Movement).top_speed + effect_amount
 		DODGE_COOLDOWN:
-			return maxf(0.0, (_player.get_node("Dodge") as Dodge).cooldown - effect_amount)
+			return maxf(0.0, (_player.get_node(Dodge.NODE_NAME) as Dodge).cooldown - effect_amount)
 		MAX_HEAT:
-			return (_player.get_node("Heat") as Heat).max_heat + effect_amount
+			return (_player.get_node(Heat.NODE_NAME) as Heat).max_heat + effect_amount
 		CRIT_CHANCE:
-			return (_player.get_node("CritRoll") as CritRoll).crit_chance * 100.0 + effect_amount
+			return (_player.get_node(CritRoll.NODE_NAME) as CritRoll).crit_chance * 100.0 + effect_amount
 		CRIT_DAMAGE:
-			return (_player.get_node("CritRoll") as CritRoll).crit_multiplier + effect_amount
+			return (_player.get_node(CritRoll.NODE_NAME) as CritRoll).crit_multiplier + effect_amount
 		BURN:
 			var searing_jab := _learned_searing_jab()
 			return searing_jab.current_burn_duration() + effect_amount if searing_jab != null else 0.0

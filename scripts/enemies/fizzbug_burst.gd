@@ -77,7 +77,7 @@ func _hit_other_enemies() -> void:
 	for enemy: Node2D in get_tree().get_nodes_in_group(EnemyReactions.ENEMIES_GROUP):
 		if enemy == fizzbug or not _is_in_ring(enemy):
 			continue
-		var enemy_health := enemy.get_node_or_null("Health") as Health
+		var enemy_health := Health.of(enemy)
 		if enemy_health != null:
 			# A ring all round: it gets round a shell guard like a sweep does.
 			enemy_health.take_damage(enemy_damage, fizzbug.global_position, false, Health.HitKind.SWEEP)

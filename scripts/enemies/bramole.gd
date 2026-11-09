@@ -63,7 +63,7 @@ func _physics_process(delta: float) -> void:
 		State.BURROWING:
 			_burrow(can_act)
 		State.RECOVERING, State.DYING:
-			_slide(delta)
+			_slide_then(State.RECOVERING, State.BURROWING, delta)
 
 	move_and_slide()
 
@@ -125,12 +125,6 @@ func _burrow(can_act: bool) -> void:
 	sprite.show_animation("move")
 
 
-func _slide(delta: float) -> void:
-	_slow_down_by(knockback_friction, delta)
-	if _timer.state == State.RECOVERING and _timer.is_over():
-		_timer.enter(State.BURROWING, 0.0)
-
-
 ## Debug (enemies passive): an attack in progress is called off and it hides again.
 func _stop_acting() -> void:
 	if _timer.state == State.DYING or _timer.state == State.HIDDEN:
@@ -166,5 +160,4 @@ func _react_to_hit(source_position: Vector2) -> void:
 func _die() -> void:
 	root_slam.cancel()
 	death_drops.drop()
-	_timer.enter(State.DYING, death_fade_time)
-	_fade_out_and_free()
+	_enter_dying_and_fade(State.DYING)

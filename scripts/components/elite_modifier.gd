@@ -25,7 +25,7 @@ extends Node
 
 
 func _ready() -> void:
-	var health: Health = enemy.get_node("Health")
+	var health: Health = Health.of(enemy)
 	health.change_max_health(ceili(health.max_health * health_multiplier) - health.max_health)
 	var light_drop := enemy.get_node_or_null("LightDrop") as LightDrop
 	if light_drop != null:

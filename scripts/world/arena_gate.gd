@@ -61,7 +61,7 @@ func _process(delta: float) -> void:
 func _draw() -> void:
 	var left := -roundf(width / 2.0)
 	var right := left + width - 1.0
-	for stud_x in [left, right]:
+	for stud_x: float in [left, right]:
 		draw_rect(Rect2(stud_x - 1.0, -2.0, 3.0, 3.0), ApolloPalette.OUTLINE)
 		draw_rect(Rect2(stud_x, -1.0, 1.0, 1.0), tip_color if _raised > 0.0 else stud_color)
 	if _raised <= 0.0:

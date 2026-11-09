@@ -61,16 +61,16 @@ func _all_stat_names(wanted: Dictionary[String, float]) -> Array[String]:
 func _change_stat(stat: String, change: float) -> void:
 	match stat:
 		MAX_HEALTH:
-			(_player.get_node("Health") as Health).change_max_health(roundi(change))
+			Health.of(_player).change_max_health(roundi(change))
 		JAB_DAMAGE:
-			(_player.get_node("MeleeAttack") as MeleeAttack).damage += roundi(change)
+			(_player.get_node(MeleeAttack.NODE_NAME) as MeleeAttack).damage += roundi(change)
 		JAB_RECOVERY_CUT:
-			(_player.get_node("MeleeAttack") as MeleeAttack).recovery_cut += change
+			(_player.get_node(MeleeAttack.NODE_NAME) as MeleeAttack).recovery_cut += change
 		MOVE_SPEED:
-			(_player.get_node("Movement") as Movement).top_speed += change
+			(_player.get_node(Movement.NODE_NAME) as Movement).top_speed += change
 		DODGE_COOLDOWN_CUT:
-			(_player.get_node("Dodge") as Dodge).cooldown -= change
+			(_player.get_node(Dodge.NODE_NAME) as Dodge).cooldown -= change
 		MAX_HEAT:
-			(_player.get_node("Heat") as Heat).max_heat += roundi(change)
+			(_player.get_node(Heat.NODE_NAME) as Heat).max_heat += roundi(change)
 		_:
 			push_warning("Ember Tree: no effect is wired up for stat '%s'." % stat)

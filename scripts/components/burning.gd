@@ -29,6 +29,7 @@ static func apply_to(target_health: Health, damage_per_second: int, duration: fl
 
 
 func _ready() -> void:
+	super._ready()
 	add_child(BurnEmbers.new())
 
 

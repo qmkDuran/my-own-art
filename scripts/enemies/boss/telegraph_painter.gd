@@ -1,6 +1,6 @@
 class_name TelegraphPainter
 extends RefCounted
-## Draws the Captain's ground telegraphs (the slam's ring with its gap, the sweep's wedge)
+## Draws the bosses' ground telegraphs (e.g. the Captain's slam ring with its gap, his sweep's wedge)
 ## so they read at a glance in a busy fight: a faint filled danger zone, a bold 2px outline
 ## that pulses gently, and bright end-caps marking the edges of a safe gap.
 ##

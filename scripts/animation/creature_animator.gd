@@ -153,7 +153,7 @@ func _swap_keeping_frame(animation_name: String) -> void:
 
 
 func _are_frame_matched(from_animation: String, to_animation: String) -> bool:
-	for pair in FRAME_MATCHED_ACTIONS:
+	for pair: Array in FRAME_MATCHED_ACTIONS:
 		var from_matches := from_animation.begins_with(pair[0] + "_") or from_animation.begins_with(pair[1] + "_")
 		var to_matches := to_animation.begins_with(pair[0] + "_") or to_animation.begins_with(pair[1] + "_")
 		if from_matches and to_matches and _view_of(from_animation) == _view_of(to_animation):

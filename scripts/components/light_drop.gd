@@ -17,7 +17,7 @@ extends Node
 
 
 func _ready() -> void:
-	var health: Health = owner_body.get_node("Health")
+	var health: Health = Health.of(owner_body)
 	if bursts_on_death:
 		health.died.connect(burst)
 

@@ -59,7 +59,7 @@ var _depths: Dictionary = PixelShape.depths(_shape)
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	await get_tree().process_frame
-	var heat := PlayerFinder.find_component(self, "Heat") as Heat
+	var heat := PlayerFinder.find_component(self, Heat.NODE_NAME) as Heat
 	if heat == null:
 		return
 	heat.heat_changed.connect(_on_heat_changed)

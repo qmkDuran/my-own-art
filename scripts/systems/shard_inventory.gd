@@ -8,19 +8,15 @@ extends Node
 
 signal collected(shard_id: String)
 
+const NO_REWARD := -1
+
 ## Shard ID -> the ShardReward.Kind it gave, or NO_REWARD (an older save's placeholder shard,
 ## found before shards gave anything; its shard fills it in, see `fill_in_reward`).
 var _found: Dictionary[String, int] = {}
 
-const NO_REWARD := -1
-
 
 func has_found(shard_id: String) -> bool:
 	return _found.has(shard_id)
-
-
-func found_count() -> int:
-	return _found.size()
 
 
 ## The reward the shard gave, or NO_REWARD.

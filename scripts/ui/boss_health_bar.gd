@@ -52,6 +52,7 @@ static func hide_boss(asker: Node) -> void:
 
 func _ready() -> void:
 	add_to_group(GROUP)
+	add_to_group(DiscoveryCard.WATCHERS_GROUP)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	self_modulate.a = 0.0
 
@@ -77,6 +78,11 @@ func show_defeat(boss_name: String) -> void:
 	_is_wanted = false
 	_update_fade()
 	defeated_banner.announce("%s DEFEATED" % boss_name.to_upper())
+
+
+## A discovery card came up or went: make way for it, or come back.
+func on_discovery_card_changed() -> void:
+	_update_fade()
 
 
 ## Fades the bar up while the fight wants it, except while a discovery card holds the
@@ -105,7 +111,6 @@ func _on_hit_taken(_amount: int, _is_critical: bool, _damage_type: Health.Damage
 
 
 func _process(delta: float) -> void:
-	_update_fade()
 	if not _is_tracking():
 		return
 	if _drain_delay.advance(delta) or _shown_share <= _share_left():

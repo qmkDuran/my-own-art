@@ -5,6 +5,9 @@ extends Node
 
 signal heat_changed(heat: int, max_heat: int)
 
+## The child node name the player's Heat goes by.
+const NODE_NAME := "Heat"
+
 @export var max_heat: int = 5
 ## Heat gained each time a jab lands (however many enemies it hits).
 @export var heat_per_landed_jab: int = 1

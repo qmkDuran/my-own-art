@@ -31,7 +31,7 @@ func last_in_zone(zone: String) -> String:
 
 
 ## The zone `asker` is in (the running scene's file), "" if none.
-static func zone_of(asker: Node) -> String:
+func zone_of(asker: Node) -> String:
 	var scene := asker.get_tree().current_scene
 	return scene.scene_file_path if scene != null else ""
 

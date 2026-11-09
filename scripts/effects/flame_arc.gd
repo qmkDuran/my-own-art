@@ -1,94 +1,100 @@
 class_name FlameArc
-extends Node2D
-## A burst of flame fanning out in an arc (Flame Uppercut), drawn in code pixel by pixel.
+extends PixelFire
+## A burst of flame fanning out in an arc (Flame Uppercut), see PixelFire.
 ##
-## The flame front races outward while the fire burns out from the inside, cooling from
-## gold to deep red (blue-white to blue once Awakened), then breaks up into flickering pixels. A few embers drift up from it.
-## Every pixel sits on the world grid (the arc is never rotated), so it stays crisp.
-## Spawn it, call play(), and it removes itself when done.
+## The flame front races outward while the fire burns out from the inside, then breaks up
+## into flickering pixels. The arc is never rotated, so every pixel stays on the world grid.
 
-## How far out the flame front starts and ends, as a share of the reach.
+## How far out the flame front starts, as a share of the reach (it ends at the full reach).
 const FRONT_START := 0.35
-## Share of the flame's life spent racing out to full reach.
+## Share of the flame's life spent racing out to full reach, and the easing of that race.
 const FRONT_TRAVEL_SHARE := 0.4
+const FRONT_EASING := 0.4
 ## How much shorter the flame is at the arc's sides than in the middle (a crescent).
 const SIDE_TAPER := 0.35
-## Closest the flame comes to the fist, as a share of the reach.
+## Closest the flame comes to the fist, as a share of the reach, and how far out the burnt
+## inside reaches by the end (it speeds up as it goes, by BURN_OUT_POWER).
 const INNER_GAP := 0.12
-## Share of the flame's life after which it starts breaking up into pixels.
-const BREAK_UP_START := 0.55
+const BURN_OUT_END := 0.95
+const BURN_OUT_POWER := 1.4
 ## Flame tongues: how many across the arc, how long (share of reach), how often they flicker.
 const TONGUE_COUNT := 7.0
 const TONGUE_LENGTH := 0.16
 const TONGUE_FLICKER_SECONDS := 0.05
+## A tongue's random length runs from this share below to the rest above TONGUE_LENGTH's span.
+const TONGUE_SHORTEST := 0.3
+## How much each kind of cooling counts toward a pixel's colour: how deep into the flame
+## from its front, how far through its life, how far out to the arc's sides.
+const COOLING_INWARD := 0.6
+const COOLING_OVER_TIME := 1.0
+const COOLING_SIDEWAYS := 0.15
+## Thinnest flame the inward cooling is measured across, as a share of the reach.
+const MIN_DEPTH := 0.05
+## Aimed further up than this (away from the camera), the flame goes behind the creature.
+const BEHIND_BELOW_Y := -0.35
+const FRONT_Z_INDEX := 2
+const BEHIND_Z_INDEX := 0
+## Embers: how hard and how fast they're thrown (pixels per second), how far out along the
+## flame they start, how much they lean upward and the cone (degrees) and blob they fill.
+const EMBER_EXPLOSIVENESS := 0.85
+const EMBER_SPEED := Vector2(25.0, 60.0)
+const EMBER_START_SHARE := 0.55
+const EMBER_LIFT := 0.6
+const EMBER_SPREAD_DEGREES := 50.0
+const EMBER_BLOB_SHARE := 0.25
 
-## Seconds the flame is visible.
-@export var duration: float = 0.3
-@export var ember_count: int = 10
-@export var ember_lifetime: float = 0.55
-
-## Each cell is one pixel the arc may cover: where it is, how far out (share of the reach),
-## where across the arc (-1 = one edge, 1 = the other) and a fixed random value.
-## Hottest to coolest: Emberoo's fire colours when this started (see EmberooFlameColors).
-var _fire_colors: Array[Color] = EmberooFlameColors.fire_ramp()
-var _cell_offsets: PackedVector2Array = PackedVector2Array()
-var _cell_distances: PackedFloat32Array = PackedFloat32Array()
+## Each cell's place across the arc (-1 = one edge, 1 = the other), matching PixelFire's cells.
 var _cell_sides: PackedFloat32Array = PackedFloat32Array()
-var _cell_noise: PackedFloat32Array = PackedFloat32Array()
-var _elapsed: float = 0.0
+## This frame's flame front and burnt-out back (shares of the reach), and flicker roll.
+var _front: float = 0.0
+var _back: float = 0.0
+var _flicker_step: int = 0
+
+
+func _init() -> void:
+	duration = 0.3
+	ember_count = 10
+	ember_lifetime = 0.55
+	break_up_start = 0.55
 
 
 ## Bursts the flame toward `direction` (a unit vector), `reach` pixels out, `arc_degrees` wide.
 func play(direction: Vector2, reach: float, arc_degrees: float) -> void:
-	# Flames aimed up (away from the camera) go behind the creature; others in front.
-	z_index = 2 if direction.y > -0.35 else 0
+	z_index = FRONT_Z_INDEX if direction.y > BEHIND_BELOW_Y else BEHIND_Z_INDEX
 	_collect_cells(direction, reach, deg_to_rad(arc_degrees) / 2.0)
 	_spawn_embers(direction, reach)
-	var lifetime := maxf(duration, ember_lifetime) + 0.1
-	get_tree().create_timer(lifetime).timeout.connect(queue_free)
+	_free_when_done()
 
 
-func _process(delta: float) -> void:
-	_elapsed += delta
-	queue_redraw()
+func _prepare_frame(progress: float) -> void:
+	_front = lerpf(FRONT_START, 1.0, ease(minf(1.0, progress / FRONT_TRAVEL_SHARE), FRONT_EASING))
+	_back = lerpf(INNER_GAP, BURN_OUT_END, pow(progress, BURN_OUT_POWER))
+	_flicker_step = floori(_elapsed / TONGUE_FLICKER_SECONDS)
 
 
-func _draw() -> void:
-	var progress := _elapsed / duration
-	if progress >= 1.0:
-		return
-	var front := lerpf(FRONT_START, 1.0, ease(minf(1.0, progress / FRONT_TRAVEL_SHARE), 0.4))
-	var back := lerpf(INNER_GAP, 0.95, pow(progress, 1.4))
-	var flicker_step := floori(_elapsed / TONGUE_FLICKER_SECONDS)
-	for index in _cell_offsets.size():
-		var color_index := _color_index_at(index, progress, front, back, flicker_step)
-		if color_index >= 0:
-			draw_rect(Rect2(_cell_offsets[index], Vector2.ONE), _fire_colors[color_index])
-
-
-## The fire colour of one pixel right now, or -1 when that pixel is not burning.
-func _color_index_at(index: int, progress: float, front: float, back: float, flicker_step: int) -> int:
+func _color_index_at(index: int, progress: float) -> int:
 	var side := absf(_cell_sides[index])
 	var taper := 1.0 - SIDE_TAPER * side * side
-	var cell_front := front * taper + _tongue_length(_cell_sides[index], flicker_step)
-	var cell_back := back * taper
+	var cell_front := _front * taper + _tongue_length(_cell_sides[index])
+	var cell_back := _back * taper
 	var distance := _cell_distances[index]
-	if distance > cell_front or distance < cell_back:
-		return -1
-	if progress > BREAK_UP_START and _cell_noise[index] < (progress - BREAK_UP_START) / (1.0 - BREAK_UP_START):
+	if distance > cell_front or distance < cell_back or _has_broken_up(index, progress):
 		return -1
 	# 0 at the leading edge (hottest), 1 at the trailing edge; everything cools with time.
-	var depth := (cell_front - distance) / maxf(cell_front - cell_back, 0.05)
-	var heat_lost := depth * 0.6 + progress * 1.0 + side * 0.15
-	return clampi(floori(heat_lost * _fire_colors.size()), 0, _fire_colors.size() - 1)
+	var depth := (cell_front - distance) / maxf(cell_front - cell_back, MIN_DEPTH)
+	return _color_index_for_heat_lost(depth * COOLING_INWARD + progress * COOLING_OVER_TIME + side * COOLING_SIDEWAYS)
 
 
 ## Flame tongues licking out past the front: a random length per slice of the arc,
 ## re-rolled every few frames so the edge flickers.
-func _tongue_length(side: float, flicker_step: int) -> float:
+func _tongue_length(side: float) -> float:
 	var slice := floorf((side + 1.0) * TONGUE_COUNT / 2.0)
-	var roll := fposmod(sin(slice * 12.9898 + flicker_step * 78.233) * 43758.5453, 1.0)
-	return (roll - 0.3) * TONGUE_LENGTH
+	return (_hash_roll(slice, _flicker_step) - TONGUE_SHORTEST) * TONGUE_LENGTH
+
+
+## A repeatable random number from 0 to 1 for this slice and flicker step (a classic sine hash).
+static func _hash_roll(slice: float, flicker_step: int) -> float:
+	return fposmod(sin(slice * 12.9898 + flicker_step * 78.233) * 43758.5453, 1.0)
 
 
 ## Works out once which pixels lie inside the arc, so drawing each frame is just a lookup.
@@ -101,35 +107,20 @@ func _collect_cells(direction: Vector2, reach: float, half_arc: float) -> void:
 			var distance := center.length() / reach
 			if absf(side) > 1.0 or distance > 1.0 + TONGUE_LENGTH:
 				continue
-			_cell_offsets.append(Vector2(x, y))
-			_cell_distances.append(distance)
+			_add_cell(Vector2(x, y), distance)
 			_cell_sides.append(side)
-			_cell_noise.append(randf())
 
 
 ## A handful of sparks thrown out with the flame that float up and fade.
 func _spawn_embers(direction: Vector2, reach: float) -> void:
-	var embers := CPUParticles2D.new()
-	embers.one_shot = true
-	embers.amount = ember_count
-	embers.lifetime = ember_lifetime
-	embers.explosiveness = 0.85
-	embers.local_coords = false
-	embers.position = (direction * reach * 0.55).round()
-	embers.direction = (direction + Vector2.UP * 0.6).normalized()
-	embers.spread = 50.0
-	embers.initial_velocity_min = 25.0
-	embers.initial_velocity_max = 60.0
-	embers.damping_min = 50.0
-	embers.damping_max = 80.0
-	embers.gravity = Vector2(0, -25)
+	var embers := _make_embers()
+	embers.explosiveness = EMBER_EXPLOSIVENESS
+	embers.position = (direction * reach * EMBER_START_SHARE).round()
+	embers.direction = (direction + Vector2.UP * EMBER_LIFT).normalized()
+	embers.spread = EMBER_SPREAD_DEGREES
+	embers.initial_velocity_min = EMBER_SPEED.x
+	embers.initial_velocity_max = EMBER_SPEED.y
 	embers.emission_shape = CPUParticles2D.EMISSION_SHAPE_SPHERE
-	embers.emission_sphere_radius = reach * 0.25
-	embers.scale_amount_min = 1.0
-	embers.scale_amount_max = 2.0
-	var ramp := Gradient.new()
-	ramp.colors = PackedColorArray([_fire_colors[0], _fire_colors[1], _fire_colors[3], Color(_fire_colors[4], 0.0)])
-	ramp.offsets = PackedFloat32Array([0.0, 0.3, 0.7, 1.0])
-	embers.color_ramp = ramp
+	embers.emission_sphere_radius = reach * EMBER_BLOB_SHARE
 	add_child(embers)
 	embers.emitting = true

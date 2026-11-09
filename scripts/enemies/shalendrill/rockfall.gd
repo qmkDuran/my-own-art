@@ -1,9 +1,15 @@
 class_name Rockfall
-extends ShalendrillAttack
+extends BossAttack
 ## Phase 2's Rockfall: the Shalendrill rears up and pounds its chest, and shale breaks loose
 ## from the walls above: red circles mark where each boulder will land (one on the player,
 ## the rest scattered around them), filling as the rocks fall. Keep moving out of the
 ## circles. It stands catching its breath while they fall: a chance to hit it if you're clear.
+
+## Tries per boulder at finding a spot far enough from the others.
+const PLACEMENT_TRIES := 8
+## The screen shake as it pounds the ground to bring the rocks down.
+const SHAKE_STRENGTH := 2.0
+const SHAKE_SECONDS := 0.4
 
 ## It calls the rocks down when the player is within this distance, in pixels.
 @export var trigger_distance: float = 200.0
@@ -18,9 +24,6 @@ extends ShalendrillAttack
 @export var screen_shake: ScreenShake
 @export var dust_scene: PackedScene
 
-## Tries per boulder at finding a spot far enough from the others.
-const PLACEMENT_TRIES := 8
-
 
 func _is_wanted(distance_to_player: float) -> bool:
 	return distance_to_player <= trigger_distance
@@ -28,12 +31,12 @@ func _is_wanted(distance_to_player: float) -> bool:
 
 func _release() -> void:
 	if screen_shake != null:
-		screen_shake.shake(2.0, 0.4)
+		screen_shake.shake(SHAKE_STRENGTH, SHAKE_SECONDS)
 	var player := PlayerFinder.find(self)
 	if player == null:
 		return
 	for spot in _landing_spots(player.global_position):
-		var boulder := FallingBoulder.spawn(captain.get_parent(), spot)
+		var boulder := FallingBoulder.spawn(boss.get_parent(), spot)
 		boulder.radius = boulder_radius
 		boulder.fall_time = fall_time
 		boulder.damage = damage

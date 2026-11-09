@@ -67,7 +67,7 @@ func _physics_process(delta: float) -> void:
 		State.SUMMONING:
 			_summon()
 		State.RECOVERING, State.DYING:
-			_slow_down(delta)
+			_slide_then(State.RECOVERING, State.WATCHING, delta)
 
 	move_and_slide()
 
@@ -131,12 +131,6 @@ func _shove() -> void:
 		_timer.enter(State.WATCHING, 0.0)
 
 
-func _slow_down(delta: float) -> void:
-	_slow_down_by(knockback_friction, delta)
-	if _timer.state == State.RECOVERING and _timer.is_over():
-		_timer.enter(State.WATCHING, 0.0)
-
-
 ## Debug (enemies passive): a summon or a slam in progress is called off and he just stands.
 ## Recovering from a hit and dying carry on as normal.
 func _stop_acting() -> void:
@@ -169,5 +163,4 @@ func _on_returned_to_spawn() -> void:
 
 func _die() -> void:
 	charge_particles.stop_charging()
-	_timer.enter(State.DYING, death_fade_time)
-	_fade_out_and_free()
+	_enter_dying_and_fade(State.DYING)

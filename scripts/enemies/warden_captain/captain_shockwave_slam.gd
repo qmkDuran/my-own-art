@@ -1,11 +1,20 @@
 class_name CaptainShockwaveSlam
-extends CaptainAttack
+extends BossAttack
 ## The Captain's shockwave slam, a bigger Warden slam: he raises the halberd-rod overhead while
 ## red energy gathers into it, and the ground shows what's coming (see TelegraphPainter): a
 ## faint red danger zone as far as the wave will roll, a bold pulsing ring at its edge, and
 ## the safe gap left clear, marked with gold end-caps. Then he slams it down: a ShockRing rolls
 ## outward. Stand in the gap or dodge-hop over the ring. Afterwards he stays bent over his rod
 ## for a moment (punish him). Drawn on the ground, under every creature (z_index in the scene).
+
+## The danger zone's fill, faint at the start of the wind-up and a little stronger by the slam.
+const FILL_ALPHA := Vector2(0.08, 0.2)
+## The ring's opacity at the start and end of the wind-up, and how much the pulse adds.
+const RING_ALPHA := Vector2(0.55, 0.85)
+const RING_PULSE_ALPHA := 0.15
+## The screen shake as the rod hits the ground.
+const SHAKE_STRENGTH := 2.0
+const SHAKE_SECONDS := 0.25
 
 ## He slams when the player is within this distance, in pixels.
 @export var trigger_distance: float = 90.0
@@ -26,12 +35,6 @@ extends CaptainAttack
 ## Dust kicked up by the slam.
 @export var dust_scene: PackedScene
 
-## The danger zone's fill, faint at the start of the wind-up and a little stronger by the slam.
-const FILL_ALPHA := Vector2(0.08, 0.2)
-## The ring's opacity at the start and end of the wind-up, and how much the pulse adds.
-const RING_ALPHA := Vector2(0.55, 0.85)
-const RING_PULSE_ALPHA := 0.15
-
 var _gap_angle: float = 0.0
 var _wind_up_progress: float = 0.0
 
@@ -43,8 +46,8 @@ func _is_wanted(distance_to_player: float) -> bool:
 func _on_start() -> void:
 	var toward_player := Vector2.DOWN
 	var player := PlayerFinder.find(self)
-	if player != null and player.global_position != captain.global_position:
-		toward_player = captain.global_position.direction_to(player.global_position)
+	if player != null and player.global_position != boss.global_position:
+		toward_player = boss.global_position.direction_to(player.global_position)
 	var offset := deg_to_rad(randf_range(gap_offset_degrees.x, gap_offset_degrees.y))
 	_gap_angle = toward_player.angle() + offset * (1.0 if randf() < 0.5 else -1.0)
 	_wind_up_progress = 0.0
@@ -59,14 +62,14 @@ func _on_wind_up(progress: float) -> void:
 func _release() -> void:
 	if charge_particles != null:
 		charge_particles.stop_charging()
-	var ring := ShockRing.spawn(captain.get_parent(), captain.global_position + slam_point, _gap_angle)
+	var ring := ShockRing.spawn(boss.get_parent(), boss.global_position + slam_point, _gap_angle)
 	ring.max_radius = ring_radius
 	ring.travel_time = ring_travel_time
 	ring.gap_width = deg_to_rad(gap_degrees)
 	ring.damage = damage
-	DustPuff.spawn(dust_scene, captain.get_parent(), captain.global_position)
+	DustPuff.spawn(dust_scene, boss.get_parent(), boss.global_position)
 	if screen_shake != null:
-		screen_shake.shake(2.0, 0.25)
+		screen_shake.shake(SHAKE_STRENGTH, SHAKE_SECONDS)
 
 
 func _on_finish() -> void:

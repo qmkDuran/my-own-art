@@ -10,8 +10,6 @@ extends ImpairingEffect
 ## The child name a target's root goes by.
 const NODE_NAME := "Rooted"
 
-var _tint: StatusTint
-
 
 ## Roots the target with `target_health` for `seconds`. False when it didn't take
 ## (dead, guarding, already rooted or still immune after the last one).
@@ -23,17 +21,11 @@ static func apply_to(target_health: Health, seconds: float) -> bool:
 	return true
 
 
-## True while `target` is rooted (it can't move).
-static func is_rooting(target: Node) -> bool:
-	var rooted := target.get_node_or_null(NODE_NAME) as Rooted
+## True while `creature` is rooted (it can't move).
+static func is_rooting(creature: Node) -> bool:
+	var rooted := creature.get_node_or_null(NODE_NAME) as Rooted
 	return rooted != null and rooted.is_active()
 
 
-func _ready() -> void:
-	_tint = StatusTint.new(target().get_node_or_null("Sprite") as CanvasItem, StatusColors.ROOT)
-	add_child(_tint)
-
-
-func _end() -> void:
-	if is_instance_valid(_tint):
-		_tint.queue_free()
+func _tint_color() -> Color:
+	return StatusColors.ROOT

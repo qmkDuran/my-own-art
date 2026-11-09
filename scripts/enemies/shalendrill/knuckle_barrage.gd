@@ -1,11 +1,17 @@
 class_name KnuckleBarrage
-extends ShalendrillAttack
+extends BossAttack
 ## The Shalendrill's knuckle barrage (the Ash Guard check): it cocks both stone fists back
 ## while a red wedge fills toward the player, then throws a quick chain of punches, each
 ## turning a little after the player. Too quick to side-step them all: back out of reach, or
 ## stand and take them on Ash Guard. A punch that lands on the guard cracks its knuckles on
 ## the ash: after the barrage it reels, shaking its hands, for a long punish window (and
 ## Counter Punch is armed by the blocked hit).
+
+const ZONE_ALPHA := 0.1
+const GROWING_FILL_ALPHA := Vector2(0.12, 0.32)
+const OUTLINE_ALPHA := 0.75
+## Seconds a punch's streak stays on screen.
+const STREAK_TIME := 0.1
 
 @export var trigger_distance: float = 34.0
 ## How far each punch reaches, in pixels.
@@ -27,12 +33,6 @@ extends ShalendrillAttack
 @export var reel_animation: String = "reel"
 @export var dust_scene: PackedScene
 @export var punch_color: Color = ApolloPalette.SILVER
-
-const ZONE_ALPHA := 0.1
-const GROWING_FILL_ALPHA := Vector2(0.12, 0.32)
-const OUTLINE_ALPHA := 0.75
-## Seconds a punch's streak stays on screen.
-const STREAK_TIME := 0.1
 
 var _direction: Vector2 = Vector2.DOWN
 var _punch_direction: Vector2 = Vector2.DOWN
@@ -96,13 +96,13 @@ func _punch() -> void:
 	var player := PlayerFinder.find(self)
 	if player == null:
 		return
-	var to_player := player.global_position - captain.global_position
+	var to_player := player.global_position - boss.global_position
 	var is_in_arc := absf(_punch_direction.angle_to(to_player)) <= deg_to_rad(half_arc_degrees)
 	if to_player.length() > reach or not is_in_arc:
 		return
 	var was_guarding := PlayerGuard.is_guarding(player)
 	var punch_damage := last_punch_damage if _punches_thrown == punch_count else damage
-	if not PlayerHit.try_to_hurt(player, punch_damage, captain.global_position):
+	if not PlayerHit.try_to_hurt(player, punch_damage, boss.global_position):
 		return
 	PlayerHit.shove(player, to_player.normalized() * push_speed, push_time)
 	if was_guarding and not _cracked_on_guard:
@@ -111,16 +111,16 @@ func _punch() -> void:
 
 func _crack_knuckles() -> void:
 	_cracked_on_guard = true
-	DustPuff.spawn(dust_scene, captain.get_parent(), captain.global_position + _punch_direction * 14.0)
+	DustPuff.spawn(dust_scene, boss.get_parent(), boss.global_position + _punch_direction * 14.0)
 	if hit_flash != null:
 		hit_flash.flash(ApolloPalette.GREY_LIGHT)
 
 
 func _toward_player(fallback: Vector2) -> Vector2:
 	var player := PlayerFinder.find(self)
-	if player == null or player.global_position == captain.global_position:
+	if player == null or player.global_position == boss.global_position:
 		return fallback
-	return captain.global_position.direction_to(player.global_position)
+	return boss.global_position.direction_to(player.global_position)
 
 
 func _draw() -> void:

@@ -46,7 +46,7 @@ func _draw() -> void:
 		PixelShape.draw_pixel(self, Vector2(pixel), _marks[pixel])
 	for part: Array in PLAYER_ARROW:
 		PixelShape.draw_pixel(self, Vector2(_centre() + (part[0] as Vector2i)), part[1])
-	var north_left := MAP_SIZE / 2 - 1
+	var north_left := floori(MAP_SIZE / 2.0) - 1
 	PixelFont.draw_text(self, "N", Vector2(north_left, -1), ApolloPalette.GREY_LIGHT, ApolloPalette.OUTLINE)
 
 
@@ -58,7 +58,7 @@ func _draw_range_cross() -> void:
 
 
 func _centre() -> Vector2i:
-	return INSIDE.position + INSIDE.size / 2
+	return INSIDE.position + Vector2i((Vector2(INSIDE.size) / 2.0).floor())
 
 
 func _find_marks() -> Dictionary:

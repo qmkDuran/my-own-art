@@ -34,7 +34,7 @@ static func _damage_targets_along(jab: MeleeAttack, punch_start: Vector2, punch_
 		var closest := Geometry2D.get_closest_point_to_segment(body_centre, punch_start, punch_end)
 		if body_centre.distance_squared_to(closest) > hit_radius_squared:
 			continue
-		var target_health: Health = target.get_node_or_null("Health")
+		var target_health: Health = Health.of(target)
 		if target_health != null:
 			CritRoll.deal_damage(jab.attacker, target_health, jab.damage)
 			struck.append(target_health)

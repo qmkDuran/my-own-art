@@ -7,6 +7,9 @@ extends SkillAction
 ## Only the guard itself lives here: Counter Punch listens for hits taken while it is up.
 ## Its numbers fill the Ash Guard facts in the tree and the stats panel's Guard row.
 
+## Where the player's Ash Guard sits, from the player.
+const NODE_PATH := SkillBar.NODE_NAME + "/AshGuard"
+
 ## Seconds the guard lasts if nothing drops it.
 @export var guard_duration: float = 1.2
 ## Share of each hit's damage taken while guarding, in percent.

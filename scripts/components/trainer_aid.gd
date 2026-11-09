@@ -8,6 +8,9 @@ extends Node
 
 signal charges_changed(charges: int, max_charges: int)
 
+## The child node name the player's TrainerAid goes by.
+const NODE_NAME := "TrainerAid"
+
 @export var max_charges: int = 3
 ## Health restored by one tonic.
 @export var heal_amount: int = 4
@@ -49,7 +52,7 @@ func refill() -> void:
 func use() -> void:
 	if charges <= 0 or _cooldown_left > 0.0 or _is_in_flight:
 		return
-	var health: Health = creature.get_node("Health")
+	var health: Health = Health.of(creature)
 	if health.current_health >= health.max_health:
 		return  # don't waste a charge at full health
 	charges -= 1

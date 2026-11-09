@@ -41,7 +41,7 @@ func _physics_process(delta: float) -> void:
 		State.GLOWING:
 			_glow()
 		State.STUNNED, State.DYING:
-			_slide(delta)
+			_slide_then(State.STUNNED, State.RUSHING, delta)
 
 	move_and_slide()
 
@@ -80,13 +80,7 @@ func _burst() -> void:
 	_is_dying = true
 	sprite.replay_animation("burst")
 	_timer.enter(State.DYING, 0.0)
-	EnemyReactions.fade_out_and_free(self, sprite, collision_shape, death_fade_time)
-
-
-func _slide(delta: float) -> void:
-	_slow_down_by(knockback_friction, delta)
-	if _timer.state == State.STUNNED and _timer.is_over():
-		_timer.enter(State.RUSHING, 0.0)
+	_fade_out_and_free()
 
 
 ## Debug (enemies passive): a glow is called off and it just sits.
@@ -112,5 +106,4 @@ func _react_to_hit(source_position: Vector2) -> void:
 func _die() -> void:
 	burst.cancel()
 	death_drops.drop()
-	_timer.enter(State.DYING, death_fade_time)
-	_fade_out_and_free()
+	_enter_dying_and_fade(State.DYING)

@@ -14,6 +14,9 @@ signal skill_used(slot_index: int)
 ## REFUSED_HEAT (not enough Heat) or REFUSED_COOLDOWN (still cooling down).
 signal skill_refused(slot_index: int, reason: String)
 
+## The child node name the player's SkillBar goes by.
+const NODE_NAME := "SkillBar"
+
 const SLOT_COUNT := 4
 const REFUSED_HEAT := "heat"
 const REFUSED_COOLDOWN := "cooldown"

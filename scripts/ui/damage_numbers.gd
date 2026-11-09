@@ -26,9 +26,9 @@ extends Node
 
 func _ready() -> void:
 	get_tree().node_added.connect(_on_node_added)
-	for group in [target_group, ticks_only_group]:
+	for group: String in [target_group, ticks_only_group]:
 		for target in get_tree().get_nodes_in_group(group):
-			_watch(target.get_node_or_null("Health") as Health)
+			_watch(Health.of(target))
 
 
 ## Catches targets that join after the level started (e.g. toads a Warden summons).

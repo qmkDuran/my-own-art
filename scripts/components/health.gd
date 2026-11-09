@@ -9,6 +9,7 @@ extends Node
 ## Poisoned, which doesn't). Both fire `hit_taken`, so damage numbers and health bars see every point.
 ## HitShields on it (a Brinelob's shell, a Rimoth's frost shell) may turn a hit away or soak it first.
 
+
 ## What dealt the damage, so displays can tell them apart (e.g. orange burn numbers, green
 ## poison numbers; see StatusColors).
 enum DamageType { DIRECT, BURN, POISON }
@@ -27,6 +28,9 @@ signal healed(amount: int)
 ## A HitShield turned a hit away whole (e.g. a Brinelob's shell): no damage, no reaction.
 signal deflected(source_position: Vector2)
 
+## The child node name every Health goes by (attacks find their targets' health by it).
+const NODE_NAME := "Health"
+
 @export var max_health: int = 3
 
 ## While true, damage is ignored (e.g. mid-dodge).
@@ -39,6 +43,11 @@ var _damage_fraction_carried: float = 0.0
 var shields: Array[HitShield] = []
 
 var current_health: int
+
+
+## The Health of `body` (its child named NODE_NAME), or null if it has none.
+static func of(body: Node) -> Health:
+	return body.get_node_or_null(NODE_NAME) as Health
 
 
 func _ready() -> void:
@@ -104,7 +113,7 @@ func change_max_health(amount: int) -> void:
 
 ## What's left of `amount` after every shield has soaked what it can.
 func _soaked(amount: int, kind: HitKind) -> int:
-	for shield in shields.duplicate():
+	for shield: HitShield in shields.duplicate():
 		amount = shield.soak(amount, kind)
 	return amount
 

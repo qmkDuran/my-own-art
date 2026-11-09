@@ -59,7 +59,7 @@ func _physics_process(delta: float) -> void:
 		State.OPEN:
 			_stand_open()
 		State.RECOVERING, State.DYING:
-			_slide(delta)
+			_slide_then(State.RECOVERING, State.WALKING, delta)
 
 	move_and_slide()
 
@@ -107,12 +107,6 @@ func _stand_open() -> void:
 		_timer.enter(State.WALKING, 0.0)
 
 
-func _slide(delta: float) -> void:
-	_slow_down_by(knockback_friction, delta)
-	if _timer.state == State.RECOVERING and _timer.is_over():
-		_timer.enter(State.WALKING, 0.0)
-
-
 ## Its walking or idle pose, unless it's still showing the guard pose after a plink.
 func _show_pose(action: String) -> void:
 	sprite.show_animation("guard" if _seconds_showing_guard > 0.0 else action)
@@ -151,5 +145,4 @@ func _on_deflected(_source_position: Vector2) -> void:
 func _die() -> void:
 	claw_snap.cancel()
 	death_drops.drop()
-	_timer.enter(State.DYING, death_fade_time)
-	_fade_out_and_free()
+	_enter_dying_and_fade(State.DYING)

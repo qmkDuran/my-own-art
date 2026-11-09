@@ -7,9 +7,9 @@ extends SlowingEffect
 const NODE_NAME := "Chilled"
 
 
-## Chills the target with `target_health`: it keeps `speed_share` of its speed for `seconds`.
-static func apply_to(target_health: Health, speed_share: float, seconds: float) -> bool:
-	return _apply(target_health, NODE_NAME, seconds, func() -> StatusEffect: return Chilled.new(speed_share))
+## Chills the target with `target_health`: it keeps `kept_speed_share` of its speed for `seconds`.
+static func apply_to(target_health: Health, kept_speed_share: float, seconds: float) -> bool:
+	return _apply(target_health, NODE_NAME, seconds, func() -> StatusEffect: return Chilled.new(kept_speed_share))
 
 
 func _init(kept_speed_share: float) -> void:

@@ -13,7 +13,7 @@ const PATCH_SPACING := 5.0
 var _trail: FireTrail = null
 
 @onready var _hopper: Node2D = get_parent()
-@onready var _dodge: Dodge = get_parent().get_node("Dodge")
+@onready var _dodge: Dodge = get_parent().get_node(Dodge.NODE_NAME)
 @onready var _ember_hop: EmberHop = get_parent().get_node_or_null("EmberHop")
 
 

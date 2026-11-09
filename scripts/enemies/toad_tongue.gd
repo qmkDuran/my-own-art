@@ -4,12 +4,12 @@ extends Line2D
 ##
 ## Drawn in code so it can point anywhere, even though the toad sprite only faces the camera.
 
-## Where the mouth is, relative to the toad's feet.
-@export var mouth_offset: Vector2 = Vector2(0, -5)
-
 ## Share of the lash spent shooting out, and the share by which it has fully extended + held.
 const SHOOT_OUT_SHARE := 0.35
 const HOLD_UNTIL_SHARE := 0.55
+
+## Where the mouth is, relative to the toad's feet.
+@export var mouth_offset: Vector2 = Vector2(0, -5)
 
 var _direction: Vector2 = Vector2.DOWN
 var _reach: float = 0.0

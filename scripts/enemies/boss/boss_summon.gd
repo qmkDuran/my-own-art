@@ -1,14 +1,15 @@
-class_name CaptainSummon
-extends CaptainAttack
-## The Captain raises his rod and calls bound Glimra to the fight, like any Warden. The
-## creatures, the timing between waves and the cap on how many are out at once live on a
-## HandlerSummoner; this makes the call one of his attacks (pose, tip flare, battle cry).
+class_name BossSummon
+extends BossAttack
+## A boss calls bound Glimra to the fight (the Warden Captain raises his rod like any Warden;
+## the Shalendrill calls Fizzbugs). The creatures, the timing between waves and the cap on
+## how many are out at once live on a HandlerSummoner; this makes the call one of the boss's
+## attacks (pose, tip flare, battle cry).
 
 @export var summoner: HandlerSummoner
-## He only summons when the player is at least this far away, so he doesn't turn his back on them.
+## The boss only summons when the player is at least this far away, so it doesn't turn its back on them.
 @export var minimum_distance: float = 30.0
 @export var speech_bubble: SpeechBubble
-## The tip flare while he calls.
+## The flare while the boss calls (e.g. the Captain's rod tip); optional.
 @export var charge_particles: ChargeParticles
 
 

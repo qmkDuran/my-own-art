@@ -11,8 +11,6 @@ signal changed(flag: String)
 const ARRIVAL_RAID_WON := "arrival_raid_won"
 ## The Tinkerer hacked the stolen Warden rod into the Link Rod (the C key works from then on).
 const LINK_ROD_GIVEN := "link_rod_given"
-## The Warden Captain fell in Ruins Edge's Final Arena (he stays beaten; the road on is open).
-const WARDEN_CAPTAIN_DEFEATED := "ruins_edge_captain_defeated"
 
 var _flags: Dictionary = {}
 

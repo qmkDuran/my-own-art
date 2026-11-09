@@ -27,10 +27,11 @@ var _hovered_slot: SkillSlot
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	for child in get_children():
-		if child is SkillSlot:
-			_slots.append(child)
-			child.hovered.connect(_on_slot_hovered)
-			child.unhovered.connect(_on_slot_unhovered)
+		var slot := child as SkillSlot
+		if slot != null:
+			_slots.append(slot)
+			slot.hovered.connect(_on_slot_hovered)
+			slot.unhovered.connect(_on_slot_unhovered)
 
 
 func _process(delta: float) -> void:
@@ -48,8 +49,8 @@ func _process(delta: float) -> void:
 
 
 func _connect_to_skill_bar() -> void:
-	_skill_bar = PlayerFinder.find_component(self, "SkillBar")
-	_heat = PlayerFinder.find_component(self, "Heat") as Heat
+	_skill_bar = PlayerFinder.find_component(self, SkillBar.NODE_NAME)
+	_heat = PlayerFinder.find_component(self, Heat.NODE_NAME) as Heat
 	if _skill_bar == null:
 		return
 	if _skill_bar.has_signal("skill_used"):

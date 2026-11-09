@@ -89,5 +89,5 @@ func _draw_beam(start: Vector2, end: Vector2) -> void:
 	for step in ceili(length):
 		var at := start.lerp(end, step / length)
 		draw_rect(Rect2(at.round(), Vector2.ONE), Color(CORE_COLOR, fade))
-		for side in [-1.0, 1.0]:
+		for side: float in [-1.0, 1.0]:
 			draw_rect(Rect2((at + across * side).round(), Vector2.ONE), Color(EDGE_COLOR, fade))

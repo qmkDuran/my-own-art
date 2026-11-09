@@ -3,6 +3,15 @@ extends Node2D
 ## A mote of stolen Glimra light, freed when a bound creature is defeated.
 ## It bursts out, hangs for a moment, then streaks to the player and becomes XP.
 
+const CORE := ApolloPalette.GOLD
+const SHINE := ApolloPalette.WHITE
+const TRAIL := ApolloPalette.ORANGE
+const TRAIL_LENGTH := 4
+## How fast it slows down while drifting, in pixels per second squared.
+const DRIFT_FRICTION := 160.0
+## Safety net: a mote this many seconds old is removed, so none lingers forever.
+const MAX_AGE := 4.0
+
 ## XP this mote is worth.
 @export var xp_value: int = 1
 ## Seconds it drifts after bursting out, before it homes in.
@@ -14,15 +23,6 @@ extends Node2D
 @export var collect_radius: float = 5.0
 ## Height of the player's body above their feet (where motes fly to).
 @export var body_height: float = -7.0
-
-const CORE := ApolloPalette.GOLD
-const SHINE := ApolloPalette.WHITE
-const TRAIL := ApolloPalette.ORANGE
-const TRAIL_LENGTH := 4
-## How fast it slows down while drifting, in pixels per second squared.
-const DRIFT_FRICTION := 160.0
-## Safety net: a mote this many seconds old is removed, so none lingers forever.
-const MAX_AGE := 4.0
 
 var _velocity: Vector2 = Vector2.ZERO
 var _age: float = 0.0

@@ -7,6 +7,9 @@ extends SkillAction
 ## then a short recovery with feet planted. Keep the "uppercut" animation's frame timings
 ## (CreatureAnimator.ANIMATION_SETTINGS) in sync with `wind_up` and `duration`.
 
+## Where the player's Flame Uppercut sits, from the player.
+const NODE_PATH := SkillBar.NODE_NAME + "/FlameUppercut"
+
 ## Seconds from pressing the key to the flame bursting out (the cocked-fist frame).
 @export var wind_up: float = 0.16
 ## Seconds the whole move takes, start to recovery.
@@ -104,7 +107,7 @@ func _hit_enemies_in_arc() -> void:
 	for target: Node2D in get_tree().get_nodes_in_group(target_group):
 		if not _is_in_arc(target.global_position):
 			continue
-		var target_health: Health = target.get_node_or_null("Health")
+		var target_health: Health = Health.of(target)
 		if target_health == null:
 			continue
 		CritRoll.deal_damage(_caster, target_health, damage, Health.HitKind.FIRE)
@@ -130,9 +133,4 @@ func _is_in_arc(target_position: Vector2) -> bool:
 ## Enemies that know how (a `knock_back(velocity)` method) are thrown away from the caster,
 ## harder than their usual hit reaction. Others keep their normal reaction.
 func _knock_back(target: Node2D) -> void:
-	if not target.has_method("knock_back"):
-		return
-	var away := target.global_position - _caster.global_position
-	if away.length() < 0.1:
-		away = _aim_direction
-	target.call("knock_back", away.normalized() * knockback_speed)
+	EnemyReactions.throw_away_from(target, _caster.global_position, knockback_speed, _aim_direction)

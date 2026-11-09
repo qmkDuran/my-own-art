@@ -18,7 +18,6 @@ const FADE_OUT_SECONDS := 0.35
 const FADE_IN_SECONDS := 0.4
 ## Above the HUD and every screen (the death screen is layer 4).
 const CURTAIN_LAYER := 20
-const TRAINER_AID_NAME := "TrainerAid"
 
 ## True from the start of the fade-out until the new zone is showing.
 var is_travelling: bool = false
@@ -68,11 +67,11 @@ func _fade_to(alpha: float, seconds: float) -> Signal:
 
 
 func _carried_aid_data() -> Dictionary:
-	var aid := PlayerFinder.find_component(self, TRAINER_AID_NAME) as TrainerAid
+	var aid := PlayerFinder.find_component(self, TrainerAid.NODE_NAME) as TrainerAid
 	return aid.to_save_data() if aid != null else {}
 
 
 func _give_aid_data(data: Dictionary) -> void:
-	var aid := PlayerFinder.find_component(self, TRAINER_AID_NAME) as TrainerAid
+	var aid := PlayerFinder.find_component(self, TrainerAid.NODE_NAME) as TrainerAid
 	if aid != null and not data.is_empty():
 		aid.load_save_data(data)

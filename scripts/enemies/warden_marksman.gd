@@ -53,7 +53,7 @@ func _physics_process(delta: float) -> void:
 		State.STANDING_UP:
 			_stand_up()
 		State.RECOVERING, State.DYING:
-			_slide(delta)
+			_slide_then(State.RECOVERING, State.STANDING, delta)
 
 	move_and_slide()
 
@@ -107,12 +107,6 @@ func _stand_up() -> void:
 		_timer.enter(State.STANDING, 0.0)
 
 
-func _slide(delta: float) -> void:
-	_slow_down_by(knockback_friction, delta)
-	if _timer.state == State.RECOVERING and _timer.is_over():
-		_timer.enter(State.STANDING, 0.0)
-
-
 ## Debug (enemies passive): an aim is called off.
 func _stop_acting() -> void:
 	if _timer.state != State.AIMING:
@@ -135,5 +129,4 @@ func _react_to_hit(source_position: Vector2) -> void:
 
 func _die() -> void:
 	rail_shot.cancel()
-	_timer.enter(State.DYING, death_fade_time)
-	_fade_out_and_free()
+	_enter_dying_and_fade(State.DYING)

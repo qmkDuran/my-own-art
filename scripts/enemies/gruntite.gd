@@ -168,6 +168,5 @@ func _react_to_hit(source_position: Vector2) -> void:
 func _die() -> void:
 	if _has_super_armour():
 		charge.finish()
-	_timer.enter(State.DYING, death_fade_time)
 	_slide_friction = skid_friction
-	_fade_out_and_free()
+	_enter_dying_and_fade(State.DYING)

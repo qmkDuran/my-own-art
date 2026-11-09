@@ -8,7 +8,7 @@ extends RefCounted
 
 ## The player's Health (what hits and status effects land on), or null.
 static func health_of(player: Node2D) -> Health:
-	return player.get_node_or_null("Health") as Health
+	return Health.of(player)
 
 
 ## Hurts the player unless they're invulnerable (leaping through it). True when it landed.
@@ -22,5 +22,6 @@ static func try_to_hurt(player: Node2D, damage: int, source_position: Vector2) -
 
 ## Shoves the player (see Creature.push): they slide with this velocity for `seconds`.
 static func shove(player: Node2D, push_velocity: Vector2, seconds: float) -> void:
-	if player.has_method("push"):
-		player.push(push_velocity, seconds)
+	var creature := player as Creature
+	if creature != null:
+		creature.push(push_velocity, seconds)

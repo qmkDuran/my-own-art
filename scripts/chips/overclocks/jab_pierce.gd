@@ -10,7 +10,7 @@ const PIERCE_REACH := 24.0
 
 var _struck_this_jab: Array[Health] = []
 
-@onready var _melee: MeleeAttack = get_parent().get_node("MeleeAttack")
+@onready var _melee: MeleeAttack = get_parent().get_node(MeleeAttack.NODE_NAME)
 @onready var _attacker: Node2D = get_parent()
 
 
@@ -35,7 +35,7 @@ func _pierce() -> void:
 	_struck_this_jab.clear()
 	if behind == null:
 		return
-	CritRoll.deal_damage(_attacker, behind.get_node("Health"), _melee.damage)
+	CritRoll.deal_damage(_attacker, Health.of(behind), _melee.damage)
 	_spawn_spark(behind.global_position + Vector2(0, _melee.target_body_height), direction)
 
 
@@ -55,7 +55,7 @@ func _nearest_behind(first: Node2D, direction: Vector2) -> Node2D:
 	var best: Node2D = null
 	var best_distance := INF
 	for target: Node2D in get_tree().get_nodes_in_group(_melee.target_group):
-		var health := target.get_node_or_null("Health") as Health
+		var health := Health.of(target)
 		if health == null or health.is_dead() or _struck_this_jab.has(health) or target == first:
 			continue
 		var offset := target.global_position - first.global_position

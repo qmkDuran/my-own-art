@@ -12,6 +12,10 @@ extends Node
 
 ## How close to a clicked spot counts as "arrived", in pixels.
 const ARRIVE_DISTANCE := 3.0
+## The little ring where a move click lands: its size, how long it spreads, its colour.
+const CLICK_MARKER_RADIUS := 6.0
+const CLICK_MARKER_SECONDS := 0.25
+const CLICK_MARKER_COLOR := Color(ApolloPalette.CREAM, 0.8)
 
 @export var player_input: PlayerInput
 ## Finds the way around walls, ruins, rocks and trees to the clicked spot or enemy.
@@ -145,4 +149,4 @@ func _is_in_reach_of(enemy: Node2D) -> bool:
 func _show_click_marker(point: Vector2) -> void:
 	if click_marker_scene == null:
 		return
-	Shockwave.spawn(click_marker_scene, creature.get_parent(), point, 6.0, 0.25, Color(ApolloPalette.CREAM, 0.8))
+	Shockwave.spawn(click_marker_scene, creature.get_parent(), point, CLICK_MARKER_RADIUS, CLICK_MARKER_SECONDS, CLICK_MARKER_COLOR)

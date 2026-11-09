@@ -15,7 +15,6 @@ const OVERCLOCK_NODES := {
 	ChipModTable.DODGE_TRAIL: preload("res://scripts/chips/overclocks/dodge_fire_trail.gd"),
 	ChipModTable.UPPERCUT_PULL: preload("res://scripts/chips/overclocks/uppercut_pull.gd"),
 }
-const UPPERCUT_PATH := "SkillBar/FlameUppercut"
 
 ## The player the amounts below were added to; a new player (a reloaded zone) starts at zero.
 var _player: Node = null
@@ -72,7 +71,7 @@ func _adopt(player: Node) -> void:
 	_player = player
 	_applied.clear()
 	_wanted.clear()
-	var uppercut := player.get_node_or_null(UPPERCUT_PATH) as SkillAction
+	var uppercut := player.get_node_or_null(FlameUppercut.NODE_PATH) as SkillAction
 	if uppercut != null and uppercut.skill != null:
 		uppercut.skill = uppercut.skill.duplicate()
 

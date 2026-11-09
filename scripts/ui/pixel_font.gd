@@ -81,8 +81,9 @@ static func _text_pixels(text: String, top_left: Vector2) -> Array[Vector2]:
 	for character in text:
 		var glyph: Array = GLYPHS.get(character, [])
 		for y in glyph.size():
-			for x in glyph[y].length():
-				if glyph[y][x] == "#":
+			var row: String = glyph[y]
+			for x in row.length():
+				if row[x] == "#":
 					pixels.append(Vector2(left + x, top_left.y + y))
 		left += _glyph_width(character) + LETTER_GAP
 	return pixels
@@ -90,4 +91,5 @@ static func _text_pixels(text: String, top_left: Vector2) -> Array[Vector2]:
 
 static func _glyph_width(character: String) -> int:
 	var glyph: Array = GLYPHS.get(character, ["..."])
-	return glyph[0].length()
+	var first_row: String = glyph[0]
+	return first_row.length()

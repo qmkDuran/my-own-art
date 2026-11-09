@@ -52,12 +52,12 @@ static func apply_live(player: Node, kind: Kind) -> void:
 		return
 	match kind:
 		Kind.MAX_HEAT:
-			var heat := player.get_node_or_null("Heat") as Heat
+			var heat := player.get_node_or_null(Heat.NODE_NAME) as Heat
 			if heat != null:
 				heat.max_heat += 1
 				heat.heat_changed.emit(heat.heat, heat.max_heat)
 		Kind.AID_CHARGE:
-			var aid := player.get_node_or_null("TrainerAid") as TrainerAid
+			var aid := player.get_node_or_null(TrainerAid.NODE_NAME) as TrainerAid
 			if aid != null:
 				aid.max_charges += 1
 				aid.add_charge()

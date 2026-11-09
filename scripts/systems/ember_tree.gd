@@ -123,7 +123,7 @@ func load_save_data(data: Dictionary) -> void:
 	var learned_any := true
 	while learned_any:
 		learned_any = false
-		for id in waiting.duplicate():
+		for id: String in waiting.duplicate():
 			if _learn_silently(id):
 				waiting.erase(id)
 				learned_any = true

@@ -10,6 +10,9 @@ extends Node
 ## Most summoned creatures alive in the zone at once.
 const ZONE_LIMIT := 24
 
+## Random spots tried for one in sight before settling for one at his feet.
+const SPOT_TRIES := 8
+
 ## The creature he summons.
 @export var creature_scene: PackedScene
 ## Seconds between summons.
@@ -28,9 +31,6 @@ const ZONE_LIMIT := 24
 ## Only spots he can see (no wall between): a summoner near a wall then never drops its
 ## creatures on the far side (used by the Shalendrill; off keeps the old behaviour).
 @export var spawn_in_sight: bool = false
-
-## Random spots tried for one in sight before settling for one at his feet.
-const SPOT_TRIES := 8
 
 var _seconds_until_summon: float = 0.0
 ## Untyped on purpose: it can briefly hold creatures that have already been freed.
@@ -92,8 +92,8 @@ func _spawn_creatures() -> void:
 		handler.get_parent().add_child(creature)
 		creature.global_position = handler.global_position + _random_spot_nearby()
 		# Summoned creatures come out already hunting the player.
-		if creature.has_method("notice_player"):
-			creature.notice_player()
+		if creature is Enemy:
+			(creature as Enemy).notice_player()
 		_summoned_creatures.append(creature)
 	# The first time the player ever sees this species, the HUD announces it.
 	if not _creature_info.is_empty():
@@ -119,8 +119,8 @@ func _random_offset() -> Vector2:
 ## Counts summoned creatures that are still alive (dead ones are removed from the list).
 func _creatures_alive() -> int:
 	var still_alive: Array = []
-	for creature in _summoned_creatures:
-		if is_instance_valid(creature) and creature.is_in_group(EnemyReactions.ENEMIES_GROUP):
+	for creature: Variant in _summoned_creatures:
+		if is_instance_valid(creature) and (creature as Node).is_in_group(EnemyReactions.ENEMIES_GROUP):
 			still_alive.append(creature)
 	_summoned_creatures = still_alive
 	return _summoned_creatures.size()
@@ -134,6 +134,6 @@ func _read_creature_info() -> void:
 	if creature_scene == null:
 		return
 	var probe := creature_scene.instantiate()
-	if probe.has_method("creature_info"):
-		_creature_info = probe.creature_info()
+	if probe is SpeciesEnemy:
+		_creature_info = (probe as SpeciesEnemy).creature_info()
 	probe.free()

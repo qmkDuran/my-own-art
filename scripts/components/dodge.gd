@@ -6,6 +6,9 @@ extends Node
 ## and can't steer. It rises and falls in an arc, like a kangaroo bound.
 ## After a dodge there is a short cooldown.
 
+## The child node name the player's Dodge goes by.
+const NODE_NAME := "Dodge"
+
 ## Speed during the dodge, in pixels per second.
 @export var dodge_speed: float = 180.0
 ## How long the dodge lasts, in seconds.

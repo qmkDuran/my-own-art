@@ -1,9 +1,20 @@
 class_name ShalendrillRoar
 extends Node
 ## The Shalendrill's phase change, at half health: it rears up and roars, the cyan in its
-## stone flares (CaptainPhaseTwo flashes it and stirs its aura), the ground shakes and the
+## stone flares (BossPhaseTwo flashes it and stirs its aura), the ground shakes and the
 ## blast throws the player back out of reach (no damage). The Shalendrill holds still with
 ## super armour while it plays.
+
+## The screen shake: its strength, and the share of the roar it lasts.
+const SHAKE_STRENGTH := 3.0
+const SHAKE_SHARE := 0.7
+## The two blast rings: a small bright one from the mouth, a wide one at the feet as far
+## as the blast reaches.
+const MOUTH_RING_RADIUS := 34.0
+const MOUTH_RING_SECONDS := 0.45
+const MOUTH_RING_COLOR := Color(ApolloPalette.SKY_LIGHT, 0.9)
+const BLAST_RING_SECONDS := 0.6
+const BLAST_RING_COLOR := Color(ApolloPalette.SKY, 0.7)
 
 ## Seconds the roar lasts.
 @export var duration: float = 1.3
@@ -25,11 +36,11 @@ var has_roared: bool = false
 func play() -> void:
 	has_roared = true
 	if screen_shake != null:
-		screen_shake.shake(3.0, duration * 0.7)
+		screen_shake.shake(SHAKE_STRENGTH, duration * SHAKE_SHARE)
 	if shockwave_scene != null:
 		var mouth := boss.global_position + mouth_offset
-		Shockwave.spawn(shockwave_scene, boss.get_parent(), mouth, 34.0, 0.45, Color(ApolloPalette.SKY_LIGHT, 0.9))
-		Shockwave.spawn(shockwave_scene, boss.get_parent(), boss.global_position, blast_radius, 0.6, Color(ApolloPalette.SKY, 0.7))
+		Shockwave.spawn(shockwave_scene, boss.get_parent(), mouth, MOUTH_RING_RADIUS, MOUTH_RING_SECONDS, MOUTH_RING_COLOR)
+		Shockwave.spawn(shockwave_scene, boss.get_parent(), boss.global_position, blast_radius, BLAST_RING_SECONDS, BLAST_RING_COLOR)
 	var player := PlayerFinder.find(self)
 	if player == null:
 		return

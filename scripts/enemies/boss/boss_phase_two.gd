@@ -1,20 +1,20 @@
-class_name CaptainPhaseTwo
+class_name BossPhaseTwo
 extends Node
-## The Warden Captain's second phase, from half health: he shouts, flashes red, his aura
-## grows busier, his wind-ups and recoveries get shorter and he walks faster. Phase-2-only
-## attacks (the chip pulse, the Zephoot summon) unlock. Watches his Health on its own.
+## A boss's second phase, from half health: it shouts, flashes red, its aura grows busier,
+## its wind-ups and recoveries get shorter and it walks faster. Phase-2-only attacks (e.g.
+## the Captain's chip pulse) unlock. Watches the boss's Health on its own.
 
 ## Wind-ups take this share of their time in phase 2.
 @export var wind_up_scale: float = 0.7
 ## Recoveries (punish windows) take this share of their time in phase 2.
 @export var recovery_scale: float = 0.7
-## He walks this much faster in phase 2.
+## The boss walks this much faster in phase 2.
 @export var speed_scale: float = 1.3
 @export var shout: String = "You're just stock!"
 @export var health: Health
 @export var speech_bubble: SpeechBubble
 @export var hit_flash: HitFlash
-@export var aura: CaptainAura
+@export var aura: BossAura
 
 var is_active: bool = false
 

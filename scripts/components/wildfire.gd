@@ -34,7 +34,7 @@ func on_burning_target_died(dead_target: Node, damage_per_second: int, duration:
 	var next_target := _nearest_living_target(from, dead_target)
 	if next_target == null:
 		return
-	Burning.apply_to(next_target.get_node("Health") as Health, damage_per_second, duration)
+	Burning.apply_to(Health.of(next_target), damage_per_second, duration)
 	_spawn_streak(dead_target.get_parent(), from, next_target.global_position)
 
 
@@ -44,7 +44,7 @@ func _nearest_living_target(from: Vector2, dead_target: Node) -> Node2D:
 	for target: Node2D in get_tree().get_nodes_in_group(target_group):
 		if target == dead_target:
 			continue
-		var target_health := target.get_node_or_null("Health") as Health
+		var target_health := Health.of(target)
 		if target_health == null or target_health.is_dead():
 			continue
 		var distance := from.distance_to(target.global_position)

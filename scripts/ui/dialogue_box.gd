@@ -119,7 +119,7 @@ func _close() -> void:
 	var fade := create_tween()
 	fade.tween_property(_card, "modulate:a", 0.0, FADE_SECONDS)
 	fade.tween_callback(_card.hide)
-	await get_tree().create_timer(RELEASE_SECONDS, true, false, true).timeout
+	await Wait.seconds(self, RELEASE_SECONDS, true)
 	if _paused_by_me:
 		_paused_by_me = false
 		get_tree().paused = false

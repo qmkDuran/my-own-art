@@ -87,4 +87,4 @@ func _start_at_saved_checkpoint(player: Creature) -> void:
 
 
 func _real_seconds(seconds: float) -> Signal:
-	return get_tree().create_timer(seconds, true, false, true).timeout
+	return Wait.seconds(self, seconds, true)

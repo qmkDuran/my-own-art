@@ -4,13 +4,6 @@ extends Node2D
 ## over it gives its permanent upgrade (`reward`, see ShardReward) and records it in
 ## ShardInventory, which shows the toast and keeps it from appearing (or paying) again.
 
-## Unique across the game (e.g. "ruins_edge_shrine"): the save remembers shards by this ID.
-@export var shard_id: String = ""
-## The permanent upgrade it gives (see ShardReward).
-@export var reward: ShardReward.Kind = ShardReward.Kind.CHIP_SLOT
-## How close the player must be to pick it up, in pixels.
-@export var pickup_radius: float = 10.0
-
 ## Height the crystal floats above its spot, and how far it bobs, in pixels.
 const FLOAT_HEIGHT := 10.0
 const BOB_PIXELS := 2.0
@@ -20,6 +13,13 @@ const PULSE_SECONDS := 1.6
 const GLOW_RADIUS := 7.0
 const SPARKLE_COUNT := 3
 const SPARKLE_REACH := 8.0
+
+## Unique across the game (e.g. "ruins_edge_shrine"): the save remembers shards by this ID.
+@export var shard_id: String = ""
+## The permanent upgrade it gives (see ShardReward).
+@export var reward: ShardReward.Kind = ShardReward.Kind.CHIP_SLOT
+## How close the player must be to pick it up, in pixels.
+@export var pickup_radius: float = 10.0
 
 var _age: float = 0.0
 

@@ -13,6 +13,31 @@ static func knockback_velocity(body: Node2D, source_position: Vector2, speed: fl
 	return (body.global_position - source_position).normalized() * speed
 
 
+## Closer than this to the attacker, a throw goes in its fallback direction instead.
+const SAME_SPOT_DISTANCE := 0.1
+
+
+## True when `target` can be thrown by a big hit (it has a `knock_back(velocity)` method:
+## every Enemy, and the training dummy, which leans instead).
+static func can_be_thrown(target: Node) -> bool:
+	return target.has_method("knock_back")
+
+
+## Throws `target` with `push_velocity`, if it can be thrown.
+static func throw(target: Node, push_velocity: Vector2) -> void:
+	if can_be_thrown(target):
+		target.call("knock_back", push_velocity)
+
+
+## Throws `target` straight away from `from` at `speed` (toward `fallback_direction` when
+## it's right on top of `from`), if it can be thrown.
+static func throw_away_from(target: Node2D, from: Vector2, speed: float, fallback_direction: Vector2) -> void:
+	var away := target.global_position - from
+	if away.length() < SAME_SPOT_DISTANCE:
+		away = fallback_direction
+	throw(target, away.normalized() * speed)
+
+
 ## A knockback (or any slide) slowing down by `friction` pixels per second squared.
 static func slowed_down(velocity: Vector2, friction: float, delta: float) -> Vector2:
 	return velocity.move_toward(Vector2.ZERO, friction * delta)

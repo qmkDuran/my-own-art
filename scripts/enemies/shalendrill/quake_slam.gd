@@ -1,5 +1,5 @@
 class_name QuakeSlam
-extends ShalendrillAttack
+extends BossAttack
 ## The Shalendrill's quake slam (the dodge check): it heaves both fists overhead while the
 ## ground shows the quake's full reach (a faint red disc and a pulsing ring, with the wave's
 ## front-to-be growing toward it), then pounds the ground: a QuakeRing rolls out with no gap,
@@ -7,6 +7,14 @@ extends ShalendrillAttack
 ## follows. Afterwards its fists are stuck in the ground for a long moment: the best punish
 ## window of the fight, and the spot a hop over the ring lands you in (Ember Hop's trail
 ## burns it there). Drawn on the ground, under every creature (z_index in the scene).
+
+const FILL_ALPHA := Vector2(0.06, 0.18)
+const RING_ALPHA := Vector2(0.55, 0.85)
+## Its fists land this far either side of its feet (a dust puff under each), in pixels.
+const FIST_SPREAD := 8.0
+## The screen shake with each ring.
+const SHAKE_STRENGTH := 2.5
+const SHAKE_SECONDS := 0.3
 
 @export var trigger_distance: float = 100.0
 @export var ring_radius: float = 104.0
@@ -18,9 +26,6 @@ extends ShalendrillAttack
 @export var ring_interval: float = 0.9
 @export var screen_shake: ScreenShake
 @export var dust_scene: PackedScene
-
-const FILL_ALPHA := Vector2(0.06, 0.18)
-const RING_ALPHA := Vector2(0.55, 0.85)
 
 var _wind_up_progress: float = 0.0
 var _rings_sent: int = 0
@@ -54,14 +59,14 @@ func _release() -> void:
 
 func _send_ring() -> void:
 	_rings_sent += 1
-	var ring := QuakeRing.spawn(captain.get_parent(), captain.global_position)
+	var ring := QuakeRing.spawn(boss.get_parent(), boss.global_position)
 	ring.max_radius = ring_radius
 	ring.travel_time = ring_travel_time
 	ring.damage = damage
-	DustPuff.spawn(dust_scene, captain.get_parent(), captain.global_position + Vector2(-8, 0))
-	DustPuff.spawn(dust_scene, captain.get_parent(), captain.global_position + Vector2(8, 0))
+	for fist_x: float in [-FIST_SPREAD, FIST_SPREAD]:
+		DustPuff.spawn(dust_scene, boss.get_parent(), boss.global_position + Vector2(fist_x, 0))
 	if screen_shake != null:
-		screen_shake.shake(2.5, 0.3)
+		screen_shake.shake(SHAKE_STRENGTH, SHAKE_SECONDS)
 
 
 func _ring_count() -> int:
