@@ -1,12 +1,13 @@
 class_name SkillSlotFlashes
 extends RefCounted
 ## The short flashes a SkillSlot plays, and the coloured border they draw around it:
-## - used: white → gold → orange, in step with the trainer's shout;
+## - used: white → gold → orange;
 ## - refused (still recovering): a short, dim grey edge;
 ## - ready (the skill just became usable): gold → orange, with a ring just outside the slot.
 ## It also keeps the slot's press: its contents dip a pixel when the key is pressed.
 
-## Border colour for each step of the "used" flash (one step per shout stage).
+## Border colour for each step of the "used" flash, and how long each step lasts.
+const USED_STAGE_SECONDS := 0.0875
 const USED_FLASH_COLORS: Array[Color] = [ApolloPalette.WHITE, ApolloPalette.GOLD, ApolloPalette.ORANGE_DARK]
 const REFUSED_FLASH_SECONDS := 0.25
 ## The "ready" glow: how long it lasts, and its colours from start to end.
@@ -68,7 +69,7 @@ func advance(delta: float) -> bool:
 func used_stage() -> int:
 	if _used_time < 0.0:
 		return -1
-	return int(_used_time / PortraitShoutTicks.STAGE_SECONDS)
+	return int(_used_time / USED_STAGE_SECONDS)
 
 
 ## Which colour of the "ready" glow is showing (0 = brightest), or -1 when none is.

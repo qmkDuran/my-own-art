@@ -2,6 +2,9 @@ class_name TrainerAid
 extends Node
 ## Trainer's Aid: the trainer throws a healing tonic (F). Limited charges,
 ## refilled by picking up berries that enemies sometimes drop.
+##
+## The thrower is the node in the "trainer" group (during play the HUD's UnseenTrainer, so the
+## tonic flies in from off screen); with no trainer at all, the heal lands at once.
 
 signal charges_changed(charges: int, max_charges: int)
 

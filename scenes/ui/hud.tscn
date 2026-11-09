@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3]
+[gd_scene load_steps=14 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/health_heart.gd" id="1_heart"]
 [ext_resource type="Script" path="res://scripts/ui/discovery_card.gd" id="2_card"]
@@ -8,15 +8,17 @@
 [ext_resource type="Script" path="res://scripts/ui/minimap.gd" id="6_map"]
 [ext_resource type="Script" path="res://scripts/ui/skill_bar_hud.gd" id="7_bar"]
 [ext_resource type="Script" path="res://scripts/ui/skill_slot.gd" id="8_slot"]
-[ext_resource type="Script" path="res://scripts/ui/trainer_portrait.gd" id="9_trainer"]
-[ext_resource type="Script" path="res://scripts/ui/combat_state.gd" id="10_combat"]
+[ext_resource type="Script" path="res://scripts/companions/unseen_trainer.gd" id="9_trainer"]
 [ext_resource type="Script" path="res://scripts/ui/skill_tooltip.gd" id="11_tooltip"]
-[ext_resource type="SpriteFrames" path="res://art/trainer/portrait/trainer_portrait_frames.tres" id="12_frames"]
 [ext_resource type="PackedScene" path="res://scenes/companions/tonic_toss.tscn" id="13_tonic"]
 [ext_resource type="Script" path="res://scripts/ui/boss_health_bar.gd" id="14_boss_bar"]
 [ext_resource type="Script" path="res://scripts/ui/boss_defeated_banner.gd" id="15_boss_banner"]
 
 [node name="Hud" type="CanvasLayer"]
+
+[node name="UnseenTrainer" type="Node2D" parent="."]
+script = ExtResource("9_trainer")
+tonic_scene = ExtResource("13_tonic")
 
 [node name="XpBar" type="Control" parent="."]
 layout_mode = 3
@@ -55,9 +57,9 @@ mouse_filter = 2
 [node name="AidCharges" type="Control" parent="BottomCluster"]
 layout_mode = 3
 anchors_preset = 0
-offset_left = -61.0
+offset_left = -74.0
 offset_top = -38.0
-offset_right = -26.0
+offset_right = -39.0
 offset_bottom = -32.0
 mouse_filter = 2
 script = ExtResource("3_aid")
@@ -65,74 +67,64 @@ script = ExtResource("3_aid")
 [node name="HealthHeart" type="Control" parent="BottomCluster"]
 layout_mode = 3
 anchors_preset = 0
-offset_left = -63.0
+offset_left = -76.0
 offset_top = -29.0
-offset_right = -34.0
+offset_right = -47.0
 offset_bottom = -6.0
 mouse_filter = 2
 script = ExtResource("1_heart")
 
-[node name="TrainerPortrait" type="Node2D" parent="BottomCluster"]
-position = Vector2(-91, -28)
-script = ExtResource("9_trainer")
-frames = ExtResource("12_frames")
-tonic_scene = ExtResource("13_tonic")
-
-[node name="CombatState" type="Node" parent="BottomCluster/TrainerPortrait"]
-script = ExtResource("10_combat")
-
 [node name="HeatFlame" type="Control" parent="BottomCluster"]
 layout_mode = 3
 anchors_preset = 0
-offset_left = 66.0
+offset_left = 52.0
 offset_top = -30.0
-offset_right = 91.0
+offset_right = 77.0
 offset_bottom = -4.0
 mouse_filter = 2
 script = ExtResource("5_heat")
 
-[node name="SkillSlots" type="Control" parent="BottomCluster" node_paths=PackedStringArray("trainer", "heat_flame", "tooltip")]
+[node name="SkillSlots" type="Control" parent="BottomCluster" node_paths=PackedStringArray("heat_flame", "tooltip")]
 layout_mode = 3
 anchors_preset = 0
 mouse_filter = 2
 script = ExtResource("7_bar")
-trainer = NodePath("../TrainerPortrait")
 heat_flame = NodePath("../HeatFlame")
 tooltip = NodePath("../../SkillTooltip")
 
 [node name="SlotQ" type="Control" parent="BottomCluster/SkillSlots"]
 layout_mode = 3
 anchors_preset = 0
-offset_left = -28.0
+offset_left = -42.0
 offset_top = -26.0
-offset_right = -8.0
+offset_right = -22.0
 offset_bottom = -6.0
 script = ExtResource("8_slot")
 
 [node name="SlotW" type="Control" parent="BottomCluster/SkillSlots"]
 layout_mode = 3
 anchors_preset = 0
-offset_left = -5.0
+offset_left = -19.0
 offset_top = -26.0
-offset_right = 15.0
+offset_right = 1.0
 offset_bottom = -6.0
 script = ExtResource("8_slot")
 
 [node name="SlotE" type="Control" parent="BottomCluster/SkillSlots"]
 layout_mode = 3
 anchors_preset = 0
-offset_left = 18.0
+offset_left = 4.0
 offset_top = -26.0
-offset_right = 38.0
+offset_right = 24.0
 offset_bottom = -6.0
 script = ExtResource("8_slot")
 
 [node name="SlotR" type="Control" parent="BottomCluster/SkillSlots"]
 layout_mode = 3
 anchors_preset = 0
-offset_left = 41.0
+offset_left = 27.0
 offset_top = -26.0
-offset_right = 61.0
+offset_right = 47.0
 offset_bottom = -6.0
 script = ExtResource("8_slot")
 

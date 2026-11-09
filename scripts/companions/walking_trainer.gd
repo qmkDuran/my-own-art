@@ -1,7 +1,7 @@
 class_name WalkingTrainer
 extends Trainer
-## The trainer walking in the world a few steps behind Emberoo (parked: the game now shows
-## the trainer in the HUD instead, but the layered look and the customiser still use this).
+## The trainer walking in the world a few steps behind Emberoo (parked for towns: during
+## play the trainer isn't shown, but the layered look and the customiser still use this).
 ##
 ## Enemies ignore the trainer: Warden visors only see Glimra light, and the trainer has none.
 ## (So the trainer has no collision and isn't in the "player" or "enemies" groups.)

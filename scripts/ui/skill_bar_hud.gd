@@ -3,7 +3,7 @@ extends Control
 ## Connects Emberoo's SkillBar to the HUD: fills the four SkillSlot children with their key
 ## letters (from the InputMap: skill_1..skill_4), skills, cooldowns and whether Emberoo's Heat
 ## covers each skill's cost, presses a slot down whenever its key is pressed, plays the
-## trainer's shout and the slot flash when a skill is used, shows why a skill was refused,
+## slot flash when a skill is used, shows why a skill was refused,
 ## and the tooltip while the mouse hovers a slot (with the Ember Tree's facts for the skill).
 ## A skill not learned in the Ember Tree yet leaves its slot empty (SkillBar hides it).
 ##
@@ -14,7 +14,6 @@ extends Control
 ## How often to look for Emberoo's SkillBar again while he has none, in seconds.
 const SEARCH_INTERVAL := 1.0
 
-@export var trainer: TrainerPortrait
 @export var heat_flame: HeatFlame
 @export var tooltip: SkillTooltip
 
@@ -92,8 +91,6 @@ func _on_skill_used(slot_index: int) -> void:
 		return
 	_slots[slot_index].press_down()
 	_slots[slot_index].flash_used()
-	if trainer != null:
-		trainer.shout()
 
 
 func _on_skill_refused(slot_index: int, reason: String) -> void:
