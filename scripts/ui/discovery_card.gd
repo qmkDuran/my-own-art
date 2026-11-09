@@ -6,13 +6,13 @@ extends Control
 ## (The full-size portrait belongs in the Creature Log, away from the fight.) The game slows down briefly
 ## (never freezes) so the moment registers while the player keeps control.
 ## A HudCard: the Ember Tree's card style and Monogram font, laid out in card pixels
-## (twice the game's resolution) and shown at half size.
+## (UI pixels) and shown scaled to the game (HudCard).
 
 const GROUP := "discovery_card"
 ## Nodes in this group are told through `on_discovery_card_changed()` whenever a card shows
 ## or hides (e.g. the boss bar makes way for it).
 const WATCHERS_GROUP := "discovery_card_watchers"
-## A 128px portrait at 1:1 screen pixels when the game is scaled 4x (32 game pixels).
+## A 128 px portrait shown 1:1 in a 1080p window (2 window pixels per card pixel).
 const PORTRAIT_SIZE := 64.0
 ## Gap between the portrait and the words, in card pixels.
 const PORTRAIT_GAP := 8

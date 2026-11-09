@@ -4,12 +4,12 @@ extends Control
 ## Emberoo's arrow in the middle (north is up), red dots for nearby enemies (Wardens as
 ## taller magenta marks) and pink dots for berries, placed relative to Emberoo.
 
-const MAP_SIZE := 46
+const MAP_SIZE := 58
 ## The dark area inside the frame, where the radar is drawn.
 const INSIDE := Rect2i(2, 2, MAP_SIZE - 4, MAP_SIZE - 4)
-## World pixels per radar pixel: the radar reaches about 190 pixels out from Emberoo,
-## a bit past the edges of the 480×270 screen.
-const WORLD_PIXELS_PER_DOT := 9.0
+## World pixels per radar pixel: the radar reaches about 340 pixels out from Emberoo,
+## a bit past the edges of the 640×360 screen.
+const WORLD_PIXELS_PER_DOT := 12.5
 ## How often the dots are refreshed, in seconds.
 const REFRESH_SECONDS := 0.1
 ## Emberoo's arrow, pointing up, as [offset from the centre, colour].

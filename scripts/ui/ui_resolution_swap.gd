@@ -3,9 +3,8 @@ extends RefCounted
 ## Switches the window to a higher-resolution canvas while a screen is open (so its text
 ## stays crisp), and puts the game's own scaling back afterwards.
 ##
-## Ask for a whole multiple of the game's resolution (e.g. 960×540 for the 480×270 game):
-## the window is a whole multiple of the game too (1920×1080 = 4×), so the screen still
-## scales by whole pixels and stays sharp.
+## Ask for a size the window's game area is a whole multiple of (GameView.ui_size, e.g.
+## 960×540 in a 1920×1080 window), so the screen still scales by whole pixels and stays sharp.
 
 var _saved_size: Vector2i
 var _saved_mode: Window.ContentScaleMode

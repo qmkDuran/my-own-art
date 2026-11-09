@@ -33,10 +33,7 @@ var _seconds_awake_after_hit: float = 0.0
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
-	var screen := Vector2(
-		ProjectSettings.get_setting("display/window/size/viewport_width"),
-		ProjectSettings.get_setting("display/window/size/viewport_height"))
-	_wake_range = screen * wake_range_in_screens
+	_wake_range = Vector2(GameView.size()) * wake_range_in_screens
 	# Spread by instance (not randf), so adding sleep never changes the game's random rolls.
 	_seconds_until_check = CHECK_INTERVAL * (get_instance_id() % CHECK_SLOTS) / CHECK_SLOTS
 	health.hit_taken.connect(_on_hit_taken)

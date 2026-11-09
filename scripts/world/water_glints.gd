@@ -5,7 +5,7 @@ extends Node2D
 ## Glints only appear on cells whose four neighbours are water too, so never on a bank.
 
 ## Glints alive at once, and how long each one shimmers (seconds).
-const GLINT_COUNT := 6
+const GLINT_COUNT := 10
 const GLINT_SECONDS := 1.4
 ## Glint lengths in pixels (a short horizontal dash) and their brightness at the peak.
 const MIN_LENGTH := 2
@@ -13,8 +13,8 @@ const MAX_LENGTH := 4
 const GLINT_ALPHA := 0.6
 ## Random cells in view tried per glint before it waits for its next turn.
 const SPAWN_ATTEMPTS := 12
-## Only water this close to the view's centre gets glints (a little more than the 480×270 view).
-const VIEW_HALF_EXTENTS := Vector2(260.0, 150.0)
+## Only water this close to the view's centre gets glints (a little more than the 640×360 view).
+const VIEW_HALF_EXTENTS := Vector2(340.0, 190.0)
 
 ## The layer that holds the water tiles.
 @export var water_layer: TileMapLayer

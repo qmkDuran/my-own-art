@@ -10,7 +10,7 @@ extends Control
 
 const GROUP := "boss_health_bar"
 ## Length of the bar, in game pixels.
-const BAR_LENGTH := 120
+const BAR_LENGTH := 160
 const BAR_HEIGHT := 3
 ## Top of the name, in game pixels (below the debug banner's row).
 const TOP := 12

@@ -86,6 +86,8 @@ func _refresh() -> void:
 func _build_columns() -> void:
 	var columns := HBoxContainer.new()
 	columns.add_theme_constant_override("separation", int(PAGE_MARGIN))
+	# The columns have fixed widths: on a wider UI canvas (1280×720 at 1440p) they stay centred.
+	columns.alignment = BoxContainer.ALIGNMENT_CENTER
 	columns.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_root.add_child(columns)
 	columns.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)

@@ -2,14 +2,14 @@ class_name SkillTooltip
 extends Control
 ## A small card above a skill slot while the mouse hovers it: the skill's name, its Heat cost
 ## and cooldown, and what it does. A HudCard: the Ember Tree's card style and Monogram font,
-## laid out at twice the game's resolution (sizes below are in card pixels) and shown at half size.
+## laid out in UI pixels (sizes below are in card pixels) and shown scaled to the game (HudCard).
 ## What it does is the Ember Tree's own facts text (EmberTreeSkillFacts), so the two never
 ## disagree: its last line (the cost, e.g. "Costs 3 Heat ∙ 2s cooldown") goes in orange
 ## under the name, the rest below the divider. It is the HUD's last child, so it draws over
 ## every other card (a discovery toast, a banner) while the mouse is on a slot.
 
 const FONT_SIZE := EmberTreeFonts.TEXT_SIZE
-## Width the description wraps at, in card pixels (96 game pixels).
+## Width the description wraps at, in card pixels (128 game pixels at 1080p).
 const TEXT_WIDTH := 192.0
 ## Gap between the lines, in card pixels.
 const LINE_GAP := 2

@@ -14,9 +14,9 @@ signal finished
 const GROUP := "dialogue_box"
 ## The keys that move it on, besides a left click.
 const ADVANCE_ACTIONS: Array[String] = ["trainer_aid", "skill_3", "dodge", "ui_accept"]
-## Card pixels (twice the game's) for the line's width.
+## Card pixels (UI pixels, see HudCard) for the line's width.
 const LINE_WIDTH := 500.0
-## The portrait is the 16×26 sprite at 3 card pixels per sprite pixel (1.5 game pixels).
+## The portrait is the 16×26 sprite at 3 card pixels per sprite pixel (6 window pixels at 1080p).
 const PORTRAIT_SCALE := 3.0
 const PORTRAIT_GAP := 10
 ## Gap between the speaker's name and the line, in card pixels.
