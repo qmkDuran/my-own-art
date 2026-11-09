@@ -37,7 +37,7 @@ static func card_style(background: Color, border: Color) -> StyleBoxFlat:
 static func make_button(text: String) -> Button:
 	var button := Button.new()
 	button.text = text
-	# No keyboard focus: Tab toggles the tree and must not move focus to the button instead.
+	# No keyboard focus: Tab toggles the chain guide and must not move focus to a button instead.
 	button.focus_mode = Control.FOCUS_NONE
 	button.add_theme_font_size_override("font_size", EmberTreeFonts.TEXT_SIZE)
 	button.add_theme_color_override("font_color", EmberTreePalette.CREAM)

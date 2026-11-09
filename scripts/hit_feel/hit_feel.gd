@@ -1,7 +1,8 @@
 class_name HitFeel
 extends RefCounted
 ## The reusable hit-feel kit (see PROJECT_B.md, "Hit-feel kit"): one call per landed hit
-## gives it the freeze, shake, spark and ring that fit how big it is. The target's own white
+## gives it the freeze, shake, spark and ring that fit how big it is. No words ever pop up
+## in combat: big beats get a coloured `burst` instead. The target's own white
 ## flash comes from its HitFlash when it takes damage.
 ##
 ##   LIGHT   basic hits:            3-frame hit-stop, 1 px shake, small spark
@@ -24,6 +25,8 @@ const RING_RADIUS := 20.0
 const RING_SECONDS := 0.28
 const LINK_SLOW_SCALE := 0.3
 const LINK_SLOW_GAME_FRAMES := 20
+## Seconds the rings of a big beat (`burst`) take to spread out.
+const BURST_SECONDS := 0.4
 ## Where a spark sits on a target: the middle of its body, above the feet.
 const BODY_OFFSET := Vector2(0, -7)
 
@@ -53,6 +56,16 @@ static func land(attacker: Node2D, spots: Array[Vector2], color: Color, weight: 
 		Weight.FINISHER:
 			time.hit_stop(FINISHER_STOP_FRAMES)
 			ImpactFrame.play(attacker)
+
+
+## The wordless cue for a big beat (a Signal Skill, a reaction, a Break): a large star and
+## three rings in `color` and white spreading to `radius`. No text: colour and size say
+## what happened (see the chain guide, Tab).
+static func burst(world: Node, at: Vector2, color: Color, radius: float) -> void:
+	ImpactStar.spawn(world, at + BODY_OFFSET, radius * 0.5, color)
+	Shockwave.spawn(RING_SCENE, world, at, radius, BURST_SECONDS, color)
+	Shockwave.spawn(RING_SCENE, world, at, radius * 0.7, BURST_SECONDS * 0.8, ApolloPalette.WHITE)
+	Shockwave.spawn(RING_SCENE, world, at, radius * 0.4, BURST_SECONDS * 0.6, color)
 
 
 ## Shakes the camera through the attacker's ScreenShake (every creature has one).

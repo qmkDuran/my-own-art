@@ -6,8 +6,8 @@ extends RefCounted
 
 ## Seconds every one of the attacker's cooldowns loses per landed hit ("keep hitting").
 const COOLDOWN_SHAVE_PER_HIT := 0.15
-const BREAK_WORD := "BREAK!"
-const WORD_HEIGHT := -22.0
+## The wordless Break cue: a cream burst this wide.
+const BREAK_BURST_RADIUS := 26.0
 
 
 ## Hits each target for `damage` with the attacker's element, then everything above.
@@ -31,7 +31,7 @@ static func after_hit(attacker: Node2D, target_health: Health, poise_damage: int
 		skill_bar.shave_cooldowns(COOLDOWN_SHAVE_PER_HIT)
 	if Poise.drain(target_health, poise_damage):
 		var target := target_health.get_parent() as Node2D
-		WordBurst.pop(target.get_parent(), target.global_position + Vector2(0, WORD_HEIGHT), BREAK_WORD, ApolloPalette.CREAM)
+		HitFeel.burst(target.get_parent(), target.global_position, ApolloPalette.CREAM, BREAK_BURST_RADIUS)
 	if not reaction.is_empty():
 		Reactions.trigger(reaction, attacker, target_health)
 

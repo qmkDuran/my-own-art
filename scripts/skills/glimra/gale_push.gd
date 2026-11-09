@@ -15,3 +15,7 @@ func _land() -> void:
 	AbilityTargets.hurt_all(_caster, targets, damage)
 	AbilityTargets.knock_back_all(targets, origin, knockback_speed)
 	GaleCone.spawn(_caster.get_parent(), _body_position(), _aim_direction, reach, cone_degrees)
+
+
+func guide_line() -> String:
+	return "A cone of wind (%d px, %d°): %d dmg and throws every enemy in it far back." % [reach, cone_degrees, damage]

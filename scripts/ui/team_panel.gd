@@ -5,7 +5,9 @@ extends Control
 ## raised in a gold frame with its name above; while the swap cooldown runs, the benched
 ## cards are veiled; a defeated member is greyed out with a red cross; a member whose Signal
 ## Skill is armed (the condition it needs is on an enemy right now) glows in its element
-## colour, with a READY pip above it naming the combo (e.g. "DROWN"): press its key.
+## colour, its key number flashes, and a badge above it shows the icon of that condition
+## (e.g. the roots of Rooted on Ripfin's card): press its key. No words: the chain guide
+## (Tab) explains every icon.
 ## Finds the Party by its group, so levels without one simply show nothing.
 
 const CARD_SIZE := Vector2(20, 20)
@@ -23,13 +25,11 @@ const WOUNDED_SHARE := 0.5
 const CRITICAL_SHARE := 0.25
 ## How fast the "Signal armed" outline pulses, in radians per second.
 const ARMED_PULSE_SPEED := 10.0
-const READY_WORD := "READY"
-## The READY pip: how far above the card its bottom sits, and its padding.
-const PIP_BOTTOM_GAP := 9
-const PIP_PADDING := 2
-const PIP_LINE_GAP := 1
-## Neighbouring pips are staggered by this many pixels so they never overlap.
-const PIP_STAGGER := 13
+## The condition badge over a lit card: how far above the card its bottom sits, its padding
+## around the 7×7 icon, and how far it bobs.
+const BADGE_BOTTOM_GAP := 9
+const BADGE_PADDING := 1
+const BADGE_BOB := 1.0
 
 var _party: Party
 
@@ -79,14 +79,14 @@ func _draw_card(slot_index: int, top_left: Vector2) -> void:
 		draw_line(top_left + Vector2(CARD_SIZE.x - 3, 3), top_left + Vector2(3, CARD_SIZE.y - 3), ApolloPalette.RED_LIGHT, 1.0)
 	var frame_color := ApolloPalette.GOLD if is_active else ApolloPalette.STONE_LIGHT
 	draw_rect(card, frame_color, false, 1.0)
-	var armed_label := _party.armed_label(slot_index)
-	if not armed_label.is_empty():
+	var armed_status := _party.armed_status(slot_index)
+	var is_armed := not armed_status.is_empty()
+	if is_armed:
 		_draw_armed_glow(card, element_color)
-		_draw_ready_pip(slot_index, top_left, armed_label, element_color)
+		_draw_condition_badge(top_left, armed_status, element_color)
 	else:
 		draw_rect(card.grow(1), ApolloPalette.OUTLINE, false, 1.0)
-	var key_color := ApolloPalette.GOLD if is_active else ApolloPalette.CREAM
-	PixelFont.draw_text(self, str(slot_index + 1), top_left + KEY_TOP_LEFT, key_color, ApolloPalette.OUTLINE)
+	_draw_key(slot_index, top_left, is_active, is_armed)
 	_draw_health_bar(top_left + Vector2(0, HEALTH_BAR_TOP), member_health)
 
 
@@ -105,22 +105,32 @@ func _draw_armed_glow(card: Rect2, element_color: Color) -> void:
 	draw_rect(card.grow(3), Color(ApolloPalette.WHITE, pulse * 0.6), false, 1.0)
 
 
-## A small two-line tag above the card: "READY" and the combo's name, in the element colour.
-func _draw_ready_pip(slot_index: int, card_top_left: Vector2, label: String, element_color: Color) -> void:
-	var text_width := maxi(PixelFont.width_of(READY_WORD), PixelFont.width_of(label))
-	var size := Vector2(text_width + PIP_PADDING * 2, PixelFont.GLYPH_HEIGHT * 2 + PIP_LINE_GAP + PIP_PADDING * 2)
-	var stagger := PIP_STAGGER * (slot_index % 2)
-	var centre_x := card_top_left.x + CARD_SIZE.x / 2.0
-	var pip_top_left := Vector2(roundf(centre_x - size.x / 2.0), -PIP_BOTTOM_GAP - size.y - stagger)
-	var pip := Rect2(pip_top_left, size)
-	draw_rect(pip.grow(1), ApolloPalette.OUTLINE)
-	draw_rect(pip, element_color)
-	draw_line(Vector2(roundf(centre_x), pip.end.y), Vector2(roundf(centre_x), card_top_left.y - 1), element_color, 1.0)
-	var text_left := pip_top_left.x + PIP_PADDING
-	var ready_left := text_left + roundf((text_width - PixelFont.width_of(READY_WORD)) / 2.0)
-	var label_left := text_left + roundf((text_width - PixelFont.width_of(label)) / 2.0)
-	PixelFont.draw_text(self, READY_WORD, Vector2(ready_left, pip_top_left.y + PIP_PADDING), ApolloPalette.WHITE, ApolloPalette.OUTLINE)
-	PixelFont.draw_text(self, label, Vector2(label_left, pip_top_left.y + PIP_PADDING + PixelFont.GLYPH_HEIGHT + PIP_LINE_GAP), ApolloPalette.GOLD, ApolloPalette.OUTLINE)
+## A small framed badge above the card, in the element colour, holding the icon of the
+## status that armed it, with a stem down to the card. It bobs so the eye catches it.
+func _draw_condition_badge(card_top_left: Vector2, status_name: String, element_color: Color) -> void:
+	var side := ChainStatusIcons.SIZE + 2 + BADGE_PADDING * 2
+	var bob := roundf(BADGE_BOB * sin(Time.get_ticks_msec() / 1000.0 * ARMED_PULSE_SPEED * 0.5))
+	var centre_x := roundf(card_top_left.x + CARD_SIZE.x / 2.0)
+	var badge := Rect2(Vector2(centre_x - floorf(side / 2.0), card_top_left.y - BADGE_BOTTOM_GAP - side + bob), Vector2(side, side))
+	draw_line(Vector2(centre_x, badge.end.y), Vector2(centre_x, card_top_left.y - 1), element_color, 1.0)
+	draw_rect(badge.grow(1), ApolloPalette.OUTLINE)
+	draw_rect(badge, element_color)
+	draw_rect(badge.grow(-1), ApolloPalette.DARK)
+	ChainStatusIcons.draw(self, status_name, badge.position + Vector2.ONE * (BADGE_PADDING + 1))
+
+
+## The card's key number (1/2/3): gold on the field, cream on the bench, and flashing
+## white and gold on a dark tab while the card is lit, so the key to press stands out.
+func _draw_key(slot_index: int, top_left: Vector2, is_active: bool, is_armed: bool) -> void:
+	var key := str(slot_index + 1)
+	var key_color := ApolloPalette.GOLD if is_active else ApolloPalette.CREAM
+	if is_armed:
+		var pulse := 0.5 + 0.5 * sin(Time.get_ticks_msec() / 1000.0 * ARMED_PULSE_SPEED)
+		key_color = ApolloPalette.GOLD.lerp(ApolloPalette.WHITE, pulse)
+		var tab := Rect2(top_left + KEY_TOP_LEFT - Vector2.ONE, Vector2(PixelFont.width_of(key) + 2, PixelFont.GLYPH_HEIGHT + 2))
+		draw_rect(tab.grow(1), ApolloPalette.OUTLINE)
+		draw_rect(tab, ApolloPalette.DARK)
+	PixelFont.draw_text(self, key, top_left + KEY_TOP_LEFT, key_color, ApolloPalette.OUTLINE)
 
 
 func _draw_health_bar(top_left: Vector2, member_health: Health) -> void:

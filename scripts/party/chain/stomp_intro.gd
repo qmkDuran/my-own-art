@@ -11,6 +11,10 @@ const ROOT_SECONDS := 2.0
 const SHOCKWAVE_RADIUS := 40.0
 
 
+func guide_line() -> String:
+	return "Drops in: %d dmg to each set-up enemy within %d px, slams them down and Roots them %d s." % [damage, reach, ROOT_SECONDS]
+
+
 func _arrive(member: PlayableCreature, _targets: Array[Health]) -> void:
 	SpriteMotion.slide(SpriteMotion.sprite_of(member), Vector2(0, -DROP_HEIGHT), Vector2.ZERO, arrival_seconds,
 			Tween.TRANS_QUAD, Tween.EASE_IN)

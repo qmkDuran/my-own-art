@@ -14,6 +14,10 @@ const UPPERCUT_HOP := 10.0
 @export var impact_scene: PackedScene
 
 
+func guide_line() -> String:
+	return "%d dmg to each set-up enemy within %d px, throws them up again (Airborne %.1f s)." % [damage, reach, RELAUNCH_SECONDS]
+
+
 func _arrive(member: PlayableCreature, targets: Array[Health]) -> void:
 	var toward_enemy := _side_toward(member, targets)
 	var sprite := SpriteMotion.sprite_of(member)

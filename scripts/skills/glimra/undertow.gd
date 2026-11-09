@@ -105,3 +105,10 @@ func _splash(at: Vector2, amount: int) -> void:
 	spray.speed_range = Vector2(40, 120)
 	Shockwave.spawn(HitFeel.RING_SCENE, _caster.get_parent(), at, 12.0, 0.25, ApolloPalette.SKY_LIGHT)
 
+
+func guide_line() -> String:
+	return "Swims under the enemy nearest the cursor, bites from behind (%d dmg). The splash Soaks enemies within %d px (%d s)." % [damage, soak_radius, soak_seconds]
+
+
+func set_up_status() -> String:
+	return SetUp.SOAKED

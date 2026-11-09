@@ -46,3 +46,7 @@ func _land() -> void:
 func _ring(at: Vector2, radius: float, color: Color) -> void:
 	if ring_scene != null:
 		Shockwave.spawn(ring_scene, _caster.get_parent(), at, radius, 0.25, color)
+
+
+func guide_line() -> String:
+	return "An updraft where it stands (%d dmg within %d px), then it rides the wind %d px to the cursor, untouchable." % [damage, burst_radius, dash_distance]

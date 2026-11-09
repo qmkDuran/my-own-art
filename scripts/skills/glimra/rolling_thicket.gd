@@ -86,3 +86,7 @@ func _bowl(target_health: Health) -> void:
 	if not pins.is_empty():
 		ElementStrike.hit(_caster, pins, bowling_damage, HitFeel.Weight.LIGHT, 2)
 		AbilityTargets.knock_back_all(pins, enemy.global_position, knockback_speed)
+
+
+func guide_line() -> String:
+	return "Rolls %d px to the cursor (untouchable): %d dmg to each enemy; Rooted ones take x%d and are bowled into others (%d dmg)." % [roll_distance, damage, rooted_multiplier, bowling_damage]

@@ -1,12 +1,12 @@
 class_name LinkMeterBar
 extends Control
 ## The team's Link meter on the HUD, next to the team cards: a "LINK" label over a bar in
-## three segments that fills from hits, reactions and Signal Skills. Full, it pulses gold
-## and says "FINISHER": the next Signal Skill is a Link Finisher.
+## three segments that fills from hits, reactions and Signal Skills. Full, the label and bar
+## pulse gold and white inside a gold glow (no extra words): the next Signal Skill is a
+## Link Finisher.
 ## Finds the LinkMeter by its group, so levels without one show nothing.
 
 const LABEL := "LINK"
-const FULL_LABEL := "FINISHER"
 const BAR_TOP := 7
 const BAR_SIZE := Vector2(34, 3)
 const SEGMENTS := 3
@@ -31,8 +31,10 @@ func _draw() -> void:
 	var is_full := _meter.is_full()
 	var pulse := 0.5 + 0.5 * sin(Time.get_ticks_msec() / 1000.0 * PULSE_SPEED)
 	var label_color := ApolloPalette.GOLD.lerp(ApolloPalette.WHITE, pulse) if is_full else ApolloPalette.CREAM
-	PixelFont.draw_text(self, FULL_LABEL if is_full else LABEL, Vector2.ZERO, label_color, ApolloPalette.OUTLINE)
+	PixelFont.draw_text(self, LABEL, Vector2.ZERO, label_color, ApolloPalette.OUTLINE)
 	var bar := Rect2(Vector2(0, BAR_TOP), BAR_SIZE)
+	if is_full:
+		draw_rect(bar.grow(2), Color(ApolloPalette.GOLD, pulse), false, 1.0)
 	draw_rect(bar.grow(1), ApolloPalette.OUTLINE)
 	draw_rect(bar, ApolloPalette.COAL)
 	var fill_color := label_color if is_full else ApolloPalette.SKY_LIGHT

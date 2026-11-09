@@ -165,3 +165,8 @@ func _land_hit() -> void:
 		target_hit.emit(target_health)
 	if not struck.is_empty():
 		hits_landed.emit(struck.size())
+
+
+## What the jab does, in one plain line with its real numbers (for the chain guide, Tab).
+func guide_line() -> String:
+	return "Jab combo: %d dmg per jab, reach %d px." % [damage, reach]

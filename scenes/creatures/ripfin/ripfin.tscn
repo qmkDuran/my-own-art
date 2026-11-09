@@ -157,12 +157,8 @@ animation_name = "signature"
 
 [node name="Intro" type="Node" parent="."]
 script = ExtResource("26_intro")
-signal_name = "AMBUSH!"
-condition_labels = {
-"Rooted": "DROWN",
-"Broken": "DROWN",
-"Soaked": "AMBUSH"
-}
+signal_name = "Ambush"
+trigger_statuses = Array[String](["Rooted", "Broken", "Soaked"])
 reach = 90.0
 damage = 3
 arrival_seconds = 0.16

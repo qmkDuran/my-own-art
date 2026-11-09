@@ -76,16 +76,16 @@ func swap_cooldown_fraction() -> float:
 ## Whether the member in `slot_index` has its Intro armed: swapping it in now would cash in
 ## a set-up (e.g. Emberoo while enemies hang Launched nearby). The TeamPanel makes it glow.
 func is_intro_armed(slot_index: int) -> bool:
-	return not armed_label(slot_index).is_empty()
+	return not armed_status(slot_index).is_empty()
 
 
-## The combo the member in `slot_index` would fire if swapped in now ("" when not armed),
-## for the READY pip on its card.
-func armed_label(slot_index: int) -> String:
+## The status on a nearby enemy that would fire the Signal Skill of the member in
+## `slot_index` if swapped in now ("" when not armed); its card shows that status's icon.
+func armed_status(slot_index: int) -> String:
 	if slot_index == active_slot or members[slot_index].health_component().is_dead():
 		return ""
 	var intro := members[slot_index].get_node_or_null(INTRO_NODE) as SwapMove
-	return intro.armed_label_at(active_member().global_position) if intro != null else ""
+	return intro.armed_status_at(active_member().global_position) if intro != null else ""
 
 
 func can_swap_to(slot_index: int) -> bool:

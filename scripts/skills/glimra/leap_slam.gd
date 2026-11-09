@@ -51,3 +51,7 @@ func _land() -> void:
 		Shockwave.spawn(ring_scene, _caster.get_parent(), landing, slam_radius * 0.6, 0.22, ApolloPalette.LIME_PALE)
 	if screen_shake != null:
 		screen_shake.shake(2.0, 0.16)
+
+
+func guide_line() -> String:
+	return "Leaps up to %d px to the cursor (untouchable), then slams: %d dmg to every enemy within %d px, thrown back." % [max_distance, damage, slam_radius]

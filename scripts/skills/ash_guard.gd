@@ -57,3 +57,7 @@ func _drop_guard() -> void:
 	if is_instance_valid(_shimmer):
 		_shimmer.queue_free()
 	_shimmer = null
+
+
+func guide_line() -> String:
+	return "Guard for %.1f s: take %d%% damage and shoves don't move you. Press again to drop it." % [guard_duration, damage_taken_percent]

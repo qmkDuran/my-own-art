@@ -11,6 +11,10 @@ const EMBERS: Array[Color] = [ApolloPalette.GOLD, ApolloPalette.ORANGE, ApolloPa
 @export var burn_seconds: float = 3.5
 
 
+func guide_line() -> String:
+	return "Leaps out in flame: every enemy within %d px is Burning (%.1f s)." % [radius, burn_seconds]
+
+
 func play(member: PlayableCreature, _partner: PlayableCreature) -> void:
 	var spot := member.global_position
 	var world := member.get_parent()
@@ -24,3 +28,7 @@ func play(member: PlayableCreature, _partner: PlayableCreature) -> void:
 	embers.gravity = -30.0
 	for target_health in AbilityTargets.within(self, spot, radius):
 		SetUp.apply(target_health, SetUp.BURNING, burn_seconds)
+
+
+func set_up_status() -> String:
+	return SetUp.BURNING

@@ -11,3 +11,10 @@ func _land() -> void:
 	_caster.get_parent().add_child(shot)
 	shot.global_position = _caster.global_position + _aim_direction * 4.0
 	shot.launch(_aim_direction)
+
+
+func guide_line() -> String:
+	var shot := shot_scene.instantiate() as WindShot
+	var line := "Fires a fast gust orb at the cursor: %d dmg and a nudge to the first enemy it meets." % shot.damage
+	shot.free()
+	return line

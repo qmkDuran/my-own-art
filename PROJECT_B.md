@@ -125,11 +125,14 @@ Skills Work", https://allthings.how/dragonsword-awakening-how-tag-team-combat-an
 1. An **Active** puts a **status** on enemies (Rooted, Soaked, Burning, Airborne...).
 2. You keep hitting: hits drain the enemy's **poise** and shave your cooldowns.
 3. When the condition a teammate needs is really on an enemy near you, **that teammate's card
-   lights up** with a READY pip naming the combo (e.g. "READY / DROWN"). A card never lights
-   just because the teammate exists.
+   lights up**: it glows in its element colour, its key number flashes, and a small badge above
+   it shows the **icon of that status** (e.g. the roots of Rooted over Ripfin's card). No words.
+   A card never lights just because the teammate exists.
 4. Press its key: the teammate swaps in, its entrance lands and its **Signal Skill** fires (a
-   big burst, 8-frame hit-stop, a word on screen). The outgoing creature's Outro is the "support
-   attack" on the way out. Then swap back, or keep going.
+   big burst of rings in its element colour, 8-frame hit-stop). The outgoing creature's Outro is
+   the "support attack" on the way out. Then swap back, or keep going.
+5. What every skill, Signal Skill and reaction does is in the **chain guide (Tab)**, never on
+   the battlefield (see "No words in combat").
 
 ### 2. Statuses (set-ups)
 | Status | Element | Applied by (starters) | Looks like |
@@ -155,9 +158,9 @@ Skills Work", https://allthings.how/dragonsword-awakening-how-tag-team-combat-an
 ### 4. Signal Skills (the starters)
 | Creature | Entrance | Signal Skill fires on | What it does |
 |---|---|---|---|
-| Emberoo | flies in from the side in a fire streak, lands a flaming uppercut | Airborne, Broken, Soaked | "FLAME UPPERCUT!": 3 dmg to every set-up enemy within 90 px, throws them up again (Airborne); Fire on Soaked = **Steam Burst** |
-| Ripfin | surfaces behind the nearest enemy, erupting in dirt and water | Rooted, Broken, Soaked | "AMBUSH!": a bite on set-up enemies within 26 px; always crits on Soaked; Tide on Rooted = **Drown** |
-| Mossdillo | drops from the sky into a stomp: shockwave rings, flying leaves | Airborne, Burning | "THICKET STOMP!": slams airborne enemies down and Roots them; Bloom on Burning = **Wildfire** |
+| Emberoo | flies in from the side in a fire streak, lands a flaming uppercut | Airborne, Broken, Soaked | Flame Uppercut: 3 dmg to every set-up enemy within 90 px, throws them up again (Airborne); Fire on Soaked = **Steam Burst** |
+| Ripfin | surfaces behind the nearest enemy, erupting in dirt and water | Rooted, Broken, Soaked | Ambush: a bite on set-up enemies within 26 px; always crits on Soaked; Tide on Rooted = **Drown** |
+| Mossdillo | drops from the sky into a stomp: shockwave rings, flying leaves | Airborne, Burning | Thicket Stomp: slams airborne enemies down and Roots them; Bloom on Burning = **Wildfire** |
 
 Outros: **Emberoo** leaps out in a column of flame and sets everything within 42 px Burning;
 **Ripfin** dives and leaves a whirlpool (1.4 s) that drags enemies in and Soaks them (it keeps
@@ -183,13 +186,13 @@ Poisoned + Wind = Miasma, Staggered + Wind = Shatter Gust.
 ### 6. The Link meter (kept, light)
 - One bar in 3 segments next to the team cards. It fills from hits (+1), reactions (+8) and
   Signal Skills (+8) (`LinkMeter`).
-- Full ("FINISHER" pulses): the next Signal Skill is a **Link Finisher**: double damage, a gold
-  flash, an impact frame, "LINK FINISHER!" and **slow-mo at 0.3× for 20 game frames**. The meter
-  empties. A plain (unlit) swap never spends it.
+- Full (the bar and its label pulse gold in a gold glow): the next Signal Skill is a **Link
+  Finisher**: double damage, a gold flash, an impact frame, big gold rings and **slow-mo at 0.3×
+  for 20 game frames**. The meter empties. A plain (unlit) swap never spends it.
 
 ## Flashy combat: the hit-feel kit
 Project B leans into spectacle. Built as `scripts/hit_feel/` (HitFeel, TimeControl, ImpactStar,
-ImpactFrame, PixelDebris, WordBurst); every hit picks a weight:
+ImpactFrame, PixelDebris); every hit picks a weight:
 
 | Weight | Used for | Hit-stop | Shake | Extras |
 |---|---|---|---|---|
@@ -202,13 +205,50 @@ ImpactFrame, PixelDebris, WordBurst); every hit picks a weight:
 - Screen shake is capped at **4 px** (`ScreenShake.MAX_STRENGTH`), whole pixels only.
 - Speed lines on dashes and entrances (Undertow's surfacing, Rolling Thicket, Emberoo's fly-in,
   Mossdillo's drop).
-- Reactions and Signal Skills pop a big **word burst** in the pixel font ("STEAM BURST!",
-  "DROWN!", "BREAK!"), slamming in at 3× and settling at 2×. Signal words sit above reaction
-  words so they never overlap. A reaction shows its word and impact frame once per beat (18
-  frames), however many enemies it hits.
+- **No words pop up** (see below). Big beats get a wordless **burst** (`HitFeel.burst`: a large
+  star and three rings): a Signal Skill in the creature's element colour, a reaction in its own
+  colour (Steam Burst white, Drown sky, Kindling orange, Wildfire gold, Toxic Blaze green) plus a
+  faint full-screen tint of that colour, a Break in cream. A reaction shows its burst, tint and
+  impact frame once per beat (18 frames), however many enemies it hits.
+- Screen flashes and impact frames are **light and never stack**: a flash is a 0.12–0.22 alpha
+  tint fading in 0.12 s, the impact frame a 0.25 dark then 0.12 pale frame, and one asked for
+  within 12 frames of the last is skipped (so a Steam Burst and the uppercut's gold flash on
+  the same swap make one flash). Hit sparks have a tiny white pixel-plus heart, never a filled
+  square (a frozen square over an enemy reads as a bug).
+- **Damage numbers never overlap:** hits on the same target within 0.3 s merge into one rising
+  total, a new number whose path up would cross another's is moved above it, at most 8 show at
+  once (oldest first), and they draw at whole-number scales (crits 2×, popping in white).
 - Everything is code-drawn on the pixel grid in Apollo colours (debris, rings, vines, whirlpool,
   bark plates); sprites move by whole pixels only.
 - Real gaps between attacks (recovery frames, cooldowns, the 1.5 s swap cooldown), so it isn't mashy.
+
+## No words in combat (decision)
+The user's call (DragonSword: Awakening doesn't show them either): chains play out with **no
+text on the battlefield**: no "STEAM BURST!", no "DROWN!", no "BREAK!", no "LINK FINISHER!",
+no READY tags. The fight speaks in
+colour, size and icons: element-coloured bursts and flashes, hit-stop, shake, impact frames,
+slow-mo, and a status icon on a lit team card. (`WordBurst` was deleted.) Damage numbers stay:
+they are numbers, not words. The names and exact effects live in one place, the chain guide.
+
+## Chain guide (Tab)
+**Tab** (or **Esc**) opens the Team Guide and pauses the game; Tab or Esc closes it. **←/→** or
+clicking a tab turns the page. It draws at 960×540 in Monogram on dark cards edged in each
+element's colour, like the Ember Tree (`scripts/ui/chain_guide_*.gd`).
+- **Team:** a card per team member: its keys (RMB/Q, W, E), each skill's icon, name, cooldown,
+  the status it sets up (icon) and one plain line with its real numbers; its **Signal Skill**
+  and exactly which statuses fire it (`[Rooted] → Drown`, `[Broken] [Soaked] → Ambush`); and its
+  swap-out move.
+- **Chains:** the three steps of a chain, the Link meter, and every chain the team can do,
+  e.g. `Mossdillo [W] Bramble Snare → [Rooted] → [2] Ripfin → Drown`.
+- **Reactions:** status + hit element → reaction and what it does; every status with its icon
+  and who on the team sets it.
+- **Recruits:** the same cards for Toxlop and Zephoot (not on the team yet).
+
+Everything is **read from the code**: each skill and swap move describes itself (`guide_line`,
+`set_up_status`), Signal Skills list their `trigger_statuses`, reactions come from
+`Reactions.TABLE` and `ReactionEffects.describe`, and the chains are worked out from all of that
+(`ChainGuideRecipes`). Change a number and the guide follows. Status icons
+(`ChainStatusIcons`) are the same ones the lit team cards use.
 
 ## Elements (recommend 8, room for 10)
 More elements means more reactions to design and balance (every pair can react). **8** keeps
@@ -336,21 +376,23 @@ creature roles.
 
 ## Prototype (built in the test arena, `scenes/main/main.tscn`)
 **How to play:** run the main scene (enemies start paused; press **F2** to wake them).
-- **1 / 2 / 3:** swap to Emberoo / Ripfin / Mossdillo (1.5 s cooldown). A card with a
-  **READY** pip is lit: pressing it fires that creature's Signal Skill.
+- **1 / 2 / 3:** swap to Emberoo / Ripfin / Mossdillo (1.5 s cooldown). A lit card (glowing,
+  key flashing, a status icon over it) means pressing it fires that creature's Signal Skill.
+- **Tab** (or **Esc**): the chain guide (pauses). **K:** the Ember Tree (Emberoo only).
 - **Right mouse** (or Shift+left, left-click an enemy, or **Q**): basic attack. **W:** Active 1.
   **E:** Active 2. **Space:** dodge. Left mouse: move.
 - **Emberoo:** Project A's kit (F3 grants debug points, K opens the Ember Tree for Ash Guard and
-  Flame Uppercut).
+  Flame Uppercut; Tab no longer opens the tree, it opens the chain guide).
 - **Ripfin:** Fin Slash (quick bite), Undertow (dives, swims under the enemy nearest the cursor,
   surfaces behind it; the splash Soaks everything around), Riptide Ambush (bursts up under every
   Soaked enemy in turn and throws each Airborne).
 - **Mossdillo:** Claw Swipe, Bramble Snare (vines at the cursor Root a pack), Rolling Thicket
   (rolls to the cursor; Rooted enemies take double and are bowled into the others).
-- **Chains to try:** jab with Emberoo, swap to Mossdillo (Ember Leap burns the pack: WILDFIRE);
-  snare the pack, swap to Ripfin (DROWN); Undertow and Riptide Ambush, swap to Emberoo (the
-  whirlpool soaks them: STEAM BURST, and the uppercut throws them up); swap to Mossdillo
-  (SLAM, roots them), Rolling Thicket through the roots. Fill the Link meter for a Link Finisher.
+- **Chains to try** (all listed in the guide's Chains page): jab with Emberoo, swap to
+  Mossdillo (Ember Leap burns the pack: Wildfire); snare the pack, swap to Ripfin (Drown);
+  Undertow and Riptide Ambush, swap to Emberoo (the whirlpool soaks them: Steam Burst, and the
+  uppercut throws them up); swap to Mossdillo (Thicket Stomp slams and roots them), Rolling
+  Thicket through the roots. Fill the Link meter for a Link Finisher.
 
 **Code map:** `scripts/party/` (Party, PartyMemberSwitch, SwapFlourish, ElementColors),
 `scripts/party/chain/` (SwapMove, SignalSkill and the three Intros UppercutIntro, AmbushIntro,
@@ -360,7 +402,8 @@ Reactions, ReactionEffects, ElementStrike, ElementalHits, LinkMeter, SpriteMotio
 Poise, Launched), `scripts/skills/glimra/` (Swipe, Undertow, RiptideAmbush, BrambleSnare,
 RollingThicket, EnemyPassThrough, plus Toxlop's and Zephoot's abilities),
 `scripts/effects/` (Whirlpool, BarkWard, BrambleVines, SlashArc), `scripts/ui/team_panel.gd`
-(READY pips), `scripts/ui/link_meter_bar.gd`, scenes `scenes/creatures/ripfin/`,
+(lit cards with status badges), `scripts/ui/link_meter_bar.gd`, `scripts/ui/chain_status_icons.gd`,
+the chain guide `scripts/ui/chain_guide_*.gd` (ChainGuideScreen in `scenes/game/game_layer.tscn`), scenes `scenes/creatures/ripfin/`,
 `scenes/creatures/mossdillo/`. Ruins Edge still plays Project A's solo Emberoo.
 
 **Not built yet:** unbinding/recruiting (Toxlop and Zephoot aren't on the team yet), the dodge

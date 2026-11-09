@@ -49,3 +49,15 @@ func caster_lift() -> float:
 ## Whether enemy attacks pass through the caster right now (e.g. mid-leap or mid-dash).
 func makes_caster_invulnerable() -> bool:
 	return false
+
+
+## What the skill does, in one plain line with its real numbers (for the chain guide, Tab).
+## Each action fills it in from its own exported values, so the guide can't drift.
+func guide_line() -> String:
+	return ""
+
+
+## The status (a SetUp name) this skill puts on enemies, "" for none. The chain guide shows
+## its icon next to the skill, so set-ups are easy to spot.
+func set_up_status() -> String:
+	return ""

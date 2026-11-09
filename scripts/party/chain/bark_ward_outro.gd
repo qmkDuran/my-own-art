@@ -8,6 +8,10 @@ const ROLL_SECONDS := 0.25
 const BARK: Array[Color] = [ApolloPalette.CORK, ApolloPalette.CORK_DARK, ApolloPalette.GREEN]
 
 
+func guide_line() -> String:
+	return "Rolls out, wraps the incoming teammate in Bark Ward: blocks the next %d hits (%d s)." % [BarkWard.HITS, BarkWard.SECONDS]
+
+
 func play(member: PlayableCreature, partner: PlayableCreature) -> void:
 	SwapFlourish.ghost(member, ROLL_AWAY, ROLL_SECONDS, ApolloPalette.CORK * 2.0)
 	PixelDebris.spray(member.get_parent(), member.global_position, BARK, 14, Vector2.UP, 160.0)

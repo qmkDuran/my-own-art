@@ -24,3 +24,11 @@ func _land() -> void:
 	for target_health in targets:
 		SetUp.apply(target_health, SetUp.ROOTED, root_seconds)
 	ElementStrike.hit(_caster, targets, damage, HitFeel.Weight.LIGHT, poise_damage)
+
+
+func guide_line() -> String:
+	return "Vines at the cursor (up to %d px away) Root every enemy within %d px for %d s." % [max_distance, radius, root_seconds]
+
+
+func set_up_status() -> String:
+	return SetUp.ROOTED

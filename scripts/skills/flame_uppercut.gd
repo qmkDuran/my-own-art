@@ -136,3 +136,7 @@ func _knock_back(target: Node2D) -> void:
 	if away.length() < 0.1:
 		away = _aim_direction
 	target.call("knock_back", away.normalized() * knockback_speed)
+
+
+func guide_line() -> String:
+	return "A rising punch: a fan of flame (%d px, %d°) deals %d dmg to each enemy and knocks them far back." % [reach, arc_degrees, damage]

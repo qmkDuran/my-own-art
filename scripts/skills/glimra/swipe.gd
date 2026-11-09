@@ -22,3 +22,7 @@ func _land() -> void:
 	SlashArc.spawn(_caster.get_parent(), _body_position() + _aim_direction * 6.0, _aim_direction, 10.0, ApolloPalette.WHITE, trail)
 	AbilityTargets.hurt_all(_caster, targets, damage)
 	AbilityTargets.knock_back_all(targets, origin, knockback_speed)
+
+
+func guide_line() -> String:
+	return "%d dmg to every enemy in front (%d° cone, %d px), small shove." % [damage, cone_degrees, reach]

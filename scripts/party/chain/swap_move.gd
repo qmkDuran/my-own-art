@@ -16,15 +16,25 @@ func play(_member: PlayableCreature, _partner: PlayableCreature) -> void:
 
 ## For an Intro: whether coming in at `spot` would fire its Signal Skill right now.
 func is_armed_at(spot: Vector2) -> bool:
-	return not armed_label_at(spot).is_empty()
+	return not armed_status_at(spot).is_empty()
 
 
-## For an Intro: the name of the combo it would fire at `spot` ("" when not armed), for the
-## READY pip on its team card.
-func armed_label_at(_spot: Vector2) -> String:
+## For an Intro: the status (SetUp name) on a nearby enemy that would fire its Signal Skill
+## at `spot` ("" when not armed). The team card shows that status's icon.
+func armed_status_at(_spot: Vector2) -> String:
 	return ""
 
 
 ## For an Intro: seconds from the swap until its entrance lands (the swap i-frames cover it).
 func entrance_seconds() -> float:
 	return 0.0
+
+
+## What the move does, in one plain line with its real numbers (for the chain guide).
+func guide_line() -> String:
+	return ""
+
+
+## For an Outro: the status (a SetUp name) it leaves on enemies, "" for none (chain guide).
+func set_up_status() -> String:
+	return ""

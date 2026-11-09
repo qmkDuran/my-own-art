@@ -9,6 +9,10 @@ extends SwapMove
 @export var ring_scene: PackedScene
 
 
+func guide_line() -> String:
+	return "Leaves in a column of wind: every enemy within %d px is Airborne (%.1f s)." % [radius, launch_seconds]
+
+
 func play(member: PlayableCreature, _partner: PlayableCreature) -> void:
 	var spot := member.global_position
 	for target_health in AbilityTargets.within(self, spot, radius):
@@ -16,3 +20,7 @@ func play(member: PlayableCreature, _partner: PlayableCreature) -> void:
 	GaleCone.spawn(member.get_parent(), spot, Vector2.UP, radius * 0.6, 160.0)
 	if ring_scene != null:
 		Shockwave.spawn(ring_scene, member.get_parent(), spot, radius, 0.35, ApolloPalette.SKY_LIGHT)
+
+
+func set_up_status() -> String:
+	return SetUp.LAUNCHED

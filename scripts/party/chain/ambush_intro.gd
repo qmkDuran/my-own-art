@@ -11,6 +11,10 @@ const SPRAY: Array[Color] = [ApolloPalette.CORK, ApolloPalette.CORK_DARK, Apollo
 const ERUPT_HEIGHT := 12.0
 
 
+func guide_line() -> String:
+	return "Surfaces behind the enemy: %d dmg bite within %d px. Always crits on Soaked." % [damage, BITE_RADIUS]
+
+
 func _arrive(member: PlayableCreature, targets: Array[Health]) -> void:
 	var prey := _nearest(member, targets)
 	if prey == null:

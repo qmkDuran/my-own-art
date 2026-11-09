@@ -68,6 +68,23 @@ static func play(reaction_id: String, attacker: Node2D, target_health: Health, i
 			HitFeel.Weight.FINISHER if is_shown else HitFeel.Weight.HEAVY)
 
 
+## What reaction `reaction_id` does, in one plain line with its real numbers (for the chain
+## guide), worked out from the constants above so the two can't drift apart.
+static func describe(reaction_id: String) -> String:
+	match reaction_id:
+		Reactions.STEAM_BURST:
+			return "%d dmg to every enemy within %d px, knocks them back." % [STEAM_DAMAGE, STEAM_RADIUS]
+		Reactions.DROWN:
+			return "%d dmg to that enemy." % DROWN_DAMAGE
+		Reactions.KINDLING:
+			return "%d dmg, then a big burn: %d dmg/s for %d s." % [KINDLING_DAMAGE, KINDLING_BURN_DAMAGE, KINDLING_BURN_SECONDS]
+		Reactions.WILDFIRE:
+			return "%d dmg; Burning jumps to every enemy within %d px." % [WILDFIRE_DAMAGE, WILDFIRE_RADIUS]
+		Reactions.TOXIC_BLAZE:
+			return "%d dmg within %d px; all of them catch fire (%d s)." % [BLAZE_DAMAGE, BLAZE_RADIUS, BLAZE_BURN_SECONDS]
+	return ""
+
+
 static func _hurt(attacker: Node2D, targets: Array[Health], damage: int) -> void:
 	for target_health in targets:
 		CritRoll.deal_damage(attacker, target_health, damage)

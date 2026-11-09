@@ -15,3 +15,11 @@ func _land() -> void:
 	var to_cursor := player_input.get_aim_point() - _caster.global_position
 	var landing := _caster.global_position + to_cursor.limit_length(max_range)
 	PoisonPuddle.spawn(_caster.get_parent(), _body_position(), landing, puddle_radius, puddle_seconds)
+
+
+func guide_line() -> String:
+	return "Spits goo up to %d px: a puddle (%d px wide, %d s) Poisons every enemy standing in it." % [max_range, puddle_radius * 2.0, puddle_seconds]
+
+
+func set_up_status() -> String:
+	return SetUp.POISONED

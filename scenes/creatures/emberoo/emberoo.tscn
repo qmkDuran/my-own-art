@@ -225,12 +225,8 @@ script = ExtResource("90_path_mover")
 [node name="Intro" type="Node" parent="."]
 script = ExtResource("39_intro")
 impact_scene = ExtResource("7_impact")
-signal_name = "FLAME UPPERCUT!"
-condition_labels = {
-"Launched": "UPPERCUT",
-"Broken": "UPPERCUT",
-"Soaked": "STEAM"
-}
+signal_name = "Flame Uppercut"
+trigger_statuses = Array[String](["Launched", "Broken", "Soaked"])
 reach = 90.0
 damage = 3
 arrival_seconds = 0.15

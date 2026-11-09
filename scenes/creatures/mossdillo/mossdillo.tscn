@@ -159,11 +159,8 @@ animation_name = "signature"
 
 [node name="Intro" type="Node" parent="."]
 script = ExtResource("26_intro")
-signal_name = "THICKET STOMP!"
-condition_labels = {
-"Launched": "SLAM",
-"Burning": "WILDFIRE"
-}
+signal_name = "Thicket Stomp"
+trigger_statuses = Array[String](["Launched", "Burning"])
 reach = 70.0
 damage = 3
 arrival_seconds = 0.18

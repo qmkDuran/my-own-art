@@ -1,22 +1,23 @@
 class_name SignalSkill
 extends SwapMove
 ## A team creature's Intro: an entrance every time it is swapped in, plus a Signal Skill
-## (a big burst) when an enemy near the swap spot carries one of its `condition_labels`
-## statuses. The team card glows with a READY pip only then (Party.armed_label), so pressing
+## (a big burst) when an enemy near the swap spot carries one of its `trigger_statuses`.
+## The team card glows with that status's icon only then (Party.armed_status), so pressing
 ## a lit card is the payoff. With a full Link meter the Signal Skill is a Link Finisher.
+## No words pop up: the strike ends in a burst of rings in the creature's element colour
+## (gold rings too for a Link Finisher). The chain guide (Tab) names and explains it.
 ##
-## Each creature fills in its entrance (`_arrive`, `_touch_down`) and its strike visuals.
+## Each creature fills in its entrance (`_arrive`, `_touch_down`), its strike visuals and
+## its `guide_line`.
 
 const LINK_DAMAGE_MULTIPLIER := 2
-const LINK_WORD := "LINK FINISHER!"
-## Above the reaction words (which sit at -22), so the two never overlap.
-const SIGNAL_WORD_HEIGHT := -44.0
-const LINK_WORD_HEIGHT := -58.0
+const SIGNAL_BURST_RADIUS := 40.0
+const LINK_BURST_RADIUS := 64.0
 
-## The word shown when the Signal Skill fires.
+## The Signal Skill's name, shown in the chain guide (never on the battlefield).
 @export var signal_name: String = ""
-## Status -> the name on the READY pip, in priority order (e.g. {"Rooted": "DROWN"}).
-@export var condition_labels: Dictionary = {}
+## The statuses (SetUp names) that fire the Signal Skill, in priority order.
+@export var trigger_statuses: Array[String] = []
 ## How far from the swap spot it looks for set-up enemies, in pixels.
 @export var reach: float = 80.0
 @export var damage: int = 3
@@ -28,17 +29,21 @@ const LINK_WORD_HEIGHT := -58.0
 var is_link_finisher: bool = false
 
 
-func armed_label_at(spot: Vector2) -> String:
+func armed_status_at(spot: Vector2) -> String:
 	var nearby := AbilityTargets.within(self, spot, reach)
-	for status_name: String in condition_labels:
+	for status_name in trigger_statuses:
 		for target_health in nearby:
 			if SetUp.has(target_health.get_parent(), status_name):
-				return condition_labels[status_name]
+				return status_name
 	return ""
 
 
 func entrance_seconds() -> float:
 	return arrival_seconds
+
+
+func guide_line() -> String:
+	return "%d dmg to each set-up enemy within %d px." % [damage, reach]
 
 
 func play(member: PlayableCreature, _partner: PlayableCreature) -> void:
@@ -58,7 +63,7 @@ func play(member: PlayableCreature, _partner: PlayableCreature) -> void:
 func _set_up_targets(spot: Vector2) -> Array[Health]:
 	var found: Array[Health] = []
 	for target_health in AbilityTargets.within(self, spot, reach):
-		for status_name: String in condition_labels:
+		for status_name in trigger_statuses:
 			if SetUp.has(target_health.get_parent(), status_name):
 				found.append(target_health)
 				break
@@ -74,14 +79,13 @@ func _fire(member: PlayableCreature) -> void:
 	ElementStrike.hit(member, targets, strike_damage, HitFeel.Weight.HEAVY, poise_damage)
 	_after_strike(member, targets)
 	var world := member.get_parent()
-	var color := ElementColors.for_element(member.element)
-	WordBurst.pop(world, member.global_position + Vector2(0, SIGNAL_WORD_HEIGHT), signal_name, color)
+	HitFeel.burst(world, member.global_position, ElementColors.for_element(member.element), SIGNAL_BURST_RADIUS)
 	LinkMeter.add_from(member, LinkMeter.PER_SIGNAL)
 	if is_link_finisher:
 		HitFeel.link_slow_mo(member)
 		ImpactFrame.play(member)
 		ScreenFlash.play(member, ApolloPalette.GOLD)
-		WordBurst.pop(world, member.global_position + Vector2(0, LINK_WORD_HEIGHT), LINK_WORD, ApolloPalette.GOLD)
+		HitFeel.burst(world, member.global_position, ApolloPalette.GOLD, LINK_BURST_RADIUS)
 
 
 # --- For each creature to fill in ----------------------------------------------

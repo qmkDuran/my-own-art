@@ -1,6 +1,7 @@
 class_name EmberTreeScreen
 extends CanvasLayer
-## The in-game Ember Tree screen. K (or Tab) opens it; K, Tab or Escape closes it.
+## The in-game Ember Tree screen. K opens it; K or Escape closes it. (Tab opens the
+## chain guide, ChainGuideScreen.)
 ##
 ## Opening pauses the game; this layer keeps running (process mode Always) so the tree
 ## stays alive. Back to front: the tree view, the frame (vignette, header and footer bars),

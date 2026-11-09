@@ -89,3 +89,10 @@ func _nearest_target() -> Health:
 			nearest_distance = distance
 	return nearest
 
+
+func guide_line() -> String:
+	return "Bursts up under every Soaked enemy within %d px: %d dmg each, throws them Airborne (%.1f s)." % [reach, damage, launch_seconds]
+
+
+func set_up_status() -> String:
+	return SetUp.LAUNCHED

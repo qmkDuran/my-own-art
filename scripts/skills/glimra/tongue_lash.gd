@@ -33,3 +33,11 @@ func _land() -> void:
 	for target_health in targets:
 		Poisoned.apply_to(target_health, poison_per_tick, seconds_between_ticks, poison_seconds)
 	AbilityTargets.knock_back_all(targets, start, knockback_speed)
+
+
+func guide_line() -> String:
+	return "Tongue whips %d px at the cursor: %d dmg and Poisoned (%d s) on every enemy it touches." % [reach, damage, poison_seconds]
+
+
+func set_up_status() -> String:
+	return SetUp.POISONED
