@@ -7,18 +7,15 @@ extends CanvasLayer
 ## away); keys pressed while that plays are ignored, so a quick double press can't skip it.
 ## Behind it, the paused game is held as a still picture while open: the canvas switch would
 ## otherwise show the world and HUD jump to another scale under the fading screen.
-## While open it draws at a whole multiple of the game's own resolution (`ui_size`), so its
-## pixel font stays crisp (the hybrid approach in DESIGN.md); the game's own scale comes back
-## on close.
+## While open it draws on the higher-resolution UI canvas (`ui_size`, see GameView), which
+## the window shows at a whole-number scale, so its pixel font stays crisp (the hybrid
+## approach in DESIGN.md); the game's own scale comes back on close.
 ##
 ## A screen builds its contents under `_root` in its `_ready` (after super._ready()) and
 ## overrides:
 ##   _can_open()  -> false when it must stay shut now (default: always opens)
 ##   _on_open()   -> brings its contents up to date just before it shows
 
-## The smallest canvas width while open: the smallest whole multiple of the game's
-## resolution at least this wide (leaves the Ember Tree room between its two cards).
-const MIN_UI_WIDTH := 960
 ## How long opening or closing takes.
 const TRANSITION_SECONDS := 0.12
 ## How far the screen slides while it fades, in screen pixels.
@@ -35,12 +32,9 @@ var _paused_by_me: bool = false
 var _transition: Tween
 
 
-## The canvas size used while open (see MIN_UI_WIDTH), e.g. 960×540 for a 480×270 game.
+## The canvas size used while open, e.g. 960×540 in a 1080p window (GameView.ui_size).
 static func ui_size() -> Vector2i:
-	var game_size := Vector2i(
-		ProjectSettings.get_setting("display/window/size/viewport_width"),
-		ProjectSettings.get_setting("display/window/size/viewport_height"))
-	return game_size * ceili(float(MIN_UI_WIDTH) / game_size.x)
+	return GameView.ui_size()
 
 
 func _ready() -> void:

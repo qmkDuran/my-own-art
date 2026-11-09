@@ -7,10 +7,11 @@ extends CPUParticles2D
 
 enum Kind { SNOW, PETALS }
 
-## A little more than half the 480×270 view, so specks drift in from beyond its edges.
-const SPAWN_HALF_EXTENTS := Vector2(260.0, 150.0)
-const SNOW_AMOUNT := 46
-const PETAL_AMOUNT := 18
+## A little more than half the 640×360 view, so specks drift in from beyond its edges.
+## The amounts below keep the same specks per screen area as before the wider view.
+const SPAWN_HALF_EXTENTS := Vector2(340.0, 190.0)
+const SNOW_AMOUNT := 76
+const PETAL_AMOUNT := 30
 const SNOW_LIFETIME := 9.0
 const PETAL_LIFETIME := 10.0
 ## Specks sit above the world and the canopy, below the HUD.

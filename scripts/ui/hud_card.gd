@@ -5,24 +5,22 @@ extends RefCounted
 ## bevelled warm frame, rounded pixel corners, drop shadow and Monogram font from the shared
 ## UI theme (PixelPanelStyle).
 ##
-## The HUD runs at 480×270 and the Ember Tree at 960×540. A HUD card is laid out on the
-## Ember Tree's canvas (twice the game's resolution) and shown at half size, so its text
-## (EmberTreeFonts.TEXT_SIZE: one font pixel = two screen pixels) and its one-pixel edge are
-## exactly as fine as the Ember Tree's, and stay crisp.
-
-## A card's own pixels per game pixel is 1 / CANVAS_SCALE.
-const CANVAS_SCALE := 0.5
+## The HUD runs at the game's 640×360 and the Ember Tree on the finer UI canvas (GameView).
+## A HUD card is laid out in UI pixels and shown scaled down to the game's pixels
+## (GameView.ui_to_game_scale, 2/3 at 1080p), so its text (EmberTreeFonts.TEXT_SIZE) and its
+## one-pixel edge land on whole window pixels exactly as the Ember Tree's do, and stay crisp.
 ## Room between the card's outer edge and its text, in card pixels, frame included (smaller
 ## than the Ember Tree's, to keep the HUD's cards small next to the fight).
 const PADDING_SIDES := 10
 const PADDING_TOP_BOTTOM := 7
 
 
-## An empty card at half size, using the shared UI theme. Add its content as usual.
+## An empty card at the UI canvas's pixel size, using the shared UI theme. Add its content
+## as usual.
 static func make() -> PanelContainer:
 	var card := PanelContainer.new()
 	card.theme = EmberTreeFonts.ui_theme()
-	card.scale = Vector2.ONE * CANVAS_SCALE
+	card.scale = Vector2.ONE * GameView.ui_to_game_scale()
 	card.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var style := EmberTreeWidgets.card_style()
 	style.content_margin_left = PADDING_SIDES
@@ -35,4 +33,4 @@ static func make() -> PanelContainer:
 
 ## How big the card shows on the HUD, in game pixels.
 static func size_on_screen(card: Control) -> Vector2:
-	return card.size * CANVAS_SCALE
+	return card.size * card.scale

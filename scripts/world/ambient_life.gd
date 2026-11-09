@@ -8,18 +8,19 @@ extends CPUParticles2D
 
 enum Kind { ASH, LEAVES, FIREFLIES, DUST }
 
-## A little more than half the 480×270 view, so specks drift in from beyond its edges.
-const SPAWN_HALF_EXTENTS := Vector2(260.0, 150.0)
+## A little more than half the 640×360 view, so specks drift in from beyond its edges.
+## The amounts below keep the same specks per screen area as before the wider view.
+const SPAWN_HALF_EXTENTS := Vector2(340.0, 190.0)
 ## Specks sit above the world and the canopy, below the HUD.
 const DRAW_LAYER := 20
 
-const ASH_AMOUNT := 14
+const ASH_AMOUNT := 23
 const ASH_LIFETIME := 10.0
-const LEAF_AMOUNT := 7
+const LEAF_AMOUNT := 12
 const LEAF_LIFETIME := 11.0
-const FIREFLY_AMOUNT := 16
+const FIREFLY_AMOUNT := 27
 const FIREFLY_LIFETIME := 7.0
-const DUST_AMOUNT := 12
+const DUST_AMOUNT := 20
 const DUST_LIFETIME := 8.0
 
 @export var kind: Kind = Kind.ASH

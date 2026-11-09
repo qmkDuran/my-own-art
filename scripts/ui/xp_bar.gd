@@ -5,7 +5,7 @@ extends Control
 ## segment shows the new total at once, and the blue fill catches up to it.
 
 ## Length of the bar itself, in game pixels.
-const BAR_LENGTH := 74
+const BAR_LENGTH := 98
 ## Gap between the level label and the bar.
 const LABEL_GAP := 4
 ## The bar's row, from the top of the label.
