@@ -1,0 +1,99 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/warden_marksman.gd" id="1_main"]
+[ext_resource type="Script" path="res://scripts/animation/single_view_animator.gd" id="2_animator"]
+[ext_resource type="Script" path="res://scripts/components/health.gd" id="3_health"]
+[ext_resource type="Script" path="res://scripts/effects/hit_flash.gd" id="4_flash"]
+[ext_resource type="Script" path="res://scripts/components/light_drop.gd" id="5_light_drop"]
+[ext_resource type="PackedScene" path="res://scenes/pickups/light_mote.tscn" id="6_mote"]
+[ext_resource type="Script" path="res://scripts/components/path_mover.gd" id="90_path_mover"]
+[ext_resource type="Script" path="res://scripts/enemies/offscreen_sleep.gd" id="91_offscreen_sleep"]
+[ext_resource type="Script" path="res://scripts/ui/floating_health_bar.gd" id="10_bar"]
+[ext_resource type="Script" path="res://scripts/enemies/chip_drop.gd" id="95_chip_drop"]
+[ext_resource type="Script" path="res://scripts/enemies/marksman_rail_shot.gd" id="20_shot"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_body"]
+radius = 5.0
+
+[node name="WardenMarksman" type="CharacterBody2D" groups=["enemies"]]
+z_index = 1
+motion_mode = 1
+script = ExtResource("1_main")
+notice_distance = 180.0
+knockback_speed = 80.0
+death_fade_time = 0.4
+species_id = "warden_marksman"
+display_name = "Warden Marksman"
+element = "Warden"
+
+[node name="Shadow" type="Polygon2D" parent="."]
+color = Color(0.0352941, 0.0392157, 0.0784314, 0.45)
+polygon = PackedVector2Array(-6, 0, -5, -1.5, 0, -2, 5, -1.5, 6, 0, 5, 1.5, 0, 2, -5, 1.5)
+
+[node name="Sprite" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -14)
+script = ExtResource("2_animator")
+sheet_folder = "res://art/warden_marksman"
+sheet_prefix = "warden_marksman"
+frame_size = Vector2i(18, 28)
+animation_settings = {
+"aim": {
+"frame_durations": [1.0],
+"loops": false
+},
+"charge": {
+"frame_durations": [1.0],
+"loops": false
+},
+"fire": {
+"frame_durations": [1.0],
+"loops": false
+},
+"idle": {
+"frame_durations": [0.5, 0.5],
+"loops": true
+},
+"walk": {
+"frame_durations": [0.15, 0.15, 0.15, 0.15],
+"loops": true
+}
+}
+
+[node name="CollisionShape" type="CollisionShape2D" parent="."]
+position = Vector2(0, -3)
+shape = SubResource("CircleShape2D_body")
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("3_health")
+max_health = 5
+
+[node name="HitFlash" type="Node" parent="." node_paths=PackedStringArray("sprite")]
+script = ExtResource("4_flash")
+sprite = NodePath("../Sprite")
+
+[node name="FloatingHealthBar" type="Node2D" parent="." node_paths=PackedStringArray("health")]
+z_index = 2
+position = Vector2(0, -32)
+script = ExtResource("10_bar")
+health = NodePath("../Health")
+
+[node name="LightDrop" type="Node" parent="."]
+script = ExtResource("5_light_drop")
+mote_scene = ExtResource("6_mote")
+mote_count = 8
+xp_per_mote = 2
+burst_offset = Vector2(0, -12)
+
+[node name="RailShot" type="Node" parent="." node_paths=PackedStringArray("hit_flash")]
+script = ExtResource("20_shot")
+hit_flash = NodePath("../HitFlash")
+
+[node name="PathMover" type="NavigationAgent2D" parent="."]
+script = ExtResource("90_path_mover")
+
+[node name="OffscreenSleep" type="Node" parent="." node_paths=PackedStringArray("health")]
+script = ExtResource("91_offscreen_sleep")
+health = NodePath("../Health")
+
+[node name="ChipDrop" type="Node" parent="."]
+script = ExtResource("95_chip_drop")

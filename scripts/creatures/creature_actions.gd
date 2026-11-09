@@ -42,7 +42,7 @@ func _wants_to_move() -> bool:
 func _start_requested_action() -> void:
 	var input := _creature.player_input
 	var orders := _creature.mouse_orders
-	if input.wants_to_dodge() and _creature.dodge.is_ready() and _creature.skill_bar.allows_dodge():
+	if input.wants_to_dodge() and _can_dodge():
 		_creature.melee_attack.cancel()
 		_creature.skill_bar.cancel_cast()
 		_start_dodge()
@@ -53,6 +53,11 @@ func _start_requested_action() -> void:
 	elif orders.is_attack_target_in_reach():
 		_start_jab(orders.direction_to_attack_target(_creature.facing.as_vector()))
 		orders.note_jabbed_attack_target()
+
+
+## Ready, allowed by the skill bar, and its feet aren't rooted to the ground.
+func _can_dodge() -> bool:
+	return _creature.dodge.is_ready() and _creature.skill_bar.allows_dodge() and not Rooted.is_rooting(_creature)
 
 
 func _start_jab(jab_direction: Vector2) -> void:

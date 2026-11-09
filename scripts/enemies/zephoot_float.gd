@@ -59,12 +59,9 @@ func preferred_direction() -> Vector2:
 	var player := PlayerFinder.find(self)
 	if player == null:
 		return Vector2.ZERO
+	if not RangeKeeping.is_in_band(zephoot, player, preferred_distance):
+		return RangeKeeping.direction(path_mover, zephoot, player, preferred_distance)
 	var to_player := player.global_position - zephoot.global_position
-	var distance := to_player.length()
-	if distance < preferred_distance.x:
-		return path_mover.direction_away_from(player.global_position)
-	if distance > preferred_distance.y:
-		return path_mover.direction_toward(player.global_position)
 	return to_player.normalized().orthogonal() * _drift_sign * (drift_speed / float_speed)
 
 

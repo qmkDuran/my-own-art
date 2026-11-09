@@ -55,7 +55,8 @@ func strike(attacker: Node2D) -> Array[Health]:
 		var target_health: Health = target.get_node_or_null("Health")
 		if target_health == null:
 			continue
-		CritRoll.deal_damage(attacker, target_health, damage)
+		# A sweep: it comes round a shell guard (see BrinelobShellGuard).
+		CritRoll.deal_damage(attacker, target_health, damage, Health.HitKind.SWEEP)
 		_knock_back(target, attacker)
 		struck.append(target_health)
 	return struck

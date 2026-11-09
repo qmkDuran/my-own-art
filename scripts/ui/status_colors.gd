@@ -11,6 +11,18 @@ const POISON_DARK := ApolloPalette.GREEN
 ## Stone: stagger.
 const STAGGER := ApolloPalette.CORK
 const STAGGER_LIGHT := ApolloPalette.CREAM
+## Bloom: root.
+const ROOT := ApolloPalette.GREEN
+const ROOT_LIGHT := ApolloPalette.GREEN_LIGHT
+## Tide: soak.
+const SOAK := ApolloPalette.BLUE
+const SOAK_LIGHT := ApolloPalette.SKY
+## Frost: chill.
+const CHILL := ApolloPalette.SKY_LIGHT
+const CHILL_LIGHT := ApolloPalette.WHITE
+## Spark: jolt.
+const JOLT := ApolloPalette.GOLD
+const JOLT_LIGHT := ApolloPalette.WHITE
 ## What a hit with no element shows in.
 const DIRECT := ApolloPalette.WHITE
 

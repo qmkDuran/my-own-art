@@ -1,7 +1,7 @@
 class_name ImpairingEffect
 extends StatusEffect
 ## A status effect that takes control of the target's movement for a moment (Staggered,
-## Buffeted; later slows and roots). It runs for a fixed length, then the target is immune
+## Buffeted, Rooted, Jolted, and the slows: Soaked, Chilled). It runs for a fixed length, then the target is immune
 ## to it for `IMMUNITY_SECONDS`, so chained hits can't lock the player down.
 
 ## Seconds after one of these ends during which the same effect can't land again.

@@ -1,6 +1,7 @@
 class_name StatusEffect
 extends Node2D
-## What every status effect has in common (Burning, Poisoned, Staggered, Buffeted): it sits
+## What every status effect has in common (Burning, Poisoned, Staggered, Buffeted, Rooted,
+## Soaked, Chilled, Jolted): it sits
 ## on anything with a Health as a child named after the effect, so a second application
 ## finds the first; it lasts a short while, then frees itself (or when the target dies).
 ##

@@ -92,7 +92,8 @@ func is_ready() -> bool:
 func start(attack_direction: Vector2) -> void:
 	is_attacking = true
 	_attack_direction = attack_direction
-	_time_attacking = 0.0
+	# A jolt (Jolted) holds the punch back a beat: the clock starts below zero.
+	_time_attacking = -Jolted.take_jab_delay(attacker)
 	_has_landed_hit = false
 	_advance_combo()
 
@@ -101,7 +102,7 @@ func start(attack_direction: Vector2) -> void:
 ## Starts at twice the average speed and slows evenly to zero as the fist lands,
 ## which still covers exactly `lunge_distance`. The finisher stays rooted.
 func lunge_velocity() -> Vector2:
-	if not is_attacking or _is_finisher or _time_attacking >= hit_delay:
+	if not is_attacking or _is_finisher or _time_attacking < 0.0 or _time_attacking >= hit_delay:
 		return Vector2.ZERO
 	var wind_up_left := 1.0 - _time_attacking / hit_delay
 	return _attack_direction * (2.0 * lunge_distance / hit_delay) * wind_up_left

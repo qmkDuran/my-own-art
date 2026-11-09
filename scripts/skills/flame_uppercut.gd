@@ -107,7 +107,7 @@ func _hit_enemies_in_arc() -> void:
 		var target_health: Health = target.get_node_or_null("Health")
 		if target_health == null:
 			continue
-		CritRoll.deal_damage(_caster, target_health, damage)
+		CritRoll.deal_damage(_caster, target_health, damage, Health.HitKind.FIRE)
 		_knock_back(target)
 
 

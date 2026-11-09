@@ -13,10 +13,11 @@ extends Node
 @export var friction: float = 800.0
 
 
-func calculate_velocity(current_velocity: Vector2, move_direction: Vector2, delta: float) -> Vector2:
+## `speed_share`: the share of `top_speed` it may reach right now (e.g. 0.8 while slowed).
+func calculate_velocity(current_velocity: Vector2, move_direction: Vector2, delta: float, speed_share: float = 1.0) -> Vector2:
 	if move_direction == Vector2.ZERO:
 		return _slow_down(current_velocity, delta)
-	return _speed_up(current_velocity, move_direction, delta)
+	return _speed_up(current_velocity, move_direction * speed_share, delta)
 
 
 func _slow_down(current_velocity: Vector2, delta: float) -> Vector2:

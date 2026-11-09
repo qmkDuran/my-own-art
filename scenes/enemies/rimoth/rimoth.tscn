@@ -1,0 +1,99 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/rimoth.gd" id="1_main"]
+[ext_resource type="Script" path="res://scripts/animation/single_view_animator.gd" id="2_animator"]
+[ext_resource type="Script" path="res://scripts/components/health.gd" id="3_health"]
+[ext_resource type="Script" path="res://scripts/effects/hit_flash.gd" id="4_flash"]
+[ext_resource type="Script" path="res://scripts/components/light_drop.gd" id="5_light_drop"]
+[ext_resource type="PackedScene" path="res://scenes/pickups/light_mote.tscn" id="6_mote"]
+[ext_resource type="Script" path="res://scripts/components/path_mover.gd" id="90_path_mover"]
+[ext_resource type="Script" path="res://scripts/enemies/offscreen_sleep.gd" id="91_offscreen_sleep"]
+[ext_resource type="Script" path="res://scripts/effects/reach_marker.gd" id="92_reach_marker"]
+[ext_resource type="Script" path="res://scripts/enemies/death_drops.gd" id="7_death_drops"]
+[ext_resource type="PackedScene" path="res://scenes/pickups/berry.tscn" id="8_berry"]
+[ext_resource type="PackedScene" path="res://scenes/effects/shockwave.tscn" id="9_shockwave"]
+[ext_resource type="Script" path="res://scripts/enemies/rimoth_frost_shell_cast.gd" id="20_cast"]
+[ext_resource type="Script" path="res://scripts/enemies/rimoth_frost_puff.gd" id="21_puff"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_body"]
+radius = 5.0
+
+[node name="Rimoth" type="CharacterBody2D" groups=["enemies"]]
+z_index = 1
+motion_mode = 1
+script = ExtResource("1_main")
+notice_distance = 140.0
+knockback_speed = 110.0
+species_id = "rimoth"
+display_name = "Rimoth"
+element = "Frost"
+
+[node name="Shadow" type="Polygon2D" parent="."]
+color = Color(0.0352941, 0.0392157, 0.0784314, 0.45)
+polygon = PackedVector2Array(-6, 0, -5, -1.5, 0, -2, 5, -1.5, 6, 0, 5, 1.5, 0, 2, -5, 1.5)
+
+[node name="ReachMarker" type="Node2D" parent="."]
+script = ExtResource("92_reach_marker")
+
+[node name="Sprite" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -8)
+script = ExtResource("2_animator")
+sheet_folder = "res://art/rimoth"
+sheet_prefix = "rimoth"
+animation_settings = {
+"cast": {
+"frame_durations": [0.3, 0.4],
+"loops": false
+},
+"idle": {
+"frame_durations": [0.3, 0.3],
+"loops": true
+},
+"move": {
+"frame_durations": [0.12, 0.12],
+"loops": true
+}
+}
+
+[node name="CollisionShape" type="CollisionShape2D" parent="."]
+position = Vector2(0, -3)
+shape = SubResource("CircleShape2D_body")
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("3_health")
+max_health = 2
+
+[node name="HitFlash" type="Node" parent="." node_paths=PackedStringArray("sprite")]
+script = ExtResource("4_flash")
+sprite = NodePath("../Sprite")
+
+[node name="LightDrop" type="Node" parent="."]
+script = ExtResource("5_light_drop")
+mote_scene = ExtResource("6_mote")
+mote_count = 5
+xp_per_mote = 1
+burst_offset = Vector2(0, -11)
+
+[node name="DeathDrops" type="Node2D" parent="."]
+script = ExtResource("7_death_drops")
+berry_scene = ExtResource("8_berry")
+berry_drop_chance = 0.1
+
+[node name="ShellCast" type="Node" parent="."]
+script = ExtResource("20_cast")
+
+[node name="FrostPuff" type="Node" parent="." node_paths=PackedStringArray("hit_flash", "reach_marker")]
+script = ExtResource("21_puff")
+reach = 26.0
+wind_up = 0.5
+seconds_between = 2.0
+frost_ring_scene = ExtResource("9_shockwave")
+hit_flash = NodePath("../HitFlash")
+reach_marker = NodePath("../ReachMarker")
+
+[node name="PathMover" type="NavigationAgent2D" parent="."]
+script = ExtResource("90_path_mover")
+
+[node name="OffscreenSleep" type="Node" parent="." node_paths=PackedStringArray("health")]
+script = ExtResource("91_offscreen_sleep")
+health = NodePath("../Health")

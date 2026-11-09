@@ -17,8 +17,9 @@ extends CharacterBody2D
 ##   Awakening: AwakeningLook (recoloured sprite, AwakeningAura), AwakeningBoost (stat bump),
 ##             AwakeningMoment (the short flare when he Awakens; he stands still meanwhile)
 ##   Arriving: ZoneEntrance (the hop onto the spawn point; it drives the creature meanwhile)
-## A shove it takes is a Pushback. Enemy status effects (Poisoned, Staggered, Buffeted) are
-## attached to it at runtime; a stagger stops it acting for a moment.
+## A shove it takes is a Pushback. Enemy status effects (Poisoned, Staggered, Buffeted, Rooted,
+## Soaked, Chilled, Jolted) are attached to it at runtime; a stagger stops it acting for a
+## moment, a root stops it walking (it can still jab), a slow (SlowingEffect) slows its walk.
 
 ## Below this speed (pixels per second) the creature counts as standing still.
 const STANDING_STILL_SPEED := 1.0
@@ -72,7 +73,8 @@ func _physics_process(delta: float) -> void:
 	# Leaping out of the way means attacks pass through you.
 	health.is_invulnerable = dodge.is_dodging
 
-	var move_direction := Vector2.ZERO if is_staggered else _chosen_move_direction()
+	var is_held := is_staggered or Rooted.is_rooting(self)
+	var move_direction := Vector2.ZERO if is_held else _chosen_move_direction()
 	velocity = _next_velocity(move_direction, delta)
 	move_and_slide()
 
@@ -128,7 +130,7 @@ func _next_velocity(move_direction: Vector2, delta: float) -> Vector2:
 		return melee_attack.lunge_velocity()
 	if skill_bar.is_casting():
 		return skill_bar.cast_velocity()
-	return movement.calculate_velocity(velocity, move_direction, delta)
+	return movement.calculate_velocity(velocity, move_direction, delta, SlowingEffect.speed_share_of(self))
 
 
 ## The creature plants its feet while punching and can't steer mid-dodge.

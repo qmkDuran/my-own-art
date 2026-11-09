@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/creatures/emberoo/emberoo.tscn" id="1_emberoo"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/handler/handler.tscn" id="3_handler"]
@@ -9,6 +9,14 @@
 [ext_resource type="PackedScene" path="res://scenes/enemies/zephoot/zephoot.tscn" id="11_zephoot"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/gruntite/gruntite.tscn" id="12_gruntite"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/warden_captain/warden_captain.tscn" id="13_captain"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/bramole/bramole.tscn" id="14_bramole"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/brinelob/brinelob.tscn" id="15_brinelob"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/fizzbug/fizzbug.tscn" id="16_fizzbug"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/rimoth/rimoth.tscn" id="17_rimoth"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/warden_marksman/warden_marksman.tscn" id="18_marksman"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_cover"]
+size = Vector2(14, 10)
 
 [node name="Main" type="Node2D"]
 
@@ -76,6 +84,40 @@ position = Vector2(20, -60)
 
 [node name="PracticeWardenCaptain" parent="." instance=ExtResource("13_captain")]
 position = Vector2(-250, -170)
+
+[node name="PracticeBramole1" parent="." instance=ExtResource("14_bramole")]
+position = Vector2(-190, 30)
+
+[node name="PracticeBramole2" parent="." instance=ExtResource("14_bramole")]
+position = Vector2(-215, 75)
+
+[node name="PracticeBrinelob" parent="." instance=ExtResource("15_brinelob")]
+position = Vector2(200, 60)
+
+[node name="PracticeRimoth" parent="." instance=ExtResource("17_rimoth")]
+position = Vector2(245, 85)
+
+[node name="PracticeFizzbug1" parent="." instance=ExtResource("16_fizzbug")]
+position = Vector2(205, -105)
+
+[node name="PracticeFizzbug2" parent="." instance=ExtResource("16_fizzbug")]
+position = Vector2(225, -90)
+
+[node name="PracticeMarksman" parent="." instance=ExtResource("18_marksman")]
+position = Vector2(-60, 200)
+
+[node name="MarksmanCover" type="StaticBody2D" parent="."]
+position = Vector2(-60, 160)
+
+[node name="Shape" type="CollisionShape2D" parent="MarksmanCover"]
+shape = SubResource("RectangleShape2D_cover")
+
+[node name="Look" type="ColorRect" parent="MarksmanCover"]
+offset_left = -7.0
+offset_top = -14.0
+offset_right = 7.0
+offset_bottom = 5.0
+color = Color(0.341176, 0.447059, 0.466667, 1)
 
 [node name="TrainingDummy" parent="." instance=ExtResource("8_dummy")]
 position = Vector2(-60, 20)

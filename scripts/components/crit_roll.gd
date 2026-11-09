@@ -20,11 +20,12 @@ var is_sure_crit: bool = false
 
 
 ## Damages `target_health` with `base_damage` from `attacker`, rolling the attacker's crit.
-static func deal_damage(attacker: Node2D, target_health: Health, base_damage: int) -> void:
+## `kind` says how the hit comes in, for the target's HitShields (e.g. a sweep, or fire).
+static func deal_damage(attacker: Node2D, target_health: Health, base_damage: int, kind: Health.HitKind = Health.HitKind.STRIKE) -> void:
 	var crit_roll := attacker.get_node_or_null(NODE_NAME) as CritRoll
 	var is_critical := crit_roll != null and crit_roll.rolls_critical()
 	var amount := crit_roll.critical_damage(base_damage) if is_critical else base_damage
-	target_health.take_damage(amount, attacker.global_position, is_critical)
+	target_health.take_damage(amount, attacker.global_position, is_critical, kind)
 
 
 func rolls_critical() -> bool:

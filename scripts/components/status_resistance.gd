@@ -1,7 +1,8 @@
 class_name StatusResistance
 extends Node
 ## How the player shrugs off enemy status effects (see DESIGN.md, "Enemy status effects"):
-## - Ash Guard up: no enemy status effect lands (poison, stagger, gust push). The hit
+## - Ash Guard up: no enemy status effect lands (poison, stagger, gust push, root, soak,
+##   chill, jolt). The hit
 ##   itself still lands, at the guard's reduced damage.
 ## - Unshakable learned: staggers last only Unshakable's `stagger_percent`% as long.
 ##
@@ -10,7 +11,10 @@ extends Node
 ## enemies never comes here: enemies have no StatusResistance.
 
 ## The effects Ash Guard blocks.
-const GUARD_BLOCKS: Array[String] = [Poisoned.NODE_NAME, Staggered.NODE_NAME, Buffeted.NODE_NAME]
+const GUARD_BLOCKS: Array[String] = [
+	Poisoned.NODE_NAME, Staggered.NODE_NAME, Buffeted.NODE_NAME,
+	Rooted.NODE_NAME, Soaked.NODE_NAME, Chilled.NODE_NAME, Jolted.NODE_NAME,
+]
 
 @export var ash_guard: AshGuard
 @export var unshakable: Unshakable
