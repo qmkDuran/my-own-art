@@ -20,6 +20,12 @@ const COMBO_LABEL_OFFSET := Vector2(0, 4)
 ## Seconds without a hit before health refills and the combo total resets.
 @export var calm_reset_time: float = 2.0
 
+@export_group("Body")
+## Height of the middle of the post above its feet, and half its width, in pixels: what
+## clicks on it go for (see CreatureBody).
+@export var body_height: float = -12.0
+@export var body_half_width: float = 8.0
+
 @export_group("Wobble")
 ## How hard the lean springs back upright (higher = faster wobble).
 @export var wobble_stiffness: float = 180.0

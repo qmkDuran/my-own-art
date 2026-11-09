@@ -198,12 +198,30 @@ Decided with the user after the size and grimdark mockups. This section wins ove
 | **Zapmite** | Fizzbug | Spark | rusher/exploder | tiny round spark drone, crackling prongs (magenta eye) |
 | **Ramtread** | Gruntite | Stone | charger | tread bot with a rusty stone ram plate (cyan eye) |
 | **Augrub** | Bramole | Bloom | burrowing ambusher | drill bot under a dirt mound; only the drill tip shows (magenta eye) |
-| **Clamplate** | Brinelob | Tide | shield tank | crab walker with two blue shield claws (cyan eye) |
+| **Clamplate** | Brinelob | Tide | shield tank | crab walker: a steel carapace with a cyan core and eye stalks on six jointed legs, between two blue pincer shield claws (hand-drawn) |
 | **Chillvane** | Rimoth | Frost | flying support | moth-winged frost drone (cyan core) |
 | **Gusteret** | Zephoot | Wind | ranged gust turret | hovering fan turret (magenta eye) |
 
 - Art: `art/machines/<name>/`, 32×32 frames (sprites ~22–30 px), PixelLab generate-image-v2 with Apollo as target palette (Seepcan was the style anchor), poses from a second generation with the base as reference, idle/move from hand-made offsets and glow flickers; 0 off-palette pixels. Front view, mirrored to face the player (`Machine`).
-- **One shared death** (`Machine.blow_up`, `MachineDeath`): a white-hot flash, an orange fireball, sparks, tumbling scrap, a smoke puff and flecks of the eye's stolen light (~0.4 s, ~40 bits, frees itself); the XP motes take the eye's colour (`scenes/enemies/machines/stolen_light_mote_*.tscn`). Elites add a small camera shake. A Zapmite's own burst blows it apart without freeing light. The Creature Log shows each machine's idle sprite (no painted portraits yet).
+- **One shared death** (`Machine.blow_up`, `MachineDeath`): a jagged white-hot pixel starburst, then an orange fireball, sparks, tumbling scrap, a smoke puff and flecks of the eye's stolen light (~0.4 s, ~40 bits, frees itself); the XP motes take the eye's colour (`scenes/enemies/machines/stolen_light_mote_*.tscn`). Elites add a small camera shake. A Zapmite's own burst blows it apart without freeing light. The Creature Log shows each machine's idle sprite (no painted portraits yet).
+
+**Glue pass for the new scale (2026-11-09).**
+- **Aim at the real body:** every enemy that aims at or draws on the hero uses his current form's body height (`CreatureBody`, from `Creature.body_height()`: -16/-22/-30), not the old -6: the Seepcan's hose rises from its spout to his middle, the Marksman's rail line is drawn from the barrel straight through his middle, gust orbs (Gusteret, the Captain's chip pulse) climb to his body height by the time they reach where he stood, light motes and scrap fly to his middle. Every enemy also states its own size (`Enemy.body_height`, `body_half_width`; machines ~-12 to -17 and 10–14 px): the blast, the Chillvane's beam, frost shells, the Zapmite's spark ring and Clamplate plinks sit on it. **Hits are still measured on the ground, feet to feet** (the hose's and rail's lines, the orbs, every ring).
+- **Clicks:** a click targets an enemy anywhere on its drawn body (an oval from its feet to the top of its head, its half-width wide, +4 px), so the top of a 28 px machine or a boss's head counts; of several, the one the cursor is most squarely on wins (`MouseOrders.click_margin`).
+- **Balance** (hero jab reach + hit radius 37/46/57 by form; jab damage ~1–2 in Ruins Edge, 2 in the fen and quarry, 3 after Awakening I; Spinning Hook 2, Flame Uppercut 3). Melee machines now strike from just outside both bodies (~28–40 px feet to feet) and land on a hero who stands still; trash dies in 1–2 hits for the zone it lives in; elites take ~3× (`EliteModifier.health_multiplier` 3.0, was 2.5; its default tag height 36 and aura 22×7 fit the machines).
+
+| Machine | Health | Ranges and speeds (before → after) |
+|---|---|---|
+| Seepcan | 1 | hop 22 → 26 px; hose reach 40 (kept), hit width 5 (at the body) → 8 (on the ground) |
+| Zapmite | 1 | rush 80 → 90 px/s; stops at 20 → 28 px; burst ring 32 → 40 px |
+| Ramtread | **5 → 3** | walk 28 → 32 px/s; charges from 40–90 → 48–110 px, 90 → 110 px long, ram hit 9 → 12 px |
+| Augrub | 3 | ambush 40 → 48 px; pops back up at 18 → 26 px; slam 28 → 34 px; burrow 24 → 28 px/s |
+| Clamplate | **6 → 4** | walk 22 → 26 px/s; snap 24 → 32 px; front arc 9 → 15 px |
+| Chillvane | 2 | keeps 80–100 → 90–115 px; flies 32 → 36 px/s; frost puff 26 → 32 px |
+| Gusteret | 2 | keeps 70–110 → 80–125 px; shoots within 150 → 160 px; orb 55 → 60 px/s |
+| Handler (Warden) | 6 | rod shove at 22 → 28 px, shockwave 30 → 36 px |
+
+Notice distances, XP and the bosses' numbers are unchanged. Hero run speed stays 60 px/s for now: the v2 Ruins Edge route takes the bot ~2 min, which is fine; if packs feel sluggish in play, ~75 px/s is the next step (`Movement.top_speed`). The Quarry Bull (zone 3's placeholder boss, a Ramtread ×5) drops from 25 to 15 health with this; its zone scene can raise its `health_multiplier` when the zone is rebuilt.
 
 Grade B colour table (world art only; colours not listed stay the same):
 

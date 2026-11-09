@@ -24,9 +24,6 @@ extends CharacterBody2D
 
 ## Below this speed (pixels per second) the creature counts as standing still.
 const STANDING_STILL_SPEED := 1.0
-## Height of a small creature's body middle above its feet, in pixels (negative is up).
-## The player's own body grows with his evolution form: use `body_height()` for him.
-const BODY_HEIGHT := -6.0
 
 var _pushback := Pushback.new()
 var _actions := CreatureActions.new(self)
@@ -97,6 +94,7 @@ func aim_direction() -> Vector2:
 
 
 ## Height of the middle of his body above his feet in his current form (negative is up).
+## Enemies aim at it (see CreatureBody); their hits are still measured feet to feet.
 func body_height() -> float:
 	return form_switch.current_form.body_height
 

@@ -37,9 +37,6 @@ const NODE_NAME := "MeleeAttack"
 ## How close to the punch line (on the ground) a target's feet must be to get hit, in pixels.
 ## Generous on purpose, so a jab that looks like it connects does (like Path of Exile).
 @export var hit_radius: float = 12.0
-## Height of a target's body centre above its feet, in pixels (negative is up): where
-## effects on a struck target are drawn.
-@export var target_body_height: float = -6.0
 ## How far the attacker lunges forward during the wind-up, in pixels.
 ## The lunge starts fast and eases to a stop as the fist lands, so it reads as a snap forward.
 @export var lunge_distance: float = 6.0

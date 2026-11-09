@@ -19,8 +19,8 @@ extends Node
 @export var seconds_between_shots: float = 2.2
 ## Seconds after it first notices the player before it may shoot.
 @export var first_shot_delay: float = 1.0
-## Where the orb leaves its beak, relative to its feet (x, y on the ground; height is the
-## orb's own sprite offset).
+## Where the orb leaves its fan, relative to its feet (x, y on the ground; it is drawn at the
+## turret's body height, see CreatureBody, and flies to the player's).
 @export var muzzle_offset: Vector2 = Vector2(0, 2)
 ## Flashes the Zephoot for the glint.
 @export var hit_flash: HitFlash
@@ -79,4 +79,5 @@ func _fire() -> void:
 	var orb: GustOrb = orb_scene.instantiate()
 	zephoot.get_parent().add_child(orb)
 	orb.global_position = zephoot.global_position + muzzle_offset
-	orb.launch(player.global_position - orb.global_position)
+	var to_player := player.global_position - orb.global_position
+	orb.launch(to_player, CreatureBody.height_of(zephoot) - muzzle_offset.y, CreatureBody.height_of(player), to_player.length())

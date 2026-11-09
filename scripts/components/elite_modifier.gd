@@ -7,7 +7,7 @@ extends Node
 ## the enemy's own scripts stay unchanged.
 
 ## How much health the elite has compared to a normal one (rounded up).
-@export var health_multiplier: float = 2.5
+@export var health_multiplier: float = 3.0
 ## How many times the normal number of light motes it frees on death.
 @export var mote_multiplier: int = 3
 ## The word in front of the species name on its tag.
@@ -17,9 +17,9 @@ extends Node
 ## Used when the enemy has no `display_name` of its own.
 @export var fallback_name: String = "Glimra"
 ## Height of the name tag above the feet, in pixels (above the sprite and its health bar).
-@export var name_tag_height: float = 24.0
+@export var name_tag_height: float = 36.0
 ## Size of the aura's ground pulse, in pixels (width, height).
-@export var aura_size: Vector2 = Vector2(14, 5)
+@export var aura_size: Vector2 = Vector2(22, 7)
 
 @onready var enemy: Node2D = get_parent()
 

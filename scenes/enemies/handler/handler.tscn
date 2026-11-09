@@ -25,6 +25,7 @@ radius = 5.0
 z_index = 1
 motion_mode = 1
 script = ExtResource("1_handler")
+body_half_width = 8.0
 notice_distance = 150.0
 knockback_speed = 80.0
 death_fade_time = 0.4
@@ -105,6 +106,8 @@ script = ExtResource("13_shove")
 shockwave_scene = ExtResource("6_shockwave")
 charge_particles = NodePath("../ChargeParticles")
 hit_flash = NodePath("../HitFlash")
+trigger_distance = 28.0
+shockwave_radius = 36.0
 
 [node name="PathMover" type="NavigationAgent2D" parent="."]
 script = ExtResource("90_path_mover")

@@ -36,7 +36,7 @@ func _pierce() -> void:
 	if behind == null:
 		return
 	CritRoll.deal_damage(_attacker, Health.of(behind), _melee.damage)
-	_spawn_spark(behind.global_position + Vector2(0, _melee.target_body_height), direction)
+	_spawn_spark(CreatureBody.middle_of(behind), direction)
 
 
 func _furthest_struck() -> Node2D:

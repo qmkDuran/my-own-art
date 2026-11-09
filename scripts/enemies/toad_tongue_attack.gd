@@ -20,8 +20,9 @@ extends Node
 @export var glint_color: Color = ApolloPalette.LIME_PALE
 ## Seconds the tongue is out (the rest of the attack animation).
 @export var lash_time: float = 0.32
-## How close to the tongue the player's body must be to get hit, in pixels.
-@export var tongue_hit_radius: float = 5.0
+## How close to the hose's line on the ground the player's feet must be to get hit, in pixels
+## (about the player's own half-width, so a hose that looks like it connects does).
+@export var tongue_hit_radius: float = 8.0
 @export var tongue_damage: int = 1
 @export_group("Poison")
 ## Damage each poison tick deals (mild by default; elites and bosses may raise it).
@@ -42,12 +43,7 @@ var _has_hit_this_lash: bool = false
 @onready var toad: Node2D = get_parent()
 
 
-## Where the tongue aims: the player's body, not their feet.
-static func aim_point(player: Node2D) -> Vector2:
-	return player.global_position + Vector2(0, Creature.BODY_HEIGHT)
-
-
-## Starts the warning; the tongue will go toward `to_player`.
+## Starts the warning; the tongue will go toward `to_player` (feet to feet, on the ground).
 func start_puff(to_player: Vector2) -> void:
 	_has_glinted = false
 	_lash_direction = to_player.normalized()
@@ -60,9 +56,13 @@ func update_puff(seconds_left: float) -> void:
 		hit_flash.flash(glint_color)
 
 
+## The hose whips out along the ground line, rising to the player's body (CreatureBody).
 func lash() -> void:
 	_has_hit_this_lash = false
-	tongue.lash(_lash_direction, tongue_reach, lash_time)
+	var player := PlayerFinder.find(self)
+	var aim_height := CreatureBody.height_of(player) if player != null else tongue.mouth_offset.y
+	var aim_distance := toad.global_position.distance_to(player.global_position) if player != null else tongue_reach
+	tongue.lash(_lash_direction, tongue_reach, lash_time, aim_height, aim_distance)
 
 
 ## Call every frame of the lash: the hit is checked once, the moment the tongue is fully out.
@@ -79,7 +79,7 @@ func cancel() -> void:
 
 func _try_to_hit_player() -> void:
 	var player := PlayerFinder.find(self)
-	if player == null or not tongue.reaches(aim_point(player), tongue_hit_radius):
+	if player == null or not tongue.reaches(player.global_position, tongue_hit_radius):
 		return
 	if PlayerHit.try_to_hurt(player, tongue_damage, toad.global_position):
 		Poisoned.apply_to(PlayerHit.health_of(player), poison_damage_per_tick, poison_tick_interval, poison_duration)

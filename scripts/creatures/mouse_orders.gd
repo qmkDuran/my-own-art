@@ -26,9 +26,10 @@ const CLICK_MARKER_COLOR := Color(ApolloPalette.CREAM, 0.8)
 ## The jab connects up to MeleeAttack's reach + hit_radius away, so this stops a little
 ## inside that and jabs at once, instead of walking into the enemy first.
 @export var attack_approach_distance: float = 20.0
-## How close the cursor must be to an enemy's body centre for a click to target it, in pixels.
-## The nearest enemy within this distance is picked, so near-misses still count.
-@export var click_target_radius: float = 12.0
+## How far outside an enemy's drawn body (an oval from its feet to the top of its head, see
+## CreatureBody) a click still targets it, in pixels, so near-misses still count. Of several,
+## the one the cursor is most squarely on is picked.
+@export var click_margin: float = 4.0
 
 ## Where a left-click told the creature to walk.
 var _destination: Vector2 = Vector2.ZERO
@@ -124,16 +125,17 @@ func _walk_to(point: Vector2) -> void:
 	_has_destination = true
 
 
-## The enemy whose body centre is nearest the cursor, if any is within click_target_radius.
+## The enemy whose drawn body the cursor is on (or within click_margin of), if any. Big bodies
+## (a boss, a tall Warden) take clicks anywhere on them, small ones only on themselves.
 func _enemy_under_cursor() -> Node2D:
 	var cursor := player_input.get_aim_point()
 	var nearest: Node2D = null
-	var nearest_distance := click_target_radius
+	var nearest_share := 1.0
 	for enemy: Node2D in get_tree().get_nodes_in_group(EnemyReactions.ENEMIES_GROUP):
-		var distance := cursor.distance_to(enemy.global_position + Vector2(0, Creature.BODY_HEIGHT))
-		if distance <= nearest_distance:
+		var share := CreatureBody.share_of_size_away(enemy, cursor, click_margin)
+		if share <= nearest_share:
 			nearest = enemy
-			nearest_distance = distance
+			nearest_share = share
 	return nearest
 
 

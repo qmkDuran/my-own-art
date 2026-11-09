@@ -28,8 +28,10 @@ species_id = "clamplate"
 display_name = "Clamplate"
 element = "Tide"
 light_color = Color(0.643137, 0.866667, 0.858824, 1)
-core_offset = Vector2(0, -13)
+body_height = -12.0
+body_half_width = 14.0
 blast_size = 13.0
+walk_speed = 26.0
 
 [node name="Shadow" type="Polygon2D" parent="."]
 color = Color(0.0352941, 0.0392157, 0.0784314, 0.45)
@@ -73,7 +75,7 @@ shape = SubResource("CircleShape2D_body")
 
 [node name="Health" type="Node" parent="."]
 script = ExtResource("3_health")
-max_health = 6
+max_health = 4
 
 [node name="HitFlash" type="Node" parent="." node_paths=PackedStringArray("sprite")]
 script = ExtResource("4_flash")
@@ -104,7 +106,7 @@ plink_scene = ExtResource("9_shockwave")
 
 [node name="ClawSnap" type="Node" parent="." node_paths=PackedStringArray("hit_flash", "reach_marker")]
 script = ExtResource("20_snap")
-reach = 24.0
+reach = 32.0
 wind_up = 0.6
 damage = 2
 glint_color = Color(0.643137, 0.866667, 0.858824, 1)

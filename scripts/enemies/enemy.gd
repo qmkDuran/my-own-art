@@ -15,6 +15,13 @@ extends CharacterBody2D
 ## (`return_to_spawn` goes back to it).
 ## Each enemy scene sets these values on its root node.
 
+@export_group("Body")
+## Height of the middle of its drawn body above its feet, in pixels (negative is up): what
+## clicks, beams, shells and effects on it go for (see CreatureBody).
+@export var body_height: float = -12.0
+## About half the width of its drawn sprite, in pixels (how wide a click on it may land).
+@export var body_half_width: float = 10.0
+
 @export_group("Noticing the player")
 ## It wakes up once the player comes this close, in pixels (then alerts its pack).
 @export var notice_distance: float = 110.0

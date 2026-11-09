@@ -26,8 +26,12 @@ species_id = "augrub"
 display_name = "Augrub"
 element = "Bloom"
 light_color = Color(0.87451, 0.517647, 0.647059, 1)
-core_offset = Vector2(0, -12)
+body_height = -13.0
+body_half_width = 13.0
 blast_size = 11.0
+ambush_distance = 48.0
+resurface_distance = 26.0
+burrow_speed = 28.0
 
 [node name="Shadow" type="Polygon2D" parent="."]
 color = Color(0.0352941, 0.0392157, 0.0784314, 0.45)
@@ -95,7 +99,7 @@ berry_drop_chance = 0.1
 
 [node name="RootSlam" type="Node" parent="." node_paths=PackedStringArray("hit_flash", "reach_marker")]
 script = ExtResource("20_slam")
-reach = 28.0
+reach = 34.0
 wind_up = 0.5
 glint_color = Color(0.815686, 0.854902, 0.568627, 1)
 hit_flash = NodePath("../HitFlash")

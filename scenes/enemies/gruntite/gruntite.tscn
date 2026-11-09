@@ -24,8 +24,10 @@ species_id = "ramtread"
 display_name = "Ramtread"
 element = "Stone"
 light_color = Color(0.643137, 0.866667, 0.858824, 1)
-core_offset = Vector2(0, -11)
+body_height = -12.0
+body_half_width = 12.0
 blast_size = 13.0
+walk_speed = 32.0
 
 [node name="Shadow" type="Polygon2D" parent="."]
 color = Color(0.0352941, 0.0392157, 0.0784314, 0.45)
@@ -58,7 +60,7 @@ shape = SubResource("CircleShape2D_body")
 
 [node name="Health" type="Node" parent="."]
 script = ExtResource("3_health")
-max_health = 5
+max_health = 3
 
 [node name="HitFlash" type="Node" parent="." node_paths=PackedStringArray("sprite")]
 script = ExtResource("4_flash")
@@ -73,6 +75,9 @@ health = NodePath("../Health")
 [node name="Charge" type="Node" parent="."]
 script = ExtResource("5_charge")
 dust_scene = ExtResource("6_dust")
+charge_range = Vector2(48, 110)
+charge_distance = 110.0
+hit_radius = 12.0
 
 [node name="LightDrop" type="Node" parent="."]
 script = ExtResource("8_drop")

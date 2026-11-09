@@ -1,9 +1,9 @@
 class_name MachineDeath
 extends Node2D
-## A machine blowing apart: the one death every trash machine shares. A white-hot flash, an
-## orange fireball, sparks, a few scrap chunks tumbling under gravity, a short puff of smoke
-## and, when it was beaten, flecks of its stolen Glimra light bursting out (the XP itself
-## flies out as the machine's LightDrop motes).
+## A machine blowing apart: the one death every trash machine shares. A jagged white-hot
+## starburst (the flash), then an orange fireball, sparks, a few scrap chunks tumbling under
+## gravity, a short puff of smoke and, when it was beaten, flecks of its stolen Glimra light
+## bursting out (the XP itself flies out as the machine's LightDrop motes).
 ##
 ## Drawn in code on whole pixels, with a fixed, small number of bits. Event-only: spawned by
 ## the machine, it frees itself after DURATION.
@@ -18,6 +18,12 @@ const FIREBALL_BITS := 10
 const SCRAP_COUNT := 4
 const SMOKE_PUFFS := 3
 const LIGHT_FLECKS := 8
+## The flash's starburst: how many rays, and their shortest and longest length as shares of
+## the blast's size (every other ray is long, so it reads jagged).
+const FLASH_RAYS := 10
+const FLASH_RAY_SHARES := Vector2(0.7, 1.7)
+## Share of each ray, from the centre, drawn white-hot (the rest is gold).
+const FLASH_HOT_SHARE := 0.6
 ## Pulls scrap and sparks down, in pixels per second squared.
 const GRAVITY := 300.0
 ## Hottest to coolest, for the fireball bits.
@@ -38,6 +44,8 @@ var _fire: Array[FlyingBit] = []
 var _scrap: Array[FlyingBit] = []
 var _flecks: Array[FlyingBit] = []
 var _smoke_offsets: Array[Vector2] = []
+## Each flash ray's tip, relative to the centre.
+var _flash_tips: Array[Vector2] = []
 
 
 ## A bit of the blast flying out from the centre.
@@ -90,7 +98,7 @@ func _draw() -> void:
 	_draw_smoke()
 	_draw_fireball()
 	if _age < FLASH_TIME:
-		draw_circle(Vector2.ZERO, _size * 1.3, ApolloPalette.WHITE)
+		_draw_flash()
 	_draw_bits(_fire, FIREBALL_TIME, true)
 	_draw_bits(_sparks, DURATION * 0.7, false)
 	_draw_bits(_flecks, DURATION, false)
@@ -115,11 +123,30 @@ func _scatter_bits(frees_light: bool) -> void:
 			_flecks.append(FlyingBit.new(Vector2.ZERO, direction * speed * 0.7, color, 1.0, false))
 	for index in SMOKE_PUFFS:
 		_smoke_offsets.append(Vector2(randf_range(-0.5, 0.5), randf_range(-0.6, 0.0)) * _size)
+	var turn := randf() * TAU
+	for index in FLASH_RAYS:
+		var share := FLASH_RAY_SHARES.y if index % 2 == 0 else FLASH_RAY_SHARES.x
+		var length := _size * share * randf_range(0.8, 1.1)
+		_flash_tips.append(Vector2.from_angle(turn + TAU * index / FLASH_RAYS + randf_range(-0.15, 0.15)) * length)
 
 
-## A ball of fire that swells fast and burns down from white to orange.
+## The first frames: a jagged pixel starburst, white-hot at the heart and along the inner rays,
+## gold toward the tips.
+func _draw_flash() -> void:
+	var core := maxf(2.0, roundf(_size * 0.35))
+	draw_rect(Rect2(Vector2(-core, -core), Vector2(core, core) * 2.0), ApolloPalette.WHITE)
+	for tip in _flash_tips:
+		var steps := ceili(tip.length())
+		for step in steps + 1:
+			var share := float(step) / steps
+			var color := ApolloPalette.WHITE if share <= FLASH_HOT_SHARE else ApolloPalette.GOLD
+			var width := 2.0 if share < 0.35 else 1.0
+			draw_rect(Rect2((tip * share).floor(), Vector2(width, width)), color)
+
+
+## A ball of fire that swells fast (once the flash is over) and burns down from white to orange.
 func _draw_fireball() -> void:
-	if _age >= FIREBALL_TIME:
+	if _age < FLASH_TIME or _age >= FIREBALL_TIME:
 		return
 	var life := _age / FIREBALL_TIME
 	var radius := _size * (0.6 + 0.6 * ease(life, 0.3)) * (1.0 - life * 0.5)

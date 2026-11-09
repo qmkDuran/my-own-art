@@ -13,8 +13,6 @@ const ARC_COLOR := ApolloPalette.SKY
 const ARC_ALPHA := 0.7
 ## Squash, so the arc lies flat on the ground.
 const GROUND_SQUASH := 0.6
-## Height of the plink spark above its feet: where the shield plates are, in pixels.
-const PLINK_HEIGHT := -12.0
 
 ## Half the width of the guarded front, in degrees (hits within this of its facing bounce).
 @export var front_half_angle: float = 55.0
@@ -28,7 +26,7 @@ const PLINK_HEIGHT := -12.0
 @export var plink_radius: float = 4.0
 @export var plink_time: float = 0.12
 ## Radius of the facing arc on the ground, in pixels.
-@export var arc_radius: float = 9.0
+@export var arc_radius: float = 15.0
 
 ## Which way the shell faces (unit vector).
 var facing: Vector2 = Vector2.DOWN
@@ -78,7 +76,7 @@ func deflects(source_position: Vector2, kind: Health.HitKind) -> bool:
 func _plink(source_position: Vector2) -> void:
 	var to_source := body.global_position.direction_to(source_position)
 	if plink_scene != null:
-		Shockwave.spawn(plink_scene, body.get_parent(), body.global_position + to_source * arc_radius + Vector2(0, PLINK_HEIGHT), plink_radius, plink_time, ApolloPalette.WHITE)
+		Shockwave.spawn(plink_scene, body.get_parent(), CreatureBody.middle_of(body) + to_source * arc_radius, plink_radius, plink_time, ApolloPalette.WHITE)
 	var player := PlayerFinder.find(self)
 	if player != null and player.global_position.distance_to(source_position) < 1.0:
 		PlayerHit.shove(player, to_source * push_speed, push_time)

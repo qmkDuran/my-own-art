@@ -27,7 +27,8 @@ species_id = "gusteret"
 display_name = "Gusteret"
 element = "Wind"
 light_color = Color(0.87451, 0.517647, 0.647059, 1)
-core_offset = Vector2(0, -17)
+body_height = -17.0
+body_half_width = 11.0
 blast_size = 10.0
 
 [node name="Shadow" type="Polygon2D" parent="."]
@@ -71,6 +72,7 @@ sprite = NodePath("../Sprite")
 script = ExtResource("5_shot")
 orb_scene = ExtResource("6_orb")
 hit_flash = NodePath("../HitFlash")
+shooting_range = 160.0
 
 [node name="LightDrop" type="Node" parent="."]
 script = ExtResource("7_drop")
@@ -91,6 +93,7 @@ script = ExtResource("90_path_mover")
 script = ExtResource("12_float")
 sprite = NodePath("../Sprite")
 path_mover = NodePath("../PathMover")
+preferred_distance = Vector2(80, 125)
 
 [node name="OffscreenSleep" type="Node" parent="." node_paths=PackedStringArray("health")]
 script = ExtResource("91_offscreen_sleep")
