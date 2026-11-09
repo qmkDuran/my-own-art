@@ -8,8 +8,6 @@ const DRIFT_FRICTION := 160.0
 const HOMING_ACCELERATION := 700.0
 const MAX_SPEED := 240.0
 const COLLECT_RADIUS := 5.0
-## Height of the player's body above their feet, where the scrap flies to.
-const BODY_HEIGHT := -7.0
 ## Safety net: a bit this old is collected anyway.
 const MAX_AGE := 4.0
 ## 3×3 bent metal: '#' steel, 'l' a lit edge, 'c' a cyan wire.
@@ -38,7 +36,7 @@ func _physics_process(delta: float) -> void:
 	if _age < DRIFT_SECONDS or player == null:
 		_velocity = _velocity.move_toward(Vector2.ZERO, DRIFT_FRICTION * delta)
 	else:
-		var to_target := player.global_position + Vector2(0, BODY_HEIGHT) - global_position
+		var to_target := CreatureBody.middle_of(player) - global_position
 		if to_target.length() <= COLLECT_RADIUS:
 			_collect()
 			return

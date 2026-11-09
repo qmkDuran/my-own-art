@@ -7,8 +7,9 @@ extends Area2D
 ## an obstacle, and fades away after `lifetime`. Other enemies don't stop it. A player who
 ## is dodging (invulnerable) passes straight through it.
 ##
-## This node sits on the ground (so it hits walls and feet); its Sprite is raised to the
-## height it was blown from, with a small shadow below.
+## This node sits on the ground (so it hits walls and feet, measured feet to feet); its
+## Sprite is raised to the height it was blown from and climbs or sinks to the height of the
+## player's body by the time it reaches where he stood, with a small shadow below.
 
 ## Flying speed, in pixels per second. Slow enough to see coming and step aside.
 @export var speed: float = 55.0
@@ -29,6 +30,11 @@ extends Area2D
 
 var _direction: Vector2 = Vector2.DOWN
 var _age: float = 0.0
+## The Sprite's height above the ground: from `_start_height`, reaching `_end_height` after
+## `_rise_distance` pixels of flight, then level.
+var _start_height: float = 0.0
+var _end_height: float = 0.0
+var _rise_distance: float = 0.0
 
 @onready var sprite: SingleViewAnimator = $Sprite
 
@@ -38,9 +44,14 @@ func _ready() -> void:
 	sprite.show_animation("orb")
 
 
-## Sends the orb off in `direction`.
-func launch(direction: Vector2) -> void:
+## Sends the orb off along the ground in `direction`, drawn `start_height` above it (negative
+## is up) and reaching `end_height` (the target's body, see CreatureBody) after `rise_distance`.
+func launch(direction: Vector2, start_height: float, end_height: float, rise_distance: float) -> void:
 	_direction = direction.normalized() if direction.length() > 0.1 else Vector2.DOWN
+	_start_height = start_height
+	_end_height = end_height
+	_rise_distance = rise_distance
+	_raise_sprite()
 
 
 func _physics_process(delta: float) -> void:
@@ -49,6 +60,12 @@ func _physics_process(delta: float) -> void:
 		queue_free()
 		return
 	position += _direction * speed * delta
+	_raise_sprite()
+
+
+func _raise_sprite() -> void:
+	var share := clampf(speed * _age / _rise_distance, 0.0, 1.0) if _rise_distance > 0.0 else 1.0
+	sprite.position.y = roundf(lerpf(_start_height, _end_height, share))
 
 
 func _on_body_entered(body: Node2D) -> void:

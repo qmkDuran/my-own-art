@@ -26,8 +26,10 @@ species_id = "zapmite"
 display_name = "Zapmite"
 element = "Spark"
 light_color = Color(0.87451, 0.517647, 0.647059, 1)
-core_offset = Vector2(0, -14)
+body_height = -14.0
+body_half_width = 10.0
 blast_size = 9.0
+run_speed = 90.0
 
 [node name="Shadow" type="Polygon2D" parent="."]
 color = Color(0.0352941, 0.0392157, 0.0784314, 0.45)
@@ -85,6 +87,8 @@ berry_drop_chance = 0.1
 script = ExtResource("20_burst")
 hit_flash = NodePath("../HitFlash")
 reach_marker = NodePath("../ReachMarker")
+trigger_distance = 28.0
+burst_radius = 40.0
 
 [node name="PathMover" type="NavigationAgent2D" parent="."]
 script = ExtResource("90_path_mover")

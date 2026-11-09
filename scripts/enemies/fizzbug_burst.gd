@@ -8,9 +8,6 @@ extends Node
 ## The Fizzbug decides when to start it and plays the poses; this does the timing, the
 ## telegraph, the ring and the hits.
 
-## Height of the spark ring's flash above the drone's feet (its core), in pixels.
-const BURST_HEIGHT := -12.0
-
 ## It stops rushing and starts to glow once the player is this close, in pixels.
 @export var trigger_distance: float = 20.0
 ## Seconds it glows before bursting (the player's warning).
@@ -59,7 +56,7 @@ func update(seconds_glowing: float) -> void:
 ## Pops: the ring, and a hit on the player and on every other enemy inside it.
 func burst() -> void:
 	reach_marker.hide_reach()
-	SparkBurst.spawn(fizzbug.get_parent(), fizzbug.global_position + Vector2(0, BURST_HEIGHT), burst_radius)
+	SparkBurst.spawn(fizzbug.get_parent(), CreatureBody.middle_of(fizzbug), burst_radius)
 	_hit_player()
 	_hit_other_enemies()
 

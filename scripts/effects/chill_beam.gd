@@ -6,8 +6,6 @@ extends Node2D
 
 ## Pixels the line wanders sideways at most.
 const WANDER := 1.0
-## Height of both ends above their feet (the bodies' middles), in pixels.
-const BODY_HEIGHT := -12.0
 const CORE_COLOR := ApolloPalette.WHITE
 const EDGE_COLOR := ApolloPalette.SKY_LIGHT
 
@@ -35,8 +33,9 @@ func _process(_delta: float) -> void:
 
 
 func _draw() -> void:
-	var start := _from.global_position + Vector2(0, BODY_HEIGHT) - global_position
-	var end := _to.global_position + Vector2(0, BODY_HEIGHT) - global_position
+	# From body middle to body middle, whatever their sizes (CreatureBody).
+	var start := CreatureBody.middle_of(_from) - global_position
+	var end := CreatureBody.middle_of(_to) - global_position
 	var length := start.distance_to(end)
 	if length < 1.0:
 		return

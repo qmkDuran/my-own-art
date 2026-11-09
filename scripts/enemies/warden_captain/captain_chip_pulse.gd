@@ -14,7 +14,8 @@ extends BossAttack
 @export var spread_degrees: float = 22.0
 ## Orb speed, in pixels per second (faster than a Zephoot's).
 @export var orb_speed: float = 75.0
-## Where the orbs leave, relative to his feet.
+## Where the orbs leave, relative to his feet, on the ground (they are drawn at his body's
+## height and fly to the player's, see CreatureBody).
 @export var muzzle_offset: Vector2 = Vector2(0, 2)
 @export var charge_particles: ChargeParticles
 
@@ -35,14 +36,17 @@ func _release() -> void:
 	if orb_scene == null or player == null:
 		return
 	var muzzle := boss.global_position + muzzle_offset
-	var aim := (player.global_position - muzzle).angle()
+	var to_player := player.global_position - muzzle
+	var aim := to_player.angle()
+	var start_height := CreatureBody.height_of(boss) - muzzle_offset.y
 	for orb_number in orb_count:
 		var orb: GustOrb = orb_scene.instantiate()
 		orb.speed = orb_speed
 		boss.get_parent().add_child(orb)
 		orb.global_position = muzzle
 		var spread_step := orb_number - (orb_count - 1) / 2.0
-		orb.launch(Vector2.from_angle(aim + deg_to_rad(spread_degrees) * spread_step))
+		orb.launch(Vector2.from_angle(aim + deg_to_rad(spread_degrees) * spread_step), start_height,
+				CreatureBody.height_of(player), to_player.length())
 
 
 func _on_finish() -> void:

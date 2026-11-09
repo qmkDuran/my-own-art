@@ -3,6 +3,9 @@ extends Line2D
 ## The toad's tongue: shoots out of the mouth toward a direction, holds, then snaps back.
 ##
 ## Drawn in code so it can point anywhere, even though the toad sprite only faces the camera.
+## It runs along the ground line from the toad's feet, drawn rising from the mouth to the
+## target's body height (reached at the target's distance), so it hits a tall hero in the
+## middle; whether it hits is measured on the ground, feet to feet.
 
 ## Share of the lash spent shooting out, and the share by which it has fully extended + held.
 const SHOOT_OUT_SHARE := 0.35
@@ -13,6 +16,9 @@ const HOLD_UNTIL_SHARE := 0.55
 
 var _direction: Vector2 = Vector2.DOWN
 var _reach: float = 0.0
+## Height above the feet the tip rises to, and the distance along the ground where it gets there.
+var _aim_height: float = 0.0
+var _aim_distance: float = 1.0
 var _duration: float = 0.0
 var _elapsed: float = 0.0
 var _is_lashing: bool = false
@@ -26,9 +32,13 @@ func _ready() -> void:
 	retract_now()
 
 
-func lash(direction: Vector2, reach: float, duration: float) -> void:
+## Whips it out along `direction` (on the ground) to `reach`, its tip rising to `aim_height`
+## (above the feet) by `aim_distance` along the ground.
+func lash(direction: Vector2, reach: float, duration: float, aim_height: float, aim_distance: float) -> void:
 	_direction = direction.normalized()
 	_reach = reach
+	_aim_height = aim_height
+	_aim_distance = maxf(1.0, aim_distance)
 	_duration = duration
 	_elapsed = 0.0
 	_is_lashing = true
@@ -46,14 +56,14 @@ func is_fully_extended() -> bool:
 	return _is_lashing and _extension() >= 1.0
 
 
-## True if the tongue passes within hit_radius of the point (world coordinates).
-func reaches(point: Vector2, hit_radius: float) -> bool:
+## True if the tongue's line on the ground passes within hit_radius of `feet` (world coordinates).
+func reaches(feet: Vector2, hit_radius: float) -> bool:
 	if not _is_lashing:
 		return false
-	var mouth := to_global(mouth_offset)
-	var tip := to_global(_tip_position())
-	var closest := Geometry2D.get_closest_point_to_segment(point, mouth, tip)
-	return closest.distance_to(point) <= hit_radius
+	var base := to_global(Vector2.ZERO)
+	var tip := base + _direction * _ground_length()
+	var closest := Geometry2D.get_closest_point_to_segment(feet, base, tip)
+	return closest.distance_to(feet) <= hit_radius
 
 
 func _process(delta: float) -> void:
@@ -61,7 +71,7 @@ func _process(delta: float) -> void:
 		return
 
 	_elapsed += delta
-	points = PackedVector2Array([mouth_offset, _tip_position()])
+	points = _hose_points()
 	if not _has_dripped and _extension() >= 1.0:
 		_has_dripped = true
 		_spray_droplets(to_global(_tip_position()))
@@ -69,8 +79,26 @@ func _process(delta: float) -> void:
 		retract_now()
 
 
+## The hose as drawn: straight from the mouth up to the target's body, then on level past it.
+func _hose_points() -> PackedVector2Array:
+	if _ground_length() <= _aim_distance:
+		return PackedVector2Array([mouth_offset, _tip_position()])
+	return PackedVector2Array([mouth_offset, _drawn_at(_aim_distance), _tip_position()])
+
+
 func _tip_position() -> Vector2:
-	return mouth_offset + _direction * _reach * _extension()
+	return _drawn_at(_ground_length())
+
+
+## The point `along` pixels out on the ground line, raised from the mouth's height toward the
+## aim height (reached at the aim distance).
+func _drawn_at(along: float) -> Vector2:
+	var rise := clampf(along / _aim_distance, 0.0, 1.0)
+	return Vector2(mouth_offset.x, lerpf(mouth_offset.y, _aim_height, rise)) + _direction * along
+
+
+func _ground_length() -> float:
+	return _reach * _extension()
 
 
 ## How far out the tongue is right now: 0 = in the mouth, 1 = full reach.

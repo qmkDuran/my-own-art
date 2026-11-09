@@ -23,8 +23,6 @@ const MAX_AGE := 4.0
 @export var max_speed: float = 280.0
 ## How close it must get to be collected, in pixels.
 @export var collect_radius: float = 5.0
-## Height of the player's body above their feet (where motes fly to).
-@export var body_height: float = -7.0
 
 var _velocity: Vector2 = Vector2.ZERO
 var _age: float = 0.0
@@ -47,7 +45,7 @@ func _physics_process(delta: float) -> void:
 	if _age < drift_time or player == null:
 		_velocity = _velocity.move_toward(Vector2.ZERO, DRIFT_FRICTION * delta)
 	else:
-		var target := player.global_position + Vector2(0, body_height)
+		var target := CreatureBody.middle_of(player)  # his body, whatever his form
 		var to_target := target - global_position
 		if to_target.length() <= collect_radius:
 			Progression.add_xp(xp_value)

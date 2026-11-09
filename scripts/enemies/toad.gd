@@ -127,12 +127,12 @@ func _choose_next_move() -> void:
 		_timer.enter(State.RESTING, _random_rest_time())
 		return
 
-	# Measured along the path: a player just across a wall is not in tongue reach.
-	var player_body := ToadTongueAttack.aim_point(player)
-	var hop_direction := path_mover.direction_toward(player_body)
-	var distance_to_player := path_mover.distance_to(player_body)
+	# Measured along the path, feet to feet: a player just across a wall is not in tongue reach.
+	var player_feet := player.global_position
+	var hop_direction := path_mover.direction_toward(player_feet)
+	var distance_to_player := path_mover.distance_to(player_feet)
 	if distance_to_player <= tongue_attack.tongue_reach:
-		_start_attack(player_body - global_position)
+		_start_attack(player_feet - global_position)
 	else:
 		_start_hop(hop_direction, distance_to_player)
 

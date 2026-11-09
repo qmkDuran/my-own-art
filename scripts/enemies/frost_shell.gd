@@ -9,9 +9,9 @@ extends HitShield
 
 ## The child name a body's shell goes by.
 const NODE_NAME := "FrostShell"
-## The ring around the body: its radius and its centre's height above the feet, in pixels.
-const RADIUS := 13.0
-const BODY_HEIGHT := -12.0
+## Pixels the ring stands clear of the body (it is centred on the body's middle and sized to
+## the body, see CreatureBody).
+const CLEARANCE := 3.0
 ## Seconds the shatter takes, and how far the shards fly out, in pixels.
 const SHATTER_TIME := 0.2
 const SHATTER_SPREAD := 6.0
@@ -71,8 +71,11 @@ func _process(delta: float) -> void:
 
 func _draw() -> void:
 	var shattered := _seconds_shattering / SHATTER_TIME if _seconds_shattering >= 0.0 else 0.0
-	var radius := RADIUS + shattered * SHATTER_SPREAD
-	var pixels := roundi(TAU * RADIUS)
+	var host := get_parent() as Node2D
+	var body_radius := maxf(CreatureBody.half_width_of(host), absf(CreatureBody.height_of(host))) + CLEARANCE
+	var centre := Vector2(0, CreatureBody.height_of(host))
+	var radius := body_radius + shattered * SHATTER_SPREAD
+	var pixels := roundi(TAU * body_radius)
 	var is_cracked := soak_left < _soak_full
 	for pixel in pixels:
 		# Cracked: gaps in the ring. Shattering: it breaks up as it flies out.
@@ -81,6 +84,6 @@ func _draw() -> void:
 		if shattered > 0.0 and (pixel * 7) % 10 < shattered * 10.0:
 			continue
 		var angle := TAU * pixel / pixels
-		var at := Vector2(cos(angle), sin(angle)) * radius + Vector2(0, BODY_HEIGHT)
+		var at := Vector2(cos(angle), sin(angle)) * radius + centre
 		var color := SHINE_COLOR if pixel % 5 == 0 else ICE_COLOR
 		draw_rect(Rect2(at.round(), Vector2.ONE), Color(color, 1.0 - shattered))

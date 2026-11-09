@@ -3,10 +3,11 @@ extends SpeciesEnemy
 ## A trash enemy: one of the AI God's machines, running on light drained from the wild Glimra.
 ## Front view only; the sprite is mirrored to face the player's side once it is alert.
 ##
-## Every machine dies the same way: it blows apart (MachineDeath) and the stolen light in its
-## eye or core bursts out as XP motes (its LightDrop), maybe leaving a berry (DeathDrops, when
-## it has one). An elite's blast gives the camera a small shake. Each machine script only says
-## what to call off when it dies (`_call_off_attacks`).
+## Every machine dies the same way: it blows apart (MachineDeath, centred on its body: see
+## `body_height`) and the stolen light in its eye or core bursts out as XP motes (its
+## LightDrop), maybe leaving a berry (DeathDrops, when it has one). An elite's blast gives
+## the camera a small shake. Each machine script only says what to call off when it dies
+## (`_call_off_attacks`).
 
 ## Closer than this to the player's side, in pixels, it keeps facing the way it was (no flicker).
 const FACING_DEAD_ZONE := 4.0
@@ -17,8 +18,6 @@ const ELITE_SHAKE_SECONDS := 0.2
 @export_group("Blowing up")
 ## The stolen light glowing in its eye or core; the flecks that burst out match it.
 @export var light_color: Color = ApolloPalette.SKY_LIGHT
-## Where the blast is centred, relative to its feet (about the middle of its body).
-@export var core_offset: Vector2 = Vector2(0, -12)
 ## About half the machine's width, in pixels: the size of the blast.
 @export var blast_size: float = 10.0
 ## Off for a machine that never turns (it looks the same both ways).
@@ -36,7 +35,7 @@ func _process(_delta: float) -> void:
 ## beaten (a Zapmite's own burst): no light flecks then (and its LightDrop never fires).
 func blow_up(frees_light: bool) -> void:
 	_is_dying = true
-	MachineDeath.spawn(get_parent(), global_position + core_offset, blast_size, light_color, frees_light)
+	MachineDeath.spawn(get_parent(), CreatureBody.middle_of(self), blast_size, light_color, frees_light)
 	if _is_elite():
 		_shake_camera()
 	EnemyReactions.take_out_of_play(self, collision_shape)
