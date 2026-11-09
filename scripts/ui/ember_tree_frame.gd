@@ -11,6 +11,7 @@ const SIDE_MARGIN := 16.0
 const FOOTER_HINT := "Click: ignite   ∙   Right-click: put out   ∙   Scroll: zoom   ∙   Drag: move   ∙   K / Esc: close"
 
 var _level_label: Label
+var _name_label: Label
 var _xp_label: Label
 
 
@@ -22,8 +23,9 @@ func _ready() -> void:
 	_build_footer()
 
 
-## Shows the level, and how far it is to the next one (which brings a skill point).
+## Shows his current name, the level, and how far it is to the next one (which brings a skill point).
 func refresh_level() -> void:
+	_name_label.text = AwakeningStage.current_hero_name().to_upper()
 	_level_label.text = "Level %d" % Progression.level
 	if Progression.level >= Progression.MAX_LEVEL:
 		_xp_label.text = "Max level"
@@ -52,7 +54,8 @@ func _build_vignette() -> void:
 func _build_header() -> void:
 	var bar := _add_bar(Control.PRESET_TOP_WIDE, HEADER_HEIGHT, Control.PRESET_BOTTOM_WIDE)
 	var title_block := _add_text_block(bar, Control.PRESET_LEFT_WIDE)
-	title_block.add_child(UiLabel.make(EmberTreeFonts.LARGE_SIZE, EmberTreePalette.GOLD, "EMBEROO"))
+	_name_label = UiLabel.make(EmberTreeFonts.LARGE_SIZE, EmberTreePalette.GOLD, AwakeningStage.current_hero_name().to_upper())
+	title_block.add_child(_name_label)
 	title_block.add_child(UiLabel.make(EmberTreeFonts.TEXT_SIZE, EmberTreePalette.GREY, "The Ember Tree"))
 	var level_block := _add_text_block(bar, Control.PRESET_RIGHT_WIDE)
 	_level_label = UiLabel.make(EmberTreeFonts.LARGE_SIZE, EmberTreePalette.CREAM)

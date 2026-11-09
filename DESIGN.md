@@ -53,12 +53,12 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
 - No gear on Emberoo, no clothes, no inventory grid.
 
 ## Build system (locked)
-- **Awakening = evolution (Art direction v2, 2026-11-09):** each Awakening is an evolution stage with its own PixelLab art (`art/emberoo_v2/`): **Emberoo** (stage 1, the start, ~35 px, cloth hand-wraps), **stage 2** (Awakening I, ~46 px, obsidian gauntlets with glowing cracks; name TBD) and **stage 3** (Awakening II, name TBD, ~63 px, flame mane, red sash, magma gauntlets). No recolour, rim or aura: the new art is the change, and his fire stays gold → orange → red (`EmberooFlameColors`). The same for every build; builds still differ through the Ember Tree, skills and effects.
+- **Awakening = evolution (Art direction v2, 2026-11-09):** each Awakening is an evolution stage with its own PixelLab art (`art/emberoo_v2/`): **Pyroo** (stage 1, the start, ~35 px, cloth hand-wraps), **Emberoo** (stage 2, Awakening I, ~46 px, obsidian gauntlets with glowing cracks) and **Cinderoo** (stage 3, Awakening II, ~63 px, flame mane, red sash, magma gauntlets). No recolour, rim or aura: the new art is the change, and his fire stays gold → orange → red (`EmberooFlameColors`). The same for every build; builds still differ through the Ember Tree, skills and effects.
   - **Trigger:** a level threshold, `AwakeningStage.ONE_LEVEL` = **10** (about the end of Act 1) for **Awakening I**, `TWO_LEVEL` = **25** (planned, mid-game) for **Awakening II** (`scripts/systems/awakening_stage.gd`; the `Awakening` autoload holds the stage).
   - **The evolve moment** (~1.2 s): Emberoo stops and faces the camera, light gathers (a warm flash and a small ring), then the flare: a white flash on his body as the new form appears, an ember burst, a fire ring, three shockwaves, a screen shake, a brief white screen flash and a "EMBEROO AWAKENED" banner (top-centre). He can't be hurt meanwhile (`AwakeningMoment`, HUD `AwakeningAnnouncement`). Loading and F4 stepping down swap the form at once.
   - **Forms** (`HeroForm` resources in `data/hero_forms/`, put on the creature by `HeroFormSwitch`): each holds the sheet folder, canvas (64/64/96) and sprite offset (feet on the node: -27/-27/-35), the fist spots for the fist sparks, and the body and reach numbers, so gameplay grows with the body:
 
-    | | Emberoo (stage 1) | stage 2 (name TBD) | stage 3 (name TBD) |
+    | | Pyroo (stage 1) | Emberoo (stage 2) | Cinderoo (stage 3) |
     |---|---|---|---|
     | jab reach / hit radius / fist height | 24 / 13 / -14 | 30 / 16 / -22 | 38 / 19 / -32 |
     | Spinning Hook radius | 36 | 48 | 60 |
@@ -183,7 +183,7 @@ Decided with the user after the size and grimdark mockups. This section wins ove
 - **Palette:** Apollo, all 46 colours (named in `ApolloPalette`). Every sprite, tile and UI pixel is Apollo; PixelLab output is generated with Apollo as its target palette and checked for 0 off-palette pixels.
 - **View:** unchanged, 480×270 at 4× (16 px tiles).
 - **Sizes** (trimmed sprite height, front view):
-  - Hero Emberoo by evolution stage: stage 1 ~35 px, stage 2 ~46 px, stage 3 ~63 px. All directions (front, frontdiag, side, backdiag, back; mirrored for the other side). Full animation set per stage.
+  - Hero Emberoo by evolution stage: Pyroo ~35 px, Emberoo ~46 px, Cinderoo ~63 px. All directions (front, frontdiag, side, backdiag, back; mirrored for the other side). Full animation set per stage.
   - **Trash = the AI God's machines** (drones, walkers, treads, turrets...): ~24–32 px, front view only (mirrored), 2-frame idle/move, a wind-up pose and a strike pose. One shared death: explosion, sparks, scrap, the stolen light bursting out as XP motes.
   - Elites: ~40–48 px. Bosses: 96–128 px. Humans (Wardens, NPCs): ~40 px; placeholders for now.
 - **Lore:** wild Glimra are nearly gone, drained to power the machines. Chipped Glimra appear as elites and bosses.
@@ -238,7 +238,7 @@ Applied to the world tiles, NPCs, the trainer kit, the handler and the Wardens. 
 ## Art
 - 2D pixel art, made by the developer in Aseprite (studying *Pixel Logic*)
 - Tiles and world: 16×16
-- Emberoo evolves by Awakening into bigger sprites (stage 1 ~35 px, stage 2 ~46 px, stage 3 ~63 px; see Art direction v2 and Awakening)
+- Emberoo evolves by Awakening into bigger sprites (Pyroo ~35 px, Emberoo ~46 px, Cinderoo ~63 px; see Art direction v2 and Awakening)
 - **Palette: Apollo** (46 colours, Lospec), chosen for its dark tone and clear ramps. Swappable later via Aseprite colour remap.
   - **Every colour we pick comes from Apollo**: art files *and* colours set in code (UI, particles, effects). Checked by script: all art is 100% Apollo; code colours snapped to Apollo.
   - On screen, transparency, fades and glow blend Apollo colours into in-between shades; that's expected and fine.
@@ -314,9 +314,9 @@ Applied to the world tiles, NPCs, the trainer kit, the handler and the Wardens. 
 - **Controls:** mouse is the main control; arrow keys also move (no WASD, since W is a skill key). Space = dodge, F = Trainer's Aid, K = Ember Tree, C = Link Rod (once the Tinkerer has made it). Next to a townsperson, F or E talks instead.
 
 ## Naming
-- Creature names blend **[element/trait] + [animal/sound]** into 2–3 fun syllables (e.g. **Emberoo**, **Toxlop**); an evolution keeps the name.
+- Creature names blend **[element/trait] + [animal/sound]** into 2–3 fun syllables (e.g. **Emberoo**). Each evolution stage has its own name: **Pyroo → Emberoo → Cinderoo** (user's pick, 2026-11-09; quick web check: no game uses Pyroo or Cinderoo; Magmaroo was rejected because it is a Dragon Quest IX volcano).
 - Every name must be original and checked (web + later USPTO/EUIPO) before use.
-- Names in use: **Glimra** (the creatures), **Emberoo** (player, fire kangaroo), **Toxlop** (toxic toad), **Zephoot** (wind puff-owl) and **Gruntite** (stone boar), both pending the trademark check; **Bramole** (bush mole), **Brinelob** (shield crab), **Fizzbug** (spark beetle) and **Rimoth** (frost moth), also pending the trademark check; **Shalendrill** (shale mandrill boss; no web hits, pending the formal check); **Wardens** (the Handlers; fine for enemies, not as a game title).
+- Names in use: **Glimra** (the creatures), **Pyroo / Emberoo / Cinderoo** (the player's fire kangaroo line), **Toxlop** (toxic toad), **Zephoot** (wind puff-owl) and **Gruntite** (stone boar), both pending the trademark check; **Bramole** (bush mole), **Brinelob** (shield crab), **Fizzbug** (spark beetle) and **Rimoth** (frost moth), also pending the trademark check; **Shalendrill** (shale mandrill boss; no web hits, pending the formal check); **Wardens** (the Handlers; fine for enemies, not as a game title).
 
 ## HUD
 - **Health: one heart** at the bottom-centre, filled with red that drains from the top down as health is lost, with the numbers beside it (e.g. 7/10) in a tiny pixel font.

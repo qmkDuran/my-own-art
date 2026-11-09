@@ -7,9 +7,9 @@ In the game: `data/hero_forms/` (one `HeroForm` per stage) points at these folde
 
 | Folder | Stage (Awakening) | Look | Canvas (each frame) | Baseline row | Body height |
 |---|---|---|---|---|---|
-| `stage1/` | stage 1 (Awakening 0, lv 0) | cloth hand-wraps with a faint ember glow | 64×64 | 58 | ~35 px |
-| `stage2/` | Emberoo (stage 1, lv 10) | obsidian gauntlets, glowing cracks | 64×64 | 58 | ~46 px |
-| `stage3/` | final (stage 2, lv 25) | flame mane, red sash, magma gauntlets | 96×96 | 82 | ~63 px |
+| `stage1/` | Pyroo, stage 1 (lv 0) | cloth hand-wraps with a faint ember glow | 64×64 | 58 | ~35 px |
+| `stage2/` | Emberoo, stage 2 (Awakening I, lv 10) | obsidian gauntlets, glowing cracks | 64×64 | 58 | ~46 px |
+| `stage3/` | Cinderoo, stage 3 (Awakening II, lv 25) | flame mane, red sash, magma gauntlets | 96×96 | 82 | ~63 px |
 
 - **Anchor:** within a stage, every frame has the same canvas; the feet stand on the
   baseline row (0-based y, the lowest opaque row of a grounded frame); the idle pose's
@@ -61,7 +61,7 @@ longer needed for these sheets).
 - Effect flecks are removed from every generated frame. The stage 3 red sash is unchanged.
 
 ## Known quirks
-- Stage 1 front jab fist is a small drawn blob (stage 1 is only ~35 px tall); it reads
+- Stage 1 front jab fist is a small drawn blob (Pyroo is only ~35 px tall); it reads
   as a punch toward the camera, but it's simple.
 - Stage 1 backdiag/back uppercut and backdiag jab2: generated poses; in the fist-up frames
   the head tilts up and the ears are smaller than in idle. The raised back-uppercut fist was

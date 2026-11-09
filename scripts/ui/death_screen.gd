@@ -5,7 +5,8 @@ extends CanvasLayer
 ## Its fades ignore the time scale, so the death's slow motion doesn't drag them out; the text
 ## also slides a few pixels as it fades, like the pausing screens (PausingScreen.fade_and_slide).
 
-const TEXT := "EMBEROO FELL"
+## e.g. "EMBEROO FELL": the hero's name in his current form.
+const TEXT_FORMAT := "%s FELL"
 ## How dark the screen gets (the darkness's alpha).
 const DARKNESS := 0.92
 ## The text sits this far below the screen's middle, in game pixels (where Emberoo was).
@@ -46,8 +47,9 @@ func _fade_to(alpha: float, seconds: float) -> Tween:
 
 
 func _draw_text() -> void:
+	var text := TEXT_FORMAT % AwakeningStage.current_hero_name().to_upper()
 	var screen := _text.get_viewport_rect().size
-	var top_left := Vector2(floorf((screen.x - PixelFont.width_of(TEXT) * TEXT_SCALE) / 2.0), floorf(screen.y / 2.0 + TEXT_DROP))
+	var top_left := Vector2(floorf((screen.x - PixelFont.width_of(text) * TEXT_SCALE) / 2.0), floorf(screen.y / 2.0 + TEXT_DROP))
 	_text.draw_set_transform(top_left, 0.0, Vector2.ONE * TEXT_SCALE)
-	PixelFont.draw_text(_text, TEXT, Vector2.ZERO, ApolloPalette.RED_LIGHT, ApolloPalette.OUTLINE)
+	PixelFont.draw_text(_text, text, Vector2.ZERO, ApolloPalette.RED_LIGHT, ApolloPalette.OUTLINE)
 	_text.draw_set_transform(Vector2.ZERO)

@@ -3,11 +3,11 @@ extends RefCounted
 ## The Awakening stages and the levels that trigger them (the Awakening autoload holds
 ## which one Emberoo has reached). Each stage is an evolution form (HeroFormSwitch).
 
-## Stage 1, Emberoo himself, where every run starts.
+## Stage 1: Pyroo, the small one every run starts with.
 const NONE := 0
-## Awakening I: he grows into Emberoo, about the end of Act 1 (see Progression's XP curve).
+## Awakening I: Pyroo grows into Emberoo, about the end of Act 1 (see Progression's XP curve).
 const ONE := 1
-## Awakening II: his final form, flame mane and magma gauntlets (the mid game).
+## Awakening II: Emberoo grows into Cinderoo, flame mane and magma gauntlets (the mid game).
 const TWO := 2
 const LAST := TWO
 
@@ -17,6 +17,8 @@ const TWO_LEVEL := 25
 const LEVEL_FOR_STAGE := {ONE: ONE_LEVEL, TWO: TWO_LEVEL}
 
 const NUMERALS := {NONE: "", ONE: "I", TWO: "II"}
+## The hero's name in each form: one evolution line, Pyroo → Emberoo → Cinderoo.
+const HERO_NAMES := {NONE: "Pyroo", ONE: "Emberoo", TWO: "Cinderoo"}
 ## Stage 1 of the Ember Tree is open from the start; each Awakening opens the next ring.
 const FIRST_TREE_STAGE := 1
 
@@ -28,6 +30,16 @@ static func for_level(level: int) -> int:
 		if level >= LEVEL_FOR_STAGE[stage]:
 			earned = maxi(earned, stage)
 	return earned
+
+
+## The hero's name at Awakening `stage`, e.g. "Emberoo".
+static func hero_name(stage: int) -> String:
+	return HERO_NAMES[clampi(stage, NONE, LAST)]
+
+
+## The hero's name in his current form.
+static func current_hero_name() -> String:
+	return hero_name(Awakening.stage)
 
 
 ## "Awakening I" (or "" for NONE).

@@ -6,7 +6,7 @@ extends PanelContainer
 ## While an ember that can be ignited is pointed at, the stats it changes show the change
 ## in place, e.g. "60 → 72 px/s", with the new number in green.
 
-const TITLE := "EMBEROO NOW"
+const TITLE_FORMAT := "%s NOW"
 const PREVIEW_PREFIX := "If you ignite "
 const NO_PLAYER := "-"
 const ROW_GAP := 2
@@ -31,7 +31,7 @@ func _init(width: float) -> void:
 	column.add_theme_constant_override("separation", ROW_GAP)
 	column.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(column)
-	column.add_child(UiLabel.make(EmberTreeFonts.TEXT_SIZE, EmberTreePalette.ORANGE, TITLE))
+	column.add_child(UiLabel.make(EmberTreeFonts.TEXT_SIZE, EmberTreePalette.ORANGE, TITLE_FORMAT % AwakeningStage.current_hero_name().to_upper()))
 	column.add_child(EmberTreeWidgets.make_divider(text_width))
 	for stat in EmberTreeStatSheet.ORDER:
 		column.add_child(_make_row(stat))

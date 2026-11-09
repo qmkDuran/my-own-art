@@ -1,11 +1,9 @@
 class_name AwakeningAnnouncement
 extends Control
 ## The HUD's half of the awakening moment (see AwakeningMoment): at the flare the screen
-## flashes briefly and a banner says "EMBEROO AWAKENED" at the top-centre.
+## flashes briefly and a banner says e.g. "PYROO EVOLVED INTO EMBEROO" at the top-centre.
 
-const BANNER_TEXT := "EMBEROO AWAKENED"
-## Added after the text for later Awakenings, e.g. "EMBEROO AWAKENED II".
-const STAGE_SUFFIX_FORMAT := " %s"
+const BANNER_FORMAT := "%s EVOLVED INTO %s"
 ## How strong the flash starts (its alpha) and how long it takes to fade, in seconds.
 const FLASH_ALPHA := 0.55
 const FLASH_FADE_SECONDS := 0.35
@@ -39,6 +37,5 @@ func _show(stage: int) -> void:
 
 
 static func banner_text(stage: int) -> String:
-	if stage <= AwakeningStage.ONE:
-		return BANNER_TEXT
-	return BANNER_TEXT + STAGE_SUFFIX_FORMAT % AwakeningStage.NUMERALS[stage]
+	var before := AwakeningStage.hero_name(stage - 1).to_upper()
+	return BANNER_FORMAT % [before, AwakeningStage.hero_name(stage).to_upper()]

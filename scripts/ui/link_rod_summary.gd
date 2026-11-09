@@ -4,7 +4,7 @@ extends PanelContainer
 ## one line per stat as "without chips → now" (e.g. "Max Health 10 → 12"), then any
 ## overclocked effects. Locked mods aren't counted: they don't work yet.
 
-const TITLE := "THE ROD GIVES EMBEROO"
+const TITLE_FORMAT := "THE ROD GIVES %s"
 const NOTHING_YET := "Nothing yet: put a chip in the rod\nand reveal its mods."
 
 var _lines: RichTextLabel
@@ -19,7 +19,7 @@ func _init(width: float) -> void:
 	column.add_theme_constant_override("separation", 4)
 	column.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(column)
-	column.add_child(UiLabel.make(EmberTreeFonts.TEXT_SIZE, EmberTreePalette.ORANGE, TITLE))
+	column.add_child(UiLabel.make(EmberTreeFonts.TEXT_SIZE, EmberTreePalette.ORANGE, TITLE_FORMAT % AwakeningStage.current_hero_name().to_upper()))
 	column.add_child(EmberTreeWidgets.make_divider(text_width))
 	_lines = EmberTreeWidgets.make_rich_text(text_width)
 	column.add_child(_lines)

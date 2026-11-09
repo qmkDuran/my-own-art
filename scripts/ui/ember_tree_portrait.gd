@@ -1,7 +1,7 @@
 class_name EmberTreePortrait
 extends Node2D
 ## Emberoo in the middle of the Ember Tree: his portrait for the current Awakening stage
-## (art/ui/emberoo_portrait_stage<N>.png: stage 1 Emberoo, then stages 2 and 3), with a
+## (art/ui/emberoo_portrait_stage<N>.png: Pyroo, Emberoo, then Cinderoo), with a
 ## slow one-pixel breathing bob.
 ##
 ## Like the node icons (EmberTreeIcons) it is drawn at a whole number of screen pixels per

@@ -2,7 +2,7 @@ class_name HeroForm
 extends Resource
 ## One of Emberoo's evolution forms (Art direction v2, DESIGN.md): his sprite sheets and the
 ## body and reach numbers that go with that body. Each Awakening stage has its own form (the
-## stage 1 Emberoo, then stages 2 and 3); HeroFormSwitch puts the current one on the creature.
+## Pyroo, Emberoo, then Cinderoo); HeroFormSwitch puts the current one on the creature.
 ##
 ## Lengths are in world pixels; heights are measured from the feet (negative is up).
 
