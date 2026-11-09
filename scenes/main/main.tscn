@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=15 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/creatures/emberoo/emberoo.tscn" id="1_emberoo"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/handler/handler.tscn" id="3_handler"]
@@ -9,6 +9,10 @@
 [ext_resource type="PackedScene" path="res://scenes/enemies/zephoot/zephoot.tscn" id="11_zephoot"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/gruntite/gruntite.tscn" id="12_gruntite"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/warden_captain/warden_captain.tscn" id="13_captain"]
+[ext_resource type="Script" path="res://scripts/party/party.gd" id="14_party"]
+[ext_resource type="PackedScene" path="res://scenes/creatures/toxlop/toxlop.tscn" id="15_toxlop"]
+[ext_resource type="PackedScene" path="res://scenes/creatures/zephoot/zephoot.tscn" id="16_zephoot"]
+[ext_resource type="PackedScene" path="res://scenes/effects/shockwave.tscn" id="17_ring"]
 
 [node name="Main" type="Node2D"]
 
@@ -80,12 +84,21 @@ position = Vector2(-250, -170)
 [node name="TrainingDummy" parent="." instance=ExtResource("8_dummy")]
 position = Vector2(-60, 20)
 
-[node name="Emberoo" parent="." instance=ExtResource("1_emberoo")]
+[node name="Party" type="Node2D" parent="." node_paths=PackedStringArray("camera")]
+script = ExtResource("14_party")
+camera = NodePath("Camera")
+ring_scene = ExtResource("17_ring")
 
-[node name="ZoneEntrance" parent="Emberoo"]
+[node name="Emberoo" parent="Party" instance=ExtResource("1_emberoo")]
+
+[node name="ZoneEntrance" parent="Party/Emberoo"]
 enabled = false
 
-[node name="Camera" type="Camera2D" parent="Emberoo"]
+[node name="Toxlop" parent="Party" instance=ExtResource("15_toxlop")]
+
+[node name="Zephoot" parent="Party" instance=ExtResource("16_zephoot")]
+
+[node name="Camera" type="Camera2D" parent="Party"]
 position_smoothing_enabled = true
 
 [node name="GameLayer" parent="." instance=ExtResource("7_game_layer")]

@@ -54,25 +54,37 @@ var _gain_pop := HudMotion.new(GAIN_POP_SECONDS)
 var _flicker := HeatFlameFlicker.new()
 var _shape: Dictionary = PixelShape.from_rows(FLAME_PIXELS)
 var _depths: Dictionary = PixelShape.depths(_shape)
+## Rebinds the flame when another creature becomes the player (a team swap).
+var _player_watch := PlayerWatch.new()
+var _bound_heat: Heat
 
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	await get_tree().process_frame
-	var heat := PlayerFinder.find_component(self, "Heat") as Heat
-	if heat == null:
-		return
-	heat.heat_changed.connect(_on_heat_changed)
-	_on_heat_changed(heat.heat, heat.max_heat)
 
 
 func _process(delta: float) -> void:
+	if _player_watch.has_changed(self):
+		_bind_to_player_heat()
 	var is_moving := _refused.advance(delta)
 	is_moving = _gain_pop.advance(delta) or is_moving
 	if _heat > 0:
 		is_moving = _flicker.advance(delta) or is_moving
 	if is_moving:
 		queue_redraw()
+
+
+## Shows the player's Heat. A creature without Heat (not every Glimra runs on it) hides the flame.
+func _bind_to_player_heat() -> void:
+	if is_instance_valid(_bound_heat):
+		_bound_heat.heat_changed.disconnect(_on_heat_changed)
+	_bound_heat = PlayerFinder.find_component(self, "Heat") as Heat
+	_heat = 0
+	_max_heat = 0
+	if _bound_heat != null:
+		_bound_heat.heat_changed.connect(_on_heat_changed)
+		_on_heat_changed(_bound_heat.heat, _bound_heat.max_heat)
+	queue_redraw()
 
 
 ## A skill wanted more Heat than there is: shake and flash for a moment.

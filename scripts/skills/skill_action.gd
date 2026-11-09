@@ -44,3 +44,8 @@ func caster_velocity() -> Vector2:
 ## How far the caster's sprite is lifted off the ground right now, in pixels.
 func caster_lift() -> float:
 	return 0.0
+
+
+## Whether enemy attacks pass through the caster right now (e.g. mid-leap or mid-dash).
+func makes_caster_invulnerable() -> bool:
+	return false

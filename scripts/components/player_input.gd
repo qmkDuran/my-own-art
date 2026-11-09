@@ -5,8 +5,8 @@ extends Node
 ## Controls: left mouse = move to the cursor (or attack the enemy you click on),
 ## right mouse = attack in place toward the cursor, Shift + left mouse = attack in place too
 ## (like Path of Exile's "stand still" key), Space = dodge, F = Trainer's Aid (heal),
-## Q/W/E/R = skill slots 1-4. The arrow keys also move, for players who prefer it
-## (not WASD: W is a skill key).
+## Q/W/E/R = skill slots 1-4, 1/2/3 = swap in that team member (see Party).
+## The arrow keys also move, for players who prefer it (not WASD: W is a skill key).
 ##
 ## Only this component knows about keys and gamepads. Everything else asks it
 ## "what does the player want?" so controls can change without touching gameplay.
@@ -85,6 +85,12 @@ func wants_trainer_aid() -> bool:
 ## Q, W, E or R: use the skill in slot 0, 1, 2 or 3.
 func wants_skill(slot_index: int) -> bool:
 	return Input.is_action_just_pressed("skill_%d" % (slot_index + 1))
+
+
+## 1, 2 or 3: bring in the team member in slot 0, 1 or 2 (see Party).
+func wants_team_swap(slot_index: int) -> bool:
+	var action := StringName("swap_%d" % (slot_index + 1))
+	return InputMap.has_action(action) and Input.is_action_just_pressed(action)
 
 
 func wants_to_dodge() -> bool:

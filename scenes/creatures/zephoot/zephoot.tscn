@@ -1,0 +1,160 @@
+[gd_scene load_steps=25 format=3]
+
+[ext_resource type="Script" path="res://scripts/creatures/front_view_creature.gd" id="1_creature"]
+[ext_resource type="Script" path="res://scripts/animation/single_view_animator.gd" id="2_animator"]
+[ext_resource type="Script" path="res://scripts/components/player_input.gd" id="3_input"]
+[ext_resource type="Script" path="res://scripts/creatures/mouse_orders.gd" id="4_orders"]
+[ext_resource type="Script" path="res://scripts/components/path_mover.gd" id="5_path"]
+[ext_resource type="Script" path="res://scripts/components/movement.gd" id="6_movement"]
+[ext_resource type="Script" path="res://scripts/components/dodge.gd" id="7_dodge"]
+[ext_resource type="Script" path="res://scripts/components/health.gd" id="8_health"]
+[ext_resource type="Script" path="res://scripts/effects/hit_flash.gd" id="9_flash"]
+[ext_resource type="Script" path="res://scripts/effects/screen_shake.gd" id="10_shake"]
+[ext_resource type="Script" path="res://scripts/components/crit_roll.gd" id="11_crit"]
+[ext_resource type="Script" path="res://scripts/skills/skill_bar.gd" id="12_bar"]
+[ext_resource type="PackedScene" path="res://scenes/effects/shockwave.tscn" id="13_ring"]
+[ext_resource type="Script" path="res://scripts/effects/ally_marker.gd" id="30_ally"]
+[ext_resource type="Texture2D" path="res://art/zephoot/zephoot_play_idle_sheet.png" id="14_idle"]
+[ext_resource type="Script" path="res://scripts/skills/glimra/gust_shot.gd" id="15_shot"]
+[ext_resource type="Script" path="res://scripts/skills/glimra/gale_push.gd" id="16_gale"]
+[ext_resource type="Script" path="res://scripts/skills/glimra/updraft_dash.gd" id="17_dash"]
+[ext_resource type="Resource" path="res://data/skills/gust_shot.tres" id="18_shot_skill"]
+[ext_resource type="Resource" path="res://data/skills/gale_push.tres" id="19_gale_skill"]
+[ext_resource type="Resource" path="res://data/skills/updraft_dash.tres" id="20_dash_skill"]
+[ext_resource type="PackedScene" path="res://scenes/effects/wind_shot.tscn" id="21_wind_shot"]
+[ext_resource type="Script" path="res://scripts/party/chain/updraft_outro.gd" id="22_outro"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("14_idle")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_body"]
+radius = 5.0
+
+[node name="Zephoot" type="CharacterBody2D" groups=["player"]]
+z_index = 1
+motion_mode = 1
+script = ExtResource("1_creature")
+hover_height = 3.0
+bob_height = 1.0
+display_name = "Zephoot"
+element = "Wind"
+team_icon = SubResource("AtlasTexture_icon")
+
+[node name="Shadow" type="Polygon2D" parent="."]
+color = Color(0.0352941, 0.0392157, 0.0784314, 0.45)
+polygon = PackedVector2Array(-6, 0, -5, -1.5, 0, -2, 5, -1.5, 6, 0, 5, 1.5, 0, 2, -5, 1.5)
+
+[node name="AllyMarker" type="Node2D" parent="."]
+script = ExtResource("30_ally")
+
+[node name="Sprite" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -8)
+script = ExtResource("2_animator")
+sheet_folder = "res://art/zephoot"
+sheet_prefix = "zephoot_play"
+animation_settings = {
+"idle": {
+"frame_durations": [0.2, 0.2, 0.2, 0.2],
+"loops": true
+},
+"move": {
+"frame_durations": [0.11, 0.11, 0.11, 0.11],
+"loops": true
+},
+"basic": {
+"frame_durations": [0.065, 0.065, 0.065, 0.065],
+"loops": false
+},
+"skill": {
+"frame_durations": [0.085, 0.085, 0.085, 0.085],
+"loops": false
+},
+"signature": {
+"frame_durations": [0.05, 0.05, 0.05, 0.05, 0.05, 0.05],
+"loops": false
+},
+"intro": {
+"frame_durations": [0.07, 0.07, 0.07],
+"loops": false
+},
+"outro": {
+"frame_durations": [0.05, 0.05, 0.05],
+"loops": false
+},
+"hurt": {
+"frame_durations": [0.08, 0.08],
+"loops": false
+}
+}
+
+[node name="CollisionShape" type="CollisionShape2D" parent="."]
+position = Vector2(0, -3)
+shape = SubResource("CircleShape2D_body")
+
+[node name="PlayerInput" type="Node" parent="."]
+script = ExtResource("3_input")
+
+[node name="PathMover" type="NavigationAgent2D" parent="."]
+script = ExtResource("5_path")
+
+[node name="MouseOrders" type="Node" parent="." node_paths=PackedStringArray("player_input", "path_mover")]
+script = ExtResource("4_orders")
+player_input = NodePath("../PlayerInput")
+path_mover = NodePath("../PathMover")
+click_marker_scene = ExtResource("13_ring")
+attack_approach_distance = 80.0
+
+[node name="Movement" type="Node" parent="."]
+script = ExtResource("6_movement")
+top_speed = 66.0
+
+[node name="Dodge" type="Node" parent="."]
+script = ExtResource("7_dodge")
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("8_health")
+max_health = 6
+
+[node name="HitFlash" type="Node" parent="." node_paths=PackedStringArray("sprite")]
+script = ExtResource("9_flash")
+sprite = NodePath("../Sprite")
+
+[node name="ScreenShake" type="Node" parent="."]
+script = ExtResource("10_shake")
+
+[node name="CritRoll" type="Node" parent="."]
+script = ExtResource("11_crit")
+
+[node name="SkillBar" type="Node" parent="." node_paths=PackedStringArray("player_input")]
+script = ExtResource("12_bar")
+player_input = NodePath("../PlayerInput")
+
+[node name="GustShot" type="Node" parent="SkillBar"]
+script = ExtResource("15_shot")
+shot_scene = ExtResource("21_wind_shot")
+wind_up = 0.08
+duration = 0.26
+skill = ExtResource("18_shot_skill")
+animation_name = "basic"
+
+[node name="GalePush" type="Node" parent="SkillBar"]
+script = ExtResource("16_gale")
+wind_up = 0.12
+duration = 0.34
+skill = ExtResource("19_gale_skill")
+slot_index = 1
+animation_name = "skill"
+
+[node name="UpdraftDash" type="Node" parent="SkillBar"]
+script = ExtResource("17_dash")
+ring_scene = ExtResource("13_ring")
+wind_up = 0.24
+duration = 0.3
+skill = ExtResource("20_dash_skill")
+slot_index = 2
+animation_name = "signature"
+
+[node name="Outro" type="Node" parent="."]
+script = ExtResource("22_outro")
+ring_scene = ExtResource("13_ring")

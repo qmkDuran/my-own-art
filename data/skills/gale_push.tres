@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Skill" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/skills/skill.gd" id="1_skill"]
+[ext_resource type="Texture2D" path="res://art/skills/gale_push_icon.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_skill")
+display_name = "Gale Push"
+icon = ExtResource("2_icon")
+cooldown = 4.0

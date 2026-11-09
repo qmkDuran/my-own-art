@@ -18,7 +18,8 @@ const SLOT_COUNT := 4
 const REFUSED_HEAT := "heat"
 const REFUSED_COOLDOWN := "cooldown"
 
-## Where the Heat to pay for skills comes from.
+## Where the Heat to pay for skills comes from. Optional: without it every skill is free
+## (creatures that don't run on Heat only wait out cooldowns).
 @export var heat: Heat
 @export var player_input: PlayerInput
 
@@ -29,7 +30,7 @@ var _cooldowns_left: Array[float] = []
 ## The action playing right now, or null.
 var _casting: SkillAction = null
 
-@onready var caster: Creature = get_parent()
+@onready var caster: PlayableCreature = get_parent()
 
 
 func _ready() -> void:
@@ -93,13 +94,14 @@ func try_use(slot_index: int) -> bool:
 	if cooldown_left(slot_index) > 0.0:
 		skill_refused.emit(slot_index, REFUSED_COOLDOWN)
 		return false
-	if not heat.has(action.skill.heat_cost):
+	if not _can_pay(action.skill.heat_cost):
 		skill_refused.emit(slot_index, REFUSED_HEAT)
 		return false
 	if is_casting() or not caster.can_start_skill():
 		return false
 
-	heat.try_spend(action.skill.heat_cost)
+	if heat != null:
+		heat.try_spend(action.skill.heat_cost)
 	_cooldowns_left[slot_index] = action.skill.cooldown
 	_casting = action
 	action.start(caster, caster.aim_direction())
@@ -126,6 +128,11 @@ func cast_velocity() -> Vector2:
 ## How far the creature's sprite rises while casting, in pixels.
 func cast_lift() -> float:
 	return _casting.caster_lift() if is_casting() else 0.0
+
+
+## Whether the current cast makes the caster untouchable (false when nothing is casting).
+func cast_makes_invulnerable() -> bool:
+	return is_casting() and _casting.makes_caster_invulnerable()
 
 
 ## Whether a dodge may cut the current cast short (true when nothing is casting).
@@ -157,6 +164,10 @@ func _action_in_slot(slot_index: int) -> SkillAction:
 	if action == null or not EmberTree.is_skill_unlocked(action.name):
 		return null
 	return action
+
+
+func _can_pay(heat_cost: int) -> bool:
+	return heat == null or heat.has(heat_cost)
 
 
 func _is_valid_slot(slot_index: int) -> bool:

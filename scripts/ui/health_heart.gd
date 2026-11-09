@@ -64,23 +64,17 @@ var _ghost_health: float = 0.0
 var _ghost_drain_per_second: float = 0.0
 var _last_health: int = 0
 var _beat_time: float = 0.0
+## Rebinds the heart when another creature becomes the player (a team swap).
+var _player_watch := PlayerWatch.new()
 
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	# Wait one frame so the player has been added to the level.
-	await get_tree().process_frame
-	_health = PlayerFinder.find_component(self, "Health") as Health
-	if _health != null:
-		_last_health = _health.current_health
-		_ghost_health = _last_health
-		_health.damaged.connect(func(_amount: int, _from: Vector2) -> void: _on_damaged())
-		_health.healed.connect(func(_amount: int) -> void: _on_healed())
-		_health.hit_taken.connect(_on_hit_taken)
-	queue_redraw()
 
 
 func _process(delta: float) -> void:
+	if _player_watch.has_changed(self):
+		_bind_to_player_health()
 	if _health == null:
 		return
 	var is_moving := _hit_shake.advance(delta)
@@ -91,6 +85,30 @@ func _process(delta: float) -> void:
 	is_moving = _advance_beat(delta) or is_moving
 	if is_moving:
 		queue_redraw()
+
+
+## Shows the player's Health, dropping the last creature's (its hits no longer show here).
+func _bind_to_player_health() -> void:
+	if is_instance_valid(_health):
+		_health.damaged.disconnect(_on_health_damaged)
+		_health.healed.disconnect(_on_health_healed)
+		_health.hit_taken.disconnect(_on_hit_taken)
+	_health = PlayerFinder.find_component(self, "Health") as Health
+	if _health != null:
+		_last_health = _health.current_health
+		_ghost_health = _last_health
+		_health.damaged.connect(_on_health_damaged)
+		_health.healed.connect(_on_health_healed)
+		_health.hit_taken.connect(_on_hit_taken)
+	queue_redraw()
+
+
+func _on_health_damaged(_amount: int, _source_position: Vector2) -> void:
+	_on_damaged()
+
+
+func _on_health_healed(_amount: int) -> void:
+	_on_healed()
 
 
 func _on_damaged() -> void:

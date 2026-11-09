@@ -1,6 +1,6 @@
 class_name SkillBarHud
 extends Control
-## Connects Emberoo's SkillBar to the HUD: fills the four SkillSlot children with their key
+## Connects the player creature's SkillBar to the HUD (it rebinds after a team swap): fills the four SkillSlot children with their key
 ## letters (from the InputMap: skill_1..skill_4), skills, cooldowns and whether Emberoo's Heat
 ## covers each skill's cost, presses a slot down whenever its key is pressed, plays the
 ## slot flash when a skill is used, shows why a skill was refused,
@@ -22,6 +22,8 @@ var _heat: Heat
 var _slots: Array[SkillSlot] = []
 var _search_left: float = 0.0
 var _hovered_slot: SkillSlot
+## Notices a team swap, so the slots show the new creature's skills straight away.
+var _player_watch := PlayerWatch.new()
 
 
 func _ready() -> void:
@@ -36,6 +38,8 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	for index in _slots.size():
 		_slots[index].key_label = InputKeyLabel.for_action(_slot_action(index))
+	if _player_watch.has_changed(self):
+		_disconnect_from_skill_bar()
 	if not is_instance_valid(_skill_bar):
 		_skill_bar = null
 		_search_left -= delta
@@ -56,6 +60,21 @@ func _connect_to_skill_bar() -> void:
 		_skill_bar.connect("skill_used", _on_skill_used)
 	if _skill_bar.has_signal("skill_refused"):
 		_skill_bar.connect("skill_refused", _on_skill_refused)
+
+
+## Lets go of the last creature's SkillBar, so the next frame finds the player's.
+func _disconnect_from_skill_bar() -> void:
+	if is_instance_valid(_skill_bar):
+		if _skill_bar.is_connected("skill_used", _on_skill_used):
+			_skill_bar.disconnect("skill_used", _on_skill_used)
+		if _skill_bar.is_connected("skill_refused", _on_skill_refused):
+			_skill_bar.disconnect("skill_refused", _on_skill_refused)
+	_skill_bar = null
+	_heat = null
+	_search_left = 0.0
+	if _hovered_slot != null and tooltip != null:
+		tooltip.hide_tooltip()
+	_hovered_slot = null
 
 
 func _update_slot(index: int) -> void:

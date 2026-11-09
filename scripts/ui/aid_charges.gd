@@ -40,26 +40,40 @@ var _refill_pop := HudMotion.new(REFILL_POP_SECONDS)
 ## Which flask the blink or the pop is playing on.
 var _spent_index: int = -1
 var _refilled_index: int = -1
+## Rebinds the flasks when another creature becomes the player (a team swap).
+var _player_watch := PlayerWatch.new()
+var _bound_aid: TrainerAid
 
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	await get_tree().process_frame
-	var aid := PlayerFinder.find_component(self, "TrainerAid") as TrainerAid
-	if aid == null:
-		return
-	aid.charges_changed.connect(_on_charges_changed)
-	_on_charges_changed(aid.charges, aid.max_charges)
 
 
-## Picks up a rebound key, and moves the blink and the pop on.
+## Picks up a rebound key (and a swapped-in creature), and moves the blink and the pop on.
 func _process(delta: float) -> void:
+	if _player_watch.has_changed(self):
+		_bind_to_player_aid()
 	var key_label := InputKeyLabel.for_action(KEY_ACTION)
 	var is_moving := _spent_blink.advance(delta)
 	is_moving = _refill_pop.advance(delta) or is_moving
 	if key_label != _key_label or is_moving:
 		_key_label = key_label
 		queue_redraw()
+
+
+## Shows the player's Trainer's Aid charges; a creature without the Aid hides the flasks.
+func _bind_to_player_aid() -> void:
+	if is_instance_valid(_bound_aid):
+		_bound_aid.charges_changed.disconnect(_on_charges_changed)
+	_bound_aid = PlayerFinder.find_component(self, "TrainerAid") as TrainerAid
+	_charges = 0
+	_max_charges = 0
+	_spent_index = -1
+	_refilled_index = -1
+	if _bound_aid != null:
+		_bound_aid.charges_changed.connect(_on_charges_changed)
+		_on_charges_changed(_bound_aid.charges, _bound_aid.max_charges)
+	queue_redraw()
 
 
 func _on_charges_changed(charges: int, max_charges: int) -> void:

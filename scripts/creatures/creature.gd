@@ -1,5 +1,5 @@
 class_name Creature
-extends CharacterBody2D
+extends PlayableCreature
 ## A creature the player controls through the spirit link.
 ##
 ## This script only coordinates: each frame it starts the action the player asks for
@@ -61,8 +61,9 @@ func _physics_process(delta: float) -> void:
 		if player_input.wants_trainer_aid():
 			trainer_aid.use()
 		_actions.update()
-	# Leaping out of the way means attacks pass through you.
-	health.is_invulnerable = dodge.is_dodging
+	# Leaping out of the way (or just being swapped in) means attacks pass through you.
+	count_down_entrance_shield(delta)
+	health.is_invulnerable = dodge.is_dodging or has_entrance_shield()
 
 	var move_direction := Vector2.ZERO if is_staggered else _chosen_move_direction()
 	velocity = _next_velocity(move_direction, delta)
@@ -155,9 +156,9 @@ func _on_damaged(_amount: int, _source_position: Vector2) -> void:
 	hit_flash.flash()
 
 
-## For the vertical slice, dying simply restarts the level.
+## For the vertical slice, dying simply restarts the level (in a Party, the next creature comes in).
 func _on_died() -> void:
-	get_tree().reload_current_scene.call_deferred()
+	_on_defeated()
 
 
 ## A skill just fired (the SkillBar decides when): stop walking or jabbing, face the aim

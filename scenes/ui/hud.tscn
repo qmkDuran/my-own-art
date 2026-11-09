@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3]
+[gd_scene load_steps=17 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/health_heart.gd" id="1_heart"]
 [ext_resource type="Script" path="res://scripts/ui/discovery_card.gd" id="2_card"]
@@ -15,6 +15,7 @@
 [ext_resource type="Script" path="res://scripts/ui/boss_defeated_banner.gd" id="15_boss_banner"]
 [ext_resource type="Script" path="res://scripts/ui/shard_found_toast.gd" id="16_shard_toast"]
 [ext_resource type="Script" path="res://scripts/ui/status_icons.gd" id="17_status_icons"]
+[ext_resource type="Script" path="res://scripts/ui/team_panel.gd" id="18_team_panel"]
 
 [node name="Hud" type="CanvasLayer"]
 
@@ -139,6 +140,19 @@ offset_top = -26.0
 offset_right = 47.0
 offset_bottom = -6.0
 script = ExtResource("8_slot")
+
+[node name="TeamPanel" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = -30.0
+offset_right = 80.0
+offset_bottom = -4.0
+grow_vertical = 0
+mouse_filter = 2
+script = ExtResource("18_team_panel")
 
 [node name="SkillTooltip" type="Control" parent="."]
 layout_mode = 3

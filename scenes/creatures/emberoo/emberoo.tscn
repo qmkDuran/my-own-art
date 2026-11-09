@@ -1,4 +1,4 @@
-[gd_scene load_steps=42 format=3]
+[gd_scene load_steps=45 format=3]
 
 [ext_resource type="Script" path="res://scripts/creatures/creature.gd" id="1_creature"]
 [ext_resource type="Script" path="res://scripts/animation/creature_animator.gd" id="2_animator"]
@@ -39,6 +39,13 @@
 [ext_resource type="Script" path="res://scripts/components/path_mover.gd" id="90_path_mover"]
 [ext_resource type="Script" path="res://scripts/components/status_resistance.gd" id="37_status_resistance"]
 
+[ext_resource type="Texture2D" path="res://art/emberoo/emberoo_front_idle_sheet.png" id="38_team_icon"]
+[ext_resource type="Script" path="res://scripts/party/chain/uppercut_intro.gd" id="39_intro"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_team_icon"]
+atlas = ExtResource("38_team_icon")
+region = Rect2(0, 0, 16, 16)
+
 [sub_resource type="CircleShape2D" id="CircleShape2D_body"]
 radius = 5.0
 
@@ -50,6 +57,9 @@ colors = PackedColorArray(0.909804, 0.756863, 0.439216, 0, 0.921569, 0.929412, 0
 z_index = 1
 motion_mode = 1
 script = ExtResource("1_creature")
+display_name = "Emberoo"
+element = "Fire"
+team_icon = SubResource("AtlasTexture_team_icon")
 
 [node name="Shadow" type="Polygon2D" parent="."]
 color = Color(0.0352941, 0.0392157, 0.0784314, 0.45)
@@ -209,5 +219,10 @@ screen_shake = NodePath("../ScreenShake")
 
 [node name="PathMover" type="NavigationAgent2D" parent="."]
 script = ExtResource("90_path_mover")
+
+[node name="Intro" type="Node" parent="." node_paths=PackedStringArray("screen_shake")]
+script = ExtResource("39_intro")
+screen_shake = NodePath("../ScreenShake")
+impact_scene = ExtResource("7_impact")
 
 [connection signal="hits_landed" from="MeleeAttack" to="Heat" method="on_hits_landed"]
