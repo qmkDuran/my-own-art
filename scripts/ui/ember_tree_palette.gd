@@ -19,7 +19,14 @@ const BETTER := ApolloPalette.GREEN_LIGHT
 
 ## See-through versions of the dark background for panels laid over the tree.
 const PANEL := Color(BACKGROUND, 0.92)
-const PANEL_EDGE := Color(ORANGE, 0.55)
+## A panel's bevel: lit on the top and left, shaded on the bottom and right (PixelPanelStyle).
+const PANEL_EDGE := ApolloPalette.ORANGE_DARK
+const PANEL_EDGE_DARK := ApolloPalette.BRICK
+## A plain button's bevel, quieter than a card's so the cards stay the frame.
+const BUTTON_EDGE := ApolloPalette.RUST
+const BUTTON_EDGE_DARK := ApolloPalette.COAL
+const ORANGE_DARK := ApolloPalette.ORANGE_DARK
+const SLATE := ApolloPalette.SLATE
 const BAR := Color(BACKGROUND, 0.72)
 
 ## Each branch's label colour, so the three directions read apart at a glance.

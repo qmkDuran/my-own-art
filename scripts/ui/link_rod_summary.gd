@@ -11,7 +11,7 @@ var _lines: RichTextLabel
 
 
 func _init(width: float) -> void:
-	add_theme_stylebox_override("panel", EmberTreeWidgets.card_style(EmberTreePalette.PANEL, EmberTreePalette.PANEL_EDGE))
+	add_theme_stylebox_override("panel", EmberTreeWidgets.card_style())
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	custom_minimum_size.x = width
 	var text_width := width - EmberTreeWidgets.CARD_PADDING * 2

@@ -108,7 +108,21 @@ func _on_skill_refused(slot_index: int, reason: String) -> void:
 func _on_slot_hovered(slot: SkillSlot) -> void:
 	_hovered_slot = slot
 	if tooltip != null:
-		tooltip.show_for(slot.skill, _facts_for(_slots.find(slot)), slot.get_global_rect())
+		tooltip.show_for(slot.skill, _facts_for(_slots.find(slot)), _tooltip_anchor(slot))
+
+
+## The slot's rectangle, stretched up to the top of the whole bottom cluster (heart, Trainer's
+## Aid flasks, Heat), so the tooltip above it never covers the rest of the HUD.
+func _tooltip_anchor(slot: SkillSlot) -> Rect2:
+	var anchor := slot.get_global_rect()
+	var cluster_top := anchor.position.y
+	for widget in get_parent().get_children():
+		var control := widget as Control
+		if control != null and control.visible and control.size.y > 0.0:
+			cluster_top = minf(cluster_top, control.get_global_rect().position.y)
+	anchor.size.y += anchor.position.y - cluster_top
+	anchor.position.y = cluster_top
+	return anchor
 
 
 ## The Ember Tree's exact-number text for the slot's skill, or "" if the tree has none.

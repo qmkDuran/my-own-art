@@ -5,7 +5,8 @@ extends Control
 ## laid out at twice the game's resolution (sizes below are in card pixels) and shown at half size.
 ## What it does is the Ember Tree's own facts text (EmberTreeSkillFacts), so the two never
 ## disagree: its last line (the cost, e.g. "Costs 3 Heat ∙ 2s cooldown") goes in orange
-## under the name, the rest below the divider.
+## under the name, the rest below the divider. It is the HUD's last child, so it draws over
+## every other card (a discovery toast, a banner) while the mouse is on a slot.
 
 const FONT_SIZE := EmberTreeFonts.TEXT_SIZE
 ## Width the description wraps at, in card pixels (96 game pixels).

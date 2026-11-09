@@ -1,12 +1,14 @@
 class_name DiscoveryCard
 extends Control
 ## The "NEW CREATURE DISCOVERED" toast: a small, see-through card that gently fades in at
-## the top-centre with the creature's portrait, name and element, then slides away.
+## the top-centre with the creature's portrait, name and element, then slides away. It
+## rests below any other top-centre card already showing (TopCentreStack).
 ## (The full-size portrait belongs in the Creature Log, away from the fight.) The game slows down briefly
 ## (never freezes) so the moment registers while the player keeps control.
 ## A HudCard: the Ember Tree's card style and Monogram font, laid out in card pixels
 ## (twice the game's resolution) and shown at half size.
 
+const GROUP := "discovery_card"
 ## A 128px portrait at 1:1 screen pixels when the game is scaled 4x (32 game pixels).
 const PORTRAIT_SIZE := 64.0
 ## Gap between the portrait and the words, in card pixels.
@@ -34,7 +36,16 @@ var _element: Label
 var _waiting: Array[Dictionary] = []
 
 
+## Whether a discovery card is up on the HUD of `asker`'s level (others make way for it).
+static func is_showing_on(asker: Node) -> bool:
+	for card: DiscoveryCard in asker.get_tree().get_nodes_in_group(GROUP):
+		if card._card.visible:
+			return true
+	return false
+
+
 func _ready() -> void:
+	add_to_group(GROUP)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_build_card()
 	CreatureLog.discovered.connect(_on_discovered)
@@ -75,17 +86,21 @@ func _slow_motion() -> void:
 ## Fades in while drifting down a few pixels, waits, then fades out while drifting back up.
 func _slide_in_and_out() -> void:
 	_card.reset_size()
-	_card.position.x = roundf((size.x - HudCard.size_on_screen(_card).x) / 2.0)
-	_card.position.y = TOP_MARGIN - DRIFT
+	var card_size := HudCard.size_on_screen(_card)
+	_card.position.x = roundf((size.x - card_size.x) / 2.0)
+	var resting_top := TopCentreStack.reserve(_card, TOP_MARGIN, card_size)
+	_card.position.y = resting_top - DRIFT
 	_card.modulate.a = 0.0
 	_card.visible = true
 	var show := create_tween().set_ignore_time_scale(true).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	show.set_parallel()
 	show.tween_property(_card, "modulate:a", 1.0, FADE_IN_SECONDS)
-	show.tween_property(_card, "position:y", TOP_MARGIN, FADE_IN_SECONDS)
+	show.tween_property(_card, "position:y", resting_top, FADE_IN_SECONDS)
 	show.chain().tween_interval(SHOW_SECONDS)
+	# A card on its way out gives up its place: the next one can take the top spot.
+	show.chain().tween_callback(TopCentreStack.release.bind(_card))
 	show.chain().tween_property(_card, "modulate:a", 0.0, FADE_OUT_SECONDS)
-	show.parallel().tween_property(_card, "position:y", TOP_MARGIN - DRIFT, FADE_OUT_SECONDS)
+	show.parallel().tween_property(_card, "position:y", resting_top - DRIFT, FADE_OUT_SECONDS)
 	show.chain().tween_callback(_finish_showing)
 
 

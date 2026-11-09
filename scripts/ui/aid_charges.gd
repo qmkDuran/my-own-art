@@ -82,7 +82,7 @@ func _draw() -> void:
 		var top_left := FIRST_FLASK_TOP_LEFT + Vector2(index * SPACING, 0)
 		if index == _refilled_index:
 			top_left += _refill_pop.bounce()
-		PixelShape.draw_outlined(self, PixelShape.colored(_flask, _flask_colors(index)), top_left, ApolloPalette.OUTLINE)
+		PixelShape.draw_outlined_with_shadow(self, PixelShape.colored(_flask, _flask_colors(index)), top_left, ApolloPalette.OUTLINE)
 
 
 ## Full or empty, unless the flask is blinking out or popping in.

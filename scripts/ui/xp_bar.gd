@@ -67,7 +67,8 @@ func _draw() -> void:
 	PixelFont.draw_text(self, label, Vector2.ZERO, ApolloPalette.WHITE if is_flashing else ApolloPalette.GOLD, ApolloPalette.OUTLINE)
 	var bar_left := PixelFont.width_of(label) + LABEL_GAP
 	var bar := Rect2(bar_left, BAR_TOP, BAR_LENGTH, 1)
-	draw_rect(bar.grow(1.0), ApolloPalette.OUTLINE)
+	PixelShape.draw_drop_shadow(self, bar.grow(1.0))
+	PixelShape.draw_rounded_outline(self, bar.grow(1.0), ApolloPalette.OUTLINE)
 	draw_rect(bar, ApolloPalette.SLATE)
 	var leading := roundi(BAR_LENGTH * _share_to_next_level())
 	var filled := roundi(BAR_LENGTH * _shown_share)
@@ -79,5 +80,8 @@ func _draw() -> void:
 	draw_rect(Rect2(bar.position + Vector2(filled - 1, 0), Vector2.ONE), ApolloPalette.SKY_LIGHT)
 
 
+## Full at the level cap (there is no next level to fill towards).
 func _share_to_next_level() -> float:
+	if Progression.level >= Progression.MAX_LEVEL:
+		return 1.0
 	return clampf(float(Progression.xp) / float(maxi(1, Progression.xp_to_next())), 0.0, 1.0)

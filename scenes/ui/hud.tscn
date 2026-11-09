@@ -143,12 +143,6 @@ offset_right = 47.0
 offset_bottom = -6.0
 script = ExtResource("8_slot")
 
-[node name="SkillTooltip" type="Control" parent="."]
-layout_mode = 3
-anchors_preset = 0
-mouse_filter = 2
-script = ExtResource("11_tooltip")
-
 [node name="DiscoveryCard" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 15
@@ -218,3 +212,9 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("40_chip_toast")
+
+[node name="SkillTooltip" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+mouse_filter = 2
+script = ExtResource("11_tooltip")

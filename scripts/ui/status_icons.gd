@@ -44,7 +44,7 @@ func _draw() -> void:
 
 
 func _draw_icon(icon: Dictionary, effect: StatusEffect, top_left: Vector2) -> void:
-	PixelShape.draw_outlined(self, icon, top_left, ApolloPalette.OUTLINE)
+	PixelShape.draw_outlined_with_shadow(self, icon, top_left, ApolloPalette.OUTLINE)
 	var width := StatusIconPixels.SIZE.x
 	var share := clampf(effect.seconds_left() / maxf(effect.full_length(), 0.001), 0.0, 1.0)
 	var bar_left := top_left + Vector2(0, BAR_TOP)

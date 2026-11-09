@@ -8,6 +8,8 @@ extends RefCounted
 ## a character from the map, or a Color).
 
 const SIDES: Array[Vector2i] = [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]
+## The HUD's hard drop shadow colour (the same as PixelPanelStyle's).
+const DROP_SHADOW := Color(ApolloPalette.OUTLINE, 0.6)
 
 
 ## The pixels of a text map, each mapped to its character. '.' is empty.
@@ -94,6 +96,21 @@ static func draw_outlined(canvas: CanvasItem, pixels: Dictionary, origin: Vector
 		draw_pixel(canvas, origin + Vector2(pixel), pixels[pixel])
 
 
+## Like draw_outlined, over a hard drop shadow one pixel down and right (the HUD's depth:
+## the same shadow as its frames and cards).
+static func draw_outlined_with_shadow(canvas: CanvasItem, pixels: Dictionary, origin: Vector2, outline: Color) -> void:
+	var ring := ring_around(pixels)
+	var covered := {}
+	for pixel: Vector2i in pixels:
+		covered[pixel] = true
+	for pixel in ring:
+		covered[pixel] = true
+	for pixel: Vector2i in covered:
+		if not covered.has(pixel + Vector2i.ONE):
+			draw_pixel(canvas, origin + Vector2(pixel + Vector2i.ONE), DROP_SHADOW)
+	draw_outlined(canvas, pixels, origin, outline)
+
+
 ## Draws a text map as it is (no added outline), each character in its colour from `colors`.
 static func draw_map(canvas: CanvasItem, rows: Array, colors: Dictionary, top_left: Vector2) -> void:
 	var pixels := colored(from_rows(rows), colors)
@@ -101,14 +118,38 @@ static func draw_map(canvas: CanvasItem, rows: Array, colors: Dictionary, top_le
 		draw_pixel(canvas, top_left + Vector2(pixel), pixels[pixel])
 
 
-## The HUD's square stone frame, `side` pixels across: a dark outline, stone lit on the top
-## and left, and a dark line inside it. Used by the skill slots and the minimap.
+## The HUD's square stone frame, `side` pixels across, in the same build as every panel
+## (PixelPanelStyle): a drop shadow down and right, a dark outline with its corners cut,
+## stone lit on the top and left and shaded on the bottom and right, and a dark line inside
+## it. Used by the skill slots and the minimap.
 static func draw_stone_frame(canvas: CanvasItem, side: int) -> void:
-	canvas.draw_rect(Rect2(-1, -1, side + 2, side + 2), ApolloPalette.OUTLINE)
-	canvas.draw_rect(Rect2(0, 0, side, side), ApolloPalette.STONE)
-	canvas.draw_rect(Rect2(0, 0, side - 1, 1), ApolloPalette.STONE_LIGHT)
-	canvas.draw_rect(Rect2(0, 0, 1, side - 1), ApolloPalette.STONE_LIGHT)
+	draw_drop_shadow(canvas, Rect2(-1, -1, side + 2, side + 2))
+	draw_rounded_outline(canvas, Rect2(-1, -1, side + 2, side + 2), ApolloPalette.OUTLINE)
+	canvas.draw_rect(Rect2(0, 0, side, side), ApolloPalette.SLATE)
+	canvas.draw_rect(Rect2(0, 0, side - 1, side - 1), ApolloPalette.STONE_LIGHT)
 	canvas.draw_rect(Rect2(1, 1, side - 2, side - 2), ApolloPalette.OUTLINE)
+
+
+## A rectangle in `color` without its four corner pixels (a one-step rounded corner).
+static func draw_rounded_outline(canvas: CanvasItem, rect: Rect2, color: Color) -> void:
+	canvas.draw_rect(Rect2(rect.position.x + 1, rect.position.y, rect.size.x - 2, rect.size.y), color)
+	canvas.draw_rect(Rect2(rect.position.x, rect.position.y + 1, rect.size.x, rect.size.y - 2), color)
+
+
+## A one-pixel ring just inside `rect`, without its corner pixels (e.g. a hover highlight
+## over a frame's outline).
+static func draw_rounded_ring(canvas: CanvasItem, rect: Rect2, color: Color) -> void:
+	canvas.draw_rect(Rect2(rect.position.x + 1, rect.position.y, rect.size.x - 2, 1), color)
+	canvas.draw_rect(Rect2(rect.position.x + 1, rect.end.y - 1, rect.size.x - 2, 1), color)
+	canvas.draw_rect(Rect2(rect.position.x, rect.position.y + 1, 1, rect.size.y - 2), color)
+	canvas.draw_rect(Rect2(rect.end.x - 1, rect.position.y + 1, 1, rect.size.y - 2), color)
+
+
+## The HUD's hard drop shadow: one pixel down and right of `rect`, corners cut like the outline.
+static func draw_drop_shadow(canvas: CanvasItem, rect: Rect2) -> void:
+	canvas.draw_rect(Rect2(rect.position.x + 1, rect.end.y, rect.size.x - 1, 1), DROP_SHADOW)
+	canvas.draw_rect(Rect2(rect.end.x, rect.position.y + 1, 1, rect.size.y - 1), DROP_SHADOW)
+	canvas.draw_rect(Rect2(rect.end.x - 1, rect.end.y - 1, 1, 1), DROP_SHADOW)
 
 
 static func draw_pixel(canvas: CanvasItem, at: Vector2, color: Color) -> void:

@@ -160,7 +160,7 @@ func _draw() -> void:
 	_colors.is_tick_tinting = _tick_tint.is_running()
 	if not _heal_tint.is_running():
 		_colors.healed_from_share = -1.0
-	PixelShape.draw_outlined(self, _colors.paint(), origin, ApolloPalette.OUTLINE)
+	PixelShape.draw_outlined_with_shadow(self, _colors.paint(), origin, ApolloPalette.OUTLINE)
 	var numbers := "%d/%d" % [_health.current_health, _health.max_health]
 	var left := floori((HEART_SIZE.x - PixelFont.width_of(numbers)) / 2.0)
 	PixelFont.draw_text(self, numbers, origin + Vector2(left, NUMBERS_TOP), ApolloPalette.CREAM, ApolloPalette.OUTLINE)

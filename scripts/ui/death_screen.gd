@@ -1,7 +1,7 @@
 class_name DeathScreen
 extends CanvasLayer
-## The dark that falls over the screen when the player falls, with a small "EMBEROO FELL" in
-## the HUD's pixel font, and lifts again once they are back up (Respawner runs both).
+## The dark that falls over the screen when the player falls, with "EMBEROO FELL" in the
+## HUD's pixel font at twice its size (a whole-number scale, so it stays crisp), and lifts again once they are back up (Respawner runs both).
 ## Its fades ignore the time scale, so the death's slow motion doesn't drag them out.
 
 const TEXT := "EMBEROO FELL"
@@ -9,6 +9,8 @@ const TEXT := "EMBEROO FELL"
 const DARKNESS := 0.92
 ## The text sits this far below the screen's middle, in game pixels (where Emberoo was).
 const TEXT_DROP := 10.0
+## Game pixels per font pixel: big enough to read as the moment it is, not a HUD label.
+const TEXT_SCALE := 2
 
 var _shade := ColorRect.new()
 var _text := Control.new()
@@ -44,5 +46,7 @@ func _fade_to(alpha: float, seconds: float) -> Tween:
 
 func _draw_text() -> void:
 	var screen := _text.get_viewport_rect().size
-	var top_left := Vector2(floorf((screen.x - PixelFont.width_of(TEXT)) / 2.0), floorf(screen.y / 2.0 + TEXT_DROP))
-	PixelFont.draw_text(_text, TEXT, top_left, ApolloPalette.RED_LIGHT, ApolloPalette.OUTLINE)
+	var top_left := Vector2(floorf((screen.x - PixelFont.width_of(TEXT) * TEXT_SCALE) / 2.0), floorf(screen.y / 2.0 + TEXT_DROP))
+	_text.draw_set_transform(top_left, 0.0, Vector2.ONE * TEXT_SCALE)
+	PixelFont.draw_text(_text, TEXT, Vector2.ZERO, ApolloPalette.RED_LIGHT, ApolloPalette.OUTLINE)
+	_text.draw_set_transform(Vector2.ZERO)

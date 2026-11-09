@@ -10,6 +10,8 @@ signal equip_toggled(serial: int)
 const TITLE_FORMAT := "STORAGE  %d / %d"
 const EMPTY_NOTE := "No chips yet. Wardens drop them\n(about 1 in 4), the Captain always."
 const IN_ROD := "IN ROD  "
+## Canvas pixels kept clear around the rows for their drop shadows (PixelPanelStyle.unit).
+const ROW_SHADOW_ROOM := 2
 const CHIP_ICON := preload("res://art/pickups/hacked_chip.png")
 
 var _title: Label
@@ -18,7 +20,7 @@ var _rows: VBoxContainer
 
 
 func _init(width: float, height: float) -> void:
-	add_theme_stylebox_override("panel", EmberTreeWidgets.card_style(EmberTreePalette.PANEL, EmberTreePalette.PANEL_EDGE))
+	add_theme_stylebox_override("panel", EmberTreeWidgets.card_style())
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	custom_minimum_size = Vector2(width, height)
 	var column := VBoxContainer.new()
@@ -33,11 +35,19 @@ func _init(width: float, height: float) -> void:
 	var scroll := ScrollContainer.new()
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	EmberTreeWidgets.style_scroll_bar(scroll.get_v_scroll_bar())
 	column.add_child(scroll)
+	# Room between the rows and the scroll bar, and below the last row, for the rows' shadows.
+	var inset := MarginContainer.new()
+	inset.add_theme_constant_override("margin_right", ROW_SHADOW_ROOM * 2)
+	inset.add_theme_constant_override("margin_bottom", ROW_SHADOW_ROOM)
+	inset.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	inset.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	scroll.add_child(inset)
 	_rows = VBoxContainer.new()
-	_rows.add_theme_constant_override("separation", 3)
+	_rows.add_theme_constant_override("separation", 4)
 	_rows.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	scroll.add_child(_rows)
+	inset.add_child(_rows)
 
 
 func refresh(selected_serial: int) -> void:

@@ -5,7 +5,8 @@ extends RefCounted
 ## Every piece ignores the mouse unless it is meant to be clicked.
 
 const CARD_PADDING := 12
-const CARD_CORNER := 4
+## A scroll bar's width, in canvas pixels.
+const SCROLL_BAR_WIDTH := 10.0
 ## A skill's video clip frame keeps a 16:9 shape; this is its height for each pixel of width.
 const PREVIEW_ASPECT := 9.0 / 16.0
 ## The clip frame is never taller than this, so long cards still fit.
@@ -13,24 +14,23 @@ const PREVIEW_MAX_HEIGHT := 64.0
 const PREVIEW_PLACEHOLDER := "Video preview coming soon"
 
 
-## A see-through dark card with a warm edge.
+## A see-through dark card with a warm bevelled edge.
 static func make_card() -> PanelContainer:
 	var card := PanelContainer.new()
-	card.add_theme_stylebox_override("panel", card_style(EmberTreePalette.PANEL, EmberTreePalette.PANEL_EDGE))
+	card.add_theme_stylebox_override("panel", card_style())
 	card.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return card
 
 
-## A box with a thin border, rounded corners, room inside and a soft shadow.
-static func card_style(background: Color, border: Color) -> StyleBoxFlat:
-	var style := StyleBoxFlat.new()
+## The game's panel (PixelPanelStyle): a pixel frame lit on the top and left (`border`),
+## shaded on the bottom and right (`border_dark`), rounded corners, a drop shadow and room inside.
+static func card_style(background: Color = EmberTreePalette.PANEL, border: Color = EmberTreePalette.PANEL_EDGE,
+		border_dark: Color = EmberTreePalette.PANEL_EDGE_DARK) -> PixelPanelStyle:
+	var style := PixelPanelStyle.new()
 	style.bg_color = background
 	style.border_color = border
-	style.set_border_width_all(1)
-	style.set_corner_radius_all(CARD_CORNER)
+	style.border_dark_color = border_dark
 	style.set_content_margin_all(CARD_PADDING)
-	style.shadow_color = Color(EmberTreePalette.BACKGROUND, 0.35)
-	style.shadow_size = 6
 	return style
 
 
@@ -43,12 +43,39 @@ static func make_button(text: String) -> Button:
 	button.add_theme_color_override("font_color", EmberTreePalette.CREAM)
 	button.add_theme_color_override("font_hover_color", EmberTreePalette.GOLD)
 	button.add_theme_color_override("font_pressed_color", EmberTreePalette.GOLD)
-	button.add_theme_color_override("font_disabled_color", EmberTreePalette.DIM)
-	button.add_theme_stylebox_override("normal", _button_style(EmberTreePalette.EMBER_DARK, Color(EmberTreePalette.ORANGE, 0.5)))
-	button.add_theme_stylebox_override("hover", _button_style(EmberTreePalette.DEEP, EmberTreePalette.GOLD))
-	button.add_theme_stylebox_override("pressed", _button_style(EmberTreePalette.DEEP, EmberTreePalette.GOLD))
-	button.add_theme_stylebox_override("disabled", _button_style(EmberTreePalette.COAL, Color(EmberTreePalette.DIM, 0.6)))
+	button.add_theme_color_override("font_disabled_color", EmberTreePalette.GREY)
+	button.add_theme_stylebox_override("normal", _button_style(EmberTreePalette.EMBER_DARK, EmberTreePalette.BUTTON_EDGE, EmberTreePalette.BUTTON_EDGE_DARK))
+	button.add_theme_stylebox_override("hover", _button_style(EmberTreePalette.DEEP, EmberTreePalette.GOLD, EmberTreePalette.ORANGE_DARK))
+	var pressed := _button_style(EmberTreePalette.DEEP, EmberTreePalette.GOLD, EmberTreePalette.ORANGE_DARK)
+	# Pushed in: the bevel flips and the words sink by one frame pixel.
+	pressed.is_inset = true
+	pressed.shadow_color = Color.TRANSPARENT
+	pressed.content_margin_top += pressed.unit
+	pressed.content_margin_bottom -= pressed.unit
+	button.add_theme_stylebox_override("pressed", pressed)
+	var disabled := _button_style(EmberTreePalette.COAL, EmberTreePalette.DIM, EmberTreePalette.SLATE)
+	disabled.shadow_color = Color.TRANSPARENT
+	button.add_theme_stylebox_override("disabled", disabled)
 	return button
+
+
+## Gives a scroll bar the panels' look: a dark inset track and a warm bevelled grabber
+## (Godot's default grey bar would be the one thing on the screen not in the game's style).
+static func style_scroll_bar(bar: ScrollBar) -> void:
+	bar.custom_minimum_size.x = SCROLL_BAR_WIDTH
+	var track := card_style(EmberTreePalette.COAL, EmberTreePalette.EMBER_DARK, EmberTreePalette.DIM)
+	track.is_inset = true
+	track.shadow_color = Color.TRANSPARENT
+	track.set_content_margin_all(0)
+	bar.add_theme_stylebox_override("scroll", track)
+	bar.add_theme_stylebox_override("scroll_focus", track)
+	for state: String in ["grabber", "grabber_highlight", "grabber_pressed"]:
+		var is_lit := state != "grabber"
+		var grabber := card_style(EmberTreePalette.DEEP, EmberTreePalette.GOLD if is_lit else EmberTreePalette.ORANGE_DARK,
+				EmberTreePalette.ORANGE_DARK if is_lit else EmberTreePalette.EMBER_DARK)
+		grabber.shadow_color = Color.TRANSPARENT
+		grabber.set_content_margin_all(SCROLL_BAR_WIDTH / 2.0)
+		bar.add_theme_stylebox_override(state, grabber)
 
 
 ## A small orange badge with a short grey note beside it, e.g. "COMING SOON".
@@ -57,13 +84,12 @@ static func make_badge_row(badge_text: String, note_text: String) -> HBoxContain
 	row.add_theme_constant_override("separation", 6)
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var badge := PanelContainer.new()
-	var badge_style := card_style(EmberTreePalette.EMBER_DARK, Color(EmberTreePalette.ORANGE, 0.7))
-	badge_style.shadow_size = 0
-	badge_style.set_corner_radius_all(3)
-	badge_style.content_margin_left = 5
-	badge_style.content_margin_right = 5
-	badge_style.content_margin_top = 0
-	badge_style.content_margin_bottom = 0
+	var badge_style := card_style(EmberTreePalette.EMBER_DARK, EmberTreePalette.ORANGE, EmberTreePalette.DEEP)
+	badge_style.shadow_color = Color.TRANSPARENT
+	badge_style.content_margin_left = 6
+	badge_style.content_margin_right = 6
+	badge_style.content_margin_top = 2
+	badge_style.content_margin_bottom = 2
 	badge.add_theme_stylebox_override("panel", badge_style)
 	badge.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	badge.add_child(UiLabel.make(EmberTreeFonts.TEXT_SIZE, EmberTreePalette.ORANGE, badge_text))
@@ -99,8 +125,10 @@ static func make_rich_text(width: float) -> RichTextLabel:
 ## An empty dark frame where a skill's video clip will play, with a placeholder note.
 static func make_preview_frame(width: float) -> PanelContainer:
 	var frame := PanelContainer.new()
-	var style := card_style(EmberTreePalette.EMBER_DARK, Color(EmberTreePalette.DIM, 0.8))
-	style.shadow_size = 0
+	# Inset (shaded on top), like a screen set into the card.
+	var style := card_style(EmberTreePalette.EMBER_DARK, EmberTreePalette.GREY, EmberTreePalette.SLATE)
+	style.is_inset = true
+	style.shadow_color = Color.TRANSPARENT
 	style.set_content_margin_all(0)
 	frame.add_theme_stylebox_override("panel", style)
 	frame.custom_minimum_size = Vector2(width, minf(PREVIEW_MAX_HEIGHT, roundf(width * PREVIEW_ASPECT)))
@@ -112,9 +140,10 @@ static func make_preview_frame(width: float) -> PanelContainer:
 	return frame
 
 
-static func _button_style(background: Color, border: Color) -> StyleBoxFlat:
-	var style := card_style(background, border)
-	style.shadow_size = 0
-	style.content_margin_top = 4
-	style.content_margin_bottom = 4
+static func _button_style(background: Color, border: Color, border_dark: Color) -> PixelPanelStyle:
+	var style := card_style(background, border, border_dark)
+	# One pixel less on top: Monogram's line keeps room above the letters, so even margins
+	# would leave the words sitting low in the button.
+	style.content_margin_top = 3
+	style.content_margin_bottom = 5
 	return style

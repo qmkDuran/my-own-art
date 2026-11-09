@@ -51,13 +51,15 @@ var _cooldown_left: float = 0.0
 var _cooldown_fraction: float = 0.0
 var _flashes := SkillSlotFlashes.new()
 var _was_usable: bool = false
+## While the mouse is on the slot its outline turns warm (its tooltip is up).
+var _is_hovered: bool = false
 
 
 func _ready() -> void:
 	size = Vector2(SLOT_SIZE, SLOT_SIZE)
 	mouse_filter = Control.MOUSE_FILTER_PASS
-	mouse_entered.connect(func() -> void: hovered.emit(self))
-	mouse_exited.connect(func() -> void: unhovered.emit(self))
+	mouse_entered.connect(_on_mouse_hover_changed.bind(true))
+	mouse_exited.connect(_on_mouse_hover_changed.bind(false))
 
 
 func _process(delta: float) -> void:
@@ -115,8 +117,19 @@ func _on_usable_maybe_changed() -> void:
 	queue_redraw()
 
 
+func _on_mouse_hover_changed(is_hovered: bool) -> void:
+	_is_hovered = is_hovered
+	queue_redraw()
+	if is_hovered:
+		hovered.emit(self)
+	else:
+		unhovered.emit(self)
+
+
 func _draw() -> void:
 	SkillSlotPainter.draw_frame(self, is_usable())
+	if _is_hovered:
+		PixelShape.draw_rounded_ring(self, Rect2(-1, -1, SLOT_SIZE + 2, SLOT_SIZE + 2), ApolloPalette.ORANGE)
 	if _flashes.used_stage() == 0:
 		SkillSlotPainter.draw_inner_glint(self)
 	draw_set_transform(_flashes.press_offset())
@@ -130,9 +143,19 @@ func _draw() -> void:
 	if is_recovering():
 		SkillSlotPainter.draw_seconds_left(self, _cooldown_left)
 	var key_color := ApolloPalette.CREAM if is_usable() or skill == null else ApolloPalette.GREY
-	PixelFont.draw_text(self, key_label, Vector2(KEY_LABEL_TOP_LEFT), key_color, ApolloPalette.OUTLINE)
+	_draw_key_tab(key_color)
 	draw_set_transform(Vector2.ZERO)
 	_flashes.draw_border(self, SLOT_SIZE)
+
+
+## The key letter on a square dark tab in the frame's corner (the tab's edge is straight,
+## not the letter's ragged outline, so it reads as a keycap set into the frame).
+func _draw_key_tab(color: Color) -> void:
+	if key_label.is_empty():
+		return
+	var tab := Rect2(Vector2(KEY_LABEL_TOP_LEFT) - Vector2.ONE, Vector2(PixelFont.width_of(key_label) + 2, PixelFont.GLYPH_HEIGHT + 2))
+	draw_rect(tab, ApolloPalette.OUTLINE)
+	PixelFont.draw_text(self, key_label, Vector2(KEY_LABEL_TOP_LEFT), color, ApolloPalette.OUTLINE)
 
 
 ## The icon with an outline, centred in the inner area: greyed while it can't be used, and

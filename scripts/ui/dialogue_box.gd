@@ -19,8 +19,10 @@ const LINE_WIDTH := 500.0
 ## The portrait is the 16×26 sprite at 3 card pixels per sprite pixel (1.5 game pixels).
 const PORTRAIT_SCALE := 3.0
 const PORTRAIT_GAP := 10
+## Gap between the speaker's name and the line, in card pixels.
+const NAME_GAP := 2
 ## Gap between the card's bottom and the screen's bottom, in game pixels (clears the HUD's bottom cluster).
-const BOTTOM_MARGIN := 40.0
+const BOTTOM_MARGIN := 44.0
 const CHARACTERS_PER_SECOND := 70.0
 const FADE_SECONDS := 0.15
 ## Real seconds the game stays paused after the last line.
@@ -145,13 +147,16 @@ func _build_card() -> void:
 	_portrait.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	row.add_child(_portrait)
 	var words := VBoxContainer.new()
-	words.add_theme_constant_override("separation", 0)
+	words.add_theme_constant_override("separation", NAME_GAP)
 	words.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	row.add_child(words)
 	_name = UiLabel.make(EmberTreeFonts.TEXT_SIZE, EmberTreePalette.ORANGE)
 	words.add_child(_name)
 	_line = UiLabel.make(EmberTreeFonts.TEXT_SIZE, EmberTreePalette.CREAM)
 	_line.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	# Lay out the whole line before typing it, so the card has its final size from the first
+	# letter (and words never jump to the next row halfway through).
+	_line.visible_characters_behavior = TextServer.VC_CHARS_AFTER_SHAPING
 	_line.custom_minimum_size = Vector2(LINE_WIDTH, 0)
 	words.add_child(_line)
 	_hint = UiLabel.make(EmberTreeFonts.TEXT_SIZE, EmberTreePalette.GREY)

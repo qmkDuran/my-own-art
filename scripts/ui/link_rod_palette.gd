@@ -9,7 +9,9 @@ const CHIP_DIM := ApolloPalette.BLUE_DEEP
 ## The rare overclocked mods stand out from the plain stat mods.
 const OVERCLOCK := ApolloPalette.PINK
 const LOCKED := ApolloPalette.STONE_LIGHT
-## The page behind the cards, over the paused game.
-const BACKDROP := Color(ApolloPalette.OUTLINE, 0.9)
-## A selected chip's button edge.
+## The page behind the cards. Opaque: while the screen is open the paused game behind it
+## is drawn at the screen's 2× canvas (smaller, off-centre), which must not show through.
+const BACKDROP := ApolloPalette.OUTLINE
+## A selected chip's button edge (lit and shaded sides of its bevel).
 const SELECTED_EDGE := ApolloPalette.SKY
+const SELECTED_EDGE_DARK := ApolloPalette.BLUE_DEEP

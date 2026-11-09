@@ -92,7 +92,7 @@ func _draw() -> void:
 	if _max_heat <= 0:
 		return
 	var origin := _refused.shake() + _gain_pop.bounce()
-	PixelShape.draw_outlined(self, _flame_colors(), origin, _outline_color())
+	PixelShape.draw_outlined_with_shadow(self, _flame_colors(), origin, _outline_color())
 	var numbers := "%d/%d" % [_heat, _max_heat]
 	var left := floori((FLAME_SIZE.x - PixelFont.width_of(numbers)) / 2.0) + 1
 	PixelFont.draw_text(self, numbers, origin + Vector2(left, NUMBERS_TOP), ApolloPalette.CREAM, ApolloPalette.OUTLINE)
