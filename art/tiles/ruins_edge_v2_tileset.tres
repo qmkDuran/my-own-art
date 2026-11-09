@@ -1421,16 +1421,6 @@ texture_region_size = Vector2i(32, 32)
 3:44/0 = 0
 4:44/0 = 0
 5:44/0 = 0
-6:44/0 = 0
-7:44/0 = 0
-8:44/0 = 0
-9:44/0 = 0
-10:44/0 = 0
-11:44/0 = 0
-12:44/0 = 0
-13:44/0 = 0
-14:44/0 = 0
-15:44/0 = 0
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_props"]
 resource_name = "Ruins Edge v2 props"

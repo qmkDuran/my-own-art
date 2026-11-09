@@ -38,6 +38,7 @@
 [ext_resource type="Script" path="res://scripts/debug/debug_controls.gd" id="37_6lss0"]
 [ext_resource type="Script" path="res://scripts/world/ground_shadows.gd" id="polish_shadows"]
 [ext_resource type="Script" path="res://scripts/world/ambient_life.gd" id="polish_ambient"]
+[ext_resource type="Script" path="res://scripts/world/light_pools.gd" id="light_pools"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_wwfmx"]
 atlas = ExtResource("7_hu24y")
@@ -303,5 +304,9 @@ shape = SubResource("RectangleShape2D_puvmk")
 [node name="DebugControls" type="CanvasLayer" parent="." unique_id=702048912 instance=ExtResource("36_hfxl2")]
 layer = 5
 script = ExtResource("37_6lss0")
+
+[node name="LightPools" type="Node2D" parent="." node_paths=PackedStringArray("lit_layers")]
+script = ExtResource("light_pools")
+lit_layers = [NodePath("../Ground"), NodePath("../Paths"), NodePath("../Decoration"), NodePath("../World/Obstacles"), NodePath("../World/ForestCanopy"), NodePath("../World/TownObstacles")]
 
 [editable path="World/RaidWarden"]

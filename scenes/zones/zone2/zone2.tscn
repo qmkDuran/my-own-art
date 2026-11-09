@@ -23,6 +23,7 @@
 [ext_resource type="Script" path="res://scripts/world/ground_shadows.gd" id="polish_shadows"]
 [ext_resource type="Script" path="res://scripts/world/water_glints.gd" id="polish_glints"]
 [ext_resource type="Script" path="res://scripts/world/ambient_life.gd" id="polish_ambient"]
+[ext_resource type="Script" path="res://scripts/world/light_pools.gd" id="light_pools"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_dredge"]
 size = Vector2(272, 160)
@@ -390,3 +391,7 @@ direction = Vector2(0, 1)
 
 [node name="DebugControls" type="CanvasLayer" parent="." unique_id=2100000094 instance=ExtResource("20_debug_contro")]
 layer = 5
+
+[node name="LightPools" type="Node2D" parent="." node_paths=PackedStringArray("lit_layers")]
+script = ExtResource("light_pools")
+lit_layers = [NodePath("../Ground"), NodePath("../Water"), NodePath("../Decoration"), NodePath("../World/Obstacles"), NodePath("../World/ForestCanopy")]

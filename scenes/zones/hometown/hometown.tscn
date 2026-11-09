@@ -29,6 +29,7 @@
 [ext_resource type="Script" path="res://scripts/world/ambient_life.gd" id="polish_ambient"]
 [ext_resource type="Resource" path="res://data/dialogue/elder_after_captain.tres" id="story_elder_after_captain"]
 [ext_resource type="Resource" path="res://data/dialogue/kid_after_captain.tres" id="story_kid_after_captain"]
+[ext_resource type="Script" path="res://scripts/world/light_pools.gd" id="light_pools"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_sckbb"]
 size = Vector2(928, 32)
@@ -218,3 +219,7 @@ shape = SubResource("RectangleShape2D_7ka44")
 [node name="DebugControls" type="CanvasLayer" parent="." unique_id=1740571707 instance=ExtResource("24_wj5ud")]
 layer = 5
 script = ExtResource("25_wrpfo")
+
+[node name="LightPools" type="Node2D" parent="." node_paths=PackedStringArray("lit_layers")]
+script = ExtResource("light_pools")
+lit_layers = [NodePath("../Ground"), NodePath("../Paths"), NodePath("../Decoration"), NodePath("../World/Obstacles"), NodePath("../World/ForestCanopy"), NodePath("../World/TownObstacles")]

@@ -26,6 +26,7 @@
 [ext_resource type="PackedScene" path="res://scenes/debug/debug_controls.tscn" id="24_debug_contro"]
 [ext_resource type="Script" path="res://scripts/world/ground_shadows.gd" id="polish_shadows"]
 [ext_resource type="Script" path="res://scripts/world/water_glints.gd" id="polish_glints"]
+[ext_resource type="Script" path="res://scripts/world/light_pools.gd" id="light_pools"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_frozenglimra"]
 atlas = ExtResource("15_frostveil_pa")
@@ -406,3 +407,7 @@ direction = Vector2(1, 0)
 
 [node name="DebugControls" type="CanvasLayer" parent="." unique_id=4100000100 instance=ExtResource("24_debug_contro")]
 layer = 5
+
+[node name="LightPools" type="Node2D" parent="." node_paths=PackedStringArray("lit_layers")]
+script = ExtResource("light_pools")
+lit_layers = [NodePath("../Ground"), NodePath("../Water"), NodePath("../Decoration"), NodePath("../World/Obstacles"), NodePath("../World/ForestCanopy")]
