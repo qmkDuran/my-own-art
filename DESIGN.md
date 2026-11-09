@@ -35,7 +35,7 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
 - **Light motes (almost every kill):** the stolen light bursts out of defeated bound Glimra and flies to Emberoo = **XP**. *(Next to build.)*
 - **Berries (sometimes):** refill Trainer's Aid charges.
 - **No loot.** No gear piles, no inventory clutter.
-- **Glimmer Shards (hand-placed, ~15–20 per game):** rewards from bosses, exploration and story moments, never random drops. The first sits in Ruins Edge's Overgrown Shrine; for now it's a placeholder pickup (`scenes/pickups/glimmer_shard.tscn`, each with its own `shard_id`) that shows "GLIMMER SHARD FOUND (shards coming soon)" and is recorded in the `ShardInventory` autoload. Socket into skills to change how they behave (never add a new element). 1 slot per skill, +1 per evolution. Free to swap outside combat.
+- **Glimmer Shards (hand-placed, ~15–20 per game):** rewards from bosses, exploration and story moments, never random drops. The first sits in Ruins Edge's Overgrown Shrine; for now it's a placeholder pickup (`scenes/pickups/glimmer_shard.tscn`, each with its own `shard_id`) that shows "GLIMMER SHARD FOUND (shards coming soon)" and is recorded in the `ShardInventory` autoload. Each shard gives a permanent upgrade (+1 Link Rod chip slot, +1 skill point, +max Heat or a tonic charge); see the Loot plan. Skill-changing effects come from chips, not shards.
 - **Heat** (Emberoo's resource): built by landing jabs, spent by skills, cools off out of combat. Shown as fire pips beside the heart.
 
 ## Loot plan: hacked chips (build after the vertical slice)
@@ -43,7 +43,7 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
 - **Chips drop only from humans** (Wardens, captains, other servants of the AI God), never from Glimra, so loot stays rare and hunting Wardens is the chase.
 - **Hacking:** chips drop "locked" with 1-3 modifiers; hack them with scrap from broken rods to reveal, reroll or upgrade mods (crafting).
 - **Mods:** simple, with exact numbers like the Ember Tree (stats, effects, rare "overclocked" mods that change a skill).
-- **Glimmer Shards stay separate:** hand-placed finds that change how skills behave. No gear on Emberoo, no clothes, no inventory grid.
+- **Glimmer Shards are permanent exploration rewards** (hand-placed in side pockets and from optional elites), each giving a lasting upgrade: +1 Link Rod chip slot, +1 skill point, +max Heat or a tonic charge (like PoE 2's optional-boss rewards). Skill-changing effects belong to chips. No gear on Emberoo, no clothes, no inventory grid.
 
 ## Build system (locked)
 - **One evolution line:** Emberoo → Furnaroo (Stage 2, ~24×24) → Emperoo (Stage 3, ~32×32), the same for every build (reference: art/reference/emberoo_inferno_line_concept.png). Builds differ through the Ember Tree and show through skills and effects, not body shape. (Branching evolution was considered and dropped: about 3× the art.)
