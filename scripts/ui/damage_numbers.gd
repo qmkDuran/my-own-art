@@ -9,6 +9,12 @@ extends Node
 ## status ticks (e.g. poison) pop numbers here too, so the player sees what is hurting them.
 ## Numbers are added to the world, not the enemy, so they finish rising after a kill.
 ## Status ticks get numbers in their element's colour (see DamageNumber).
+## Numbers never overlap: quick hits on the same target (same damage type) merge into one
+## rising total; a new number whose path up would cross another's moves up above it; and
+## only `max_numbers` show at once (the oldest goes first).
+
+const MAX_STACK_STEPS := 8
+const SPRITE_NODE := "Sprite"
 
 ## Enemies in this group get damage numbers.
 @export var target_group: String = "enemies"
@@ -22,6 +28,17 @@ extends Node
 @export var horizontal_spread: int = 4
 ## Draw order over the world (creatures sit at 1, speech bubbles at 3).
 @export var number_z_index: int = 3
+## A hit this soon after the last one on the same target adds to its number instead.
+@export var merge_seconds: float = 0.3
+## The most numbers on screen at once.
+@export var max_numbers: int = 8
+## Pixels between a number and the one it was moved above.
+@export var stack_gap: int = 1
+
+## Numbers on screen, oldest first.
+var _live: Array[DamageNumber] = []
+## "target id:damage type" -> that target's latest number, for merging.
+var _latest: Dictionary = {}
 
 
 func _ready() -> void:
@@ -56,17 +73,74 @@ func _on_hit(amount: int, is_critical: bool, damage_type: Health.DamageType, tar
 	var world := target.get_parent()
 	if world == null:
 		return
+	var key := "%d:%d" % [target.get_instance_id(), damage_type]
+	if not _merge_into_latest(key, amount, is_critical):
+		_pop_new(key, world, target, amount, is_critical, damage_type)
+
+
+## Adds the hit to the target's young number, if it has one. True if it did.
+func _merge_into_latest(key: String, amount: int, is_critical: bool) -> bool:
+	# Untyped on purpose: it may hold a freed number, which can't be stored as a DamageNumber.
+	var latest: Variant = _latest.get(key)
+	if not is_instance_valid(latest):
+		return false
+	var number: DamageNumber = latest
+	if number.age() >= merge_seconds:
+		return false
+	number.add(amount, is_critical)
+	# A bigger total (or a crit's double size) may now reach a neighbour: move it clear.
+	number.place_at(_free_spot(number))
+	return true
+
+
+func _pop_new(key: String, world: Node, target: Node2D, amount: int, is_critical: bool, damage_type: Health.DamageType) -> void:
+	_forget_finished()
+	while _live.size() >= max_numbers:
+		var oldest: DamageNumber = _live.pop_front()
+		oldest.queue_free()
 	var number := DamageNumber.new()
 	number.z_index = number_z_index
 	world.add_child(number)
 	var spread := randi_range(-horizontal_spread, horizontal_spread)
 	number.global_position = (target.global_position + Vector2(spread, -_number_height(target))).round()
 	number.pop(amount, is_critical, damage_type)
+	number.place_at(_free_spot(number))
+	_live.append(number)
+	_latest[key] = number
+
+
+## Where `number` can start so it never covers another number on the way up: moved above
+## each one whose path it would cross (a few steps at most).
+func _free_spot(number: DamageNumber) -> Vector2:
+	var spot := number.start_position()
+	for _step in MAX_STACK_STEPS:
+		var blocker := _overlapping(number)
+		if blocker == null:
+			break
+		spot.y = blocker.path_footprint().position.y - stack_gap
+		number.place_at(spot)
+	return spot
+
+
+func _overlapping(number: DamageNumber) -> DamageNumber:
+	var area := number.path_footprint()
+	for other in _live:
+		if is_instance_valid(other) and other != number and other.get_parent() == number.get_parent() and other.path_footprint().intersects(area):
+			return other
+	return null
+
+
+func _forget_finished() -> void:
+	# Untyped on purpose: a freed number can't be passed as a DamageNumber.
+	_live.assign(_live.filter(func(number: Variant) -> bool: return is_instance_valid(number)))
+	for key: String in _latest.keys():
+		if not is_instance_valid(_latest[key]):
+			_latest.erase(key)
 
 
 ## How far above the target's feet its numbers start: just over the top of its sprite.
 func _number_height(target: Node2D) -> float:
-	var sprite := target.get_node_or_null("Sprite") as Node2D
+	var sprite := target.get_node_or_null(SPRITE_NODE) as Node2D
 	var sprite_top := _sprite_top(sprite)
 	if is_nan(sprite_top):
 		return fallback_height

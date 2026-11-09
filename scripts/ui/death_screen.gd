@@ -2,7 +2,8 @@ class_name DeathScreen
 extends CanvasLayer
 ## The dark that falls over the screen when the player falls, with "EMBEROO FELL" in the
 ## HUD's pixel font at twice its size (a whole-number scale, so it stays crisp), and lifts again once they are back up (Respawner runs both).
-## Its fades ignore the time scale, so the death's slow motion doesn't drag them out.
+## Its fades ignore the time scale, so the death's slow motion doesn't drag them out; the text
+## also slides a few pixels as it fades, like the pausing screens (PausingScreen.fade_and_slide).
 
 const TEXT := "EMBEROO FELL"
 ## How dark the screen gets (the darkness's alpha).
@@ -40,7 +41,7 @@ func fade_in(seconds: float) -> void:
 func _fade_to(alpha: float, seconds: float) -> Tween:
 	var fade := create_tween().set_ignore_time_scale(true).set_parallel()
 	fade.tween_property(_shade, "modulate:a", alpha, seconds)
-	fade.tween_property(_text, "modulate:a", alpha, seconds)
+	PausingScreen.fade_and_slide(fade, _text, alpha > 0.0, seconds)
 	return fade
 
 

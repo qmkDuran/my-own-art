@@ -12,6 +12,7 @@ extends PausingScreen
 const MAX_START_ZOOM := 0.8
 ## Shown under the tree until the player zooms out: the later rings start off-screen.
 const ZOOM_HINT := "Scroll out for Stage 2 and 3"
+const ZOOM_HINT_FADE_SECONDS := 0.15
 
 var _view: EmberTreeView
 var _frame: EmberTreeFrame
@@ -115,4 +116,4 @@ func _on_branch_hovered(branch: String) -> void:
 ## The zoom hint fades away once the player has zoomed out past the opening view.
 func _on_zoom_changed(zoom: float) -> void:
 	var wanted_alpha := 0.0 if zoom < _view.home_zoom else 1.0
-	create_tween().tween_property(_zoom_hint, "modulate:a", wanted_alpha, FADE_SECONDS)
+	create_tween().tween_property(_zoom_hint, "modulate:a", wanted_alpha, ZOOM_HINT_FADE_SECONDS)
