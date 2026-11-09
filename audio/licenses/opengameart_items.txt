@@ -1,0 +1,68 @@
+OpenGameArt.org items used in Project R. Licence as shown in the 'License(s)' field of each page
+(CC0 = Creative Commons Zero 1.0, full text in CC0-1.0_legalcode.txt). Retrieved 2026-11-09.
+The description text below is copied from each page (HTML removed).
+
+== Dog Snarl Grunt Grumble
+URL: https://opengameart.org/content/dog-snarl-grunt-grumble
+Author (OGA submitter): qubodup
+Posted: Saturday, June 11, 2011 - 06:48
+Licence(s): CC0
+Files: dog_0.7z
+Page text: Playing with the dog. Source file seen here: http://www.freesound.org/people/qubodup/sounds/122183/
+
+== Female Scream 1
+URL: https://opengameart.org/content/female-scream-1
+Author (OGA submitter): Nocturnal_Vanguard
+Posted: Tuesday, February 14, 2023 - 03:57
+Licence(s): CC0
+Files: female_scream_1.ogg
+Page text: Hi I'm AuraVoice, a full-time voice over artist. I will post here some SFX I've recorded in past projects that I hope someone would find useful for their project. If you're interested in checking out some more of my work or would like to use my services, please check me out at https://www.fiverr.com/auravoice Whatever SFX I post here, use however you like! No credit required.
+
+== Pain sounds by EmoPreben
+URL: https://opengameart.org/content/pain-sounds-by-emopreben
+Author (OGA submitter): EmoPreben
+Posted: Saturday, May 1, 2021 - 05:54
+Licence(s): CC0
+Files: painsounds.zip
+Page text: Hey all, heres some more public domain painsounds I've recorded for you to use for whatever :) As always i'd love a link to see what you use it in, but its not a requirement ^-^ Sounds are in .ogg - but can be uploaded in different format if requested *2/5 2021: Uploaded fixed version with less artifacts.. Didnt notice them at first. Copyright/Attribution Notice: Lasse Bührmann, a.k.a Emopreben
+
+== Calm Piano 1 (Vaporware)
+URL: https://opengameart.org/content/calm-piano-1-vaporware
+Author (OGA submitter): cynicmusic
+Posted: Saturday, May 11, 2019 - 15:00
+Licence(s): CC0
+Files: 003_Vaporware_2.mp3
+Page text: This is the song "Vaporware"- written by The Cynic Project for the game Pixelsphere. Please use it your game as well (or any other creative project). The song features relaxing pads and an uplifting piano melody. I am pleased to announce my game Pixelsphere ( https://pixelsphere.org/ ) is complete! For more of my music, see cynicmusic.com. Licensing oportunities available. Please email me! More music available on request. Please join my mailing list if you are able, I appreciate it! I haven't sent any mailers yet, but this will be the first source if I release new public domain music for your games, and new music on my site. https://cynicmusic.com/email.html Copyright/Attribution Notice: ATTRIBUTION: The Cynic Project / cynicmusic.com / pixelsphere.org
+
+== At Home - Orchestral
+URL: https://opengameart.org/content/at-home-orchestral
+Author (OGA submitter): Wolfgang_
+Posted: Friday, August 14, 2020 - 18:25
+Licence(s): CC0
+Files: cinematic-calm.wav
+Page text: A short calm piece. [contact e-mail omitted]
+
+== Emotional Piano
+URL: https://opengameart.org/content/emotional-piano-0
+Author (OGA submitter): Centurion_of_war
+Posted: Friday, May 31, 2024 - 15:22
+Licence(s): CC0
+Files: emotional_piano_2.ogg, emotional_piano_solo_0.ogg
+Page text: A small slow emotional Piano theme
+
+== The Hope
+URL: https://opengameart.org/content/the-hope
+Author (OGA submitter): TAD
+Posted: Monday, August 5, 2019 - 12:35
+Licence(s): CC0
+Files: Hope.mp3
+Page text: Easy cheap orchestra music.
+
+== Revelation
+URL: https://opengameart.org/content/revelation
+Author (OGA submitter): Indieteur
+Posted: Friday, December 21, 2018 - 00:33
+Licence(s): CC0
+Files: Revelation.Wav, Revelation_0.mp3
+Page text: An acoustic meditative and calm instrumental music. If you like this music or you have used this in your project, please consider donating to me! It'll help me make better royalty free assets! Thanks :) Copyright/Attribution Notice: Attribution will be appreciated but not required.
+
