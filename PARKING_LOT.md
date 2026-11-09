@@ -31,3 +31,11 @@ Good ideas that don't belong in the current milestone. Check here when a milesto
 ## Controls
 - **Key rebinding:** a Controls screen where players remap every action (saved to user settings). Defaults stay as they are now. The HUD key labels already read from the input map, so they'll follow.
 - **Smart move-attack:** while holding left-click to move, auto-jab an enemy that blocks the path within reach (offered, not yet approved).
+
+## Art
+- **Emberoo evolution art (open problem).** About 7 attempts so far (hand-drawn, ChatGPT concept, PixelLab, a hybrid cleanup, chibi, grown-from-base); none hit the bar. What we learned:
+  - the original 16px Emberoo is the style anchor (it reads as a kangaroo);
+  - HGSS follower bodies are about 14x19, 17x24 and 25x25 with about 14 colours, with one bold signature shape per stage;
+  - keep the kangaroo identity first;
+  - avoid boxy rectangles: taper the waist, round the shapes, give the pose attitude.
+  Options: community critique (r/PixelArt), the user's own skill growing, or a commission once the game earns. Gameplay can use a placeholder until then.
