@@ -155,6 +155,42 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
 - Team: solo developer (first game; full-time software dev)
 - Pace: ~20 hours/week, sustainable over years
 
+## Art direction v2: gritty world, PixelLab creatures (2026-11-09, IN PROGRESS)
+
+Decided with the user after the size and grimdark mockups. This section wins over older art notes below where they disagree; the old 16×16 rules still describe the art that hasn't been switched yet.
+
+- **Look: GRITTY (grade B).** The world is darker and greyer: ashen foliage, grey slush, cold stone. It is done by remapping each world colour to a darker Apollo colour (the table below), never by a night filter over the screen. The hero, attacks, effects, elites' auras and loot are the only bright, saturated things on screen. Attacks must be flashy.
+- **Palette:** Apollo, all 46 colours (named in `ApolloPalette`). Every sprite, tile and UI pixel is Apollo; PixelLab output is generated with Apollo as its target palette and checked for 0 off-palette pixels.
+- **View:** unchanged, 480×270 at 4× (16 px tiles).
+- **Sizes** (trimmed sprite height, front view):
+  - Hero Emberoo by evolution stage: joey ~35 px, Emberoo ~46 px, final ~63 px. All directions (front, frontdiag, side, backdiag, back; mirrored for the other side). Full animation set per stage.
+  - **Trash = the AI God's machines** (drones, walkers, treads, turrets...): ~24–32 px, front view only (mirrored), 2-frame idle/move, a wind-up pose and a strike pose. One shared death: explosion, sparks, scrap, the stolen light bursting out as XP motes.
+  - Elites: ~40–48 px. Bosses: 96–128 px. Humans (Wardens, NPCs): ~40 px; placeholders for now.
+- **Lore:** wild Glimra are nearly gone, drained to power the machines. Chipped Glimra appear as elites and bosses.
+- **Placeholders for now:** the world tiles (regraded old tiles), NPCs, Wardens, the trainer, bosses. Real art now: the hero (all stages and attacks), the trash machines, the UI regrade.
+- **Hero gauntlets:** dark obsidian stone with glowing orange/gold cracks (the cracks must read on dark ground). No full-body rim light.
+
+Grade B colour table (world art only; colours not listed stay the same):
+
+| From | To | From | To | From | To |
+|---|---|---|---|---|---|
+| d0da91 | 819796 | e8c170 | c09473 | df84a5 | a23e8c |
+| a8ca58 | 577277 | de9e41 | be772b | c65197 | 7a367b |
+| 75a743 | 394a50 | be772b | 884b2b | a23e8c | 7a367b |
+| 468232 | 394a50 | 884b2b | 602c2c | 7a367b | 402751 |
+| 25562e | 19332d | 602c2c | 4d2b32 | 402751 | 1e1d39 |
+| 19332d | 151d28 | 341c27 | 241527 | a4dddb | 73bed3 |
+| e7d5b3 | a8b5b2 | da863e | be772b | 73bed3 | 4f8fba |
+| d7b594 | 819796 | cf573c | a53030 | 4f8fba | 3c5e8b |
+| c09473 | 7a4841 | a53030 | 752438 | 3c5e8b | 253a5e |
+| ad7757 | 7a4841 | 752438 | 411d31 | ebede9 | c7cfcc |
+| 7a4841 | 4d2b32 | 411d31 | 241527 | c7cfcc | a8b5b2 |
+| 4d2b32 | 341c27 | a8b5b2 | 819796 | 819796 | 577277 |
+| 577277 | 394a50 | 394a50 | 202e37 | 202e37 | 151d28 |
+| 151d28 | 10141f | 10141f | 090a14 | | |
+
+(Water's 253a5e is kept so ponds don't vanish into the floor.)
+
 ## Art
 - 2D pixel art, made by the developer in Aseprite (studying *Pixel Logic*)
 - Tiles and world: 16×16
