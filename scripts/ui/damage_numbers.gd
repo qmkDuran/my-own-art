@@ -1,15 +1,19 @@
 class_name DamageNumbers
 extends Node
-## Pops a DamageNumber over every enemy that takes a hit (toads, Wardens, the training dummy).
+## Pops a DamageNumber over every enemy that takes a hit (toads, Wardens, the training dummy)
+## and over the player for each status tick.
 ##
 ## Lives once in the level and watches the scene tree: any enemy (a member of `target_group`
 ## with a child "Health") gets numbers as soon as it appears, including ones summoned later,
-## so new enemies need nothing extra. The player is not in the group; its heart shows its hits.
+## so new enemies need nothing extra. The player's hits show on its heart instead, but its
+## status ticks (e.g. poison) pop numbers here too, so the player sees what is hurting them.
 ## Numbers are added to the world, not the enemy, so they finish rising after a kill.
-## Burn ticks get orange numbers (see DamageNumber).
+## Status ticks get numbers in their element's colour (see DamageNumber).
 
 ## Enemies in this group get damage numbers.
 @export var target_group: String = "enemies"
+## Members of this group (the player) get numbers for status ticks only, never for hits.
+@export var ticks_only_group: String = "player"
 ## Pixels above the top of the enemy's sprite where numbers start.
 @export var gap_above_sprite: float = 2.0
 ## Height used when an enemy has no "Sprite" child to measure, in pixels above its feet.
@@ -22,39 +26,47 @@ extends Node
 
 func _ready() -> void:
 	get_tree().node_added.connect(_on_node_added)
-	for enemy in get_tree().get_nodes_in_group(target_group):
-		_watch(enemy.get_node_or_null("Health") as Health)
+	for group in [target_group, ticks_only_group]:
+		for target in get_tree().get_nodes_in_group(group):
+			_watch(target.get_node_or_null("Health") as Health)
 
 
-## Catches enemies that join after the level started (e.g. toads a Warden summons).
+## Catches targets that join after the level started (e.g. toads a Warden summons).
 func _on_node_added(node: Node) -> void:
-	if node is Health and node.get_parent() != null and node.get_parent().is_in_group(target_group):
+	if node is Health and node.get_parent() != null:
 		_watch(node as Health)
 
 
+## Watches a target's hits, if it is in one of the groups.
 func _watch(health: Health) -> void:
 	if health == null:
 		return
-	var on_hit := _on_enemy_hit.bind(health.get_parent())
+	var target := health.get_parent()
+	var ticks_only := not target.is_in_group(target_group)
+	if ticks_only and not target.is_in_group(ticks_only_group):
+		return
+	var on_hit := _on_hit.bind(target, ticks_only)
 	if not health.hit_taken.is_connected(on_hit):
 		health.hit_taken.connect(on_hit)
 
 
-func _on_enemy_hit(amount: int, is_critical: bool, damage_type: Health.DamageType, enemy: Node2D) -> void:
-	var world := enemy.get_parent()
+func _on_hit(amount: int, is_critical: bool, damage_type: Health.DamageType, target: Node2D, ticks_only: bool) -> void:
+	if ticks_only and damage_type == Health.DamageType.DIRECT:
+		return
+	var world := target.get_parent()
 	if world == null:
 		return
 	var number := DamageNumber.new()
 	number.z_index = number_z_index
 	world.add_child(number)
 	var spread := randi_range(-horizontal_spread, horizontal_spread)
-	number.global_position = (enemy.global_position + Vector2(spread, -_number_height(enemy))).round()
+	number.global_position = (target.global_position + Vector2(spread, -_number_height(target))).round()
 	number.pop(amount, is_critical, damage_type)
 
 
-## How far above the enemy's feet its numbers start: just over the top of its sprite.
-func _number_height(enemy: Node2D) -> float:
-	var sprite := enemy.get_node_or_null("Sprite") as Node2D
+## How far above the target's feet its numbers start: just over the top of its sprite.
+func _number_height(target: Node2D) -> float:
+	var sprite := target.get_node_or_null("Sprite") as Node2D
 	var sprite_top := _sprite_top(sprite)
 	if is_nan(sprite_top):
 		return fallback_height

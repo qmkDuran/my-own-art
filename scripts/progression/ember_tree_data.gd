@@ -86,7 +86,7 @@ const NODE_ROWS := [
 	{"id": "unshakable", "branch": "bruiser", "stage": 1, "tier": 2, "angle": SPREAD_FAR, "kind": Kind.STAT,
 		"requires": ["counter_punch"], "skill_action": "Unshakable",
 		"title": "Unshakable", "text": "Feet like roots.",
-		"facts": "Enemy shoves and rams (Warden rods, Gruntite charges, gusts) push you only {push_percent}% as far."},
+		"facts": "Enemy shoves and rams (Warden rods, Gruntite charges, gusts) push you only {push_percent}% as far, and staggers last {stagger_percent}% as long."},
 
 	# --- Stage 2: opens at the first evolution ----------------------------------
 	{"id": "meteor_fist", "branch": "inferno", "stage": 2, "tier": 3, "angle": -SPREAD_FAR, "kind": Kind.SKILL,

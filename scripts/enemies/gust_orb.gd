@@ -2,7 +2,8 @@ class_name GustOrb
 extends Area2D
 ## A Zephoot's gust orb: a slow ball of packed wind that flies in a straight line.
 ##
-## It hurts the player and gives them a small push, then bursts. It also bursts on a wall or
+## It hurts the player and gives them a small push (the Wind effect, Buffeted: a player
+## pushed by a gust can't be pushed by another for a moment), then bursts. It also bursts on a wall or
 ## an obstacle, and fades away after `lifetime`. Other enemies don't stop it. A player who
 ## is dodging (invulnerable) passes straight through it.
 ##
@@ -62,7 +63,7 @@ func _on_body_entered(body: Node2D) -> void:
 func _try_to_hit_player(player: Node2D) -> void:
 	if not PlayerHit.try_to_hurt(player, damage, global_position):
 		return  # dodged through it
-	PlayerHit.shove(player, _direction * push_speed, push_time)
+	Buffeted.apply_to(PlayerHit.health_of(player), _direction * push_speed, push_time)
 	_burst()
 
 

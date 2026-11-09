@@ -1,4 +1,4 @@
-[gd_scene load_steps=41 format=3]
+[gd_scene load_steps=42 format=3]
 
 [ext_resource type="Script" path="res://scripts/creatures/creature.gd" id="1_creature"]
 [ext_resource type="Script" path="res://scripts/animation/creature_animator.gd" id="2_animator"]
@@ -37,6 +37,7 @@
 [ext_resource type="Script" path="res://scripts/components/wildfire.gd" id="35_wildfire"]
 [ext_resource type="Script" path="res://scripts/components/ember_hop.gd" id="36_ember_hop"]
 [ext_resource type="Script" path="res://scripts/components/path_mover.gd" id="90_path_mover"]
+[ext_resource type="Script" path="res://scripts/components/status_resistance.gd" id="37_status_resistance"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_body"]
 radius = 5.0
@@ -163,6 +164,11 @@ animation_name = "guard"
 [node name="Unshakable" type="Node" parent="." node_paths=PackedStringArray("ash_guard")]
 script = ExtResource("33_unshakable")
 ash_guard = NodePath("../SkillBar/AshGuard")
+
+[node name="StatusResistance" type="Node" parent="." node_paths=PackedStringArray("ash_guard", "unshakable")]
+script = ExtResource("37_status_resistance")
+ash_guard = NodePath("../SkillBar/AshGuard")
+unshakable = NodePath("../Unshakable")
 
 [node name="CounterPunch" type="Node" parent="." node_paths=PackedStringArray("health", "melee_attack", "ash_guard", "crit_roll", "hit_flash")]
 script = ExtResource("34_counter_punch")

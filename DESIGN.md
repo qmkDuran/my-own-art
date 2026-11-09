@@ -189,6 +189,18 @@ Brightest and busiest first: **player** > **danger cues** (attack tells, project
 - **Soon after: status effects.** Each element applies its own effect (fire = burn, toxic = poison over time).
 - **No type chart for now.** Revisit only when there are many elements.
 
+### Enemy status effects
+Enemies give the player mild elemental effects, **sparingly**: they must never get annoying.
+1. **Only signature attacks apply effects,** never every hit. Effects are short and mild by default; only elites and bosses get stronger ones (each attack exposes its effect numbers as parameters).
+2. **Always telegraphed:** only attacks the player can see coming and dodge (a dodge avoids the hit and the effect).
+3. **No lock-downs:** after any movement-impairing effect (stagger, push, later slow or root) the player is immune to that effect for **2 s**.
+4. **Clear visuals:** a subtle tint pulse on Emberoo (green for poison, stone for stagger); a small 7×7 pixel icon beside the heart with a draining timer bar; tick numbers in the element's colour over Emberoo. A tick only tints the heart's rim for a blink (no shake or flash).
+- **Toxlop, poison (Toxic):** only a tongue lash that lands poisons: 1 damage every 1.5 s for 3 s (2 ticks). A new lash refreshes it (no stacking yet).
+- **Gruntite, stagger (Stone):** only the charge ram staggers: 0.4 s in which the current jab or skill is cut off and Emberoo can't act, on top of the damage and shove. Then 2 s of stagger immunity.
+- **Zephoot, push (Wind):** the gust orb's small push is the Wind effect; once pushed, other gusts can't push again for 2 s (they still hurt), so a volley can't juggle.
+- **Counters:** Ash Guard blocks every enemy status effect (the hit still lands at half damage); Unshakable halves staggers (0.2 s).
+- Code: one system. `StatusEffect` (attached at runtime, by node name, with the immunity), `DamageOverTime` (Burning, Poisoned), `ImpairingEffect` (Staggered, Buffeted); the player's `StatusResistance` decides what lands. Ticks go through `Health.take_tick_damage` with their `DamageType`.
+
 ### Enemy #1: Toxlop, the toxic toad (locked)
 - Purple toad with toxic green warts, yellow eyes; 16×16, sprite in `art/toxic_toad/`.
 - **Front view only:** always faces the camera and hops in any direction (like a slime), so one view covers everything.

@@ -11,11 +11,12 @@ extends CharacterBody2D
 ##             SearingJab, Wildfire, CounterPunch, SkillBar (Q/W/E/R skills that spend Heat)
 ##   Defence:  Dodge (with AfterimageTrail, SpeedTrail, SpeedLines and EmberHop's fire),
 ##             Health (dodging makes it invulnerable), Unshakable (how much of a shove lands),
-##             TrainerAid (F: a healing tonic)
+##             StatusResistance (which enemy status effects land), TrainerAid (F: a healing tonic)
 ##   Show:     Sprite (CreatureAnimator), HitFlash, FistEmbers, ComboPips, ScreenShake,
 ##             SpeechBubble, LevelUpBoost
 ##   Arriving: ZoneEntrance (the hop onto the spawn point; it drives the creature meanwhile)
-## A shove it takes is a Pushback.
+## A shove it takes is a Pushback. Enemy status effects (Poisoned, Staggered, Buffeted) are
+## attached to it at runtime; a stagger stops it acting for a moment.
 
 ## Below this speed (pixels per second) the creature counts as standing still.
 const STANDING_STILL_SPEED := 1.0
@@ -55,13 +56,15 @@ func _physics_process(delta: float) -> void:
 		return
 	_pushback.count_down(delta)
 	mouse_orders.update()
-	if player_input.wants_trainer_aid():
-		trainer_aid.use()
-	_actions.update()
+	var is_staggered := Staggered.is_staggering(self)
+	if not is_staggered:
+		if player_input.wants_trainer_aid():
+			trainer_aid.use()
+		_actions.update()
 	# Leaping out of the way means attacks pass through you.
 	health.is_invulnerable = dodge.is_dodging
 
-	var move_direction := _chosen_move_direction()
+	var move_direction := Vector2.ZERO if is_staggered else _chosen_move_direction()
 	velocity = _next_velocity(move_direction, delta)
 	move_and_slide()
 
@@ -87,16 +90,22 @@ func push(push_velocity: Vector2, duration: float) -> void:
 	var share := unshakable.share_of_push()
 	if share <= 0.0:
 		return
-	melee_attack.cancel()
-	skill_bar.cancel_cast()
+	interrupt()
 	velocity = push_velocity * share
 	_pushback.start(share, duration)
 
 
-## The SkillBar asks this before firing: not mid-leap and not being shoved.
+## Cuts off whatever it is doing: a jab or a skill (e.g. a shove or a stagger).
+func interrupt() -> void:
+	melee_attack.cancel()
+	skill_bar.cancel_cast()
+
+
+## The SkillBar asks this before firing: not mid-leap, not being shoved or staggered.
 ## A jab in progress doesn't block a skill; the skill cuts it short.
 func can_start_skill() -> bool:
-	return not dodge.is_dodging and not _pushback.is_active() and not health.is_dead()
+	return not dodge.is_dodging and not _pushback.is_active() and not Staggered.is_staggering(self) \
+			and not health.is_dead()
 
 
 # --- Moving ---------------------------------------------------------------

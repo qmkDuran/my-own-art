@@ -2,7 +2,8 @@ class_name Unshakable
 extends Node
 ## How much of an enemy's shove actually moves the player (Warden shoves, Gruntite rams,
 ## gust shots): all of it normally, none while Ash Guard is up, and `push_percent`% once the
-## Unshakable node (Ember Tree, Bruiser) is learned.
+## Unshakable node (Ember Tree, Bruiser) is learned. Once learned, staggers (e.g. a Gruntite
+## ram) also last only `stagger_percent`% as long (StatusResistance asks `stagger_share`).
 ##
 ## The creature asks `share_of_push` in its `push`, so no enemy needs to know about it.
 ## Its numbers fill the Unshakable facts in the tree and the stats panel's Shoves row.
@@ -12,6 +13,8 @@ const UNSHAKABLE_ID := "unshakable"
 
 ## How far shoves push once Unshakable is learned, as a percent of the full push.
 @export var push_percent: int = 25
+## How long staggers last once Unshakable is learned, as a percent of the full stagger.
+@export var stagger_percent: int = 50
 ## While this guard is up, shoves don't move the player at all.
 @export var ash_guard: AshGuard
 
@@ -31,3 +34,8 @@ func share_of_push() -> float:
 ## Share of a shove that moves the player when he isn't guarding (shown in the stats panel).
 func resting_share() -> float:
 	return push_percent / 100.0 if is_learned() else 1.0
+
+
+## Share of a stagger's length (0..1) the player suffers.
+func stagger_share() -> float:
+	return stagger_percent / 100.0 if is_learned() else 1.0

@@ -5,8 +5,9 @@ extends Control
 ## The heart is a container of red: it drains from the top down as health is lost,
 ## with a brighter line on the surface of what's left (colours: HealthHeartColors).
 ## When hit it shakes and flashes pale, and the lost health lingers as a lighter "ghost"
-## band that drains away after a moment. Heals tint the rows gained green. At low health
-## the heart beats, faster the lower it gets.
+## band that drains away after a moment. A status tick (e.g. poison) is quieter: no shake or
+## flash, just the ghost band and the rim tinting the element's colour for a blink. Heals
+## tint the rows gained green. At low health the heart beats, faster the lower it gets.
 
 ## Pixel map of the heart (29×23). 'x' = inside the heart.
 const HEART_PIXELS := [
@@ -40,6 +41,7 @@ const NUMBERS_TOP := 9
 const HIT_SHAKE_SECONDS := 0.2
 const HIT_FLASH_SECONDS := 0.08
 const HEAL_TINT_SECONDS := 0.3
+const TICK_TINT_SECONDS := 0.15
 ## Lost health stays as a ghost band this long, then drains away over GHOST_DRAIN_SECONDS.
 const GHOST_HOLD_SECONDS := 0.4
 const GHOST_DRAIN_SECONDS := 0.4
@@ -55,6 +57,7 @@ var _colors := HealthHeartColors.new(PixelShape.from_rows(HEART_PIXELS))
 var _hit_shake := HudMotion.new(HIT_SHAKE_SECONDS)
 var _hit_flash := HudMotion.new(HIT_FLASH_SECONDS)
 var _heal_tint := HudMotion.new(HEAL_TINT_SECONDS)
+var _tick_tint := HudMotion.new(TICK_TINT_SECONDS)
 var _ghost_hold := HudMotion.new(GHOST_HOLD_SECONDS)
 ## Health shown by the ghost band (drains down to the real health), and how fast it drains.
 var _ghost_health: float = 0.0
@@ -73,6 +76,7 @@ func _ready() -> void:
 		_ghost_health = _last_health
 		_health.damaged.connect(func(_amount: int, _from: Vector2) -> void: _on_damaged())
 		_health.healed.connect(func(_amount: int) -> void: _on_healed())
+		_health.hit_taken.connect(_on_hit_taken)
 	queue_redraw()
 
 
@@ -82,6 +86,7 @@ func _process(delta: float) -> void:
 	var is_moving := _hit_shake.advance(delta)
 	is_moving = _hit_flash.advance(delta) or is_moving
 	is_moving = _heal_tint.advance(delta) or is_moving
+	is_moving = _tick_tint.advance(delta) or is_moving
 	is_moving = _drain_ghost(delta) or is_moving
 	is_moving = _advance_beat(delta) or is_moving
 	if is_moving:
@@ -89,11 +94,25 @@ func _process(delta: float) -> void:
 
 
 func _on_damaged() -> void:
+	_hit_shake.start()
+	_hit_flash.start()
+	_show_health_lost()
+
+
+## Status ticks fire no `damaged` (hits are handled there), only `hit_taken`.
+func _on_hit_taken(_amount: int, _is_critical: bool, damage_type: Health.DamageType) -> void:
+	if damage_type == Health.DamageType.DIRECT:
+		return
+	_colors.tick_color = StatusColors.for_damage_type(damage_type)
+	_tick_tint.start()
+	_show_health_lost()
+
+
+## The health just lost lingers as the ghost band.
+func _show_health_lost() -> void:
 	_ghost_health = maxf(_ghost_health, _last_health)
 	_ghost_drain_per_second = 0.0
 	_ghost_hold.start()
-	_hit_shake.start()
-	_hit_flash.start()
 	_last_health = _health.current_health
 	queue_redraw()
 
@@ -138,6 +157,7 @@ func _draw() -> void:
 	_colors.share_left = _share_of(_health.current_health)
 	_colors.ghost_share = _share_of(_ghost_health)
 	_colors.is_hit_flashing = _hit_flash.is_running()
+	_colors.is_tick_tinting = _tick_tint.is_running()
 	if not _heal_tint.is_running():
 		_colors.healed_from_share = -1.0
 	PixelShape.draw_outlined(self, _colors.paint(), origin, ApolloPalette.OUTLINE)

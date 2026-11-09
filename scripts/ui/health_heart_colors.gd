@@ -5,6 +5,7 @@ extends RefCounted
 ## - ghost: health just lost, still showing as a lighter red band until it drains away;
 ## - healed: the rows just gained, tinted green for a moment;
 ## - hit flash: the whole fill turns pale for a blink;
+## - tick tint: (a status tick, e.g. poison) only the filled rim takes the element's colour;
 ## - beat: (low health) the heart grows by one pixel all round.
 
 ## Pixels on the left lobe that catch the light, when filled.
@@ -21,6 +22,9 @@ var ghost_share: float = 1.0
 ## Share before the last heal, while the heal tint shows; -1 when it doesn't.
 var healed_from_share: float = -1.0
 var is_hit_flashing: bool = false
+var is_tick_tinting: bool = false
+## The element's colour the rim takes while tick tinting.
+var tick_color: Color = StatusColors.POISON
 var is_beating: bool = false
 
 var _shape: Dictionary
@@ -55,6 +59,8 @@ func paint() -> Dictionary:
 func _filled_color(pixel: Vector2i, is_rim: bool, surface_row: int, is_just_healed: bool) -> Color:
 	if is_hit_flashing:
 		return ApolloPalette.GREY_LIGHT if is_rim else ApolloPalette.WHITE
+	if is_tick_tinting and is_rim:
+		return tick_color
 	if is_just_healed:
 		return ApolloPalette.GREEN if is_rim else ApolloPalette.GREEN_LIGHT
 	if pixel.y == surface_row or pixel in SHINE_PIXELS:

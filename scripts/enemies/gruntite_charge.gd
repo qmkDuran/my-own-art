@@ -3,7 +3,9 @@ extends Node
 ## A Gruntite's charge: it locks onto where the player is, winds up (crest bristles and eyes
 ## go red, then head down with a hoof scrape and a puff of dust), then thunders in a straight
 ## line for a fixed distance. Ramming the player hurts and throws them hard; a dodge passes
-## through it. The Gruntite stops early if it hits a wall.
+## through it. The Gruntite stops early if it hits a wall. The ram is the Gruntite's
+## signature attack, so it also staggers the player (Staggered): whatever they were doing is
+## cut off and they can't act for a moment.
 ##
 ## The Gruntite decides when to start and plays the pose; this does the timing, the
 ## direction, the distance and the hit.
@@ -25,6 +27,8 @@ extends Node
 @export var push_speed: float = 230.0
 ## Seconds the push controls the player.
 @export var push_time: float = 0.3
+## Seconds a ram staggers the player (mild by default; elites and bosses may raise it).
+@export var stagger_time: float = 0.4
 ## Seconds after a charge before it can charge again.
 @export var cooldown: float = 1.5
 ## The dust kicked up by the hoof scrape (and by a bonk).
@@ -101,6 +105,7 @@ func try_to_ram_player() -> bool:
 		return false  # leaping through it
 	_has_hit = true
 	PlayerHit.shove(player, direction * push_speed, push_time)
+	Staggered.apply_to(PlayerHit.health_of(player), stagger_time)
 	return true
 
 

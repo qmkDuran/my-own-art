@@ -7,6 +7,8 @@ extends Node
 ## Like most trash mobs, the toad mainly telegraphs with its pose (the held puff); the one
 ## quick glint is the final cue. The toad decides when to start it and plays the pose; this
 ## does the timing, the glint and the hit.
+## The lash is the toad's signature attack, so a lash that lands also poisons (Poisoned);
+## nothing else the toad does carries poison (see DESIGN.md, "Enemy status effects").
 
 ## How far the tongue reaches, in pixels. The toad attacks once the player is this close.
 @export var tongue_reach: float = 40.0
@@ -21,6 +23,14 @@ extends Node
 ## How close to the tongue the player's body must be to get hit, in pixels.
 @export var tongue_hit_radius: float = 5.0
 @export var tongue_damage: int = 1
+@export_group("Poison")
+## Damage each poison tick deals (mild by default; elites and bosses may raise it).
+@export var poison_damage_per_tick: int = 1
+## Seconds between poison ticks.
+@export var poison_tick_interval: float = 1.5
+## Seconds the poison lasts (3s at 1.5s a tick: 2 ticks).
+@export var poison_duration: float = 3.0
+@export_group("")
 @export var tongue: ToadTongue
 ## Flashes the toad for the glint.
 @export var hit_flash: HitFlash
@@ -69,5 +79,7 @@ func cancel() -> void:
 
 func _try_to_hit_player() -> void:
 	var player := PlayerFinder.find(self)
-	if player != null and tongue.reaches(aim_point(player), tongue_hit_radius):
-		PlayerHit.try_to_hurt(player, tongue_damage, toad.global_position)
+	if player == null or not tongue.reaches(aim_point(player), tongue_hit_radius):
+		return
+	if PlayerHit.try_to_hurt(player, tongue_damage, toad.global_position):
+		Poisoned.apply_to(PlayerHit.health_of(player), poison_damage_per_tick, poison_tick_interval, poison_duration)

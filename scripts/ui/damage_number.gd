@@ -4,7 +4,8 @@ extends Node2D
 ##
 ## Normal hits are small and white. Critical hits are gold with a "!" (e.g. "4!") and bigger,
 ## with a two-step pop: a flash at POP_SCALE, then they settle at CRIT_SCALE.
-## Burn ticks are small and orange, so they read as the fire, not as a punch.
+## Status ticks are small and in their element's colour (orange burn, green poison; see
+## StatusColors), so they read as the effect, not as a punch.
 ## Drawn with PixelFont at whole-pixel offsets and whole-number scales, so it stays crisp.
 
 ## Pixels the number rises over its life.
@@ -19,9 +20,8 @@ const CRIT_MARK := "!"
 const POP_SCALE := 3.0
 const CRIT_SCALE := 2.0
 const POP_TIME := 0.08
-const NORMAL_COLOR := ApolloPalette.WHITE
+const NORMAL_COLOR := StatusColors.DIRECT
 const CRIT_COLOR := ApolloPalette.GOLD
-const BURN_COLOR := ApolloPalette.ORANGE
 
 var _text: String = ""
 var _color: Color = NORMAL_COLOR
@@ -43,7 +43,7 @@ func pop(amount: int, is_critical: bool = false, damage_type: Health.DamageType 
 static func _color_for(is_critical: bool, damage_type: Health.DamageType) -> Color:
 	if is_critical:
 		return CRIT_COLOR
-	return BURN_COLOR if damage_type == Health.DamageType.BURN else NORMAL_COLOR
+	return StatusColors.for_damage_type(damage_type)
 
 
 func _process(delta: float) -> void:

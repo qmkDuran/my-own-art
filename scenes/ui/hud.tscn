@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3]
+[gd_scene load_steps=16 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/health_heart.gd" id="1_heart"]
 [ext_resource type="Script" path="res://scripts/ui/discovery_card.gd" id="2_card"]
@@ -14,6 +14,7 @@
 [ext_resource type="Script" path="res://scripts/ui/boss_health_bar.gd" id="14_boss_bar"]
 [ext_resource type="Script" path="res://scripts/ui/boss_defeated_banner.gd" id="15_boss_banner"]
 [ext_resource type="Script" path="res://scripts/ui/shard_found_toast.gd" id="16_shard_toast"]
+[ext_resource type="Script" path="res://scripts/ui/status_icons.gd" id="17_status_icons"]
 
 [node name="Hud" type="CanvasLayer"]
 
@@ -74,6 +75,16 @@ offset_right = -47.0
 offset_bottom = -6.0
 mouse_filter = 2
 script = ExtResource("1_heart")
+
+[node name="StatusIcons" type="Control" parent="BottomCluster"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = -99.0
+offset_top = -23.0
+offset_right = -79.0
+offset_bottom = -11.0
+mouse_filter = 2
+script = ExtResource("17_status_icons")
 
 [node name="HeatFlame" type="Control" parent="BottomCluster"]
 layout_mode = 3

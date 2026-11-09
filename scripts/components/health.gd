@@ -5,11 +5,12 @@ extends Node
 ## Other components listen to its signals (flash on hit, die at zero)
 ## instead of Health knowing about them.
 ## Two kinds of harm: a hit (`take_damage`, fires `damaged`, so the target reacts: flash,
-## knockback, interrupted) and a status-effect tick (`take_tick_damage`, e.g. Burning,
-## which doesn't). Both fire `hit_taken`, so damage numbers and health bars see every point.
+## knockback, interrupted) and a status-effect tick (`take_tick_damage`, e.g. Burning or
+## Poisoned, which doesn't). Both fire `hit_taken`, so damage numbers and health bars see every point.
 
-## What dealt the damage, so displays can tell them apart (e.g. orange burn numbers).
-enum DamageType { DIRECT, BURN }
+## What dealt the damage, so displays can tell them apart (e.g. orange burn numbers, green
+## poison numbers; see StatusColors).
+enum DamageType { DIRECT, BURN, POISON }
 
 ## A hit: the target should react to it (flash, knockback, interruption).
 signal damaged(amount: int, source_position: Vector2)
