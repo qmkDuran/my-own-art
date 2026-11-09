@@ -31,10 +31,14 @@ const ORANGE_MID := Color("da863e")
 const ORANGE_DARK := Color("be772b")
 const GOLD := Color("e8c170")
 
+const FOREST := Color("25562e")
+const GREEN_DARK := Color("468232")
 const GREEN := Color("75a743")
 const GREEN_LIGHT := Color("a8ca58")
 const LIME_PALE := Color("d0da91")
 
+const BLUE_DARK := Color("3c5e8b")
+const BLUE := Color("4f8fba")
 const SKY := Color("73bed3")
 const SKY_LIGHT := Color("a4dddb")
 

@@ -53,3 +53,7 @@ func _advance(delta: float) -> void:
 	_seconds_to_next_tick += tick_interval
 	_ticks_left -= 1
 	_health.take_tick_damage(damage_per_tick, damage_type)
+
+
+func consume() -> void:
+	_ticks_left = 0

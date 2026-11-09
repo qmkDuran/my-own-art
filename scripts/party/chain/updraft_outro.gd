@@ -9,10 +9,10 @@ extends SwapMove
 @export var ring_scene: PackedScene
 
 
-func play(member: PlayableCreature) -> void:
+func play(member: PlayableCreature, _partner: PlayableCreature) -> void:
 	var spot := member.global_position
 	for target_health in AbilityTargets.within(self, spot, radius):
-		Launched.apply_to(target_health, launch_seconds)
+		SetUp.apply(target_health, SetUp.LAUNCHED, launch_seconds)
 	GaleCone.spawn(member.get_parent(), spot, Vector2.UP, radius * 0.6, 160.0)
 	if ring_scene != null:
 		Shockwave.spawn(ring_scene, member.get_parent(), spot, radius, 0.35, ApolloPalette.SKY_LIGHT)

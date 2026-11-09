@@ -16,6 +16,6 @@ static func play(asker: Node, color: Color) -> void:
 	cover.set_anchors_preset(Control.PRESET_FULL_RECT)
 	flash.add_child(cover)
 	asker.get_tree().current_scene.add_child(flash)
-	var fade := cover.create_tween()
+	var fade := cover.create_tween().set_ignore_time_scale(true)
 	fade.tween_property(cover, "color:a", 0.0, FADE_SECONDS)
 	fade.tween_callback(flash.queue_free)

@@ -13,20 +13,28 @@ const SPARK_COUNT := 12
 
 ## A white ghost of the creature's current frame, left behind where it stood.
 static func play_exit(member: PlayableCreature) -> void:
+	ghost(member, Vector2(0, -EXIT_RISE), EXIT_SECONDS, ApolloPalette.WHITE * 3.0)
+
+
+## A copy of the creature's current frame that drifts by `drift` pixels over `seconds` while
+## fading out, tinted `tint` (an Outro's exit: a leap up, a dive down).
+static func ghost(member: PlayableCreature, drift: Vector2, seconds: float, tint: Color) -> void:
 	var sprite := member.get_node_or_null("Sprite") as AnimatedSprite2D
-	if sprite == null or sprite.sprite_frames == null:
+	if sprite == null or sprite.sprite_frames == null or not sprite.sprite_frames.has_animation(sprite.animation):
 		return
-	var ghost := Sprite2D.new()
-	ghost.texture = sprite.sprite_frames.get_frame_texture(sprite.animation, sprite.frame)
-	ghost.flip_h = sprite.flip_h
-	ghost.z_index = 2
-	ghost.self_modulate = ApolloPalette.WHITE * 3.0
-	member.get_parent().add_child(ghost)
-	ghost.global_position = sprite.global_position
-	var fade := ghost.create_tween().set_parallel()
-	fade.tween_property(ghost, "modulate:a", 0.0, EXIT_SECONDS)
-	fade.tween_property(ghost, "position:y", ghost.position.y - EXIT_RISE, EXIT_SECONDS)
-	fade.chain().tween_callback(ghost.queue_free)
+	var copy := Sprite2D.new()
+	copy.texture = sprite.sprite_frames.get_frame_texture(sprite.animation, sprite.frame)
+	copy.flip_h = sprite.flip_h
+	copy.z_index = 2
+	copy.self_modulate = tint
+	member.get_parent().add_child(copy)
+	copy.global_position = sprite.global_position.round()
+	var start := copy.position
+	var fade := copy.create_tween().set_parallel()
+	fade.tween_property(copy, "modulate:a", 0.0, seconds).set_ease(Tween.EASE_IN)
+	fade.tween_method(func(offset: Vector2) -> void: copy.position = (start + offset).round(), Vector2.ZERO, drift, seconds) \
+			.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	fade.chain().tween_callback(copy.queue_free)
 
 
 ## Rings and sparks in the element's colour, and the creature flashes that colour.

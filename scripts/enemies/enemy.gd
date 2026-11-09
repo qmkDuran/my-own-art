@@ -52,6 +52,11 @@ func knock_back(push_velocity: Vector2) -> void:
 		velocity = push_velocity
 
 
+## True while hits can't move it or drain its poise (mid-charge, mid-slam, ...).
+func is_super_armoured() -> bool:
+	return _has_super_armour()
+
+
 ## True once the player has come within `notice_distance` (or it was hit, summoned or alerted).
 func _is_alert() -> bool:
 	return _awareness.has_noticed_player(self, notice_distance)

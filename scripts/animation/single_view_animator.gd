@@ -7,7 +7,12 @@ extends AnimatedSprite2D
 @export_dir var sheet_folder: String
 @export var sheet_prefix: String
 ## Size of one frame in the sheets, e.g. 16×16 for creatures, 18×24 for humans.
+## Zero means square frames as tall as each sheet (creatures may be 16, 20 or 24 pixels).
 @export var frame_size: Vector2i = Vector2i(16, 16)
+## Stands the sprite on its feet: its bottom edge sits on the creature's origin whatever the
+## frame height (set from the first sheet), so bigger creatures stand on the ground too.
+## Off, the sprite keeps the position it has in the scene.
+@export var stands_on_feet: bool = false
 ## For each action: { "frame_durations": [seconds per frame], "loops": bool }.
 @export var animation_settings: Dictionary = {}
 
@@ -25,9 +30,14 @@ func _ready() -> void:
 		if not ResourceLoader.exists(sheet_path):
 			continue
 		var settings: Dictionary = animation_settings[action]
+		var sheet := load(sheet_path) as Texture2D
+		var size := frame_size if frame_size != Vector2i.ZERO else Vector2i(sheet.get_height(), sheet.get_height())
 		SpriteSheetLoader.add_animation(
-			sprite_frames, action, load(sheet_path), settings["frame_durations"], settings["loops"], frame_size
+			sprite_frames, action, sheet, settings["frame_durations"], settings["loops"], size
 		)
+		if stands_on_feet:
+			_ground_offset = Vector2(position.x, -size.y / 2.0)
+	position = _ground_offset
 
 
 func show_animation(action: String) -> void:

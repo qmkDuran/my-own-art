@@ -5,7 +5,10 @@ extends Node2D
 ## Swaps share a short cooldown. Each member keeps its own health; a defeated member can't
 ## come back in. When the one on the field falls, the next standing member jumps in at
 ## once; when all have fallen, the level restarts. A swap also plays the outgoing member's
-## Outro and the incoming one's Intro (SwapMove), the swap-chain combos.
+## Outro and the incoming one's Intro (SwapMove): its entrance, plus its Signal Skill when
+## the card is lit (a condition it needs is on an enemy). The incoming creature can't be
+## hurt until its entrance has landed (swap i-frames). With a full LinkMeter, a Signal Skill
+## is a Link Finisher.
 ##
 ## Benching and fielding a member is PartyMemberSwitch's job. The camera follows whoever is
 ## on the field. The HUD's TeamPanel reads the members, the active slot and the cooldown.
@@ -26,6 +29,8 @@ const INTRO_NODE := "Intro"
 @export var camera: Camera2D
 ## The ring used by the swap-in burst.
 @export var ring_scene: PackedScene
+## The team's Link meter (optional).
+@export var link_meter: LinkMeter
 
 var members: Array[PlayableCreature] = []
 var active_slot: int = 0
@@ -71,10 +76,16 @@ func swap_cooldown_fraction() -> float:
 ## Whether the member in `slot_index` has its Intro armed: swapping it in now would cash in
 ## a set-up (e.g. Emberoo while enemies hang Launched nearby). The TeamPanel makes it glow.
 func is_intro_armed(slot_index: int) -> bool:
+	return not armed_label(slot_index).is_empty()
+
+
+## The combo the member in `slot_index` would fire if swapped in now ("" when not armed),
+## for the READY pip on its card.
+func armed_label(slot_index: int) -> String:
 	if slot_index == active_slot or members[slot_index].health_component().is_dead():
-		return false
+		return ""
 	var intro := members[slot_index].get_node_or_null(INTRO_NODE) as SwapMove
-	return intro != null and intro.is_armed_at(active_member().global_position)
+	return intro.armed_label_at(active_member().global_position) if intro != null else ""
 
 
 func can_swap_to(slot_index: int) -> bool:
@@ -98,17 +109,23 @@ func _join(member: PlayableCreature) -> void:
 
 func _swap_to(slot_index: int) -> void:
 	var outgoing := active_member()
+	var incoming := members[slot_index]
 	var spot := outgoing.global_position
+	var intro := incoming.get_node_or_null(INTRO_NODE) as SwapMove
+	var is_signal := intro != null and intro.is_armed_at(spot)
 	outgoing.show_exit_pose()
 	SwapFlourish.play_exit(outgoing)
-	_play_swap_move(outgoing, OUTRO_NODE)
+	_play_swap_move(outgoing, OUTRO_NODE, incoming)
 	PartyMemberSwitch.bench(outgoing)
 	active_slot = slot_index
-	PartyMemberSwitch.bring_in(active_member(), spot)
-	active_member().entrance_shield_left = entrance_shield_seconds
-	active_member().play_entrance_pose()
-	SwapFlourish.play_entrance(active_member(), ring_scene)
-	_play_swap_move(active_member(), INTRO_NODE)
+	PartyMemberSwitch.bring_in(incoming, spot)
+	incoming.entrance_shield_left = entrance_shield_seconds + (intro.entrance_seconds() if intro != null else 0.0)
+	incoming.play_entrance_pose()
+	SwapFlourish.play_entrance(incoming, ring_scene)
+	if is_signal and intro is SignalSkill and link_meter != null and link_meter.is_full():
+		link_meter.spend()
+		(intro as SignalSkill).is_link_finisher = true
+	_play_swap_move(incoming, INTRO_NODE, outgoing)
 	_cooldown_left = swap_cooldown
 	if camera != null:
 		camera.offset = Vector2.ZERO
@@ -116,10 +133,10 @@ func _swap_to(slot_index: int) -> void:
 
 
 ## Plays the member's Outro or Intro, if it has one (see SwapMove).
-func _play_swap_move(member: PlayableCreature, move_name: String) -> void:
+func _play_swap_move(member: PlayableCreature, move_name: String, partner: PlayableCreature) -> void:
 	var move := member.get_node_or_null(move_name) as SwapMove
 	if move != null and not member.health_component().is_dead():
-		move.play(member)
+		move.play(member, partner)
 
 
 ## The member on the field fell: the next one still standing jumps in (no cooldown wait).

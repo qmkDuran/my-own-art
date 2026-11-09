@@ -35,3 +35,7 @@ func full_length() -> float:
 
 func _advance(delta: float) -> void:
 	_seconds_left -= delta
+
+
+func consume() -> void:
+	_seconds_left = 0.0

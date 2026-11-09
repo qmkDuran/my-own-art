@@ -19,11 +19,15 @@ signal damaged(amount: int, source_position: Vector2)
 signal hit_taken(amount: int, is_critical: bool, damage_type: DamageType)
 signal died
 signal healed(amount: int)
+## A shielded hit was soaked up whole (e.g. by Mossdillo's Bark Ward).
+signal shield_absorbed
 
 @export var max_health: int = 3
 
 ## While true, damage is ignored (e.g. mid-dodge).
 var is_invulnerable: bool = false
+## Hits still to be soaked up whole by a shield (e.g. Bark Ward). Ticks get through.
+var shield_hits: int = 0
 ## Share of each hit's damage actually taken: 1 = all, 0.5 = half (e.g. while Ash Guard is up).
 ## The leftover fraction carries to the next hit, so two 1-damage hits at half cost exactly 1.
 var damage_taken_scale: float = 1.0
@@ -38,6 +42,10 @@ func _ready() -> void:
 
 func take_damage(amount: int, source_position: Vector2, is_critical: bool = false) -> void:
 	if is_invulnerable or is_dead():
+		return
+	if shield_hits > 0 and amount > 0:
+		shield_hits -= 1
+		shield_absorbed.emit()
 		return
 
 	amount = _scaled_hit(amount)

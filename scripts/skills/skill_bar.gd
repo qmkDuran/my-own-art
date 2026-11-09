@@ -79,6 +79,12 @@ func cooldown_fraction(slot_index: int) -> float:
 	return clampf(cooldown_left(slot_index) / skill.cooldown, 0.0, 1.0)
 
 
+## Takes `seconds` off every cooldown that is running (landed hits do this).
+func shave_cooldowns(seconds: float) -> void:
+	for slot_index in SLOT_COUNT:
+		_cooldowns_left[slot_index] = maxf(0.0, _cooldowns_left[slot_index] - seconds)
+
+
 # --- Firing -------------------------------------------------------------------
 
 ## Fires the skill in a slot if it can. Returns true if it fired.

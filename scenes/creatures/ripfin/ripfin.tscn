@@ -1,0 +1,171 @@
+[gd_scene load_steps=25 format=3]
+
+[ext_resource type="Script" path="res://scripts/creatures/front_view_creature.gd" id="1_creature"]
+[ext_resource type="Script" path="res://scripts/animation/single_view_animator.gd" id="2_animator"]
+[ext_resource type="Script" path="res://scripts/components/player_input.gd" id="3_input"]
+[ext_resource type="Script" path="res://scripts/creatures/mouse_orders.gd" id="4_orders"]
+[ext_resource type="Script" path="res://scripts/components/path_mover.gd" id="5_path"]
+[ext_resource type="Script" path="res://scripts/components/movement.gd" id="6_movement"]
+[ext_resource type="Script" path="res://scripts/components/dodge.gd" id="7_dodge"]
+[ext_resource type="Script" path="res://scripts/components/health.gd" id="8_health"]
+[ext_resource type="Script" path="res://scripts/effects/hit_flash.gd" id="9_flash"]
+[ext_resource type="Script" path="res://scripts/effects/screen_shake.gd" id="10_shake"]
+[ext_resource type="Script" path="res://scripts/components/crit_roll.gd" id="11_crit"]
+[ext_resource type="Script" path="res://scripts/skills/skill_bar.gd" id="12_bar"]
+[ext_resource type="PackedScene" path="res://scenes/effects/shockwave.tscn" id="13_ring"]
+[ext_resource type="Script" path="res://scripts/effects/ally_marker.gd" id="14_ally"]
+[ext_resource type="Script" path="res://scripts/effects/speed_lines.gd" id="15_lines"]
+[ext_resource type="Script" path="res://scripts/skills/glimra/swipe.gd" id="20_swipe"]
+[ext_resource type="Script" path="res://scripts/skills/glimra/undertow.gd" id="21_undertow"]
+[ext_resource type="Script" path="res://scripts/skills/glimra/riptide_ambush.gd" id="22_ambush"]
+[ext_resource type="Resource" path="res://data/skills/fin_slash.tres" id="23_fin_slash"]
+[ext_resource type="Resource" path="res://data/skills/undertow.tres" id="24_undertow_skill"]
+[ext_resource type="Resource" path="res://data/skills/riptide_ambush.tres" id="25_ambush_skill"]
+[ext_resource type="Script" path="res://scripts/party/chain/ambush_intro.gd" id="26_intro"]
+[ext_resource type="Script" path="res://scripts/party/chain/whirlpool_outro.gd" id="27_outro"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_body"]
+radius = 5.0
+
+[node name="Ripfin" type="CharacterBody2D" groups=["player"]]
+z_index = 1
+motion_mode = 1
+script = ExtResource("1_creature")
+display_name = "Ripfin"
+element = "Tide"
+
+[node name="Shadow" type="Polygon2D" parent="."]
+color = Color(0.0352941, 0.0392157, 0.0784314, 0.45)
+polygon = PackedVector2Array(-6, 0, -5, -1.5, 0, -2, 5, -1.5, 6, 0, 5, 1.5, 0, 2, -5, 1.5)
+
+[node name="AllyMarker" type="Node2D" parent="."]
+script = ExtResource("14_ally")
+
+[node name="Sprite" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -8)
+script = ExtResource("2_animator")
+frame_size = Vector2i(0, 0)
+stands_on_feet = true
+sheet_folder = "res://art/ripfin"
+sheet_prefix = "ripfin_play"
+animation_settings = {
+"idle": {
+"frame_durations": [0.16, 0.16, 0.16, 0.16],
+"loops": true
+},
+"move": {
+"frame_durations": [0.08, 0.08, 0.08, 0.08],
+"loops": true
+},
+"basic": {
+"frame_durations": [0.04, 0.06, 0.06, 0.08],
+"loops": false
+},
+"skill": {
+"frame_durations": [0.06, 0.06, 0.06, 0.06],
+"loops": false
+},
+"signature": {
+"frame_durations": [0.03, 0.04, 0.05, 0.05, 0.06, 0.1],
+"loops": false
+},
+"intro": {
+"frame_durations": [0.05, 0.08, 0.08, 0.16],
+"loops": false
+},
+"outro": {
+"frame_durations": [0.05, 0.05, 0.05],
+"loops": false
+},
+"hurt": {
+"frame_durations": [0.08, 0.08],
+"loops": false
+},
+"submerged": {
+"frame_durations": [0.08, 0.08],
+"loops": true
+}
+}
+
+[node name="CollisionShape" type="CollisionShape2D" parent="."]
+position = Vector2(0, -3)
+shape = SubResource("CircleShape2D_body")
+
+[node name="PlayerInput" type="Node" parent="."]
+script = ExtResource("3_input")
+
+[node name="PathMover" type="NavigationAgent2D" parent="."]
+script = ExtResource("5_path")
+
+[node name="MouseOrders" type="Node" parent="." node_paths=PackedStringArray("player_input", "path_mover")]
+script = ExtResource("4_orders")
+player_input = NodePath("../PlayerInput")
+path_mover = NodePath("../PathMover")
+click_marker_scene = ExtResource("13_ring")
+attack_approach_distance = 18.0
+
+[node name="Movement" type="Node" parent="."]
+script = ExtResource("6_movement")
+top_speed = 72
+
+[node name="Dodge" type="Node" parent="."]
+script = ExtResource("7_dodge")
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("8_health")
+max_health = 8
+
+[node name="HitFlash" type="Node" parent="." node_paths=PackedStringArray("sprite")]
+script = ExtResource("9_flash")
+sprite = NodePath("../Sprite")
+
+[node name="ScreenShake" type="Node" parent="."]
+script = ExtResource("10_shake")
+
+[node name="CritRoll" type="Node" parent="."]
+script = ExtResource("11_crit")
+
+[node name="SpeedLines" type="Node" parent="." node_paths=PackedStringArray("target")]
+script = ExtResource("15_lines")
+target = NodePath("..")
+
+[node name="SkillBar" type="Node" parent="." node_paths=PackedStringArray("player_input")]
+script = ExtResource("12_bar")
+player_input = NodePath("../PlayerInput")
+
+[node name="FinSlash" type="Node" parent="SkillBar"]
+script = ExtResource("20_swipe")
+reach = 20.0
+cone_degrees = 80.0
+lunge_distance = 6.0
+wind_up = 0.06
+duration = 0.22
+skill = ExtResource("23_fin_slash")
+animation_name = "basic"
+
+[node name="Undertow" type="Node" parent="SkillBar"]
+script = ExtResource("21_undertow")
+skill = ExtResource("24_undertow_skill")
+slot_index = 1
+animation_name = "submerged"
+
+[node name="RiptideAmbush" type="Node" parent="SkillBar"]
+script = ExtResource("22_ambush")
+skill = ExtResource("25_ambush_skill")
+slot_index = 2
+animation_name = "signature"
+
+[node name="Intro" type="Node" parent="."]
+script = ExtResource("26_intro")
+signal_name = "AMBUSH!"
+condition_labels = {
+"Rooted": "DROWN",
+"Broken": "DROWN",
+"Soaked": "AMBUSH"
+}
+reach = 90.0
+damage = 3
+arrival_seconds = 0.16
+
+[node name="Outro" type="Node" parent="."]
+script = ExtResource("27_outro")

@@ -39,10 +39,11 @@ static func along(asker: Node, start: Vector2, end: Vector2, radius: float) -> A
 	return found
 
 
-## Damages each target (rolling the attacker's crits).
-static func hurt_all(attacker: Node2D, targets: Array[Health], damage: int) -> void:
-	for target_health in targets:
-		CritRoll.deal_damage(attacker, target_health, damage)
+## Damages each target as a hit of the attacker's element (crits, reactions, poise; see
+## ElementStrike).
+static func hurt_all(attacker: Node2D, targets: Array[Health], damage: int,
+		weight: HitFeel.Weight = HitFeel.Weight.LIGHT, poise_damage: int = 1) -> void:
+	ElementStrike.hit(attacker, targets, damage, weight, poise_damage)
 
 
 ## Throws each target away from `from` at `speed` (enemies that know how to be knocked back).

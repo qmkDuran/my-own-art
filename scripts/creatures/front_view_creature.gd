@@ -26,6 +26,9 @@ const BASIC_ATTACK_SLOT := 0
 @export var move_animation: String = "move"
 ## How high it floats above its shadow, in pixels (0 = it sits on the ground).
 @export var hover_height: float = 0.0
+## For a creature drawn in three-quarter side view facing right (e.g. Mossdillo): its sprite
+## flips to face left when it moves or aims left. Front-view creatures leave this off.
+@export var faces_sideways: bool = false
 ## How far a floating creature bobs up and down, in pixels, and how long one bob takes.
 @export var bob_height: float = 0.0
 @export var bob_period: float = 1.6
@@ -49,6 +52,8 @@ var _pose_left: float = 0.0
 
 
 func _ready() -> void:
+	if team_icon == null and animator.sprite_frames.has_animation("idle"):
+		team_icon = animator.sprite_frames.get_frame_texture("idle", 0)
 	health.damaged.connect(_on_damaged)
 	health.died.connect(_on_defeated)
 	skill_bar.skill_used.connect(_on_skill_used)
@@ -71,6 +76,8 @@ func _physics_process(delta: float) -> void:
 
 	animator.show_animation(_current_animation())
 	animator.lift(_current_lift())
+	if faces_sideways:
+		_face_travel_or_aim()
 
 
 func aim_direction() -> Vector2:
@@ -103,7 +110,7 @@ func show_exit_pose() -> void:
 
 
 func play_entrance_pose() -> void:
-	_play_pose("intro")
+	play_pose("intro")
 
 
 # --- Acting -----------------------------------------------------------------
@@ -171,8 +178,9 @@ func _current_animation() -> String:
 	return "idle"
 
 
-## Plays a one-off animation over idle for its whole length (skills and moving win over it).
-func _play_pose(pose: String) -> void:
+## Plays a one-off animation over idle for its whole length (skills and moving win over it),
+## e.g. an Intro's "submerged" then "intro".
+func play_pose(pose: String) -> void:
 	if not animator.sprite_frames.has_animation(pose):
 		return
 	_pose = pose
@@ -183,6 +191,13 @@ func _play_pose(pose: String) -> void:
 	animator.replay_animation(pose)
 
 
+## Faces where it is moving, or where its skill aims while casting (drawn facing right).
+func _face_travel_or_aim() -> void:
+	var facing_x := aim_direction().x if skill_bar.is_casting() else velocity.x
+	if not is_zero_approx(facing_x):
+		animator.flip_h = facing_x < 0.0
+
+
 func _current_lift() -> float:
 	var bob := sin(TAU * _seconds_alive / bob_period) * bob_height if bob_period > 0.0 else 0.0
 	return hover_height + bob + dodge.current_height() + skill_bar.cast_lift()
@@ -191,7 +206,7 @@ func _current_lift() -> float:
 func _on_damaged(_amount: int, _source_position: Vector2) -> void:
 	hit_flash.flash()
 	if not skill_bar.is_casting():
-		_play_pose("hurt")
+		play_pose("hurt")
 
 
 func _on_skill_used(_slot_index: int) -> void:

@@ -1,0 +1,172 @@
+[gd_scene load_steps=25 format=3]
+
+[ext_resource type="Script" path="res://scripts/creatures/front_view_creature.gd" id="1_creature"]
+[ext_resource type="Script" path="res://scripts/animation/single_view_animator.gd" id="2_animator"]
+[ext_resource type="Script" path="res://scripts/components/player_input.gd" id="3_input"]
+[ext_resource type="Script" path="res://scripts/creatures/mouse_orders.gd" id="4_orders"]
+[ext_resource type="Script" path="res://scripts/components/path_mover.gd" id="5_path"]
+[ext_resource type="Script" path="res://scripts/components/movement.gd" id="6_movement"]
+[ext_resource type="Script" path="res://scripts/components/dodge.gd" id="7_dodge"]
+[ext_resource type="Script" path="res://scripts/components/health.gd" id="8_health"]
+[ext_resource type="Script" path="res://scripts/effects/hit_flash.gd" id="9_flash"]
+[ext_resource type="Script" path="res://scripts/effects/screen_shake.gd" id="10_shake"]
+[ext_resource type="Script" path="res://scripts/components/crit_roll.gd" id="11_crit"]
+[ext_resource type="Script" path="res://scripts/skills/skill_bar.gd" id="12_bar"]
+[ext_resource type="PackedScene" path="res://scenes/effects/shockwave.tscn" id="13_ring"]
+[ext_resource type="Script" path="res://scripts/effects/ally_marker.gd" id="14_ally"]
+[ext_resource type="Script" path="res://scripts/effects/speed_lines.gd" id="15_lines"]
+[ext_resource type="Script" path="res://scripts/skills/glimra/swipe.gd" id="20_swipe"]
+[ext_resource type="Script" path="res://scripts/skills/glimra/bramble_snare.gd" id="21_snare"]
+[ext_resource type="Script" path="res://scripts/skills/glimra/rolling_thicket.gd" id="22_thicket"]
+[ext_resource type="Resource" path="res://data/skills/claw_swipe.tres" id="23_claw"]
+[ext_resource type="Resource" path="res://data/skills/bramble_snare.tres" id="24_snare_skill"]
+[ext_resource type="Resource" path="res://data/skills/rolling_thicket.tres" id="25_thicket_skill"]
+[ext_resource type="Script" path="res://scripts/party/chain/stomp_intro.gd" id="26_intro"]
+[ext_resource type="Script" path="res://scripts/party/chain/bark_ward_outro.gd" id="27_outro"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_body"]
+radius = 5.0
+
+[node name="Mossdillo" type="CharacterBody2D" groups=["player"]]
+z_index = 1
+motion_mode = 1
+script = ExtResource("1_creature")
+display_name = "Mossdillo"
+element = "Bloom"
+faces_sideways = true
+
+[node name="Shadow" type="Polygon2D" parent="."]
+color = Color(0.0352941, 0.0392157, 0.0784314, 0.45)
+polygon = PackedVector2Array(-6, 0, -5, -1.5, 0, -2, 5, -1.5, 6, 0, 5, 1.5, 0, 2, -5, 1.5)
+
+[node name="AllyMarker" type="Node2D" parent="."]
+script = ExtResource("14_ally")
+
+[node name="Sprite" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -8)
+script = ExtResource("2_animator")
+frame_size = Vector2i(0, 0)
+stands_on_feet = true
+sheet_folder = "res://art/mossdillo"
+sheet_prefix = "mossdillo_play"
+animation_settings = {
+"idle": {
+"frame_durations": [0.2, 0.2, 0.2, 0.2],
+"loops": true
+},
+"move": {
+"frame_durations": [0.1, 0.1, 0.1, 0.1],
+"loops": true
+},
+"basic": {
+"frame_durations": [0.06, 0.06, 0.08, 0.12],
+"loops": false
+},
+"skill": {
+"frame_durations": [0.06, 0.08, 0.1, 0.14],
+"loops": false
+},
+"signature": {
+"frame_durations": [0.05, 0.1, 0.1, 0.1, 0.12, 0.15],
+"loops": false
+},
+"intro": {
+"frame_durations": [0.06, 0.06, 0.1, 0.18],
+"loops": false
+},
+"outro": {
+"frame_durations": [0.05, 0.05, 0.05],
+"loops": false
+},
+"hurt": {
+"frame_durations": [0.08, 0.08],
+"loops": false
+}
+}
+
+[node name="CollisionShape" type="CollisionShape2D" parent="."]
+position = Vector2(0, -3)
+shape = SubResource("CircleShape2D_body")
+
+[node name="PlayerInput" type="Node" parent="."]
+script = ExtResource("3_input")
+
+[node name="PathMover" type="NavigationAgent2D" parent="."]
+script = ExtResource("5_path")
+
+[node name="MouseOrders" type="Node" parent="." node_paths=PackedStringArray("player_input", "path_mover")]
+script = ExtResource("4_orders")
+player_input = NodePath("../PlayerInput")
+path_mover = NodePath("../PathMover")
+click_marker_scene = ExtResource("13_ring")
+attack_approach_distance = 18.0
+
+[node name="Movement" type="Node" parent="."]
+script = ExtResource("6_movement")
+top_speed = 52
+
+[node name="Dodge" type="Node" parent="."]
+script = ExtResource("7_dodge")
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("8_health")
+max_health = 12
+
+[node name="HitFlash" type="Node" parent="." node_paths=PackedStringArray("sprite")]
+script = ExtResource("9_flash")
+sprite = NodePath("../Sprite")
+
+[node name="ScreenShake" type="Node" parent="."]
+script = ExtResource("10_shake")
+
+[node name="CritRoll" type="Node" parent="."]
+script = ExtResource("11_crit")
+
+[node name="SpeedLines" type="Node" parent="." node_paths=PackedStringArray("target")]
+script = ExtResource("15_lines")
+target = NodePath("..")
+
+[node name="SkillBar" type="Node" parent="." node_paths=PackedStringArray("player_input")]
+script = ExtResource("12_bar")
+player_input = NodePath("../PlayerInput")
+
+[node name="ClawSwipe" type="Node" parent="SkillBar"]
+script = ExtResource("20_swipe")
+reach = 22.0
+cone_degrees = 110.0
+knockback_speed = 110.0
+lunge_distance = 4.0
+wind_up = 0.12
+duration = 0.34
+skill = ExtResource("23_claw")
+animation_name = "basic"
+
+[node name="BrambleSnare" type="Node" parent="SkillBar"]
+script = ExtResource("21_snare")
+wind_up = 0.18
+duration = 0.36
+skill = ExtResource("24_snare_skill")
+slot_index = 1
+animation_name = "skill"
+
+[node name="RollingThicket" type="Node" parent="SkillBar"]
+script = ExtResource("22_thicket")
+wind_up = 0.45
+duration = 0.62
+skill = ExtResource("25_thicket_skill")
+slot_index = 2
+animation_name = "signature"
+
+[node name="Intro" type="Node" parent="."]
+script = ExtResource("26_intro")
+signal_name = "THICKET STOMP!"
+condition_labels = {
+"Launched": "SLAM",
+"Burning": "WILDFIRE"
+}
+reach = 70.0
+damage = 3
+arrival_seconds = 0.18
+
+[node name="Outro" type="Node" parent="."]
+script = ExtResource("27_outro")

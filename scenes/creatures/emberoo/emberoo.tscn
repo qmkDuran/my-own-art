@@ -1,4 +1,4 @@
-[gd_scene load_steps=45 format=3]
+[gd_scene load_steps=47 format=3]
 
 [ext_resource type="Script" path="res://scripts/creatures/creature.gd" id="1_creature"]
 [ext_resource type="Script" path="res://scripts/animation/creature_animator.gd" id="2_animator"]
@@ -41,6 +41,8 @@
 
 [ext_resource type="Texture2D" path="res://art/emberoo/emberoo_front_idle_sheet.png" id="38_team_icon"]
 [ext_resource type="Script" path="res://scripts/party/chain/uppercut_intro.gd" id="39_intro"]
+[ext_resource type="Script" path="res://scripts/party/chain/ember_leap_outro.gd" id="40_outro"]
+[ext_resource type="Script" path="res://scripts/party/chain/elemental_hits.gd" id="41_elemental_hits"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_team_icon"]
 atlas = ExtResource("38_team_icon")
@@ -220,9 +222,24 @@ screen_shake = NodePath("../ScreenShake")
 [node name="PathMover" type="NavigationAgent2D" parent="."]
 script = ExtResource("90_path_mover")
 
-[node name="Intro" type="Node" parent="." node_paths=PackedStringArray("screen_shake")]
+[node name="Intro" type="Node" parent="."]
 script = ExtResource("39_intro")
-screen_shake = NodePath("../ScreenShake")
 impact_scene = ExtResource("7_impact")
+signal_name = "FLAME UPPERCUT!"
+condition_labels = {
+"Launched": "UPPERCUT",
+"Broken": "UPPERCUT",
+"Soaked": "STEAM"
+}
+reach = 90.0
+damage = 3
+arrival_seconds = 0.15
+
+[node name="Outro" type="Node" parent="."]
+script = ExtResource("40_outro")
+
+[node name="ElementalHits" type="Node" parent="." node_paths=PackedStringArray("melee_attack")]
+script = ExtResource("41_elemental_hits")
+melee_attack = NodePath("../MeleeAttack")
 
 [connection signal="hits_landed" from="MeleeAttack" to="Heat" method="on_hits_landed"]

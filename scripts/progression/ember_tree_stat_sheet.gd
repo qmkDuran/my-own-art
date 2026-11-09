@@ -54,6 +54,9 @@ const SEARING_JAB := "SearingJab"
 const ASH_GUARD := "SkillBar/AshGuard"
 const UNSHAKABLE := "Unshakable"
 
+## The child only Emberoo has, which every jab stat reads.
+const MELEE_ATTACK_NODE := "MeleeAttack"
+
 var _player: Node
 
 
@@ -62,9 +65,10 @@ func _init(player: Node) -> void:
 	_player = player
 
 
-## False while there is no player to read (e.g. it is respawning).
+## False while there is no player to read (e.g. it is respawning), or while the one on the
+## field isn't Emberoo (the Ember Tree is his; Project B's teammates have no jab or Heat).
 func has_player() -> bool:
-	return _player != null and is_instance_valid(_player)
+	return _player != null and is_instance_valid(_player) and _player.has_node(MELEE_ATTACK_NODE)
 
 
 func value(stat: String) -> float:

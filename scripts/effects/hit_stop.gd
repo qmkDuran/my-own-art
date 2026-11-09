@@ -1,13 +1,11 @@
 class_name HitStop
 extends RefCounted
-## Freezes the game for a blink on a finisher, so the hit lands with weight: time slows
-## almost to a stop for `REAL_SECONDS` of real time, then runs on.
+## Freezes the game for a blink so a hit lands with weight (see HitFeel for the frame counts
+## per kind of hit). TimeControl does the freezing.
 
-const REAL_SECONDS := 0.09
-const FROZEN_TIME_SCALE := 0.05
+## Frames of the default freeze (an Intro-sized hit).
+const DEFAULT_FRAMES := 6
 
 
-static func play(tree: SceneTree) -> void:
-	Engine.time_scale = FROZEN_TIME_SCALE
-	await tree.create_timer(REAL_SECONDS, true, false, true).timeout
-	Engine.time_scale = 1.0
+static func play(tree: SceneTree, frames: int = DEFAULT_FRAMES) -> void:
+	TimeControl.of(tree).hit_stop(frames)

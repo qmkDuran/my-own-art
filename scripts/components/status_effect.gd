@@ -19,6 +19,7 @@ extends Node2D
 ##   _advance(delta)        -> one physics frame while active (ticks, timers)
 ##   _end()                 -> once, when it stops working (remove a tint, ...)
 ##   _on_target_died()      -> the target died with it on (e.g. a burn spreads)
+##   consume()              -> ends it at once (a reaction or Signal Skill cashed it in)
 
 ## The child a target's StatusResistance goes by, if it has one.
 const RESISTANCE_NODE := "StatusResistance"
@@ -106,6 +107,11 @@ func full_length() -> float:
 
 
 func _advance(_delta: float) -> void:
+	pass
+
+
+## Ends the effect right away (a reaction or Signal Skill cashed it in).
+func consume() -> void:
 	pass
 
 

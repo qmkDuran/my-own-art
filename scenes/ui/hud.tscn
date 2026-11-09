@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3]
+[gd_scene load_steps=18 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/health_heart.gd" id="1_heart"]
 [ext_resource type="Script" path="res://scripts/ui/discovery_card.gd" id="2_card"]
@@ -16,6 +16,7 @@
 [ext_resource type="Script" path="res://scripts/ui/shard_found_toast.gd" id="16_shard_toast"]
 [ext_resource type="Script" path="res://scripts/ui/status_icons.gd" id="17_status_icons"]
 [ext_resource type="Script" path="res://scripts/ui/team_panel.gd" id="18_team_panel"]
+[ext_resource type="Script" path="res://scripts/ui/link_meter_bar.gd" id="19_link_meter_bar"]
 
 [node name="Hud" type="CanvasLayer"]
 
@@ -199,3 +200,16 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("16_shard_toast")
+
+[node name="LinkMeterBar" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 84.0
+offset_top = -26.0
+offset_right = 120.0
+offset_bottom = -14.0
+grow_vertical = 0
+mouse_filter = 2
+script = ExtResource("19_link_meter_bar")
