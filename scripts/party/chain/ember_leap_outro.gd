@@ -6,6 +6,12 @@ extends SwapMove
 const LEAP_HEIGHT := 48.0
 const LEAP_SECONDS := 0.3
 const EMBERS: Array[Color] = [ApolloPalette.GOLD, ApolloPalette.ORANGE, ApolloPalette.RED_LIGHT]
+const EMBER_PIXELS := 18
+## Embers float up instead of falling.
+const EMBER_GRAVITY := -30.0
+## The column of flame: how high it reaches (pixels) and how wide it fans out (degrees).
+const FLAME_REACH := 20.0
+const FLAME_ARC_DEGREES := 70.0
 
 @export var radius: float = 42.0
 @export var burn_seconds: float = 3.5
@@ -22,10 +28,10 @@ func play(member: PlayableCreature, _partner: PlayableCreature) -> void:
 	var flame := FlameArc.new()
 	world.add_child(flame)
 	flame.global_position = spot
-	flame.play(Vector2.UP, 20.0, 70.0)
+	flame.play(Vector2.UP, FLAME_REACH, FLAME_ARC_DEGREES)
 	Shockwave.spawn(HitFeel.RING_SCENE, world, spot, radius, 0.35, ApolloPalette.ORANGE)
-	var embers := PixelDebris.spray(world, spot, EMBERS, 18, Vector2.UP, 60.0)
-	embers.gravity = -30.0
+	var embers := PixelDebris.spray(world, spot, EMBERS, EMBER_PIXELS, Vector2.UP, 60.0)
+	embers.gravity = EMBER_GRAVITY
 	for target_health in AbilityTargets.within(self, spot, radius):
 		SetUp.apply(target_health, SetUp.BURNING, burn_seconds)
 

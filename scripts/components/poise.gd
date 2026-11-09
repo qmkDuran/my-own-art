@@ -9,6 +9,8 @@ extends Node2D
 ## bar under the enemy's health bar (or over its head) once it has taken poise damage.
 
 const NODE_NAME := "Poise"
+## The enemy's health bar, which the poise bar sits under when it has one.
+const HEALTH_BAR_NODE := "FloatingHealthBar"
 const MIN_POISE := 3
 const MAX_POISE := 12
 ## Extra poise on top of the enemy's max health.
@@ -49,7 +51,7 @@ static func drain(target_health: Health, amount: int) -> bool:
 
 func _ready() -> void:
 	z_index = 2
-	var health_bar := get_parent().get_node_or_null("FloatingHealthBar") as Node2D
+	var health_bar := get_parent().get_node_or_null(HEALTH_BAR_NODE) as Node2D
 	position = health_bar.position + Vector2(0, BAR_GAP_UNDER_HEALTH) if health_bar != null else Vector2(0, BAR_HEIGHT_WITHOUT_HEALTH)
 
 

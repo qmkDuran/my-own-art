@@ -30,6 +30,11 @@ const ARMED_PULSE_SPEED := 10.0
 const BADGE_BOTTOM_GAP := 9
 const BADGE_PADDING := 1
 const BADGE_BOB := 1.0
+## The card's wash of its element colour, the cooldown veil over benched cards, and the
+## defeat cross's inset from the card's corners.
+const ELEMENT_WASH_ALPHA := 0.25
+const COOLDOWN_VEIL_ALPHA := 0.65
+const DEFEAT_CROSS_INSET := 3.0
 
 var _party: Party
 
@@ -67,16 +72,34 @@ func _draw_card(slot_index: int, top_left: Vector2) -> void:
 	var element_color := ElementColors.for_element(member.element)
 	var card := Rect2(top_left, CARD_SIZE)
 	draw_rect(card, ApolloPalette.DARK)
-	draw_rect(card.grow(-1), Color(element_color, 0.25))
+	draw_rect(card.grow(-1), Color(element_color, ELEMENT_WASH_ALPHA))
 	if member.team_icon != null:
 		var tint := ApolloPalette.GREY if is_defeated else Color.WHITE
 		_draw_icon(member.team_icon, top_left + ICON_TOP_LEFT, tint)
-	if not is_active and not is_defeated and _party.swap_cooldown_fraction() > 0.0:
-		var veil_height := CARD_SIZE.y * _party.swap_cooldown_fraction()
-		draw_rect(Rect2(top_left, Vector2(CARD_SIZE.x, veil_height)), Color(ApolloPalette.NIGHT, 0.65))
+	if not is_active and not is_defeated:
+		_draw_cooldown_veil(top_left)
 	if is_defeated:
-		draw_line(top_left + Vector2(3, 3), top_left + CARD_SIZE - Vector2(3, 3), ApolloPalette.RED_LIGHT, 1.0)
-		draw_line(top_left + Vector2(CARD_SIZE.x - 3, 3), top_left + Vector2(3, CARD_SIZE.y - 3), ApolloPalette.RED_LIGHT, 1.0)
+		_draw_defeat_cross(card)
+	_draw_frame_and_key(slot_index, card, element_color, is_active)
+	_draw_health_bar(top_left + Vector2(0, HEALTH_BAR_TOP), member_health)
+
+
+## A dark veil over a benched card, shrinking as the swap cooldown runs out.
+func _draw_cooldown_veil(top_left: Vector2) -> void:
+	var share := _party.swap_cooldown_fraction()
+	if share > 0.0:
+		draw_rect(Rect2(top_left, Vector2(CARD_SIZE.x, CARD_SIZE.y * share)), Color(ApolloPalette.NIGHT, COOLDOWN_VEIL_ALPHA))
+
+
+func _draw_defeat_cross(card: Rect2) -> void:
+	var inner := card.grow(-DEFEAT_CROSS_INSET)
+	draw_line(inner.position, inner.end, ApolloPalette.RED_LIGHT, 1.0)
+	draw_line(Vector2(inner.end.x, inner.position.y), Vector2(inner.position.x, inner.end.y), ApolloPalette.RED_LIGHT, 1.0)
+
+
+## The frame (gold on the field), the armed glow and badge when lit, and the key number.
+func _draw_frame_and_key(slot_index: int, card: Rect2, element_color: Color, is_active: bool) -> void:
+	var top_left := card.position
 	var frame_color := ApolloPalette.GOLD if is_active else ApolloPalette.STONE_LIGHT
 	draw_rect(card, frame_color, false, 1.0)
 	var armed_status := _party.armed_status(slot_index)
@@ -87,7 +110,6 @@ func _draw_card(slot_index: int, top_left: Vector2) -> void:
 	else:
 		draw_rect(card.grow(1), ApolloPalette.OUTLINE, false, 1.0)
 	_draw_key(slot_index, top_left, is_active, is_armed)
-	_draw_health_bar(top_left + Vector2(0, HEALTH_BAR_TOP), member_health)
 
 
 ## The member's icon; a creature drawn bigger than 16×16 shows its middle 16×16.

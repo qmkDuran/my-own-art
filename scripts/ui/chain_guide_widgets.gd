@@ -8,6 +8,11 @@ const TEXT_SIZE := EmberTreeFonts.TEXT_SIZE
 const LARGE_SIZE := EmberTreeFonts.LARGE_SIZE
 const ROW_GAP := 6
 const KEY_CAP_PADDING := 4
+const KEY_CAP_CORNER_RADIUS := 2
+const CARD_EDGE_ALPHA := 0.8
+const DIVIDER_ALPHA := 0.4
+## Gap between a status chip's icon and its name.
+const CHIP_GAP := 4
 
 
 ## A see-through dark card edged in `edge_color`.
@@ -19,7 +24,7 @@ static func make_card(edge_color: Color) -> PanelContainer:
 
 
 static func card_style(edge_color: Color) -> StyleBoxFlat:
-	return EmberTreeWidgets.card_style(EmberTreePalette.PANEL, Color(edge_color, 0.8))
+	return EmberTreeWidgets.card_style(EmberTreePalette.PANEL, Color(edge_color, CARD_EDGE_ALPHA))
 
 
 static func make_column(separation: int = ROW_GAP) -> VBoxContainer:
@@ -55,7 +60,7 @@ static func make_key_cap(keys: String, color: Color = EmberTreePalette.GOLD) -> 
 	var cap := PanelContainer.new()
 	var style := EmberTreeWidgets.card_style(ApolloPalette.NIGHT, color)
 	style.shadow_size = 0
-	style.set_corner_radius_all(2)
+	style.set_corner_radius_all(KEY_CAP_CORNER_RADIUS)
 	style.content_margin_left = KEY_CAP_PADDING
 	style.content_margin_right = KEY_CAP_PADDING
 	style.content_margin_top = 0
@@ -72,10 +77,20 @@ static func make_section_title(text: String, color: Color) -> Label:
 	return make_label(text.to_upper(), color)
 
 
+## A table `columns` wide.
+static func make_grid(columns: int, column_gap: int, row_gap: int) -> GridContainer:
+	var grid := GridContainer.new()
+	grid.columns = columns
+	grid.add_theme_constant_override("h_separation", column_gap)
+	grid.add_theme_constant_override("v_separation", row_gap)
+	grid.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return grid
+
+
 ## A thin line across a card in `color`.
 static func make_divider(color: Color) -> ColorRect:
 	var divider := ColorRect.new()
-	divider.color = Color(color, 0.4)
+	divider.color = Color(color, DIVIDER_ALPHA)
 	divider.custom_minimum_size = Vector2(0, 1)
 	divider.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return divider
@@ -91,7 +106,7 @@ static func make_spacer() -> Control:
 
 ## "[icon] Rooted": a status's icon and its name in its colour.
 static func make_status_chip(status_name: String) -> HBoxContainer:
-	var chip := make_row(4)
+	var chip := make_row(CHIP_GAP)
 	chip.add_child(ChainGuideIcon.status(status_name))
 	chip.add_child(make_label(ChainStatusIcons.name_of(status_name), ChainStatusIcons.color_of(status_name)))
 	return chip

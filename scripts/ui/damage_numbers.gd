@@ -14,6 +14,8 @@ extends Node
 ## only `max_numbers` show at once (the oldest goes first).
 
 const MAX_STACK_STEPS := 8
+const HEALTH_NODE := "Health"
+const SPRITE_NODE := "Sprite"
 
 ## Enemies in this group get damage numbers.
 @export var target_group: String = "enemies"
@@ -42,9 +44,9 @@ var _latest: Dictionary = {}
 
 func _ready() -> void:
 	get_tree().node_added.connect(_on_node_added)
-	for group in [target_group, ticks_only_group]:
+	for group: String in [target_group, ticks_only_group]:
 		for target in get_tree().get_nodes_in_group(group):
-			_watch(target.get_node_or_null("Health") as Health)
+			_watch(target.get_node_or_null(HEALTH_NODE) as Health)
 
 
 ## Catches targets that join after the level started (e.g. toads a Warden summons).
@@ -73,15 +75,30 @@ func _on_hit(amount: int, is_critical: bool, damage_type: Health.DamageType, tar
 	if world == null:
 		return
 	var key := "%d:%d" % [target.get_instance_id(), damage_type]
+	if not _merge_into_latest(key, amount, is_critical):
+		_pop_new(key, world, target, amount, is_critical, damage_type)
+
+
+## Adds the hit to the target's young number, if it has one. True if it did.
+func _merge_into_latest(key: String, amount: int, is_critical: bool) -> bool:
+	# Untyped on purpose: it may hold a freed number, which can't be stored as a DamageNumber.
 	var latest: Variant = _latest.get(key)
-	if is_instance_valid(latest) and (latest as DamageNumber).age() < merge_seconds:
-		(latest as DamageNumber).add(amount, is_critical)
-		# A bigger total (or a crit's double size) may now reach a neighbour: move it clear.
-		(latest as DamageNumber).place_at(_free_spot(latest as DamageNumber))
-		return
+	if not is_instance_valid(latest):
+		return false
+	var number: DamageNumber = latest
+	if number.age() >= merge_seconds:
+		return false
+	number.add(amount, is_critical)
+	# A bigger total (or a crit's double size) may now reach a neighbour: move it clear.
+	number.place_at(_free_spot(number))
+	return true
+
+
+func _pop_new(key: String, world: Node, target: Node2D, amount: int, is_critical: bool, damage_type: Health.DamageType) -> void:
 	_forget_finished()
 	while _live.size() >= max_numbers:
-		_live.pop_front().queue_free()
+		var oldest: DamageNumber = _live.pop_front()
+		oldest.queue_free()
 	var number := DamageNumber.new()
 	number.z_index = number_z_index
 	world.add_child(number)
@@ -117,14 +134,14 @@ func _overlapping(number: DamageNumber) -> DamageNumber:
 func _forget_finished() -> void:
 	# Untyped on purpose: a freed number can't be passed as a DamageNumber.
 	_live.assign(_live.filter(func(number: Variant) -> bool: return is_instance_valid(number)))
-	for key in _latest.keys():
+	for key: String in _latest.keys():
 		if not is_instance_valid(_latest[key]):
 			_latest.erase(key)
 
 
 ## How far above the target's feet its numbers start: just over the top of its sprite.
 func _number_height(target: Node2D) -> float:
-	var sprite := target.get_node_or_null("Sprite") as Node2D
+	var sprite := target.get_node_or_null(SPRITE_NODE) as Node2D
 	var sprite_top := _sprite_top(sprite)
 	if is_nan(sprite_top):
 		return fallback_height

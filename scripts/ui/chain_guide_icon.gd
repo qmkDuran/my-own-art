@@ -75,5 +75,6 @@ func _draw_texture() -> void:
 	if _texture == null:
 		return
 	var full := Vector2i(_texture.get_size())
+	@warning_ignore("integer_division")
 	var region := Rect2(Vector2((full - _crop) / 2), Vector2(_crop))
 	draw_texture_rect_region(_texture, Rect2(Vector2.ZERO, Vector2(_crop * _pixel_size)), region)

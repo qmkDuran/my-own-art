@@ -8,8 +8,17 @@ extends PinnedEffect
 const NODE_NAME := "Rooted"
 const IMMUNITY := 0.5
 const VINE_COUNT := 5
+## Seconds the vines take to grow to full height.
+const GROW_SECONDS := 0.15
+## The leftmost vine's x, the gap between vines, and the shortest vine, in pixels.
+const FIRST_VINE_X := -6
+const VINE_SPACING := 3
+const SHORTEST_VINE := 4
+## The vine that binds across the feet: its half-width, and how high its ends rise at full growth.
+const BIND_HALF_WIDTH := 7
+const BIND_LEFT_RISE := 2
+const BIND_RIGHT_RISE := 3
 
-var _tint: StatusTint
 var _age: float = 0.0
 
 
@@ -17,7 +26,7 @@ static func apply_to(target_health: Health, seconds: float) -> bool:
 	var rooted := _find_or_add(target_health, NODE_NAME, func() -> StatusEffect: return Rooted.new()) as Rooted
 	if rooted == null:
 		return false
-	rooted.start(maxf(seconds, rooted.seconds_left()))
+	rooted.extend_to(seconds)
 	return true
 
 
@@ -27,8 +36,7 @@ func _init() -> void:
 
 func _ready() -> void:
 	z_index = 2
-	_tint = StatusTint.new(target().get_node_or_null("Sprite") as CanvasItem, ApolloPalette.GREEN)
-	add_child(_tint)
+	_tint_target(ApolloPalette.GREEN)
 
 
 func _advance(delta: float) -> void:
@@ -41,16 +49,11 @@ func _advance(delta: float) -> void:
 func _draw() -> void:
 	if not is_active():
 		return
-	var grow := clampf(_age / 0.15, 0.0, 1.0)
+	var grow := clampf(_age / GROW_SECONDS, 0.0, 1.0)
 	for vine in VINE_COUNT:
-		var base_x := -6 + vine * 3
-		var height := roundf((4 + (vine % 3) * 2) * grow)
+		var base_x := FIRST_VINE_X + vine * VINE_SPACING
+		var height := roundf((SHORTEST_VINE + (vine % 3) * 2) * grow)
 		var lean := 1 if vine % 2 == 0 else -1
 		draw_line(Vector2(base_x, 1), Vector2(base_x, 1 - height), ApolloPalette.GREEN_DARK, 1.0)
 		draw_rect(Rect2(Vector2(base_x + lean, -height), Vector2.ONE), ApolloPalette.GREEN_LIGHT)
-	draw_line(Vector2(-7, -2 * grow), Vector2(7, -3 * grow), ApolloPalette.GREEN, 1.0)
-
-
-func _end() -> void:
-	if is_instance_valid(_tint):
-		_tint.queue_free()
+	draw_line(Vector2(-BIND_HALF_WIDTH, -BIND_LEFT_RISE * grow), Vector2(BIND_HALF_WIDTH, -BIND_RIGHT_RISE * grow), ApolloPalette.GREEN, 1.0)

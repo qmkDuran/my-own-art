@@ -10,8 +10,8 @@ extends ImpairingEffect
 
 ## The child name a target's stagger goes by.
 const NODE_NAME := "Staggered"
-
-var _tint: StatusTint
+## What a target that can be cut off mid-action calls it (e.g. PlayableCreature.interrupt).
+const INTERRUPT_METHOD := "interrupt"
 
 
 ## Staggers the target with `target_health` for `seconds`. False when it didn't take
@@ -21,22 +21,17 @@ static func apply_to(target_health: Health, seconds: float) -> bool:
 	if staggered == null or staggered.is_active():
 		return false
 	staggered.start(_resisted_length(target_health, NODE_NAME, seconds))
-	if staggered.target().has_method("interrupt"):
-		staggered.target().interrupt()
+	var creature := staggered.target()
+	if creature.has_method(INTERRUPT_METHOD):
+		creature.call(INTERRUPT_METHOD)
 	return true
 
 
-## True while `target` is staggered (it can't act).
-static func is_staggering(target: Node) -> bool:
-	var staggered := target.get_node_or_null(NODE_NAME) as Staggered
+## True while `creature` is staggered (it can't act).
+static func is_staggering(creature: Node) -> bool:
+	var staggered := creature.get_node_or_null(NODE_NAME) as Staggered
 	return staggered != null and staggered.is_active()
 
 
 func _ready() -> void:
-	_tint = StatusTint.new(target().get_node_or_null("Sprite") as CanvasItem, StatusColors.STAGGER)
-	add_child(_tint)
-
-
-func _end() -> void:
-	if is_instance_valid(_tint):
-		_tint.queue_free()
+	_tint_target(StatusColors.STAGGER)

@@ -11,6 +11,18 @@ const PULL_SPEED := 55.0
 const CENTRE_RADIUS := 6.0
 const SOAK_SECONDS := 4.0
 const ARM_COUNT := 4
+## It opens up over this long, then shrinks by this share of its size over its life.
+const OPEN_SECONDS := 0.15
+const SHRINK_SHARE := 0.3
+## How fast the arms spin, in radians per second (clockwise).
+const SPIN_SPEED := 8.0
+const RIM_ALPHA := 0.5
+## Each arm is a few arcs, from the rim inward, each a step further round.
+const ARC_STEPS := 3
+const ARC_STEP_INWARD := 0.25
+const ARC_STEP_TWIST := 0.6
+const ARC_LENGTH := 1.1
+const OUTER_ARC_SHARE := 0.85
 
 var _age: float = 0.0
 
@@ -42,14 +54,15 @@ func _physics_process(delta: float) -> void:
 
 func _draw() -> void:
 	var life := _age / SECONDS
-	var size := RADIUS * minf(1.0, _age / 0.15) * (1.0 - 0.3 * life)
+	var size := RADIUS * minf(1.0, _age / OPEN_SECONDS) * (1.0 - SHRINK_SHARE * life)
 	var fade := 1.0 - life * life
-	var spin := -_age * 8.0
-	draw_arc(Vector2.ZERO, roundf(size), 0.0, TAU, 32, Color(ApolloPalette.BLUE, 0.5 * fade), 1.0)
+	var spin := -_age * SPIN_SPEED
+	draw_arc(Vector2.ZERO, roundf(size), 0.0, TAU, 32, Color(ApolloPalette.BLUE, RIM_ALPHA * fade), 1.0)
 	for arm in ARM_COUNT:
 		var start_angle := spin + TAU * arm / ARM_COUNT
-		for step in 3:
-			var radius := roundf(size * (0.85 - step * 0.25))
+		for step in ARC_STEPS:
+			var radius := roundf(size * (OUTER_ARC_SHARE - step * ARC_STEP_INWARD))
 			var color := ApolloPalette.SKY_LIGHT if step == 0 else ApolloPalette.SKY
-			draw_arc(Vector2.ZERO, radius, start_angle + step * 0.6, start_angle + step * 0.6 + 1.1, 8, Color(color, fade), 1.0)
+			var arc_start := start_angle + step * ARC_STEP_TWIST
+			draw_arc(Vector2.ZERO, radius, arc_start, arc_start + ARC_LENGTH, 8, Color(color, fade), 1.0)
 	draw_rect(Rect2(Vector2(-1, -1), Vector2(2, 2)), Color(ApolloPalette.WHITE, fade))

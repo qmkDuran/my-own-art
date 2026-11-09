@@ -8,8 +8,11 @@ const NODE_NAME := "Broken"
 const STAR_COUNT := 3
 const STAR_ORBIT := Vector2(6, 2)
 const STAR_HEIGHT := -16.0
+## How fast the stars circle, in radians per second.
+const STAR_SPIN_SPEED := 7.0
+## Each star trails one fainter pixel behind it.
+const STAR_TRAIL_ALPHA := 0.7
 
-var _tint: StatusTint
 var _age: float = 0.0
 
 
@@ -27,8 +30,7 @@ func _init() -> void:
 
 func _ready() -> void:
 	z_index = 2
-	_tint = StatusTint.new(target().get_node_or_null("Sprite") as CanvasItem, ApolloPalette.CREAM)
-	add_child(_tint)
+	_tint_target(ApolloPalette.CREAM)
 
 
 func _advance(delta: float) -> void:
@@ -41,12 +43,7 @@ func _draw() -> void:
 	if not is_active():
 		return
 	for star in STAR_COUNT:
-		var angle := _age * 7.0 + TAU * star / STAR_COUNT
+		var angle := _age * STAR_SPIN_SPEED + TAU * star / STAR_COUNT
 		var spot := (Vector2(cos(angle) * STAR_ORBIT.x, STAR_HEIGHT + sin(angle) * STAR_ORBIT.y)).round()
 		draw_rect(Rect2(spot, Vector2.ONE), ApolloPalette.GOLD)
-		draw_rect(Rect2(spot + Vector2(-1, 0), Vector2.ONE), Color(ApolloPalette.WHITE, 0.7))
-
-
-func _end() -> void:
-	if is_instance_valid(_tint):
-		_tint.queue_free()
+		draw_rect(Rect2(spot + Vector2(-1, 0), Vector2.ONE), Color(ApolloPalette.WHITE, STAR_TRAIL_ALPHA))

@@ -1,10 +1,11 @@
 class_name SkillBarHud
 extends Control
-## Connects the player creature's SkillBar to the HUD (it rebinds after a team swap): fills the four SkillSlot children with their key
-## letters (from the InputMap: skill_1..skill_4), skills, cooldowns and whether Emberoo's Heat
-## covers each skill's cost, presses a slot down whenever its key is pressed, plays the
-## slot flash when a skill is used, shows why a skill was refused,
-## and the tooltip while the mouse hovers a slot (with the Ember Tree's facts for the skill).
+## Connects the player creature's SkillBar to the HUD (it rebinds after a team swap): fills
+## the four SkillSlot children with their key letters (from the InputMap: skill_1..skill_4),
+## skills, cooldowns and whether the creature's Heat covers each skill's cost, presses a slot
+## down whenever its key is pressed, plays the slot flash when a skill is used, shows why a
+## skill was refused, and the tooltip while the mouse hovers a slot (with the Ember Tree's
+## facts for the skill).
 ## A skill not learned in the Ember Tree yet leaves its slot empty (SkillBar hides it).
 ##
 ## The SkillBar is read by name and duck typing (has_method / has_signal), so the HUD still

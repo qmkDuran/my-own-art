@@ -24,7 +24,8 @@ extends CharacterBody2D
 ## Seconds it takes to fade out after dying (enemies with a death of their own ignore it).
 @export var death_fade_time: float = 0.3
 
-var _timer := StateTimer.new()
+## The state clock every enemy's own state machine runs on.
+var state_timer := StateTimer.new()
 var _awareness := PlayerAwareness.new()
 var _is_dying: bool = false
 

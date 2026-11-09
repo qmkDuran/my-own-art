@@ -48,11 +48,11 @@ func _ready() -> void:
 	for child in get_children():
 		if child is CaptainAttack:
 			_attacks.append(child)
-	_timer.enter(State.WAITING, 0.0)
+	state_timer.enter(State.WAITING, 0.0)
 
 
 func _physics_process(delta: float) -> void:
-	_timer.advance(delta)
+	state_timer.advance(delta)
 	_seconds_until_staggerable = maxf(0.0, _seconds_until_staggerable - delta)
 	var is_alert := _is_alert()
 	if is_alert and not _has_started_fight and not _is_dying:
@@ -63,7 +63,7 @@ func _physics_process(delta: float) -> void:
 	if DebugControls.enemies_passive:
 		_stop_acting()
 
-	match _timer.state:
+	match state_timer.state:
 		State.WAITING, State.CHASING:
 			_chase_or_attack(can_act)
 		State.ATTACKING:
@@ -109,13 +109,13 @@ func _chase_or_attack(can_act: bool) -> void:
 		return
 	velocity = path_mover.direction_toward(player.global_position) * walk_speed * phase_two.current_speed_scale()
 	sprite.show_animation("walk")
-	_timer.state = State.CHASING
+	state_timer.state = State.CHASING
 
 
 func _stand() -> void:
 	velocity = Vector2.ZERO
 	sprite.show_animation("idle")
-	_timer.state = State.WAITING
+	state_timer.state = State.WAITING
 
 
 func _start_attack(attack: CaptainAttack) -> void:
@@ -126,18 +126,18 @@ func _start_attack(attack: CaptainAttack) -> void:
 	sprite.replay_animation(attack.animation)
 	# The pose keeps time with the faster phase-2 wind-up.
 	sprite.speed_scale = 1.0 / wind_up_scale
-	_timer.enter(State.ATTACKING, attack.duration())
+	state_timer.enter(State.ATTACKING, attack.duration())
 
 
 func _continue_attack() -> void:
 	velocity = Vector2.ZERO
-	_attack.update(_timer.elapsed)
-	if not _timer.is_over():
+	_attack.update(state_timer.elapsed)
+	if not state_timer.is_over():
 		return
 	var recovery := _attack.recovery_time * phase_two.current_recovery_scale()
 	sprite.replay_animation(_attack.recovery_animation)
 	_end_attack()
-	_timer.enter(State.RECOVERING, recovery)
+	state_timer.enter(State.RECOVERING, recovery)
 
 
 func _end_attack() -> void:
@@ -149,13 +149,13 @@ func _end_attack() -> void:
 
 func _slide(delta: float) -> void:
 	_slow_down_by(knockback_friction, delta)
-	if _timer.state != State.DYING and _timer.is_over():
-		_timer.enter(State.WAITING, 0.0)
+	if state_timer.state != State.DYING and state_timer.is_over():
+		state_timer.enter(State.WAITING, 0.0)
 
 
 ## Debug (enemies passive): an attack in progress is called off and he just stands.
 func _stop_acting() -> void:
-	if _timer.state == State.ATTACKING:
+	if state_timer.state == State.ATTACKING:
 		_end_attack()
 		_stand()
 
@@ -163,23 +163,23 @@ func _stop_acting() -> void:
 # --- Reactions ------------------------------------------------------------
 
 func _has_super_armour() -> bool:
-	return _timer.state == State.ATTACKING and _attack != null and _attack.is_winding_up()
+	return state_timer.state == State.ATTACKING and _attack != null and _attack.is_winding_up()
 
 
 ## A hit never interrupts an attack. Otherwise it can stagger him, but not again straight
 ## away (no stun-lock).
 func _react_to_hit(source_position: Vector2) -> void:
-	if _timer.state == State.ATTACKING or _seconds_until_staggerable > 0.0:
+	if state_timer.state == State.ATTACKING or _seconds_until_staggerable > 0.0:
 		return
 	_seconds_until_staggerable = stagger_cooldown
 	_knock_back_from(source_position)
 	sprite.replay_animation("stagger")
-	var still_recovering_for := _timer.seconds_left() if _timer.state == State.RECOVERING else 0.0
-	_timer.enter(State.STAGGERED, maxf(stagger_time, still_recovering_for))
+	var still_recovering_for := state_timer.seconds_left() if state_timer.state == State.RECOVERING else 0.0
+	state_timer.enter(State.STAGGERED, maxf(stagger_time, still_recovering_for))
 
 
 func _die() -> void:
 	_end_attack()
 	velocity = Vector2.ZERO
-	_timer.enter(State.DYING, 0.0)
+	state_timer.enter(State.DYING, 0.0)
 	defeat.play()

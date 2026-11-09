@@ -13,8 +13,11 @@ extends CanvasLayer
 ## chain names appear: combat itself shows no words (see PROJECT_B.md).
 ## Like the Ember Tree it draws at 960×540 (UiResolutionSwap) so Monogram stays crisp.
 
+enum Page { TEAM, CHAINS, REACTIONS, RECRUITS }
+
 const TITLE := "TEAM GUIDE"
 const SUBTITLE := "Skills, Signal Skills and chains"
+## One per Page, in order.
 const PAGE_NAMES: Array[String] = ["Team", "Chains", "Reactions", "Recruits"]
 const FOOTER_HINT := "Tab / Esc: close   ∙   ← / →  or click a tab: turn the page   ∙   The game is paused"
 const RECRUIT_SCENES: Array[String] = [
@@ -26,6 +29,9 @@ const HEADER_HEIGHT := 52.0
 const FOOTER_HEIGHT := 28.0
 const MARGIN := 16
 const CARD_GAP := 10
+const CARDS_PER_ROW := 3
+const HEADER_GAP := 12
+const BACKDROP_ALPHA := 0.9
 const FADE_SECONDS := 0.12
 ## Where each tab keeps its own plain look, to put back when it stops being the open page.
 const PLAIN_STYLE_META := &"plain_style"
@@ -120,11 +126,11 @@ func show_page(index: int) -> void:
 func _build_page(index: int) -> Control:
 	var team := _team_members()
 	match index:
-		1:
+		Page.CHAINS:
 			return ChainGuideChainsPage.new(team, _party().swap_cooldown)
-		2:
+		Page.REACTIONS:
 			return ChainGuideReactionsPage.new(team + _recruit_members())
-		3:
+		Page.RECRUITS:
 			return _recruits_page()
 	return _card_row(team)
 
@@ -162,10 +168,11 @@ func _recruits_page() -> Control:
 	return page
 
 
-## The members' cards side by side, three to a screen width.
+## The members' cards side by side, CARDS_PER_ROW to a screen width.
 func _card_row(members: Array[ChainGuideMember]) -> HBoxContainer:
 	var row := ChainGuideWidgets.make_row(CARD_GAP)
-	var card_width := floorf((EmberTreeScreen.ui_size().x - MARGIN * 2 - CARD_GAP * 2) / 3.0)
+	var gaps := CARD_GAP * (CARDS_PER_ROW - 1)
+	var card_width := floorf((EmberTreeScreen.ui_size().x - MARGIN * 2 - gaps) / float(CARDS_PER_ROW))
 	for member in members:
 		var card := ChainGuideMemberCard.new(member, card_width)
 		card.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
@@ -177,7 +184,7 @@ func _card_row(members: Array[ChainGuideMember]) -> HBoxContainer:
 
 func _build_backdrop() -> void:
 	var backdrop := ColorRect.new()
-	backdrop.color = Color(EmberTreePalette.BACKGROUND, 0.9)
+	backdrop.color = Color(EmberTreePalette.BACKGROUND, BACKDROP_ALPHA)
 	backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_root.add_child(backdrop)
 	backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -196,8 +203,7 @@ func _build_page_holder() -> void:
 
 func _build_header() -> void:
 	var bar := _add_bar(Control.PRESET_TOP_WIDE, HEADER_HEIGHT)
-	var row := ChainGuideWidgets.make_row(12)
-	row.add_theme_constant_override("separation", 12)
+	var row := ChainGuideWidgets.make_row(HEADER_GAP)
 	var titles := ChainGuideWidgets.make_column(0)
 	titles.add_child(ChainGuideWidgets.make_label(TITLE, EmberTreePalette.GOLD, EmberTreeFonts.LARGE_SIZE))
 	titles.add_child(ChainGuideWidgets.make_label(SUBTITLE, EmberTreePalette.GREY))

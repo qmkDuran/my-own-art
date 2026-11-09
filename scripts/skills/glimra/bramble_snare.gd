@@ -13,9 +13,7 @@ var _snare_spot: Vector2
 
 
 func _begin() -> void:
-	var aim_point := (_caster.get_node("PlayerInput") as PlayerInput).get_aim_point()
-	var start := _caster.global_position
-	_snare_spot = start + (aim_point - start).limit_length(max_distance)
+	_snare_spot = _toward(_aim_point(), max_distance)
 
 
 func _land() -> void:

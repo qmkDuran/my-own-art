@@ -14,10 +14,6 @@ func has_found(shard_id: String) -> bool:
 	return _found.has(shard_id)
 
 
-func found_count() -> int:
-	return _found.size()
-
-
 ## Records a shard; does nothing if it was already found.
 func collect(shard_id: String) -> void:
 	if has_found(shard_id):

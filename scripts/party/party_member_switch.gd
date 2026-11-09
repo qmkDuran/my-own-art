@@ -17,9 +17,7 @@ static func bring_in(member: PlayableCreature, at: Vector2) -> void:
 static func bench(member: PlayableCreature) -> void:
 	member.interrupt()
 	member.velocity = Vector2.ZERO
-	var orders := member.get_node_or_null("MouseOrders") as MouseOrders
-	if orders != null:
-		orders.clear()
+	member.mouse_orders.clear()
 	member.remove_from_group(PlayerFinder.GROUP)
 	member.visible = false
 	member.process_mode = Node.PROCESS_MODE_DISABLED

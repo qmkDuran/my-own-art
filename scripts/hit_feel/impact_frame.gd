@@ -11,6 +11,8 @@ const DARK_ALPHA := 0.25
 const LIGHT_ALPHA := 0.12
 ## An impact frame asked for this few rendered frames after the last one is skipped.
 const MIN_GAP_FRAMES := 12
+## Over the world and the HUD, under the screen flash.
+const CANVAS_LAYER := 40
 
 static var _last_play_frame: int = -MIN_GAP_FRAMES
 
@@ -24,7 +26,7 @@ static func play(asker: Node) -> void:
 		return
 	_last_play_frame = now
 	var frame := ImpactFrame.new()
-	frame.layer = 40
+	frame.layer = CANVAS_LAYER
 	frame.process_mode = Node.PROCESS_MODE_ALWAYS
 	asker.get_tree().current_scene.add_child(frame)
 

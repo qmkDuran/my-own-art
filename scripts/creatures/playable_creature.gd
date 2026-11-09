@@ -19,6 +19,12 @@ extends CharacterBody2D
 ## Seconds left of the brief untouchable moment after being swapped in (the Party sets it).
 var entrance_shield_left: float = 0.0
 
+@onready var player_input: PlayerInput = $PlayerInput
+@onready var mouse_orders: MouseOrders = $MouseOrders
+@onready var health: Health = $Health
+@onready var hit_flash: HitFlash = $HitFlash
+@onready var skill_bar: SkillBar = $SkillBar
+
 
 ## Where its attacks go: a unit vector toward the mouse cursor.
 func aim_direction() -> Vector2:
@@ -60,7 +66,7 @@ func play_entrance_pose() -> void:
 	pass
 
 
-## Its Health, which every playable creature has.
+## Its Health, which every playable creature has (also before it is ready, unlike `health`).
 func health_component() -> Health:
 	return get_node("Health") as Health
 

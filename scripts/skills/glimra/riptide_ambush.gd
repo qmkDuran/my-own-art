@@ -7,6 +7,12 @@ extends TimedAbility
 const SPRAY: Array[Color] = [ApolloPalette.CORK, ApolloPalette.CORK_DARK, ApolloPalette.SKY, ApolloPalette.SKY_LIGHT, ApolloPalette.WHITE]
 const MAX_TARGETS := 6
 const RECOVERY := 0.25
+const ANIMATION := "signature"
+## It surfaces this far below the enemy's feet, so it bursts up under it.
+const SURFACE_OFFSET := Vector2(0, 3)
+const SPRAY_PIXELS := 22
+## Poise each bite drains.
+const POISE_DAMAGE := 2
 
 @export var reach: float = 130.0
 ## Seconds per burst: under the ground, then up.
@@ -23,13 +29,14 @@ var _pass_through := EnemyPassThrough.new()
 func _begin() -> void:
 	_queue = _soaked_targets()
 	if _queue.is_empty():
-		var nearest := _nearest_target()
+		var origin := _caster.global_position
+		var nearest := AbilityTargets.nearest_to(origin, AbilityTargets.within(self, origin, reach))
 		if nearest != null:
 			_queue.append(nearest)
 	_bursts_done = 0
 	wind_up = 0.0
 	duration = _queue.size() * seconds_per_burst + RECOVERY
-	_pass_through.start(_caster as PhysicsBody2D)
+	_pass_through.start(_caster)
 
 
 func makes_caster_invulnerable() -> bool:
@@ -49,6 +56,7 @@ func _physics_process(delta: float) -> void:
 	super._physics_process(delta)
 	if not is_casting:
 		return
+	# Each burst lands halfway through its slot: under the ground, then up.
 	var due := mini(_queue.size(), floori(_time_casting / seconds_per_burst + 0.5))
 	while _bursts_done < due:
 		_burst_under(_queue[_bursts_done])
@@ -61,13 +69,12 @@ func _burst_under(target_health: Health) -> void:
 	if target_health == null or target_health.is_dead():
 		return
 	var enemy := target_health.get_parent() as Node2D
-	_caster.global_position = (enemy.global_position + Vector2(0, 3)).round()
-	(_caster as FrontViewCreature).animator.replay_animation("signature")
+	_caster.global_position = (enemy.global_position + SURFACE_OFFSET).round()
+	(_caster as FrontViewCreature).animator.replay_animation(ANIMATION)
 	var world := _caster.get_parent()
-	var spray := PixelDebris.spray(world, enemy.global_position, SPRAY, 22, Vector2.UP, 90.0)
+	var spray := PixelDebris.spray(world, enemy.global_position, SPRAY, SPRAY_PIXELS, Vector2.UP, 90.0)
 	spray.speed_range = Vector2(60, 150)
-	var one: Array[Health] = [target_health]
-	AbilityTargets.hurt_all(_caster, one, damage, HitFeel.Weight.HEAVY, 2)
+	ElementStrike.hit(_caster, AbilityTargets.single(target_health), damage, HitFeel.Weight.HEAVY, POISE_DAMAGE)
 	SetUp.apply(target_health, SetUp.LAUNCHED, launch_seconds)
 
 
@@ -77,17 +84,6 @@ func _soaked_targets() -> Array[Health]:
 		if SetUp.has(target_health.get_parent(), SetUp.SOAKED) and soaked.size() < MAX_TARGETS:
 			soaked.append(target_health)
 	return soaked
-
-
-func _nearest_target() -> Health:
-	var nearest: Health = null
-	var nearest_distance := reach
-	for target_health in AbilityTargets.within(self, _caster.global_position, reach):
-		var distance := (target_health.get_parent() as Node2D).global_position.distance_to(_caster.global_position)
-		if distance < nearest_distance:
-			nearest = target_health
-			nearest_distance = distance
-	return nearest
 
 
 func guide_line() -> String:

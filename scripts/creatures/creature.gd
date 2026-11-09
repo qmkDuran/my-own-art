@@ -26,8 +26,6 @@ const BODY_HEIGHT := -6.0
 var _pushback := Pushback.new()
 var _actions := CreatureActions.new(self)
 
-@onready var player_input: PlayerInput = $PlayerInput
-@onready var mouse_orders: MouseOrders = $MouseOrders
 @onready var movement: Movement = $Movement
 @onready var facing: Facing = $Facing
 @onready var melee_attack: MeleeAttack = $MeleeAttack
@@ -35,12 +33,9 @@ var _actions := CreatureActions.new(self)
 @onready var afterimage_trail: AfterimageTrail = $AfterimageTrail
 @onready var speed_trail: SpeedTrail = $SpeedTrail
 @onready var speed_lines: SpeedLines = $SpeedLines
-@onready var health: Health = $Health
-@onready var hit_flash: HitFlash = $HitFlash
 @onready var animator: CreatureAnimator = $Sprite
 @onready var fist_embers: FistEmbers = $FistEmbers
 @onready var trainer_aid: TrainerAid = $TrainerAid
-@onready var skill_bar: SkillBar = $SkillBar
 @onready var zone_entrance: ZoneEntrance = $ZoneEntrance
 @onready var unshakable: Unshakable = $Unshakable
 

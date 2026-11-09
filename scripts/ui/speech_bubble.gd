@@ -38,9 +38,9 @@ func say(text: String, seconds: float = 1.4) -> void:
 	var resting_y := panel.position.y
 	panel.position.y = resting_y + 3.0
 	panel.modulate.a = 0.0
-	var show := create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT).set_parallel()
-	show.tween_property(panel, "modulate:a", 1.0, 0.3)
-	show.tween_property(panel, "position:y", resting_y, 0.3)
-	show.chain().tween_interval(seconds)
-	show.chain().tween_property(panel, "modulate:a", 0.0, 0.4)
-	show.chain().tween_callback(panel.queue_free)
+	var appearance := create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT).set_parallel()
+	appearance.tween_property(panel, "modulate:a", 1.0, 0.3)
+	appearance.tween_property(panel, "position:y", resting_y, 0.3)
+	appearance.chain().tween_interval(seconds)
+	appearance.chain().tween_property(panel, "modulate:a", 0.0, 0.4)
+	appearance.chain().tween_callback(panel.queue_free)

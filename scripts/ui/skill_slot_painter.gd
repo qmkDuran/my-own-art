@@ -42,5 +42,6 @@ static func draw_cooldown_veil(slot: Control, fraction_left: float) -> void:
 
 static func draw_seconds_left(slot: Control, seconds_left: float) -> void:
 	var seconds := str(ceili(seconds_left))
+	@warning_ignore("integer_division")
 	var left := (SLOT_SIZE - PixelFont.width_of(seconds)) / 2
 	PixelFont.draw_text(slot, seconds, Vector2(left, SECONDS_TOP), ApolloPalette.WHITE, ApolloPalette.OUTLINE)

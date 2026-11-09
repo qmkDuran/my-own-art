@@ -35,19 +35,19 @@ enum State { HOVERING, WINDING_UP, RECOVERING, DYING }
 
 func _ready() -> void:
 	super._ready()
-	_timer.enter(State.HOVERING, 0.0)
+	state_timer.enter(State.HOVERING, 0.0)
 
 
 func _physics_process(delta: float) -> void:
-	_timer.advance(delta)
+	state_timer.advance(delta)
 	floating.drift_and_bob(delta)
 	var is_alert := _is_alert()
-	if _timer.state != State.DYING and is_alert:
+	if state_timer.state != State.DYING and is_alert:
 		gust_shot.count_down(delta)
 	if DebugControls.enemies_passive:
 		_stop_acting()
 
-	match _timer.state:
+	match state_timer.state:
 		State.HOVERING:
 			_hover(_can_act(is_alert), delta)
 		State.WINDING_UP:
@@ -78,43 +78,43 @@ func _start_wind_up() -> void:
 	velocity = Vector2.ZERO
 	gust_shot.start()
 	sprite.replay_animation("attack")
-	_timer.enter(State.WINDING_UP, gust_shot.wind_up)
+	state_timer.enter(State.WINDING_UP, gust_shot.wind_up)
 
 
 func _wind_up() -> void:
 	velocity = Vector2.ZERO
-	if gust_shot.update(_timer.elapsed):
-		_timer.enter(State.RECOVERING, shot_recovery_time)
+	if gust_shot.update(state_timer.elapsed):
+		state_timer.enter(State.RECOVERING, shot_recovery_time)
 
 
 ## Slow to react: after a shot it only creeps away; after a hit it slides with the knockback.
 func _recover(delta: float) -> void:
 	var creep := floating.preferred_direction() * floating.float_speed * recovery_speed_share
 	velocity = velocity.move_toward(creep, knockback_friction * delta)
-	if _timer.is_over():
-		_timer.enter(State.HOVERING, 0.0)
+	if state_timer.is_over():
+		state_timer.enter(State.HOVERING, 0.0)
 
 
 ## Debug (enemies passive): a wind-up is called off and it just hovers.
 func _stop_acting() -> void:
-	if _timer.state != State.WINDING_UP:
+	if state_timer.state != State.WINDING_UP:
 		return
 	gust_shot.cancel()
-	_timer.enter(State.HOVERING, 0.0)
+	state_timer.enter(State.HOVERING, 0.0)
 
 
 # --- Reactions ------------------------------------------------------------
 
 func _react_to_hit(source_position: Vector2) -> void:
-	if _timer.state == State.WINDING_UP:
+	if state_timer.state == State.WINDING_UP:
 		gust_shot.cancel()
 	_knock_back_from(source_position)
 	# A hit never cuts the slow spell after a shot short.
-	var still_slow_for := _timer.seconds_left() if _timer.state == State.RECOVERING else 0.0
-	_timer.enter(State.RECOVERING, maxf(hit_recover_time, still_slow_for))
+	var still_slow_for := state_timer.seconds_left() if state_timer.state == State.RECOVERING else 0.0
+	state_timer.enter(State.RECOVERING, maxf(hit_recover_time, still_slow_for))
 
 
 func _die() -> void:
 	death_drops.drop()
-	_timer.enter(State.DYING, death_fade_time)
+	state_timer.enter(State.DYING, death_fade_time)
 	_fade_out_and_free()

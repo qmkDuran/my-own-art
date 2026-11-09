@@ -4,6 +4,10 @@ extends Area2D
 ## nudges the first enemy it reaches, bursts on walls and obstacles, and fades after
 ## `lifetime`. Like the enemy's GustOrb it sits on the ground with its Sprite raised.
 
+## The nudge pushes away from a point this far behind the orb, along its flight.
+const PUSH_FROM_BEHIND := 8.0
+const BURST_RADIUS := 6.0
+
 @export var speed: float = 170.0
 @export var lifetime: float = 0.75
 @export var damage: int = 1
@@ -42,10 +46,10 @@ func _physics_process(delta: float) -> void:
 
 
 func _hit(target_health: Health) -> void:
-	var targets: Array[Health] = [target_health]
+	var targets := AbilityTargets.single(target_health)
 	var attacker := _shooter if is_instance_valid(_shooter) else self
-	AbilityTargets.hurt_all(attacker, targets, damage)
-	AbilityTargets.knock_back_all(targets, global_position - _direction * 8.0, knockback_speed)
+	ElementStrike.hit(attacker, targets, damage)
+	AbilityTargets.knock_back_all(targets, global_position - _direction * PUSH_FROM_BEHIND, knockback_speed)
 	_burst()
 
 
@@ -58,6 +62,6 @@ func _on_body_entered(body: Node2D) -> void:
 
 func _burst() -> void:
 	if burst_scene != null:
-		Shockwave.spawn(burst_scene, get_parent(), sprite.global_position, 6.0, 0.15, ApolloPalette.SKY_LIGHT)
+		Shockwave.spawn(burst_scene, get_parent(), sprite.global_position, BURST_RADIUS, 0.15, ApolloPalette.SKY_LIGHT)
 	set_deferred("monitoring", false)
 	queue_free()

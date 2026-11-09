@@ -18,6 +18,30 @@ const BLAZE_DAMAGE := 2
 const BLAZE_BURN_SECONDS := 3.0
 const BODY_OFFSET := Vector2(0, -7)
 
+const STEAM_COLORS: Array[Color] = [ApolloPalette.WHITE, ApolloPalette.SILVER, ApolloPalette.SKY_LIGHT]
+const STEAM_PIXELS := 26
+const WILDFIRE_COLORS: Array[Color] = [ApolloPalette.GOLD, ApolloPalette.ORANGE, ApolloPalette.GREEN_LIGHT]
+const WILDFIRE_PIXELS := 18
+## Wildfire's own burst is smaller than the reach of its spread.
+const WILDFIRE_BURST_SHARE := 0.6
+const DROWN_COLORS: Array[Color] = [ApolloPalette.BLUE, ApolloPalette.SKY, ApolloPalette.SKY_LIGHT, ApolloPalette.WHITE]
+const DROWN_COLUMN_PIXELS := 30
+const DROWN_BURST_PIXELS := 10
+const DROWN_BURST_RADIUS := 22.0
+const KINDLING_COLORS: Array[Color] = [ApolloPalette.GOLD, ApolloPalette.ORANGE, ApolloPalette.RED_LIGHT, ApolloPalette.GREEN_DARK]
+const KINDLING_PIXELS := 16
+const KINDLING_BURST_RADIUS := 20.0
+## Kindling's flame: where it rises from (from the feet), how high and how wide (degrees).
+const KINDLING_FLAME_OFFSET := Vector2(0, 2)
+const KINDLING_FLAME_REACH := 24.0
+const KINDLING_FLAME_ARC_DEGREES := 160.0
+const BLAZE_COLORS: Array[Color] = [ApolloPalette.GREEN_LIGHT, ApolloPalette.LIME_PALE, ApolloPalette.ORANGE]
+const BLAZE_PIXELS := 20
+## Every burst's spray: pull down and how wide it fans out (degrees).
+const BURST_GRAVITY := 120.0
+const BURST_SPREAD_DEGREES := 300.0
+const BURST_RING_SECONDS := 0.32
+
 
 ## Plays reaction `reaction_id` on the enemy with `target_health`. `is_shown` is false for
 ## the 2nd+ copy in the same beat (smaller show, same damage).
@@ -27,42 +51,15 @@ static func play(reaction_id: String, attacker: Node2D, target_health: Health, i
 	var world := target.get_parent()
 	match reaction_id:
 		Reactions.STEAM_BURST:
-			var caught := AbilityTargets.within(attacker, at, STEAM_RADIUS)
-			_hurt(attacker, caught, STEAM_DAMAGE)
-			AbilityTargets.knock_back_all(caught, at, STEAM_KNOCKBACK)
-			var steam: Array[Color] = [ApolloPalette.WHITE, ApolloPalette.SILVER, ApolloPalette.SKY_LIGHT]
-			_burst(world, at, steam, 26, STEAM_RADIUS, ApolloPalette.WHITE)
+			_steam_burst(attacker, world, at)
 		Reactions.WILDFIRE:
-			_hurt(attacker, _single(target_health), WILDFIRE_DAMAGE)
-			for other_health in AbilityTargets.within(attacker, at, WILDFIRE_RADIUS):
-				Burning.apply_to(other_health, SetUp.BURN_DAMAGE, WILDFIRE_BURN_SECONDS)
-				var streak := EmberStreak.new()
-				world.add_child(streak)
-				streak.play(at + BODY_OFFSET, (other_health.get_parent() as Node2D).global_position + BODY_OFFSET)
-			var fire: Array[Color] = [ApolloPalette.GOLD, ApolloPalette.ORANGE, ApolloPalette.GREEN_LIGHT]
-			_burst(world, at, fire, 18, WILDFIRE_RADIUS * 0.6, ApolloPalette.ORANGE)
+			_wildfire(attacker, target_health, world, at)
 		Reactions.DROWN:
-			_hurt(attacker, _single(target_health), DROWN_DAMAGE)
-			var water: Array[Color] = [ApolloPalette.BLUE, ApolloPalette.SKY, ApolloPalette.SKY_LIGHT, ApolloPalette.WHITE]
-			var column := PixelDebris.spray(world, at, water, 30, Vector2.UP, 40.0)
-			column.speed_range = Vector2(80, 170)
-			_burst(world, at, water, 10, 22.0, ApolloPalette.SKY)
+			_drown(attacker, target_health, world, at)
 		Reactions.KINDLING:
-			_hurt(attacker, _single(target_health), KINDLING_DAMAGE)
-			Burning.apply_to(target_health, KINDLING_BURN_DAMAGE, KINDLING_BURN_SECONDS)
-			var flame := FlameArc.new()
-			world.add_child(flame)
-			flame.global_position = at + Vector2(0, 2)
-			flame.play(Vector2.UP, 24.0, 160.0)
-			var embers: Array[Color] = [ApolloPalette.GOLD, ApolloPalette.ORANGE, ApolloPalette.RED_LIGHT, ApolloPalette.GREEN_DARK]
-			_burst(world, at, embers, 16, 20.0, ApolloPalette.ORANGE)
+			_kindling(attacker, target_health, world, at)
 		Reactions.TOXIC_BLAZE:
-			var caught := AbilityTargets.within(attacker, at, BLAZE_RADIUS)
-			_hurt(attacker, caught, BLAZE_DAMAGE)
-			for other_health in caught:
-				Burning.apply_to(other_health, SetUp.BURN_DAMAGE, BLAZE_BURN_SECONDS)
-			var blaze: Array[Color] = [ApolloPalette.GREEN_LIGHT, ApolloPalette.LIME_PALE, ApolloPalette.ORANGE]
-			_burst(world, at, blaze, 20, BLAZE_RADIUS, ApolloPalette.GREEN_LIGHT)
+			_toxic_blaze(attacker, world, at)
 	var spots: Array[Vector2] = [at]
 	HitFeel.land(attacker, spots, ElementColors.for_element(ElementStrike.element_of(attacker)),
 			HitFeel.Weight.FINISHER if is_shown else HitFeel.Weight.HEAVY)
@@ -85,6 +82,53 @@ static func describe(reaction_id: String) -> String:
 	return ""
 
 
+## Fire on Soaked: a blast of steam hurts and throws back everything around.
+static func _steam_burst(attacker: Node2D, world: Node, at: Vector2) -> void:
+	var caught := AbilityTargets.within(attacker, at, STEAM_RADIUS)
+	_hurt(attacker, caught, STEAM_DAMAGE)
+	AbilityTargets.knock_back_all(caught, at, STEAM_KNOCKBACK)
+	_burst(world, at, STEAM_COLORS, STEAM_PIXELS, STEAM_RADIUS, ApolloPalette.WHITE)
+
+
+## Bloom on Burning: the burn leaps to every enemy around, each one streaked to.
+static func _wildfire(attacker: Node2D, target_health: Health, world: Node, at: Vector2) -> void:
+	_hurt(attacker, AbilityTargets.single(target_health), WILDFIRE_DAMAGE)
+	for other_health in AbilityTargets.within(attacker, at, WILDFIRE_RADIUS):
+		Burning.apply_to(other_health, SetUp.BURN_DAMAGE, WILDFIRE_BURN_SECONDS)
+		var streak := EmberStreak.new()
+		world.add_child(streak)
+		streak.play(at + BODY_OFFSET, (other_health.get_parent() as Node2D).global_position + BODY_OFFSET)
+	_burst(world, at, WILDFIRE_COLORS, WILDFIRE_PIXELS, WILDFIRE_RADIUS * WILDFIRE_BURST_SHARE, ApolloPalette.ORANGE)
+
+
+## Tide on Rooted: a column of water crushes the held enemy.
+static func _drown(attacker: Node2D, target_health: Health, world: Node, at: Vector2) -> void:
+	_hurt(attacker, AbilityTargets.single(target_health), DROWN_DAMAGE)
+	var column := PixelDebris.spray(world, at, DROWN_COLORS, DROWN_COLUMN_PIXELS, Vector2.UP, 40.0)
+	column.speed_range = Vector2(80, 170)
+	_burst(world, at, DROWN_COLORS, DROWN_BURST_PIXELS, DROWN_BURST_RADIUS, ApolloPalette.SKY)
+
+
+## Fire on Rooted: the vines catch, a flame shoots up and the enemy burns hard.
+static func _kindling(attacker: Node2D, target_health: Health, world: Node, at: Vector2) -> void:
+	_hurt(attacker, AbilityTargets.single(target_health), KINDLING_DAMAGE)
+	Burning.apply_to(target_health, KINDLING_BURN_DAMAGE, KINDLING_BURN_SECONDS)
+	var flame := FlameArc.new()
+	world.add_child(flame)
+	flame.global_position = at + KINDLING_FLAME_OFFSET
+	flame.play(Vector2.UP, KINDLING_FLAME_REACH, KINDLING_FLAME_ARC_DEGREES)
+	_burst(world, at, KINDLING_COLORS, KINDLING_PIXELS, KINDLING_BURST_RADIUS, ApolloPalette.ORANGE)
+
+
+## Fire on Poisoned: the toxin flares, hurting and setting alight everything around.
+static func _toxic_blaze(attacker: Node2D, world: Node, at: Vector2) -> void:
+	var caught := AbilityTargets.within(attacker, at, BLAZE_RADIUS)
+	_hurt(attacker, caught, BLAZE_DAMAGE)
+	for other_health in caught:
+		Burning.apply_to(other_health, SetUp.BURN_DAMAGE, BLAZE_BURN_SECONDS)
+	_burst(world, at, BLAZE_COLORS, BLAZE_PIXELS, BLAZE_RADIUS, ApolloPalette.GREEN_LIGHT)
+
+
 static func _hurt(attacker: Node2D, targets: Array[Health], damage: int) -> void:
 	for target_health in targets:
 		CritRoll.deal_damage(attacker, target_health, damage)
@@ -92,12 +136,7 @@ static func _hurt(attacker: Node2D, targets: Array[Health], damage: int) -> void
 
 ## A spray of pixels and a ring the size of the reaction.
 static func _burst(world: Node, at: Vector2, palette: Array[Color], amount: int, radius: float, ring_color: Color) -> void:
-	var spray := PixelDebris.spray(world, at + BODY_OFFSET, palette, amount, Vector2.UP, 300.0)
-	spray.gravity = 120.0
+	var spray := PixelDebris.spray(world, at + BODY_OFFSET, palette, amount, Vector2.UP, BURST_SPREAD_DEGREES)
+	spray.gravity = BURST_GRAVITY
 	spray.speed_range = Vector2(30, radius * 3.0)
-	Shockwave.spawn(HitFeel.RING_SCENE, world, at, radius, 0.32, ring_color)
-
-
-static func _single(target_health: Health) -> Array[Health]:
-	var one: Array[Health] = [target_health]
-	return one
+	Shockwave.spawn(HitFeel.RING_SCENE, world, at, radius, BURST_RING_SECONDS, ring_color)

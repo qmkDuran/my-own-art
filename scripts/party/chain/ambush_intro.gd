@@ -7,8 +7,16 @@ extends SignalSkill
 const BEHIND_DISTANCE := 12.0
 ## How close to the surfacing spot an enemy must be for the bite to reach it.
 const BITE_RADIUS := 26.0
-const SPRAY: Array[Color] = [ApolloPalette.CORK, ApolloPalette.CORK_DARK, ApolloPalette.SKY, ApolloPalette.SKY_LIGHT, ApolloPalette.WHITE]
+## The same dirt-and-water spray as its Riptide Ambush.
+const SPRAY := RiptideAmbush.SPRAY
+const SPRAY_PIXELS := 34
 const ERUPT_HEIGHT := 12.0
+const ERUPT_SECONDS := 0.32
+const SUBMERGED_POSE := "submerged"
+const SURFACED_POSE := "intro"
+const DIVE_RING_RADIUS := 10.0
+const ERUPT_SHAKE := 2.0
+const ERUPT_SHAKE_SECONDS := 0.15
 
 
 func guide_line() -> String:
@@ -16,9 +24,9 @@ func guide_line() -> String:
 
 
 func _arrive(member: PlayableCreature, targets: Array[Health]) -> void:
-	var prey := _nearest(member, targets)
+	var prey := AbilityTargets.nearest_to(member.global_position, targets)
 	if prey == null:
-		prey = _nearest(member, AbilityTargets.within(self, member.global_position, reach))
+		prey = AbilityTargets.nearest_to(member.global_position, AbilityTargets.within(self, member.global_position, reach))
 	if prey != null:
 		var enemy := prey.get_parent() as Node2D
 		var away := enemy.global_position - member.global_position
@@ -26,21 +34,21 @@ func _arrive(member: PlayableCreature, targets: Array[Health]) -> void:
 		member.global_position = (enemy.global_position + away * BEHIND_DISTANCE).round()
 	var front_view := member as FrontViewCreature
 	if front_view != null:
-		front_view.play_pose("submerged")
-	Shockwave.spawn(HitFeel.RING_SCENE, member.get_parent(), member.global_position, 10.0, arrival_seconds, ApolloPalette.SKY_LIGHT)
+		front_view.play_pose(SUBMERGED_POSE)
+	Shockwave.spawn(HitFeel.RING_SCENE, member.get_parent(), member.global_position, DIVE_RING_RADIUS, arrival_seconds, ApolloPalette.SKY_LIGHT)
 
 
 func _touch_down(member: PlayableCreature) -> void:
 	var front_view := member as FrontViewCreature
 	if front_view != null:
-		front_view.play_pose("intro")
-	SpriteMotion.hop(SpriteMotion.sprite_of(member), ERUPT_HEIGHT, 0.32)
+		front_view.play_pose(SURFACED_POSE)
+	SpriteMotion.hop(SpriteMotion.sprite_of(member), ERUPT_HEIGHT, ERUPT_SECONDS)
 	var world := member.get_parent()
-	var spray := PixelDebris.spray(world, member.global_position, SPRAY, 34, Vector2.UP, 110.0)
+	var spray := PixelDebris.spray(world, member.global_position, SPRAY, SPRAY_PIXELS, Vector2.UP, 110.0)
 	spray.speed_range = Vector2(60, 160)
 	Shockwave.spawn(HitFeel.RING_SCENE, world, member.global_position, 20.0, 0.3, ApolloPalette.SKY)
 	Shockwave.spawn(HitFeel.RING_SCENE, world, member.global_position, 12.0, 0.22, ApolloPalette.CORK)
-	HitFeel.shake(member, 2.0, 0.15)
+	HitFeel.shake(member, ERUPT_SHAKE, ERUPT_SHAKE_SECONDS)
 
 
 func _strike_targets(member: PlayableCreature) -> Array[Health]:
@@ -64,14 +72,3 @@ func _after_strike(member: PlayableCreature, _targets: Array[Health]) -> void:
 	var crit_roll := member.get_node_or_null(CritRoll.NODE_NAME) as CritRoll
 	if crit_roll != null:
 		crit_roll.is_sure_crit = false
-
-
-func _nearest(member: PlayableCreature, candidates: Array[Health]) -> Health:
-	var nearest: Health = null
-	var nearest_distance := INF
-	for candidate in candidates:
-		var distance := (candidate.get_parent() as Node2D).global_position.distance_to(member.global_position)
-		if distance < nearest_distance:
-			nearest = candidate
-			nearest_distance = distance
-	return nearest

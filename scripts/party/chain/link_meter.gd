@@ -11,8 +11,6 @@ const PER_HIT := 1.0
 const PER_REACTION := 8.0
 const PER_SIGNAL := 8.0
 
-signal filled
-
 var charge: float = 0.0
 
 
@@ -28,10 +26,7 @@ static func add_from(asker: Node, amount: float) -> void:
 
 
 func add(amount: float) -> void:
-	var was_full := is_full()
 	charge = minf(FULL, charge + amount)
-	if is_full() and not was_full:
-		filled.emit()
 
 
 func is_full() -> bool:

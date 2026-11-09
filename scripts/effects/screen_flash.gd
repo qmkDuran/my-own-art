@@ -9,6 +9,8 @@ const START_ALPHA := 0.22
 const FADE_SECONDS := 0.12
 ## A flash asked for this few rendered frames after the last one is skipped.
 const MIN_GAP_FRAMES := 12
+## Over everything else on screen, the impact frame included.
+const CANVAS_LAYER := 50
 
 static var _last_flash_frame: int = -MIN_GAP_FRAMES
 
@@ -20,7 +22,7 @@ static func play(asker: Node, color: Color, alpha: float = START_ALPHA) -> void:
 		return
 	_last_flash_frame = now
 	var flash := ScreenFlash.new()
-	flash.layer = 50
+	flash.layer = CANVAS_LAYER
 	var cover := ColorRect.new()
 	cover.color = Color(color, alpha)
 	cover.mouse_filter = Control.MOUSE_FILTER_IGNORE

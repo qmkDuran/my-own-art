@@ -18,25 +18,36 @@ static func hit(attacker: Node2D, targets: Array[Health], damage: int,
 	for target_health in targets:
 		var reaction := Reactions.find_for(target_health.get_parent(), element)
 		CritRoll.deal_damage(attacker, target_health, damage)
-		spots.append((target_health.get_parent() as Node2D).global_position)
-		after_hit(attacker, target_health, poise_damage, reaction)
+		spots.append(_feet_of(target_health))
+		_after_hit(attacker, target_health, poise_damage, reaction)
 	HitFeel.land(attacker, spots, ElementColors.for_element(element), weight)
 
 
-## The rest of a hit whose damage was already dealt elsewhere (e.g. Emberoo's jabs).
-static func after_hit(attacker: Node2D, target_health: Health, poise_damage: int, reaction: Dictionary) -> void:
-	LinkMeter.add_from(attacker, LinkMeter.PER_HIT)
-	var skill_bar := attacker.get_node_or_null("SkillBar") as SkillBar
-	if skill_bar != null:
-		skill_bar.shave_cooldowns(COOLDOWN_SHAVE_PER_HIT)
-	if Poise.drain(target_health, poise_damage):
-		var target := target_health.get_parent() as Node2D
-		HitFeel.burst(target.get_parent(), target.global_position, ApolloPalette.CREAM, BREAK_BURST_RADIUS)
-	if not reaction.is_empty():
-		Reactions.trigger(reaction, attacker, target_health)
+## Everything but the damage, for a light hit that already dealt its own (Emberoo's jabs).
+static func after_damage(attacker: Node2D, target_health: Health, poise_damage: int) -> void:
+	var element := element_of(attacker)
+	_after_hit(attacker, target_health, poise_damage, Reactions.find_for(target_health.get_parent(), element))
+	var spots: Array[Vector2] = [_feet_of(target_health)]
+	HitFeel.land(attacker, spots, ElementColors.for_element(element), HitFeel.Weight.LIGHT)
 
 
 ## The element of a team creature ("" for anything else).
 static func element_of(attacker: Node) -> String:
 	var member := attacker as PlayableCreature
 	return member.element if member != null else ""
+
+
+static func _after_hit(attacker: Node2D, target_health: Health, poise_damage: int, reaction: Reactions.Reaction) -> void:
+	LinkMeter.add_from(attacker, LinkMeter.PER_HIT)
+	var member := attacker as PlayableCreature
+	if member != null:
+		member.skill_bar.shave_cooldowns(COOLDOWN_SHAVE_PER_HIT)
+	if Poise.drain(target_health, poise_damage):
+		var target := target_health.get_parent() as Node2D
+		HitFeel.burst(target.get_parent(), target.global_position, ApolloPalette.CREAM, BREAK_BURST_RADIUS)
+	if reaction != null:
+		Reactions.trigger(reaction, attacker, target_health)
+
+
+static func _feet_of(target_health: Health) -> Vector2:
+	return (target_health.get_parent() as Node2D).global_position

@@ -42,15 +42,15 @@ var _hop_velocity: Vector2 = Vector2.ZERO
 
 func _ready() -> void:
 	super._ready()
-	_timer.enter(State.RESTING, _random_rest_time())
+	state_timer.enter(State.RESTING, _random_rest_time())
 
 
 func _physics_process(delta: float) -> void:
-	_timer.advance(delta)
+	state_timer.advance(delta)
 	if DebugControls.enemies_passive:
 		_stop_acting()
 
-	match _timer.state:
+	match state_timer.state:
 		State.RESTING:
 			_rest()
 		State.HOPPING:
@@ -70,54 +70,54 @@ func _physics_process(delta: float) -> void:
 func _rest() -> void:
 	velocity = Vector2.ZERO
 	sprite.show_animation("idle")
-	if not _timer.is_over() or DebugControls.enemies_passive:
+	if not state_timer.is_over() or DebugControls.enemies_passive:
 		return
 	if _is_alert():
 		_choose_next_move()
 	else:
-		_timer.enter(State.RESTING, _random_rest_time())
+		state_timer.enter(State.RESTING, _random_rest_time())
 
 
 func _hop() -> void:
 	velocity = _hop_velocity
-	sprite.lift(sin(PI * _timer.progress()) * hop_height)
-	if _timer.is_over():
+	sprite.lift(sin(PI * state_timer.progress()) * hop_height)
+	if state_timer.is_over():
 		sprite.lift(0.0)
-		_timer.enter(State.RESTING, _random_rest_time())
+		state_timer.enter(State.RESTING, _random_rest_time())
 
 
 ## The wind-up: the toad holds its puffed-up pose, then glints just before striking.
 func _puff() -> void:
 	velocity = Vector2.ZERO
-	tongue_attack.update_puff(_timer.seconds_left())
-	if _timer.is_over():
+	tongue_attack.update_puff(state_timer.seconds_left())
+	if state_timer.is_over():
 		tongue_attack.lash()
-		_timer.enter(State.LASHING, tongue_attack.lash_time)
+		state_timer.enter(State.LASHING, tongue_attack.lash_time)
 
 
 func _lash() -> void:
 	velocity = Vector2.ZERO
 	tongue_attack.update_lash()
-	if _timer.is_over():
-		_timer.enter(State.RECOVERING, recover_time)
+	if state_timer.is_over():
+		state_timer.enter(State.RECOVERING, recover_time)
 
 
 func _slow_down(delta: float) -> void:
 	_slow_down_by(knockback_friction, delta)
-	if _timer.state == State.RECOVERING:
+	if state_timer.state == State.RECOVERING:
 		sprite.show_animation("idle")
-		if _timer.is_over():
-			_timer.enter(State.RESTING, _random_rest_time())
+		if state_timer.is_over():
+			state_timer.enter(State.RESTING, _random_rest_time())
 
 
 ## Debug (enemies passive): a hop or an attack in progress stops at once and the toad sits.
 ## Recovering from a hit and dying carry on as normal.
 func _stop_acting() -> void:
-	if _timer.state != State.HOPPING and _timer.state != State.PUFFING and _timer.state != State.LASHING:
+	if state_timer.state != State.HOPPING and state_timer.state != State.PUFFING and state_timer.state != State.LASHING:
 		return
 	tongue_attack.cancel()
 	sprite.lift(0.0)
-	_timer.enter(State.RESTING, _random_rest_time())
+	state_timer.enter(State.RESTING, _random_rest_time())
 
 
 # --- Decisions ------------------------------------------------------------
@@ -125,7 +125,7 @@ func _stop_acting() -> void:
 func _choose_next_move() -> void:
 	var player := PlayerFinder.find(self)
 	if player == null:
-		_timer.enter(State.RESTING, _random_rest_time())
+		state_timer.enter(State.RESTING, _random_rest_time())
 		return
 
 	# Measured along the path: a player just across a wall is not in tongue reach.
@@ -141,7 +141,7 @@ func _choose_next_move() -> void:
 func _start_attack(to_player: Vector2) -> void:
 	tongue_attack.start_puff(to_player)
 	sprite.replay_animation("attack")
-	_timer.enter(State.PUFFING, tongue_attack.puff_time)
+	state_timer.enter(State.PUFFING, tongue_attack.puff_time)
 
 
 ## Hops toward the player, but not so far that it lands on top of them.
@@ -149,7 +149,7 @@ func _start_hop(direction: Vector2, distance_to_player: float) -> void:
 	var distance := minf(hop_distance, distance_to_player - tongue_attack.tongue_reach * hop_stop_short_share)
 	_hop_velocity = direction * distance / hop_duration
 	sprite.replay_animation("hop")
-	_timer.enter(State.HOPPING, hop_duration)
+	state_timer.enter(State.HOPPING, hop_duration)
 
 
 func _random_rest_time() -> float:
@@ -162,10 +162,10 @@ func _react_to_hit(source_position: Vector2) -> void:
 	tongue_attack.cancel()
 	sprite.lift(0.0)
 	_knock_back_from(source_position)
-	_timer.enter(State.RECOVERING, recover_time)
+	state_timer.enter(State.RECOVERING, recover_time)
 
 
 func _die() -> void:
 	death_drops.drop()
-	_timer.enter(State.DYING, death_fade_time)
+	state_timer.enter(State.DYING, death_fade_time)
 	_fade_out_and_free()

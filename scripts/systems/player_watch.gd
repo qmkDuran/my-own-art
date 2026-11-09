@@ -2,6 +2,8 @@ class_name PlayerWatch
 extends RefCounted
 ## Tells a HUD widget when the player creature has changed (e.g. a team swap brought another
 ## creature in), so it can bind to the new one's components. Ask `has_changed` each frame.
+## Polled rather than signalled: solo levels have no Party to announce a swap, and the
+## player may only join the level a frame after the HUD is ready.
 
 ## Instance id of the player last seen (0 = none).
 var _player_id: int = 0

@@ -41,14 +41,9 @@ var _aim_override: Vector2 = Vector2.ZERO
 var _pose: String = ""
 var _pose_left: float = 0.0
 
-@onready var player_input: PlayerInput = $PlayerInput
-@onready var mouse_orders: MouseOrders = $MouseOrders
 @onready var movement: Movement = $Movement
 @onready var dodge: Dodge = $Dodge
-@onready var health: Health = $Health
-@onready var hit_flash: HitFlash = $HitFlash
 @onready var animator: SingleViewAnimator = $Sprite
-@onready var skill_bar: SkillBar = $SkillBar
 
 
 func _ready() -> void:

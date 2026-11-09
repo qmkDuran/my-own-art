@@ -246,7 +246,7 @@ element's colour, like the Ember Tree (`scripts/ui/chain_guide_*.gd`).
 
 Everything is **read from the code**: each skill and swap move describes itself (`guide_line`,
 `set_up_status`), Signal Skills list their `trigger_statuses`, reactions come from
-`Reactions.TABLE` and `ReactionEffects.describe`, and the chains are worked out from all of that
+`Reactions.table` and `ReactionEffects.describe`, and the chains are worked out from all of that
 (`ChainGuideRecipes`). Change a number and the guide follows. Status icons
 (`ChainStatusIcons`) are the same ones the lit team cards use.
 

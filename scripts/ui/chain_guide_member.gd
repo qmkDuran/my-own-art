@@ -12,6 +12,10 @@ const BASIC_SLOT_KEYS := "RMB/Q"
 const JAB_KEYS := "RMB"
 const JAB_TITLE := "Jab"
 const LOCKED_NOTE := "Learn it in the Ember Tree (K)."
+## Read by name: a recruit is a scene instance that never enters the tree, so its
+## @onready component variables are never set.
+const SKILL_BAR_NODE := "SkillBar"
+const MELEE_ATTACK_NODE := "MeleeAttack"
 
 
 ## One skill row: the keys that fire it, its name, icon and what it does.
@@ -27,11 +31,11 @@ class SkillRow:
 
 
 ## What fires the Signal Skill: an enemy carrying any of `statuses`, and the reaction the
-## creature's element sets off on them ({} when it is just the Signal Skill's own hit).
+## creature's element sets off on them (null when it is just the Signal Skill's own hit).
 ## Statuses with the same result share one Trigger, so the card stays short.
 class Trigger:
 	var statuses: Array[String] = []
-	var reaction: Dictionary = {}
+	var reaction: Reactions.Reaction = null
 
 
 var display_name: String = ""
@@ -47,12 +51,12 @@ var outro_line: String = ""
 var outro_status: String = ""
 
 
-static func from_creature(creature: PlayableCreature, swap_key: String) -> ChainGuideMember:
+static func from_creature(creature: PlayableCreature, key: String) -> ChainGuideMember:
 	var member := ChainGuideMember.new()
 	member.display_name = creature.display_name
 	member.element = creature.element
 	member.icon = creature.team_icon
-	member.swap_key = swap_key
+	member.swap_key = key
 	member._read_skills(creature)
 	member._read_signal(creature.get_node_or_null(Party.INTRO_NODE) as SignalSkill)
 	member._read_outro(creature.get_node_or_null(Party.OUTRO_NODE) as SwapMove)
@@ -65,8 +69,8 @@ func has_signal_skill() -> bool:
 
 func _read_skills(creature: PlayableCreature) -> void:
 	var actions := _skill_actions(creature)
-	var has_basic_slot := actions.any(func(action: SkillAction) -> bool: return action.slot_index == 0)
-	var melee := creature.get_node_or_null("MeleeAttack") as MeleeAttack
+	var has_basic_slot := actions.any(func(action: SkillAction) -> bool: return action.slot_index == FrontViewCreature.BASIC_ATTACK_SLOT)
+	var melee := creature.get_node_or_null(MELEE_ATTACK_NODE) as MeleeAttack
 	if not has_basic_slot and melee != null:
 		skills.append(_jab_row(melee))
 	for action in actions:
@@ -76,7 +80,7 @@ func _read_skills(creature: PlayableCreature) -> void:
 ## The creature's skill actions, in slot order (Q, W, E, R).
 func _skill_actions(creature: PlayableCreature) -> Array[SkillAction]:
 	var actions: Array[SkillAction] = []
-	var skill_bar := creature.get_node_or_null("SkillBar")
+	var skill_bar := creature.get_node_or_null(SKILL_BAR_NODE)
 	if skill_bar == null:
 		return actions
 	for child in skill_bar.get_children():
@@ -88,7 +92,7 @@ func _skill_actions(creature: PlayableCreature) -> Array[SkillAction]:
 
 func _skill_row(action: SkillAction) -> SkillRow:
 	var row := SkillRow.new()
-	row.keys = BASIC_SLOT_KEYS if action.slot_index == 0 else SLOT_KEYS[action.slot_index]
+	row.keys = BASIC_SLOT_KEYS if action.slot_index == FrontViewCreature.BASIC_ATTACK_SLOT else SLOT_KEYS[action.slot_index]
 	row.title = action.skill.display_name
 	row.icon = action.skill.icon
 	row.cooldown = action.skill.cooldown
@@ -119,9 +123,9 @@ func _read_signal(intro: SignalSkill) -> void:
 
 
 ## The trigger with this result, made on first use.
-func _trigger_for(reaction: Dictionary) -> Trigger:
+func _trigger_for(reaction: Reactions.Reaction) -> Trigger:
 	for trigger in triggers:
-		if trigger.reaction.get("id", "") == reaction.get("id", ""):
+		if trigger.reaction == reaction:
 			return trigger
 	var trigger := Trigger.new()
 	trigger.reaction = reaction

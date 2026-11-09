@@ -3,6 +3,10 @@ extends TimedAbility
 ## A quick close-range swipe in front of the creature with a small lunge: Ripfin's Fin
 ## Slash (a bite) and Mossdillo's Claw Swipe. Hits every enemy in a short cone.
 
+## The slash crescent: how far in front of the body it is drawn, and its radius, in pixels.
+const SLASH_DISTANCE := 6.0
+const SLASH_RADIUS := 10.0
+
 @export var reach: float = 22.0
 @export var cone_degrees: float = 90.0
 @export var damage: int = 1
@@ -19,8 +23,8 @@ func _land() -> void:
 	var origin := _caster.global_position
 	var targets := AbilityTargets.in_cone(self, origin, _aim_direction, reach, cone_degrees)
 	var trail := ElementColors.for_element(ElementStrike.element_of(_caster))
-	SlashArc.spawn(_caster.get_parent(), _body_position() + _aim_direction * 6.0, _aim_direction, 10.0, ApolloPalette.WHITE, trail)
-	AbilityTargets.hurt_all(_caster, targets, damage)
+	SlashArc.spawn(_caster.get_parent(), _body_position() + _aim_direction * SLASH_DISTANCE, _aim_direction, SLASH_RADIUS, ApolloPalette.WHITE, trail)
+	ElementStrike.hit(_caster, targets, damage)
 	AbilityTargets.knock_back_all(targets, origin, knockback_speed)
 
 

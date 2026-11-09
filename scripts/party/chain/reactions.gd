@@ -11,17 +11,6 @@ const DROWN := "drown"
 const KINDLING := "kindling"
 const TOXIC_BLAZE := "toxic_blaze"
 
-## In priority order: the first row that matches is the one that fires.
-## status: what the enemy carries; element: the hit's element; name: what the chain guide
-## calls it (never shown in combat); color: its burst and flash; consumes: whether the
-## status ends. What each one does, in words and numbers, is ReactionEffects.describe.
-const TABLE: Array[Dictionary] = [
-	{"id": STEAM_BURST, "status": SetUp.SOAKED, "element": "Fire", "name": "Steam Burst", "color": ApolloPalette.WHITE, "consumes": true},
-	{"id": DROWN, "status": SetUp.ROOTED, "element": "Tide", "name": "Drown", "color": ApolloPalette.SKY, "consumes": true},
-	{"id": KINDLING, "status": SetUp.ROOTED, "element": "Fire", "name": "Kindling", "color": ApolloPalette.ORANGE, "consumes": true},
-	{"id": WILDFIRE, "status": SetUp.BURNING, "element": "Bloom", "name": "Wildfire", "color": ApolloPalette.GOLD, "consumes": false},
-	{"id": TOXIC_BLAZE, "status": SetUp.POISONED, "element": "Fire", "name": "Toxic Blaze", "color": ApolloPalette.GREEN_LIGHT, "consumes": true},
-]
 ## A reaction's burst, flash and impact frame show at most once per this many physics
 ## frames, so a Signal Skill that sets off five Steam Bursts at once still reads as one beat.
 const SHOW_GAP_FRAMES := 18
@@ -30,41 +19,75 @@ const REACTION_BURST_RADIUS := 34.0
 ## Light: a tint of the reaction's colour, not a white-out.
 const REACTION_FLASH_ALPHA := 0.12
 
+
+## One row of the table: a hit of `element` on an enemy carrying `status` sets it off.
+class Reaction:
+	var id: String
+	## A SetUp status name.
+	var status: String
+	var element: String
+	## What the chain guide calls it (never shown in combat).
+	var display_name: String
+	## Its burst and flash.
+	var color: Color
+	## Whether the status ends when it fires.
+	var consumes: bool
+
+	func _init(reaction_id: String, status_name: String, element_name: String, shown_name: String,
+			shown_color: Color, consumes_status: bool) -> void:
+		id = reaction_id
+		status = status_name
+		element = element_name
+		display_name = shown_name
+		color = shown_color
+		consumes = consumes_status
+
+
+## In priority order: the first row that matches is the one that fires. What each one does,
+## in words and numbers, is ReactionEffects.describe.
+static var table: Array[Reaction] = [
+	Reaction.new(STEAM_BURST, SetUp.SOAKED, "Fire", "Steam Burst", ApolloPalette.WHITE, true),
+	Reaction.new(DROWN, SetUp.ROOTED, "Tide", "Drown", ApolloPalette.SKY, true),
+	Reaction.new(KINDLING, SetUp.ROOTED, "Fire", "Kindling", ApolloPalette.ORANGE, true),
+	Reaction.new(WILDFIRE, SetUp.BURNING, "Bloom", "Wildfire", ApolloPalette.GOLD, false),
+	Reaction.new(TOXIC_BLAZE, SetUp.POISONED, "Fire", "Toxic Blaze", ApolloPalette.GREEN_LIGHT, true),
+]
+
+## Reaction id -> the physics frame its show last played (see SHOW_GAP_FRAMES).
 static var _last_shown_frame: Dictionary = {}
 
 
-## The reaction a hit of `element` would set off on `target` right now ({} for none).
-static func find_for(target: Node, element: String) -> Dictionary:
+## The reaction a hit of `element` would set off on `target` right now (null for none).
+static func find_for(target: Node, element: String) -> Reaction:
 	if element.is_empty():
-		return {}
-	for reaction in TABLE:
-		if reaction["element"] == element and SetUp.has(target, reaction["status"]):
+		return null
+	for reaction in table:
+		if reaction.element == element and SetUp.has(target, reaction.status):
 			return reaction
-	return {}
+	return null
 
 
-## The reaction a hit of `element` sets off on an enemy carrying `status_name` ({} for none),
-## e.g. Tide on Rooted is Drown. The chain guide uses it to name each Signal Skill's payoff.
-static func find_for_status(status_name: String, element: String) -> Dictionary:
-	for reaction in TABLE:
-		if reaction["element"] == element and reaction["status"] == status_name:
+## The reaction a hit of `element` sets off on an enemy carrying `status_name` (null for
+## none), e.g. Tide on Rooted is Drown. The chain guide uses it to name each Signal Skill's payoff.
+static func find_for_status(status_name: String, element: String) -> Reaction:
+	for reaction in table:
+		if reaction.element == element and reaction.status == status_name:
 			return reaction
-	return {}
+	return null
 
 
 ## Sets `reaction` off on the enemy with `target_health` (already hit by `attacker`).
-static func trigger(reaction: Dictionary, attacker: Node2D, target_health: Health) -> void:
+static func trigger(reaction: Reaction, attacker: Node2D, target_health: Health) -> void:
 	var target := target_health.get_parent() as Node2D
 	if target == null or not attacker.is_inside_tree():
 		return
-	if reaction["consumes"]:
-		SetUp.consume(target, reaction["status"])
-	var is_shown := _claim_show(reaction["id"])
-	ReactionEffects.play(reaction["id"], attacker, target_health, is_shown)
+	if reaction.consumes:
+		SetUp.consume(target, reaction.status)
+	var is_shown := _claim_show(reaction.id)
+	ReactionEffects.play(reaction.id, attacker, target_health, is_shown)
 	if is_shown:
-		var color: Color = reaction["color"]
-		HitFeel.burst(target.get_parent(), target.global_position, color, REACTION_BURST_RADIUS)
-		ScreenFlash.play(attacker, color, REACTION_FLASH_ALPHA)
+		HitFeel.burst(target.get_parent(), target.global_position, reaction.color, REACTION_BURST_RADIUS)
+		ScreenFlash.play(attacker, reaction.color, REACTION_FLASH_ALPHA)
 	LinkMeter.add_from(attacker, LinkMeter.PER_REACTION)
 
 

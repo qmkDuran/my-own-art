@@ -79,14 +79,14 @@ func _slide_in_and_out() -> void:
 	_card.position.y = TOP_MARGIN - DRIFT
 	_card.modulate.a = 0.0
 	_card.visible = true
-	var show := create_tween().set_ignore_time_scale(true).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	show.set_parallel()
-	show.tween_property(_card, "modulate:a", 1.0, FADE_IN_SECONDS)
-	show.tween_property(_card, "position:y", TOP_MARGIN, FADE_IN_SECONDS)
-	show.chain().tween_interval(SHOW_SECONDS)
-	show.chain().tween_property(_card, "modulate:a", 0.0, FADE_OUT_SECONDS)
-	show.parallel().tween_property(_card, "position:y", TOP_MARGIN - DRIFT, FADE_OUT_SECONDS)
-	show.chain().tween_callback(_finish_showing)
+	var appearance := create_tween().set_ignore_time_scale(true).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	appearance.set_parallel()
+	appearance.tween_property(_card, "modulate:a", 1.0, FADE_IN_SECONDS)
+	appearance.tween_property(_card, "position:y", TOP_MARGIN, FADE_IN_SECONDS)
+	appearance.chain().tween_interval(SHOW_SECONDS)
+	appearance.chain().tween_property(_card, "modulate:a", 0.0, FADE_OUT_SECONDS)
+	appearance.parallel().tween_property(_card, "position:y", TOP_MARGIN - DRIFT, FADE_OUT_SECONDS)
+	appearance.chain().tween_callback(_finish_showing)
 
 
 func _finish_showing() -> void:

@@ -43,20 +43,20 @@ enum State { WATCHING, RETREATING, SUMMONING, SHOVING, RECOVERING, DYING }
 func _ready() -> void:
 	super._ready()
 	summoner.wait_before_next_summon(first_summon_delay)
-	_timer.enter(State.WATCHING, 0.0)
+	state_timer.enter(State.WATCHING, 0.0)
 
 
 func _physics_process(delta: float) -> void:
-	_timer.advance(delta)
+	state_timer.advance(delta)
 	var is_alert := _is_alert()
-	if _timer.state != State.DYING and is_alert:
+	if state_timer.state != State.DYING and is_alert:
 		summoner.count_down(delta)
 		rod_shove.count_down(delta)
 
 	if DebugControls.enemies_passive:
 		_stop_acting()
 
-	match _timer.state:
+	match state_timer.state:
 		State.WATCHING, State.RETREATING:
 			if _can_act(is_alert):
 				_keep_distance_or_summon(delta)
@@ -82,7 +82,7 @@ func _keep_distance_or_summon(delta: float) -> void:
 		_start_summon()
 		return
 
-	var retreat_velocity := retreat.next_velocity(_timer.state == State.RETREATING, delta)
+	var retreat_velocity := retreat.next_velocity(state_timer.state == State.RETREATING, delta)
 	if retreat_velocity == Vector2.ZERO:
 		_stand_still()
 	else:
@@ -91,13 +91,13 @@ func _keep_distance_or_summon(delta: float) -> void:
 
 func _stand_still() -> void:
 	velocity = Vector2.ZERO
-	_timer.state = State.WATCHING
+	state_timer.state = State.WATCHING
 	sprite.show_animation("idle")
 
 
 func _back_away(retreat_velocity: Vector2) -> void:
 	velocity = retreat_velocity
-	_timer.state = State.RETREATING
+	state_timer.state = State.RETREATING
 	sprite.show_animation("walk")
 
 
@@ -107,43 +107,43 @@ func _start_summon() -> void:
 	if battle_cry != "":
 		speech_bubble.say(battle_cry)
 	sprite.replay_animation("summon")
-	_timer.enter(State.SUMMONING, summoner.summon_duration)
+	state_timer.enter(State.SUMMONING, summoner.summon_duration)
 
 
 func _summon() -> void:
 	velocity = Vector2.ZERO
-	if _timer.is_over():
+	if state_timer.is_over():
 		summoner.finish_summon()
-		_timer.enter(State.WATCHING, 0.0)
+		state_timer.enter(State.WATCHING, 0.0)
 
 
 func _start_shove() -> void:
 	sprite.replay_animation("shove", "summon")
 	rod_shove.start()
-	_timer.enter(State.SHOVING, rod_shove.duration())
+	state_timer.enter(State.SHOVING, rod_shove.duration())
 
 
 func _shove() -> void:
 	velocity = Vector2.ZERO
-	rod_shove.update(_timer.elapsed)
-	if _timer.is_over():
+	rod_shove.update(state_timer.elapsed)
+	if state_timer.is_over():
 		rod_shove.finish()
-		_timer.enter(State.WATCHING, 0.0)
+		state_timer.enter(State.WATCHING, 0.0)
 
 
 func _slow_down(delta: float) -> void:
 	_slow_down_by(knockback_friction, delta)
-	if _timer.state == State.RECOVERING and _timer.is_over():
-		_timer.enter(State.WATCHING, 0.0)
+	if state_timer.state == State.RECOVERING and state_timer.is_over():
+		state_timer.enter(State.WATCHING, 0.0)
 
 
 ## Debug (enemies passive): a summon or a slam in progress is called off and he just stands.
 ## Recovering from a hit and dying carry on as normal.
 func _stop_acting() -> void:
-	if _timer.state != State.SUMMONING and _timer.state != State.SHOVING:
+	if state_timer.state != State.SUMMONING and state_timer.state != State.SHOVING:
 		return
 	charge_particles.stop_charging()
-	_timer.enter(State.WATCHING, 0.0)
+	state_timer.enter(State.WATCHING, 0.0)
 
 
 # --- Reactions ------------------------------------------------------------
@@ -151,17 +151,17 @@ func _stop_acting() -> void:
 ## Super armour: once the shove is winding up, hits hurt but don't interrupt or push it.
 ## Otherwise holding attack would cancel it every time.
 func _has_super_armour() -> bool:
-	return _timer.state == State.SHOVING
+	return state_timer.state == State.SHOVING
 
 
 func _react_to_hit(source_position: Vector2) -> void:
 	if _has_super_armour():
 		return
 	_knock_back_from(source_position)
-	_timer.enter(State.RECOVERING, recover_time)
+	state_timer.enter(State.RECOVERING, recover_time)
 
 
 func _die() -> void:
 	charge_particles.stop_charging()
-	_timer.enter(State.DYING, death_fade_time)
+	state_timer.enter(State.DYING, death_fade_time)
 	_fade_out_and_free()

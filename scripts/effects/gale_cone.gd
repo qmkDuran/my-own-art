@@ -6,6 +6,8 @@ extends Node2D
 const DURATION := 0.28
 const STREAK_COUNT := 5
 const STREAK_LENGTH := 9.0
+## The gust starts at this share of its reach and rushes out to all of it.
+const START_REACH_SHARE := 0.3
 
 var _direction: Vector2 = Vector2.RIGHT
 var _reach: float = 40.0
@@ -39,9 +41,9 @@ func _draw() -> void:
 	for streak in STREAK_COUNT:
 		var share := float(streak) / float(STREAK_COUNT - 1) if STREAK_COUNT > 1 else 0.5
 		var heading := _direction.rotated(lerpf(-half_cone, half_cone, share))
-		var tip := heading * _reach * (0.3 + 0.7 * progress)
+		var tip := heading * _reach * (START_REACH_SHARE + (1.0 - START_REACH_SHARE) * progress)
 		var tail := tip - heading * STREAK_LENGTH
 		var color := ApolloPalette.WHITE if streak % 2 == 0 else ApolloPalette.SKY_LIGHT
 		draw_line(tail.round(), tip.round(), Color(color, fade), 1.0)
-	var arc_radius := _reach * (0.3 + 0.7 * progress)
+	var arc_radius := _reach * (START_REACH_SHARE + (1.0 - START_REACH_SHARE) * progress)
 	draw_arc(Vector2.ZERO, arc_radius, _direction.angle() - half_cone, _direction.angle() + half_cone, 12, Color(ApolloPalette.SKY, fade), 1.0)

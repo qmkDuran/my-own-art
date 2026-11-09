@@ -17,12 +17,14 @@ extends Node2D
 ##   seconds_left()         -> seconds until it ends (the HUD drains its timer with this)
 ##   full_length()          -> its whole length, as last applied
 ##   _advance(delta)        -> one physics frame while active (ticks, timers)
-##   _end()                 -> once, when it stops working (remove a tint, ...)
+##   _end()                 -> once, when it stops working (its tint is already removed)
 ##   _on_target_died()      -> the target died with it on (e.g. a burn spreads)
 ##   consume()              -> ends it at once (a reaction or Signal Skill cashed it in)
 
 ## The child a target's StatusResistance goes by, if it has one.
 const RESISTANCE_NODE := "StatusResistance"
+## The target's sprite, which a tinting effect colours (see `_tint_target`).
+const SPRITE_NODE := "Sprite"
 
 ## Seconds after the effect ends during which the target can't get it again.
 var immunity_seconds: float = 0.0
@@ -30,6 +32,8 @@ var immunity_seconds: float = 0.0
 var _health: Health
 var _immunity_left: float = 0.0
 var _has_ended: bool = false
+## The pulsing colour on the target's sprite, if this effect shows one.
+var _tint: StatusTint
 
 
 ## The target's `effect_name` effect, newly made by `make` if it has none yet. Null when it
@@ -37,17 +41,17 @@ var _has_ended: bool = false
 static func _find_or_add(target_health: Health, effect_name: String, make: Callable) -> StatusEffect:
 	if target_health == null or target_health.is_dead():
 		return null
-	var target := target_health.get_parent()
-	var resistance := target.get_node_or_null(RESISTANCE_NODE) as StatusResistance
+	var target_node := target_health.get_parent()
+	var resistance := target_node.get_node_or_null(RESISTANCE_NODE) as StatusResistance
 	if resistance != null and resistance.resists(effect_name):
 		return null
-	var effect := target.get_node_or_null(effect_name) as StatusEffect
+	var effect := target_node.get_node_or_null(effect_name) as StatusEffect
 	if effect != null:
 		return null if effect.is_immune() else effect
 	effect = make.call()
 	effect.name = effect_name
 	effect._health = target_health
-	target.add_child(effect)
+	target_node.add_child(effect)
 	target_health.died.connect(effect._on_target_died)
 	return effect
 
@@ -79,6 +83,7 @@ func _physics_process(delta: float) -> void:
 	if not _has_ended:
 		_has_ended = true
 		_immunity_left = immunity_seconds
+		_remove_tint()
 		_end()
 	_immunity_left -= delta
 	if _immunity_left <= 0.0:
@@ -88,8 +93,21 @@ func _physics_process(delta: float) -> void:
 func _finish() -> void:
 	if not _has_ended:
 		_has_ended = true
+		_remove_tint()
 		_end()
 	queue_free()
+
+
+## Pulses the target's sprite toward `color` until the effect ends (a target without a
+## sprite simply shows no tint).
+func _tint_target(color: Color) -> void:
+	_tint = StatusTint.new(target().get_node_or_null(SPRITE_NODE) as CanvasItem, color)
+	add_child(_tint)
+
+
+func _remove_tint() -> void:
+	if is_instance_valid(_tint):
+		_tint.queue_free()
 
 
 # --- For each effect to fill in --------------------------------------------

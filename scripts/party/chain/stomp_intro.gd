@@ -9,6 +9,13 @@ const LEAVES: Array[Color] = [ApolloPalette.GREEN, ApolloPalette.GREEN_LIGHT, Ap
 const DIRT: Array[Color] = [ApolloPalette.CORK, ApolloPalette.CORK_DARK]
 const ROOT_SECONDS := 2.0
 const SHOCKWAVE_RADIUS := 40.0
+const LEAF_PIXELS := 26
+const DIRT_PIXELS := 18
+## The leaves burst from its body, this far above its feet.
+const LEAF_BURST_OFFSET := Vector2(0, -6)
+const LANDING_SHAKE := 3.0
+const LANDING_SHAKE_SECONDS := 0.22
+const LANDED_POSE := "intro"
 
 
 func guide_line() -> String:
@@ -18,9 +25,7 @@ func guide_line() -> String:
 func _arrive(member: PlayableCreature, _targets: Array[Health]) -> void:
 	SpriteMotion.slide(SpriteMotion.sprite_of(member), Vector2(0, -DROP_HEIGHT), Vector2.ZERO, arrival_seconds,
 			Tween.TRANS_QUAD, Tween.EASE_IN)
-	var lines := member.get_node_or_null("SpeedLines") as SpeedLines
-	if lines != null:
-		lines.play_for(arrival_seconds, Vector2.DOWN)
+	SpeedLines.play_on(member, arrival_seconds, Vector2.DOWN)
 
 
 func _touch_down(member: PlayableCreature) -> void:
@@ -29,15 +34,15 @@ func _touch_down(member: PlayableCreature) -> void:
 	Shockwave.spawn(HitFeel.RING_SCENE, world, feet, SHOCKWAVE_RADIUS, 0.35, ApolloPalette.GREEN_LIGHT)
 	Shockwave.spawn(HitFeel.RING_SCENE, world, feet, SHOCKWAVE_RADIUS * 0.65, 0.28, ApolloPalette.CORK)
 	Shockwave.spawn(HitFeel.RING_SCENE, world, feet, SHOCKWAVE_RADIUS * 0.35, 0.2, ApolloPalette.WHITE)
-	var leaves := PixelDebris.spray(world, feet + Vector2(0, -6), LEAVES, 26, Vector2.UP, 220.0)
+	var leaves := PixelDebris.spray(world, feet + LEAF_BURST_OFFSET, LEAVES, LEAF_PIXELS, Vector2.UP, 220.0)
 	leaves.gravity = 70.0
 	leaves.sway = 25.0
 	leaves.lifetime = 1.0
-	PixelDebris.spray(world, feet, DIRT, 18, Vector2.UP, 160.0)
-	HitFeel.shake(member, 3.0, 0.22)
+	PixelDebris.spray(world, feet, DIRT, DIRT_PIXELS, Vector2.UP, 160.0)
+	HitFeel.shake(member, LANDING_SHAKE, LANDING_SHAKE_SECONDS)
 	var front_view := member as FrontViewCreature
 	if front_view != null:
-		front_view.play_pose("intro")
+		front_view.play_pose(LANDED_POSE)
 
 
 func _after_strike(_member: PlayableCreature, targets: Array[Health]) -> void:

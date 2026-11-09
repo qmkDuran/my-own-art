@@ -9,8 +9,12 @@ const NODE_NAME := "Soaked"
 ## Share of its own movement a soaked target still makes.
 const SPEED_SHARE := 0.55
 const DRIP_SECONDS := 0.12
+const DRIP_COLORS: Array[Color] = [ApolloPalette.SKY, ApolloPalette.SKY_LIGHT]
+## Drops fall from up to this far left or right of the body, this high above the feet.
+const DRIP_SPREAD := 4
+const DRIP_HEIGHT := -12
+const DRIP_LIFETIME := 0.35
 
-var _tint: StatusTint
 var _last_position: Vector2
 var _drip_left: float = 0.0
 
@@ -19,7 +23,7 @@ static func apply_to(target_health: Health, seconds: float) -> bool:
 	var soaked := _find_or_add(target_health, NODE_NAME, func() -> StatusEffect: return Soaked.new()) as Soaked
 	if soaked == null:
 		return false
-	soaked.start(maxf(seconds, soaked.seconds_left()))
+	soaked.extend_to(seconds)
 	return true
 
 
@@ -30,8 +34,7 @@ func _init() -> void:
 func _ready() -> void:
 	z_index = 2
 	_last_position = (target() as Node2D).global_position
-	_tint = StatusTint.new(target().get_node_or_null("Sprite") as CanvasItem, ApolloPalette.SKY)
-	add_child(_tint)
+	_tint_target(ApolloPalette.SKY)
 
 
 func _advance(delta: float) -> void:
@@ -46,13 +49,8 @@ func _advance(delta: float) -> void:
 
 
 func _drip(body: Node2D) -> void:
-	var palette: Array[Color] = [ApolloPalette.SKY, ApolloPalette.SKY_LIGHT]
-	var drop := PixelDebris.spray(body.get_parent(), body.global_position + Vector2(randi_range(-4, 4), -12), palette, 1, Vector2.DOWN, 20.0)
+	var from := body.global_position + Vector2(randi_range(-DRIP_SPREAD, DRIP_SPREAD), DRIP_HEIGHT)
+	var drop := PixelDebris.spray(body.get_parent(), from, DRIP_COLORS, 1, Vector2.DOWN, 20.0)
 	drop.speed_range = Vector2(5, 15)
-	drop.lifetime = 0.35
+	drop.lifetime = DRIP_LIFETIME
 	drop.chunk_share = 0.0
-
-
-func _end() -> void:
-	if is_instance_valid(_tint):
-		_tint.queue_free()

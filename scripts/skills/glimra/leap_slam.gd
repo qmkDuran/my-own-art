@@ -4,6 +4,9 @@ extends TimedAbility
 ## a slam that hurts and throws back every enemy around the landing spot.
 ## The wind-up is the time in the air.
 
+const LANDING_SHAKE := 2.0
+const LANDING_SHAKE_SECONDS := 0.16
+
 ## Farthest the leap goes, in pixels.
 @export var max_distance: float = 64.0
 ## How high the leap peaks, in pixels.
@@ -19,8 +22,7 @@ var _leap_speed: float = 0.0
 
 
 func _begin() -> void:
-	var player_input := _caster.get_node("PlayerInput") as PlayerInput
-	var leap_distance := minf(max_distance, _caster.global_position.distance_to(player_input.get_aim_point()))
+	var leap_distance := minf(max_distance, _caster.global_position.distance_to(_aim_point()))
 	_leap_speed = leap_distance / wind_up
 
 
@@ -44,13 +46,13 @@ func can_be_cancelled() -> bool:
 func _land() -> void:
 	var landing := _caster.global_position
 	var targets := AbilityTargets.within(self, landing, slam_radius)
-	AbilityTargets.hurt_all(_caster, targets, damage)
+	ElementStrike.hit(_caster, targets, damage)
 	AbilityTargets.knock_back_all(targets, landing, knockback_speed)
 	if ring_scene != null:
 		Shockwave.spawn(ring_scene, _caster.get_parent(), landing, slam_radius, 0.3, ApolloPalette.GREEN_LIGHT)
 		Shockwave.spawn(ring_scene, _caster.get_parent(), landing, slam_radius * 0.6, 0.22, ApolloPalette.LIME_PALE)
 	if screen_shake != null:
-		screen_shake.shake(2.0, 0.16)
+		screen_shake.shake(LANDING_SHAKE, LANDING_SHAKE_SECONDS)
 
 
 func guide_line() -> String:

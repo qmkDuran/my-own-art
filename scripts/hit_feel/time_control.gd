@@ -11,6 +11,8 @@ const NODE_NAME := "TimeControl"
 const FRAME_SECONDS := 1.0 / 60.0
 ## How slow a hit-stop runs the game (almost frozen, but never 0 so timers still move).
 const HIT_STOP_SCALE := 0.05
+## Guards the real-time sum against a time scale of zero.
+const MIN_TIME_SCALE := 0.001
 
 ## The one instance (it is added to the tree a moment after it is made).
 static var _instance: TimeControl
@@ -44,12 +46,8 @@ func slow_mo(time_scale: float, game_frames: int) -> void:
 	_apply()
 
 
-func is_slowed() -> bool:
-	return _slow_seconds_left > 0.0
-
-
 func _process(delta: float) -> void:
-	var real_delta := delta / maxf(Engine.time_scale, 0.001)
+	var real_delta := delta / maxf(Engine.time_scale, MIN_TIME_SCALE)
 	_stop_seconds_left = maxf(0.0, _stop_seconds_left - real_delta)
 	_slow_seconds_left = maxf(0.0, _slow_seconds_left - real_delta)
 	_apply()

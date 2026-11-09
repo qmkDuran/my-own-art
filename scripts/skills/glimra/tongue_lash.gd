@@ -27,12 +27,12 @@ func cancel() -> void:
 
 
 func _land() -> void:
-	var start := _caster.global_position
-	var targets := AbilityTargets.along(self, start, start + _aim_direction * reach, hit_radius)
-	AbilityTargets.hurt_all(_caster, targets, damage)
+	var origin := _caster.global_position
+	var targets := AbilityTargets.along(self, origin, origin + _aim_direction * reach, hit_radius)
+	ElementStrike.hit(_caster, targets, damage)
 	for target_health in targets:
 		Poisoned.apply_to(target_health, poison_per_tick, seconds_between_ticks, poison_seconds)
-	AbilityTargets.knock_back_all(targets, start, knockback_speed)
+	AbilityTargets.knock_back_all(targets, origin, knockback_speed)
 
 
 func guide_line() -> String:

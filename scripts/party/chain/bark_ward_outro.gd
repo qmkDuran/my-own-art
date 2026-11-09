@@ -6,6 +6,7 @@ extends SwapMove
 const ROLL_AWAY := Vector2(-20, 0)
 const ROLL_SECONDS := 0.25
 const BARK: Array[Color] = [ApolloPalette.CORK, ApolloPalette.CORK_DARK, ApolloPalette.GREEN]
+const BARK_PIXELS := 14
 
 
 func guide_line() -> String:
@@ -14,6 +15,6 @@ func guide_line() -> String:
 
 func play(member: PlayableCreature, partner: PlayableCreature) -> void:
 	SwapFlourish.ghost(member, ROLL_AWAY, ROLL_SECONDS, ApolloPalette.CORK * 2.0)
-	PixelDebris.spray(member.get_parent(), member.global_position, BARK, 14, Vector2.UP, 160.0)
+	PixelDebris.spray(member.get_parent(), member.global_position, BARK, BARK_PIXELS, Vector2.UP, 160.0)
 	if partner != null:
 		BarkWard.wrap(partner)

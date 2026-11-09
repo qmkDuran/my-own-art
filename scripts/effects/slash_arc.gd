@@ -5,6 +5,8 @@ extends Node2D
 
 const LIFETIME := 0.1
 const STROKES := 3
+## Each stroke behind the edge is this many pixels further in.
+const STROKE_GAP := 2
 
 var _direction: Vector2 = Vector2.RIGHT
 var _radius: float = 12.0
@@ -39,6 +41,6 @@ func _draw() -> void:
 	var sweep_end := lerpf(-half, half, minf(1.0, progress * 2.0))
 	var centre_angle := _direction.angle()
 	for stroke in STROKES:
-		var radius := roundf(_radius - stroke * 2)
+		var radius := roundf(_radius - stroke * STROKE_GAP)
 		var color := _edge if stroke == 0 else _trail
 		draw_arc(Vector2.ZERO, radius, centre_angle - half, centre_angle + sweep_end, 10, Color(color, 1.0 - progress), 1.0)

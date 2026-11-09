@@ -30,6 +30,9 @@ const BURST_SECONDS := 0.4
 ## Where a spark sits on a target: the middle of its body, above the feet.
 const BODY_OFFSET := Vector2(0, -7)
 
+## The child every creature shakes the camera through.
+const SCREEN_SHAKE_NODE := "ScreenShake"
+
 const RING_SCENE := preload("res://scenes/effects/shockwave.tscn")
 
 
@@ -70,7 +73,7 @@ static func burst(world: Node, at: Vector2, color: Color, radius: float) -> void
 
 ## Shakes the camera through the attacker's ScreenShake (every creature has one).
 static func shake(attacker: Node, strength: float, seconds: float) -> void:
-	var screen_shake := attacker.get_node_or_null("ScreenShake") as ScreenShake
+	var screen_shake := attacker.get_node_or_null(SCREEN_SHAKE_NODE) as ScreenShake
 	if screen_shake != null:
 		screen_shake.shake(strength, seconds)
 

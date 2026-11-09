@@ -5,6 +5,9 @@ extends Node
 ## Each burst places a few thin lines behind the target, pointing along the
 ## direction of travel, scattered side to side so they read as rushing air.
 
+## The child name a creature's speed lines go by.
+const NODE_NAME := "SpeedLines"
+
 ## What the lines appear behind.
 @export var target: Node2D
 ## Where on the target the lines centre, e.g. the middle of the body.
@@ -25,6 +28,13 @@ extends Node
 @export var fade_time: float = 0.15
 @export var line_color: Color = Color(ApolloPalette.WHITE, 0.9)
 @export var line_width: float = 1.0
+
+
+## Plays `creature`'s speed lines for `duration`, if it has them.
+static func play_on(creature: Node, duration: float, travel_direction: Vector2) -> void:
+	var lines := creature.get_node_or_null(NODE_NAME) as SpeedLines
+	if lines != null:
+		lines.play_for(duration, travel_direction)
 
 
 func play_for(duration: float, travel_direction: Vector2) -> void:

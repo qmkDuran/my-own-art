@@ -13,6 +13,17 @@ const FADE_SECONDS := 0.5
 ## The puddle is a flat ellipse: this much as tall as it is wide.
 const FLATNESS := 0.4
 const GLOB_RADIUS := 2.0
+## Seconds the puddle takes to spread from half its size to all of it.
+const SPREAD_SECONDS := 0.12
+## The lighter inner pool: its offset and size as a share of the puddle.
+const INNER_OFFSET := Vector2(-1, -0.5)
+const INNER_SHARE := 0.6
+## A bubble drifting across the puddle: how fast (radians per second) and how far (share
+## of the radius) it wanders.
+const BUBBLE_SPEED := 5.0
+const BUBBLE_WANDER := 0.4
+const ELLIPSE_POINTS := 20
+const SPLAT_SCENE := preload("res://scenes/effects/toxic_splat.tscn")
 
 @export var seconds_between_doses: float = 0.5
 @export var poison_per_tick: int = 1
@@ -40,10 +51,6 @@ static func spawn(world: Node, from: Vector2, landing: Vector2, puddle_radius: f
 	puddle.global_position = landing
 
 
-func _ready() -> void:
-	z_index = 0
-
-
 func _physics_process(delta: float) -> void:
 	_age += delta
 	if not _has_landed:
@@ -68,7 +75,7 @@ func _poison_enemies_inside() -> void:
 
 
 func _splat() -> void:
-	var splat := preload("res://scenes/effects/toxic_splat.tscn").instantiate() as ToxicSplat
+	var splat := SPLAT_SCENE.instantiate() as ToxicSplat
 	get_parent().add_child(splat)
 	splat.global_position = global_position
 	splat.play()
@@ -80,17 +87,17 @@ func _draw() -> void:
 		var glob := _flight_from.lerp(_landing, progress) + Vector2(0, -sin(PI * progress) * ARC_HEIGHT)
 		draw_circle(to_local(glob), GLOB_RADIUS, ApolloPalette.GREEN_LIGHT)
 		return
-	var spread := clampf(_age / 0.12, 0.0, 1.0)
+	var spread := clampf(_age / SPREAD_SECONDS, 0.0, 1.0)
 	var size := Vector2(radius * 2.0, radius * 2.0 * FLATNESS) * (0.5 + 0.5 * spread)
 	_draw_ellipse(Vector2.ZERO, size, ApolloPalette.GREEN)
-	_draw_ellipse(Vector2(-1, -0.5), size * 0.6, ApolloPalette.GREEN_LIGHT)
-	var bubble := Vector2(sin(_age * 5.0) * radius * 0.4, -1.0).round()
+	_draw_ellipse(INNER_OFFSET, size * INNER_SHARE, ApolloPalette.GREEN_LIGHT)
+	var bubble := Vector2(sin(_age * BUBBLE_SPEED) * radius * BUBBLE_WANDER, -1.0).round()
 	draw_circle(bubble, 1.0, ApolloPalette.LIME_PALE)
 
 
 func _draw_ellipse(centre: Vector2, size: Vector2, color: Color) -> void:
 	var points := PackedVector2Array()
-	for step in 20:
-		var angle := TAU * step / 20.0
+	for step in ELLIPSE_POINTS:
+		var angle := TAU * step / float(ELLIPSE_POINTS)
 		points.append(centre + Vector2(cos(angle) * size.x / 2.0, sin(angle) * size.y / 2.0))
 	draw_colored_polygon(points, color)

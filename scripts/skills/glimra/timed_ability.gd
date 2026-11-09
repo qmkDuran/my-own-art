@@ -9,7 +9,7 @@ extends SkillAction
 ## Seconds the whole move takes, start to recovery.
 @export var duration: float = 0.3
 
-var _caster: Node2D = null
+var _caster: PlayableCreature = null
 var _aim_direction: Vector2 = Vector2.DOWN
 var _time_casting: float = 0.0
 var _has_landed: bool = false
@@ -17,7 +17,7 @@ var _has_landed: bool = false
 
 func start(caster: Node2D, aim_direction: Vector2) -> void:
 	super.start(caster, aim_direction)
-	_caster = caster
+	_caster = caster as PlayableCreature
 	_aim_direction = aim_direction.normalized()
 	_time_casting = 0.0
 	_has_landed = false
@@ -47,6 +47,17 @@ func _wind_up_progress() -> float:
 ## Where the caster's body is (above its feet), where most effects start.
 func _body_position() -> Vector2:
 	return _caster.global_position + Vector2(0, FrontViewCreature.BODY_HEIGHT)
+
+
+## Where the cursor is, in the world.
+func _aim_point() -> Vector2:
+	return _caster.player_input.get_aim_point()
+
+
+## The caster's spot moved toward `point`, but no farther than `max_distance`.
+func _toward(point: Vector2, max_distance: float) -> Vector2:
+	var origin := _caster.global_position
+	return origin + (point - origin).limit_length(max_distance)
 
 
 # --- For each ability to fill in ----------------------------------------------

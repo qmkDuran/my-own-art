@@ -11,9 +11,7 @@ extends TimedAbility
 
 
 func _land() -> void:
-	var player_input := _caster.get_node("PlayerInput") as PlayerInput
-	var to_cursor := player_input.get_aim_point() - _caster.global_position
-	var landing := _caster.global_position + to_cursor.limit_length(max_range)
+	var landing := _toward(_aim_point(), max_range)
 	PoisonPuddle.spawn(_caster.get_parent(), _body_position(), landing, puddle_radius, puddle_seconds)
 
 

@@ -8,14 +8,14 @@ const SWAP_OUT := "swap out"
 
 
 ## One chain: `setter` uses `move` (keys + name), leaving `status` on enemies; swapping
-## to `receiver` fires its Signal Skill, or a reaction (`reaction`, {} for none).
+## to `receiver` fires its Signal Skill, or a reaction (`reaction`, null for none).
 class Recipe:
 	var setter: ChainGuideMember
 	var move_keys: String = ""
 	var move_name: String = ""
 	var status: String = ""
 	var receiver: ChainGuideMember
-	var reaction: Dictionary = {}
+	var reaction: Reactions.Reaction = null
 
 
 ## Every chain within `members`: reaction chains first, then plain Signal Skill set-ups.
@@ -29,12 +29,12 @@ static func find(members: Array[ChainGuideMember]) -> Array[Recipe]:
 					continue
 				for status_name in trigger.statuses:
 					for recipe in _recipes_for(setter, receiver, status_name, trigger.reaction):
-						(signal_only if recipe.reaction.is_empty() else with_reaction).append(recipe)
+						(signal_only if recipe.reaction == null else with_reaction).append(recipe)
 	return with_reaction + signal_only
 
 
 static func _recipes_for(setter: ChainGuideMember, receiver: ChainGuideMember, status_name: String,
-		reaction: Dictionary) -> Array[Recipe]:
+		reaction: Reactions.Reaction) -> Array[Recipe]:
 	var found: Array[Recipe] = []
 	for row in setter.skills:
 		if row.set_up_status == status_name:
@@ -45,7 +45,7 @@ static func _recipes_for(setter: ChainGuideMember, receiver: ChainGuideMember, s
 
 
 static func _recipe(setter: ChainGuideMember, keys: String, move_name: String, receiver: ChainGuideMember,
-		status_name: String, reaction: Dictionary) -> Recipe:
+		status_name: String, reaction: Reactions.Reaction) -> Recipe:
 	var recipe := Recipe.new()
 	recipe.setter = setter
 	recipe.move_keys = keys

@@ -10,6 +10,8 @@ const NODE_NAME := "Launched"
 ## How high the sprite floats, in pixels, and how long it takes to rise and to drop.
 const LIFT_HEIGHT := 10.0
 const RISE_SECONDS := 0.15
+## How fast the swirl under it spins, in radians per second.
+const SWIRL_SPIN_SPEED := 9.0
 
 var _sprite: AnimatedSprite2D
 var _age: float = 0.0
@@ -24,19 +26,13 @@ static func apply_to(target_health: Health, seconds: float) -> bool:
 	return true
 
 
-## True while `target` hangs in the air (an Intro can cash it in).
-static func is_launched(target: Node) -> bool:
-	var launched := target.get_node_or_null(NODE_NAME) as Launched
-	return launched != null and launched.is_active()
-
-
 func _init() -> void:
 	immunity_seconds = 0.0
 
 
 func _ready() -> void:
 	z_index = 1
-	_sprite = target().get_node_or_null("Sprite") as AnimatedSprite2D
+	_sprite = target().get_node_or_null(SPRITE_NODE) as AnimatedSprite2D
 
 
 func _advance(delta: float) -> void:
@@ -63,6 +59,6 @@ func _height_share() -> float:
 func _draw() -> void:
 	if not is_active():
 		return
-	var spin := _age * 9.0
+	var spin := _age * SWIRL_SPIN_SPEED
 	draw_arc(Vector2.ZERO, 5.0, spin, spin + PI * 1.2, 8, ApolloPalette.SKY_LIGHT, 1.0)
 	draw_arc(Vector2(0, -3), 3.0, -spin, -spin + PI, 6, ApolloPalette.WHITE, 1.0)

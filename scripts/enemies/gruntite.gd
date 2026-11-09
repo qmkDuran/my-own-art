@@ -43,19 +43,19 @@ var _slide_friction: float = 0.0
 
 func _ready() -> void:
 	super._ready()
-	_timer.enter(State.STANDING, 0.0)
+	state_timer.enter(State.STANDING, 0.0)
 
 
 func _physics_process(delta: float) -> void:
-	_timer.advance(delta)
+	state_timer.advance(delta)
 	var is_alert := _is_alert()
-	if _timer.state != State.DYING and is_alert:
+	if state_timer.state != State.DYING and is_alert:
 		charge.count_down(delta)
 	if DebugControls.enemies_passive:
 		_stop_acting()
 	var can_act := _can_act(is_alert)
 
-	match _timer.state:
+	match state_timer.state:
 		State.STANDING, State.PLODDING:
 			_plod_or_charge(can_act)
 		State.WINDING_UP:
@@ -66,7 +66,7 @@ func _physics_process(delta: float) -> void:
 			_slide(delta)
 
 	move_and_slide()
-	if _timer.state == State.CHARGING and get_slide_collision_count() > 0:
+	if state_timer.state == State.CHARGING and get_slide_collision_count() > 0:
 		_bonk()
 
 
@@ -84,28 +84,28 @@ func _plod_or_charge(can_act: bool) -> void:
 				if charge.is_player_too_close() else path_mover.direction_toward(player.global_position)
 		velocity = walk_direction * walk_speed
 		sprite.show_animation("move")
-		_timer.state = State.PLODDING
+		state_timer.state = State.PLODDING
 
 
 func _stand() -> void:
 	velocity = Vector2.ZERO
 	sprite.show_animation("idle")
-	_timer.state = State.STANDING
+	state_timer.state = State.STANDING
 
 
 func _start_wind_up() -> void:
 	velocity = Vector2.ZERO
 	charge.start_wind_up()
 	sprite.replay_animation("attack")
-	_timer.enter(State.WINDING_UP, charge.wind_up)
+	state_timer.enter(State.WINDING_UP, charge.wind_up)
 
 
 func _wind_up() -> void:
 	velocity = Vector2.ZERO
-	charge.update_wind_up(_timer.elapsed)
-	if _timer.is_over():
+	charge.update_wind_up(state_timer.elapsed)
+	if state_timer.is_over():
 		velocity = charge.start_charge(walk_speed)
-		_timer.enter(State.CHARGING, 0.0)
+		state_timer.enter(State.CHARGING, 0.0)
 
 
 func _charge() -> void:
@@ -127,22 +127,22 @@ func _bonk() -> void:
 func _end_charge(recover_time: float, friction: float) -> void:
 	charge.finish()
 	_slide_friction = friction
-	_timer.enter(State.RECOVERING, recover_time)
+	state_timer.enter(State.RECOVERING, recover_time)
 
 
 func _slide(delta: float) -> void:
 	_slow_down_by(_slide_friction, delta)
-	if _timer.state != State.RECOVERING:
+	if state_timer.state != State.RECOVERING:
 		return
 	if velocity.length() < 1.0:
 		sprite.show_animation("idle")
-	if _timer.is_over():
-		_timer.enter(State.STANDING, 0.0)
+	if state_timer.is_over():
+		state_timer.enter(State.STANDING, 0.0)
 
 
 ## Debug (enemies passive): a wind-up or a charge in progress is called off and it stands.
 func _stop_acting() -> void:
-	if _timer.state != State.WINDING_UP and _timer.state != State.CHARGING:
+	if state_timer.state != State.WINDING_UP and state_timer.state != State.CHARGING:
 		return
 	charge.finish()
 	_stand()
@@ -152,7 +152,7 @@ func _stop_acting() -> void:
 
 ## While winding up and charging, hits hurt but don't push or stop it.
 func _has_super_armour() -> bool:
-	return _timer.state == State.WINDING_UP or _timer.state == State.CHARGING
+	return state_timer.state == State.WINDING_UP or state_timer.state == State.CHARGING
 
 
 func _react_to_hit(source_position: Vector2) -> void:
@@ -161,13 +161,13 @@ func _react_to_hit(source_position: Vector2) -> void:
 	_knock_back_from(source_position)
 	_slide_friction = knockback_friction
 	# A hit never cuts a daze short (that would make punishing a missed charge backfire).
-	var dazed_for := _timer.seconds_left() if _timer.state == State.RECOVERING else 0.0
-	_timer.enter(State.RECOVERING, maxf(hit_recover_time, dazed_for))
+	var dazed_for := state_timer.seconds_left() if state_timer.state == State.RECOVERING else 0.0
+	state_timer.enter(State.RECOVERING, maxf(hit_recover_time, dazed_for))
 
 
 func _die() -> void:
 	if _has_super_armour():
 		charge.finish()
-	_timer.enter(State.DYING, death_fade_time)
+	state_timer.enter(State.DYING, death_fade_time)
 	_slide_friction = skid_friction
 	_fade_out_and_free()

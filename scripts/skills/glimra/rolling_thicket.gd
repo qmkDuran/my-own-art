@@ -7,6 +7,12 @@ extends TimedAbility
 
 const LEAVES: Array[Color] = [ApolloPalette.GREEN, ApolloPalette.GREEN_LIGHT, ApolloPalette.CORK]
 const TRAIL_SECONDS := 0.04
+const TRAIL_PIXELS := 3
+const LANDING_RING_RADIUS := 16.0
+## Poise drained from an enemy it rolls into, a Rooted one it bowls, and the ones that one hits.
+const ROLL_POISE_DAMAGE := 2
+const BOWLED_POISE_DAMAGE := 3
+const PIN_POISE_DAMAGE := 2
 
 @export var roll_distance: float = 120.0
 @export var hit_radius: float = 11.0
@@ -25,10 +31,8 @@ var _pass_through := EnemyPassThrough.new()
 
 func _begin() -> void:
 	_struck.clear()
-	_pass_through.start(_caster as PhysicsBody2D)
-	var lines := _caster.get_node_or_null("SpeedLines") as SpeedLines
-	if lines != null:
-		lines.play_for(wind_up, _aim_direction)
+	_pass_through.start(_caster)
+	SpeedLines.play_on(_caster, wind_up, _aim_direction)
 
 
 func caster_velocity() -> Vector2:
@@ -59,32 +63,36 @@ func _physics_process(delta: float) -> void:
 	_trail_left -= delta
 	if _trail_left <= 0.0:
 		_trail_left = TRAIL_SECONDS
-		PixelDebris.spray(_caster.get_parent(), _caster.global_position, LEAVES, 3, -_aim_direction, 90.0)
+		PixelDebris.spray(_caster.get_parent(), _caster.global_position, LEAVES, TRAIL_PIXELS, -_aim_direction, 90.0)
 
 
 func _land() -> void:
 	_pass_through.stop()
-	Shockwave.spawn(HitFeel.RING_SCENE, _caster.get_parent(), _caster.global_position, 16.0, 0.25, ApolloPalette.GREEN_LIGHT)
+	Shockwave.spawn(HitFeel.RING_SCENE, _caster.get_parent(), _caster.global_position, LANDING_RING_RADIUS, 0.25, ApolloPalette.GREEN_LIGHT)
 
 
 func _bowl(target_health: Health) -> void:
 	var enemy := target_health.get_parent() as Node2D
-	var one: Array[Health] = [target_health]
+	var one := AbilityTargets.single(target_health)
 	if not SetUp.has(enemy, SetUp.ROOTED):
-		AbilityTargets.hurt_all(_caster, one, damage, HitFeel.Weight.LIGHT, 2)
+		ElementStrike.hit(_caster, one, damage, HitFeel.Weight.LIGHT, ROLL_POISE_DAMAGE)
 		AbilityTargets.knock_back_all(one, _caster.global_position, knockback_speed)
 		return
 	SetUp.consume(enemy, SetUp.ROOTED)
-	AbilityTargets.hurt_all(_caster, one, damage * rooted_multiplier, HitFeel.Weight.HEAVY, 3)
-	if enemy.has_method("knock_back"):
-		enemy.call("knock_back", _aim_direction * bowled_speed)
+	ElementStrike.hit(_caster, one, damage * rooted_multiplier, HitFeel.Weight.HEAVY, BOWLED_POISE_DAMAGE)
+	AbilityTargets.knock_back(enemy, _aim_direction * bowled_speed)
+	_knock_down_pins(enemy, target_health)
+
+
+## The enemies around a bowled one get hit by it and shoved away from it.
+func _knock_down_pins(enemy: Node2D, target_health: Health) -> void:
 	var pins: Array[Health] = []
 	for other_health in AbilityTargets.within(self, enemy.global_position, bowling_radius):
 		if other_health != target_health and not _struck.has(other_health):
 			pins.append(other_health)
 			_struck.append(other_health)
 	if not pins.is_empty():
-		ElementStrike.hit(_caster, pins, bowling_damage, HitFeel.Weight.LIGHT, 2)
+		ElementStrike.hit(_caster, pins, bowling_damage, HitFeel.Weight.LIGHT, PIN_POISE_DAMAGE)
 		AbilityTargets.knock_back_all(pins, enemy.global_position, knockback_speed)
 
 

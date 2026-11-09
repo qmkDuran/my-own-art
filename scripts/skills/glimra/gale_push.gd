@@ -12,7 +12,7 @@ extends TimedAbility
 func _land() -> void:
 	var origin := _caster.global_position
 	var targets := AbilityTargets.in_cone(self, origin, _aim_direction, reach, cone_degrees)
-	AbilityTargets.hurt_all(_caster, targets, damage)
+	ElementStrike.hit(_caster, targets, damage)
 	AbilityTargets.knock_back_all(targets, origin, knockback_speed)
 	GaleCone.spawn(_caster.get_parent(), _body_position(), _aim_direction, reach, cone_degrees)
 

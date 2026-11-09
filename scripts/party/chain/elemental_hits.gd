@@ -14,8 +14,4 @@ func _ready() -> void:
 
 
 func _on_target_hit(target_health: Health) -> void:
-	var attacker := get_parent() as Node2D
-	var reaction := Reactions.find_for(target_health.get_parent(), ElementStrike.element_of(attacker))
-	ElementStrike.after_hit(attacker, target_health, poise_damage, reaction)
-	var spots: Array[Vector2] = [(target_health.get_parent() as Node2D).global_position]
-	HitFeel.land(attacker, spots, ElementColors.for_element(ElementStrike.element_of(attacker)), HitFeel.Weight.LIGHT)
+	ElementStrike.after_damage(get_parent() as Node2D, target_health, poise_damage)

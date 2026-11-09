@@ -10,7 +10,11 @@ extends PanelContainer
 ## Built once from a ChainGuideMember.
 
 const PORTRAIT_CROP := Vector2i(16, 16)
+const PORTRAIT_SCALE := 2
 const COLUMN_GAP := 5
+const HEADER_GAP := 8
+const BLOCK_GAP := 2
+const SIGNAL_BLOCK_GAP := 3
 const SKILL_ICON_SCALE := 2
 const SIGNAL_TITLE := "Signal Skill"
 const SIGNAL_HINT := "Swap in (key %s) when an enemy near you is:"
@@ -44,9 +48,9 @@ func _init(member: ChainGuideMember, width: float) -> void:
 
 
 func _header() -> HBoxContainer:
-	var header := ChainGuideWidgets.make_row(8)
+	var header := ChainGuideWidgets.make_row(HEADER_GAP)
 	if _member.icon != null:
-		header.add_child(ChainGuideIcon.texture(_member.icon, 2, PORTRAIT_CROP))
+		header.add_child(ChainGuideIcon.texture(_member.icon, PORTRAIT_SCALE, PORTRAIT_CROP))
 	header.add_child(ChainGuideWidgets.make_label(_member.display_name, _element_color, ChainGuideWidgets.LARGE_SIZE))
 	header.add_child(ChainGuideWidgets.make_spacer())
 	header.add_child(ChainGuideWidgets.make_label(_member.element.to_upper(), _element_color))
@@ -56,7 +60,7 @@ func _header() -> HBoxContainer:
 
 
 func _skill_block(row: ChainGuideMember.SkillRow) -> VBoxContainer:
-	var block := ChainGuideWidgets.make_column(2)
+	var block := ChainGuideWidgets.make_column(BLOCK_GAP)
 	var title_row := ChainGuideWidgets.make_row()
 	title_row.add_child(ChainGuideWidgets.make_key_cap(row.keys))
 	if row.icon != null:
@@ -64,9 +68,7 @@ func _skill_block(row: ChainGuideMember.SkillRow) -> VBoxContainer:
 	var title_color := ApolloPalette.GREY if row.is_locked else ApolloPalette.CREAM
 	title_row.add_child(ChainGuideWidgets.make_label(row.title, title_color))
 	title_row.add_child(ChainGuideWidgets.make_spacer())
-	if not row.set_up_status.is_empty():
-		title_row.add_child(ChainGuideWidgets.make_label(SETS_UP, ApolloPalette.GREY))
-		title_row.add_child(ChainGuideIcon.status(row.set_up_status))
+	_add_sets_up(title_row, row.set_up_status)
 	if row.cooldown > 0.0:
 		title_row.add_child(ChainGuideWidgets.make_label(COOLDOWN_FORMAT % ChainGuideWidgets.short_number(row.cooldown), ApolloPalette.GREY))
 	block.add_child(title_row)
@@ -75,7 +77,7 @@ func _skill_block(row: ChainGuideMember.SkillRow) -> VBoxContainer:
 
 
 func _signal_block() -> VBoxContainer:
-	var block := ChainGuideWidgets.make_column(3)
+	var block := ChainGuideWidgets.make_column(SIGNAL_BLOCK_GAP)
 	if not _member.has_signal_skill():
 		block.add_child(ChainGuideWidgets.make_section_title(SIGNAL_TITLE, ApolloPalette.GREY))
 		block.add_child(ChainGuideWidgets.make_wrapped(NO_SIGNAL_NOTE, ApolloPalette.GREY))
@@ -99,21 +101,27 @@ func _trigger_row(trigger: ChainGuideMember.Trigger) -> HBoxContainer:
 	for status_name in trigger.statuses:
 		row.add_child(ChainGuideWidgets.make_status_chip(status_name))
 	row.add_child(ChainGuideIcon.arrow(ApolloPalette.CREAM))
-	if trigger.reaction.is_empty():
+	if trigger.reaction == null:
 		row.add_child(ChainGuideWidgets.make_label(_member.signal_name, _element_color))
 	else:
-		row.add_child(ChainGuideWidgets.make_label(trigger.reaction["name"], trigger.reaction["color"]))
+		row.add_child(ChainGuideWidgets.make_label(trigger.reaction.display_name, trigger.reaction.color))
 	return row
 
 
 func _outro_block() -> VBoxContainer:
-	var block := ChainGuideWidgets.make_column(2)
+	var block := ChainGuideWidgets.make_column(BLOCK_GAP)
 	var title_row := ChainGuideWidgets.make_row()
 	title_row.add_child(ChainGuideWidgets.make_section_title(OUTRO_TITLE, ApolloPalette.GOLD))
 	title_row.add_child(ChainGuideWidgets.make_spacer())
-	if not _member.outro_status.is_empty():
-		title_row.add_child(ChainGuideWidgets.make_label(SETS_UP, ApolloPalette.GREY))
-		title_row.add_child(ChainGuideIcon.status(_member.outro_status))
+	_add_sets_up(title_row, _member.outro_status)
 	block.add_child(title_row)
 	block.add_child(ChainGuideWidgets.make_wrapped(_member.outro_line, ApolloPalette.GREY_LIGHT))
 	return block
+
+
+## "sets [icon]" at the end of a title row, for a move that puts `status_name` on enemies.
+func _add_sets_up(title_row: HBoxContainer, status_name: String) -> void:
+	if status_name.is_empty():
+		return
+	title_row.add_child(ChainGuideWidgets.make_label(SETS_UP, ApolloPalette.GREY))
+	title_row.add_child(ChainGuideIcon.status(status_name))

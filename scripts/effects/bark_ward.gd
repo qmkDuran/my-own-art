@@ -9,6 +9,17 @@ const SECONDS := 3.0
 const ORBIT := Vector2(9, 4)
 const PLATE_HEIGHT := -6.0
 const CHIPS: Array[Color] = [ApolloPalette.CORK, ApolloPalette.CORK_DARK, ApolloPalette.GREEN_LIGHT]
+const CHIP_PIXELS := 10
+const PLATES_PER_HIT := 2
+## How fast the plates circle, in radians per second.
+const ORBIT_SPEED := 4.0
+## In its last moments it blinks (this many times a second, counting on and off).
+const BLINK_SECONDS := 0.6
+const BLINK_RATE := 20.0
+## The faint leafy ring around the body.
+const RING_CENTRE := Vector2(0, -1)
+const RING_RADIUS := 8.0
+const RING_ALPHA := 0.5
 
 var _health: Health
 var _seconds_left: float = SECONDS
@@ -48,18 +59,18 @@ func _exit_tree() -> void:
 
 
 func _on_absorbed() -> void:
-	PixelDebris.spray(get_parent().get_parent(), global_position + Vector2(0, PLATE_HEIGHT), CHIPS, 10, Vector2.UP, 200.0)
+	PixelDebris.spray(get_parent().get_parent(), global_position + Vector2(0, PLATE_HEIGHT), CHIPS, CHIP_PIXELS, Vector2.UP, 200.0)
 
 
 ## Plates (2×2 bark chips) orbiting the body, one per hit left, plus a faint leafy ring.
 func _draw() -> void:
-	var blink := _seconds_left < 0.6 and int(_age * 20.0) % 2 == 0
-	if blink:
+	var is_blinked_out := _seconds_left < BLINK_SECONDS and int(_age * BLINK_RATE) % 2 == 0
+	if is_blinked_out:
 		return
-	var plates := _health.shield_hits * 2
+	var plates := _health.shield_hits * PLATES_PER_HIT
 	for plate in plates:
-		var angle := _age * 4.0 + TAU * plate / plates
+		var angle := _age * ORBIT_SPEED + TAU * plate / plates
 		var spot := Vector2(cos(angle) * ORBIT.x, PLATE_HEIGHT + sin(angle) * ORBIT.y).round()
 		draw_rect(Rect2(spot, Vector2(2, 2)), ApolloPalette.CORK)
 		draw_rect(Rect2(spot, Vector2.ONE), ApolloPalette.GREEN_LIGHT)
-	draw_arc(Vector2(0, -1), 8.0, 0.0, TAU, 16, Color(ApolloPalette.GREEN_LIGHT, 0.5), 1.0)
+	draw_arc(RING_CENTRE, RING_RADIUS, 0.0, TAU, 16, Color(ApolloPalette.GREEN_LIGHT, RING_ALPHA), 1.0)

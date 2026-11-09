@@ -21,6 +21,11 @@ func start(seconds: float) -> void:
 	_seconds_left = seconds
 
 
+## Starts it again for `seconds`, unless more than that is still left.
+func extend_to(seconds: float) -> void:
+	start(maxf(seconds, seconds_left()))
+
+
 func is_active() -> bool:
 	return _seconds_left > 0.0
 

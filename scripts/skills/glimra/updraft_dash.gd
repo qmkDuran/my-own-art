@@ -4,6 +4,11 @@ extends TimedAbility
 ## around it), then it rides the wind toward the cursor, untouchable while it flies.
 ## The wind-up is the dash itself.
 
+const ARRIVAL_RING_RADIUS := 10.0
+## The take-off gust: its reach as a share of the burst radius, and how wide it fans out.
+const GUST_REACH_SHARE := 0.8
+const GUST_CONE_DEGREES := 120.0
+
 @export var dash_distance: float = 76.0
 ## How high it rises during the dash, in pixels.
 @export var rise_height: float = 6.0
@@ -17,10 +22,10 @@ extends TimedAbility
 func _begin() -> void:
 	var take_off := _caster.global_position
 	var targets := AbilityTargets.within(self, take_off, burst_radius)
-	AbilityTargets.hurt_all(_caster, targets, damage)
+	ElementStrike.hit(_caster, targets, damage)
 	AbilityTargets.knock_back_all(targets, take_off, knockback_speed)
 	_ring(take_off, burst_radius, ApolloPalette.SKY_LIGHT)
-	GaleCone.spawn(_caster.get_parent(), _body_position(), Vector2.UP, burst_radius * 0.8, 120.0)
+	GaleCone.spawn(_caster.get_parent(), _body_position(), Vector2.UP, burst_radius * GUST_REACH_SHARE, GUST_CONE_DEGREES)
 
 
 func caster_velocity() -> Vector2:
@@ -40,7 +45,7 @@ func can_be_cancelled() -> bool:
 
 
 func _land() -> void:
-	_ring(_caster.global_position, 10.0, ApolloPalette.WHITE)
+	_ring(_caster.global_position, ARRIVAL_RING_RADIUS, ApolloPalette.WHITE)
 
 
 func _ring(at: Vector2, radius: float, color: Color) -> void:
