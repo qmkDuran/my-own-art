@@ -30,6 +30,8 @@ func say(text: String, seconds: float = 1.4) -> void:
 
 	# Centre the bubble above this node once its size is known.
 	await get_tree().process_frame
+	if not is_instance_valid(panel):
+		return  # a newer line replaced this one in the meantime
 	panel.position = Vector2(-panel.size.x / 2.0, -panel.size.y)
 	panel.pivot_offset = Vector2(panel.size.x / 2.0, panel.size.y)
 	# Fade in while rising slightly, hold, then fade out (no popping).

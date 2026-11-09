@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3]
+[gd_scene load_steps=16 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/health_heart.gd" id="1_heart"]
 [ext_resource type="Script" path="res://scripts/ui/discovery_card.gd" id="2_card"]
@@ -13,6 +13,8 @@
 [ext_resource type="Script" path="res://scripts/ui/skill_tooltip.gd" id="11_tooltip"]
 [ext_resource type="SpriteFrames" path="res://scenes/ui/hud_trainer_frames.tres" id="12_frames"]
 [ext_resource type="PackedScene" path="res://scenes/companions/tonic_toss.tscn" id="13_tonic"]
+[ext_resource type="Script" path="res://scripts/ui/boss_health_bar.gd" id="14_boss_bar"]
+[ext_resource type="Script" path="res://scripts/ui/boss_defeated_banner.gd" id="15_boss_banner"]
 
 [node name="Hud" type="CanvasLayer"]
 
@@ -149,3 +151,23 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("2_card")
+
+[node name="BossHealthBar" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("14_boss_bar")
+
+[node name="DefeatedBanner" type="Control" parent="BossHealthBar"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("15_boss_banner")

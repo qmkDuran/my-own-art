@@ -1,0 +1,215 @@
+[gd_scene load_steps=25 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/warden_captain/warden_captain.gd" id="1_captain"]
+[ext_resource type="Script" path="res://scripts/animation/single_view_animator.gd" id="2_animator"]
+[ext_resource type="Script" path="res://scripts/components/health.gd" id="3_health"]
+[ext_resource type="Script" path="res://scripts/effects/hit_flash.gd" id="4_flash"]
+[ext_resource type="Script" path="res://scripts/effects/charge_particles.gd" id="5_charge"]
+[ext_resource type="Script" path="res://scripts/ui/speech_bubble.gd" id="6_speech"]
+[ext_resource type="Script" path="res://scripts/effects/screen_shake.gd" id="7_shake"]
+[ext_resource type="Script" path="res://scripts/components/light_drop.gd" id="8_drop"]
+[ext_resource type="PackedScene" path="res://scenes/pickups/light_mote.tscn" id="9_mote"]
+[ext_resource type="Script" path="res://scripts/enemies/handler_summoner.gd" id="10_summoner"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/toxic_toad/toxic_toad.tscn" id="11_toad"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/zephoot/zephoot.tscn" id="12_zephoot"]
+[ext_resource type="Script" path="res://scripts/enemies/warden_captain/captain_rod_sweep.gd" id="13_sweep"]
+[ext_resource type="Script" path="res://scripts/enemies/warden_captain/captain_shockwave_slam.gd" id="14_slam"]
+[ext_resource type="Script" path="res://scripts/enemies/warden_captain/captain_summon.gd" id="15_summon"]
+[ext_resource type="Script" path="res://scripts/enemies/warden_captain/captain_chip_pulse.gd" id="16_pulse"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/zephoot/gust_orb.tscn" id="17_orb"]
+[ext_resource type="PackedScene" path="res://scenes/effects/dust_puff.tscn" id="18_dust"]
+[ext_resource type="Script" path="res://scripts/enemies/warden_captain/captain_aura.gd" id="19_aura"]
+[ext_resource type="Script" path="res://scripts/enemies/warden_captain/captain_defeat.gd" id="20_defeat"]
+[ext_resource type="PackedScene" path="res://scenes/effects/shockwave.tscn" id="21_shockwave"]
+[ext_resource type="Script" path="res://scripts/enemies/warden_captain/captain_phase_two.gd" id="22_phase"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_body"]
+radius = 7.0
+
+[node name="WardenCaptain" type="CharacterBody2D" groups=["enemies"]]
+z_index = 1
+motion_mode = 1
+script = ExtResource("1_captain")
+
+[node name="Shadow" type="Polygon2D" parent="."]
+color = Color(0.0352941, 0.0392157, 0.0784314, 0.45)
+polygon = PackedVector2Array(-10, 0, -8, -2.5, 0, -3, 8, -2.5, 10, 0, 8, 2.5, 0, 3, -8, 2.5)
+
+[node name="Aura" type="Node2D" parent="."]
+script = ExtResource("19_aura")
+
+[node name="Sprite" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -17)
+script = ExtResource("2_animator")
+sheet_folder = "res://art/warden_captain"
+sheet_prefix = "warden_captain"
+frame_size = Vector2i(24, 34)
+animation_settings = {
+"defeated": {
+"frame_durations": [0.12, 0.08],
+"loops": true
+},
+"idle": {
+"frame_durations": [0.5, 0.5],
+"loops": true
+},
+"slam": {
+"frame_durations": [0.45, 0.45, 0.4],
+"loops": false
+},
+"stagger": {
+"frame_durations": [0.15, 0.15],
+"loops": true
+},
+"summon": {
+"frame_durations": [0.35, 0.45],
+"loops": false
+},
+"sweep": {
+"frame_durations": [0.5, 0.1, 0.3],
+"loops": false
+},
+"walk": {
+"frame_durations": [0.18, 0.18, 0.18, 0.18],
+"loops": true
+}
+}
+
+[node name="RodChargeRed" type="Node2D" parent="."]
+z_index = 1
+position = Vector2(10, -13)
+script = ExtResource("5_charge")
+
+[node name="RodChargeCyan" type="Node2D" parent="."]
+z_index = 1
+position = Vector2(9, -13)
+script = ExtResource("5_charge")
+colors = Array[Color]([Color(0.45098, 0.745098, 0.827451, 1), Color(0.643137, 0.866667, 0.858824, 1), Color(0.921569, 0.929412, 0.913725, 1)])
+
+[node name="CollisionShape" type="CollisionShape2D" parent="."]
+position = Vector2(0, -4)
+shape = SubResource("CircleShape2D_body")
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("3_health")
+max_health = 80
+
+[node name="HitFlash" type="Node" parent="." node_paths=PackedStringArray("sprite")]
+script = ExtResource("4_flash")
+sprite = NodePath("../Sprite")
+
+[node name="SpeechBubble" type="Node2D" parent="."]
+z_index = 3
+position = Vector2(0, -38)
+script = ExtResource("6_speech")
+
+[node name="PhaseTwo" type="Node" parent="." node_paths=PackedStringArray("health", "speech_bubble", "hit_flash", "aura")]
+script = ExtResource("22_phase")
+health = NodePath("../Health")
+speech_bubble = NodePath("../SpeechBubble")
+hit_flash = NodePath("../HitFlash")
+aura = NodePath("../Aura")
+
+[node name="ScreenShake" type="Node" parent="."]
+script = ExtResource("7_shake")
+
+[node name="LightDrop" type="Node" parent="."]
+script = ExtResource("8_drop")
+mote_scene = ExtResource("9_mote")
+mote_count = 30
+xp_per_mote = 4
+burst_offset = Vector2(0, -16)
+bursts_on_death = false
+
+[node name="ToadSummoner" type="Node" parent="."]
+script = ExtResource("10_summoner")
+creature_scene = ExtResource("11_toad")
+summon_interval = 11.0
+summon_when_alive_at_most = 0
+creatures_per_summon = 2
+max_creatures = 3
+summon_radius = Vector2(18, 40)
+
+[node name="ZephootSummoner" type="Node" parent="."]
+script = ExtResource("10_summoner")
+creature_scene = ExtResource("12_zephoot")
+summon_interval = 15.0
+summon_when_alive_at_most = 0
+creatures_per_summon = 1
+max_creatures = 1
+summon_radius = Vector2(30, 50)
+
+[node name="Sweep" type="Node2D" parent="." node_paths=PackedStringArray("hit_flash")]
+script = ExtResource("13_sweep")
+animation = "sweep"
+wind_up = 0.55
+follow_through = 0.3
+recovery_time = 0.7
+cooldown = 1.8
+first_use_delay = 0.5
+glint_color = Color(0.811765, 0.341176, 0.235294, 1)
+hit_flash = NodePath("../HitFlash")
+
+[node name="SummonToads" type="Node2D" parent="." node_paths=PackedStringArray("summoner", "speech_bubble", "charge_particles", "hit_flash")]
+script = ExtResource("15_summon")
+summoner = NodePath("../ToadSummoner")
+speech_bubble = NodePath("../SpeechBubble")
+charge_particles = NodePath("../RodChargeCyan")
+animation = "summon"
+wind_up = 0.6
+follow_through = 0.2
+recovery_time = 0.4
+cooldown = 2.0
+first_use_delay = 3.0
+hit_flash = NodePath("../HitFlash")
+
+[node name="SummonZephoot" type="Node2D" parent="." node_paths=PackedStringArray("summoner", "speech_bubble", "charge_particles", "hit_flash")]
+script = ExtResource("15_summon")
+summoner = NodePath("../ZephootSummoner")
+speech_bubble = NodePath("../SpeechBubble")
+charge_particles = NodePath("../RodChargeCyan")
+animation = "summon"
+wind_up = 0.6
+follow_through = 0.2
+recovery_time = 0.4
+cooldown = 2.0
+first_use_delay = 2.5
+phase_two_only = true
+hit_flash = NodePath("../HitFlash")
+
+[node name="Slam" type="Node2D" parent="." node_paths=PackedStringArray("charge_particles", "screen_shake", "hit_flash")]
+script = ExtResource("14_slam")
+charge_particles = NodePath("../RodChargeRed")
+screen_shake = NodePath("../ScreenShake")
+dust_scene = ExtResource("18_dust")
+animation = "slam"
+wind_up = 0.9
+follow_through = 0.3
+recovery_time = 1.3
+recovery_animation = "stagger"
+cooldown = 6.0
+first_use_delay = 2.0
+glint_color = Color(0.811765, 0.341176, 0.235294, 1)
+hit_flash = NodePath("../HitFlash")
+
+[node name="ChipPulse" type="Node2D" parent="." node_paths=PackedStringArray("charge_particles", "hit_flash")]
+script = ExtResource("16_pulse")
+orb_scene = ExtResource("17_orb")
+charge_particles = NodePath("../RodChargeCyan")
+animation = "summon"
+wind_up = 0.7
+follow_through = 0.25
+recovery_time = 0.6
+cooldown = 4.0
+first_use_delay = 1.5
+phase_two_only = true
+hit_flash = NodePath("../HitFlash")
+
+[node name="Defeat" type="Node" parent="." node_paths=PackedStringArray("sprite", "collision_shape", "light_drop", "aura", "screen_shake")]
+script = ExtResource("20_defeat")
+sprite = NodePath("../Sprite")
+collision_shape = NodePath("../CollisionShape")
+light_drop = NodePath("../LightDrop")
+aura = NodePath("../Aura")
+screen_shake = NodePath("../ScreenShake")
+shockwave_scene = ExtResource("21_shockwave")

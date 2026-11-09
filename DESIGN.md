@@ -58,10 +58,10 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
 
 ## Zones
 - **First zone: Ruins Edge** (`scenes/zones/ruins_edge/`), overgrown ruins at the edge of the AI God's territory. The game starts here; `scenes/main/main.tscn` stays as the test arena (enemies start paused there).
-- One winding path through hand-made areas: Start Glade (dummy, berries), Mossy Steps, Fallen Courtyard, Sunken Garden (+ optional Berry Hollow), Conduit Hall, Warden Gate, Final Arena (open, kept for a future mini-boss). Aim: ~4–5 minutes per early zone. Enemy density rises toward the end.
+- One winding path through hand-made areas: Start Glade (dummy, berries), Mossy Steps, Fallen Courtyard, Sunken Garden (+ optional Berry Hollow), Conduit Hall, Warden Gate, Final Arena (the Warden Captain's boss room). Aim: ~4–5 minutes per early zone. Enemy density rises toward the end.
 - Tiles are 16×16 from `art/tiles/ruins_edge_tileset.tres`: Ground, Decoration, and an Obstacles layer y-sorted with the creatures (`World` node). Dense forest walls the map in. Dead cyan conduits in the stone are the only tech hint; use them sparingly.
 - **Enemies wait until they notice you:** toads and Gruntites within ~7 tiles, Zephoots ~8, Wardens ~9 (their visors see Glimra light). Noticing (or being hit) alerts the rest of the pack; summoned toads come out already hunting. Noticing a species for the first time brings up its discovery card.
-- Zephoots stand behind the toad packs (Mossy Steps, Sunken Garden), Gruntites hold the open stone areas (Fallen Courtyard, Conduit Hall); the Final Arena has one of each. One `FutureEnemySpot` marker (under `Areas/FinalArena`) is kept for the mini-boss.
+- Zephoots stand behind the toad packs (Mossy Steps, Sunken Garden), Gruntites hold the open stone areas (Fallen Courtyard, Conduit Hall); one of each guards the approach to the Final Arena. The Final Arena holds only the Warden Captain (its old Warden + toad pack was removed; his summons and XP burst replace it). Walking in (`Areas/FinalArena/BossArena`) wakes him and closes two cyan energy gates behind you (`ArenaGate`); they open when he falls.
 - The HUD and game systems live in one shared scene (`scenes/game/game_layer.tscn`) that every level instances.
 
 ## Platform
@@ -111,6 +111,12 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
 - Vertical slice: 1 Handler + 1 bound creature type (simple: runs at you and bites).
 
 - **Zephoot** (wind, `art/zephoot/`): a puff-owl floating on a cloud, 2 jabs. Keeps ~70–110px away (backs off, drifts), then a 0.6s puff-up wind-up with a glint and one slow gust orb (~55px/s, 1 damage + small push; a dodge passes through). A shot every ~2.2s; slow to move right after one (the counterplay window). 4 XP, 10% berry.
+- **Warden Captain** (first mini-boss, Final Arena of Ruins Edge; `art/warden_captain/`, `scripts/enemies/warden_captain/`): an elite Warden, 24×34 front view: armoured navy coat, steel pauldrons with cyan trim, a hood with a steel crest and an antenna with the only red light, a wide cyan visor and a heavy halberd-rod. Elite aura: a slow cyan pulse at his feet and blinking data-pixels drifting up. **80 health** (~70-80 jabs at level 4-5 with crits, uppercuts and burn; ~60-90 s). He walks you down and picks an attack, each telegraphed with super armour while it winds up, then a punish window (a hit can stagger him, at most every 2 s):
+  - **Rod sweep** (≤34px): 0.55 s wind-up with a red wedge filling toward you, then a 140° swing (36px): 2 damage + shove. Dodge or step back.
+  - **Shockwave slam** (≤90px): 0.9 s overhead charge (red sparks; a faint ring shows the reach and the gap), then a red ring rolls out to 96px with a 55° gap placed away from you: 2 damage unless you stand in the gap or dodge-hop it. He's dazed 1.3 s after.
+  - **Summon:** 2 Toxlops (at most 3 out, a new wave only when none are left, every ~11 s); phase 2 adds one Zephoot (at most 1).
+  - **Phase 2 at half health:** "You're just stock!", red flash, busier aura; wind-ups and recoveries ×0.7, walks ×1.3; adds the **chip pulse**: 3 gust orbs in a spread (75px/s, 1 damage each).
+  - **Death:** he staggers, his visor flickers out, his chip shorts in a cyan spark burst and 30 motes ×4 XP (120 XP, about one level at 4-5) fly out; "WARDEN CAPTAIN DEFEATED" shows top-centre for 2 s. The **boss bar** (name + bar, half-health notch) sits top-centre while he lives and steps aside for discovery cards.
 - **Gruntite** (stone, `art/gruntite/`): a clay-rock boar, 5 jabs, health bar once hit. Plods slowly; from ~40–90px a 0.8s wind-up (red eyes, then head down with a hoof scrape and dust) and a straight 90px charge at 3× walk speed: 2 damage + a strong shove. A miss skids into a ~1s daze (the punish window); a wall stops it with a bonk. Super armour while winding up and charging. 8 XP.
 
 ### Creature #1 (player): Emberoo

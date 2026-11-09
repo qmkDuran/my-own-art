@@ -17,6 +17,12 @@
 [ext_resource type="Script" path="res://scripts/debug/debug_controls.gd" id="15_3skcb"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/zephoot/zephoot.tscn" id="16_zeph"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/gruntite/gruntite.tscn" id="17_grun"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/warden_captain/warden_captain.tscn" id="18_captain"]
+[ext_resource type="Script" path="res://scripts/world/boss_arena.gd" id="19_arena"]
+[ext_resource type="Script" path="res://scripts/world/arena_gate.gd" id="20_gate"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_arena"]
+size = Vector2(384, 256)
 
 [node name="RuinsEdge" type="Node2D" unique_id=348360192]
 
@@ -275,61 +281,6 @@ motion_mode = 1
 script = ExtResource("9_rhgum")
 portrait = ExtResource("10_k2t23")
 
-[node name="FinalArenaWarden1" type="CharacterBody2D" parent="World" unique_id=1527293609 groups=["enemies"] instance=ExtResource("11_ugfhl")]
-z_index = 1
-position = Vector2(1432, 984)
-motion_mode = 1
-script = ExtResource("12_lnaqi")
-
-[node name="FinalArenaWarden2" type="CharacterBody2D" parent="World" unique_id=449126709 groups=["enemies"] instance=ExtResource("11_ugfhl")]
-z_index = 1
-position = Vector2(1592, 984)
-motion_mode = 1
-script = ExtResource("12_lnaqi")
-first_summon_delay = 2.5
-
-[node name="FinalArenaToad1" type="CharacterBody2D" parent="World" unique_id=328457036 groups=["enemies"] instance=ExtResource("8_0ktw3")]
-z_index = 1
-position = Vector2(1478, 912)
-motion_mode = 1
-script = ExtResource("9_rhgum")
-portrait = ExtResource("10_k2t23")
-
-[node name="FinalArenaToad2" type="CharacterBody2D" parent="World" unique_id=1635931761 groups=["enemies"] instance=ExtResource("8_0ktw3")]
-z_index = 1
-position = Vector2(1444, 916)
-motion_mode = 1
-script = ExtResource("9_rhgum")
-portrait = ExtResource("10_k2t23")
-
-[node name="FinalArenaToad3" type="CharacterBody2D" parent="World" unique_id=1444106624 groups=["enemies"] instance=ExtResource("8_0ktw3")]
-z_index = 1
-position = Vector2(1462, 884)
-motion_mode = 1
-script = ExtResource("9_rhgum")
-portrait = ExtResource("10_k2t23")
-
-[node name="FinalArenaToad4" type="CharacterBody2D" parent="World" unique_id=570842368 groups=["enemies"] instance=ExtResource("8_0ktw3")]
-z_index = 1
-position = Vector2(1574, 928)
-motion_mode = 1
-script = ExtResource("9_rhgum")
-portrait = ExtResource("10_k2t23")
-
-[node name="FinalArenaToad5" type="CharacterBody2D" parent="World" unique_id=899812030 groups=["enemies"] instance=ExtResource("8_0ktw3")]
-z_index = 1
-position = Vector2(1540, 932)
-motion_mode = 1
-script = ExtResource("9_rhgum")
-portrait = ExtResource("10_k2t23")
-
-[node name="FinalArenaToad6" type="CharacterBody2D" parent="World" unique_id=1397276045 groups=["enemies"] instance=ExtResource("8_0ktw3")]
-z_index = 1
-position = Vector2(1558, 900)
-motion_mode = 1
-script = ExtResource("9_rhgum")
-portrait = ExtResource("10_k2t23")
-
 [node name="MossyStepsZephoot1" type="CharacterBody2D" parent="World" unique_id=758618299 groups=["enemies"] instance=ExtResource("16_zeph")]
 position = Vector2(216, 504)
 
@@ -343,10 +294,24 @@ position = Vector2(728, 744)
 position = Vector2(1272, 280)
 
 [node name="FinalArenaGruntite1" type="CharacterBody2D" parent="World" unique_id=1359937302 groups=["enemies"] instance=ExtResource("17_grun")]
-position = Vector2(1416, 920)
+position = Vector2(1320, 760)
 
 [node name="FinalArenaZephoot1" type="CharacterBody2D" parent="World" unique_id=812946852 groups=["enemies"] instance=ExtResource("16_zeph")]
-position = Vector2(1608, 920)
+position = Vector2(1440, 776)
+
+[node name="FinalArenaWardenCaptain" type="CharacterBody2D" parent="World" unique_id=1846201733 groups=["enemies"] instance=ExtResource("18_captain")]
+position = Vector2(1512, 968)
+
+[node name="FinalArenaGateWest" type="StaticBody2D" parent="World" unique_id=1846201734]
+z_index = 1
+position = Vector2(1376, 826)
+script = ExtResource("20_gate")
+
+[node name="FinalArenaGateMain" type="StaticBody2D" parent="World" unique_id=1846201735]
+z_index = 1
+position = Vector2(1512, 826)
+script = ExtResource("20_gate")
+width = 80.0
 
 [node name="Areas" type="Node2D" parent="." unique_id=837474602]
 
@@ -371,9 +336,14 @@ position = Vector2(1376, 672)
 [node name="FinalArena" type="Node2D" parent="Areas" unique_id=1173766368]
 position = Vector2(1504, 944)
 
-[node name="FutureEnemySpot" type="Marker2D" parent="Areas/FinalArena" unique_id=1210105174 groups=["future_enemy_spots"]]
-position = Vector2(8, 24)
-metadata/note = "mini-boss"
+[node name="BossArena" type="Area2D" parent="Areas/FinalArena" unique_id=1846201736 node_paths=PackedStringArray("boss", "gates")]
+script = ExtResource("19_arena")
+boss = NodePath("../../../World/FinalArenaWardenCaptain")
+gates = [NodePath("../../../World/FinalArenaGateWest"), NodePath("../../../World/FinalArenaGateMain")]
+
+[node name="Floor" type="CollisionShape2D" parent="Areas/FinalArena/BossArena" unique_id=1846201737]
+position = Vector2(-16, 32)
+shape = SubResource("RectangleShape2D_arena")
 
 [node name="BerryHollow" type="Node2D" parent="Areas" unique_id=303252639]
 position = Vector2(512, 848)
