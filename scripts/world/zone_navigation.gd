@@ -42,6 +42,9 @@ func rebake() -> void:
 
 
 func _start_bake() -> void:
+	# A deferred request can land after the zone has left the tree (e.g. it was swapped out).
+	if not is_inside_tree():
+		return
 	if is_baking():
 		_wants_another_bake = true
 		return

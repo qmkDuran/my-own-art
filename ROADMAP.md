@@ -26,7 +26,9 @@ Goal: one fun zone (Ruins Edge, about 5 min) with real art, a full Stage 1 build
 | Hub: Hometown (town tileset, NPCs with dialogue, Tinkerer gives the Link Rod: C gated until then) | ✅ first pass |
 | Zone 2 Mirelight Fen (own tileset, loop, 3 pockets, shard, Dredge Foreman mini-event) | ✅ first pass |
 | Zone 3 Shockwire Quarry (own tileset, loop, 2 pockets, shard, Bull Pit with a placeholder boss) | ✅ first pass |
-| Real mid-act boss for the Bull Pit (replaces the elite-Gruntite "Quarry Bull") | ⬜ |
+| Zone 4 Frostveil Pass (own tileset, loop, 3 pockets, shard: +1 Aid charge, Ice Cutters mini-event, snow drift) | ✅ first pass |
+| Zone 5 Galebloom Orchard (own tileset, loop, 2 pockets, Blossom Court boss arena with the Shalendrill, petal drift) | ✅ first pass |
+| Real mid-act boss: the Shalendrill (2 phases, barrage/quake slam/leap, Rockfall + Fizzbugs in phase 2, test arena); for the end of zone 5 | ✅ first pass |
 | Trainer final design (waiting on user references) | ⬜ |
 | Music and sound (waiting on user's packs) | ⬜ |
 
@@ -41,6 +43,10 @@ Goal: one fun zone (Ruins Edge, about 5 min) with real art, a full Stage 1 build
 - 2026-11-09: zones 2 (Mirelight Fen) and 3 (Shockwire Quarry) built from scratch with their own tilesets (see DESIGN.md, Zones). Next for them: playtest the timing and XP (target level ~9 after the quarry), a real mid-act boss, zone 4.
 
 - 2026-11-09: the arrival and the hub are in: a new game lands in the Hometown Outskirts mid-raid, then the hub (Hometown) with the Tinkerer, Elder Bram, Pip, the gate guard and a merchant; zones link through ZoneExit/ZoneEntry (Outskirts ↔ Hometown ↔ Ruins Edge ↔ zone 2). Next for them: the intro (home world and the portal) before the outskirts, more hub life (the trainer shown in town, shops?), sound.
+
+- 2026-11-09: the mid-act boss is built: the **Shalendrill** (see DESIGN.md, Enemies), with its own test arena. Next: place it in zone 5's boss arena (it replaces the placeholder `Boss` node), playtest the 60–120 s target by hand, a portrait for its discovery card.
+
+- 2026-11-09: zones 4 (Frostveil Pass) and 5 (Galebloom Orchard) built (see DESIGN.md, Zones); quarry → pass → orchard travel works both ways. The Shalendrill now stands in the Blossom Court. Next for them: playtest timing and XP by hand (level 11 at the boss door).
 
 ## Later milestones (rough)
 2. Act 1 (demo, about 1-1.5h): more zones, a hub town with NPCs, a light story

@@ -25,6 +25,12 @@ const ZONE_LIMIT := 24
 @export var max_creatures: int = 5
 ## How far from him new creatures appear, in pixels (min, max).
 @export var summon_radius: Vector2 = Vector2(14, 36)
+## Only spots he can see (no wall between): a summoner near a wall then never drops its
+## creatures on the far side (used by the Shalendrill; off keeps the old behaviour).
+@export var spawn_in_sight: bool = false
+
+## Random spots tried for one in sight before settling for one at his feet.
+const SPOT_TRIES := 8
 
 var _seconds_until_summon: float = 0.0
 ## Untyped on purpose: it can briefly hold creatures that have already been freed.
@@ -95,6 +101,16 @@ func _spawn_creatures() -> void:
 
 
 func _random_spot_nearby() -> Vector2:
+	if not spawn_in_sight:
+		return _random_offset()
+	for attempt in SPOT_TRIES:
+		var offset := _random_offset()
+		if LineOfSight.is_clear(handler, handler.global_position, handler.global_position + offset):
+			return offset
+	return Vector2.ZERO
+
+
+func _random_offset() -> Vector2:
 	var angle := randf() * TAU
 	var distance := randf_range(summon_radius.x, summon_radius.y)
 	return Vector2.from_angle(angle) * distance

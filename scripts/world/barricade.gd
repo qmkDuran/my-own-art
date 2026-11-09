@@ -30,6 +30,8 @@ func _ready() -> void:
 	_collision.shape = shape
 	_collision.position = Vector2(0, -footprint.y / 2.0)
 	add_child(_collision)
+	# The zone's navmesh was baked before this joined the obstacles: carve it out now.
+	get_tree().call_group(ZoneNavigation.GROUP, "rebake")
 
 
 ## Clears the way: at once (`instantly`, e.g. on a later visit) or with the shake and fade.
