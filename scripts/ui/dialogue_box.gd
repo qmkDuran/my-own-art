@@ -16,7 +16,7 @@ const GROUP := "dialogue_box"
 const ADVANCE_ACTIONS: Array[String] = ["trainer_aid", "skill_3", "dodge", "ui_accept"]
 ## Card pixels (twice the game's) for the line's width.
 const LINE_WIDTH := 500.0
-## The portrait is the 16×24 sprite at 3 card pixels per sprite pixel (1.5 game pixels).
+## The portrait is the 16×26 sprite at 3 card pixels per sprite pixel (1.5 game pixels).
 const PORTRAIT_SCALE := 3.0
 const PORTRAIT_GAP := 10
 ## Gap between the card's bottom and the screen's bottom, in game pixels (clears the HUD's bottom cluster).
@@ -57,7 +57,7 @@ func _exit_tree() -> void:
 		get_tree().paused = false
 
 
-## Shows `lines` said by `speaker` (with `portrait`, a 16×24 texture, if given). Await `finished`.
+## Shows `lines` said by `speaker` (with `portrait`, a 16×26 texture, if given). Await `finished`.
 func play(speaker: String, lines: PackedStringArray, portrait: Texture2D = null) -> void:
 	if is_open or lines.is_empty():
 		finished.emit.call_deferred()
@@ -141,7 +141,7 @@ func _build_card() -> void:
 	_portrait = TextureRect.new()
 	_portrait.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	_portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	_portrait.custom_minimum_size = Vector2(16, 24) * PORTRAIT_SCALE
+	_portrait.custom_minimum_size = Vector2(16, 26) * PORTRAIT_SCALE
 	_portrait.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	row.add_child(_portrait)
 	var words := VBoxContainer.new()

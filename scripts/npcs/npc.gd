@@ -5,10 +5,10 @@ extends StaticBody2D
 ## second Dialogue can take over once its flag is set (e.g. after the Tinkerer hands over
 ## the rod she says something new).
 ##
-## The sprite is a 16×24 sheet with a 2-frame idle (the second frame is the breath); the
+## The sprite is a 16×26 sheet with a 2-frame idle (the second frame is the breath); the
 ## node's origin is at the feet. They block the way like a crate and never fight.
 
-const FRAME_SIZE := Vector2i(16, 24)
+const FRAME_SIZE := Vector2i(16, 26)
 ## Seconds per idle frame: the normal pose holds, the breath is short.
 const POSE_SECONDS := 0.9
 const BREATH_SECONDS := 0.35
@@ -18,7 +18,7 @@ const FEET_SIZE := Vector2(10, 5)
 const SHADOW_RADIUS := Vector2(6, 2)
 
 @export var display_name: String = ""
-## The 32×24 idle sheet (two 16×24 frames).
+## The 32×26 idle sheet (two 16×26 frames).
 @export var sprite_sheet: Texture2D
 @export var dialogue: Dialogue
 ## Said instead of `dialogue` once `later_flag` is set (e.g. the Tinkerer's own flag).
