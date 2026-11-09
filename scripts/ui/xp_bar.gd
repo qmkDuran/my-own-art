@@ -69,7 +69,7 @@ func _draw() -> void:
 	var bar := Rect2(bar_left, BAR_TOP, BAR_LENGTH, 1)
 	PixelShape.draw_drop_shadow(self, bar.grow(1.0))
 	PixelShape.draw_rounded_outline(self, bar.grow(1.0), ApolloPalette.OUTLINE)
-	draw_rect(bar, ApolloPalette.SLATE)
+	draw_rect(bar, HudPalette.BAR_TROUGH)
 	var leading := roundi(BAR_LENGTH * _share_to_next_level())
 	var filled := roundi(BAR_LENGTH * _shown_share)
 	if leading > filled:

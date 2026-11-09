@@ -1,7 +1,8 @@
 class_name LinkRodPalette
 extends RefCounted
-## The Link Rod screen's colour roles, from ApolloPalette. It shares the Ember Tree's warm
-## cards and text (EmberTreePalette) and adds the Wardens' cyan for everything chip.
+## The Link Rod screen's colour roles, from ApolloPalette. It shares the Ember Tree's stone
+## cards, ember highlights and text (EmberTreePalette) and adds the Wardens' cyan for
+## everything chip.
 
 const CHIP := ApolloPalette.SKY
 const CHIP_LIGHT := ApolloPalette.SKY_LIGHT
@@ -12,6 +13,8 @@ const LOCKED := ApolloPalette.STONE_LIGHT
 ## The page behind the cards. Opaque: while the screen is open the paused game behind it
 ## is drawn at the screen's 2× canvas (smaller, off-centre), which must not show through.
 const BACKDROP := ApolloPalette.OUTLINE
-## A selected chip's button edge (lit and shaded sides of its bevel).
-const SELECTED_EDGE := ApolloPalette.SKY
-const SELECTED_EDGE_DARK := ApolloPalette.BLUE_DEEP
+## A selected chip's button: lit by the ember like every selected thing (EmberTreePalette),
+## its fill and bevel (lit and shaded sides).
+const SELECTED_FILL := EmberTreePalette.HOT_FILL
+const SELECTED_EDGE := EmberTreePalette.HOT_EDGE
+const SELECTED_EDGE_DARK := EmberTreePalette.HOT_EDGE_DARK

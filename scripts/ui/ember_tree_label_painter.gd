@@ -71,7 +71,7 @@ func _draw_text_along_ring(canvas: CanvasItem, text: String, radius: float, midd
 
 func _make_label_pill(color: Color) -> StyleBoxFlat:
 	var pill := StyleBoxFlat.new()
-	pill.bg_color = Color(EmberTreePalette.EMBER_DARK, 0.9)
+	pill.bg_color = Color(EmberTreePalette.PANEL, 0.9)
 	pill.border_color = Color(color, 0.7)
 	pill.set_border_width_all(2)
 	pill.set_corner_radius_all(6)

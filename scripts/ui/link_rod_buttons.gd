@@ -1,7 +1,7 @@
 class_name LinkRodButtons
 extends RefCounted
-## The Link Rod screen's buttons, built on the Ember Tree's warm buttons: full-width row
-## buttons for chips and slots (a cyan edge marks the selected one), and small hack buttons.
+## The Link Rod screen's buttons, built on the Ember Tree's buttons: full-width row buttons
+## for chips and slots (the selected one is lit by the ember), and small hack buttons.
 
 const ROW_HEIGHT := 24
 ## Room beside a small button's text, its frame (PixelPanelStyle, 4 canvas pixels) included.
@@ -34,11 +34,11 @@ static func make_small_button(text: String) -> Button:
 	return button
 
 
-## Gives the button a cyan edge while it is the selected chip, the usual warm one otherwise.
+## Lights the button with the ember while it is the selected chip; the usual stone otherwise.
 static func mark_selected(button: Button, is_selected: bool) -> void:
 	var style := button.get_theme_stylebox("normal").duplicate() as PixelPanelStyle
 	style.border_color = LinkRodPalette.SELECTED_EDGE if is_selected else EmberTreePalette.BUTTON_EDGE
 	style.border_dark_color = LinkRodPalette.SELECTED_EDGE_DARK if is_selected else EmberTreePalette.BUTTON_EDGE_DARK
-	style.bg_color = EmberTreePalette.DEEP if is_selected else EmberTreePalette.EMBER_DARK
+	style.bg_color = LinkRodPalette.SELECTED_FILL if is_selected else EmberTreePalette.BUTTON_FILL
 	button.add_theme_stylebox_override("normal", style)
 	button.add_theme_stylebox_override("disabled", style if is_selected else button.get_theme_stylebox("disabled"))

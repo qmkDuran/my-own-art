@@ -124,10 +124,10 @@ static func draw_map(canvas: CanvasItem, rows: Array, colors: Dictionary, top_le
 ## it. Used by the skill slots and the minimap.
 static func draw_stone_frame(canvas: CanvasItem, side: int) -> void:
 	draw_drop_shadow(canvas, Rect2(-1, -1, side + 2, side + 2))
-	draw_rounded_outline(canvas, Rect2(-1, -1, side + 2, side + 2), ApolloPalette.OUTLINE)
-	canvas.draw_rect(Rect2(0, 0, side, side), ApolloPalette.SLATE)
-	canvas.draw_rect(Rect2(0, 0, side - 1, side - 1), ApolloPalette.STONE_LIGHT)
-	canvas.draw_rect(Rect2(1, 1, side - 2, side - 2), ApolloPalette.OUTLINE)
+	draw_rounded_outline(canvas, Rect2(-1, -1, side + 2, side + 2), HudPalette.FRAME_OUTLINE)
+	canvas.draw_rect(Rect2(0, 0, side, side), HudPalette.FRAME_SHADE)
+	canvas.draw_rect(Rect2(0, 0, side - 1, side - 1), HudPalette.FRAME_LIT)
+	canvas.draw_rect(Rect2(1, 1, side - 2, side - 2), HudPalette.FRAME_OUTLINE)
 
 
 ## A rectangle in `color` without its four corner pixels (a one-step rounded corner).

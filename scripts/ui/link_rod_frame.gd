@@ -69,7 +69,7 @@ func _add_bar(is_top: bool) -> ColorRect:
 	else:
 		bar.offset_top = -FOOTER_HEIGHT
 	var line := ColorRect.new()
-	line.color = Color(EmberTreePalette.ORANGE, 0.25)
+	line.color = EmberTreePalette.DIVIDER
 	line.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	bar.add_child(line)
 	line.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE if is_top else Control.PRESET_TOP_WIDE, Control.PRESET_MODE_MINSIZE)

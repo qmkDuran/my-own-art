@@ -18,8 +18,6 @@ const HIT_MARGIN := 2.0
 const LEARN_POP_SCALE := 1.5
 ## How quickly hover and pop sizes ease back (higher = snappier).
 const EASE_RATE := 14.0
-const EMBEROO_SCALE := 4.0
-const EMBEROO_IDLE_SHEET := "res://art/emberoo/emberoo_front_idle_sheet.png"
 
 var hovered_id: String = ""
 ## The branch whose name is pointed at, or "" for none.
@@ -31,8 +29,6 @@ var _hover_scale: Dictionary[String, float] = {}
 var _shown_learned: Dictionary[String, bool] = {}
 var _time: float = 0.0
 var _label_painter: EmberTreeLabelPainter
-## Emberoo in the middle of the tree, recoloured when his Awakening stage changes.
-var _emberoo_sprite: AnimatedSprite2D
 
 
 func _ready() -> void:
@@ -80,23 +76,9 @@ func _place_nodes() -> void:
 		_hover_scale[node.id] = 1.0
 
 
-## Emberoo's live idle animation in the middle of the tree, in his Awakened look.
+## Emberoo's portrait for his Awakening stage, in the middle of the tree.
 func _add_emberoo() -> void:
-	var sprite := AnimatedSprite2D.new()
-	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	sprite.sprite_frames = SpriteFrames.new()
-	sprite.sprite_frames.remove_animation("default")
-	var settings: Dictionary = CreatureAnimator.ANIMATION_SETTINGS["idle"]
-	var sheet: Texture2D = load(EMBEROO_IDLE_SHEET)
-	SpriteSheetLoader.add_animation(sprite.sprite_frames, "idle", sheet, settings["frame_durations"], true, CreatureAnimator.FRAME_SIZE)
-	sprite.scale = Vector2.ONE * EMBEROO_SCALE
-	EmberooFlameMarker.mark_frames(sprite.sprite_frames)
-	AwakeningPalette.apply(sprite, Awakening.stage)
-	_emberoo_sprite = sprite
-	# A method (not a lambda) so Godot drops the connection when this canvas is freed.
-	Awakening.stage_changed.connect(_on_awakening_stage_changed)
-	add_child(sprite)
-	sprite.play("idle")
+	add_child(EmberTreePortrait.new())
 
 
 # --- Reacting to learning -----------------------------------------------------
@@ -145,26 +127,26 @@ func _draw_node(node: EmberTreeNode) -> void:
 	EmberTreeNodePainter.draw_node(self, node, _positions[node.id], _hover_scale[node.id], _time, _highlight_for(node.id))
 
 
-## One ring per tier: solid and warm where the stage is open, dashed and cold where it isn't.
+## One ring per tier: solid where the stage is open, dashed and fainter where it isn't.
 func _draw_rings() -> void:
 	var radii := EmberTreeLayout.TIER_RADII
 	for tier in radii.size():
 		var radius := radii[tier]
 		if EmberTree.is_stage_open(EmberTreeLayout.stage_of_tier(tier)):
-			draw_arc(Vector2.ZERO, radius, 0.0, TAU, 128, Color(EmberTreePalette.RED, 0.25), 1.5)
+			draw_arc(Vector2.ZERO, radius, 0.0, TAU, 128, EmberTreePalette.RING_OPEN, 1.5)
 			continue
 		var dashes := 64
 		for dash in dashes:
 			var start := TAU * dash / dashes
-			draw_arc(Vector2.ZERO, radius, start, start + TAU / dashes * 0.45, 4, Color(EmberTreePalette.DIM, 0.7), 1.5)
+			draw_arc(Vector2.ZERO, radius, start, start + TAU / dashes * 0.45, 4, EmberTreePalette.RING_SEALED, 1.5)
 
 
 func _draw_centre() -> void:
 	var radius := EmberTreeLayout.CENTRE_RADIUS
-	draw_circle(Vector2.ZERO, radius, EmberTreePalette.BACKGROUND)
-	draw_arc(Vector2.ZERO, radius, 0.0, TAU, 96, EmberTreePalette.RED, 2.5)
+	draw_circle(Vector2.ZERO, radius, EmberTreePalette.MEDALLION_FILL)
+	draw_arc(Vector2.ZERO, radius, 0.0, TAU, 96, EmberTreePalette.MEDALLION_EDGE, 2.5)
 	var pulse := 0.5 + 0.5 * sin(_time * 2.0)
-	draw_arc(Vector2.ZERO, radius + 6.0 + pulse * 3.0, 0.0, TAU, 96, Color(EmberTreePalette.ORANGE, 0.2 + 0.2 * pulse), 1.5)
+	draw_arc(Vector2.ZERO, radius + 6.0 + pulse * 3.0, 0.0, TAU, 96, Color(EmberTreePalette.MEDALLION_GLOW, 0.2 + 0.2 * pulse), 1.5)
 
 
 # --- Helpers -------------------------------------------------------------------
@@ -188,8 +170,3 @@ func _is_in_hovered_branch(id: String) -> bool:
 
 func _hovered_branch_color() -> Color:
 	return EmberTreePalette.BRANCH_COLORS[hovered_branch]
-
-
-func _on_awakening_stage_changed(stage: int) -> void:
-	if is_instance_valid(_emberoo_sprite):
-		AwakeningPalette.apply(_emberoo_sprite, stage)

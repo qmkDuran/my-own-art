@@ -1,21 +1,32 @@
 class_name FireTrail
 extends Node2D
-## A line of small fires on the ground (Ember Hop's dodge trail): each patch flickers for
+## A line of fires on the ground (Ember Hop's dodge trail): each patch flickers for
 ## `patch_lifetime` seconds, then gutters out. Enemies whose feet touch a burning patch
-## start Burning (refreshed while they stand in it).
+## start Burning (refreshed while they stand in it). When the hop stops laying fire, a
+## ring of fire bursts out where it landed (EmberHopLanding).
 ##
-## Drawn in code, pixel by pixel, on the world grid. Lay patches with `lay_patch_at`; the
-## trail removes itself once its last patch has gone out.
+## Drawn in code, pixel by pixel, on the world grid: fresh flames have a white-hot core,
+## older ones cool to red and sink to their base. Sized for the ~46 px hero. Lay patches
+## with `lay_patch_at`; the trail removes itself once its last patch has gone out.
 
-## Pixels each patch covers, around its centre (a small flame shape, taller than wide).
-const PATCH_PIXELS: Array[Vector2i] = [
-	Vector2i(-1, 0), Vector2i(0, 0), Vector2i(1, 0), Vector2i(-2, 0), Vector2i(2, 0),
-	Vector2i(-1, -1), Vector2i(0, -1), Vector2i(1, -1), Vector2i(0, -2),
+## Each patch's flame, from its foot ('#' a pixel, '.' empty), centred on the foot's middle.
+const PATCH_ROWS: Array[String] = [
+	"...#...",
+	"..##...",
+	"..###..",
+	".####..",
+	".#####.",
+	"#######",
+	"#######",
 ]
-## How many of PATCH_PIXELS (the base row) an old patch keeps once it starts dying down.
-const BASE_ROW_PIXELS := 5
-## Share of a patch's life after which it dies down to its base row.
+## A patch's lowest rows, all an old patch keeps once it starts dying down.
+const BASE_ROWS := 2
+## Share of a patch's life after which it dies down to its base rows.
 const DIE_DOWN_SHARE := 0.6
+## Physics frames without a new patch after which the hop counts as landed.
+const LANDED_AFTER_FRAMES := 2
+## On the ground layer (z 0, drawn after it) and under the creatures (z 1).
+const GROUND_Z_INDEX := 0
 ## Times per second the flames pick new colours.
 const FLICKER_RATE := 12.0
 ## Group whose members the fire can burn (each needs a child node named "Health").
@@ -27,22 +38,31 @@ var burn_duration: float = 2.0
 var touch_radius: float = 6.0
 var patch_spacing: float = 5.0
 
+## Hottest to coolest: Emberoo's burst colours when this started (see EmberooFlameColors).
+var _fire_colors: Array[Color] = EmberooFlameColors.burst_ramp()
 ## Where each patch is (global, on the pixel grid) and how long it has burned.
-## Hottest to coolest: Emberoo's fire colours when this started (see EmberooFlameColors).
-var _fire_colors: Array[Color] = EmberooFlameColors.fire_ramp()
 var _patch_positions := PackedVector2Array()
 var _patch_ages := PackedFloat32Array()
 var _elapsed: float = 0.0
+## The flame's pixels (offsets from the foot) and how deep inside the flame each one is.
+var _flame_pixels: Array[Vector2i] = []
+var _flame_depths := PackedInt32Array()
+## The last place and physics frame a patch was asked for; -1 once it has landed.
+var _last_lay_position: Vector2 = Vector2.ZERO
+var _last_lay_frame: int = -1
 
 
 func _ready() -> void:
 	# Flat on the ground, under the creatures that walk through it.
-	z_index = -1
+	z_index = GROUND_Z_INDEX
 	global_position = Vector2.ZERO
+	_build_flame()
 
 
 ## Adds a patch at `ground_position`, unless the last one is closer than `patch_spacing`.
 func lay_patch_at(ground_position: Vector2) -> void:
+	_last_lay_position = ground_position
+	_last_lay_frame = Engine.get_physics_frames()
 	var cell := ground_position.round()
 	var count := _patch_positions.size()
 	if count > 0 and _patch_positions[count - 1].distance_to(cell) < patch_spacing:
@@ -53,6 +73,9 @@ func lay_patch_at(ground_position: Vector2) -> void:
 
 func _physics_process(delta: float) -> void:
 	_elapsed += delta
+	if _last_lay_frame >= 0 and Engine.get_physics_frames() - _last_lay_frame >= LANDED_AFTER_FRAMES:
+		_last_lay_frame = -1
+		EmberHopLanding.spawn(get_parent(), _last_lay_position)
 	for index in _patch_ages.size():
 		_patch_ages[index] += delta
 	if not _patch_ages.is_empty() and _patch_ages[_patch_ages.size() - 1] >= patch_lifetime:
@@ -77,15 +100,29 @@ func _is_touching_fire(feet: Vector2) -> bool:
 
 func _draw() -> void:
 	var flicker_step := floori(_elapsed * FLICKER_RATE)
+	var lowest_base_row := 1 - BASE_ROWS
 	for index in _patch_positions.size():
 		var age_share := _patch_ages[index] / patch_lifetime
 		if age_share >= 1.0:
 			continue
-		# Older patches shrink to their base row and cool toward red.
-		var shown_pixels := PATCH_PIXELS.size() if age_share < DIE_DOWN_SHARE else BASE_ROW_PIXELS
-		for pixel_index in shown_pixels:
-			var noise := float(absi(hash(Vector3i(index, pixel_index, flicker_step))) % 100) / 100.0
-			# Half from age, half from flicker: fresh patches are gold and orange, old ones red.
-			var heat_lost := clampf((age_share + noise) / 2.0, 0.0, 0.999)
-			var color := _fire_colors[floori(heat_lost * _fire_colors.size())]
-			draw_rect(Rect2(_patch_positions[index] + Vector2(PATCH_PIXELS[pixel_index]), Vector2.ONE), color)
+		var is_dying_down := age_share >= DIE_DOWN_SHARE
+		for pixel_index in _flame_pixels.size():
+			var pixel := _flame_pixels[pixel_index]
+			# Older patches sink to their base rows.
+			if is_dying_down and pixel.y < lowest_base_row:
+				continue
+			var noise := FxPixels.noise(index, pixel_index, flicker_step)
+			# From age, flicker and depth: fresh cores are white-hot, old edges red.
+			var core_heat := minf(1.0, _flame_depths[pixel_index] / 2.0)
+			var heat_lost := clampf(age_share * 0.6 + noise * 0.4 + 0.3 - core_heat * 0.3, 0.0, 0.999)
+			draw_rect(Rect2(_patch_positions[index] + Vector2(pixel), Vector2.ONE), FxPixels.ramp_color(_fire_colors, heat_lost))
+
+
+## Reads PATCH_ROWS into pixel offsets from the flame's foot, with each pixel's depth.
+func _build_flame() -> void:
+	var shape := PixelShape.from_rows(PATCH_ROWS)
+	var depths := PixelShape.depths(shape)
+	var foot := Vector2i(floori(PATCH_ROWS[0].length() / 2.0), PATCH_ROWS.size() - 1)
+	for pixel: Vector2i in shape:
+		_flame_pixels.append(pixel - foot)
+		_flame_depths.append(depths[pixel])

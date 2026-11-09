@@ -3,12 +3,13 @@ extends PixelFire
 ## A swirling ring of fire bursting out all around the attacker (the Spinning Hook), see
 ## PixelFire.
 ##
-## The ring snaps outward to full size while a hot streak races round it the way the
+## The ring snaps outward to full size while a white-hot streak races round it the way the
 ## attacker turns (down, right, up, left); behind the streak the fire cools, then the ring
-## breaks up into flickering pixels.
+## breaks up into flickering pixels. It is drawn HeroFxScale.SKILL_SIZE_SCALE times the
+## radius it is given (sized for the bigger hero).
 
 ## Where the ring's outer edge starts, as a share of the radius, before snapping out to full size.
-const START_SIZE := 0.55
+const START_SIZE := 0.7
 ## Share of the ring's life spent growing to full size, and the easing of that growth.
 const GROW_SHARE := 0.35
 const GROW_EASING := 0.4
@@ -29,7 +30,7 @@ const MIN_BAND := 0.05
 const RING_Z_INDEX := 2
 ## Embers: how hard they're flung (pixels per second) and how far out round the ring they start.
 const EMBER_EXPLOSIVENESS := 0.9
-const EMBER_SPEED := Vector2(15.0, 40.0)
+const EMBER_SPEED := Vector2(30.0, 80.0)
 const EMBER_START_SHARE := 0.85
 
 ## Each cell's angle around the centre (matching PixelFire's cells).
@@ -40,11 +41,20 @@ var _inner: float = 0.0
 var _streak_angle: float = 0.0
 
 
-## Bursts the ring out to `radius` pixels around this node's position.
+func _init() -> void:
+	duration = 0.3
+	ember_count = 20
+	ember_lifetime = 0.5
+
+
+## Bursts the ring out to `radius` pixels (times HeroFxScale.SKILL_SIZE_SCALE) around this
+## node's position.
 func play(radius: float) -> void:
+	var drawn_radius := radius * HeroFxScale.SKILL_SIZE_SCALE
 	z_index = RING_Z_INDEX
-	_collect_cells(radius)
-	_spawn_embers(radius)
+	_collect_cells(drawn_radius)
+	_add_glow(drawn_radius)
+	_spawn_embers(drawn_radius)
 	_free_when_done()
 
 
@@ -62,7 +72,7 @@ func _color_index_at(index: int, progress: float) -> int:
 	# The streak turns toward smaller angles, so pixels it has passed have larger ones.
 	var behind_streak := fposmod(_cell_angles[index] - _streak_angle, TAU) / TAU
 	var inward := (_outer - distance) / maxf(_outer - _inner, MIN_BAND)
-	return _color_index_for_heat_lost(behind_streak * COOLING_BEHIND_STREAK + progress * COOLING_OVER_TIME + inward * COOLING_INWARD)
+	return _flickering_color_index(index, behind_streak * COOLING_BEHIND_STREAK + progress * COOLING_OVER_TIME + inward * COOLING_INWARD)
 
 
 ## Works out once which pixels lie within the ring's reach, so drawing each frame is just a lookup.

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://3esmhpejjpjy"
-path="res://.godot/imported/fx_fire_impact_sheet.png-bad1e716578da055daa3e4c41222ed9b.ctex"
+uid="uid://77qi6557ofuq"
+path="res://.godot/imported/emberoo_portrait_stage1.png-12a29d42fd8445db0149d8783f28a5cd.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/fx/fx_fire_impact_sheet.png"
-dest_files=["res://.godot/imported/fx_fire_impact_sheet.png-bad1e716578da055daa3e4c41222ed9b.ctex"]
+source_file="res://art/ui/emberoo_portrait_stage1.png"
+dest_files=["res://.godot/imported/emberoo_portrait_stage1.png-12a29d42fd8445db0149d8783f28a5cd.ctex"]
 
 [params]
 

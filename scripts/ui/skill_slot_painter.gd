@@ -14,17 +14,17 @@ const SECONDS_TOP := 8
 static func draw_frame(slot: Control, is_usable: bool) -> void:
 	PixelShape.draw_stone_frame(slot, SLOT_SIZE)
 	if is_usable:
-		slot.draw_rect(Rect2(0, 0, SLOT_SIZE - 1, 1), ApolloPalette.GOLD)
+		slot.draw_rect(Rect2(0, 0, SLOT_SIZE - 1, 1), HudPalette.READY_EDGE)
 	var inner := Rect2(INNER)
 	var top_half := Rect2(inner.position, Vector2(inner.size.x, floorf(inner.size.y / 2.0)))
-	slot.draw_rect(inner, ApolloPalette.DARK)
-	slot.draw_rect(top_half, ApolloPalette.SLATE)
+	slot.draw_rect(inner, HudPalette.WELL)
+	slot.draw_rect(top_half, HudPalette.WELL_TOP)
 
 
 ## First frame of the "used" flash: a bright line along the inside top and left edges.
 static func draw_inner_glint(slot: Control) -> void:
-	slot.draw_rect(Rect2(INNER.position.x, INNER.position.y, INNER.size.x, 1), ApolloPalette.STONE)
-	slot.draw_rect(Rect2(INNER.position.x, INNER.position.y, 1, INNER.size.y), ApolloPalette.STONE)
+	slot.draw_rect(Rect2(INNER.position.x, INNER.position.y, INNER.size.x, 1), HudPalette.WELL_GLINT)
+	slot.draw_rect(Rect2(INNER.position.x, INNER.position.y, 1, INNER.size.y), HudPalette.WELL_GLINT)
 
 
 ## A dotted veil over the share still recovering (`fraction_left`), with a sky-blue line on
