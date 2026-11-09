@@ -1,6 +1,7 @@
 class_name Brinelob
-extends SpeciesEnemy
-## A Brinelob: a bound Tide Glimra, a crab that holds its claws up as a shell wall. Hits from
+extends Machine
+## A Clamplate (Tide machine; the scene and code keep the old Brinelob name): a crab walker that
+## holds its two shield claws up as a wall. Hits from
 ## in front plink off (BrinelobShellGuard); circle it, hit it from behind, spin (the Spinning
 ## Hook) or burn it. Up close it throws its claws wide and claps them (BrinelobClawSnap), and
 ## right after a snap its guard is down for a moment: the opening.
@@ -11,9 +12,8 @@ extends SpeciesEnemy
 ##   WINDING_UP -> claws thrown wide, the clap's reach on the ground (super armour)
 ##   OPEN       -> just clapped: its guard is down and it stands still
 ##   RECOVERING -> knocked back by a hit that got through
-##   DYING      -> fades away
 
-enum State { STANDING, WALKING, WINDING_UP, OPEN, RECOVERING, DYING }
+enum State { STANDING, WALKING, WINDING_UP, OPEN, RECOVERING }
 
 @export_group("Walking")
 @export var walk_speed: float = 22.0
@@ -33,7 +33,6 @@ var _seconds_showing_guard: float = 0.0
 
 @onready var shell_guard: BrinelobShellGuard = $ShellGuard
 @onready var claw_snap: BrinelobClawSnap = $ClawSnap
-@onready var death_drops: DeathDrops = $DeathDrops
 
 
 func _ready() -> void:
@@ -46,7 +45,7 @@ func _physics_process(delta: float) -> void:
 	_timer.advance(delta)
 	_seconds_showing_guard = maxf(0.0, _seconds_showing_guard - delta)
 	var is_alert := _is_alert()
-	if _timer.state != State.DYING and is_alert:
+	if is_alert:
 		claw_snap.count_down(delta)
 	if DebugControls.enemies_passive:
 		_stop_acting()
@@ -58,7 +57,7 @@ func _physics_process(delta: float) -> void:
 			_wind_up()
 		State.OPEN:
 			_stand_open()
-		State.RECOVERING, State.DYING:
+		State.RECOVERING:
 			_slide_then(State.RECOVERING, State.WALKING, delta)
 
 	move_and_slide()
@@ -142,7 +141,5 @@ func _on_deflected(_source_position: Vector2) -> void:
 		sprite.show_animation("guard")
 
 
-func _die() -> void:
+func _call_off_attacks() -> void:
 	claw_snap.cancel()
-	death_drops.drop()
-	_enter_dying_and_fade(State.DYING)

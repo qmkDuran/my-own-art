@@ -26,7 +26,6 @@
 [ext_resource type="Script" path="res://scripts/enemies/offscreen_sleep.gd" id="24_4nw61"]
 [ext_resource type="Script" path="res://scripts/enemies/chip_drop.gd" id="25_fnh87"]
 [ext_resource type="Script" path="res://scripts/enemies/toad.gd" id="26_ntdlm"]
-[ext_resource type="Texture2D" path="res://art/toxic_toad/toxlop_portrait_128.png" id="27_q7grm"]
 [ext_resource type="Script" path="res://scripts/npcs/npc.gd" id="28_k7r34"]
 [ext_resource type="Texture2D" path="res://art/npcs/townsperson_idle.png" id="29_t1nuk"]
 [ext_resource type="Resource" path="res://data/dialogue/townsperson.tres" id="30_r7ctg"]
@@ -232,10 +231,7 @@ z_index = 1
 position = Vector2(280, 288)
 motion_mode = 1
 script = ExtResource("26_ntdlm")
-species_id = "toxlop"
-display_name = "Toxlop"
 element = "Toxic"
-portrait = ExtResource("27_q7grm")
 knockback_speed = 120.0
 knockback_friction = 600.0
 
@@ -244,10 +240,7 @@ z_index = 1
 position = Vector2(360, 304)
 motion_mode = 1
 script = ExtResource("26_ntdlm")
-species_id = "toxlop"
-display_name = "Toxlop"
 element = "Toxic"
-portrait = ExtResource("27_q7grm")
 knockback_speed = 120.0
 knockback_friction = 600.0
 

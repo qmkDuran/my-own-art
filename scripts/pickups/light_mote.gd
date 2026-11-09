@@ -3,9 +3,7 @@ extends Node2D
 ## A mote of stolen Glimra light, freed when a bound creature is defeated.
 ## It bursts out, hangs for a moment, then streaks to the player and becomes XP.
 
-const CORE := ApolloPalette.GOLD
 const SHINE := ApolloPalette.WHITE
-const TRAIL := ApolloPalette.ORANGE
 const TRAIL_LENGTH := 4
 ## How fast it slows down while drifting, in pixels per second squared.
 const DRIFT_FRICTION := 160.0
@@ -14,6 +12,10 @@ const MAX_AGE := 4.0
 
 ## XP this mote is worth.
 @export var xp_value: int = 1
+## Its glow and the trail behind it (gold by default; a machine's stolen light keeps the
+## cyan or magenta of its eye, see scenes/enemies/machines/).
+@export var core_color: Color = ApolloPalette.GOLD
+@export var trail_color: Color = ApolloPalette.ORANGE
 ## Seconds it drifts after bursting out, before it homes in.
 @export var drift_time: float = 0.3
 ## How hard it accelerates toward the player, in pixels per second squared.
@@ -61,6 +63,6 @@ func _physics_process(delta: float) -> void:
 func _draw() -> void:
 	for index in _trail.size():
 		var fade := 0.5 * (1.0 - float(index) / TRAIL_LENGTH)
-		draw_rect(Rect2(to_local(_trail[index]).round() - Vector2(0.5, 0.5), Vector2.ONE), Color(TRAIL, fade))
-	draw_rect(Rect2(Vector2(-1, -1), Vector2(2, 2)), CORE)
+		draw_rect(Rect2(to_local(_trail[index]).round() - Vector2(0.5, 0.5), Vector2.ONE), Color(trail_color, fade))
+	draw_rect(Rect2(Vector2(-1, -1), Vector2(2, 2)), core_color)
 	draw_rect(Rect2(Vector2(-1, -1), Vector2.ONE), SHINE)

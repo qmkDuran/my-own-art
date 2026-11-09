@@ -7,7 +7,7 @@ extends Node2D
 ## Pixels the line wanders sideways at most.
 const WANDER := 1.0
 ## Height of both ends above their feet (the bodies' middles), in pixels.
-const BODY_HEIGHT := -7.0
+const BODY_HEIGHT := -12.0
 const CORE_COLOR := ApolloPalette.WHITE
 const EDGE_COLOR := ApolloPalette.SKY_LIGHT
 

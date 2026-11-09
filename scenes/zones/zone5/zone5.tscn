@@ -132,7 +132,7 @@ position = Vector2(400, 315.2)
 
 [node name="EliteModifier" type="Node" parent="World/ScarecrowPatchEliteBramole" unique_id=5100000024]
 script = ExtResource("9_elite_modifi")
-name_tag_height = 24.0
+name_tag_height = 36.0
 
 [node name="ScarecrowPatchBerry1" type="Node2D" parent="World" unique_id=5100000025 instance=ExtResource("5_berry")]
 z_index = 1
@@ -204,7 +204,7 @@ position = Vector2(776, 952)
 
 [node name="EliteModifier" type="Node" parent="World/OldWellEliteToad" unique_id=5100000045]
 script = ExtResource("9_elite_modifi")
-name_tag_height = 22.0
+name_tag_height = 36.0
 
 [node name="OldWellBerry1" type="Node2D" parent="World" unique_id=5100000046 instance=ExtResource("5_berry")]
 z_index = 1

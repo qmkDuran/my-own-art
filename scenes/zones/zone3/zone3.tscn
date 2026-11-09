@@ -116,7 +116,7 @@ position = Vector2(616, 392)
 
 [node name="EliteModifier" type="Node" parent="World/OreCacheEliteGruntite" unique_id=3100000021]
 script = ExtResource("8_elite_modifi")
-name_tag_height = 30.0
+name_tag_height = 36.0
 
 [node name="OreCacheBerry1" type="Node2D" parent="World" unique_id=3100000022 instance=ExtResource("4_berry")]
 z_index = 1
@@ -197,7 +197,7 @@ position = Vector2(1192, 1112)
 
 [node name="EliteModifier" type="Node" parent="World/OldShaftEliteZephoot" unique_id=3100000045]
 script = ExtResource("8_elite_modifi")
-name_tag_height = 28.0
+name_tag_height = 40.0
 
 [node name="SiphonRigLoreStone" type="Node2D" parent="World" unique_id=3100000046]
 position = Vector2(1208, 638.4)

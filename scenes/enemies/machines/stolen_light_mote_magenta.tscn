@@ -1,0 +1,9 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/pickups/light_mote.gd" id="1_mote"]
+
+[node name="StolenLightMote" type="Node2D"]
+z_index = 2
+script = ExtResource("1_mote")
+core_color = Color(0.87451, 0.517647, 0.647059, 1)
+trail_color = Color(0.776471, 0.317647, 0.592157, 1)

@@ -1,6 +1,7 @@
 class_name Gruntite
-extends SpeciesEnemy
-## A Gruntite: a bound stone Glimra, a tanky boar that plods toward the player and charges.
+extends Machine
+## A Ramtread (Stone machine; the scene and code keep the old Gruntite name): a tanky tread bot
+## with a stone ram plate that rolls toward the player and charges.
 ##
 ## From mid range it winds up and charges in a straight line (GruntiteCharge). Ramming the
 ## player throws them hard. If it misses, it skids to a stop and stands dazed for a moment:
@@ -11,12 +12,11 @@ extends SpeciesEnemy
 ##   STANDING   -> waits (hasn't noticed the player, or enemies are paused)
 ##   PLODDING   -> walks slowly toward the player along the path around obstacles (or backs off
 ##                 to make room for a charge). The charge itself stays a straight line: it bonks.
-##   WINDING_UP -> crest bristles, eyes go red, head down and a hoof scrape
+##   WINDING_UP -> eye flares, ram plate down and a tread scrape
 ##   CHARGING   -> thunders along the locked direction
 ##   RECOVERING -> slides to a stop: after a hit, a ram, a missed charge (dazed) or a bonk
-##   DYING      -> fades away
 
-enum State { STANDING, PLODDING, WINDING_UP, CHARGING, RECOVERING, DYING }
+enum State { STANDING, PLODDING, WINDING_UP, CHARGING, RECOVERING }
 
 @export_group("Plodding")
 ## Walking speed, in pixels per second. Slow; the charge is three times this.
@@ -49,7 +49,7 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	_timer.advance(delta)
 	var is_alert := _is_alert()
-	if _timer.state != State.DYING and is_alert:
+	if is_alert:
 		charge.count_down(delta)
 	if DebugControls.enemies_passive:
 		_stop_acting()
@@ -62,7 +62,7 @@ func _physics_process(delta: float) -> void:
 			_wind_up()
 		State.CHARGING:
 			_charge()
-		State.RECOVERING, State.DYING:
+		State.RECOVERING:
 			_slide(delta)
 
 	move_and_slide()
@@ -165,8 +165,6 @@ func _react_to_hit(source_position: Vector2) -> void:
 	_timer.enter(State.RECOVERING, maxf(hit_recover_time, dazed_for))
 
 
-func _die() -> void:
+func _call_off_attacks() -> void:
 	if _has_super_armour():
 		charge.finish()
-	_slide_friction = skid_friction
-	_enter_dying_and_fade(State.DYING)

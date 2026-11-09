@@ -133,7 +133,7 @@ position = Vector2(288, 568)
 
 [node name="EliteModifier" type="Node" parent="World/HuntersHollowEliteGruntite" unique_id=4100000024]
 script = ExtResource("9_elite_modifi")
-name_tag_height = 30.0
+name_tag_height = 36.0
 
 [node name="HuntersHollowBerry1" type="Node2D" parent="World" unique_id=4100000025 instance=ExtResource("5_berry")]
 z_index = 1
@@ -182,7 +182,7 @@ position = Vector2(1032, 48)
 
 [node name="EliteModifier" type="Node" parent="World/MothGrottoEliteRimoth" unique_id=4100000038]
 script = ExtResource("9_elite_modifi")
-name_tag_height = 26.0
+name_tag_height = 40.0
 
 [node name="MothGrottoBerry1" type="Node2D" parent="World" unique_id=4100000039 instance=ExtResource("5_berry")]
 z_index = 1

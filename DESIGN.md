@@ -170,6 +170,21 @@ Decided with the user after the size and grimdark mockups. This section wins ove
 - **Placeholders for now:** the world tiles (regraded old tiles), NPCs, Wardens, the trainer, bosses. Real art now: the hero (all stages and attacks), the trash machines, the UI regrade.
 - **Hero gauntlets:** dark obsidian stone with glowing orange/gold cracks (the cracks must read on dark ground). No full-body rim light.
 
+**Trash machines (built 2026-11-09).** Each old trash species is now one of the AI God's machines, same role, stats and code (the scenes and scripts keep their old names, e.g. `toad.gd` is the Seepcan); names pending the formal trademark check:
+
+| Machine | Was | Element | Role | Look (stolen-light accent) |
+|---|---|---|---|---|
+| **Seepcan** | Toxlop | Toxic | melee, sludge-hose lash (poison) | squat leaking canister walker, green sludge (cyan eye) |
+| **Zapmite** | Fizzbug | Spark | rusher/exploder | tiny round spark drone, crackling prongs (magenta eye) |
+| **Ramtread** | Gruntite | Stone | charger | tread bot with a rusty stone ram plate (cyan eye) |
+| **Augrub** | Bramole | Bloom | burrowing ambusher | drill bot under a dirt mound; only the drill tip shows (magenta eye) |
+| **Clamplate** | Brinelob | Tide | shield tank | crab walker with two blue shield claws (cyan eye) |
+| **Chillvane** | Rimoth | Frost | flying support | moth-winged frost drone (cyan core) |
+| **Gusteret** | Zephoot | Wind | ranged gust turret | hovering fan turret (magenta eye) |
+
+- Art: `art/machines/<name>/`, 32×32 frames (sprites ~22–30 px), PixelLab generate-image-v2 with Apollo as target palette (Seepcan was the style anchor), poses from a second generation with the base as reference, idle/move from hand-made offsets and glow flickers; 0 off-palette pixels. Front view, mirrored to face the player (`Machine`).
+- **One shared death** (`Machine.blow_up`, `MachineDeath`): a white-hot flash, an orange fireball, sparks, tumbling scrap, a smoke puff and flecks of the eye's stolen light (~0.4 s, ~40 bits, frees itself); the XP motes take the eye's colour (`scenes/enemies/machines/stolen_light_mote_*.tscn`). Elites add a small camera shake. A Zapmite's own burst blows it apart without freeing light. The Creature Log shows each machine's idle sprite (no painted portraits yet).
+
 Grade B colour table (world art only; colours not listed stay the same):
 
 | From | To | From | To | From | To |

@@ -10,8 +10,8 @@ extends HitShield
 ## The child name a body's shell goes by.
 const NODE_NAME := "FrostShell"
 ## The ring around the body: its radius and its centre's height above the feet, in pixels.
-const RADIUS := 9.0
-const BODY_HEIGHT := -7.0
+const RADIUS := 13.0
+const BODY_HEIGHT := -12.0
 ## Seconds the shatter takes, and how far the shards fly out, in pixels.
 const SHATTER_TIME := 0.2
 const SHATTER_SPREAD := 6.0
