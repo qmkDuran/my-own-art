@@ -90,6 +90,13 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
 - **Navigation:** each zone has a `ZoneNavigation` region that bakes a navmesh at load from the Obstacles layer's tile collision (plus closed arena gates; a gate rebakes when it opens or closes), shrunk by a 6 px agent radius so walkers clear corners. Baking from collision, not tile navigation polygons, keeps the tiles' collision the one source of truth and gives that margin. Enemies and click-to-move walk it through one shared `PathMover` (repaths every 0.25 s, staggered); Wardens and Zephoots back away by turning aside from walls; the Gruntite's charge and arrow-key movement stay straight. Without a navmesh (the test arena) everything walks straight.
 - The HUD and game systems live in one shared scene (`scenes/game/game_layer.tscn`) that every level instances.
 
+## Act 1 outline (draft)
+- **Intro (short):** the bright home world, then the portal throws you and Emberoo **100 years into the future**, into the same hometown, now under the AI God.
+- **Arrival:** you land at the edge of the town in the middle of a Warden raid: a short fight right away (PoE-style "fight from minute one"). Then you enter the town.
+- **Hub: the hometown, 100 years later:** people stare (nobody has seen a free Glimra in decades). Story set-up. The tinkerer has a stolen Warden rod and hacks it into the **Link Rod** (chips plan).
+- **Zones:** about 10 per act at 5–8 min each, plus the hub. Zone 1 = **Ruins Edge** (ends with the Warden Captain). A mid-act boss around zone 5 and the act boss at about zone 10.
+- **Demo scope:** the intro, the arrival fight, the hub and about 5 zones with 2 bosses (35–45 min).
+
 ## Platform
 - Engine: Godot
 - Release: Steam (PC)
