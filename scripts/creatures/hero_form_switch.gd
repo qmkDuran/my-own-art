@@ -1,6 +1,6 @@
 class_name HeroFormSwitch
 extends Node
-## Keeps Emberoo in the evolution form of his Awakening stage (see HeroForm): the joey, then
+## Keeps Emberoo in the evolution form of his Awakening stage (see HeroForm): stage 1, then
 ## Emberoo from Awakening I, then his final form from Awakening II. The new art is the
 ## evolution, so a form change swaps the sprite sheets and resizes everything tied to his
 ## body: the feet's collision circle and shadow, the jab's reach, the Spinning Hook's circle, Flame

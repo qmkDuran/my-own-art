@@ -53,12 +53,12 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
 - No gear on Emberoo, no clothes, no inventory grid.
 
 ## Build system (locked)
-- **Awakening = evolution (Art direction v2, 2026-11-09):** each Awakening is an evolution stage with its own PixelLab art (`art/emberoo_v2/`): the **joey** (start, ~35 px, cloth hand-wraps), **Emberoo** (Awakening I, ~46 px, obsidian gauntlets with glowing cracks) and his **final form** (Awakening II, ~63 px, flame mane, red sash, magma gauntlets). No recolour, rim or aura: the new art is the change, and his fire stays gold → orange → red (`EmberooFlameColors`). The same for every build; builds still differ through the Ember Tree, skills and effects.
+- **Awakening = evolution (Art direction v2, 2026-11-09):** each Awakening is an evolution stage with its own PixelLab art (`art/emberoo_v2/`): **Emberoo** (stage 1, the start, ~35 px, cloth hand-wraps), **stage 2** (Awakening I, ~46 px, obsidian gauntlets with glowing cracks; name TBD) and **stage 3** (Awakening II, name TBD, ~63 px, flame mane, red sash, magma gauntlets). No recolour, rim or aura: the new art is the change, and his fire stays gold → orange → red (`EmberooFlameColors`). The same for every build; builds still differ through the Ember Tree, skills and effects.
   - **Trigger:** a level threshold, `AwakeningStage.ONE_LEVEL` = **10** (about the end of Act 1) for **Awakening I**, `TWO_LEVEL` = **25** (planned, mid-game) for **Awakening II** (`scripts/systems/awakening_stage.gd`; the `Awakening` autoload holds the stage).
   - **The evolve moment** (~1.2 s): Emberoo stops and faces the camera, light gathers (a warm flash and a small ring), then the flare: a white flash on his body as the new form appears, an ember burst, a fire ring, three shockwaves, a screen shake, a brief white screen flash and a "EMBEROO AWAKENED" banner (top-centre). He can't be hurt meanwhile (`AwakeningMoment`, HUD `AwakeningAnnouncement`). Loading and F4 stepping down swap the form at once.
   - **Forms** (`HeroForm` resources in `data/hero_forms/`, put on the creature by `HeroFormSwitch`): each holds the sheet folder, canvas (64/64/96) and sprite offset (feet on the node: -27/-27/-35), the fist spots for the fist sparks, and the body and reach numbers, so gameplay grows with the body:
 
-    | | joey | Emberoo | final |
+    | | Emberoo (stage 1) | stage 2 (name TBD) | stage 3 (name TBD) |
     |---|---|---|---|
     | jab reach / hit radius / fist height | 24 / 13 / -14 | 30 / 16 / -22 | 38 / 19 / -32 |
     | Spinning Hook radius | 36 | 48 | 60 |
@@ -87,6 +87,20 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
 - Scope: ~1 act for the demo, ~3 acts for the full game.
 - Write the story **after** the vertical slice is fun.
 
+## Zone sweet spot (2026-11-09, applies to every zone)
+
+The game is about beating up packs, flashy skills, effects and loot: the more of that per minute, the better. Size serves density, never the other way round.
+
+- **Size (in 480×270 screens):** linear 4–6 screens long; open 6–9 across; maze 6–8. Boss arena 1–1.5 screens so the whole fight fits the camera. Ruins Edge (about 6 × 6.6) is a medium open zone.
+- **Time:** 5–7 minutes per zone including fights; about 2 minutes of pure walking.
+- **Density (the important part):**
+  - A pack every **6–12 seconds** of walking; never more than ~3 seconds without something to hit, break or pick up on the main path.
+  - Packs of **6–14 trash** that die in 1–2 hits and explode in chains; a Warden relay in the bigger packs.
+  - About **one elite every 60–90 s**, and one rare "named" pack or mini-boss per zone (plus the zone boss where there is one).
+  - Breakables (crates, scrap, wrecks) along the path that drop small loot.
+- **Loot rhythm:** something drops from almost every pack; a notable drop (chip, core, shard, gem) every 1–2 minutes; one guaranteed good drop from each zone's boss or event.
+- **Layout:** one loop or branch, 25–35% optional space with a reward in every pocket, no dead ends without a reward, no long empty corridors, a checkpoint before bosses.
+
 ## Zones
 - **Zone design rules** (from our zone research):
   - **5–8 minutes** per zone on a first run.
@@ -106,7 +120,7 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
 - Ruins Edge's pockets (each seen from the path, each with a reward): **Burned Camp** (west of the Drone Crash: burnt Warden tents, a firepit, stores; an elite Gruntite with 4 toads, 3 berries), **Scavenger Hollow** (south of the Cable Run: a walker wreck and husks, a pack of 6, 2 berries), **Overgrown Shrine** (south of the Husk Field: the stone shrine, the zone's **Glimmer Shard** `ruins_edge_overgrown_shrine`, an elite Toxlop with 4 toads), **Boar Den** (north of Conduit Hall: an elite Gruntite with 4 toads in the wreckage, 3 berries). Optional space: pockets ~17%, plus the loop's other branch ~29%.
   - **Boss-gate checkpoint** (an east nook just past the Warden Gate's wall): a waystone, lit conduits, Warden banners and 2 berries. Its waystone's flame glyph lights up once you reach `Areas/BossGateCheckpoint/Checkpoint_BossGate` (a `Checkpoint`, group `checkpoints`); see "Death and respawn". It sits out of the gate pack's notice range.
 - Hand-placed berries never expire (`lifetime = 0`); dropped ones still fade after 25 s.
-- Tiles are 16×16 from `art/tiles/ruins_edge_tileset.tres`: Ground, Decoration, and an Obstacles layer y-sorted with the creatures (`World` node). Dense forest walls the map in. Rows 28–36 hold the first revamp's tiles (water, steps, lit conduits, statue, shrine, standing stones, Warden banner, gate arch, broken tower); **rows 37+ the v2 war props, drawn by hand in Python** (Apollo, gritty grade, `#090A14` outline, top-left light, no baked shadows so `GroundShadows` casts them; cyan/magenta only on machine cores): 37–38 two-tile props (wrecked drone, scrap heap, broken and leaning pylons, crate stack, burnt Warden tent, drained Glimra husk, wrecked walker, burnt banner, dead crystal spire), 39 one-tile obstacles (scrap, crate, barrel, small husk, dead crystals, small drone, cable spool, firepit, sandbags, armour plate), 40 flat decorations without collision (cables, cut cable end, debris, oil, scorch marks, ash, bones, crystal shards, bolts, tread marks), 41–46 big pieces (the Fallen Colossus 5×6, the Warden drain rig 3×3, a rusted watch post 2×3, a wall a machine arm smashed through 3×2, tank traps 2×1). Nothing in rows 0–36 moved. The zone is built by a generator script (Python, like the zone 2–5 builders).
+- Tiles are 16×16 from `art/tiles/ruins_edge_tileset.tres`: Ground, Decoration, and an Obstacles layer y-sorted with the creatures (`World` node). Dense forest walls the map in. Rows 28–36 hold the first revamp's tiles (water, steps, lit conduits, statue, shrine, standing stones, Warden banner, gate arch, broken tower); **rows 37+ the v2 war props, drawn by hand in Python** (Apollo, gritty grade, `#090A14` outline, top-left light, no baked shadows so `GroundShadows` casts them; cyan/magenta only on machine cores): 37–38 two-tile props (wrecked drone, scrap heap, broken and leaning pylons, crate stack, burnt Warden tent, drained Glimra husk, wrecked walker, burnt banner, dead crystal spire), 39 one-tile obstacles (scrap, crate, barrel, small husk, dead crystals, small drone, cable spool, firepit, sandbags, armour plate), 40 flat decorations without collision (cables, cut cable end, debris, oil, scorch marks, ash, bones, crystal shards, bolts, tread marks), 41–46 big pieces (the Fallen Colossus 5×6, the Warden drain rig 3×3, a rusted watch post 2×3, a wall a machine arm smashed through 3×2, tank traps 2×1). Row 47 holds ground-variety decals (dead grass, rubble, cracked paving, gravel, puddle, moss), scattered in clumped patches so the dirt and grass don't read as one flat colour; each fight clearing also has a few low cover props off the trails. Nothing in rows 0–36 moved. The zone is built by a generator script (Python, like the zone 2–5 builders).
 - **Enemies wait until they notice you:** toads and Gruntites within ~7 tiles, Zephoots ~8, Wardens ~9 (their visors see Glimra light). Noticing (or being hit) alerts the rest of the pack; summoned toads come out already hunting. Noticing a species for the first time brings up its discovery card.
 - The Final Arena holds only the Warden Captain (his summons and XP burst are the adds). Walking in (`Areas/FinalArena/BossArena`) wakes him and closes two cyan energy gates (`ArenaGate`, 80 px: the north mouth and the south road); they open when he falls.
 - **Navigation:** each zone has a `ZoneNavigation` region that bakes a navmesh at load from the Obstacles layer's tile collision (plus closed arena gates; a gate rebakes when it opens or closes), shrunk by a 6 px agent radius so walkers clear corners. Baking from collision, not tile navigation polygons, keeps the tiles' collision the one source of truth and gives that margin. Enemies and click-to-move walk it through one shared `PathMover` (repaths every 0.25 s, staggered); Wardens and Zephoots back away by turning aside from walls; the Gruntite's charge and arrow-key movement stay straight. Without a navmesh (the test arena) everything walks straight.
@@ -169,7 +183,7 @@ Decided with the user after the size and grimdark mockups. This section wins ove
 - **Palette:** Apollo, all 46 colours (named in `ApolloPalette`). Every sprite, tile and UI pixel is Apollo; PixelLab output is generated with Apollo as its target palette and checked for 0 off-palette pixels.
 - **View:** unchanged, 480×270 at 4× (16 px tiles).
 - **Sizes** (trimmed sprite height, front view):
-  - Hero Emberoo by evolution stage: joey ~35 px, Emberoo ~46 px, final ~63 px. All directions (front, frontdiag, side, backdiag, back; mirrored for the other side). Full animation set per stage.
+  - Hero Emberoo by evolution stage: stage 1 ~35 px, stage 2 ~46 px, stage 3 ~63 px. All directions (front, frontdiag, side, backdiag, back; mirrored for the other side). Full animation set per stage.
   - **Trash = the AI God's machines** (drones, walkers, treads, turrets...): ~24–32 px, front view only (mirrored), 2-frame idle/move, a wind-up pose and a strike pose. One shared death: explosion, sparks, scrap, the stolen light bursting out as XP motes.
   - Elites: ~40–48 px. Bosses: 96–128 px. Humans (Wardens, NPCs): ~40 px; placeholders for now.
 - **Lore:** wild Glimra are nearly gone, drained to power the machines. Chipped Glimra appear as elites and bosses.
@@ -242,7 +256,7 @@ Applied to the world tiles, NPCs, the trainer kit, the handler and the Wardens. 
 ## Art
 - 2D pixel art, made by the developer in Aseprite (studying *Pixel Logic*)
 - Tiles and world: 16×16
-- Emberoo evolves by Awakening into bigger sprites (joey ~35 px, Emberoo ~46 px, final ~63 px; see Art direction v2 and Awakening)
+- Emberoo evolves by Awakening into bigger sprites (stage 1 ~35 px, stage 2 ~46 px, stage 3 ~63 px; see Art direction v2 and Awakening)
 - **Palette: Apollo** (46 colours, Lospec), chosen for its dark tone and clear ramps. Swappable later via Aseprite colour remap.
   - **Every colour we pick comes from Apollo**: art files *and* colours set in code (UI, particles, effects). Checked by script: all art is 100% Apollo; code colours snapped to Apollo.
   - On screen, transparency, fades and glow blend Apollo colours into in-between shades; that's expected and fine.

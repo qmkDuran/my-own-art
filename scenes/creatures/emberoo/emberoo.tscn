@@ -40,9 +40,9 @@
 [ext_resource type="Script" path="res://scripts/components/status_resistance.gd" id="37_status_resistance"]
 [ext_resource type="Script" path="res://scripts/creatures/hero_form_switch.gd" id="38_form_switch"]
 [ext_resource type="Script" path="res://scripts/creatures/hero_form.gd" id="hero_form_script"]
-[ext_resource type="Resource" path="res://data/hero_forms/joey.tres" id="39_form_joey"]
-[ext_resource type="Resource" path="res://data/hero_forms/emberoo.tres" id="42_form_emberoo"]
-[ext_resource type="Resource" path="res://data/hero_forms/final.tres" id="43_form_final"]
+[ext_resource type="Resource" path="res://data/hero_forms/emberoo_stage1.tres" id="39_form_stage1"]
+[ext_resource type="Resource" path="res://data/hero_forms/emberoo_stage2.tres" id="42_form_emberoo"]
+[ext_resource type="Resource" path="res://data/hero_forms/emberoo_stage3.tres" id="43_form_final"]
 [ext_resource type="Script" path="res://scripts/creatures/awakening_moment.gd" id="40_awakening_moment"]
 [ext_resource type="Script" path="res://scripts/creatures/awakening_boost.gd" id="41_awakening_boost"]
 
@@ -68,7 +68,7 @@ creature_name = "emberoo"
 
 [node name="HeroFormSwitch" type="Node" parent="." node_paths=PackedStringArray("animator", "shadow", "collision_shape", "melee_attack", "spinning_hook", "flame_uppercut", "dodge", "mouse_orders", "fist_embers", "speech_bubble", "awakening_moment")]
 script = ExtResource("38_form_switch")
-forms = Array[ExtResource("hero_form_script")]([ExtResource("39_form_joey"), ExtResource("42_form_emberoo"), ExtResource("43_form_final")])
+forms = Array[ExtResource("hero_form_script")]([ExtResource("39_form_stage1"), ExtResource("42_form_emberoo"), ExtResource("43_form_final")])
 animator = NodePath("../Sprite")
 shadow = NodePath("../Shadow")
 collision_shape = NodePath("../CollisionShape")

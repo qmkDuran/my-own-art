@@ -3,7 +3,7 @@ extends RefCounted
 ## The Awakening stages and the levels that trigger them (the Awakening autoload holds
 ## which one Emberoo has reached). Each stage is an evolution form (HeroFormSwitch).
 
-## The joey, where every run starts.
+## Stage 1, Emberoo himself, where every run starts.
 const NONE := 0
 ## Awakening I: he grows into Emberoo, about the end of Act 1 (see Progression's XP curve).
 const ONE := 1
