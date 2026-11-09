@@ -1,5 +1,7 @@
 # Project B: Team Glimra (design doc)
 
+> **Status (2026-11-09): PAUSED.** Work is on Project A only for now. Last state: 3 starters, Signal-skill chaining, Team Guide (Tab), no words in combat, clean-code pass. Next when resumed: Unbinding (recruiting), recruits' Signal Skills, the team in real zones.
+
 > A second direction for the same world as Project A (DESIGN.md): same story start, same art
 > rules (Apollo palette, 16×16 creatures), same code rules. Different structure: instead of one
 > creature with a deep skill tree, you build a **team** and **swap mid-fight**.
