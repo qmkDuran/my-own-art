@@ -2,10 +2,11 @@ class_name CreatureAnimator
 extends AnimatedSprite2D
 ## Plays the right animation for what the creature is doing and where it's looking.
 ##
-## Animations are loaded from sprite sheets when the game starts (see SpriteSheetLoader).
-## If an animation hasn't been drawn yet, it falls back to an idle so the game never breaks.
+## Animations are loaded from sprite sheets (see SpriteSheetLoader) when `use_sheets` is
+## called: HeroFormSwitch does that for each evolution form, whose frames are bigger.
+## If an animation hasn't been drawn yet, it falls back to a stand-in sheet or an idle,
+## so the game never breaks.
 
-const FRAME_SIZE := Vector2i(16, 16)
 const FALLBACK_ACTION := "idle"
 const FALLBACK_VIEW := "side"
 
@@ -25,18 +26,20 @@ const STAND_IN_FOR_VIEW := {
 	"backdiag": "side",
 }
 
-## Seconds each frame is shown, in order.
+## Seconds each frame is shown, in order. An action may name a "stand_in_sheet": the sheet
+## used for views where its own isn't drawn (with the action's own timings).
 ## Keep "jab" in sync with MeleeAttack's timings on the creature: the hit lands
-## (hit_delay) as frame 2 (fist out) starts, and attack_duration is the total.
+## (hit_delay) as frame 1 (fist out, held for frames 1-2) starts, and attack_duration is the total.
+## Keep "dodge" as long as Dodge.dodge_duration (crouch, bound, landing).
 const ANIMATION_SETTINGS := {
 	"idle": { "frame_durations": [0.30, 0.20, 0.30, 0.20], "loops": true },
 	"hop": { "frame_durations": [0.09, 0.16, 0.11, 0.11], "loops": true },
-	"jab": { "frame_durations": [0.12, 0.07, 0.11, 0.14], "loops": false },
-	"jab2": { "frame_durations": [0.12, 0.07, 0.11, 0.14], "loops": false },
+	"jab": { "frame_durations": [0.10, 0.06, 0.10, 0.14], "loops": false },
+	"jab2": { "frame_durations": [0.10, 0.06, 0.10, 0.14], "loops": false, "stand_in_sheet": "jab" },
 	"dodge": { "frame_durations": [0.07, 0.15, 0.11], "loops": false },
-	# Flame Uppercut: crouch, rise (the hit), fist overhead, hold, recover.
-	# Keep in sync with FlameUppercut's wind_up (first frame) and duration (the total).
-	"uppercut": { "frame_durations": [0.16, 0.05, 0.09, 0.07, 0.08], "loops": false },
+	# Flame Uppercut: crouch, rise, fist overhead (the burst, held two frames), recover.
+	# Keep in sync with FlameUppercut's wind_up (frames 0-1) and duration (the total).
+	"uppercut": { "frame_durations": [0.12, 0.05, 0.10, 0.08, 0.10], "loops": false, "stand_in_sheet": "jab" },
 	# A closed-eyes copy of every idle frame, so a blink never interrupts the breathing.
 	"blink": { "frame_durations": [0.30, 0.20, 0.30, 0.20], "loops": true },
 	# Spinning Hook: the jab's frames, held one at a time by SpinTurn (never played through).
@@ -51,8 +54,6 @@ const FRAME_MATCHED_ACTIONS := [["idle", "blink"]]
 
 ## If an animation isn't drawn yet, use a similar one instead of dropping to idle.
 const STAND_IN_FOR_ACTION := {
-	"jab2": "jab",
-	"uppercut": "jab",
 	"blink": "idle",
 }
 
@@ -65,8 +66,9 @@ const SPIN_ACTION := "spin"
 
 ## Used to find this creature's sprite sheets, e.g. "emberoo".
 @export var creature_name: String = "emberoo"
-@export_dir var sprite_sheet_folder: String = "res://art/emberoo"
 
+## Frames already built, by sheet folder and creature, so switching forms back and forth is instant.
+static var _built_frames: Dictionary[String, SpriteFrames] = {}
 
 ## Where the sprite sits when the creature is on the ground.
 var _ground_offset: Vector2
@@ -79,13 +81,27 @@ var _is_spinning: bool = false
 func _ready() -> void:
 	_ground_offset = position
 	_schedule_next_blink()
-	sprite_frames = SpriteSheetLoader.build_sprite_frames(
-		sprite_sheet_folder,
-		creature_name,
-		VIEW_FOR_DIRECTION.values(),
-		ANIMATION_SETTINGS,
-		FRAME_SIZE
-	)
+
+
+## Shows the sheets in `sheet_folder` (square frames `frame_size` pixels wide), drawn
+## `offset_y` pixels up from the creature's feet (centred frames), keeping the action and
+## view on screen.
+func use_sheets(sheet_folder: String, frame_size: int, offset_y: float) -> void:
+	var shown_animation := animation
+	var frames_key := "%s/%s" % [sheet_folder, creature_name]
+	if not _built_frames.has(frames_key):
+		_built_frames[frames_key] = SpriteSheetLoader.build_sprite_frames(
+			sheet_folder,
+			creature_name,
+			VIEW_FOR_DIRECTION.values(),
+			ANIMATION_SETTINGS,
+			Vector2i(frame_size, frame_size)
+		)
+	sprite_frames = _built_frames[frames_key]
+	centered = true
+	offset = Vector2(0, offset_y)
+	if sprite_frames.has_animation(shown_animation):
+		play(shown_animation)
 
 
 ## Raises the sprite off the ground, in pixels. The shadow stays put, which sells the jump.

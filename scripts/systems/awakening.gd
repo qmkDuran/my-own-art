@@ -1,11 +1,11 @@
 extends Node
 ## How far Emberoo has Awakened (registered as the "Awakening" autoload).
 ##
-## There is no evolution art: Emberoo Awakens instead. The same sprite is recoloured
-## (AwakeningPalette), his flames turn blue-white (EmberooFlameColors), he gains a flat
+## Each Awakening is an evolution: Emberoo takes his next form (HeroFormSwitch: the joey,
+## then Emberoo, then his final form, each with its own art, size and reach), gains a flat
 ## stat bump (AwakeningBoost) and the Ember Tree opens its next ring. Reaching a level
-## threshold (AwakeningStage) triggers it; `awakened` then plays the short awakening
-## moment (AwakeningMoment on the creature, AwakeningAnnouncement on the HUD).
+## threshold (AwakeningStage) triggers it; `awakened` then plays the short evolve moment
+## (AwakeningMoment on the creature, AwakeningAnnouncement on the HUD).
 ## Kept in an autoload so it survives the level restarting; SaveGame stores the stage.
 
 ## Any change of stage, including loading and the debug key (looks and stats follow it).
@@ -27,7 +27,6 @@ func set_stage(new_stage: int, celebrate: bool) -> void:
 	if new_stage == stage:
 		return
 	stage = new_stage
-	EmberooFlameColors.awakening_stage = stage
 	EmberTree.set_unlocked_stage(AwakeningStage.tree_stage_for(stage))
 	# The moment starts first, so the look waits for its flare instead of switching now.
 	if celebrate:
@@ -46,7 +45,6 @@ func to_save_data() -> Dictionary:
 func load_save_data(data: Dictionary) -> void:
 	var earned := AwakeningStage.for_level(Progression.level)
 	stage = SaveData.read_int(data, "stage", earned, AwakeningStage.NONE, AwakeningStage.LAST)
-	EmberooFlameColors.awakening_stage = stage
 	EmberTree.unlocked_stage = AwakeningStage.tree_stage_for(stage)
 	stage_changed.emit(stage)
 

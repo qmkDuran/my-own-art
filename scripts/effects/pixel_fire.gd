@@ -3,8 +3,8 @@ class_name PixelFire
 extends Node2D
 ## A burst of fire drawn in code pixel by pixel (FireRing, FlameArc): every pixel it may cover
 ## is worked out once (`_add_cell`), then each frame the burst decides which of them burn and
-## how hot (`_color_index_at`), cooling from white-hot through gold to deep red (blue-white
-## to blue once Awakened; EmberooFlameColors' burst ramp) before it breaks up into
+## how hot (`_color_index_at`), cooling from white-hot through gold to deep red
+## (EmberooFlameColors' burst ramp) before it breaks up into
 ## flickering pixels. It opens with a frame or two of pure white, over a faint additive
 ## glow, and embers float up from it. Every pixel sits on the world grid, so it stays
 ## crisp. It removes itself when done.

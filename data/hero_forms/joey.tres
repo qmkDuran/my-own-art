@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="HeroForm" format=3]
+
+[ext_resource type="Script" path="res://scripts/creatures/hero_form.gd" id="1_ua0p0"]
+
+[resource]
+script = ExtResource("1_ua0p0")
+fist_spots = Dictionary[String, Array]({
+"back": [Vector2(-9, -14), Vector2(9, -14)],
+"backdiag": [Vector2(11, -14)],
+"front": [Vector2(-12, -13), Vector2(0, -12)],
+"frontdiag": [Vector2(-1, -12), Vector2(11, -13)],
+"side": [Vector2(9, -13)]
+})
+body_height = -16.0

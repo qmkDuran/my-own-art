@@ -34,7 +34,7 @@ Good ideas that don't belong in the current milestone. Check here when a milesto
 - **Smart move-attack:** while holding left-click to move, auto-jab an enemy that blocks the path within reach (offered, not yet approved).
 
 ## Art
-- **Emberoo evolution art (parked, optional).** Replaced for now by **Awakening** (same sprite, recoloured, blue fire; see DESIGN.md). Evolution art stays an open option for later, e.g. as a late-game form or if a commission becomes possible. About 7 attempts so far (hand-drawn, ChatGPT concept, PixelLab, a hybrid cleanup, chibi, grown-from-base); none hit the bar. What we learned:
+- **Emberoo evolution art (done in Art direction v2).** The PixelLab forms in `art/emberoo_v2/` are now the Awakening stages (see DESIGN.md); the notes below are kept from the earlier attempts. About 7 attempts so far (hand-drawn, ChatGPT concept, PixelLab, a hybrid cleanup, chibi, grown-from-base); none hit the bar. What we learned:
   - the original 16px Emberoo is the style anchor (it reads as a kangaroo);
   - HGSS follower bodies are about 14x19, 17x24 and 25x25 with about 14 colours, with one bold signature shape per stage;
   - keep the kangaroo identity first;

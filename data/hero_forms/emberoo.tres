@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="HeroForm" format=3]
+
+[ext_resource type="Script" path="res://scripts/creatures/hero_form.gd" id="1_wifwb"]
+
+[resource]
+script = ExtResource("1_wifwb")
+sheet_folder = "res://art/emberoo_v2/stage2"
+fist_spots = Dictionary[String, Array]({
+"back": [Vector2(-9, -23), Vector2(4, -25)],
+"backdiag": [Vector2(10, -25)],
+"front": [Vector2(-7, -21), Vector2(7, -21)],
+"frontdiag": [Vector2(11, -21), Vector2(0, -19)],
+"side": [Vector2(13, -24)]
+})
+shadow_scale = 1.8
+body_radius = 6.0
+body_height = -22.0
+head_height = -50.0
+jab_reach = 30.0
+jab_hit_radius = 16.0
+fist_height = -22.0
+jab_lunge = 7.0
+hook_radius = 48.0
+uppercut_reach = 52.0
+attack_approach_distance = 27.0
+dodge_speed = 190.0

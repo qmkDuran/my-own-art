@@ -8,7 +8,8 @@ extends RefCounted
 ##
 ## Frame timings are given in seconds per frame, so each frame can have its own length
 ## (fast wind-ups, lingering follow-throughs). An action's settings may name another
-## action's sheet as "sheet", to reuse its frames with different timings.
+## action's sheet as "sheet", to reuse its frames with different timings, or a
+## "stand_in_sheet" used only for views where its own sheet isn't drawn.
 
 
 static func build_sprite_frames(
@@ -24,10 +25,8 @@ static func build_sprite_frames(
 	for action: String in animation_settings:
 		var settings: Dictionary = animation_settings[action]
 		for view: String in view_names:
-			# An action may borrow another action's sheet with its own timings (e.g. "uppercut").
-			var sheet_action: String = settings.get("sheet", action)
-			var sheet_path := "%s/%s_%s_%s_sheet.png" % [sheet_folder, creature_name, view, sheet_action]
-			if not ResourceLoader.exists(sheet_path):
+			var sheet_path := _sheet_path_for(sheet_folder, creature_name, view, action, settings)
+			if sheet_path == "":
 				continue
 			add_animation(
 				sprite_frames,
@@ -39,6 +38,16 @@ static func build_sprite_frames(
 			)
 
 	return sprite_frames
+
+
+## The sheet an action uses in one view: its own (or the one it borrows as "sheet"), else
+## its "stand_in_sheet", else "" when neither is drawn.
+static func _sheet_path_for(sheet_folder: String, creature_name: String, view: String, action: String, settings: Dictionary) -> String:
+	for sheet_action: String in [settings.get("sheet", action), settings.get("stand_in_sheet", "")]:
+		var sheet_path := "%s/%s_%s_%s_sheet.png" % [sheet_folder, creature_name, view, sheet_action]
+		if sheet_action != "" and ResourceLoader.exists(sheet_path):
+			return sheet_path
+	return ""
 
 
 static func animation_name_for(action: String, view: String) -> String:

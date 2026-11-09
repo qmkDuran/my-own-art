@@ -3,7 +3,7 @@
 PixelLab-generated, cleaned by script: every pixel is Apollo (0 off-palette pixels in
 every sheet), outline `#090A14`, stray pixels removed, gauntlet cracks recoloured to
 bright `#E8C170` / `#DE9E41` so they read on the dark grade-B ground. No rim light.
-Not wired into the game yet: the old 16×16 sheets in `art/emberoo/` are still the ones in use.
+In the game: `data/hero_forms/` (one `HeroForm` per stage) points at these folders; `HeroFormSwitch` swaps them when the Awakening stage changes.
 
 | Folder | Stage (Awakening) | Look | Canvas (each frame) | Baseline row | Body height |
 |---|---|---|---|---|---|
@@ -34,8 +34,7 @@ Not wired into the game yet: the old 16×16 sheets in `art/emberoo/` are still t
 | hop | 4 | 0 crouch, 1 take-off, 2 air, 3 landing |
 
   Note for integration: the fist is out from **frame 1** in jab/jab2 (frame 2 in the old
-  sheets), so `MeleeAttack.hit_delay` / the jab `frame_durations` need retuning (e.g.
-  `[0.10, 0.06, 0.10, 0.14]`, hit as frame 1 starts).
+  sheets): the jab is `[0.10, 0.06, 0.10, 0.14]` with the hit as frame 1 starts.
 
 ## What exists
 
@@ -45,7 +44,7 @@ Not wired into the game yet: the old 16×16 sheets in `art/emberoo/` are still t
 | jab2 | front, back (mirrored jab) | all 5 views | front, back (mirrored jab) |
 | uppercut | front, frontdiag, side | all 5 views | front, frontdiag, side |
 
-Missing sheets fall back in `CreatureAnimator` (`jab2` → `jab`, `uppercut` → `jab`).
+Missing sheets fall back to the jab sheet (`stand_in_sheet` in `CreatureAnimator.ANIMATION_SETTINGS`), with their own timings.
 Stage 2 is complete (35 sheets); stages 1 and 3 have 30 each.
 
 ## Known quirks

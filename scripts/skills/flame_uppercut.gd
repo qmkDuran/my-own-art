@@ -10,11 +10,12 @@ extends SkillAction
 ## Where the player's Flame Uppercut sits, from the player.
 const NODE_PATH := SkillBar.NODE_NAME + "/FlameUppercut"
 
-## Seconds from pressing the key to the flame bursting out (the cocked-fist frame).
-@export var wind_up: float = 0.16
+## Seconds from pressing the key to the flame bursting out (as the fist-up frame starts).
+@export var wind_up: float = 0.17
 ## Seconds the whole move takes, start to recovery.
 @export var duration: float = 0.45
-## How far the flame reaches from the caster's feet, in pixels.
+## How far the flame reaches from the caster's feet, in pixels. The player's evolution form
+## sets it and `fist_height` (HeroFormSwitch).
 @export var reach: float = 26.0
 ## How wide the flame fans out, in degrees.
 @export var arc_degrees: float = 100.0

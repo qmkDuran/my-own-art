@@ -15,16 +15,15 @@ extends Node
 @export var hit_delay: float = 0.18
 ## Seconds the whole spin takes, start to recovery.
 @export var attack_duration: float = 0.5
-## How far from the attacker's fist height an enemy's body centre may be to get hit, in pixels.
+## How far from the attacker's feet an enemy's feet may be to get hit, in pixels (measured
+## on the ground). The player's evolution form sets it (HeroFormSwitch).
 @export var radius: float = 24.0
 ## Damage dealt to each enemy in the circle.
 @export var damage: int = 2
 ## Speed enemies are thrown outward at, in pixels per second (Flame Uppercut uses 260).
 @export var knockback_speed: float = 170.0
-## Height of the fists above the attacker's feet, where the circle is centred (negative is up).
+## Height of the fists above the attacker's feet, where the fire ring is drawn (negative is up).
 @export var fist_height: float = -7.0
-## Height of a target's body centre above its feet, in pixels (negative is up).
-@export var target_body_height: float = -6.0
 ## Group whose members the hook can hurt (each needs a child node named "Health").
 @export var target_group: String = "enemies"
 
@@ -43,14 +42,12 @@ func is_unlocked() -> bool:
 ## Lands the hook all around `attacker`: the fire ring, a small shake, and damage plus
 ## knockback to every target in the circle. Returns the Health of every target hit.
 func strike(attacker: Node2D) -> Array[Health]:
-	var centre := attacker.global_position + Vector2(0, fist_height)
-	_spawn_fire_ring(attacker, centre)
+	_spawn_fire_ring(attacker, attacker.global_position + Vector2(0, fist_height))
 	if screen_shake != null:
 		screen_shake.shake(shake_strength, shake_duration)
 	var struck: Array[Health] = []
 	for target: Node2D in get_tree().get_nodes_in_group(target_group):
-		var body_centre := target.global_position + Vector2(0, target_body_height)
-		if body_centre.distance_to(centre) > radius:
+		if target.global_position.distance_to(attacker.global_position) > radius:
 			continue
 		var target_health: Health = Health.of(target)
 		if target_health == null:
