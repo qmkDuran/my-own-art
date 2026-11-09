@@ -68,7 +68,7 @@ func advance(delta: float) -> bool:
 func used_stage() -> int:
 	if _used_time < 0.0:
 		return -1
-	return int(_used_time / HudTrainer.SHOUT_STAGE_SECONDS)
+	return int(_used_time / PortraitShoutTicks.STAGE_SECONDS)
 
 
 ## Which colour of the "ready" glow is showing (0 = brightest), or -1 when none is.

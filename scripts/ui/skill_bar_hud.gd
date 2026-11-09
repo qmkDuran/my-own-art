@@ -14,7 +14,7 @@ extends Control
 ## How often to look for Emberoo's SkillBar again while he has none, in seconds.
 const SEARCH_INTERVAL := 1.0
 
-@export var trainer: HudTrainer
+@export var trainer: TrainerPortrait
 @export var heat_flame: HeatFlame
 @export var tooltip: SkillTooltip
 

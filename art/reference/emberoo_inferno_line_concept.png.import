@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c2i0kurqvv3qo"
-path="res://.godot/imported/trainer_hud_front.png-a87b0b469381d28076758a1f695cdaa1.ctex"
+uid="uid://b4mbaib5a44nr"
+path="res://.godot/imported/emberoo_inferno_line_concept.png-ae8818634301d11ef9691380c9b3fc8e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/trainer/hud_standin/trainer_hud_front.png"
-dest_files=["res://.godot/imported/trainer_hud_front.png-a87b0b469381d28076758a1f695cdaa1.ctex"]
+source_file="res://art/reference/emberoo_inferno_line_concept.png"
+dest_files=["res://.godot/imported/emberoo_inferno_line_concept.png-ae8818634301d11ef9691380c9b3fc8e.ctex"]
 
 [params]
 

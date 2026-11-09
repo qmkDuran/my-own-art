@@ -8,10 +8,10 @@
 [ext_resource type="Script" path="res://scripts/ui/minimap.gd" id="6_map"]
 [ext_resource type="Script" path="res://scripts/ui/skill_bar_hud.gd" id="7_bar"]
 [ext_resource type="Script" path="res://scripts/ui/skill_slot.gd" id="8_slot"]
-[ext_resource type="Script" path="res://scripts/ui/hud_trainer.gd" id="9_trainer"]
+[ext_resource type="Script" path="res://scripts/ui/trainer_portrait.gd" id="9_trainer"]
 [ext_resource type="Script" path="res://scripts/ui/combat_state.gd" id="10_combat"]
 [ext_resource type="Script" path="res://scripts/ui/skill_tooltip.gd" id="11_tooltip"]
-[ext_resource type="SpriteFrames" path="res://scenes/ui/hud_trainer_frames.tres" id="12_frames"]
+[ext_resource type="SpriteFrames" path="res://art/trainer/portrait/trainer_portrait_frames.tres" id="12_frames"]
 [ext_resource type="PackedScene" path="res://scenes/companions/tonic_toss.tscn" id="13_tonic"]
 [ext_resource type="Script" path="res://scripts/ui/boss_health_bar.gd" id="14_boss_bar"]
 [ext_resource type="Script" path="res://scripts/ui/boss_defeated_banner.gd" id="15_boss_banner"]
@@ -55,9 +55,9 @@ mouse_filter = 2
 [node name="AidCharges" type="Control" parent="BottomCluster"]
 layout_mode = 3
 anchors_preset = 0
-offset_left = -98.0
+offset_left = -61.0
 offset_top = -38.0
-offset_right = -63.0
+offset_right = -26.0
 offset_bottom = -32.0
 mouse_filter = 2
 script = ExtResource("3_aid")
@@ -65,20 +65,20 @@ script = ExtResource("3_aid")
 [node name="HealthHeart" type="Control" parent="BottomCluster"]
 layout_mode = 3
 anchors_preset = 0
-offset_left = -92.0
+offset_left = -63.0
 offset_top = -29.0
-offset_right = -63.0
+offset_right = -34.0
 offset_bottom = -6.0
 mouse_filter = 2
 script = ExtResource("1_heart")
 
-[node name="HudTrainer" type="Node2D" parent="BottomCluster"]
-position = Vector2(2, -7)
+[node name="TrainerPortrait" type="Node2D" parent="BottomCluster"]
+position = Vector2(-91, -28)
 script = ExtResource("9_trainer")
 frames = ExtResource("12_frames")
 tonic_scene = ExtResource("13_tonic")
 
-[node name="CombatState" type="Node" parent="BottomCluster/HudTrainer"]
+[node name="CombatState" type="Node" parent="BottomCluster/TrainerPortrait"]
 script = ExtResource("10_combat")
 
 [node name="HeatFlame" type="Control" parent="BottomCluster"]
@@ -96,25 +96,25 @@ layout_mode = 3
 anchors_preset = 0
 mouse_filter = 2
 script = ExtResource("7_bar")
-trainer = NodePath("../HudTrainer")
+trainer = NodePath("../TrainerPortrait")
 heat_flame = NodePath("../HeatFlame")
 tooltip = NodePath("../../SkillTooltip")
 
 [node name="SlotQ" type="Control" parent="BottomCluster/SkillSlots"]
 layout_mode = 3
 anchors_preset = 0
-offset_left = -57.0
+offset_left = -28.0
 offset_top = -26.0
-offset_right = -37.0
+offset_right = -8.0
 offset_bottom = -6.0
 script = ExtResource("8_slot")
 
 [node name="SlotW" type="Control" parent="BottomCluster/SkillSlots"]
 layout_mode = 3
 anchors_preset = 0
-offset_left = -34.0
+offset_left = -5.0
 offset_top = -26.0
-offset_right = -14.0
+offset_right = 15.0
 offset_bottom = -6.0
 script = ExtResource("8_slot")
 

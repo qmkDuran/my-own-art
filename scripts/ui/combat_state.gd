@@ -1,6 +1,6 @@
 class_name CombatState
 extends Node
-## Tells whether Emberoo is fighting, so the HUD trainer knows which way to face.
+## Tells whether Emberoo is fighting, so the trainer portrait knows when to look calm.
 ##
 ## Emberoo is "in combat" while an enemy is close, and for a few seconds after he last
 ## dealt or took damage (or used a skill). After that many seconds of calm, he's out of combat.
@@ -12,7 +12,7 @@ const ENEMY_NEAR_DISTANCE := 110.0
 const CALM_SECONDS := 4.0
 
 var _player: Node2D
-## Starts calm, so the trainer faces the player when the level begins.
+## Starts calm, so the trainer portrait smiles when the level begins.
 var _seconds_since_fighting: float = CALM_SECONDS
 
 

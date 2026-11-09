@@ -1,0 +1,71 @@
+[gd_resource type="SpriteFrames" load_steps=10 format=3]
+
+[ext_resource type="Texture2D" path="res://art/trainer/portrait/portrait_neutral.png" id="1_neutral"]
+[ext_resource type="Texture2D" path="res://art/trainer/portrait/portrait_neutral_blink.png" id="2_neutral_blink"]
+[ext_resource type="Texture2D" path="res://art/trainer/portrait/portrait_calm.png" id="3_calm"]
+[ext_resource type="Texture2D" path="res://art/trainer/portrait/portrait_calm_blink.png" id="4_calm_blink"]
+[ext_resource type="Texture2D" path="res://art/trainer/portrait/portrait_worried.png" id="5_worried"]
+[ext_resource type="Texture2D" path="res://art/trainer/portrait/portrait_worried_blink.png" id="6_worried_blink"]
+[ext_resource type="Texture2D" path="res://art/trainer/portrait/portrait_shout.png" id="7_shout"]
+[ext_resource type="Texture2D" path="res://art/trainer/portrait/portrait_cheer.png" id="8_cheer"]
+[ext_resource type="Texture2D" path="res://art/trainer/portrait/portrait_toss.png" id="9_toss"]
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_neutral")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_neutral_blink")
+}],
+"loop": true,
+"name": &"neutral",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_calm")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_calm_blink")
+}],
+"loop": true,
+"name": &"calm",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("5_worried")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_worried_blink")
+}],
+"loop": true,
+"name": &"worried",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("7_shout")
+}],
+"loop": true,
+"name": &"shout",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("8_cheer")
+}],
+"loop": true,
+"name": &"cheer",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("9_toss")
+}],
+"loop": true,
+"name": &"toss",
+"speed": 5.0
+}]

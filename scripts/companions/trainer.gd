@@ -3,8 +3,8 @@ extends Node2D
 ## The player's trainer, who supports Emberoo through the spirit link (Trainer's Aid).
 ##
 ## This is the part every trainer body shares: TrainerAid finds the trainer through the
-## "trainer" group and asks it to throw a healing tonic. The bodies are the HudTrainer
-## (standing in the skill bar) and the parked WalkingTrainer (follows Emberoo in the world).
+## "trainer" group and asks it to throw a healing tonic. The bodies are the TrainerPortrait
+## (a portrait frame in the HUD) and the parked WalkingTrainer (follows Emberoo in the world).
 
 @export var tonic_scene: PackedScene
 

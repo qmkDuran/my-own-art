@@ -8,7 +8,7 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
 
 ## Story frame
 - **Spirit link:** the trainer stays safe in the hub and guides the creature through a mental bond. This explains why the player directly controls the creature.
-- In the field, the trainer is part of the HUD: they stand in the skill bar (between W and E), watching Emberoo from behind during fights, and turn to face the camera after a few calm seconds. They shout each skill command (small tick lines). In towns they appear fully.
+- In the field, the trainer is part of the HUD: a **portrait frame** beside the heart, like an RPG party frame. In towns they appear fully.
 
 ## Story premise
 - **Glimra** (*GLIM-rah*) is the name for the creatures: beings that carry a living light inside them (it "glimmers"). Emberoo is a Glimra.
@@ -24,9 +24,11 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
 
 ## The trainer (in the world)
 - **No capture device, no ball.** We never catch Glimra and Emberoo is with you the whole game (like a partner who just walks beside you), so nothing stores or releases him. Avoid Pokéball-, Mega Bracelet- and Z-Ring-like items.
-- The trainer **walks with Emberoo**, a few steps behind. Enemies ignore them (Warden visors only see Glimra light).
+- *(Parked)* The trainer **walks with Emberoo**, a few steps behind. Enemies ignore them (Warden visors only see Glimra light).
 - Original look: brown coat, cream shirt, **orange scarf matching Emberoo**, satchel. 18×28 sprite, front view for now (walk/diagonal animations later).
-- **Trainer's Aid (F):** the trainer throws a healing tonic that arcs to Emberoo (+4 health). **3 charges**; can't be used at full health.
+- **In the field: the HUD portrait.** A 24×24 stone-and-gold frame (the skill slots' style) just left of the heart, with a 20×20 head-and-shoulders bust. Expressions, highest priority first: **shout** (mouth open, brows down; for ~0.4 s on every skill, with three tick lines popping above the mouth side and a 1 px bounce), a short **toss** look when Trainer's Aid is used, **cheer** (big smile, ~1.5 s on a level up), **worried** (health at 30% or lower), **calm** (soft smile, out of combat), **neutral**. Neutral, calm and worried blink now and then. The art is a swappable stand-in (one SpriteFrames, an animation per expression, in `art/trainer/portrait/`) until the trainer's final look is decided.
+- The walking trainer, the layered look kit and the customiser are **parked for towns**, where the trainer appears fully.
+- **Trainer's Aid (F):** the trainer throws a healing tonic that arcs from the HUD portrait to Emberoo (+4 health). **3 charges**; can't be used at full health.
 - **Berries:** toads sometimes drop a glowing berry (25%); walking over it refills one Aid charge (it waits if Aid is full).
 
 ## Drops and progression resources
@@ -133,7 +135,7 @@ An ARPG where your starter creature is your class. You're a trainer who sends a 
 ## HUD
 - **Health: one heart** at the bottom-centre, filled with red that drains from the top down as health is lost, with the numbers beside it (e.g. 7/10) in a tiny pixel font.
 - **Enemy health:** Wardens and Gruntites show a small bar once hit; one- and two-hit mobs show none.
-- **Ability hotbar (later, with the skill tree):** a row of skill slots at the bottom-centre beside the heart and Heat pips, with key labels and cooldown overlays.
+- **Bottom cluster, centred, left to right:** the trainer portrait, the heart (with the Trainer's Aid flasks lying on top of it), the skill slots **Q W E R** in one evenly spaced row (key labels, cooldown veils), then the Heat flame.
 - **No mana yet.** When skills arrive, Emberoo's resource is **Heat**, gained by landing hits and spent on fire skills, shown as **fire pips** next to the heart. Each element class gets its own resource.
 
 ## Skill tree presentation
