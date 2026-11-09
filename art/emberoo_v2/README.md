@@ -59,6 +59,10 @@ longer needed for these sheets).
   arc removed from the old frames by script; frontdiag, side, backdiag, back: regenerated
   without effects.
 - Effect flecks are removed from every generated frame. The stage 3 red sash is unchanged.
+- **Stage 3 closed mouth**: Cinderoo's muzzle is closed (mouth line + raised jaw, painted by
+  script in the head's own fur colours) in idle, blink, hop and dodge for front, frontdiag and
+  side (one patch per view, tracked to each frame's head; dodge heads hand-patched per frame).
+  The mouth stays open (battle shout) only in jab, jab2 and uppercut. Back/backdiag show no mouth.
 
 ## Known quirks
 - Stage 1 front jab fist is a small drawn blob (Pyroo is only ~35 px tall); it reads
