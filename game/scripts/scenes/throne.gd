@@ -3,6 +3,8 @@ extends SceneBase
 ## res://data/throne.json. The One on the throne is shown only as light (Rev 4:2-3); no figure is drawn.
 
 const ART: String = "res://art/throne/"
+const CITY_SCENE: String = "res://main.tscn"
+const ARRIVE_AT := Vector2(480, 500)          # at the foot of the sea of glass, facing the throne
 const LAMB_OFFSET := Vector2(-24, -41)
 const LAMB_GLOW_SCALE := Vector2(0.14, 0.16)
 const BOLT_MIN: float = 1.8
@@ -94,7 +96,10 @@ func _start_audio() -> void:
 
 
 func _begin() -> void:
-	if args.has("--closeup"):
+	if Travel.arriving == "to_throne":
+		arrive_at(ARRIVE_AT, "up")
+		continue_demo()
+	elif args.has("--closeup"):
 		_start_closeup()
 	elif args.has("--demo"):
 		_next_worship = float(data["worship"]["first_in_demo"])
@@ -118,6 +123,8 @@ func _tick(delta: float) -> void:
 	if _next_worship <= 0.0:
 		_worship()
 		_next_worship = float(data["worship"]["every"])
+	if SceneData.rect(data["exit"]["area"]).has_point(player.global_position):
+		travel(CITY_SCENE, "throne")   # back across the sea of glass to where the player came from
 	var lamp_dist: float = player.global_position.distance_to(Vector2(480, 236))
 	_lamps_sound.volume_db = lerpf(-20.0, -32.0, clampf(lamp_dist / LAMPS_HEAR, 0.0, 1.0))
 

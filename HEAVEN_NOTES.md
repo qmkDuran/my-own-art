@@ -7,6 +7,7 @@ Godot 4.7.2 binary: `scratchpad/godot/Godot_v4.7.2-stable_linux.x86_64`. Project
 - **Palette:** Resurrect 64 only (`/home/user/project-revelation/art/style_anchors/resurrect64.hex`; loaded as `plh.R64/RGB/PAL`). Pass `target_palette` to every PixelLab call and quantize every final sprite (`quant()` in the build scripts). Additive light glows (`glow_*.png`, `throne_glow.png`, `rays.png`) are the only off-palette assets (smooth alpha FX).
 - **Outline:** `#2e222f`. Light from the top-left (highlights on top-left bevels, shade on the bottom-right). View: 3/4 top-down.
 - **Resolution:** viewport 960x540, window 1920x1080, stretch `canvas_items`, integer scale, nearest filter, 2D pixel snap. All coordinates in code are 960x540 viewport pixels.
+- **Garden layout (Rev 22:1-2):** wall bottom 160; north grass bank 160–318 (trees base y 288); river 318–394; south bank 394–540 (trees base 516); gold street x 432–528 from the gate to the district; riverside path y 300–316 on the north bank. Trees x 100/320/640/860: every canopy (trunk base −54..+55 x, −109..+10 y) must lie fully on grass — `tools/scan_layout.py` checks this, plus people in water/behind canopies and earth props on paths/water. Bridge = deck exactly the street's width; parapets mirrored onto the street's edge bands (x 424–431 / 528–535), 5 evenly spaced posts.
 - **Scale rule (true proportions):** person ~58 px; house ~3 people tall (~240–280 px), door a little taller than a person, windows at head height; vine trellis ~1.2x a person (70 px). Building generations at 168 px are Scale2x'd (`art/upscale.py`: EPX + outline thinning back to 1 px) so line weight matches.
 - **Sizes:** tiles 32 px. Humans: 64x64 frames, feet on row 61, figure about 58–60 px tall. Elders 64x64 (seated on their throne). Living creatures 112 px. Trees 128x128 (trunk base at 64,112). Pearl gate 144x160 (arch about 85 px tall). Wall 110 px tall (bottom at y=160 in city/earth). Lamb 48 px, angels 32 px, animals 64 px (adult) / 48 px (young).
 - **Depth:** backgrounds z -20/-10; water -9; glows -8/-15 (additive); bridge -7; a y-sorted `world` Node2D (z 0) holds trees, people, animals, houses and the player, all with origin at the feet; UI on a CanvasLayer. Glows over the scene z 5, particles z 6.
@@ -16,7 +17,8 @@ Godot 4.7.2 binary: `scratchpad/godot/Godot_v4.7.2-stable_linux.x86_64`. Project
 - God the Father is never depicted: the throne holds a radial burst of light (jasper and carnelian, Rev 4:3), with no vertical body or head-like shape. In the city, the throne's light is only a glow at the river's source.
 - Redeemed humans have real bodies: white robes, palms, no wings, no halos, no wounds, no frailty (1 Cor 15; Rev 7:9; 21:4). No children.
 - Angels may have wings, but halos were removed. The four creatures have six wings with "eyes" drawn as jewel motifs (not horror). The Lamb is a white lamb with a 2-px muted mark only; the seven horns and seven eyes were omitted.
-- Captions and NPC talk use KJV Scripture only, no invented doctrine or backstories. The hymn is the NICAEA tune (Dykes 1861, public domain), instrumental only.
+- Captions and NPC talk use **NIV (2011)** Scripture only, no invented doctrine or backstories. All verse text is in `game/data/verses.json` (entries: ref, cited verses, exact fragments, '...' for deliberate omissions, '\n' line breaks); scene data refers to it as `{key}` / `{key|block}` (resolved by `Scripture` in `SceneData.load_json`). Never type NIV text from memory: `tools/fetch_niv.py` caches whole chapters from Bible Gateway into `art/niv_source.json`; `tools/check_verses.py` fails on any fragment that is not an exact substring and records the verse count (49 now; Biblica's limit is 500). The Biblica notice is on the menu, in README and CREDITS.md.
+- Kneeling (all people and the player): drawn by `common.kneel`. From behind, robe folds converge to the waist with the soles of both feet under the hem; in front, knee bumps; in profile, knees under the body with shins and heel behind. Never a flat basin (it read as a bathtub). The hymn is the NICAEA tune (Dykes 1861, public domain), instrumental only.
 - Physical sense: no floating objects, no one in water, doors face paths, collision matches the visuals. Check placements programmatically (see the earth sanity check).
 
 ## 3. PixelLab lessons (API v2; the key is injected by the proxy as `Authorization: Bearer dummy`)
@@ -49,7 +51,7 @@ All build scripts import shared helpers from **`art/common.py`**: palette (`PALA
 | `art/build_walkers.py` | `game/art/people/walkerA/B.png` (same 7-row layout) |
 | `art/build_people4.py` | 4-dir standing people `pNN.png` (rows down/up/left; cols idle/breathe/kneel/palmA/palmB), speech bubble, `out/people4_sheet_3x.png` |
 | `art/build_trees.py` | trees of life (dirt patch removed) |
-| `art/build_scene.py` | city bg (wall bands, gem foundation, gold sheen, banks, river bed), bridge, water ripples, glows |
+| `art/build_scene.py` | garden bg (wide grass banks, river, riverside path, gold street with symmetric edges, wall + gate via wall.py), straight mirrored bridge, water ripples, glows |
 | `art/build_throne_sprites.py` | creatures (+ the man-faced head repaint), Lamb, elders (rounded heads, bow frames, crowns), angels |
 | `art/build_throne_scene.py` | throne-room bg, burst core, lamps, `art/throne/layout.json` |
 | `art/build_wings.py` | wing flap frames (column shear) for creatures and angels |
@@ -59,12 +61,15 @@ All build scripts import shared helpers from **`art/common.py`**: palette (`PALA
 | `art/gen_district.py` | **paid**: dwellings (straight-front wording reused) and gifts |
 | `art/build_earth.py` | **1920x1080** new-earth map: wall + gate across the top, main path + cross road + door paths, stream, roses, contact shadows; animals, hay stack, 5 houses (Scale2x), straight-front vine rows raised by hand, field trees, hammer, basket, `art/earth/layout.json` (map_size, houses, vine_rows, animals, trees, stream_rects) |
 | `art/audio/synth.py` | **all audio** (procedural, CC0) into `game/audio/` |
+| `tools/fetch_niv.py`, `tools/check_verses.py` | NIV source cache + exact-text check of `game/data/verses.json` |
+| `tools/extend_font.py` | adds ‘ ’ “ ” – — … ® ™ é pixel glyphs to monogram → `game/fonts/monogram_ext.ttf` |
+| `tools/scan_layout.py` | layout sanity scan across scenes |
 | `art/mock*.py` | quick PIL composites to check layouts before Godot |
 
 Order after a palette or helper change: build_char → build_walkers → build_people4 → build_trees → build_scene → build_throne_sprites → build_throne_scene → build_wings → build_earth, then `godot --headless --path game --import`.
 
 ## 5. Game architecture (`game/`)
-Thin scenes over shared, typed components. **Content lives in data**: `game/data/{city,throne,earth}.json` (people, walkers, verses, zone captions, colliders, demo routes, titles). Art geometry comes from `art/throne/layout.json` and `art/earth/layout.json` (written by the build scripts).
+Thin scenes over shared, typed components. Scripture text comes only from `data/verses.json` via `Scripture` (`scripts/core/scripture.gd`). **Content lives in data**: `game/data/{city,throne,earth}.json` (people, walkers, verses, zone captions, colliders, demo routes, titles). Art geometry comes from `art/throne/layout.json` and `art/earth/layout.json` (written by the build scripts).
 
 | Folder | Module | Responsibility |
 |---|---|---|
@@ -91,7 +96,7 @@ Thin scenes over shared, typed components. **Content lives in data**: `game/data
 | `tests` | `probe.gd` (autoload, `--probe`), `smoke_test.gd` (autoload, `--smoke`), `run_smoke.sh` | regression probes and the smoke test |
 
 - **Collision:** Blockers from data rects or layout numbers; the wall is open only at the gate passage x 462–502, the city river only on the bridge deck x 440–520, and the stream rects come from the art mask.
-- **Gate flow:** city gate light → new earth (Rev 21:25-26); the earth gate → city (spawn 482,186). City map is 1920x1080 in three rooms: garden (0,0), district (0,1) and (1,1); the garden street continues south between dwellings into the great street.
+- **Gate flow:** city gate light → new earth (Rev 21:25-26); the earth gate → city (spawn 482,186). Garden riverside path west into the river's source light → throne room (Rev 22:1); great street west into the light → throne room (Rev 22:3-4); throne room bottom edge → back to where the player came from (`Travel.throne_from`). All transitions use `SceneBase.travel()` / `arrive_at()`; demos chain into the next scene with `"then"` + `continue_demo()`. Smoke test covers all six ways. City map is 1920x1080 in three rooms: garden (0,0), district (0,1) and (1,1); the garden street continues south between dwellings into the great street.
 - **Record args:** also `--district-demo` (garden → district → light → homes, with talk and a close zoom on the bearers).
 - **Tests:**
   - `GODOT=<bin> game/tests/run_smoke.sh` loads menu/city/throne/earth for about 5 s each and checks: player spawned, colliders > 0, talk returns the nearest person (city/earth), kneel works (throne), no script errors.
@@ -112,6 +117,7 @@ Thin scenes over shared, typed components. **Content lives in data**: `game/data
 | New earth | 80 | 50 | animals 20, houses 10, frame 10, vines 10 |
 | People fix pass | 15 | 11 | 11 x 4-dir create-character-v3 (1 each, ~3 min each) |
 | Code cleanup | 0 | 0 | refactor only; behaviour verified identical |
+| Garden fixes + NIV + paths to the throne | 0 | 0 | all by hand / code |
 | City district | 30 | 25 | dwellings 15 (168 px, straight-front 4/4 usable), gifts 10 (64 x 32 px); bearers and residents made by hand |
 | Scale + zoom | 40 | 40 | house2x 15, frame2x 15 (168 px = 15 each), vines2x 10 (came out oblique: unused; the straight v1 row was raised by hand instead) |
 Balance after the city district: 189.5 generations; USD 2.18083 throughout.
@@ -126,4 +132,4 @@ Balance after the city district: 189.5 generations; USD 2.18083 throughout.
 - Lesson: before paying for a piece, reuse the exact view wording/settings that already worked (the district dwellings came out 4/4 usable that way); an oblique vine batch was wasted in the scale pass.
 
 ## 8. Queued phases
-None queued. Ideas if asked: back-view dwellings for a south row; more individuals by hair recolours; a slow procession lane east (people returning) for variety.
+1. **Jesus as the Shepherd by the river** (Rev 7:17; separate cap 15, wait for go): Rev 1:13-16 appearance (robe to the feet, golden sash, white hair, glowing bronze feet, face as brilliant light with no drawn features; no sword, no stars), optional staff, subtle wound marks optional. Cheap check first, then a 4-direction character (1 gen), idle only, hand-made radiance. Placed on the garden's north bank near the riverside path, with a few people at a respectful distance (some kneeling) facing him. Talk rotates NIV Rev 7:17, 21:4-5, John 10:11, Matt 11:28 (fetch exact text; add to verses.json). Caption zone; smoke test; screenshots + 3x sheet (no mp4 unless asked).

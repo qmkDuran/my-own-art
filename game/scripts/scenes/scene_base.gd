@@ -14,6 +14,7 @@ var captions: CaptionBar
 var talk: TalkSystem
 var camera: CameraRig
 var args: PackedStringArray
+var _leaving: bool = false
 
 
 ## Path of this scene's data file (res://data/*.json).
@@ -100,6 +101,47 @@ func run_demo(key: String) -> void:
 ## Talk to whoever is nearest (also used by demo events).
 func talk_nearest() -> void:
 	talk.talk(player.global_position)
+
+
+## Leave for another scene through light: freeze, chime, fade to white with a verse, then change scene.
+func travel(to_scene: String, arriving: String, verse: String = "", verse_y: float = 214.0) -> void:
+	if _leaving:
+		return
+	_leaving = true
+	captions.suppressed = true
+	player.frozen = true
+	player.autopilot.clear()
+	Audio.sfx("gate_chime", -7.0)
+	if verse != "":
+		captions.show_verse(verse, verse_y, 1.2)
+	var tw := create_tween()
+	tw.tween_property(captions.fade, "color:a", 1.0, 1.2)
+	tw.tween_interval(2.4 if verse != "" else 0.1)
+	tw.tween_callback(func() -> void:
+		Travel.arriving = arriving
+		get_tree().change_scene_to_file(to_scene))
+
+
+## Arrive out of light: fade in from white at a spot.
+func arrive_at(at: Vector2, face: String, fade: float = 1.2) -> void:
+	Travel.arriving = ""
+	player.global_position = at
+	player.face(face)
+	camera.snap_to_target()
+	captions.fade.color.a = 1.0
+	captions.title.modulate.a = 0.0
+	create_tween().tween_property(captions.fade, "color:a", 0.0, fade)
+
+
+## A recording continued from the previous scene (Travel.demo_next names this scene's demo data).
+func continue_demo() -> bool:
+	if not Travel.demo or Travel.demo_next == "" or not data.has(Travel.demo_next):
+		return false
+	var key: String = Travel.demo_next
+	Travel.demo = false
+	Travel.demo_next = ""
+	run_demo(key)
+	return true
 
 
 ## Demo events: integer zoom steps (overview / normal / close).

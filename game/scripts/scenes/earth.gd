@@ -23,7 +23,6 @@ var _herd: Herd
 var _builder: Builder
 var _trees: Array[Sprite2D] = []
 var _stream_sound: AudioStreamPlayer
-var _leaving: bool = false
 var _time: float = 0.0
 
 
@@ -138,22 +137,10 @@ func _tick(delta: float) -> void:
 	_builder.animate(_time, player.global_position)
 	var near_stream: float = player.global_position.distance_to(SceneData.vec(data["stream_centre"]))
 	_stream_sound.volume_db = lerpf(-16.0, -40.0, clampf(near_stream / float(data["stream_hear"]), 0.0, 1.0))
-	if not _leaving and _in_passage(player.global_position):
-		_enter_city()
+	if _in_passage(player.global_position):
+		travel(CITY_SCENE, "earth")   # back in through the gate of one pearl
 
 
 func _in_passage(p: Vector2) -> bool:
 	var g: Dictionary = data["gate"]
 	return p.y < float(g["passage_end"]) + 2.0 and p.x > float(g["passage"][0]) and p.x < float(g["passage"][1])
-
-
-## Back in through the gate of one pearl.
-func _enter_city() -> void:
-	_leaving = true
-	player.frozen = true
-	Audio.sfx("gate_chime", -7.0)
-	var tw := create_tween()
-	tw.tween_property(captions.fade, "color:a", 1.0, 1.2)
-	tw.tween_callback(func() -> void:
-		Travel.arriving = "earth"
-		get_tree().change_scene_to_file(CITY_SCENE))

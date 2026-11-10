@@ -68,13 +68,12 @@ def street(px):
 
 
 def garden_street(px):
-    """The garden's street continues down between the dwellings, with white jasper edges, into the great street."""
+    """The garden's street continues down between the dwellings with the same edge bands as in the garden
+    (outline, gold, outline at x 429-431 and 528-530), so the seam between the screens lines up."""
     x0, x1 = GARDEN_STREET
     for y in range(0, STREET[0] - 4):
-        for x in (x0 - 3, x1 + 2):
-            px[x, y] = OUT
-        for x in (x0 - 2, x0 - 1, x1, x1 + 1):
-            px[x, y] = C('fbff86') if x < x0 else C('e6904e')
+        for xe in (x0 - 3, x1):
+            px[xe, y] = OUT; px[xe + 1, y] = C('f9c22b'); px[xe + 2, y] = OUT
 
 
 def walkways(px):

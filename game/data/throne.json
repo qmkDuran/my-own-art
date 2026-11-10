@@ -1,7 +1,7 @@
 {
  "_doc": "Throne room (Rev 4-5). Geometry comes from res://art/throne/layout.json (art/build_throne_scene.py); this file holds content.",
  "title": {
-  "text": "The throne room of heaven\nRevelation 4-5",
+  "text": "The throne room of heaven\nRevelation 4–5",
   "y": 300
  },
  "caption_y": 482,
@@ -30,27 +30,27 @@
   ]
  ],
  "kneel": {
-  "text": "Holy, holy, holy, Lord God Almighty,\nwhich was, and is, and is to come.\nRevelation 4:8",
+  "text": "{holy_holy|block}",
   "y": 430
  },
  "worship": {
   "every": 16.0,
   "first": 6.0,
   "first_in_demo": 7.0,
-  "text": "The four and twenty elders fall down before him... and cast their crowns before the throne, saying,\nThou art worthy, O Lord, to receive glory and honour and power.  Rev 4:10-11"
+  "text": "{lay_crowns}"
  },
  "creature_text": {
-  "lion": "And the first beast was like a lion...  and they rest not day and night, saying, Holy, holy, holy.  Rev 4:7-8",
-  "ox": "...and the second beast like a calf...  each had six wings about him; and they were full of eyes within.  Rev 4:7-8",
-  "man": "...and the third beast had a face as a man...  full of eyes before and behind.  Rev 4:6-7",
-  "eagle": "...and the fourth beast was like a flying eagle.  Rev 4:7"
+  "lion": "{creature_lion}",
+  "ox": "{creature_ox}",
+  "man": "{creature_man}",
+  "eagle": "{creature_eagle}"
  },
  "zone_text": {
-  "lamb": "And I beheld, and, lo, in the midst of the throne... stood a Lamb as it had been slain.  Rev 5:6",
-  "lamps": "There were seven lamps of fire burning before the throne... and out of the throne proceeded lightnings.  Rev 4:5",
-  "elders": "Round about the throne were four and twenty seats... elders sitting, clothed in white raiment; and they had crowns of gold.  Rev 4:4",
-  "sea": "And before the throne there was a sea of glass like unto crystal.  Rev 4:6",
-  "throne": "He that sat was to look upon like a jasper and a sardine stone: and there was a rainbow round about the throne, like an emerald.  Rev 4:3"
+  "lamb": "{lamb_slain}",
+  "lamps": "{seven_lamps}",
+  "elders": "{elders_thrones}",
+  "sea": "{sea_of_glass}",
+  "throne": "{jasper_ruby}"
  },
  "zone_rules": {
   "lamb_reach": 80,
@@ -141,5 +141,30 @@
    ]
   ],
   "quit_after": 33.0
+ },
+ "exit": {
+  "area": [
+   300,
+   526,
+   360,
+   14
+  ],
+  "to": "res://main.tscn"
+ },
+ "arrival_demo": {
+  "face": "up",
+  "pause": 1.0,
+  "waypoints": [
+   [
+    480,
+    470,
+    0
+   ],
+   [
+    480,
+    430,
+    2.0
+   ]
+  ]
  }
 }

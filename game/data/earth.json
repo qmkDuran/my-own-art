@@ -1,7 +1,7 @@
 {
  "_doc": "The new earth (Isa 11, 35, 55, 65; Rev 21:1, 24-26) on a 1920x1080 map. Geometry from res://art/earth/layout.json (art/build_earth.py); this file holds content. Rects [x, y, w, h(, verse)].",
  "title": {
-  "text": "The new earth\nBehold, I create new heavens and a new earth.  Isaiah 65:17\n...and there was no more sea.  Revelation 21:1",
+  "text": "The new earth\n{new_heavens}\n{no_sea}",
   "y": 236,
   "hold": 4.2
  },
@@ -63,52 +63,52 @@
    160,
    160,
    90,
-   "And the nations of them which are saved shall walk in the light of it... and the gates of it shall not be shut at all by day.  Rev 21:24-25"
+   "{nations_gates}"
   ],
   [
    1100,
    680,
    720,
    400,
-   "And they shall build houses, and inhabit them; and they shall plant vineyards, and eat the fruit of them.  Isa 65:21"
+   "{build_plant}"
   ],
   [
    620,
    860,
    240,
    120,
-   "The wolf and the lamb shall feed together, and the lion shall eat straw like the bullock... They shall not hurt nor destroy in all my holy mountain.  Isa 65:25"
+   "{lion_straw}"
   ],
   [
    300,
    700,
    420,
    140,
-   "The wolf also shall dwell with the lamb, and the leopard shall lie down with the kid; and the calf and the young lion and the fatling together.  Isa 11:6"
+   "{wolf_lamb}"
   ],
   [
    300,
    880,
    320,
    200,
-   "And the cow and the bear shall feed; their young ones shall lie down together: and the lion shall eat straw like the ox.  Isa 11:7"
+   "{cow_bear}"
   ],
   [
    0,
    640,
    300,
    440,
-   "For in the wilderness shall waters break out, and streams in the desert.  Isa 35:6"
+   "{streams}"
   ],
   [
    0,
    330,
    1920,
    350,
-   "They shall not build, and another inhabit; they shall not plant, and another eat... mine elect shall long enjoy the work of their hands.  Isa 65:22"
+   "{enjoy_work}"
   ]
  ],
- "default_zone": "The wilderness and the solitary place shall be glad for them; and the desert shall rejoice, and blossom as the rose.  Isa 35:1",
+ "default_zone": "{desert_blossom}",
  "people": [
   [
    5,
@@ -116,7 +116,7 @@
    640,
    "stand",
    "up",
-   "And they shall build houses, and inhabit them.  Isa 65:21"
+   "{build_houses}"
   ],
   [
    9,
@@ -124,7 +124,7 @@
    778,
    "stand",
    "up",
-   "And they shall plant vineyards, and eat the fruit of them.  Isa 65:21"
+   "{plant_vineyards}"
   ],
   [
    6,
@@ -132,7 +132,7 @@
    772,
    "stand",
    "right",
-   "But they shall sit every man under his vine and under his fig tree; and none shall make them afraid.  Mic 4:4"
+   "{own_vine}"
   ],
   [
    7,
@@ -140,7 +140,7 @@
    640,
    "stand",
    "left",
-   "They shall not build, and another inhabit; they shall not plant, and another eat... mine elect shall long enjoy the work of their hands.  Isa 65:22"
+   "{enjoy_work}"
   ],
   [
    15,
@@ -148,7 +148,7 @@
    640,
    "stand",
    "right",
-   "But the meek shall inherit the earth; and shall delight themselves in the abundance of peace.  Ps 37:11"
+   "{meek_inherit}"
   ],
   [
    1,
@@ -156,7 +156,7 @@
    692,
    "stand",
    "right",
-   "They shall not hurt nor destroy in all my holy mountain: for the earth shall be full of the knowledge of the LORD.  Isa 11:9"
+   "{no_harm}"
   ],
   [
    14,
@@ -164,7 +164,7 @@
    694,
    "palm",
    "left",
-   "And the ransomed of the LORD shall return, and come to Zion with songs and everlasting joy upon their heads.  Isa 35:10"
+   "{enter_zion}"
   ],
   [
    2,
@@ -172,7 +172,7 @@
    600,
    "palm",
    "down",
-   "Ye shall go out with joy, and be led forth with peace... and all the trees of the field shall clap their hands.  Isa 55:12"
+   "{trees_clap}"
   ],
   [
    0,
@@ -180,7 +180,7 @@
    860,
    "stand",
    "right",
-   "For, behold, I create new heavens and a new earth: and the former shall not be remembered, nor come into mind.  Isa 65:17"
+   "{former_things}"
   ],
   [
    10,
@@ -188,7 +188,7 @@
    400,
    "stand",
    "left",
-   "And the nations of them which are saved shall walk in the light of it.  Rev 21:24"
+   "{nations_light}"
   ]
  ],
  "walkers": [
@@ -204,7 +204,7 @@
      668
     ]
    ],
-   "verse": "And the nations of them which are saved shall walk in the light of it.  Rev 21:24",
+   "verse": "{nations_light}",
    "steps": "step_grass"
   },
   {
@@ -219,7 +219,7 @@
      668
     ]
    ],
-   "verse": "And they shall bring the glory and honour of the nations into it.  Rev 21:26",
+   "verse": "{nations_glory}",
    "steps": "step_grass"
   }
  ],

@@ -8,6 +8,8 @@ const SMALL: int = UiText.SMALL
 const LARGE: int = UiText.LARGE
 const FADE_OUT_RATE: float = 3.0
 const FADE_IN_RATE: float = 2.0
+const CAPTION_BOX := Vector2(930, 38)      # room for two lines of 16 px text
+const CAPTION_LINE: float = 18.0
 
 var fade: ColorRect
 var title: Label
@@ -30,7 +32,11 @@ func _init(caption_y: float, hint: String) -> void:
 	fade.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(fade)
 	title = make_label(LARGE, 0.0, "")
-	caption = make_label(SMALL, caption_y, "")
+	caption = make_label(SMALL, caption_y + CAPTION_LINE - CAPTION_BOX.y, "")
+	caption.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART   # long verses wrap onto a second line, growing upward
+	caption.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
+	caption.position.x = (VIEW_W - CAPTION_BOX.x) / 2.0
+	caption.size = CAPTION_BOX
 	caption.modulate.a = 0.0
 	make_label(SMALL, 526.0, hint).modulate.a = 0.75
 

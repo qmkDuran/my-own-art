@@ -74,11 +74,12 @@ func set_kneel(on: bool) -> void:
 	_sprite.play(("kneel_" if on else "idle_") + _facing)
 
 
+## Turn to "down", "up", "side" (left) or "right" (side, mirrored).
 func face(dir: String) -> void:
-	_facing = dir
-	_flip = false
-	_sprite.flip_h = false
-	_sprite.play("idle_" + dir)
+	_facing = "side" if dir == "right" else dir
+	_flip = dir == "right"
+	_sprite.flip_h = _flip
+	_sprite.play("idle_" + _facing)
 
 
 func _input_vector() -> Vector2:

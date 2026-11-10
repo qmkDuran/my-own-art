@@ -1,0 +1,615 @@
+{
+ "_doc": "The one place for all Scripture shown in the game. Each entry: ref (shown), verses (the exact verses the parts are taken from), parts: exact fragments of the NIV text, plus '...' (deliberate omission) and '\\n' (line break). Check with: python3 -I tools/check_verses.py",
+ "version": "NIV",
+ "edition": "The Holy Bible, New International Version (2011)",
+ "notice": "Scripture quotations taken from The Holy Bible, New International Version® NIV® Copyright © 1973, 1978, 1984, 2011 by Biblica, Inc.™ Used by permission. All rights reserved worldwide.",
+ "source": "Text copied from https://www.biblegateway.com (version=NIV), fetched and verified by tools/fetch_niv.py and tools/check_verses.py",
+ "verse_count": 49,
+ "verses": {
+  "gate_open": {
+   "ref": "Revelation 21:25-26",
+   "verses": [
+    "Revelation 21:25",
+    "Revelation 21:26"
+   ],
+   "parts": [
+    "On no day will its gates ever be shut, for there will be no night there.",
+    "\n",
+    "The glory and honor of the nations will be brought into it."
+   ]
+  },
+  "pearl_gates": {
+   "ref": "Rev 21:21",
+   "verses": [
+    "Revelation 21:21"
+   ],
+   "parts": [
+    "The twelve gates were twelve pearls, each gate made of a single pearl."
+   ]
+  },
+  "river": {
+   "ref": "Rev 22:1",
+   "verses": [
+    "Revelation 22:1"
+   ],
+   "parts": [
+    "...",
+    "the river of the water of life, as clear as crystal, flowing from the throne of God and of the Lamb"
+   ]
+  },
+  "tree_each_side": {
+   "ref": "Rev 22:2",
+   "verses": [
+    "Revelation 22:2"
+   ],
+   "parts": [
+    "On each side of the river stood the tree of life, bearing twelve crops of fruit, yielding its fruit every month."
+   ]
+  },
+  "leaves_healing": {
+   "ref": "Rev 22:2",
+   "verses": [
+    "Revelation 22:2"
+   ],
+   "parts": [
+    "And the leaves of the tree are for the healing of the nations."
+   ]
+  },
+  "wall_jasper": {
+   "ref": "Rev 21:18-19",
+   "verses": [
+    "Revelation 21:18",
+    "Revelation 21:19"
+   ],
+   "parts": [
+    "The wall was made of jasper, and the city of pure gold, as pure as glass.",
+    "The foundations of the city walls were decorated with every kind of precious stone."
+   ]
+  },
+  "street_gold": {
+   "ref": "Rev 21:21",
+   "verses": [
+    "Revelation 21:21"
+   ],
+   "parts": [
+    "The great street of the city was of gold, as pure as transparent glass."
+   ]
+  },
+  "salvation": {
+   "ref": "Rev 7:10",
+   "verses": [
+    "Revelation 7:10"
+   ],
+   "parts": [
+    "Salvation belongs to our God, who sits on the throne, and to the Lamb."
+   ]
+  },
+  "path_of_life": {
+   "ref": "Ps 16:11",
+   "verses": [
+    "Psalm 16:11"
+   ],
+   "parts": [
+    "You make known to me the path of life; you will fill me with joy in your presence, with eternal pleasures at your right hand."
+   ]
+  },
+  "no_more_tears": {
+   "ref": "Rev 21:4",
+   "verses": [
+    "Revelation 21:4"
+   ],
+   "parts": [
+    "‘He will wipe every tear from their eyes. There will be no more death’ or mourning or crying or pain, for the old order of things has passed away."
+   ]
+  },
+  "praise_lamb": {
+   "ref": "Rev 5:13",
+   "verses": [
+    "Revelation 5:13"
+   ],
+   "parts": [
+    "To him who sits on the throne and to the Lamb be praise and honor and glory and power, for ever and ever!"
+   ]
+  },
+  "no_night": {
+   "ref": "Rev 22:5",
+   "verses": [
+    "Revelation 22:5"
+   ],
+   "parts": [
+    "There will be no more night. They will not need the light of a lamp or the light of the sun, for the Lord God will give them light."
+   ]
+  },
+  "gladness": {
+   "ref": "Isa 35:10",
+   "verses": [
+    "Isaiah 35:10"
+   ],
+   "parts": [
+    "Gladness and joy will overtake them, and sorrow and sighing will flee away."
+   ]
+  },
+  "hallelujah": {
+   "ref": "Rev 19:6",
+   "verses": [
+    "Revelation 19:6"
+   ],
+   "parts": [
+    "Hallelujah! For our Lord God Almighty reigns."
+   ]
+  },
+  "amen_praise": {
+   "ref": "Rev 7:12",
+   "verses": [
+    "Revelation 7:12"
+   ],
+   "parts": [
+    "Amen! Praise and glory and wisdom and thanks and honor and power and strength be to our God for ever and ever. Amen!"
+   ]
+  },
+  "no_eye_seen": {
+   "ref": "1 Cor 2:9",
+   "verses": [
+    "1 Corinthians 2:9"
+   ],
+   "parts": [
+    "“What no eye has seen, what no ear has heard, and what no human mind has conceived” — the things God has prepared for those who love him"
+   ]
+  },
+  "dwelling_with": {
+   "ref": "Rev 21:3",
+   "verses": [
+    "Revelation 21:3"
+   ],
+   "parts": [
+    "Look! God’s dwelling place is now among the people, and he will dwell with them. They will be his people, and God himself will be with them and be their God."
+   ]
+  },
+  "many_rooms_short": {
+   "ref": "John 14:2",
+   "verses": [
+    "John 14:2"
+   ],
+   "parts": [
+    "My Father’s house has many rooms;",
+    "...",
+    "I am going there to prepare a place for you"
+   ]
+  },
+  "see_his_face": {
+   "ref": "Rev 22:4",
+   "verses": [
+    "Revelation 22:4"
+   ],
+   "parts": [
+    "They will see his face, and his name will be on their foreheads."
+   ]
+  },
+  "new_song": {
+   "ref": "Rev 5:9",
+   "verses": [
+    "Revelation 5:9"
+   ],
+   "parts": [
+    "You are worthy to take the scroll and to open its seals, because you were slain, and with your blood you purchased for God persons from every tribe and language and people and nation."
+   ]
+  },
+  "throne_in_city": {
+   "ref": "Rev 22:3",
+   "verses": [
+    "Revelation 22:3"
+   ],
+   "parts": [
+    "No longer will there be any curse. The throne of God and of the Lamb will be in the city, and his servants will serve him."
+   ]
+  },
+  "nations_light": {
+   "ref": "Rev 21:24",
+   "verses": [
+    "Revelation 21:24"
+   ],
+   "parts": [
+    "The nations will walk by its light, and the kings of the earth will bring their splendor into it."
+   ]
+  },
+  "no_sun_needed": {
+   "ref": "Rev 21:23",
+   "verses": [
+    "Revelation 21:23"
+   ],
+   "parts": [
+    "The city does not need the sun or the moon to shine on it, for the glory of God gives it light, and the Lamb is its lamp."
+   ]
+  },
+  "many_rooms": {
+   "ref": "John 14:2",
+   "verses": [
+    "John 14:2"
+   ],
+   "parts": [
+    "My Father’s house has many rooms; if that were not so, would I have told you that I am going there to prepare a place for you?"
+   ]
+  },
+  "hearts_troubled": {
+   "ref": "John 14:1-2",
+   "verses": [
+    "John 14:1",
+    "John 14:2"
+   ],
+   "parts": [
+    "Do not let your hearts be troubled. You believe in God; believe also in me.",
+    "My Father’s house has many rooms",
+    "..."
+   ]
+  },
+  "serve_see_face": {
+   "ref": "Rev 22:3-4",
+   "verses": [
+    "Revelation 22:3",
+    "Revelation 22:4"
+   ],
+   "parts": [
+    "...",
+    "his servants will serve him.",
+    "They will see his face, and his name will be on their foreheads."
+   ]
+  },
+  "wash_robes": {
+   "ref": "Rev 22:14",
+   "verses": [
+    "Revelation 22:14"
+   ],
+   "parts": [
+    "Blessed are those who wash their robes, that they may have the right to the tree of life and may go through the gates into the city."
+   ]
+  },
+  "all_new": {
+   "ref": "Rev 21:5",
+   "verses": [
+    "Revelation 21:5"
+   ],
+   "parts": [
+    "He who was seated on the throne said, “I am making everything new!”"
+   ]
+  },
+  "victorious": {
+   "ref": "Rev 21:7",
+   "verses": [
+    "Revelation 21:7"
+   ],
+   "parts": [
+    "Those who are victorious will inherit all this, and I will be their God and they will be my children."
+   ]
+  },
+  "nations_glory": {
+   "ref": "Rev 21:26",
+   "verses": [
+    "Revelation 21:26"
+   ],
+   "parts": [
+    "The glory and honor of the nations will be brought into it."
+   ]
+  },
+  "to_throne": {
+   "ref": "Revelation 22:3-4",
+   "verses": [
+    "Revelation 22:3",
+    "Revelation 22:4"
+   ],
+   "parts": [
+    "The throne of God and of the Lamb will be in the city, and his servants will serve him.",
+    "\n",
+    "They will see his face, and his name will be on their foreheads."
+   ]
+  },
+  "to_throne_river": {
+   "ref": "Revelation 22:1",
+   "verses": [
+    "Revelation 22:1"
+   ],
+   "parts": [
+    "Then the angel showed me the river of the water of life, as clear as crystal,",
+    "\n",
+    "flowing from the throne of God and of the Lamb"
+   ]
+  },
+  "holy_holy": {
+   "ref": "Revelation 4:8",
+   "verses": [
+    "Revelation 4:8"
+   ],
+   "parts": [
+    "‘Holy, holy, holy is the Lord God Almighty,’",
+    "\n",
+    "who was, and is, and is to come."
+   ]
+  },
+  "lay_crowns": {
+   "ref": "Rev 4:10-11",
+   "verses": [
+    "Revelation 4:10",
+    "Revelation 4:11"
+   ],
+   "parts": [
+    "...",
+    "the twenty-four elders fall down before him who sits on the throne",
+    "...",
+    "They lay their crowns before the throne and say:",
+    "\n",
+    "You are worthy, our Lord and God, to receive glory and honor and power",
+    "..."
+   ]
+  },
+  "creature_lion": {
+   "ref": "Rev 4:7-8",
+   "verses": [
+    "Revelation 4:7",
+    "Revelation 4:8"
+   ],
+   "parts": [
+    "The first living creature was like a lion",
+    "...",
+    "Day and night they never stop saying:",
+    "\n",
+    "“‘Holy, holy, holy is the Lord God Almighty,’ who was, and is, and is to come.”"
+   ]
+  },
+  "creature_ox": {
+   "ref": "Rev 4:7-8",
+   "verses": [
+    "Revelation 4:7",
+    "Revelation 4:8"
+   ],
+   "parts": [
+    "...",
+    "the second was like an ox",
+    "...",
+    "\n",
+    "Each of the four living creatures had six wings and was covered with eyes all around, even under its wings."
+   ]
+  },
+  "creature_man": {
+   "ref": "Rev 4:6-7",
+   "verses": [
+    "Revelation 4:6",
+    "Revelation 4:7"
+   ],
+   "parts": [
+    "In the center, around the throne, were four living creatures, and they were covered with eyes, in front and in back.",
+    "\n",
+    "...",
+    "the third had a face like a man",
+    "..."
+   ]
+  },
+  "creature_eagle": {
+   "ref": "Rev 4:7",
+   "verses": [
+    "Revelation 4:7"
+   ],
+   "parts": [
+    "...",
+    "the fourth was like a flying eagle."
+   ]
+  },
+  "lamb_slain": {
+   "ref": "Rev 5:6",
+   "verses": [
+    "Revelation 5:6"
+   ],
+   "parts": [
+    "Then I saw a Lamb, looking as if it had been slain, standing at the center of the throne, encircled by the four living creatures and the elders."
+   ]
+  },
+  "seven_lamps": {
+   "ref": "Rev 4:5",
+   "verses": [
+    "Revelation 4:5"
+   ],
+   "parts": [
+    "From the throne came flashes of lightning, rumblings and peals of thunder. In front of the throne, seven lamps were blazing."
+   ]
+  },
+  "elders_thrones": {
+   "ref": "Rev 4:4",
+   "verses": [
+    "Revelation 4:4"
+   ],
+   "parts": [
+    "Surrounding the throne were twenty-four other thrones, and seated on them were twenty-four elders.",
+    "\n",
+    "They were dressed in white and had crowns of gold on their heads."
+   ]
+  },
+  "sea_of_glass": {
+   "ref": "Rev 4:6",
+   "verses": [
+    "Revelation 4:6"
+   ],
+   "parts": [
+    "Also in front of the throne there was what looked like a sea of glass, clear as crystal."
+   ]
+  },
+  "jasper_ruby": {
+   "ref": "Rev 4:3",
+   "verses": [
+    "Revelation 4:3"
+   ],
+   "parts": [
+    "And the one who sat there had the appearance of jasper and ruby. A rainbow that shone like an emerald encircled the throne."
+   ]
+  },
+  "new_heavens": {
+   "ref": "Isaiah 65:17",
+   "verses": [
+    "Isaiah 65:17"
+   ],
+   "parts": [
+    "See, I will create new heavens and a new earth."
+   ]
+  },
+  "no_sea": {
+   "ref": "Revelation 21:1",
+   "verses": [
+    "Revelation 21:1"
+   ],
+   "parts": [
+    "...",
+    "and there was no longer any sea."
+   ]
+  },
+  "nations_gates": {
+   "ref": "Rev 21:24-25",
+   "verses": [
+    "Revelation 21:24",
+    "Revelation 21:25"
+   ],
+   "parts": [
+    "The nations will walk by its light",
+    "...",
+    "On no day will its gates ever be shut, for there will be no night there."
+   ]
+  },
+  "build_plant": {
+   "ref": "Isa 65:21",
+   "verses": [
+    "Isaiah 65:21"
+   ],
+   "parts": [
+    "They will build houses and dwell in them; they will plant vineyards and eat their fruit."
+   ]
+  },
+  "lion_straw": {
+   "ref": "Isa 65:25",
+   "verses": [
+    "Isaiah 65:25"
+   ],
+   "parts": [
+    "The wolf and the lamb will feed together, and the lion will eat straw like the ox",
+    "...",
+    "They will neither harm nor destroy on all my holy mountain"
+   ]
+  },
+  "wolf_lamb": {
+   "ref": "Isa 11:6",
+   "verses": [
+    "Isaiah 11:6"
+   ],
+   "parts": [
+    "The wolf will live with the lamb, the leopard will lie down with the goat, the calf and the lion and the yearling together; and a little child will lead them."
+   ]
+  },
+  "cow_bear": {
+   "ref": "Isa 11:7",
+   "verses": [
+    "Isaiah 11:7"
+   ],
+   "parts": [
+    "The cow will feed with the bear, their young will lie down together, and the lion will eat straw like the ox."
+   ]
+  },
+  "streams": {
+   "ref": "Isa 35:6",
+   "verses": [
+    "Isaiah 35:6"
+   ],
+   "parts": [
+    "Water will gush forth in the wilderness and streams in the desert."
+   ]
+  },
+  "enjoy_work": {
+   "ref": "Isa 65:22",
+   "verses": [
+    "Isaiah 65:22"
+   ],
+   "parts": [
+    "No longer will they build houses and others live in them, or plant and others eat.",
+    "...",
+    "my chosen ones will long enjoy the work of their hands."
+   ]
+  },
+  "desert_blossom": {
+   "ref": "Isa 35:1",
+   "verses": [
+    "Isaiah 35:1"
+   ],
+   "parts": [
+    "The desert and the parched land will be glad; the wilderness will rejoice and blossom."
+   ]
+  },
+  "build_houses": {
+   "ref": "Isa 65:21",
+   "verses": [
+    "Isaiah 65:21"
+   ],
+   "parts": [
+    "They will build houses and dwell in them",
+    "..."
+   ]
+  },
+  "plant_vineyards": {
+   "ref": "Isa 65:21",
+   "verses": [
+    "Isaiah 65:21"
+   ],
+   "parts": [
+    "...",
+    "they will plant vineyards and eat their fruit."
+   ]
+  },
+  "own_vine": {
+   "ref": "Mic 4:4",
+   "verses": [
+    "Micah 4:4"
+   ],
+   "parts": [
+    "Everyone will sit under their own vine and under their own fig tree, and no one will make them afraid, for the Lord Almighty has spoken."
+   ]
+  },
+  "meek_inherit": {
+   "ref": "Ps 37:11",
+   "verses": [
+    "Psalm 37:11"
+   ],
+   "parts": [
+    "But the meek will inherit the land and enjoy peace and prosperity."
+   ]
+  },
+  "no_harm": {
+   "ref": "Isa 11:9",
+   "verses": [
+    "Isaiah 11:9"
+   ],
+   "parts": [
+    "They will neither harm nor destroy on all my holy mountain, for the earth will be filled with the knowledge of the Lord as the waters cover the sea."
+   ]
+  },
+  "enter_zion": {
+   "ref": "Isa 35:10",
+   "verses": [
+    "Isaiah 35:10"
+   ],
+   "parts": [
+    "They will enter Zion with singing; everlasting joy will crown their heads."
+   ]
+  },
+  "trees_clap": {
+   "ref": "Isa 55:12",
+   "verses": [
+    "Isaiah 55:12"
+   ],
+   "parts": [
+    "You will go out in joy and be led forth in peace; the mountains and hills will burst into song before you, and all the trees of the field will clap their hands."
+   ]
+  },
+  "former_things": {
+   "ref": "Isa 65:17",
+   "verses": [
+    "Isaiah 65:17"
+   ],
+   "parts": [
+    "See, I will create new heavens and a new earth. The former things will not be remembered, nor will they come to mind."
+   ]
+  }
+ }
+}

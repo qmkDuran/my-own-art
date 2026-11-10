@@ -32,8 +32,14 @@ func _ready() -> void:
 	UiText.label(self, UiText.LARGE, 150.0, "Heaven")
 	for i: int in SCENES.size():
 		_labels.append(UiText.label(self, UiText.SMALL, FIRST_ROW_Y + i * ROW_GAP, SCENES[i][0]))
-	UiText.label(self, UiText.SMALL, 430.0, "Up/Down + Enter, or press 1 / 2 / 3.   Esc in a scene returns here.")
+	UiText.label(self, UiText.SMALL, 400.0, "Up/Down + Enter, or press 1 / 2 / 3.   Esc in a scene returns here.")
+	UiText.label(self, UiText.SMALL, 466.0, _notice_lines()).modulate.a = 0.85
 	_refresh()
+
+
+## The NIV permission notice (Biblica), required on the credits screen, broken into lines that fit.
+func _notice_lines() -> String:
+	return Scripture.notice().replace("NIV® Copyright", "NIV®\nCopyright").replace("Inc.™ Used", "Inc.™\nUsed")
 
 
 func _refresh() -> void:

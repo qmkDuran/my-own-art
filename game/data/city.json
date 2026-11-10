@@ -1,7 +1,7 @@
 {
  "_doc": "The holy city (Rev 21-22): the garden heart (room 0,0, unchanged) and the district below it (rooms 0,1 and 1,1). Numbers mirror art/build_scene.py and art/build_district.py. Rects [x, y, w, h]; demo waypoints [x, y, pause].",
  "title": {
-  "text": "The New Jerusalem\nRevelation 21-22",
+  "text": "The New Jerusalem\nRevelation 21–22",
   "y": 196
  },
  "caption_y": 508,
@@ -20,12 +20,12 @@
    482,
    186
   ],
-  "verse": "And the gates of it shall not be shut at all by day...\nAnd they shall bring the glory and honour of the nations into it.\nRevelation 21:25-26",
+  "verse": "{gate_open|block}",
   "verse_y": 214
  },
  "river": [
-  272,
-  368
+  318,
+  394
  ],
  "street_x": [
   432,
@@ -33,61 +33,61 @@
  ],
  "banks": [
   [
-   224,
-   272
+   160,
+   318
   ],
   [
-   368,
-   416
+   394,
+   540
   ]
  ],
  "trees": [
   [
    "tree1",
-   90,
-   262,
+   100,
+   288,
    false
   ],
   [
    "tree2",
-   290,
-   262,
-   false
-  ],
-  [
-   "tree1",
-   670,
-   262,
-   true
-  ],
-  [
-   "tree2",
-   870,
-   262,
-   true
-  ],
-  [
-   "tree2",
-   140,
-   406,
-   true
-  ],
-  [
-   "tree1",
-   330,
-   406,
-   false
-  ],
-  [
-   "tree2",
-   630,
-   406,
+   320,
+   288,
    false
   ],
   [
    "tree1",
-   830,
-   406,
+   640,
+   288,
+   true
+  ],
+  [
+   "tree2",
+   860,
+   288,
+   true
+  ],
+  [
+   "tree2",
+   100,
+   516,
+   true
+  ],
+  [
+   "tree1",
+   320,
+   516,
+   false
+  ],
+  [
+   "tree2",
+   640,
+   516,
+   false
+  ],
+  [
+   "tree1",
+   860,
+   516,
    true
   ]
  ],
@@ -112,21 +112,27 @@
   ],
   [
    -40,
-   268,
-   480,
-   104
+   318,
+   472,
+   76
   ],
   [
-   520,
-   268,
-   480,
-   104
+   528,
+   318,
+   472,
+   76
   ],
   [
    -40,
    0,
    40,
-   540
+   300
+  ],
+  [
+   -40,
+   316,
+   40,
+   224
   ],
   [
    960,
@@ -143,7 +149,7 @@
   [
    -40,
    540,
-   100,
+   40,
    540
   ],
   [
@@ -182,9 +188,9 @@
   ],
   [
    0,
-   232,
+   278,
    260,
-   176,
+   156,
    50,
    14,
    -3,
@@ -215,120 +221,127 @@
    540,
    330,
    540,
-   "And there shall be no more curse: but the throne of God and of the Lamb shall be in it; and his servants shall serve him.  Rev 22:3"
+   "{throne_in_city}"
   ],
   [
    330,
    790,
    1590,
    100,
-   "And the nations of them which are saved shall walk in the light of it: and the kings of the earth do bring their glory and honour into it.  Rev 21:24"
+   "{nations_light}"
   ],
   [
    0,
    890,
    1920,
    190,
-   "And the city had no need of the sun, neither of the moon, to shine in it: for the glory of God did lighten it, and the Lamb is the light thereof.  Rev 21:23"
+   "{no_sun_needed}"
   ],
   [
    330,
    540,
    1590,
    250,
-   "In my Father's house are many mansions: if it were not so, I would have told you. I go to prepare a place for you.  John 14:2"
+   "{many_rooms}"
   ],
   [
    440,
    120,
    80,
    110,
-   "The twelve gates were twelve pearls; every gate was of one pearl.  Rev 21:21"
+   "{pearl_gates}"
   ],
   [
-   440,
-   262,
-   80,
-   116,
-   "A pure river of water of life, clear as crystal, proceeding out of the throne.  Rev 22:1"
-  ],
-  [
-   0,
-   222,
-   960,
-   52,
-   "On either side of the river was the tree of life... the leaves were for the healing of the nations.  Rev 22:2"
+   432,
+   300,
+   96,
+   100,
+   "{river}"
   ],
   [
    0,
-   366,
-   960,
-   54,
-   "The tree of life, which bare twelve manner of fruits, and yielded her fruit every month.  Rev 22:2"
+   296,
+   432,
+   22,
+   "{river}"
   ],
   [
    0,
    160,
    960,
-   62,
-   "The wall was of jasper; its foundations garnished with all manner of precious stones.  Rev 21:18-19"
+   24,
+   "{wall_jasper}"
+  ],
+  [
+   432,
+   394,
+   96,
+   146,
+   "{street_gold}"
   ],
   [
    0,
-   420,
+   160,
    960,
-   120,
-   "The street of the city was pure gold, as it were transparent glass.  Rev 21:21"
+   140,
+   "{tree_each_side}"
+  ],
+  [
+   0,
+   394,
+   960,
+   146,
+   "{leaves_healing}"
   ]
  ],
  "people": [
   [
    1,
-   200,
-   486,
+   190,
+   478,
    "stand",
    "right",
-   "Salvation to our God which sitteth upon the throne, and unto the Lamb.  Rev 7:10"
+   "{salvation}"
   ],
   [
    7,
-   244,
-   489,
+   236,
+   481,
    "stand",
    "left",
-   "In thy presence is fulness of joy; at thy right hand there are pleasures for evermore.  Ps 16:11"
+   "{path_of_life}"
   ],
   [
    9,
-   222,
-   510,
+   212,
+   500,
    "stand",
    "up",
-   "God shall wipe away all tears from their eyes; and there shall be no more death, neither sorrow, nor crying.  Rev 21:4"
+   "{no_more_tears}"
   ],
   [
    0,
-   150,
-   446,
+   404,
+   470,
    "palm",
    "down",
-   "Blessing, and honour, and glory, and power, be unto him that sitteth upon the throne, and unto the Lamb for ever and ever.  Rev 5:13"
+   "{praise_lamb}"
   ],
   [
    5,
-   752,
+   742,
    200,
    "stand",
    "right",
-   "There shall be no night there; and they need no candle, neither light of the sun; for the Lord God giveth them light.  Rev 22:5"
+   "{no_night}"
   ],
   [
    14,
-   792,
+   782,
    204,
    "palm",
    "left",
-   "They shall obtain joy and gladness, and sorrow and sighing shall flee away.  Isa 35:10"
+   "{gladness}"
   ],
   [
    4,
@@ -336,39 +349,39 @@
    198,
    "kneel",
    "up",
-   "Alleluia: for the Lord God omnipotent reigneth.  Rev 19:6"
+   "{hallelujah}"
   ],
   [
    2,
-   520,
+   518,
    200,
    "palm",
    "up",
-   "Blessing, and glory, and wisdom, and thanksgiving, and honour, and power, and might, be unto our God for ever and ever. Amen.  Rev 7:12"
+   "{amen_praise}"
   ],
   [
    15,
-   560,
-   398,
+   556,
+   412,
    "stand",
    "up",
-   "Eye hath not seen, nor ear heard... the things which God hath prepared for them that love him.  1 Cor 2:9"
+   "{no_eye_seen}"
   ],
   [
    6,
-   190,
-   252,
+   205,
+   250,
    "palm",
    "down",
-   "Behold, the tabernacle of God is with men, and he will dwell with them, and they shall be his people.  Rev 21:3"
+   "{dwelling_with}"
   ],
   [
    10,
-   880,
-   440,
+   938,
+   470,
    "stand",
    "left",
-   "In my Father's house are many mansions... I go to prepare a place for you.  John 14:2"
+   "{many_rooms_short}"
   ],
   [
    31,
@@ -376,7 +389,7 @@
    786,
    "stand",
    "down",
-   "Let not your heart be troubled... In my Father's house are many mansions.  John 14:1-2"
+   "{hearts_troubled}"
   ],
   [
    32,
@@ -384,7 +397,7 @@
    800,
    "stand",
    "right",
-   "And his servants shall serve him: and they shall see his face.  Rev 22:3-4"
+   "{serve_see_face}"
   ],
   [
    33,
@@ -392,7 +405,7 @@
    802,
    "stand",
    "left",
-   "Blessed are they that do his commandments, that they may have right to the tree of life, and may enter in through the gates into the city.  Rev 22:14"
+   "{wash_robes}"
   ],
   [
    34,
@@ -400,7 +413,7 @@
    786,
    "palm",
    "down",
-   "And he that sat upon the throne said, Behold, I make all things new.  Rev 21:5"
+   "{all_new}"
   ],
   [
    35,
@@ -408,7 +421,7 @@
    788,
    "stand",
    "right",
-   "He that overcometh shall inherit all things; and I will be his God, and he shall be my son.  Rev 21:7"
+   "{victorious}"
   ]
  ],
  "walkers": [
@@ -416,47 +429,31 @@
    "sheet": "res://art/people/walkerA.png",
    "loop": [
     [
-     900,
-     470
+     940,
+     535
     ],
     [
      560,
-     470
-    ],
-    [
-     560,
-     505
-    ],
-    [
-     900,
-     505
+     535
     ]
    ],
-   "verse": "And they shall see his face; and his name shall be in their foreheads.  Rev 22:4",
-   "steps": "step_gold"
+   "verse": "{see_his_face}",
+   "steps": "step_grass"
   },
   {
    "sheet": "res://art/people/walkerB.png",
    "loop": [
     [
-     290,
-     520
+     20,
+     535
     ],
     [
-     290,
-     450
-    ],
-    [
-     410,
-     450
-    ],
-    [
-     410,
-     520
+     400,
+     535
     ]
    ],
-   "verse": "And they sung a new song, saying, Thou art worthy... for thou wast slain, and hast redeemed us to God by thy blood.  Rev 5:9",
-   "steps": "step_gold"
+   "verse": "{new_song}",
+   "steps": "step_grass"
   },
   {
    "sheet": "res://art/district/bearer_a.png",
@@ -474,7 +471,7 @@
     1880,
     860
    ],
-   "verse": "And they shall bring the glory and honour of the nations into it.  Rev 21:26",
+   "verse": "{nations_glory}",
    "steps": "step_gold",
    "procession": true
   },
@@ -494,7 +491,7 @@
     1560,
     868
    ],
-   "verse": "And the kings of the earth do bring their glory and honour into it.  Rev 21:24",
+   "verse": "{nations_light}",
    "steps": "step_gold",
    "procession": true
   },
@@ -514,7 +511,7 @@
     1240,
     860
    ],
-   "verse": "And they shall bring the glory and honour of the nations into it.  Rev 21:26",
+   "verse": "{nations_glory}",
    "steps": "step_gold",
    "procession": true
   },
@@ -534,7 +531,7 @@
     920,
     868
    ],
-   "verse": "And the kings of the earth do bring their glory and honour into it.  Rev 21:24",
+   "verse": "{nations_light}",
    "steps": "step_gold",
    "procession": true
   },
@@ -554,7 +551,7 @@
     600,
     860
    ],
-   "verse": "And they shall bring the glory and honour of the nations into it.  Rev 21:26",
+   "verse": "{nations_glory}",
    "steps": "step_gold",
    "procession": true
   },
@@ -574,76 +571,57 @@
     280,
     868
    ],
-   "verse": "And the kings of the earth do bring their glory and honour into it.  Rev 21:24",
+   "verse": "{nations_light}",
    "steps": "step_gold",
    "procession": true
   }
  ],
  "demo": {
   "start": [
-   56,
-   500
+   480,
+   528
   ],
-  "pause": 3.0,
+  "face": "up",
+  "pause": 1.5,
   "waypoints": [
    [
-    160,
-    494,
+    262,
+    528,
     0
    ],
    [
-    161,
-    494,
+    250,
+    506,
     4.2
    ],
    [
-    110,
-    426,
+    262,
+    528,
     0
    ],
    [
     480,
-    426,
+    528,
     0
    ],
    [
     480,
-    318,
+    300,
     0
    ],
    [
-    481,
-    318,
-    1.2
-   ],
-   [
-    480,
-    246,
+    430,
+    308,
     0
    ],
    [
-    372,
-    246,
-    0
+    300,
+    308,
+    1.0
    ],
    [
-    372,
-    247,
-    1.6
-   ],
-   [
-    480,
-    246,
-    0
-   ],
-   [
-    482,
-    198,
-    0
-   ],
-   [
-    482,
-    120,
+    6,
+    308,
     0
    ]
   ],
@@ -653,27 +631,8 @@
     "talk_nearest"
    ]
   ],
-  "quit_after": 38.5
- },
- "earth_demo": {
-  "start": [
-   482,
-   262
-  ],
-  "face": "up",
-  "pause": 1.2,
-  "waypoints": [
-   [
-    482,
-    198,
-    0
-   ],
-   [
-    482,
-    120,
-    0
-   ]
-  ]
+  "quit_after": 33.0,
+  "then": "arrival_demo"
  },
  "map_size": [
   1920,
@@ -702,16 +661,11 @@
  "district_demo": {
   "start": [
    480,
-   470
+   530
   ],
   "face": "down",
   "pause": 1.5,
   "waypoints": [
-   [
-    480,
-    600,
-    0
-   ],
    [
     480,
     830,
@@ -723,39 +677,87 @@
     4.0
    ],
    [
-    140,
+    150,
     836,
-    2.5
+    1.0
    ],
    [
-    1000,
-    822,
+    20,
+    836,
     0
-   ],
-   [
-    1215,
-    800,
-    4.0
    ]
   ],
   "events": [
    [
-    8.8,
-    "talk_nearest"
-   ],
-   [
-    21.0,
-    "zoom_close"
-   ],
-   [
-    25.0,
-    "zoom_normal"
-   ],
-   [
-    31.2,
+    9.2,
     "talk_nearest"
    ]
   ],
-  "quit_after": 35.0
+  "quit_after": 27.0,
+  "then": "arrival_demo"
+ },
+ "throne_glow": [
+  -40,
+  116
+ ],
+ "to_throne": [
+  {
+   "from": "garden",
+   "area": [
+    0,
+    296,
+    14,
+    22
+   ],
+   "verse": "{to_throne_river|block}",
+   "verse_y": 214
+  },
+  {
+   "from": "district",
+   "area": [
+    0,
+    780,
+    70,
+    120
+   ],
+   "verse": "{to_throne|block}",
+   "verse_y": 214
+  }
+ ],
+ "arrive_from_throne": {
+  "garden": {
+   "at": [
+    34,
+    308
+   ],
+   "face": "right"
+  },
+  "district": {
+   "at": [
+    96,
+    840
+   ],
+   "face": "right"
+  }
+ },
+ "earth_demo": {
+  "start": [
+   482,
+   262
+  ],
+  "face": "up",
+  "pause": 1.2,
+  "waypoints": [
+   [
+    482,
+    198,
+    0
+   ],
+   [
+    482,
+    120,
+    0
+   ]
+  ]
  }
 }

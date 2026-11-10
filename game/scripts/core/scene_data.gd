@@ -1,12 +1,29 @@
 class_name SceneData
 extends RefCounted
-## Loads a scene's content (positions, people, verses, colliders, demo routes) from JSON and converts values.
+## Loads a scene's content (positions, people, verse keys, colliders, demo routes) from JSON and converts values.
 
 
 static func load_json(path: String) -> Dictionary:
 	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
 	assert(parsed is Dictionary, "bad scene data: " + path)
-	return parsed
+	return _resolve(parsed)
+
+
+## Scripture placeholders ({key}) in any string become the verse text from res://data/verses.json.
+static func _resolve(v: Variant) -> Variant:
+	if v is String:
+		return Scripture.resolve(v)
+	if v is Array:
+		var a: Array = []
+		for x: Variant in v:
+			a.append(_resolve(x))
+		return a
+	if v is Dictionary:
+		var d: Dictionary = {}
+		for k: Variant in v:
+			d[k] = _resolve(v[k])
+		return d
+	return v
 
 
 static func vec(a: Array) -> Vector2:

@@ -13,6 +13,8 @@ const TREE_TRUNK := Vector2(28, 10)
 const TREE_FADE_ALPHA: float = 0.55
 const RIVER_HEAR: float = 220.0
 const EARTH_SCENE: String = "res://earth.tscn"
+const THRONE_SCENE: String = "res://throne.tscn"
+const BRIDGE_AT := Vector2(423, 310)          # art/build_scene.py: bridge image origin
 
 var _trees: Array[Sprite2D] = []
 var _water_a: Sprite2D
@@ -21,7 +23,6 @@ var _throne_glow: Sprite2D
 var _gate_glow: Sprite2D
 var _river_sound: AudioStreamPlayer
 var _district: District
-var _in_light: bool = false
 var _time: float = 0.0
 
 
@@ -33,8 +34,9 @@ func _build_background() -> void:
 	SpriteFactory.sprite(self, "res://art/bg.png", Vector2.ZERO, -10)
 	_water_a = _water_layer("res://art/water_a.png", 1.0)
 	_water_b = _water_layer("res://art/water_b.png", 0.8)
-	_throne_glow = SpriteFactory.sprite(self, "res://art/glow_throne.png", Vector2(-40, 80), -8, true)
-	SpriteFactory.sprite(self, "res://art/bridge.png", Vector2(424, 268), -7)
+	# The river flows from the throne's light at the left edge (Rev 22:1); no figure, light only.
+	_throne_glow = SpriteFactory.sprite(self, "res://art/glow_throne.png", SceneData.vec(data["throne_glow"]), -8, true)
+	SpriteFactory.sprite(self, "res://art/bridge.png", BRIDGE_AT, -7)
 	_gate_glow = SpriteFactory.sprite(self, "res://art/glow_gate.png", Vector2(380, 20), 5, true)
 
 
@@ -107,7 +109,11 @@ func _on_grass(at: Vector2) -> bool:
 
 func _begin() -> void:
 	if Travel.arriving == "earth":
-		_arrive_from_earth()
+		arrive_at(SceneData.vec(data["gate"]["respawn"]), "down")
+	elif Travel.arriving == "throne":
+		var back: Dictionary = data["arrive_from_throne"][Travel.throne_from]
+		arrive_at(SceneData.vec(back["at"]), back["face"])
+		continue_demo()
 	elif args.has("--earth-demo"):
 		Travel.demo = true
 		run_demo("earth_demo")
@@ -127,8 +133,7 @@ func _tick(delta: float) -> void:
 	_update_tree_fade(delta)
 	_district.animate(_time)
 	_update_river_sound()
-	if not _in_light and _in_passage(player.global_position):
-		_enter_light()
+	_check_exits(player.global_position)
 
 
 func _update_tree_fade(delta: float) -> void:
@@ -151,28 +156,15 @@ func _in_passage(p: Vector2) -> bool:
 	return p.y < float(g["passage_end"]) + 2.0 and p.x > float(g["passage"][0]) and p.x < float(g["passage"][1])
 
 
-func _enter_light() -> void:
-	# The gates are never shut (Rev 21:25): through the open pearl lies the new earth (Rev 21:24-26).
-	_in_light = true
-	captions.suppressed = true
-	Audio.sfx("gate_chime", -7.0)
-	player.frozen = true
-	player.autopilot.clear()
-	var g: Dictionary = data["gate"]
-	captions.show_verse(g["verse"], float(g["verse_y"]), 1.2)
-	var tw := create_tween()
-	tw.tween_property(captions.fade, "color:a", 1.0, 1.2)
-	tw.tween_interval(2.2)
-	tw.tween_callback(func() -> void:
-		Travel.arriving = "city"
-		get_tree().change_scene_to_file(EARTH_SCENE))
-
-
-func _arrive_from_earth() -> void:
-	# Coming back in through the pearl gate: start just inside it, out of the light.
-	Travel.arriving = ""
-	player.global_position = SceneData.vec(data["gate"]["respawn"])
-	player.face("down")
-	camera.snap_to_target()
-	captions.fade.color.a = 1.0
-	create_tween().tween_property(captions.fade, "color:a", 0.0, 1.2)
+## The ways out: the open pearl gate leads to the new earth (Rev 21:24-26); the light at the river's source and
+## at the west end of the great street lead to the throne (Rev 22:1-4).
+func _check_exits(p: Vector2) -> void:
+	if _in_passage(p):
+		var g: Dictionary = data["gate"]
+		travel(EARTH_SCENE, "city", g["verse"], float(g["verse_y"]))
+		return
+	for way: Dictionary in data["to_throne"]:
+		if SceneData.rect(way["area"]).has_point(p):
+			Travel.throne_from = way["from"]
+			travel(THRONE_SCENE, "to_throne", way["verse"], float(way["verse_y"]))
+			return

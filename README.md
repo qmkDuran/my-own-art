@@ -25,7 +25,7 @@ Verse captions fade in at the bottom depending on where you stand.
 
 ## People (Rev 7:9)
 The city now has a calm multitude of the redeemed: standing groups, a kneeling worshipper and palm-bearers near the gate light,
-and two people walking slow loops. Press E near someone to hear a verse (KJV). Built by `art/build_walkers.py` and `art/build_people4.py`;
+and two people walking slow loops. Press E near someone to hear a verse (NIV). Built by `art/build_walkers.py` and `art/build_people4.py`;
 NPC logic in `game/scripts/actors/npc.gd`.
 
 ## The new earth (Isa 11, 35, 65; Rev 21:1, 24-26)
@@ -38,8 +38,17 @@ From the garden walk south along the gold street: below lies the great street of
 (light only), dwellings with pearl doors on the street, people at their homes, and the nations carrying their gifts into the light.
 The camera moves screen by screen so each view keeps its composition. `-- --district-demo` records a tour.
 
+## Scripture
+Scripture quotations taken from The Holy Bible, New International Version® NIV® Copyright © 1973, 1978, 1984, 2011 by Biblica, Inc.™ Used by permission. All rights reserved worldwide.
+All verses (49 distinct) live in `game/data/verses.json`; verify with `python3 -I tools/check_verses.py` (re-fetch the source with `python3 -I tools/fetch_niv.py`). See `CREDITS.md`.
+
+## Ways through the city
+New earth → pearl gate → garden and river → (riverside path west, into the light: Rev 22:1) → throne room;
+garden → gold street south → great street → (west, into the light: Rev 22:3-4) → throne room.
+Walking off the bottom of the sea of glass returns to where you came from.
+
 ## Font
-Captions use the pixel font **monogram** by datagoblin (CC0): `game/fonts/monogram.ttf`, licence note `game/fonts/LICENSE-monogram.txt`.
+Captions use the pixel font **monogram** by datagoblin (CC0), extended with NIV punctuation: `game/fonts/monogram_ext.ttf`, licence note `game/fonts/LICENSE-monogram.txt`.
 
 ## Sound
 All audio is original procedural audio (CC0), made by `art/audio/synth.py`; the kneel hymn arranges the public-domain
@@ -58,7 +67,8 @@ Scene content (people, verses, zones, colliders, demo routes) is in `game/data/*
 Full module map: `HEAVEN_NOTES.md` section 5.
 
 ## Tests
-    GODOT=<godot binary> game/tests/run_smoke.sh                       # headless smoke test (all scenes)
+    GODOT=<godot binary> game/tests/run_smoke.sh                       # headless smoke test (all scenes + every transition)
+    python3 -I tools/scan_layout.py                                    # trees on grass, nobody in water, props off paths
     <godot> --headless --fixed-fps 60 --path game -- --demo --probe    # position probe log (regressions)
 
 ## Files

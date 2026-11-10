@@ -1,3 +1,5 @@
 .godot/
 __pycache__/
 *.mp4
+# full fetched NIV chapters: local verse-check cache only, not distributed
+art/niv_source.json

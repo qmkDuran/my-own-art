@@ -52,3 +52,4 @@ vines2x	cost=10.0	total_used=40.0	usd=2.18083018988485
 --- city district: START=214.5 CAP=30 ---
 mansion	cost=15.0	total_used=15.0	usd=2.18083018988485
 gifts	cost=10.0	total_used=25.0	usd=2.18083018988485
+--- garden fixes: START=189.5 CAP=0 ---
