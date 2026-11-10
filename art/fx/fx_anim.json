@@ -1,0 +1,146 @@
+{
+ "fx/fire_small": {
+  "size": [
+   160,
+   28
+  ],
+  "frame": [
+   20,
+   28
+  ],
+  "frames": 8,
+  "ms_per_frame": 90,
+  "loop": true,
+  "origin_px": [
+   10,
+   27
+  ],
+  "note": "small flame loop (debris, stove-top, a burning bin); feet of the flame at origin"
+ },
+ "fx/fire_medium": {
+  "size": [
+   288,
+   52
+  ],
+  "frame": [
+   36,
+   52
+  ],
+  "frames": 8,
+  "ms_per_frame": 90,
+  "loop": true,
+  "origin_px": [
+   18,
+   51
+  ],
+  "note": "medium flame loop (house/garage fire spot, store front at night)"
+ },
+ "fx/dust_puff": {
+  "size": [
+   192,
+   24
+  ],
+  "frame": [
+   32,
+   24
+  ],
+  "frames": 6,
+  "ms_per_frame": 70,
+  "loop": false,
+  "origin_px": [
+   16,
+   22
+  ],
+  "note": "one-shot dust puff (landing, shoving furniture, a falling shelf)"
+ },
+ "fx/hit_flash": {
+  "size": [
+   128,
+   32
+  ],
+  "frame": [
+   32,
+   32
+  ],
+  "frames": 4,
+  "ms_per_frame": 50,
+  "loop": false,
+  "origin_px": [
+   16,
+   16
+  ],
+  "note": "one-shot impact flash (bat / punch hit); centre on the point of contact"
+ },
+ "fx/glass_burst": {
+  "size": [
+   448,
+   36
+  ],
+  "frame": [
+   56,
+   36
+  ],
+  "frames": 8,
+  "ms_per_frame": 60,
+  "loop": false,
+  "origin_px": [
+   28,
+   35
+  ],
+  "note": "one-shot breaking-glass burst; last frame matches a settled shard pile (swap to props/glass_floor after)"
+ },
+ "fx/fire": {
+  "size": [
+   384,
+   64
+  ],
+  "frame": [
+   48,
+   64
+  ],
+  "frames": 8,
+  "ms_per_frame": 83,
+  "loop": true,
+  "origin_px": [
+   24,
+   54
+  ],
+  "note": "looping car fire (place over the wreck bonnet; also small flames on debris)"
+ },
+ "fx/smoke": {
+  "size": [
+   768,
+   96
+  ],
+  "frame": [
+   48,
+   96
+  ],
+  "frames": 16,
+  "ms_per_frame": 100,
+  "loop": true,
+  "origin_px": [
+   24,
+   94
+  ],
+  "note": "looping dark smoke column (place above the fire)"
+ },
+ "fx/sparks": {
+  "size": [
+   384,
+   48
+  ],
+  "frame": [
+   48,
+   48
+  ],
+  "frames": 8,
+  "ms_per_frame": 83,
+  "loop": false,
+  "origin_px": [
+   24,
+   24
+  ],
+  "note": "one-shot spark burst (broken streetlight, crash)"
+ }
+}
