@@ -7,6 +7,7 @@ Godot 4.7.2 binary: `scratchpad/godot/Godot_v4.7.2-stable_linux.x86_64`. Project
 - **Palette:** Resurrect 64 only (`/home/user/project-revelation/art/style_anchors/resurrect64.hex`; loaded as `plh.R64/RGB/PAL`). Pass `target_palette` to every PixelLab call and quantize every final sprite (`quant()` in the build scripts). Additive light glows (`glow_*.png`, `throne_glow.png`, `rays.png`) are the only off-palette assets (smooth alpha FX).
 - **Outline:** `#2e222f`. Light from the top-left (highlights on top-left bevels, shade on the bottom-right). View: 3/4 top-down.
 - **Resolution:** viewport 960x540, window 1920x1080, stretch `canvas_items`, integer scale, nearest filter, 2D pixel snap. All coordinates in code are 960x540 viewport pixels.
+- **Scale rule (true proportions):** person ~58 px; house ~3 people tall (~240–280 px), door a little taller than a person, windows at head height; vine trellis ~1.2x a person (70 px). Building generations at 168 px are Scale2x'd (`art/upscale.py`: EPX + outline thinning back to 1 px) so line weight matches.
 - **Sizes:** tiles 32 px. Humans: 64x64 frames, feet on row 61, figure about 58–60 px tall. Elders 64x64 (seated on their throne). Living creatures 112 px. Trees 128x128 (trunk base at 64,112). Pearl gate 144x160 (arch about 85 px tall). Wall 110 px tall (bottom at y=160 in city/earth). Lamb 48 px, angels 32 px, animals 64 px (adult) / 48 px (young).
 - **Depth:** backgrounds z -20/-10; water -9; glows -8/-15 (additive); bridge -7; a y-sorted `world` Node2D (z 0) holds trees, people, animals, houses and the player, all with origin at the feet; UI on a CanvasLayer. Glows over the scene z 5, particles z 6.
 - **Mood:** bright, even light, no night, no dark shadows; soft light particles everywhere.
@@ -52,7 +53,9 @@ All build scripts import shared helpers from **`art/common.py`**: palette (`PALA
 | `art/build_throne_sprites.py` | creatures (+ the man-faced head repaint), Lamb, elders (rounded heads, bow frames, crowns), angels |
 | `art/build_throne_scene.py` | throne-room bg, burst core, lamps, `art/throne/layout.json` |
 | `art/build_wings.py` | wing flap frames (column shear) for creatures and angels |
-| `art/build_earth.py` | new-earth bg (path, stream, roses, contact shadows), animals, hay stack, houses, vines, field trees, hammer, basket, `art/earth/layout.json` |
+| `art/wall.py` | shared city outer works: `draw_sky`, `wall_strip(width)` (jasper bands + 12-stone foundation), `pearl_gate()`, `add_city_top(bg, gate_x)` — any width |
+| `art/upscale.py` | Scale2x + outline thinning for true-scale buildings |
+| `art/build_earth.py` | **1920x1080** new-earth map: wall + gate across the top, main path + cross road + door paths, stream, roses, contact shadows; animals, hay stack, 5 houses (Scale2x), straight-front vine rows raised by hand, field trees, hammer, basket, `art/earth/layout.json` (map_size, houses, vine_rows, animals, trees, stream_rects) |
 | `art/audio/synth.py` | **all audio** (procedural, CC0) into `game/audio/` |
 | `art/mock*.py` | quick PIL composites to check layouts before Godot |
 
@@ -76,9 +79,9 @@ Thin scenes over shared, typed components. **Content lives in data**: `game/data
 | | `UiText` | the one label factory (monogram 16/32, outlined) |
 | `scripts/talk` | `TalkSystem` | nearest Npc within 52 px → `speak` + caption for 5.5 s |
 | `scripts/demo` | `DemoRecorder` | data-driven scripted walks: start/face/pause/waypoints, timed events (scene method names), SceneTree-bound quit |
-| `scripts/camera` | `CameraRig` | Camera2D with **integer zoom levels** [1,2,3], map-bound clamping, `tour()`; at level 1 on one screen it is invisible |
+| `scripts/camera` | `CameraRig` | follow camera with **integer screen scales** 1 = overview, 2 = normal, 3 = close (camera zoom = scale / 2, since the window is 2x). Steps go through a 0.2 s soft white veil (no blurry in-between zoom). `min_scale()` from map bounds (one-screen maps: 2 and 3 only), clamped; `go_to/step/cycle/tour` |
 | `scripts/scenes` | `SceneBase` | skeleton: data → background → y-sorted world → player → people → overlay → captions/talk/camera → audio → `_begin()`. Hooks: `_build_background/_build_world/_build_overlay/_setup_captions/_start_audio/_on_action/_tick/_begin`. Esc → menu |
-| | `city.gd`, `throne.gd`, `earth.gd`, `menu.gd` | the scenes (main.tscn = city) |
+| | `city.gd`, `throne.gd`, `earth.gd`, `menu.gd` | the scenes (main.tscn = city). Zoom input in SceneBase: mouse wheel, `+`/`-`, `Z` cycles. Demo events `zoom_overview/zoom_normal/zoom_close`. Scenes give `_map_bounds()` (earth: from layout map_size) |
 | `scripts/throne` | `HeavenlyHost`, `ThroneLight`, `LivingCreatures`, `ElderCircle` | angels; burst/lamps/lightning; creatures + wings; elders, crowns, bowls, worship |
 | `scripts/earth` | `Herd`, `Builder` | animals (idles, voices); hammer + knock |
 | `tests` | `probe.gd` (autoload, `--probe`), `smoke_test.gd` (autoload, `--smoke`), `run_smoke.sh` | regression probes and the smoke test |
@@ -104,18 +107,20 @@ Thin scenes over shared, typed components. **Content lives in data**: `game/data
 | New earth | 80 | 50 | animals 20, houses 10, frame 10, vines 10 |
 | People fix pass | 15 | 11 | 11 x 4-dir create-character-v3 (1 each, ~3 min each) |
 | Code cleanup | 0 | 0 | refactor only; behaviour verified identical |
-Balance after the people fix pass: 254.5 generations; USD 2.18083 throughout.
+| Scale + zoom | 40 | 40 | house2x 15, frame2x 15 (168 px = 15 each), vines2x 10 (came out oblique: unused; the straight v1 row was raised by hand instead) |
+Balance after scale + zoom: 214.5 generations; USD 2.18083 throughout.
 
 ## 7. Known weak spots
 - Gold plaza grid and rigid horizontal city layout; flat bridge; synthetic-sounding music.
 - People: the 4-dir rotations differ slightly from the original front sprites; palm sway is still subtle (4 px at the tip); the kneel is a hand-drawn robe pool (simple); side-view kneel is weakest.
 - Creatures' wing motion is a shear (stepped edges); elders turn only left/right.
-- New earth: houses come from oblique-view generations (slightly different perspective from the top-down meadow); the builder's hammer is small; the animals' idle is only a 1–2 px head dip.
+- New earth: houses are straight-front now but their roofs are seen fairly low (more side than top-down); the meadow is large and evenly speckled (can feel empty between groups); the animals' idle is only a 1–2 px head dip; the builder's hammer is small.
+- Zoom: the overview (1x) makes 64 px people small; captions stay screen-size (by design).
 
 ## 8. Queued phases (wait for the coordinator's go and guard reset)
-1. **New earth scale + zoom** (cap 40):
-   - Regenerate the houses at about 3 people tall (doors slightly taller than a person, matching the top-down 3/4 view) and the house under construction; vine rows about 1.2x person height.
-   - Expand to about 3x2 screens with a following camera (`CameraRig.target`, `bounds`): wall + gate along the top, villages, vineyards, meadows, stream, animals.
-   - Integer zoom 1x/2x/3x on the mouse wheel and +/- (`CameraRig.set_level`), UI unaffected; maybe the city too.
-   - Deliver screenshots at each zoom and an mp4.
-2. **City district screen** (cap ~30): an adjacent screen with the great street of gold toward the throne light (light only), dwellings (John 14:2) with doors on the street, people at their homes, nations bringing glory (Rev 21:24-26). Uncluttered.
+1. **City district screen** (cap ~30): an adjacent city screen (camera transition at an edge of the current city screen; the garden heart stays unchanged) with:
+   - the great street of gold toward the throne's light at the far end (light only);
+   - dwellings (John 14:2) of jasper, gold, pearl and gems with doors on the street, people at their homes, a few walkers;
+   - nations bringing glory and honour, carrying gifts toward the throne (Rev 21:24-26).
+
+   Keep it uncluttered and generously spaced. Reuse: `art/wall.py`, `upscale.py`, SceneBase/CameraRig (bounds for a 2-screen city), Npc/TalkSystem, data JSON.

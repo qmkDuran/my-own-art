@@ -18,6 +18,7 @@ A second scene, the throne room of heaven (Revelation 4-5), is chosen from the s
 First time only (or after changing art): `--headless --path . --import`.
 
 Controls: WASD or arrow keys, 8-way movement. Esc returns to the menu.
+Zoom: mouse wheel or +/- (Z cycles): overview 1x (whole new earth), normal 2x, close 3x, always whole pixels.
 City: cross the river on the bridge; walk north into the pearl gate to step out into the light.
 Throne room: walk on the sea of glass; E kneels in worship (Rev 4:8). Every 16 s the elders cast their crowns before the throne (Rev 4:10).
 Verse captions fade in at the bottom depending on where you stand.
@@ -61,4 +62,4 @@ Full module map: `HEAVEN_NOTES.md` section 5.
 - `art/common.py` + `art/build_*.py`: rebuild the final art from the PixelLab outputs in `art/raw/` (no API calls).
 - `art/gen_*.py`, `art/mkchar.py`, `tools/anim.py`: the PixelLab generation scripts (paid; all routed through `tools/guard.py`).
 - `spend_log.txt`: every paid call and the running total.
-- `out/`: city screenshots + `new_jerusalem_walk.mp4` + `character_sheet_3x.png`; throne room `throne_screenshot_*.png` + `throne_room_walk.mp4` + `throne_sprites_3x.png`; with sound: `city_with_sound.mp4`, `throne_with_sound.mp4`, `wings_closeup.mp4`; `elder_heads_fix.png` (before/after); new earth: `new_earth.mp4`, `new_earth_*.png`, `new_earth_sprites_3x.png`; people: `city_people.mp4`, `city_people_talk.png`, `city_people_bank.png`, `people_sheet_3x.png`, `people4_sheet_3x.png` (4-direction people).
+- `out/`: city screenshots + `new_jerusalem_walk.mp4` + `character_sheet_3x.png`; throne room `throne_screenshot_*.png` + `throne_room_walk.mp4` + `throne_sprites_3x.png`; with sound: `city_with_sound.mp4`, `throne_with_sound.mp4`, `wings_closeup.mp4`; `elder_heads_fix.png` (before/after); new earth: `new_earth_v2.mp4` (larger map, zooming), `new_earth_v2_{overview_1x,normal_2x,close_3x}.png`, older `new_earth.mp4`, `new_earth_*.png`, `new_earth_sprites_3x.png`; people: `city_people.mp4`, `city_people_talk.png`, `city_people_bank.png`, `people_sheet_3x.png`, `people4_sheet_3x.png` (4-direction people).

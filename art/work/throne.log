@@ -1,0 +1,72 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PROBE ThroneRoom f=30 p=480,484 blockers=34 npcs=0
+PROBE ThroneRoom f=60 p=480,472 blockers=34 npcs=0
+PROBE ThroneRoom f=90 p=480,472 blockers=34 npcs=0
+PROBE ThroneRoom f=120 p=480,472 blockers=34 npcs=0
+PROBE ThroneRoom f=150 p=462,474 blockers=34 npcs=0
+PROBE ThroneRoom f=180 p=423,480 blockers=34 npcs=0
+PROBE ThroneRoom f=210 p=385,486 blockers=34 npcs=0
+PROBE ThroneRoom f=240 p=346,491 blockers=34 npcs=0
+PROBE ThroneRoom f=270 p=308,497 blockers=34 npcs=0
+PROBE ThroneRoom f=300 p=269,502 blockers=34 npcs=0
+PROBE ThroneRoom f=330 p=251,505 blockers=34 npcs=0
+PROBE ThroneRoom f=360 p=251,505 blockers=34 npcs=0
+PROBE ThroneRoom f=390 p=255,504 blockers=34 npcs=0
+PROBE ThroneRoom f=420 p=292,492 blockers=34 npcs=0
+PROBE ThroneRoom f=450 p=329,479 blockers=34 npcs=0
+PROBE ThroneRoom f=480 p=366,467 blockers=34 npcs=0
+PROBE ThroneRoom f=510 p=403,455 blockers=34 npcs=0
+PROBE ThroneRoom f=540 p=440,443 blockers=34 npcs=0
+PROBE ThroneRoom f=570 p=477,431 blockers=34 npcs=0
+PROBE ThroneRoom f=600 p=513,442 blockers=34 npcs=0
+PROBE ThroneRoom f=630 p=550,455 blockers=34 npcs=0
+PROBE ThroneRoom f=660 p=587,467 blockers=34 npcs=0
+PROBE ThroneRoom f=690 p=624,479 blockers=34 npcs=0
+PROBE ThroneRoom f=720 p=661,492 blockers=34 npcs=0
+PROBE ThroneRoom f=750 p=698,504 blockers=34 npcs=0
+PROBE ThroneRoom f=780 p=699,505 blockers=34 npcs=0
+PROBE ThroneRoom f=810 p=699,505 blockers=34 npcs=0
+PROBE ThroneRoom f=840 p=679,498 blockers=34 npcs=0
+PROBE ThroneRoom f=870 p=642,485 blockers=34 npcs=0
+PROBE ThroneRoom f=900 p=605,473 blockers=34 npcs=0
+PROBE ThroneRoom f=930 p=568,460 blockers=34 npcs=0
+PROBE ThroneRoom f=960 p=532,448 blockers=34 npcs=0
+PROBE ThroneRoom f=990 p=495,435 blockers=34 npcs=0
+PROBE ThroneRoom f=1020 p=481,407 blockers=34 npcs=0
+PROBE ThroneRoom f=1050 p=481,368 blockers=34 npcs=0
+PROBE ThroneRoom f=1080 p=480,329 blockers=34 npcs=0
+PROBE ThroneRoom f=1110 p=480,316 blockers=34 npcs=0
+PROBE ThroneRoom f=1140 p=480,316 blockers=34 npcs=0
+PROBE ThroneRoom f=1170 p=480,316 blockers=34 npcs=0
+PROBE ThroneRoom f=1200 p=480,316 blockers=34 npcs=0
+PROBE ThroneRoom f=1230 p=480,316 blockers=34 npcs=0
+PROBE ThroneRoom f=1260 p=480,316 blockers=34 npcs=0
+PROBE ThroneRoom f=1290 p=480,316 blockers=34 npcs=0
+PROBE ThroneRoom f=1320 p=480,316 blockers=34 npcs=0
+PROBE ThroneRoom f=1350 p=480,316 blockers=34 npcs=0
+PROBE ThroneRoom f=1380 p=480,316 blockers=34 npcs=0
+PROBE ThroneRoom f=1410 p=480,316 blockers=34 npcs=0
+PROBE ThroneRoom f=1440 p=480,316 blockers=34 npcs=0
+PROBE ThroneRoom f=1470 p=480,316 blockers=34 npcs=0
+PROBE ThroneRoom f=1500 p=480,316 blockers=34 npcs=0
+PROBE ThroneRoom f=1530 p=480,316 blockers=34 npcs=0
+PROBE ThroneRoom f=1560 p=480,316 blockers=34 npcs=0
+PROBE ThroneRoom f=1590 p=480,316 blockers=34 npcs=0
+PROBE ThroneRoom f=1620 p=480,316 blockers=34 npcs=0
+PROBE ThroneRoom f=1650 p=480,316 blockers=34 npcs=0
+PROBE ThroneRoom f=1680 p=480,316 blockers=34 npcs=0
+PROBE ThroneRoom f=1710 p=480,316 blockers=34 npcs=0
+PROBE ThroneRoom f=1740 p=480,316 blockers=34 npcs=0
+PROBE ThroneRoom f=1770 p=480,316 blockers=34 npcs=0
+PROBE ThroneRoom f=1800 p=480,316 blockers=34 npcs=0
+PROBE ThroneRoom f=1830 p=480,316 blockers=34 npcs=0
+PROBE ThroneRoom f=1860 p=480,316 blockers=34 npcs=0
+PROBE ThroneRoom f=1890 p=480,316 blockers=34 npcs=0
+PROBE ThroneRoom f=1920 p=480,316 blockers=34 npcs=0
+PROBE ThroneRoom f=1950 p=480,316 blockers=34 npcs=0
+PROBE ThroneRoom f=1980 p=480,316 blockers=34 npcs=0
+WARNING: 142 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 13 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)
