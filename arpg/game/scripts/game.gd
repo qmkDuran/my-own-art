@@ -3,9 +3,10 @@ extends Node2D
 ## The zone: a ruined suburb street at night in the time of distress (Dan 12:1). Michael is sent in answer to
 ## prayer (Dan 10:12-13). Builds the world, wires the systems and turns input into Michael's commands.
 
-const PICKUP_RADIUS: float = 22.0
+const PICKUP_RADIUS: float = 34.0
 const TARGET_RADIUS: float = 40.0
 const INTRO_SECONDS: float = 7.0
+const SAVE_EVERY: float = 5.0
 
 var world: Node2D
 var zone: Zone
@@ -19,11 +20,16 @@ var skill_panel: SkillPanel
 var hosts_panel: HostsPanel
 var pause_panel: PausePanel
 var bot: DemoBot
+var travel_panel: TravelPanel
+var stones: Array = []
 
 var _attack_target: Demon
 var _pickup_target: GroundItem
+var _use_target: Interactable
 var _zone_caption: String = ""
 var _intro_t: float = INTRO_SECONDS
+var _dirty: bool = false
+var _save_t: float = 0.0
 
 
 func _ready() -> void:
@@ -45,13 +51,18 @@ func _ready() -> void:
 	objective = PrayerObjective.new()
 	add_child(objective)
 	objective.setup(world, michael, spawner)
+	for c: Array in GameData.zone["chests"]:
+		Interactable.make(world, c[0], Interactable.NAMES[c[0]], Vector2(float(c[1]), float(c[2])))
+	for w: Array in GameData.zone["waystones"]:
+		stones.append(Interactable.make(world, "waystone", w[0], Vector2(float(w[1]), float(w[2]))))
+	add_child(LabelStack.new())
 	camera = Camera2D.new()
 	var size: Vector2 = SceneData.vec(GameData.zone["size"])
 	camera.limit_right = int(size.x)
 	camera.limit_bottom = int(size.y)
 	camera.position_smoothing_enabled = true
 	camera.position_smoothing_speed = 7.0
-	var zoom: float = float(GameData.settings.get("camera_zoom", 1.5))
+	var zoom: float = float(GameData.settings.get("camera_zoom", 1.0))
 	camera.zoom = Vector2(zoom, zoom)
 	michael.add_child(camera)
 	_build_ui()
@@ -64,6 +75,10 @@ func _ready() -> void:
 	get_tree().create_timer(4.0).timeout.connect(hud.caption.bind("{michael_arise}"))
 	Audio.play_music("night_music", -9.0, 2.5)
 	Audio.loop_player(self, "night_wind", -14.0)
+	if SaveGame.enabled() and SaveGame.read(self):
+		hud.notice("Welcome back")
+	michael.prog.changed.connect(func() -> void: _dirty = true)
+	michael.inv.changed.connect(func() -> void: _dirty = true)
 	if OS.get_cmdline_user_args().has("--demo"):
 		bot = DemoBot.new()
 		add_child(bot)
@@ -90,6 +105,14 @@ func _build_ui() -> void:
 	pause_panel = PausePanel.new()
 	ui.add_child(pause_panel)
 	pause_panel.setup()
+	travel_panel = TravelPanel.new()
+	ui.add_child(travel_panel)
+	travel_panel.setup(michael, Rect2(360, 150, 240, 40 + 22 * stones.size()))
+	travel_panel.stones = stones
+	travel_panel.chosen.connect(_travel)
+	var mini := Minimap.new()
+	ui.add_child(mini)
+	mini.setup(self)
 	var cursor := CursorView.new()
 	ui.add_child(cursor)
 	cursor.setup(self)
@@ -103,7 +126,18 @@ func _on_level(level: int) -> void:
 
 
 func panels_open() -> bool:
-	return inventory_panel.visible or skill_panel.visible or hosts_panel.visible
+	return inventory_panel.visible or skill_panel.visible or hosts_panel.visible or travel_panel.visible
+
+
+## Travel to a found waystone: a short white-out, then Michael stands beside it.
+func _travel(i: int) -> void:
+	travel_panel.visible = false
+	var to: Vector2 = (stones[i] as Interactable).global_position + Vector2(0, 36)
+	Audio.sfx("dash", -6.0, 0.6)
+	hud.fade_through(func() -> void:
+		michael.position = to
+		michael.stop()
+		camera.reset_smoothing())
 
 
 # ------------------------------------------------------------------ input (click-to-move first)
@@ -124,7 +158,7 @@ func cursor_screen() -> Vector2:
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("pause"):
 		if panels_open():
-			for p: GamePanel in [inventory_panel, skill_panel, hosts_panel]:
+			for p: GamePanel in [inventory_panel, skill_panel, hosts_panel, travel_panel]:
 				p.visible = false
 		else:
 			get_tree().paused = not get_tree().paused
@@ -141,7 +175,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	elif event.is_action_pressed("dodge"):
 		michael.dodge()
 	elif event.is_action_pressed("charge"):
-		press_skill("descent")
+		press_slot("RMB")
 	elif event.is_action_pressed("click"):
 		lmb_down()
 	elif event.is_action_released("click"):
@@ -149,7 +183,12 @@ func _unhandled_input(event: InputEvent) -> void:
 	else:
 		for i: int in 4:
 			if event.is_action_pressed("skill_%d" % (i + 1)):
-				press_skill(GameData.skills["slots"][i + 2])
+				press_slot(["Q", "W", "E", "R"][i])
+
+
+func press_slot(key: String) -> void:
+	if michael.prog.slots.has(key):
+		press_skill(michael.prog.slots[key])
 
 
 func press_skill(id: String) -> void:
@@ -159,16 +198,24 @@ func press_skill(id: String) -> void:
 
 ## Left button down: an item name -> go and pick it up; with Shift -> strike toward the cursor where you stand;
 ## an enemy -> go to it and strike; open ground -> walk there (keep holding to keep walking).
-func lmb_down() -> void:
+func lmb_down(use_things: bool = true) -> void:
 	lmb = true
 	var at: Vector2 = mouse_world()
 	_attack_target = null
 	_pickup_target = null
-	for n: Node in world.get_children():
-		var g := n as GroundItem
-		if g != null and g.label_rect().has_point(at):
-			_pickup_target = g
-			michael.move_to(g.global_position)
+	_use_target = null
+	if LabelStack.shown:
+		for n: Node in get_tree().get_nodes_in_group("ground_items"):
+			var g := n as GroundItem
+			if g.label_rect().has_point(at):
+				_pickup_target = g
+				michael.move_to(g.global_position)
+				return
+	for n: Node in get_tree().get_nodes_in_group("interactables"):
+		var it := n as Interactable
+		if use_things and it.click_rect().has_point(at) and not (it.is_chest() and it.opened):
+			_use_target = it
+			michael.move_to(it.global_position + Vector2(0, 20))
 			return
 	if stand:
 		michael.stop()
@@ -195,8 +242,18 @@ func demon_near(at: Vector2, r: float) -> Demon:
 	return best
 
 
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_WM_CLOSE_REQUEST and SaveGame.enabled():
+		SaveGame.write(self)
+
+
 func _physics_process(delta: float) -> void:
 	_intro_t -= delta
+	_save_t += delta
+	if _dirty and _save_t > SAVE_EVERY and SaveGame.enabled():
+		_save_t = 0.0
+		_dirty = false
+		SaveGame.write(self)
 	if bot == null:
 		stand = Input.is_action_pressed("stand")
 		if InputSetup.keyboard_movement:
@@ -226,7 +283,7 @@ func _drive_pointer() -> void:
 		if not michael.busy():
 			michael.strike(at)
 			hud.flash("strike")
-	elif _attack_target == null and _pickup_target == null:
+	elif _attack_target == null and _pickup_target == null and _use_target == null:
 		michael.move_to(at)
 
 
@@ -247,9 +304,19 @@ func _follow_targets() -> void:
 
 
 func _auto_pickup() -> void:
-	for n: Node in world.get_children():
+	for n: Node in get_tree().get_nodes_in_group("interactables"):
+		var it := n as Interactable
+		if it.notice_michael(michael):
+			hud.notice("Waystone found: " + it.title)
+		if it == _use_target and michael.global_position.distance_to(it.global_position) < Interactable.REACH:
+			_use_target = null
+			michael.stop()
+			it.use(world, spawner.area_level() + 1)
+			if not it.is_chest():
+				travel_panel.visible = true
+	for n: Node in get_tree().get_nodes_in_group("ground_items"):
 		var g := n as GroundItem
-		if g == null or g.global_position.distance_to(michael.global_position) > PICKUP_RADIUS:
+		if g.global_position.distance_to(michael.global_position) > PICKUP_RADIUS or not (g == _pickup_target or g.auto_take()):
 			continue
 		if michael.inv.add(g.item):
 			FloatText.spawn(world, g.global_position, g.item["name"], GameData.rarity_color(g.item["rarity"]))

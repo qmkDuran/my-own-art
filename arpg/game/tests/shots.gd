@@ -35,7 +35,9 @@ func _process(delta: float) -> void:
 	if _t >= float(s[0]):
 		var img: Image = get_viewport().get_texture().get_image()
 		img.save_png(ProjectSettings.globalize_path("res://") + "../out/" + String(s[1]) + ".png")
-		print("SHOT ", s[1])
+		print("SHOT ", s[1], "  fps %.0f  physics %.2f ms  process %.2f ms  objects %d" % [Engine.get_frames_per_second(),
+			Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS) * 1000.0, Performance.get_monitor(Performance.TIME_PROCESS) * 1000.0,
+			Performance.get_monitor(Performance.OBJECT_NODE_COUNT)])
 		g.skill_panel.visible = false
 		g.hosts_panel.visible = false
 		_i += 1

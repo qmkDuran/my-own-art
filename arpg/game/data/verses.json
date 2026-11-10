@@ -4,7 +4,7 @@
  "edition": "2011",
  "notice": "Scripture quotations taken from The Holy Bible, New International Version® NIV® Copyright © 1973, 1978, 1984, 2011 by Biblica, Inc.™ Used by permission. All rights reserved worldwide.",
  "source": "Text copied from https://www.biblegateway.com (version=NIV), fetched and verified by tools/fetch_niv.py and tools/check_verses.py",
- "verse_count": 29,
+ "verse_count": 30,
  "verses": {
   "heard": {
    "ref": "Dan 10:12",
@@ -294,6 +294,15 @@
    ],
    "parts": [
     "He gives strength to the weary and increases the power of the weak."
+   ]
+  },
+  "abyss": {
+   "ref": "Rev 9:2",
+   "verses": [
+    "Revelation 9:2"
+   ],
+   "parts": [
+    "When he opened the Abyss, smoke rose from it like the smoke from a gigantic furnace."
    ]
   }
  }

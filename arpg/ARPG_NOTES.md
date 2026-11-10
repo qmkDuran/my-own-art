@@ -8,33 +8,58 @@ Godot 4.7.2 project: `arpg/game/` (run `godot --path arpg/game`; `-- --demo` pla
 `-- --smoke` headless test; `-- --demo --shots` writes review screenshots to `arpg/out/`).
 
 ## Controls (click-to-move is primary)
-Hold LMB on the ground to keep walking toward the cursor; LMB on an enemy = walk to it and strike; hold Shift = stand
-still and strike/cast toward the cursor. RMB Descent; Q W E R skills (1-4 alternates); Space dodge; I / K / P panels;
-Esc pause. WASD movement is `wasd_movement` in `data/settings.json` (off; when on, W stays on 2 only). The game draws its
-own cursor (CursorView); the demo bot drives a virtual cursor and the same Game methods (`lmb_down`, `lmb`, `stand`,
-`press_skill`), so the recording shows the real controls.
+Hold LMB on the ground to keep walking toward the cursor; LMB on an enemy = walk to it and strike; LMB on an item's
+name = walk to it and take it (clicking the ground never takes an item); LMB on a crate/lockbox/waystone = use it;
+hold Shift = stand still and strike/cast toward the cursor. RMB and Q W E R use the skills placed on those keys
+(1-4 alternates); Space dodge; I inventory, K skills, P stars, Alt item labels on/off, Esc pause. Options in
+`data/settings.json`: `wasd_movement` (off), `camera_zoom` (1.0 default; 1.5 = larger), `screen_shake` (0..1),
+`auto_pickup` (none / all / a rarity and better). The demo bot drives a virtual cursor through the same Game methods.
 
-## View
-Camera zoom 1.5 (`camera_zoom` in settings): with the 2x window stretch every world pixel is 3x3 screen pixels at 1080p
-(whole pixels), so Michael, demons and people are 1.5x larger on screen than before, all at the same scale. The HUD stays
-at 2x: a compact bottom-centre cluster (life gauge | skill bar with a 4 px experience bar above it | glory gauge).
+## View and light
+Camera zoom 1.0 by default (more of the street and the packs in view; 1.5 is the option), whole pixels either way.
+The night is darker (night tint 0.17/0.18/0.30); fires are the main lights (12 fires, flickering), one flickering
+streetlight, the rift's red glow. Michael casts no glow on the ground: a light with `range_item_cull_mask = 2` touches
+only characters (Michael, demons, chests, stones on light mask 2), so they stay readable.
 
-## Systems (mechanics inspired by classic dark ARPGs; all names, UI and art original)
-- **Skills (mastery style):** 3 skill points per level. The mastery bar (max 20) opens tiers at 1 / 4 / 8 and adds life
-  and damage per point. Skill ranks 1-8 (+12% per rank). Each skill has two one-point modifiers. `data/skills.json`.
-- **Stars (the Hosts, Isa 40:26):** separate point type: 1 per level after the first + 1 per answered prayer. Five groups
-  of 4-6 stars (24 stars), taken in order; a finished group gives a bonus; Cedar needs Anchor, Crown needs Vigil + Eagle.
-  `data/hosts.json`.
-- **Loot:** rarity tiers common / magic / rare / unique (white / blue / gold / orange), random affixes by item level,
-  rolled values, ground labels with a coloured light, auto pickup, 32-cell bag, paper doll with the armour of God
-  (Eph 6:13-17) + 2 rings + amulet. `data/items.json`, `scripts/loot/`.
-- **Enemies:** Imp (fast swarmer), Brute (slow, heavy), Shade (keeps away and casts "flaming arrows" — Eph 6:16 — that the
-  Shield of Faith puts out). Champion packs (22%: two empowered members, named "Champion"), a hero demon (Gravemaw) in the
-  final pack. Packs respawn after 22 s when Michael is away. Hit flash, knockback, damage numbers, hit-stop, dissolve
-  into shadow (shader). `data/enemies.json`, `scripts/actors/demon.gd`, `shaders/shadow.gdshader`.
-- **Objective:** three praying people (light circle + rising incense light). Reaching one brings a wave; clearing it answers
-  the prayer (+1 star). After all three: a final pack with Gravemaw; defeating it drops a unique, two rares and a magic item.
-- **Michael never dies:** struck down, he is raised again at the start ("Peace! Be strong now; be strong", Dan 10:19).
+## Map (3840x2160, 4x4 screens; `art/build_zone.py` writes ground, minimap, props and `data/zone.json`)
+Suburb (two streets of houses, side street) -> highway (four lanes, median barrier with gaps, guardrails with gaps,
+pile-up of wrecks, an overpass that turns see-through when Michael is under it) -> park (dirt paths, dark and dead trees,
+woods along the edges) -> the rift (ash ground, cracks, a chasm with a red-hot rim and smoke rising from it, Rev 9:2):
+the final arena. 27 mixed packs; 3 prayers (suburb, highway verge, park); 5 chests where they make sense (by a garage,
+behind the store, beside the wrecked van, by the park hedge, by a burned stump); 4 waystones (found by passing; use one
+to travel to any found stone); minimap top-right. Performance: headless ~1.3 ms process + ~1.3 ms physics per frame
+with ~95 demons (demons farther than 1300 px sleep); the xvfb software renderer is slow (~20 fps) - not representative.
+
+## Enemies
+Imp, Cinder (bursts near Michael and on death), Brute, Ravager (winds up and charges), Mauler (large, ground slam),
+Shade (ranged), Caller (summons imps), Stalker (blinks behind Michael) - palette variants of the three generated demons;
+plus three from Revelation (paid art, hand animation): Locust (Rev 9:7-10: crowned, human-like face, iron scales,
+scorpion tail; flies over obstacles and darts to sting), Impure Spirit (Rev 16:13-14: frog-like; hops, spits bolts and
+empowers nearby demons), Fire Horse (Rev 9:17-19: lion head, fire and smoke from its mouth, serpent tail; charges and
+breathes a cone of fire). Champions (18% of packs): two members with 1-2 modifiers (Hasted, Ember-Burst, Shielded) shown
+in their names. Hero: Gravemaw (final pack). Demons arrive as streaks of black smoke that swirl and coalesce, land with a
+dark burst and dust (respawns, waves, summons, the hero); after the final battle the rest leave the same way.
+
+## Builds (dual mastery, Grim Dawn-style mechanics, original content)
+Masteries (pick a second at level 3): Sword (Strike, Whirl), Shield (Shield of Faith, Bash), Voice (Rebuke, Silence,
+Trumpet Call), Wings (Descent, Gale), Light (Radiance, Lance). Each mastery bar (max 20) opens its skills' tiers at 1/4/8
+and adds stats. Ranks 1-8; 1-2 modifiers per skill. Learned skills take the first free key; click the key in the panel to
+move a skill. Attributes (1 point per level): Might, Agility, Spirit; items can roll them. Class titles by pair: Warden,
+Captain, Vanguard, Sentinel, Herald, Guardian, Keeper, Messenger, Witness, Beacon. Respec refunds every point.
+Uniques have build effects: Dawnbreaker (third swing bursts light), Last Wall (Shield of Faith throws bolts back),
+Swiftfoot (Descent recovers twice as fast), Oathband (Rebuke restores 8% life). Progress saves to
+`user://great_prince_save.json` (every 5 s when changed and on quit; not in --demo/--smoke/--fresh).
+
+## Loot
+Drops land in a ring on open ground (never in a wall, prop, wreck, the chasm or a fire, never under Michael's feet);
+labels stack so they never overlap; Alt hides/shows them.
+
+## Impact
+Every hit: sparks and a torn-off puff of shadow, a metallic tick; criticals: a flash ring, bigger number, small shake.
+Skills: blasts with rings, light and dust (Rebuke, Trumpet Call), a scorched crater with debris (Descent), a beam (Lance).
+Deaths: a shadow explosion with embers and a ring; neighbours are jolted so packs fall in a ripple. Screen shake scales
+with impact (setting). Layered procedural sounds (impact_heavy, burst, crunch, spark). Master bus: hard limiter -1 dB and
+per-sound ducking.
 
 ## Module map (`game/scripts/`)
 | Folder | Modules |
@@ -64,17 +89,20 @@ at 2x: a compact bottom-centre cluster (life gauge | skill bar with a 4 px exper
 ## Scripture
 NIV only, exact fragments, `game/data/verses.json`; check with `python3 -I tools/check_verses.py` after
 `python3 -I tools/fetch_niv.py` (local cache `art/niv_source.json`, never shipped). The Biblica notice is on the pause screen.
-Verses used: Dan 10:12, 10:13, 10:19, 12:1; Jude 9; Rev 2:10, 8:4, 12:7, 12:8, 12:9, 12:11; Eph 6:10, 6:12-18;
+Verses used: Dan 10:12, 10:13, 10:19, 12:1; Jude 9; Rev 2:10, 8:4, 9:2, 12:7, 12:8, 12:9, 12:11; Eph 6:10, 6:12-18;
 1 Thess 4:16; Num 22:31; Ps 34:7, 91:5, 91:11, 92:12; Isa 40:26, 40:29, 40:31; Heb 6:19.
 
 ## Names (all in data JSON; easy to rename)
-Skills: Strike, Descent, Rebuke, Shield of Faith, Trumpet Call, Radiance. Modifiers: Wide Arc, Heavy Blow, Wingbeat,
-Long Reach, Dread, Echo, Quench, Steadfast, Resound, Shockwave, Kindle, Mending. Mastery bar: Mastery.
-Star groups: Vigil, Anchor, Eagle, Cedar, Crown. Item bases: Girdle, Breastplate, Boots, Round Shield, Helm, Longsword,
-Ring, Amulet. Prefixes: Steadfast, Burnished, Bright, Fleet, Unbroken, Keen. Suffixes: of Dawn, of Renewal, of Precision,
-of Mercy, of Peace, of Truth. Rare words: Dawn/Ash/Iron/Ember/Silver/Storm/Bright/Stone/Winter/Cinder +
-Guard/Ward/Bastion/Mantle/Edge/Oath/Brand/Veil/Bulwark/Vow. Uniques: Oathband, Swiftfoot, Dawnbreaker, Last Wall.
-Enemies: Imp, Brute, Shade; Champion; hero Gravemaw.
+Masteries: Sword, Shield, Voice, Wings, Light. Classes: Warden, Captain, Vanguard, Sentinel, Herald, Guardian, Keeper,
+Messenger, Witness, Beacon. Skills: Strike, Whirl, Shield of Faith, Bash, Rebuke, Silence, Trumpet Call, Descent, Gale,
+Radiance, Lance. Modifiers: Wide Arc, Heavy Blow, Momentum, Quench, Steadfast, Daze, Dread, Echo, Long Silence, Resound,
+Shockwave, Downdraft, Long Reach, Gust, Kindle, Mending, Pierce. Attributes: Might, Agility, Spirit. Star groups: Vigil,
+Anchor, Eagle, Cedar, Crown. Item bases: Girdle, Breastplate, Boots, Round Shield, Helm, Longsword, Ring, Amulet.
+Prefixes: Steadfast, Burnished, Bright, Fleet, Unbroken, Keen. Suffixes: of Dawn, of Renewal, of Precision, of Mercy,
+of Peace, of Truth, of Might, of Agility, of Spirit. Rare words: Dawn/Ash/Iron/Ember/Silver/Storm/Bright/Stone/Winter/
+Cinder + Guard/Ward/Bastion/Mantle/Edge/Oath/Brand/Veil/Bulwark/Vow. Uniques: Oathband, Swiftfoot, Dawnbreaker, Last Wall.
+Enemies: Imp, Cinder, Brute, Ravager, Mauler, Shade, Caller, Stalker, Locust, Impure Spirit, Fire Horse; champion
+modifiers Hasted, Ember-Burst, Shielded; hero Gravemaw. Places: Main Street, Highway, Park, The Rift; Supply Crate, Lockbox.
 
 ## Budget (generations; guard START 168.5, CAP 100 for job A + B)
 | Item | Cost |
@@ -85,14 +113,16 @@ Enemies: Imp, Brute, Shade; Champion; hero Gravemaw.
 | Sword slash, pixminimax 8 frames x4 directions | 4 |
 | Demons 64 px batch (16 variants listing the three kinds; #02 imp, #04 brute, #08 shade) | 10 |
 | Item icons 32 px batch (64 variants, 8 per slot) | 10 |
-| **Total** | **39** (balance 129.5; USD unchanged) |
+| **Total, first pass** | **39** (balance 129.5; USD unchanged) |
+| Locust, Impure Spirit, Fire Horse: one 64 px batch each (16 variants; #02, #04, #01 used) | 30 |
+| **Total** | **69** (balance 99.5; USD unchanged) |
 
 ## Known weak spots
-- Michael's walk template barely moves the legs facing down; the east walk recoloured a wing (the side row uses the west walk;
-  right = mirrored). No cast animation (skills use the idle pose + effects).
-- Demons have one facing (mirrored) and hand-made animation (bob / lean / lunge), no real walk cycles.
-- The zone is a 2x2-screen street; houses are Project R art darkened, not truly ruined; no doors to enter.
-- Audio: a hard limiter on the master bus (ceiling -1 dB) and per-sound ducking (each copy already playing makes the next
-  3.5 dB quieter, max 4 copies).
-- Balance is first-pass; the demo bot starts at level 6 so every skill appears in the recording.
-- Skill icons are simple drawn glyphs. Houses repeat (four art pieces, some mirrored/darkened) and cannot be entered.
+- Michael's walk template barely moves the legs facing down; the side row is the mirrored west walk. No cast animation
+  (skills use the idle pose + effects).
+- All enemies are side views mirrored, with hand-made animation (bob / lean / lunge / wingbeat by shifting the upper half,
+  hop by squash and stretch), not drawn walk cycles. Palette variants share silhouettes with their base demons.
+- Houses repeat (four art pieces, some mirrored/darkened) and cannot be entered; the park is mostly open grass and trees.
+- The overpass is a flat deck drawn overhead (no ramps); the highway's lanes are walkable everywhere.
+- Balance is first-pass; the demo bot starts at level 6 with the Sword + Voice build so the skills appear in the recording.
+- Skill icons are simple drawn glyphs.

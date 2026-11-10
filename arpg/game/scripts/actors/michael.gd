@@ -1,7 +1,8 @@
 class_name Michael
 extends CharacterBody2D
-## The archangel Michael (Jude 9; Rev 12:7; Dan 10:13), sent in answer to prayer: a light in the dark street.
-## Moves where he is sent (click-to-move), strikes with the sword in a three-hit combo, dodges, and carries his own light.
+## The archangel Michael (Jude 9; Rev 12:7; Dan 10:13), sent in answer to prayer.
+## Moves where he is sent (click-to-move), strikes with the sword in a three-hit combo and dodges. He casts no glow on
+## the ground: a light that touches only characters (light mask 2) keeps him and the demons near him readable at night.
 ## Holds his numbers (Stats), growth (Progression) and the armour of God (Inventory). Skills live in SkillSystem.
 
 signal life_changed
@@ -17,7 +18,7 @@ const REACH_PAD: float = 14.0
 const ARRIVE: float = 6.0
 const COMBO_WINDOW: float = 0.55
 const DOWN_SECONDS: float = 2.5
-const LIGHT_ENERGY: float = 1.15
+const CHARACTER_LIGHT: float = 0.9
 
 var stats := Stats.new()
 var prog := Progression.new()
@@ -44,7 +45,6 @@ var _dodge_cd: float = 0.0
 var _anim_t: float = 0.0
 var _step_t: float = 0.0
 var _spawn: Vector2
-var light: PointLight2D
 
 
 func _ready() -> void:
@@ -65,13 +65,15 @@ func _ready() -> void:
 	_sprite = Sprite2D.new()
 	_sprite.centered = false
 	_sprite.offset = Vector2(-FRAME / 2.0, -FRAME + 3)
+	_sprite.light_mask = 1 | Demon.CHARACTER_LIGHT_MASK
 	add_child(_sprite)
-	light = PointLight2D.new()
-	light.texture = LightTex.radial(512)
-	light.color = Color(1.0, 0.95, 0.82)
-	light.energy = LIGHT_ENERGY
-	light.position = Vector2(0, -30)
-	add_child(light)
+	var readable := PointLight2D.new()
+	readable.texture = LightTex.radial(384)
+	readable.color = Color(0.85, 0.85, 1.0)
+	readable.energy = CHARACTER_LIGHT
+	readable.range_item_cull_mask = Demon.CHARACTER_LIGHT_MASK
+	readable.position = Vector2(0, -30)
+	add_child(readable)
 	skills = SkillSystem.new(self)
 	add_child(skills)
 	prog.changed.connect(refresh_stats)
@@ -268,7 +270,7 @@ func shield_radius() -> float:
 
 func shield_blocked(at: Vector2) -> void:
 	Audio.sfx("shield", -10.0, randf_range(0.95, 1.1))
-	skills.on_quench()
+	skills.on_quench(at)
 	SkillFx.ring(get_parent(), at, 16.0, Color("8fd3ff"), 0.25)
 
 

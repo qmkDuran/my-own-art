@@ -1,6 +1,7 @@
 class_name SkillIcons
 extends RefCounted
-## Small hand-drawn skill glyphs (original): a blade, a descending arrow, sound waves, a shield, a horn, a radiant sun.
+## Small hand-drawn skill glyphs (original): blade, spin, descending arrow, wind, sound waves, a closed mouth line,
+## shield, shield edge, horn, radiant sun, a line of light.
 
 
 static func draw_icon(ci: CanvasItem, id: String, c: Vector2, col: Color) -> void:
@@ -30,3 +31,19 @@ static func draw_icon(ci: CanvasItem, id: String, c: Vector2, col: Color) -> voi
 			for i: int in 8:
 				var a: float = TAU * i / 8.0
 				ci.draw_line(c + Vector2(cos(a), sin(a)) * 8.0, c + Vector2(cos(a), sin(a)) * 12.0, gold, 2.0)
+		"whirl":
+			ci.draw_arc(c, 10.0, 0.3, TAU - 0.6, 16, pale, 2.0)
+			ci.draw_line(c + Vector2(3, -9), c + Vector2(10, -2), gold, 2.0)
+		"bash":
+			ci.draw_arc(c + Vector2(-3, 0), 11.0, -1.0, 1.0, 10, gold, 3.0)
+			ci.draw_line(c + Vector2(4, -6), c + Vector2(11, -6), pale, 2.0)
+			ci.draw_line(c + Vector2(4, 6), c + Vector2(11, 6), pale, 2.0)
+		"silence":
+			ci.draw_arc(c, 10.0, 0.0, TAU, 20, Color("c7dcd0") * col, 2.0)
+			ci.draw_line(c + Vector2(-6, 0), c + Vector2(6, 0), pale, 3.0)
+		"gale":
+			for i: int in 3:
+				ci.draw_line(c + Vector2(-10, -6 + i * 6), c + Vector2(8 - i * 3, -6 + i * 6), Color("c7dcd0") * col, 2.0)
+		"lance":
+			ci.draw_line(c + Vector2(-11, 8), c + Vector2(11, -8), pale, 3.0)
+			ci.draw_circle(c + Vector2(11, -8), 3.0, gold)

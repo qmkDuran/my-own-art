@@ -82,10 +82,15 @@ func _answer(p: Dictionary) -> void:
 
 func _reward() -> void:
 	var at: Vector2 = SceneData.vec(GameData.zone["final_pack"]["at"])
+	var gifts: Array = []
 	for r: String in ["unique", "rare", "rare", "magic"]:
-		GroundItem.spawn(world, at + Vector2(randf_range(-40, 40), randf_range(-20, 20)), LootGen.make(spawner.area_level() + 2, 3.0, r))
+		gifts.append(LootGen.make(spawner.area_level() + 2, 3.0, r))
+	LootDrop.drop(world, at, gifts)
 	Audio.sfx("rare_drop", -3.0)
 	caption.emit("{not_strong}")
+	for n: Node in get_tree().get_nodes_in_group("demons"):         # the rest flee as smoke
+		if (n as Demon).global_position.distance_to(at) < 700.0:
+			SmokeArrival.depart(world, n as Demon)
 
 
 static func _cleared(wave: Array) -> bool:

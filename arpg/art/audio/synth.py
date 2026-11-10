@@ -132,11 +132,42 @@ def step():
     return s * env_exp(d, 40)
 
 
+def impact_heavy():
+    """A deep thud with a sub drop: Descent landings, Trumpet Call, Mauler slams."""
+    d = 0.9; t = t_axis(d)
+    boom = np.sin(2 * np.pi * (70 - 40 * t / d) * t)[:, None] * env_exp(d, 5)
+    crack = np.stack([bp(noise(d)[:, c], 200, 2500) for c in range(2)], 1) * env_exp(d, 18)
+    return boom * 1.2 + crack * 0.6
+
+
+def burst():
+    """A shadow bursting apart: a hollow pop with a falling hiss."""
+    d = 0.6; t = t_axis(d)
+    pop = np.sin(2 * np.pi * (180 - 140 * t / d) * t)[:, None] * env_exp(d, 14)
+    hiss = np.stack([bp(noise(d)[:, c], 600, 5000) for c in range(2)], 1) * env_exp(d, 6)
+    return pop + hiss * 0.5
+
+
+def crunch():
+    """Debris: short gritty clicks."""
+    d = 0.4; buf = np.zeros((int(d * SR), 2))
+    for i in range(7):
+        c = np.stack([hp(noise(0.03)[:, k], 1500) for k in range(2)], 1) * env_exp(0.03, 80)
+        place(buf, c * rng.uniform(0.4, 1.0), rng.uniform(0, 0.3))
+    return buf
+
+
+def spark():
+    """A bright metallic tick on a sword hit."""
+    return bell(2637, 0.25, 0.6, ratios=(1, 2.9, 5.1, 7.2), decays=(0.08, 0.05, 0.03, 0.02))
+
+
 if __name__ == '__main__':
     hs.save('night_music', night_music(), loop=True, peak_db=-6)
     hs.save('night_wind', night_wind(), loop=True, peak_db=-12)
     for name, fn, pk in (('swing', swing, -8), ('hit', hit, -5), ('dissolve', dissolve, -7), ('rebuke', rebuke, -4),
                          ('trumpet', trumpet, -4), ('shield', shield_block, -6), ('dash', dash, -9), ('pickup', pickup, -8),
                          ('rare_drop', rare_drop, -6), ('level_up', level_up, -5), ('bolt', bolt, -9),
-                         ('demon_hurt', demon_hurt, -9), ('prayer', prayer_answered, -5), ('step', step, -14)):
+                         ('demon_hurt', demon_hurt, -9), ('prayer', prayer_answered, -5), ('step', step, -14),
+                         ('impact_heavy', impact_heavy, -3), ('burst', burst, -6), ('crunch', crunch, -9), ('spark', spark, -12)):
         hs.save(name, fn(), peak_db=pk)

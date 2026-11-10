@@ -92,6 +92,85 @@ def demons():
     return out
 
 
+# ------------------------------------------------------------------ Revelation enemies (paid batches; hand animation)
+REVELATION = {  # name: (raw image, mirror to face left, rim colour)
+    'locust': ('arpg_locust_02', False, 'f9c22b'),       # Rev 9:7-10
+    'frog': ('arpg_frog_04', False, 'cddf6c'),           # Rev 16:13-14
+    'firehorse': ('arpg_firehorse_01', True, 'f57d4a'),  # Rev 9:17-19
+}
+
+
+def top_shift(im, dy, frac=0.5):
+    """Move the upper part of a sprite (wings, mane) by dy pixels: a wingbeat or a toss of the head."""
+    a = np.array(im); out = a.copy()
+    bb = im.getbbox(); cut = bb[1] + int((bb[3] - bb[1]) * frac)
+    out[:cut] = 0
+    src = a[:cut]
+    if dy < 0: out[:cut + dy] = np.where(src[-dy:, ..., 3:4] > 0, src[-dy:], out[:cut + dy])
+    else: out[dy:cut] = np.where(src[:cut - dy, ..., 3:4] > 0, src[:cut - dy], out[dy:cut])
+    return Image.fromarray(out)
+
+
+def revelation():
+    for name, (raw, flip, rim_col) in REVELATION.items():
+        base = keep_main(load(RAW + raw + '.png'), 0.2)
+        if flip: base = mirror(base)
+        bb = base.getbbox(); b = Image.new('RGBA', (F, F)); b.alpha_composite(base.crop(bb), ((F - (bb[2] - bb[0])) // 2, F - 2 - (bb[3] - bb[1])))
+        base = rim(b, rim_col)
+        if name == 'locust':        # hovering on beating wings, darting, stinging
+            idle = [top_shift(base, -2), top_shift(base, 1)]
+            move = [shift(top_shift(base, -2), 0, -3), shift(top_shift(base, 1), -2, -2), shift(top_shift(base, -2), 0, -3), shift(top_shift(base, 1), 2, -2)]
+            attack = [shift(base, 4, -4, 1.0, 1.04), shift(base, -8, 1, 1.08, 0.95), shift(base, -3, 0)]
+        elif name == 'frog':        # crouch and hop; spit
+            idle = [base, shift(base, 0, 0, 1.04, 0.96)]
+            move = [shift(base, 0, 0, 1.08, 0.9), shift(base, -2, -8, 0.94, 1.06), shift(base, -3, -10, 0.94, 1.06), shift(base, -1, -3)]
+            attack = [shift(base, 2, 0, 1.06, 0.94), shift(base, -4, -2, 0.96, 1.05), base]
+        else:                       # gallop; rear and breathe fire
+            idle = [base, top_shift(base, 1, 0.4)]
+            move = [shift(base, 0, -2), shift(top_shift(base, 1, 0.4), -1, 0), shift(base, 0, -2), shift(top_shift(base, -1, 0.4), 1, 0)]
+            attack = [shift(top_shift(base, -2, 0.45), 2, -2), shift(base, -5, 0, 1.05, 0.97), shift(base, -2, 0)]
+        save(sheet([idle, move, attack]), G + f'demons/{name}.png')
+
+
+# ------------------------------------------------------------------ demon variants by palette (no new generations)
+VARIANTS = {  # name: (source sheet, body ramp dark->light, rim colour, eye colour or None to keep)
+    'cinder': ('swarmer', ['2e222f', '6e2727', 'b33831', 'e83b3b'], 'f57d4a', 'fbff86'),
+    'stalker': ('caster', ['2e222f', '374e4a', '547e64', '92a984'], 'cddf6c', 'cddf6c'),
+    'caller': ('caster', ['2e222f', '3e3546', '625565', '9babb2'], 'c7dcd0', 'e83b3b'),
+    'ravager': ('brute', ['2e222f', '6e2727', '9e4539', 'cd683d'], 'e83b3b', 'fbff86'),
+    'mauler': ('brute', ['2e222f', '3e3546', '625565', '7f708a'], '9babb2', 'e83b3b'),
+}
+EYES = {H(c) for c in ('f57d4a', 'e6904e', 'f9c22b', 'fbb954', 'ea4f36', 'f79617', 'fbff86', 'e83b3b')}
+
+
+def lum(c): return 0.299 * c[0] + 0.587 * c[1] + 0.114 * c[2]
+
+
+def recolour_demon(src, ramp, rim_col, eye_col, old_rim):
+    """Body pixels move onto `ramp` by luminance; eyes take `eye_col`; the rim takes `rim_col`; outline stays."""
+    a = np.array(Image.open(G + f'demons/{src}.png').convert('RGBA'))
+    cols = {tuple(int(v) for v in p) for p in a[a[..., 3] > 0][:, :3]} - {H('2e222f')}
+    body = sorted([c for c in cols if c not in EYES and c != H(old_rim)], key=lum)
+    counts = {c: int(((a[..., :3] == c).all(-1) & (a[..., 3] > 0)).sum()) for c in body}
+    total = float(sum(counts.values())); acc = 0.0; rank = {}
+    for c in body:                                                   # by share of pixels, dark -> light
+        rank[c] = (acc + counts[c] / 2) / total; acc += counts[c]
+    out = a.copy()
+    for c in cols:
+        m = (a[..., :3] == c).all(-1) & (a[..., 3] > 0)
+        if c == H(old_rim): out[m, :3] = H(rim_col)
+        elif c in EYES: out[m, :3] = H(eye_col) if eye_col else c
+        else:
+            k = (0 if rank[c] < 0.35 else 1 if rank[c] < 0.72 else 2 if rank[c] < 0.93 else 3)
+            out[m, :3] = H(ramp[k])
+    return Image.fromarray(out)
+
+
+def variants():
+    for name, (src, ramp, rim_col, eye_col) in VARIANTS.items():
+        save(recolour_demon(src, ramp, rim_col, eye_col, RIM[src]), G + f'demons/{name}.png')
+
+
 # ------------------------------------------------------------------ items: 8 slots x 8 icons (batch order)
 ITEM_ROWS = ['belt', 'breastplate', 'feet', 'shield', 'helmet', 'sword', 'ring', 'amulet']
 
@@ -124,14 +203,15 @@ def praying():
 
 
 def review(mi, dm):
-    o = Image.new('RGBA', (F * 13, F * 2), (30, 28, 45, 255))
+    o = Image.new('RGBA', (F * 14, F * 2), (30, 28, 45, 255))
     o.alpha_composite(mi, (0, 0))
-    for i, (n, b) in enumerate(dm.items()): o.alpha_composite(b, (i * F, F))
-    for i, (n, _, _) in enumerate(PRAYERS): o.alpha_composite(Image.open(G + f'people/{n}.png').crop((0, 0, 64, 64)), ((4 + i) * F, F))
+    for i, n in enumerate(list(dm) + list(VARIANTS) + list(REVELATION)):
+        o.alpha_composite(Image.open(G + f'demons/{n}.png').crop((0, 0, 64, 64)), (i * F, F))
+    for i, (n, _, _) in enumerate(PRAYERS): o.alpha_composite(Image.open(G + f'people/{n}.png').crop((0, 0, 64, 64)), ((11 + i) * F, F))
     o.resize((o.width * 3, o.height * 3), Image.NEAREST).save('out/sprites_3x.png')
 
 
 if __name__ == '__main__':
     os.makedirs('out', exist_ok=True)
-    mi = michael(); dm = demons(); items(); praying(); review(mi, dm)
+    mi = michael(); dm = demons(); variants(); revelation(); items(); praying(); review(mi, dm)
     print('arpg art ok')

@@ -1,5 +1,7 @@
 {
- "_doc": "Player options. wasd_movement: keyboard movement (WASD/arrows) in addition to click-to-move; off by default, and when on, the W skill moves to 2 only. camera_zoom: world pixels are shown at 2 x zoom screen pixels (1.5 -> 3x at 1080p, whole pixels).",
+ "_doc": "Player options. wasd_movement: keyboard movement in addition to click-to-move (off; when on, W stays on 2 only). camera_zoom: 1.0 (default, more view) or 1.5 (larger; whole pixels either way). screen_shake: 0..1. auto_pickup: none, all, or a rarity and better (common, magic, rare, unique) taken by walking over.",
  "wasd_movement": false,
- "camera_zoom": 1.5
+ "camera_zoom": 1.0,
+ "screen_shake": 1.0,
+ "auto_pickup": "none"
 }

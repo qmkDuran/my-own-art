@@ -1,7 +1,8 @@
 class_name GroundItem
 extends Node2D
-## A dropped item: its icon on the ground with a light pillar for better rarities, and a coloured name label.
-## Picked up by walking over it, or by clicking the label (Michael walks to it).
+## A dropped item: its icon on the ground with a light for better rarities, and a coloured name label.
+## Picked up by clicking the label (Michael walks to it) — never by clicking the ground; an optional auto-pickup
+## filter in settings takes items of chosen rarities when walked over. Labels stack (LabelStack); Alt toggles them.
 
 const PICKUP_RADIUS: float = 22.0
 const LABEL_W: float = 160.0
@@ -46,11 +47,31 @@ func _ready() -> void:
 	label.size = Vector2(LABEL_W, 16)
 	label.position = Vector2(-LABEL_W / 2.0, -46)
 	Overlay.follower(self).add_child(label)
+	add_to_group("ground_items")
 	var drop := create_tween()
 	position.y -= 18
 	drop.tween_property(self, "position:y", position.y + 18, 0.35).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
 
 
+var stack_lift: float = 0.0             # set by LabelStack so labels never overlap
+
+
 func label_rect() -> Rect2:
 	var w: float = label.get_theme_font("font").get_string_size(label.text, HORIZONTAL_ALIGNMENT_LEFT, -1, 16).x + 8.0
-	return Rect2(global_position + Vector2(-w / 2.0, -46), Vector2(w, 18))
+	return Rect2(global_position + Vector2(-w / 2.0, -46 - stack_lift), Vector2(w, 18))
+
+
+func _process(_delta: float) -> void:
+	label.position.y = -46 - stack_lift
+	label.visible = LabelStack.shown
+
+
+## Should walking over this item take it? (settings "auto_pickup": "none", "all", or a rarity and better)
+func auto_take() -> bool:
+	var rule: String = String(GameData.settings.get("auto_pickup", "none"))
+	if rule == "none":
+		return false
+	if rule == "all":
+		return true
+	var order: Array = ["common", "magic", "rare", "unique"]
+	return order.find(item["rarity"]) >= order.find(rule)

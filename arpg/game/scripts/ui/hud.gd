@@ -23,13 +23,28 @@ var _notice_t: float = 0.0
 var _flash: Dictionary = {}
 
 
+var _fade: float = 0.0
+
+
+## A quick white-out used for travel: `mid` runs at full white.
+func fade_through(mid: Callable) -> void:
+	var tw := create_tween()
+	tw.tween_property(self, "_fade", 1.0, 0.25)
+	tw.tween_callback(mid)
+	tw.tween_property(self, "_fade", 0.0, 0.35)
+
+
 ## Light up a skill's slot when it is used.
 func flash(id: String) -> void:
 	_flash[id] = FLASH_TIME
 
 
+func _bar_keys() -> Array:
+	return ["LMB"] + GameData.skills["slot_keys"]
+
+
 func _bar_rect() -> Rect2:
-	var n: int = GameData.skills["slots"].size()
+	var n: int = _bar_keys().size()
 	var w: float = n * (SLOT + GAP) - GAP
 	return Rect2(480.0 - w / 2.0, BAR_Y, w, SLOT)
 
@@ -76,17 +91,20 @@ func _draw() -> void:
 	if m.prog.star_points() > 0:
 		pts.append("Stars %d  (P)" % m.prog.star_points())
 	UiDraw.text(self, Vector2(8, 18), "Level %d" % m.prog.level, UiDraw.GOLD)
+	UiDraw.text(self, Vector2(8, 530), "Alt: labels", Color(1, 1, 1, 0.35))
 	UiDraw.text(self, Vector2(8, 34), "   ".join(pts), Color("fbff86"))
 	if objective != null:
 		var s: String = "Prayers answered %d / %d" % [objective.answered(), objective.points.size()]
 		if objective.finished:
 			s = "The street is held"
-		UiDraw.text(self, Vector2(0, 18), s, Color("fbff86"), 16, HORIZONTAL_ALIGNMENT_RIGHT, 952.0)
+		UiDraw.text(self, Vector2(0, 112), s, Color("fbff86"), 16, HORIZONTAL_ALIGNMENT_RIGHT, 952.0)
 	if _caption_t > 0.0:
 		var a: float = clampf(_caption_t, 0.0, 1.0)
 		for i: int in _caption.size():
 			UiDraw.text(self, Vector2(0, CAPTION_Y - 14.0 * (_caption.size() - 1 - i)), _caption[i],
 				Color(1, 1, 1, a), 16, HORIZONTAL_ALIGNMENT_CENTER, 960.0)
+	if _fade > 0.0:
+		draw_rect(Rect2(0, 0, 960, 540), Color(1, 1, 1, _fade))
 	if _notice_t > 0.0:
 		UiDraw.text(self, Vector2(0, 120), _notice, Color(UiDraw.GOLD, clampf(_notice_t, 0.0, 1.0)), 32, HORIZONTAL_ALIGNMENT_CENTER, 960.0)
 
@@ -109,11 +127,16 @@ func _orb(c: Vector2, frac: float, deep: Color, bright: Color, label: String) ->
 
 
 func _skill_bar() -> void:
-	var ids: Array = GameData.skills["slots"]
+	var keys: Array = _bar_keys()
 	var x0: float = _bar_rect().position.x
-	for i: int in ids.size():
-		var id: String = ids[i]
+	for i: int in keys.size():
+		var key: String = keys[i]
+		var id: String = "strike" if key == "LMB" else String(m.prog.slots.get(key, ""))
 		var r := Rect2(x0 + i * (SLOT + GAP), BAR_Y, SLOT, SLOT)
+		if id == "":
+			UiDraw.box(self, r, Color(0.06, 0.05, 0.09, 0.8), Color(0.3, 0.28, 0.24))
+			UiDraw.text(self, r.position + Vector2(2, 11), key, Color(0.6, 0.6, 0.6))
+			continue
 		var learned: bool = m.skills.learned(id)
 		var lit: bool = float(_flash.get(id, 0.0)) > 0.0 or (id == "radiance" and m.skills.radiance_on)
 		UiDraw.box(self, r, Color(0.25, 0.2, 0.06, 0.95) if float(_flash.get(id, 0.0)) > 0.0 else Color(0.06, 0.05, 0.09, 0.95),
@@ -126,7 +149,7 @@ func _skill_bar() -> void:
 			draw_rect(Rect2(r.position.x, r.end.y - h, SLOT, h), Color(0, 0, 0, 0.6))
 		elif learned and m.glory < float(GameData.skill(id)["cost"]):
 			draw_rect(r, Color(0.1, 0.1, 0.4, 0.5))
-		UiDraw.text(self, r.position + Vector2(2, 11), String(GameData.skill(id)["key"]), Color("dcd3c0"))
+		UiDraw.text(self, r.position + Vector2(2, 11), key, Color("dcd3c0"))
 
 
 func _xp_bar() -> void:

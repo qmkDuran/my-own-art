@@ -1,43 +1,17 @@
 {
- "_doc": "Written by art/build_zone.py (edit there). props: [art, x, base y, footprint w, footprint h]; colliders [x,y,w,h]; lights [x, y, energy, kind]; packs and prayers are gameplay positions; zones: [x,y,w,h,verse key] captions.",
+ "_doc": "Written by art/build_zone.py (edit there). props: [art, x, base y, footprint w, footprint h]; colliders [x,y,w,h]; lights [x, y, energy, kind]; packs and prayers are gameplay positions; zones: [x,y,w,h,verse key] captions; chests [kind, x, y]; waystones [name, x, y]; overhead [art, x, y] drawn above everything.",
  "size": [
-  1920,
-  1080
+  3840,
+  2160
  ],
  "player_start": [
   760,
   548
  ],
  "night": [
-  0.3,
-  0.31,
-  0.48
- ],
- "colliders": [
-  [
-   -40,
-   -40,
-   40,
-   1160
-  ],
-  [
-   1920,
-   -40,
-   40,
-   1160
-  ],
-  [
-   -40,
-   -40,
-   2000,
-   100
-  ],
-  [
-   -40,
-   1080,
-   2000,
-   40
-  ]
+  0.17,
+  0.18,
+  0.3
  ],
  "packs": [
   {
@@ -46,10 +20,10 @@
     548
    ],
    "kinds": [
-    "swarmer",
-    "swarmer",
-    "swarmer",
-    "swarmer"
+    "imp",
+    "imp",
+    "imp",
+    "cinder"
    ]
   },
   {
@@ -58,10 +32,10 @@
     548
    ],
    "kinds": [
-    "caster",
-    "swarmer",
-    "swarmer",
-    "swarmer"
+    "locust",
+    "imp",
+    "imp",
+    "imp"
    ]
   },
   {
@@ -71,8 +45,8 @@
    ],
    "kinds": [
     "brute",
-    "swarmer",
-    "swarmer"
+    "imp",
+    "imp"
    ]
   },
   {
@@ -81,10 +55,10 @@
     985
    ],
    "kinds": [
-    "swarmer",
-    "swarmer",
-    "caster",
-    "swarmer"
+    "imp",
+    "cinder",
+    "shade",
+    "imp"
    ]
   },
   {
@@ -94,7 +68,7 @@
    ],
    "kinds": [
     "brute",
-    "caster"
+    "shade"
    ]
   },
   {
@@ -103,10 +77,9 @@
     780
    ],
    "kinds": [
-    "caster",
-    "swarmer",
-    "swarmer",
-    "swarmer"
+    "caller",
+    "imp",
+    "imp"
    ]
   },
   {
@@ -115,9 +88,9 @@
     220
    ],
    "kinds": [
-    "swarmer",
-    "swarmer",
-    "swarmer"
+    "imp",
+    "imp",
+    "stalker"
    ]
   },
   {
@@ -126,14 +99,234 @@
     740
    ],
    "kinds": [
+    "ravager",
+    "imp",
+    "imp"
+   ]
+  },
+  {
+   "at": [
+    2250,
+    600
+   ],
+   "kinds": [
+    "imp",
+    "imp",
+    "cinder",
+    "cinder",
+    "imp"
+   ]
+  },
+  {
+   "at": [
+    2550,
+    450
+   ],
+   "kinds": [
+    "ravager",
+    "shade",
+    "imp"
+   ]
+  },
+  {
+   "at": [
+    2850,
+    660
+   ],
+   "kinds": [
+    "locust",
+    "stalker",
+    "imp",
+    "imp"
+   ]
+  },
+  {
+   "at": [
+    3200,
+    470
+   ],
+   "kinds": [
+    "mauler",
+    "imp",
+    "imp",
+    "imp"
+   ]
+  },
+  {
+   "at": [
+    3500,
+    640
+   ],
+   "kinds": [
+    "caller",
+    "shade",
+    "imp"
+   ]
+  },
+  {
+   "at": [
+    3700,
+    450
+   ],
+   "kinds": [
+    "firehorse",
+    "imp",
+    "imp"
+   ]
+  },
+  {
+   "at": [
+    2700,
+    200
+   ],
+   "kinds": [
+    "imp",
+    "imp",
+    "imp",
+    "cinder"
+   ]
+  },
+  {
+   "at": [
+    3300,
+    960
+   ],
+   "kinds": [
+    "shade",
+    "shade",
+    "imp"
+   ]
+  },
+  {
+   "at": [
+    1552,
+    1300
+   ],
+   "kinds": [
+    "imp",
+    "imp",
+    "stalker"
+   ]
+  },
+  {
+   "at": [
+    1100,
+    1500
+   ],
+   "kinds": [
     "brute",
-    "swarmer",
-    "swarmer"
+    "imp",
+    "imp",
+    "cinder"
+   ]
+  },
+  {
+   "at": [
+    500,
+    1420
+   ],
+   "kinds": [
+    "frog",
+    "imp",
+    "imp",
+    "cinder"
+   ]
+  },
+  {
+   "at": [
+    300,
+    1750
+   ],
+   "kinds": [
+    "mauler",
+    "imp",
+    "imp"
+   ]
+  },
+  {
+   "at": [
+    800,
+    1880
+   ],
+   "kinds": [
+    "shade",
+    "stalker",
+    "imp",
+    "imp"
+   ]
+  },
+  {
+   "at": [
+    1500,
+    1680
+   ],
+   "kinds": [
+    "ravager",
+    "cinder",
+    "cinder"
+   ]
+  },
+  {
+   "at": [
+    2200,
+    1600
+   ],
+   "kinds": [
+    "imp",
+    "imp",
+    "imp",
+    "imp",
+    "cinder"
+   ]
+  },
+  {
+   "at": [
+    2550,
+    1350
+   ],
+   "kinds": [
+    "frog",
+    "brute",
+    "imp"
+   ]
+  },
+  {
+   "at": [
+    3500,
+    1400
+   ],
+   "kinds": [
+    "firehorse",
+    "shade",
+    "imp"
+   ]
+  },
+  {
+   "at": [
+    3550,
+    1900
+   ],
+   "kinds": [
+    "locust",
+    "locust",
+    "shade"
+   ]
+  },
+  {
+   "at": [
+    2500,
+    1950
+   ],
+   "kinds": [
+    "ravager",
+    "imp",
+    "imp",
+    "imp"
    ]
   }
  ],
- "respawn_seconds": 22,
- "respawn_min_distance": 380,
+ "respawn_seconds": 30,
+ "respawn_min_distance": 700,
  "prayers": [
   {
    "at": [
@@ -142,55 +335,112 @@
    ],
    "person": "res://art/people/pray_a.png",
    "wave": [
-    "swarmer",
-    "swarmer",
-    "swarmer",
-    "caster"
+    "imp",
+    "imp",
+    "imp",
+    "shade"
    ]
   },
   {
    "at": [
-    1740,
-    380
+    2470,
+    960
    ],
    "person": "res://art/people/pray_b.png",
    "wave": [
     "brute",
-    "swarmer",
-    "swarmer",
-    "swarmer"
+    "imp",
+    "imp",
+    "cinder"
    ]
   },
   {
    "at": [
-    1730,
-    790
+    880,
+    1560
    ],
    "person": "res://art/people/pray_c.png",
    "wave": [
-    "caster",
-    "caster",
-    "swarmer",
-    "swarmer",
-    "swarmer"
+    "shade",
+    "caller",
+    "imp",
+    "imp",
+    "stalker"
    ]
   }
  ],
  "prayer_radius": 70,
  "final_pack": {
   "at": [
-   1100,
-   548
+   3000,
+   1460
   ],
   "kinds": [
-   "brute",
-   "caster",
-   "caster",
-   "swarmer",
-   "swarmer",
-   "swarmer"
+   "firehorse",
+   "locust",
+   "frog",
+   "shade",
+   "imp",
+   "imp",
+   "cinder"
   ]
  },
+ "chests": [
+  [
+   "lockbox",
+   305,
+   922
+  ],
+  [
+   "crate",
+   540,
+   686
+  ],
+  [
+   "crate",
+   2775,
+   538
+  ],
+  [
+   "crate",
+   600,
+   1372
+  ],
+  [
+   "lockbox",
+   3640,
+   1262
+  ]
+ ],
+ "waystones": [
+  [
+   "Main Street",
+   820,
+   640
+  ],
+  [
+   "Highway",
+   2240,
+   820
+  ],
+  [
+   "Park",
+   1480,
+   1440
+  ],
+  [
+   "The Rift",
+   2700,
+   1500
+  ]
+ ],
+ "overhead": [
+  [
+   "overpass",
+   2900,
+   220
+  ]
+ ],
  "zones": [
   [
    0,
@@ -212,6 +462,27 @@
    1920,
    452,
    "guard_ways"
+  ],
+  [
+   1920,
+   0,
+   1920,
+   1080,
+   "triumphed"
+  ],
+  [
+   0,
+   1080,
+   1920,
+   1080,
+   "pray_always"
+  ],
+  [
+   1920,
+   1080,
+   1920,
+   1080,
+   "abyss"
   ]
  ],
  "props": [
@@ -816,50 +1087,906 @@
    930,
    10,
    8
+  ],
+  [
+   "car_wreck",
+   2240,
+   470,
+   96,
+   30
+  ],
+  [
+   "car_wreck_burned",
+   2620,
+   640,
+   96,
+   30
+  ],
+  [
+   "van",
+   2840,
+   520,
+   96,
+   30
+  ],
+  [
+   "suv_red",
+   2990,
+   455,
+   96,
+   30
+  ],
+  [
+   "car_wreck",
+   3080,
+   700,
+   96,
+   30
+  ],
+  [
+   "car_wreck_burned",
+   3150,
+   600,
+   96,
+   30
+  ],
+  [
+   "van",
+   3560,
+   420,
+   96,
+   30
+  ],
+  [
+   "car_wreck",
+   3700,
+   690,
+   96,
+   30
+  ],
+  [
+   "car_wreck_burned",
+   2470,
+   880,
+   96,
+   30
+  ],
+  [
+   "tree_dead",
+   2122,
+   257,
+   26,
+   12
+  ],
+  [
+   "tree_dead",
+   2391,
+   271,
+   26,
+   12
+  ],
+  [
+   "tree_dead",
+   2710,
+   285,
+   26,
+   12
+  ],
+  [
+   "tree_dead",
+   2828,
+   153,
+   26,
+   12
+  ],
+  [
+   "tree_dead",
+   3015,
+   259,
+   26,
+   12
+  ],
+  [
+   "tree_dead",
+   3178,
+   209,
+   26,
+   12
+  ],
+  [
+   "tree_dead",
+   3625,
+   254,
+   26,
+   12
+  ],
+  [
+   "tree_dead",
+   2079,
+   1029,
+   26,
+   12
+  ],
+  [
+   "tree_dead",
+   2478,
+   1007,
+   26,
+   12
+  ],
+  [
+   "tree_dead",
+   2645,
+   971,
+   26,
+   12
+  ],
+  [
+   "tree_dead",
+   2837,
+   962,
+   26,
+   12
+  ],
+  [
+   "tree_dead",
+   3680,
+   1020,
+   26,
+   12
+  ],
+  [
+   "fence_chainlink",
+   2064,
+   300,
+   32,
+   10
+  ],
+  [
+   "fence_chainlink",
+   2096,
+   300,
+   32,
+   10
+  ],
+  [
+   "fence_chainlink",
+   2128,
+   300,
+   32,
+   10
+  ],
+  [
+   "fence_chainlink",
+   2160,
+   300,
+   32,
+   10
+  ],
+  [
+   "fence_chainlink",
+   2192,
+   300,
+   32,
+   10
+  ],
+  [
+   "fence_chainlink",
+   2224,
+   300,
+   32,
+   10
+  ],
+  [
+   "fence_chainlink",
+   2256,
+   300,
+   32,
+   10
+  ],
+  [
+   "fence_chainlink",
+   2288,
+   300,
+   32,
+   10
+  ],
+  [
+   "fence_chainlink",
+   2320,
+   300,
+   32,
+   10
+  ],
+  [
+   "fence_chainlink",
+   2352,
+   300,
+   32,
+   10
+  ],
+  [
+   "fence_chainlink",
+   2384,
+   300,
+   32,
+   10
+  ],
+  [
+   "fence_chainlink",
+   3516,
+   300,
+   32,
+   10
+  ],
+  [
+   "fence_chainlink",
+   3548,
+   300,
+   32,
+   10
+  ],
+  [
+   "fence_chainlink",
+   3580,
+   300,
+   32,
+   10
+  ],
+  [
+   "fence_chainlink",
+   3612,
+   300,
+   32,
+   10
+  ],
+  [
+   "fence_chainlink",
+   3644,
+   300,
+   32,
+   10
+  ],
+  [
+   "fence_chainlink",
+   3676,
+   300,
+   32,
+   10
+  ],
+  [
+   "fence_chainlink",
+   3708,
+   300,
+   32,
+   10
+  ],
+  [
+   "fence_chainlink",
+   3740,
+   300,
+   32,
+   10
+  ],
+  [
+   "fence_chainlink",
+   3772,
+   300,
+   32,
+   10
+  ],
+  [
+   "fence_chainlink",
+   3804,
+   300,
+   32,
+   10
+  ],
+  [
+   "fence_chainlink",
+   3836,
+   300,
+   32,
+   10
+  ],
+  [
+   "tree_dead",
+   35,
+   2122,
+   26,
+   12
+  ],
+  [
+   "tree_dead",
+   153,
+   2141,
+   26,
+   12
+  ],
+  [
+   "tree_dead",
+   297,
+   2143,
+   26,
+   12
+  ],
+  [
+   "tree_dark",
+   415,
+   2135,
+   26,
+   12
+  ],
+  [
+   "tree_dead",
+   524,
+   2126,
+   26,
+   12
+  ],
+  [
+   "tree_dark",
+   629,
+   2148,
+   26,
+   12
+  ],
+  [
+   "tree_dead",
+   758,
+   2131,
+   26,
+   12
+  ],
+  [
+   "tree_dead",
+   892,
+   2132,
+   26,
+   12
+  ],
+  [
+   "tree_dark",
+   1011,
+   2132,
+   26,
+   12
+  ],
+  [
+   "tree_dark",
+   1105,
+   2125,
+   26,
+   12
+  ],
+  [
+   "tree_dead",
+   1251,
+   2120,
+   26,
+   12
+  ],
+  [
+   "tree_dark",
+   1375,
+   2139,
+   26,
+   12
+  ],
+  [
+   "tree_dead",
+   1474,
+   2138,
+   26,
+   12
+  ],
+  [
+   "tree_dead",
+   1615,
+   2139,
+   26,
+   12
+  ],
+  [
+   "tree_dark",
+   1710,
+   2140,
+   26,
+   12
+  ],
+  [
+   "tree_dark",
+   1841,
+   2131,
+   26,
+   12
+  ],
+  [
+   "tree_dead",
+   49,
+   1150,
+   26,
+   12
+  ],
+  [
+   "tree_dark",
+   40,
+   1270,
+   26,
+   12
+  ],
+  [
+   "tree_dark",
+   41,
+   1390,
+   26,
+   12
+  ],
+  [
+   "tree_dead",
+   53,
+   1510,
+   26,
+   12
+  ],
+  [
+   "tree_dark",
+   32,
+   1630,
+   26,
+   12
+  ],
+  [
+   "tree_dead",
+   45,
+   1750,
+   26,
+   12
+  ],
+  [
+   "tree_dark",
+   40,
+   1870,
+   26,
+   12
+  ],
+  [
+   "tree_dead",
+   67,
+   1990,
+   26,
+   12
+  ],
+  [
+   "tree_dark",
+   1922,
+   1120,
+   26,
+   12
+  ],
+  [
+   "tree_dead",
+   1924,
+   1230,
+   26,
+   12
+  ],
+  [
+   "tree_dead",
+   1915,
+   1340,
+   26,
+   12
+  ],
+  [
+   "tree_dark",
+   1904,
+   1450,
+   26,
+   12
+  ],
+  [
+   "tree_dead",
+   1926,
+   1780,
+   26,
+   12
+  ],
+  [
+   "tree_dead",
+   1930,
+   1890,
+   26,
+   12
+  ],
+  [
+   "tree_dark",
+   1918,
+   2000,
+   26,
+   12
+  ],
+  [
+   "tree_dark",
+   1916,
+   2110,
+   26,
+   12
+  ],
+  [
+   "tree_dead",
+   700,
+   1250,
+   26,
+   12
+  ],
+  [
+   "tree_dark",
+   1150,
+   1300,
+   26,
+   12
+  ],
+  [
+   "tree_dark",
+   380,
+   1650,
+   26,
+   12
+  ],
+  [
+   "tree_dark",
+   1250,
+   1820,
+   26,
+   12
+  ],
+  [
+   "tree_dead",
+   640,
+   1640,
+   26,
+   12
+  ],
+  [
+   "tree_dark",
+   1600,
+   1900,
+   26,
+   12
+  ],
+  [
+   "tree_dark",
+   1000,
+   1980,
+   26,
+   12
+  ],
+  [
+   "tree_dark",
+   300,
+   1880,
+   26,
+   12
+  ],
+  [
+   "tree_dark",
+   1700,
+   1200,
+   26,
+   12
+  ],
+  [
+   "tree_dead",
+   1820,
+   1420,
+   26,
+   12
+  ],
+  [
+   "tree_dark",
+   200,
+   1220,
+   26,
+   12
+  ],
+  [
+   "tree_dark",
+   1300,
+   1980,
+   26,
+   12
+  ],
+  [
+   "tree_dark",
+   560,
+   1800,
+   26,
+   12
+  ],
+  [
+   "tree_dark",
+   1750,
+   1780,
+   26,
+   12
+  ],
+  [
+   "tree_dark",
+   950,
+   1280,
+   26,
+   12
+  ],
+  [
+   "hedge",
+   520,
+   1360,
+   56,
+   14
+  ],
+  [
+   "hedge",
+   1450,
+   1720,
+   56,
+   14
+  ],
+  [
+   "hedge_32",
+   860,
+   1700,
+   28,
+   12
+  ],
+  [
+   "tree_dead",
+   2300,
+   1280,
+   26,
+   12
+  ],
+  [
+   "tree_dead",
+   2600,
+   2050,
+   26,
+   12
+  ],
+  [
+   "tree_dead",
+   3600,
+   1250,
+   26,
+   12
+  ],
+  [
+   "tree_dead",
+   3700,
+   1950,
+   26,
+   12
+  ],
+  [
+   "tree_dead",
+   2200,
+   1950,
+   26,
+   12
+  ]
+ ],
+ "colliders": [
+  [
+   -40,
+   -40,
+   40,
+   2240
+  ],
+  [
+   3840,
+   -40,
+   40,
+   2240
+  ],
+  [
+   -40,
+   -40,
+   3920,
+   100
+  ],
+  [
+   -40,
+   2160,
+   3920,
+   40
+  ],
+  [
+   2048,
+   344,
+   512,
+   10
+  ],
+  [
+   2660,
+   344,
+   1180,
+   10
+  ],
+  [
+   2048,
+   748,
+   372,
+   10
+  ],
+  [
+   2520,
+   748,
+   780,
+   10
+  ],
+  [
+   3420,
+   748,
+   420,
+   10
+  ],
+  [
+   2048,
+   544,
+   252,
+   12
+  ],
+  [
+   2380,
+   544,
+   400,
+   12
+  ],
+  [
+   2860,
+   544,
+   640,
+   12
+  ],
+  [
+   3580,
+   544,
+   260,
+   12
+  ],
+  [
+   2040,
+   344,
+   8,
+   124
+  ],
+  [
+   2040,
+   628,
+   8,
+   128
+  ],
+  [
+   2835.0,
+   1566.0,
+   330.0,
+   87.33333333333333
+  ],
+  [
+   2730.0,
+   1659.3333333333333,
+   540.0,
+   87.33333333333333
+  ],
+  [
+   2835.0,
+   1752.6666666666667,
+   330.0,
+   87.33333333333333
   ]
  ],
  "lights": [
   [
    380,
    330,
-   1.0,
-   "lamp"
+   0.5,
+   "flicker"
   ],
   [
    1100,
    330,
-   1.0,
+   0.0,
    "lamp"
   ],
   [
    700,
    760,
-   0.8,
+   0.45,
    "flicker"
   ],
   [
    1650,
    760,
-   1.0,
+   0.0,
    "lamp"
   ],
   [
    700,
    560,
-   1.0,
+   1.3,
    "fire"
   ],
   [
    1340,
    700,
-   1.0,
+   1.3,
    "fire"
   ],
   [
    1560,
    1000,
-   1.0,
+   1.3,
    "fire"
+  ],
+  [
+   2620,
+   615,
+   1.3,
+   "fire"
+  ],
+  [
+   3150,
+   575,
+   1.3,
+   "fire"
+  ],
+  [
+   2470,
+   855,
+   1.3,
+   "fire"
+  ],
+  [
+   1180,
+   1750,
+   1.3,
+   "fire"
+  ],
+  [
+   2380,
+   1420,
+   1.3,
+   "fire"
+  ],
+  [
+   2700,
+   1950,
+   1.3,
+   "fire"
+  ],
+  [
+   3420,
+   1500,
+   1.3,
+   "fire"
+  ],
+  [
+   3300,
+   1900,
+   1.3,
+   "fire"
+  ],
+  [
+   2800,
+   1480,
+   1.3,
+   "fire"
+  ],
+  [
+   3000,
+   1700,
+   2.0,
+   "rift"
   ]
  ],
  "fires": [
@@ -874,6 +2001,48 @@
   [
    1560,
    1000
+  ],
+  [
+   2620,
+   615
+  ],
+  [
+   3150,
+   575
+  ],
+  [
+   2470,
+   855
+  ],
+  [
+   1180,
+   1750
+  ],
+  [
+   2380,
+   1420
+  ],
+  [
+   2700,
+   1950
+  ],
+  [
+   3420,
+   1500
+  ],
+  [
+   3300,
+   1900
+  ],
+  [
+   2800,
+   1480
   ]
+ ],
+ "rift": [
+  3000,
+  1700,
+  300,
+  140
  ]
 }

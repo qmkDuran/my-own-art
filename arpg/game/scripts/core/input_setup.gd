@@ -1,8 +1,9 @@
 class_name InputSetup
 extends RefCounted
 ## Input actions. Click-to-move is the primary scheme: hold LMB on the ground to walk toward the cursor, LMB on an
-## enemy to go and strike it, hold Shift to stand still and strike/cast toward the cursor. RMB Descent; skills on
-## Q W E R (1-4 as alternates); Space dodge; I inventory, K skills, P stars, Esc pause.
+## enemy to go and strike it, hold Shift to stand still and strike/cast toward the cursor. RMB and Q W E R use the
+## skills placed on those keys (1-4 as alternates for Q W E R); Space dodge; I inventory, K skills, P stars, Alt labels,
+## Esc pause.
 ## Keyboard movement (WASD/arrows) is an option in data/settings.json (off by default).
 
 const SKILL_KEYS: Array = [[KEY_Q, KEY_1], [KEY_W, KEY_2], [KEY_E, KEY_3], [KEY_R, KEY_4]]

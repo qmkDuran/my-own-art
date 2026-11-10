@@ -243,6 +243,30 @@
     4,
     0.4
    ]
+  },
+  "might": {
+   "name": "of Might",
+   "stat": "might",
+   "value": [
+    2,
+    0.3
+   ]
+  },
+  "agility": {
+   "name": "of Agility",
+   "stat": "agility",
+   "value": [
+    2,
+    0.3
+   ]
+  },
+  "spirit": {
+   "name": "of Spirit",
+   "stat": "spirit",
+   "value": [
+    2,
+    0.3
+   ]
   }
  },
  "rare_words": [
@@ -280,7 +304,9 @@
     "life": 60,
     "life_regen": 4,
     "armour": 25
-   }
+   },
+   "proc": "rebuke_heal",
+   "proc_desc": "Rebuke restores 8% life."
   },
   {
    "name": "Swiftfoot",
@@ -290,7 +316,9 @@
     "move_pct": 18,
     "dodge_pct": 30,
     "life": 25
-   }
+   },
+   "proc": "descent_cdr",
+   "proc_desc": "Descent recovers twice as fast."
   },
   {
    "name": "Dawnbreaker",
@@ -300,7 +328,9 @@
     "damage": 18,
     "holy_pct": 35,
     "crit": 8
-   }
+   },
+   "proc": "strike_burst",
+   "proc_desc": "Every third swing releases a burst of light."
   },
   {
    "name": "Last Wall",
@@ -310,7 +340,9 @@
     "block": 22,
     "armour": 40,
     "glory_regen": 3
-   }
+   },
+   "proc": "shield_reflect",
+   "proc_desc": "Shield of Faith throws projectiles back."
   }
  ],
  "stat_names": {
@@ -327,6 +359,10 @@
   "life_on_hit": "+%d life on hit",
   "cooldown_pct": "+%d%% cooldown recovery",
   "attack_pct": "+%d%% attack speed",
-  "dodge_pct": "+%d%% dodge recovery"
+  "dodge_pct": "+%d%% dodge recovery",
+  "might": "+%d Might",
+  "agility": "+%d Agility",
+  "spirit": "+%d Spirit",
+  "damage_pct": "+%d%% damage"
  }
 }

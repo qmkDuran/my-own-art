@@ -6,16 +6,17 @@ protects those who pray, and is clothed in the armour of God (Ephesians 6:13-17)
 
 ## Run
     <godot> --path game                         # play
-    <godot> --path game -- --demo               # plays itself for 32 s with the real controls (out/arpg_controls.mp4)
+    <godot> --path game -- --demo               # plays itself for 46 s with the real controls (out/arpg_demo.mp4)
     GODOT=<godot> game/tests/run_smoke.sh       # headless smoke test
     xvfb-run -a <godot> --rendering-driver opengl3 --path game -- --demo --shots   # screenshots into out/
 
 Controls (click-to-move):
-- Hold the left button on the ground to walk toward the cursor; click an enemy to go to it and strike.
-- Hold Shift to stand still and strike (left button) or cast toward the cursor.
-- Right button: Descent. Q W E R: Rebuke, Shield of Faith, Trumpet Call, Radiance (1-4 also work).
-- Space dodge. I inventory, K skills, P stars, Esc pause. Items: walk over them or click their names.
-- Keyboard movement (WASD/arrows) is an option in game/data/settings.json (off by default).
+- Hold the left button on the ground to walk; click an enemy to strike it; click an item's name to take it;
+  click a crate, lockbox or waystone to use it. Hold Shift to stand and strike/cast toward the cursor.
+- Right button and Q W E R: the skills on those keys (1-4 also work). Space dodge.
+- I inventory, K skills (masteries, attributes, keys, respec), P stars, Alt labels, Esc pause.
+- Options in game/data/settings.json: keyboard movement, camera zoom, screen shake, auto-pickup.
+- Progress is saved in user:// (start with `-- --fresh` to ignore it).
 
 ## Credits
 - Scripture: Scripture quotations taken from The Holy Bible, New International Version® NIV® Copyright © 1973, 1978, 1984, 2011 by Biblica, Inc.™ Used by permission. All rights reserved worldwide.

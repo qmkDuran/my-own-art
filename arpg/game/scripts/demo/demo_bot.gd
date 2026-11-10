@@ -8,10 +8,12 @@ const SEEK: float = 420.0
 const LOOT_GRAB: float = 240.0
 const SAFE: float = 110.0
 const START_XP: float = 1250.0
-const QUIT_AFTER: float = 32.0
+const QUIT_AFTER: float = 46.0
 const CURSOR_SPEED: float = 1100.0
 const WALK_LEAD: float = 140.0          # a player holds the cursor a little ahead of Michael, not at the destination
-const TIMELINE: Array = [[17.0, "open_inventory"], [18.4, "equip"], [19.8, "close"]]
+const TIMELINE: Array = [[17.0, "open_inventory"], [18.4, "equip"], [19.8, "close"], [27.0, "open_skills"], [29.5, "close"],
+	[31.0, "open_travel"], [32.5, "travel_rift"]]
+const GIVE_UP: float = 3.0                # an item it cannot reach is left
 
 var g: Game
 var m: Michael
@@ -20,6 +22,9 @@ var _step: int = 0
 var _think: float = 0.0
 var _cursor_goal: Vector2
 var _clicked: Demon
+var _taking: GroundItem
+var _taking_t: float = 0.0
+var _skip: Array = []
 
 
 func setup(game: Game) -> void:
@@ -61,8 +66,15 @@ func _point(at: Vector2) -> bool:
 func _act() -> void:
 	g.stand = false
 	var close_item: GroundItem = _nearest_item(LOOT_GRAB)
+	if close_item != _taking:
+		_taking = close_item
+		_taking_t = 0.0
+	_taking_t += 0.1
+	if close_item != null and _taking_t > GIVE_UP:
+		_skip.append(close_item)
+		close_item = null
 	if close_item != null and _nearest_demon(SAFE) == null:
-		_walk(close_item.global_position)
+		_take(close_item)
 		return
 	var target: Demon = _nearest_demon(SEEK)
 	if target != null:
@@ -76,13 +88,22 @@ func _act() -> void:
 	_walk(SceneData.vec(GameData.zone["final_pack"]["at"]))
 
 
+## Click an item's name (only names pick items up).
+func _take(it: GroundItem) -> void:
+	_clicked = null
+	g.lmb = false
+	if _point(it.label_rect().get_center()) and g.get("_pickup_target") != it:
+		g.lmb_down()
+		g.lmb = false
+
+
 ## Hold the left button with the cursor a little ahead of Michael toward the goal.
 func _walk(to: Vector2) -> void:
 	_clicked = null
 	var lead: Vector2 = m.global_position + (to - m.global_position).limit_length(WALK_LEAD)
 	_point(lead)
 	if not g.lmb:
-		g.lmb_down()
+		g.lmb_down(false)                         # walking: the cursor may pass over a crate or a stone
 
 
 func _fight(d: Demon) -> void:
@@ -104,6 +125,12 @@ func _fight(d: Demon) -> void:
 		return
 	if sk.learned("radiance") and not sk.radiance_on and _count_within(150.0) >= 2 and m.glory > 50.0:
 		g.press_skill("radiance")
+	if _count_within(95.0) >= 2 and sk.can_use("whirl"):
+		g.press_skill("whirl")
+		return
+	if _count_within(220.0) >= 3 and sk.can_use("silence") and _casters_near():
+		g.press_skill("silence")
+		return
 	if _count_within(80.0) >= 2:                 # surrounded: hold Shift and strike where he stands
 		g.stand = true
 		g.lmb = true
@@ -123,6 +150,13 @@ func _count_within(r: float) -> int:
 	return n
 
 
+func _casters_near() -> bool:
+	for x: Node in get_tree().get_nodes_in_group("demons"):
+		if (x as Demon).data["behaviour"] == "ranged" and (x as Demon).global_position.distance_to(m.global_position) < 220.0:
+			return true
+	return false
+
+
 func _bolt_near() -> bool:
 	for x: Node in g.world.get_children():
 		if x is Bolt and (x as Bolt).global_position.distance_to(m.global_position) < 150.0:
@@ -139,32 +173,34 @@ func _nearest_item(r: float) -> GroundItem:
 	var bd: float = r
 	for x: Node in g.world.get_children():
 		var it := x as GroundItem
-		if it != null and it.global_position.distance_to(m.global_position) < bd:
+		if it != null and not _skip.has(it) and it.global_position.distance_to(m.global_position) < bd:
 			bd = it.global_position.distance_to(m.global_position)
 			best = it
 	return best
 
 
-## Mastery to open each tier, the skills of that tier, then modifiers and ranks; then stars.
+## The demo build: Sword + Voice ("Captain"). Mastery points open the tiers, then the skills, modifiers and ranks;
+## attribute points into Might; stars into any open group.
 func _spend_points() -> void:
 	var p: Progression = m.prog
-	while p.mastery < 4 and p.add_mastery():
+	if p.can_choose_mastery():
+		p.choose_mastery("voice")
+	while int(p.mastery_points.get("sword", 0)) < 4 and p.add_mastery("sword"):
 		pass
-	for sk: String in ["rebuke", "shield"]:
+	while int(p.mastery_points.get("voice", 0)) < 8 and p.add_mastery("voice"):
+		pass
+	for sk: String in ["rebuke", "whirl", "trumpet", "silence"]:
 		if p.rank(sk) == 0:
 			p.add_rank(sk)
-	while p.mastery < 8 and p.add_mastery():
-		pass
-	for sk: String in ["trumpet", "radiance"]:
-		if p.rank(sk) == 0:
-			p.add_rank(sk)
-	for mod: Array in [["strike", "heavy_blow"], ["rebuke", "echo"], ["descent", "wingbeat"], ["trumpet", "resound"]]:
+	for mod: Array in [["strike", "heavy_blow"], ["rebuke", "echo"], ["trumpet", "resound"], ["whirl", "momentum"]]:
 		p.add_mod(mod[0], mod[1])
-	var cycle: Array = ["strike", "rebuke", "trumpet", "descent"]
+	var cycle: Array = ["strike", "whirl", "rebuke", "trumpet"]
 	var i: int = 0
 	while p.skill_points() > 0 and i < 40:
 		p.add_rank(cycle[i % cycle.size()])
 		i += 1
+	while p.add_attribute("might"):
+		pass
 	for gid: String in GameData.hosts["groups"]:
 		while p.take_star(gid):
 			pass
@@ -180,7 +216,13 @@ func _do(action: String) -> void:
 				i = m.inv.best_upgrade()
 			Audio.sfx("pickup", -10.0, 0.8)
 		"open_skills": g.skill_panel.visible = true
+		"open_travel":
+			for st: Interactable in g.stones:
+				st.notice_michael_force()
+			g.travel_panel.visible = true
+		"travel_rift":
+			g._travel(g.stones.size() - 1)
 		"open_hosts": g.hosts_panel.visible = true
 		"close":
-			for p: GamePanel in [g.inventory_panel, g.skill_panel, g.hosts_panel]:
+			for p: GamePanel in [g.inventory_panel, g.skill_panel, g.hosts_panel, g.travel_panel]:
 				p.visible = false

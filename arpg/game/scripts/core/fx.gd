@@ -100,6 +100,7 @@ static func shadow_puff(parent: Node, at: Vector2) -> CPUParticles2D:
 	p.scale_amount_min = 1.5
 	p.scale_amount_max = 2.5
 	p.color_ramp = _ramp([[0.0, Color(0.16, 0.1, 0.2, 0.9)], [1.0, Color(0.2, 0.12, 0.3, 0.0)]])
+	parent.get_tree().create_timer(1.6).timeout.connect(p.queue_free)
 	return p
 
 
@@ -136,4 +137,38 @@ static func ash(parent: Node, area: Rect2, amount: int) -> CPUParticles2D:
 	p.initial_velocity_min = 8.0
 	p.initial_velocity_max = 16.0
 	p.color_ramp = _ramp([[0.0, Color(0.7, 0.68, 0.75, 0)], [1.0, Color(0.6, 0.58, 0.65, 0)], [0.5, Color(0.75, 0.72, 0.8, 0.8)]])
+	return p
+
+
+## Smoke rising from the Abyss "like the smoke from a gigantic furnace" (Rev 9:2): a dark column (normal blend).
+static func abyss_smoke(parent: Node, at: Vector2, extents: Vector2) -> CPUParticles2D:
+	var p := _base(parent, at, extents, 90, 6.0)
+	p.material = null
+	p.z_index = 14
+	p.direction = Vector2.UP
+	p.spread = 12.0
+	p.initial_velocity_min = 22.0
+	p.initial_velocity_max = 40.0
+	p.scale_amount_min = 4.0
+	p.scale_amount_max = 9.0
+	p.color_ramp = _ramp([[0.0, Color(0.12, 0.06, 0.1, 0.0)], [1.0, Color(0.1, 0.08, 0.12, 0.0)], [0.2, Color(0.18, 0.08, 0.1, 0.85)],
+		[0.6, Color(0.12, 0.09, 0.14, 0.6)]])
+	return p
+
+
+## A puff of fire and smoke from a mouth, toward `dir` (Rev 9:17).
+static func flame(parent: Node, at: Vector2, dir: Vector2) -> CPUParticles2D:
+	var p := _base(parent, at, Vector2(2, 2), 12, 0.5)
+	p.preprocess = 0.0
+	p.one_shot = true
+	p.explosiveness = 0.6
+	p.direction = dir
+	p.spread = 22.0
+	p.initial_velocity_min = 180.0
+	p.initial_velocity_max = 260.0
+	p.scale_amount_min = 1.5
+	p.scale_amount_max = 3.0
+	p.color_ramp = _ramp([[0.0, Color(1, 0.9, 0.4, 1)], [1.0, Color(0.25, 0.15, 0.15, 0)], [0.4, Color(1, 0.45, 0.1, 0.9)]])
+	p.emitting = true
+	parent.get_tree().create_timer(0.8).timeout.connect(p.queue_free)
 	return p

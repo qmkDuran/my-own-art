@@ -65,7 +65,8 @@ static func _unique(ilvl: int) -> Dictionary:
 	var u: Dictionary = GameData.items["uniques"].pick_random()
 	var base: Dictionary = GameData.items["slots"][u["slot"]]
 	return {"slot": u["slot"], "base": base["name"], "name": u["name"], "rarity": "unique", "ilvl": ilvl,
-		"stats": u["stats"].duplicate(), "icon": Vector2i(int(u["icon"]), int(base["icon_row"]))}
+		"stats": u["stats"].duplicate(), "icon": Vector2i(int(u["icon"]), int(base["icon_row"])),
+		"proc": u["proc"], "proc_desc": u["proc_desc"]}
 
 
 static func _value(spec: Array, ilvl: int) -> float:
@@ -98,6 +99,8 @@ static func describe(item: Dictionary) -> PackedStringArray:
 		var fmt: String = names.get(stat, stat + " %d")
 		var value: float = float(item["stats"][stat])
 		out.append(fmt % (value if "%.1f" in fmt else roundi(value)))
+	if item.has("proc_desc"):
+		out.append(String(item["proc_desc"]))
 	return out
 
 

@@ -29,7 +29,7 @@ func _run() -> void:
 	var g := get_tree().current_scene as Game
 	var m: Michael = g.michael
 	_expect(get_tree().get_nodes_in_group("demons").size() >= 15, "packs spawned (%d demons)" % get_tree().get_nodes_in_group("demons").size())
-	var d: Demon = g.spawner.spawn("swarmer", m.global_position + Vector2(30, 0))
+	var d: Demon = g.spawner.spawn("imp", m.global_position + Vector2(30, 0))
 	await _frames(2)
 	var xp0: float = m.prog.xp
 	for i: int in 8:
@@ -41,9 +41,17 @@ func _run() -> void:
 	_expect(m.prog.xp > xp0 or m.prog.level > 1, "experience gained")
 	var item: Dictionary = LootGen.make(5, 1.0, "rare")
 	_expect(item["stats"].size() >= 4 and item["name"] != "", "rare item rolled: " + String(item["name"]))
-	GroundItem.spawn(g.world, m.global_position + Vector2(4, 0), item)
-	await _frames(5)
-	_expect(m.inv.bag.has(item), "walking over an item picks it up")
+	var gi := GroundItem.spawn(g.world, m.global_position + Vector2(60, 0), item)
+	await _frames(30)
+	g.cursor_override = gi.label_rect().get_center()
+	g.lmb_down()
+	g.lmb = false
+	await _frames(60)
+	g.cursor_override = Vector2.INF
+	_expect(m.inv.bag.has(item), "clicking an item's name walks there and picks it up")
+	var drop_spots: Array[Vector2] = LootDrop.free_spots(g.world, m.global_position, 6)
+	_expect(drop_spots.all(func(p: Vector2) -> bool: return p.distance_to(m.global_position) >= LootDrop.CLEAR_OF_MICHAEL),
+		"drops land in a ring, clear of Michael's feet")
 	var life0: float = m.stats.v("life")
 	var armour0: float = m.stats.v("armour")
 	m.inv.equip(m.inv.bag.find(item))
@@ -52,18 +60,32 @@ func _run() -> void:
 		"equipping changes the numbers")
 	m.prog.add_xp(2000.0)
 	_expect(m.prog.level > 3 and m.prog.skill_points() > 0, "levels and skill points (level %d)" % m.prog.level)
-	while m.prog.mastery < 8 and m.prog.add_mastery():
+	_expect(m.prog.choose_mastery("voice") and m.prog.class_title() == "Captain", "a second mastery gives a class (Captain)")
+	while int(m.prog.mastery_points["voice"]) < 8 and m.prog.add_mastery("voice"):
 		pass
-	for s: String in ["rebuke", "shield", "trumpet", "radiance"]:
+	while int(m.prog.mastery_points["sword"]) < 4 and m.prog.add_mastery("sword"):
+		pass
+	for s: String in ["rebuke", "silence", "trumpet", "whirl"]:
 		m.prog.add_rank(s)
-	_expect(m.prog.tier_open(2) and m.prog.rank("trumpet") == 1, "mastery opens the tiers")
+	_expect(m.prog.skill_open("trumpet") and m.prog.rank("trumpet") == 1 and m.prog.slots.size() == 4, "mastery opens the tiers; skills take keys")
+	_expect(m.prog.add_attribute("might") and m.stats.v("might") >= 1.0, "an attribute point raises Might")
 	var used: int = 0
-	for s: String in ["rebuke", "shield", "trumpet", "descent", "radiance"]:
+	for s: String in ["rebuke", "silence", "trumpet", "whirl"]:
 		m.glory = m.stats.v("glory")
 		await _frames(25)
 		if m.skills.use(s, m.global_position + Vector2(60, 0)):
 			used += 1
-	_expect(used == 5, "all five skills used (%d)" % used)
+	_expect(used == 4, "the build's skills are used (%d / 4)" % used)
+	var pts: int = m.prog.skill_points()
+	m.prog.respec()
+	_expect(m.prog.skill_points() > pts and m.prog.attribute_points() > 0, "respec refunds the points")
+	var sv: Dictionary = m.prog.to_dict()
+	var back := Progression.new()
+	back.from_dict(JSON.parse_string(JSON.stringify(sv)))
+	_expect(back.level == m.prog.level and back.masteries == m.prog.masteries, "the build saves and loads")
+	SaveGame.write(g)
+	_expect(FileAccess.file_exists(SaveGame.PATH), "progress is written to user://")
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(SaveGame.PATH))
 	_expect(not InputMap.has_action("move_up") and InputMap.action_get_events("skill_2").any(
 		func(e: InputEvent) -> bool: return e is InputEventKey and (e as InputEventKey).physical_keycode == KEY_W),
 		"click-to-move by default; W is a skill key")
@@ -90,6 +112,7 @@ func _run() -> void:
 	m.position = p["at"]
 	await _frames(10)
 	_expect(int(p["state"]) == PrayerObjective.STATE_DEFENDING, "reaching a prayer brings a wave")
+	await _frames(120)                                    # the wave arrives as smoke first
 	for w: Variant in p["wave"]:
 		if is_instance_valid(w):
 			(w as Demon).hurt(99999.0, m.global_position, 0.0, false)

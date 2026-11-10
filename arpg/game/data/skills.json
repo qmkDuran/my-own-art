@@ -1,27 +1,25 @@
 {
- "_doc": "Mastery-style skills. Points: skill_points_per_level per level (start_points at level 1, pre-spent as 'start'). Mastery points unlock tiers and give per_point stats. Skill ranks scale damage by rank_bonus per rank after the first. Modifiers cost 1 point each and need rank 1. Every name lives here; the verse goes in the tooltip.",
+ "_doc": "Dual mastery (Grim Dawn-style, original content). Skill points per level go into mastery bars (each opens its skills' tiers and adds stats), skill ranks and modifiers. A second mastery is chosen at second_mastery_level; the pair gives a class title. Attribute points (Might, Agility, Spirit) per level. Every name lives here; the verse goes in the tooltip.",
  "skill_points_per_level": 3,
+ "attribute_points_per_level": 1,
+ "second_mastery_level": 3,
  "start": {
-  "mastery": 1,
+  "masteries": [
+   "sword"
+  ],
+  "mastery_points": {
+   "sword": 1
+  },
   "ranks": {
-   "strike": 1,
-   "descent": 1
+   "strike": 1
   }
  },
- "mastery": {
-  "name": "Mastery",
-  "max": 20,
-  "tiers": [
-   1,
-   4,
-   8
-  ],
-  "per_point": {
-   "life": 4,
-   "damage": 0.4
-  },
-  "verse": "chief_prince"
- },
+ "max_mastery": 20,
+ "tiers": [
+  1,
+  4,
+  8
+ ],
  "rank_bonus": 0.12,
  "max_rank": 8,
  "glory_regen": 5.0,
@@ -31,19 +29,149 @@
   "time": 0.22,
   "cooldown": 1.1
  },
- "slots": [
-  "strike",
-  "descent",
-  "rebuke",
-  "shield",
-  "trumpet",
-  "radiance"
+ "slot_keys": [
+  "RMB",
+  "Q",
+  "W",
+  "E",
+  "R"
  ],
+ "masteries": {
+  "sword": {
+   "name": "Sword",
+   "verse": "sword",
+   "per_point": {
+    "damage": 0.5,
+    "life": 2
+   },
+   "skills": [
+    [
+     "strike",
+     0
+    ],
+    [
+     "whirl",
+     1
+    ]
+   ]
+  },
+  "shield": {
+   "name": "Shield",
+   "verse": "shield",
+   "per_point": {
+    "armour": 3,
+    "life": 3
+   },
+   "skills": [
+    [
+     "shield",
+     0
+    ],
+    [
+     "bash",
+     1
+    ]
+   ]
+  },
+  "voice": {
+   "name": "Voice",
+   "verse": "trumpet",
+   "per_point": {
+    "glory": 3,
+    "holy_pct": 0.5
+   },
+   "skills": [
+    [
+     "rebuke",
+     0
+    ],
+    [
+     "silence",
+     1
+    ],
+    [
+     "trumpet",
+     2
+    ]
+   ]
+  },
+  "wings": {
+   "name": "Wings",
+   "verse": "eagles",
+   "per_point": {
+    "move_pct": 0.4,
+    "dodge_pct": 1.5
+   },
+   "skills": [
+    [
+     "descent",
+     0
+    ],
+    [
+     "gale",
+     1
+    ]
+   ]
+  },
+  "light": {
+   "name": "Light",
+   "verse": "encamps",
+   "per_point": {
+    "holy_pct": 1.0,
+    "glory_regen": 0.1
+   },
+   "skills": [
+    [
+     "radiance",
+     0
+    ],
+    [
+     "lance",
+     2
+    ]
+   ]
+  }
+ },
+ "classes": {
+  "shield+sword": "Warden",
+  "sword+voice": "Captain",
+  "sword+wings": "Vanguard",
+  "light+sword": "Sentinel",
+  "shield+voice": "Herald",
+  "shield+wings": "Guardian",
+  "light+shield": "Keeper",
+  "voice+wings": "Messenger",
+  "light+voice": "Witness",
+  "light+wings": "Beacon"
+ },
+ "attributes": {
+  "might": {
+   "name": "Might",
+   "per_point": {
+    "damage_pct": 2.0,
+    "life": 3
+   }
+  },
+  "agility": {
+   "name": "Agility",
+   "per_point": {
+    "crit": 0.2,
+    "attack_pct": 0.6,
+    "dodge_pct": 1.0
+   }
+  },
+  "spirit": {
+   "name": "Spirit",
+   "per_point": {
+    "glory": 2,
+    "glory_regen": 0.06,
+    "holy_pct": 0.6
+   }
+  }
+ },
  "skills": {
   "strike": {
    "name": "Strike",
-   "tier": 0,
-   "key": "LMB",
    "verse": "sword",
    "desc": "Three sword swings; the third is heavier.",
    "damage": [
@@ -68,8 +196,6 @@
   },
   "descent": {
    "name": "Descent",
-   "tier": 0,
-   "key": "RMB",
    "verse": "chief_prince",
    "desc": "Leap to the target and strike where you land.",
    "damage": 1.3,
@@ -79,8 +205,8 @@
    "cost": 14,
    "cooldown": 4.0,
    "mods": {
-    "wingbeat": {
-     "name": "Wingbeat",
+    "downdraft": {
+     "name": "Downdraft",
      "desc": "Landing throws enemies back."
     },
     "long_reach": {
@@ -91,8 +217,6 @@
   },
   "rebuke": {
    "name": "Rebuke",
-   "tier": 1,
-   "key": "Q",
    "verse": "rebuke",
    "desc": "A word of command: enemies nearby are struck and flee.",
    "damage": 0.7,
@@ -113,8 +237,6 @@
   },
   "shield": {
    "name": "Shield of Faith",
-   "tier": 1,
-   "key": "W",
    "verse": "shield",
    "desc": "Raise the shield: projectiles are put out, blows weakened.",
    "duration": 4.5,
@@ -135,8 +257,6 @@
   },
   "trumpet": {
    "name": "Trumpet Call",
-   "tier": 2,
-   "key": "E",
    "verse": "trumpet",
    "desc": "A great blast around you that hurls enemies away.",
    "damage": 2.6,
@@ -157,8 +277,6 @@
   },
   "radiance": {
    "name": "Radiance",
-   "tier": 2,
-   "key": "R",
    "verse": "encamps",
    "desc": "Toggle. Light burns enemies around you and mends you; drains glory.",
    "dps": 0.55,
@@ -175,6 +293,87 @@
     "mending": {
      "name": "Mending",
      "desc": "Mends twice as fast."
+    }
+   }
+  },
+  "whirl": {
+   "name": "Whirl",
+   "verse": "sword",
+   "desc": "Spin with the blade: strikes every enemy around you.",
+   "damage": 1.4,
+   "radius": 92,
+   "cost": 18,
+   "cooldown": 3.0,
+   "mods": {
+    "momentum": {
+     "name": "Momentum",
+     "desc": "30% wider."
+    }
+   }
+  },
+  "bash": {
+   "name": "Bash",
+   "verse": "shield",
+   "desc": "Drive the shield forward: enemies in front are stunned and pushed.",
+   "damage": 1.0,
+   "radius": 80,
+   "arc": 100,
+   "stun": 1.5,
+   "cost": 12,
+   "cooldown": 4.0,
+   "mods": {
+    "daze": {
+     "name": "Daze",
+     "desc": "Stuns 1 second longer."
+    }
+   }
+  },
+  "silence": {
+   "name": "Silence",
+   "verse": "rebuke",
+   "desc": "A word that stops them: casters fall silent, the rest stagger.",
+   "radius": 210,
+   "stun": 1.0,
+   "silence": 2.5,
+   "cost": 20,
+   "cooldown": 10.0,
+   "mods": {
+    "long_silence": {
+     "name": "Long Silence",
+     "desc": "Casters stay silent 2 seconds longer."
+    }
+   }
+  },
+  "gale": {
+   "name": "Gale",
+   "verse": "eagles",
+   "desc": "A beat of the wings: a cone of wind hurls enemies away.",
+   "damage": 0.5,
+   "radius": 170,
+   "arc": 70,
+   "push": 340,
+   "cost": 15,
+   "cooldown": 5.0,
+   "mods": {
+    "gust": {
+     "name": "Gust",
+     "desc": "Reaches 30% farther."
+    }
+   }
+  },
+  "lance": {
+   "name": "Lance",
+   "verse": "encamps",
+   "desc": "A line of light toward the cursor, through every enemy in its path.",
+   "damage": 2.0,
+   "length": 330,
+   "width": 26,
+   "cost": 22,
+   "cooldown": 3.5,
+   "mods": {
+    "pierce": {
+     "name": "Pierce",
+     "desc": "50% longer."
     }
    }
   }

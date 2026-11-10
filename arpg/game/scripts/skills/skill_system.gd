@@ -1,7 +1,8 @@
 class_name SkillSystem
 extends Node
-## Michael's skills (data: res://data/skills.json): cooldowns, glory cost, ranks and modifiers, and their effects.
-## Damage hits enemies in the "demons" group only: Michael never fights people (Eph 6:12).
+## Michael's skills (data: res://data/skills.json): cooldowns, glory cost, ranks and modifiers, unique-item effects
+## ("procs"), and every skill's effect. Damage hits enemies in the "demons" group only: Michael never fights people
+## (Eph 6:12).
 
 signal used(skill: String)
 signal hit_landed(count: int)
@@ -9,7 +10,6 @@ signal hit_landed(count: int)
 const GOLD := Color("f9c22b")
 const PALE := Color("fbff86")
 const SKY := Color("8fd3ff")
-const CAMERA_SHAKE: float = 6.0
 
 var m: Michael
 var cooldowns: Dictionary = {}
@@ -77,11 +77,18 @@ func use(id: String, target: Vector2) -> bool:
 	cooldowns[id] = m.stats.cooldown(float(d["cooldown"]))
 	m.aim_at(target)
 	m.face_toward(m.aim())
+	if id == "descent" and m.inv.has_proc("descent_cdr"):
+		cooldowns[id] = float(cooldowns[id]) * 0.5
 	match id:
 		"descent": _descent(target)
 		"rebuke": _rebuke()
 		"shield": _shield()
 		"trumpet": _trumpet()
+		"whirl": _whirl()
+		"bash": _bash(target)
+		"silence": _silence()
+		"gale": _gale(target)
+		"lance": _lance(target)
 	used.emit(id)
 	return true
 
@@ -121,6 +128,13 @@ func strike_hit(aim: Vector2, combo: int) -> void:
 			n += 1
 	if n > 0:
 		Audio.sfx("hit", -6.0, randf_range(0.9, 1.1))
+		Audio.sfx("spark", -10.0, randf_range(0.9, 1.2))
+		Impact.shake(m, 1.0 if combo < 2 else 2.0)
+	if combo == 2 and m.inv.has_proc("strike_burst"):
+		var at: Vector2 = center + aim * radius * 0.6
+		Impact.blast(m.get_parent(), at, 60.0, PALE, 0.5)
+		for dm: Demon in _demons_within(at, 60.0):
+			_damage(dm, 0.6, 80.0)
 		HitStop.trigger(get_tree(), 0.045 if combo < 2 else 0.08)
 	hit_landed.emit(n)
 
@@ -141,21 +155,23 @@ func _land() -> void:
 	var d: Dictionary = data("descent")
 	m.velocity = Vector2.ZERO
 	m.invulnerable = false
-	var push: float = 260.0 if m.prog.has_mod("descent", "wingbeat") else 90.0
-	SkillFx.ring(m.get_parent(), m.global_position, float(d["radius"]), PALE, 0.35)
+	var push: float = 260.0 if m.prog.has_mod("descent", "downdraft") else 90.0
+	Impact.crater(m.get_parent(), m.global_position, float(d["radius"]) * 0.6)
 	var n: int = 0
 	for dm: Demon in _demons_within(m.global_position, float(d["radius"])):
 		_damage(dm, float(d["damage"]) * m.prog.rank_mult("descent"), push)
 		n += 1
-	Audio.sfx("hit", -4.0, 0.8)
+	Audio.sfx("impact_heavy", -3.0)
+	Audio.sfx("crunch", -8.0)
 	if n > 0:
 		HitStop.trigger(get_tree(), 0.07)
-	_shake()
 
 
 # ------------------------------------------------------------------ Rebuke (Jude 9)
 func _rebuke() -> void:
 	_rebuke_pulse()
+	if m.inv.has_proc("rebuke_heal"):
+		m.life = minf(m.stats.v("life"), m.life + m.stats.v("life") * 0.08)
 	if m.prog.has_mod("rebuke", "echo"):
 		get_tree().create_timer(0.55).timeout.connect(_rebuke_pulse)
 	Audio.sfx("rebuke", -4.0)
@@ -164,7 +180,7 @@ func _rebuke() -> void:
 func _rebuke_pulse() -> void:
 	var d: Dictionary = data("rebuke")
 	var fear: float = float(d["fear"]) * (1.6 if m.prog.has_mod("rebuke", "dread") else 1.0)
-	SkillFx.ring(m.get_parent(), m.global_position + Vector2(0, -20), float(d["radius"]), GOLD, 0.5)
+	Impact.blast(m.get_parent(), m.global_position + Vector2(0, -10), float(d["radius"]), GOLD, 0.8)
 	for dm: Demon in _demons_within(m.global_position, float(d["radius"])):
 		_damage(dm, float(d["damage"]) * m.prog.rank_mult("rebuke"), 120.0)
 		dm.fear(fear)
@@ -181,9 +197,14 @@ func shield_reduce() -> float:
 	return float(data("shield")["reduce"]) + (0.15 if m.prog.has_mod("shield", "steadfast") else 0.0)
 
 
-func on_quench() -> void:
+func on_quench(at: Vector2) -> void:
 	if m.prog.has_mod("shield", "quench"):
 		m.life = minf(m.stats.v("life"), m.life + 4.0)
+	if m.inv.has_proc("shield_reflect"):                   # the bolt flies back and strikes what is nearest
+		var near: Array[Demon] = _demons_within(at, 400.0)
+		if not near.is_empty():
+			_damage(near[0], 1.0, 60.0, false)
+			SkillFx.beam(m.get_parent(), at, near[0].global_position + Vector2(0, -24), Color("8fd3ff"))
 
 
 func _draw_shield() -> void:
@@ -197,15 +218,82 @@ func _draw_shield() -> void:
 func _trumpet() -> void:
 	var d: Dictionary = data("trumpet")
 	var radius: float = float(d["radius"]) * (1.25 if m.prog.has_mod("trumpet", "resound") else 1.0)
-	SkillFx.ring(m.get_parent(), m.global_position + Vector2(0, -20), radius, PALE, 0.6)
-	SkillFx.ring(m.get_parent(), m.global_position + Vector2(0, -20), radius * 0.7, GOLD, 0.45)
+	Impact.blast(m.get_parent(), m.global_position + Vector2(0, -10), radius, PALE, 1.6)
+	SkillFx.ring(m.get_parent(), m.global_position + Vector2(0, -10), radius * 0.7, GOLD, 0.45)
+	Audio.sfx("impact_heavy", -4.0, 0.8)
 	for dm: Demon in _demons_within(m.global_position, radius):
 		_damage(dm, float(d["damage"]) * m.prog.rank_mult("trumpet"), float(d["push"]) * 2.0)
 		if m.prog.has_mod("trumpet", "shockwave"):
 			dm.stun(1.5)
 	Audio.sfx("trumpet", -3.0)
 	HitStop.trigger(get_tree(), 0.09)
-	_shake(2.0)
+
+
+# ------------------------------------------------------------------ the second skill of each mastery
+func _whirl() -> void:
+	var d: Dictionary = data("whirl")
+	var r: float = float(d["radius"]) * (1.3 if m.prog.has_mod("whirl", "momentum") else 1.0)
+	var c: Vector2 = m.global_position + Vector2(0, -20)
+	for i: int in 4:
+		SkillFx.arc(m.get_parent(), c, r - i * 4.0, i * PI / 2.0, 120.0, PALE)
+	for dm: Demon in _demons_within(m.global_position, r):
+		_damage(dm, float(d["damage"]) * m.prog.rank_mult("whirl"), 110.0)
+	Audio.sfx("swing", -6.0, 0.8)
+	Audio.sfx("hit", -8.0, 0.9)
+	Impact.shake(m, 1.5)
+
+
+func _bash(target: Vector2) -> void:
+	var d: Dictionary = data("bash")
+	var dir: Vector2 = (target - m.global_position).normalized()
+	SkillFx.arc(m.get_parent(), m.global_position + Vector2(0, -20), float(d["radius"]), dir.angle(), float(d["arc"]), SKY)
+	var stun: float = float(d["stun"]) + (1.0 if m.prog.has_mod("bash", "daze") else 0.0)
+	for dm: Demon in _demons_within(m.global_position, float(d["radius"])):
+		if absf(rad_to_deg(dir.angle_to(dm.global_position - m.global_position))) <= float(d["arc"]) / 2.0 + 10.0:
+			_damage(dm, float(d["damage"]) * m.prog.rank_mult("bash"), 200.0)
+			dm.stun(stun)
+	Audio.sfx("shield", -6.0, 0.7)
+	Audio.sfx("impact_heavy", -10.0, 1.4)
+	Impact.shake(m, 2.0)
+
+
+func _silence() -> void:
+	var d: Dictionary = data("silence")
+	var long: float = float(d["silence"]) + (2.0 if m.prog.has_mod("silence", "long_silence") else 0.0)
+	SkillFx.ring(m.get_parent(), m.global_position + Vector2(0, -10), float(d["radius"]), Color("c7dcd0"), 0.7)
+	for dm: Demon in _demons_within(m.global_position, float(d["radius"])):
+		dm.stun(long if dm.data["behaviour"] == "ranged" else float(d["stun"]))
+	Audio.sfx("rebuke", -8.0, 1.4)
+
+
+func _gale(target: Vector2) -> void:
+	var d: Dictionary = data("gale")
+	var reach: float = float(d["radius"]) * (1.3 if m.prog.has_mod("gale", "gust") else 1.0)
+	var dir: Vector2 = (target - m.global_position).normalized()
+	SkillFx.arc(m.get_parent(), m.global_position + Vector2(0, -20), reach * 0.6, dir.angle(), float(d["arc"]), Color("c7dcd0"))
+	SkillFx.arc(m.get_parent(), m.global_position + Vector2(0, -20), reach, dir.angle(), float(d["arc"]), Color("c7dcd0"))
+	for dm: Demon in _demons_within(m.global_position, reach):
+		if absf(rad_to_deg(dir.angle_to(dm.global_position - m.global_position))) <= float(d["arc"]) / 2.0 + 10.0:
+			_damage(dm, float(d["damage"]) * m.prog.rank_mult("gale"), float(d["push"]))
+	Audio.sfx("dash", -4.0, 0.6)
+	Impact.shake(m, 1.5)
+
+
+func _lance(target: Vector2) -> void:
+	var d: Dictionary = data("lance")
+	var length: float = float(d["length"]) * (1.5 if m.prog.has_mod("lance", "pierce") else 1.0)
+	var from: Vector2 = m.global_position + Vector2(0, -28)
+	var dir: Vector2 = (target - from).normalized()
+	var to: Vector2 = from + dir * length
+	SkillFx.beam(m.get_parent(), from, to, PALE)
+	for dm: Demon in _demons_within(from + dir * length / 2.0, length / 2.0 + 20.0):
+		var p: Vector2 = dm.global_position + Vector2(0, -20)
+		var t: float = clampf((p - from).dot(dir), 0.0, length)
+		if (from + dir * t).distance_to(p) < float(d["width"]) + float(dm.data["radius"]):
+			_damage(dm, float(d["damage"]) * m.prog.rank_mult("lance"), 60.0)
+	Audio.sfx("trumpet", -14.0, 2.0)
+	Audio.sfx("spark", -6.0, 0.8)
+	Impact.shake(m, 1.2)
 
 
 # ------------------------------------------------------------------ Radiance (Ps 34:7), a toggle
@@ -251,13 +339,3 @@ func _damage(dm: Demon, mult: float, push: float, gain: bool = true) -> void:
 	if gain:
 		m.glory = minf(m.stats.v("glory"), m.glory + float(GameData.skills["glory_on_hit"]))
 		m.life = minf(m.stats.v("life"), m.life + m.stats.v("life_on_hit"))
-
-
-func _shake(strength: float = 1.0) -> void:
-	var cam := get_viewport().get_camera_2d()
-	if cam == null:
-		return
-	var tw := cam.create_tween()
-	for i: int in 6:
-		tw.tween_property(cam, "offset", Vector2(randf_range(-1, 1), randf_range(-1, 1)) * CAMERA_SHAKE * strength, 0.03)
-	tw.tween_property(cam, "offset", Vector2.ZERO, 0.05)

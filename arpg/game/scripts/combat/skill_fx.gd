@@ -23,6 +23,12 @@ static func arc(parent: Node, at: Vector2, r: float, dir: float, span_deg: float
 	return f
 
 
+static func beam(parent: Node, from: Vector2, to: Vector2, col: Color) -> SkillFx:
+	var f := _make(parent, "beam", from, (to - from).length(), col, 0.3)
+	f.arc_dir = (to - from).angle()
+	return f
+
+
 static func circle(parent: Node, at: Vector2, r: float, col: Color) -> SkillFx:
 	var f := _make(parent, "circle", at, r, col, INF)
 	f.z_index = -5
@@ -54,6 +60,10 @@ func _draw() -> void:
 	var k: float = _t / life if life != INF else 0.0
 	var c := Color(color, 1.0 - k)
 	match kind:
+		"beam":
+			var end := Vector2(cos(arc_dir), sin(arc_dir)) * radius
+			draw_line(Vector2.ZERO, end, Color(c, c.a * 0.5), 12.0 * (1.0 - k))
+			draw_line(Vector2.ZERO, end, c, 4.0)
 		"circle":
 			draw_set_transform(Vector2.ZERO, 0.0, Vector2(1.0, 0.55))      # lies flat on the ground
 			var pulse: float = 0.6 + 0.25 * sin(_t * 2.0)
