@@ -26,7 +26,8 @@
       "windup": 0.09,
       "active": 0.13,
       "recover": 0.22,
-      "sfx_swing": "bat_swing"
+      "sfx_swing": "bat_swing",
+      "anim": "swing"
     }
   },
   "mop_handle": {
@@ -42,7 +43,8 @@
       "windup": 0.08,
       "active": 0.12,
       "recover": 0.2,
-      "sfx_swing": "whoosh"
+      "sfx_swing": "whoosh",
+      "anim": "swing"
     }
   },
   "food": {

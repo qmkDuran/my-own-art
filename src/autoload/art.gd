@@ -7,6 +7,7 @@ extends Node
 var _logged_missing: Dictionary = {}
 
 var _cache: Dictionary = {}
+var _layouts: Dictionary = {}
 
 
 func texture(art_id: String) -> Texture2D:
@@ -37,6 +38,32 @@ func entry(art_id: String) -> Dictionary:
 ## Sprite-sheet layout for animated art: {"hframes", "vframes", "rows": {"down","up","side"}, "fps"}.
 func sheet(art_id: String) -> Dictionary:
 	return entry(art_id).get("sheet", {})
+
+
+## True when the entry's PNG exists (not a painted placeholder).
+func has_real_texture(art_id: String) -> bool:
+	var path := String(entry(art_id).get("path", ""))
+	return not path.is_empty() and ResourceLoader.exists(path)
+
+
+## Animation layout of a full character sheet ("sheet": {"layout": "res://...json"}), as
+## {anim: {dir: {"row", "frames", "fps", "loop"}}}. Empty when the entry has none.
+func layout(art_id: String) -> Dictionary:
+	if _layouts.has(art_id):
+		return _layouts[art_id]
+	var result: Dictionary = {}
+	var path := String(sheet(art_id).get("layout", ""))
+	if not path.is_empty() and FileAccess.file_exists(path):
+		var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
+		if parsed is Dictionary:
+			for row: Variant in (parsed as Dictionary).get("rows", []):
+				var r: Dictionary = row
+				var anim := String(r.get("anim", ""))
+				if not result.has(anim):
+					result[anim] = {}
+				(result[anim] as Dictionary)[String(r.get("dir", "down"))] = r
+	_layouts[art_id] = result
+	return result
 
 
 ## The skin palette-swap material for art marked "skin_swap": true (hero body, Mom, Mom's

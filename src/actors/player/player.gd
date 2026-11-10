@@ -106,6 +106,10 @@ func _start_attack() -> void:
 	_change_state(State.ATTACK)
 	_attack_phase = 0
 	velocity *= 0.3
+	var anim := String(_weapon.get("anim", ""))
+	if not anim.is_empty():
+		var total := float(_weapon.get("windup", 0.07)) + float(_weapon.get("active", 0.12)) + float(_weapon.get("recover", 0.16))
+		visual.play_action(anim, total)
 	AudioManager.play_sfx(String(_weapon.get("sfx_swing", "swing")), -4.0, 0.08)
 
 
@@ -172,6 +176,7 @@ func take_hit(hitbox: Hitbox) -> void:
 	if state == State.DEAD:
 		return
 	_change_state(State.HURT)
+	visual.play_hurt(HURT_TIME + 0.15)
 	visual.flash(Color(2.0, 0.6, 0.6), 0.3)
 	AudioManager.play_sfx("hurt", 0.0, 0.05)
 	Events.shake_requested.emit(5.0, 0.25)

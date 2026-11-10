@@ -54,9 +54,26 @@ func build(entry: Dictionary) -> void:
 func _prop(entry: Dictionary, id: String) -> Node2D:
 	var node := Node2D.new()
 	node.position = _position(entry)
+	var flip: bool = entry.get("flip", false)
 	if entry.has("art"):
-		node.add_child(_sprite(String(entry["art"]), String(entry.get("anchor", "bottom"))))
-	_add_solid(node, entry.get("solid"), entry.get("solid_offset"))
+		var sprite := _sprite(String(entry["art"]), String(entry.get("anchor", "bottom")))
+		if flip:
+			sprite.flip_h = true
+		node.add_child(sprite)
+	if entry.get("above", false):
+		node.z_index = 20   # ceiling fixtures: drawn over everything in the room
+	var solid: Variant = entry.get("solid")
+	if solid is String and solid == "art":
+		var art_id := String(entry.get("art", ""))
+		var art := Art.entry(art_id)
+		var rects: Array = [art.get("footprint")] + Array(art.get("solid_extra", []))
+		for r: Variant in rects:
+			if r is Array:
+				_add_image_rect(node, art_id, r, flip)
+	else:
+		_add_solid(node, solid, entry.get("solid_offset"))
+	for r: Variant in entry.get("solid_rects", []):
+		_add_image_rect(node, String(entry.get("art", "")), r, flip)
 	_add_interaction(node, entry, id, null)
 	if entry.has("light"):
 		_add_light(node, entry["light"])
@@ -105,7 +122,22 @@ func _build_leftover(entry: Dictionary, id: String) -> void:
 
 # --- Parts -----------------------------------------------------------------------
 
+## A solid rectangle given in the art's own pixel space ([x, y, w, h] from the image's top-left),
+## for a bottom-centre anchored sprite. Used for buildings and other large footprints.
+func _add_image_rect(node: Node2D, art_id: String, r: Array, flip: bool) -> void:
+	var tex_size := Art.texture(art_id).get_size()
+	var left := float(r[0]) - roundf(tex_size.x / 2.0)
+	var w := float(r[2])
+	if flip:
+		left = -left - w
+	var top := float(r[1]) - tex_size.y
+	_add_solid(node, [w, float(r[3])], [left + w / 2.0, top + float(r[3])])
+
+
 func _sprite(art_id: String, anchor: String) -> Sprite2D:
+	var fx := Art.entry(art_id).get("fx", {}) as Dictionary
+	if not fx.is_empty() and Art.has_real_texture(art_id):
+		return FxSprite.create(art_id, fx)
 	var sprite := Sprite2D.new()
 	sprite.texture = Art.texture(art_id)
 	var tex_size := sprite.texture.get_size()

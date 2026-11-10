@@ -9,7 +9,7 @@
         "up": 1,
         "side": 2
       },
-      "fps": 8
+      "fps": 10
     },
     "placeholder": {
       "shape": "character",
@@ -18,7 +18,8 @@
       "shirt": "3a6a8a",
       "pants": "34384a"
     },
-    "skin_swap": true
+    "skin_swap": true,
+    "full": "hero_male_body_full"
   },
   "hero_female_body": {
     "path": "res://art/characters/hero_female_body.png",
@@ -30,7 +31,7 @@
         "up": 1,
         "side": 2
       },
-      "fps": 8
+      "fps": 10
     },
     "placeholder": {
       "shape": "character",
@@ -39,7 +40,8 @@
       "shirt": "7a4a6a",
       "pants": "34384a"
     },
-    "skin_swap": true
+    "skin_swap": true,
+    "full": "hero_female_body_full"
   },
   "hair_short": {
     "path": "res://art/characters/hair_short.png",
@@ -51,13 +53,14 @@
         "up": 1,
         "side": 2
       },
-      "fps": 8
+      "fps": 10
     },
     "placeholder": {
       "shape": "hair",
       "hair_style": "short",
       "hair": "2a1e18"
-    }
+    },
+    "full": "hair_short_full"
   },
   "hair_buzz": {
     "path": "res://art/characters/hair_buzz.png",
@@ -69,13 +72,14 @@
         "up": 1,
         "side": 2
       },
-      "fps": 8
+      "fps": 10
     },
     "placeholder": {
       "shape": "hair",
       "hair_style": "buzz",
       "hair": "1e1612"
-    }
+    },
+    "full": "hair_buzz_full"
   },
   "hair_curly": {
     "path": "res://art/characters/hair_curly.png",
@@ -87,13 +91,14 @@
         "up": 1,
         "side": 2
       },
-      "fps": 8
+      "fps": 10
     },
     "placeholder": {
       "shape": "hair",
       "hair_style": "curly",
       "hair": "2a1a12"
-    }
+    },
+    "full": "hair_curly_full"
   },
   "hair_long": {
     "path": "res://art/characters/hair_long.png",
@@ -105,13 +110,14 @@
         "up": 1,
         "side": 2
       },
-      "fps": 8
+      "fps": 10
     },
     "placeholder": {
       "shape": "hair",
       "hair_style": "long",
       "hair": "4a2a1a"
-    }
+    },
+    "full": "hair_long_full"
   },
   "hair_bun": {
     "path": "res://art/characters/hair_bun.png",
@@ -123,13 +129,14 @@
         "up": 1,
         "side": 2
       },
-      "fps": 8
+      "fps": 10
     },
     "placeholder": {
       "shape": "hair",
       "hair_style": "bun",
       "hair": "3a2418"
-    }
+    },
+    "full": "hair_bun_full"
   },
   "hair_bob": {
     "path": "res://art/characters/hair_bob.png",
@@ -141,13 +148,14 @@
         "up": 1,
         "side": 2
       },
-      "fps": 8
+      "fps": 10
     },
     "placeholder": {
       "shape": "hair",
       "hair_style": "bob",
       "hair": "5a3420"
-    }
+    },
+    "full": "hair_bob_full"
   },
   "mom": {
     "path": "res://art/characters/mom.png",
@@ -159,7 +167,7 @@
         "up": 1,
         "side": 2
       },
-      "fps": 8
+      "fps": 10
     },
     "placeholder": {
       "shape": "character",
@@ -169,7 +177,8 @@
       "shirt": "b08058",
       "pants": "4a4658"
     },
-    "skin_swap": true
+    "skin_swap": true,
+    "full": "mom_full"
   },
   "hollis": {
     "path": "res://art/characters/hollis.png",
@@ -181,7 +190,7 @@
         "up": 1,
         "side": 2
       },
-      "fps": 8
+      "fps": 10
     },
     "placeholder": {
       "shape": "character",
@@ -190,7 +199,8 @@
       "hair_style": "short",
       "shirt": "3a7a4a",
       "pants": "3a3a44"
-    }
+    },
+    "full": "hollis_full"
   },
   "wade": {
     "path": "res://art/characters/wade.png",
@@ -202,7 +212,7 @@
         "up": 1,
         "side": 2
       },
-      "fps": 8
+      "fps": 10
     },
     "placeholder": {
       "shape": "character",
@@ -211,7 +221,8 @@
       "hair_style": "cap",
       "shirt": "4a5a6a",
       "pants": "2a3040"
-    }
+    },
+    "full": "wade_full"
   },
   "looter": {
     "path": "res://art/characters/looter.png",
@@ -223,7 +234,7 @@
         "up": 1,
         "side": 2
       },
-      "fps": 8
+      "fps": 10
     },
     "placeholder": {
       "shape": "character",
@@ -232,7 +243,8 @@
       "hood": "2a2a30",
       "shirt": "3a3a40",
       "pants": "202428"
-    }
+    },
+    "full": "looter_full"
   },
   "walt": {
     "path": "res://art/characters/walt.png",
@@ -286,7 +298,7 @@
         "up": 1,
         "side": 2
       },
-      "fps": 8
+      "fps": 10
     },
     "placeholder": {
       "shape": "character",
@@ -295,7 +307,8 @@
       "hair_style": "bun",
       "shirt": "4a8a9a",
       "pants": "3a3a50"
-    }
+    },
+    "full": "dana_full"
   },
   "noah": {
     "path": "res://art/characters/noah.png",
@@ -370,15 +383,16 @@
         "up": 1,
         "side": 2
       },
-      "fps": 8
+      "fps": 10
     },
     "placeholder": {
       "shape": "dog",
       "fur": "9a7a50"
-    }
+    },
+    "full": "dog_full"
   },
   "shadow": {
-    "path": "res://art/characters/shadow.png",
+    "path": "res://art/interior/props/shadow.png",
     "placeholder": {
       "shape": "shadow",
       "size": [
@@ -388,7 +402,7 @@
     }
   },
   "portrait_mom": {
-    "path": "res://art/portraits/portrait_mom.png",
+    "path": "res://art/characters/portraits/portrait_mom.png",
     "placeholder": {
       "shape": "portrait",
       "skin": "c89070",
@@ -401,27 +415,27 @@
   },
   "portrait_mom_happy": {
     "extends": "portrait_mom",
-    "path": "res://art/portraits/portrait_mom_happy.png",
+    "path": "res://art/characters/portraits/portrait_mom_happy.png",
     "placeholder": {
       "mood": "happy"
     }
   },
   "portrait_mom_sad": {
     "extends": "portrait_mom",
-    "path": "res://art/portraits/portrait_mom_sad.png",
+    "path": "res://art/characters/portraits/portrait_mom_sad.png",
     "placeholder": {
       "mood": "sad"
     }
   },
   "portrait_mom_afraid": {
     "extends": "portrait_mom",
-    "path": "res://art/portraits/portrait_mom_afraid.png",
+    "path": "res://art/characters/portraits/portrait_mom_afraid.png",
     "placeholder": {
       "mood": "afraid"
     }
   },
   "portrait_hollis": {
-    "path": "res://art/portraits/portrait_hollis.png",
+    "path": "res://art/characters/portraits/portrait_hollis.png",
     "placeholder": {
       "shape": "portrait",
       "skin": "8a5a3a",
@@ -433,27 +447,27 @@
   },
   "portrait_hollis_happy": {
     "extends": "portrait_hollis",
-    "path": "res://art/portraits/portrait_hollis_happy.png",
+    "path": "res://art/characters/portraits/portrait_hollis_happy.png",
     "placeholder": {
       "mood": "happy"
     }
   },
   "portrait_hollis_sad": {
     "extends": "portrait_hollis",
-    "path": "res://art/portraits/portrait_hollis_sad.png",
+    "path": "res://art/characters/portraits/portrait_hollis.png",
     "placeholder": {
       "mood": "sad"
     }
   },
   "portrait_hollis_afraid": {
     "extends": "portrait_hollis",
-    "path": "res://art/portraits/portrait_hollis_afraid.png",
+    "path": "res://art/characters/portraits/portrait_hollis.png",
     "placeholder": {
       "mood": "afraid"
     }
   },
   "portrait_wade": {
-    "path": "res://art/portraits/portrait_wade.png",
+    "path": "res://art/characters/portraits/portrait_wade.png",
     "placeholder": {
       "shape": "portrait",
       "skin": "c89878",
@@ -465,21 +479,21 @@
   },
   "portrait_wade_sad": {
     "extends": "portrait_wade",
-    "path": "res://art/portraits/portrait_wade_sad.png",
+    "path": "res://art/characters/portraits/portrait_wade_sad.png",
     "placeholder": {
       "mood": "sad"
     }
   },
   "portrait_wade_afraid": {
     "extends": "portrait_wade",
-    "path": "res://art/portraits/portrait_wade_afraid.png",
+    "path": "res://art/characters/portraits/portrait_wade_afraid.png",
     "placeholder": {
       "mood": "afraid"
     }
   },
   "portrait_wade_angry": {
     "extends": "portrait_wade",
-    "path": "res://art/portraits/portrait_wade_angry.png",
+    "path": "res://art/characters/portraits/portrait_wade_angry.png",
     "placeholder": {
       "mood": "angry"
     }
@@ -567,7 +581,7 @@
     }
   },
   "portrait_dana": {
-    "path": "res://art/portraits/portrait_dana.png",
+    "path": "res://art/characters/portraits/portrait_dana.png",
     "placeholder": {
       "shape": "portrait",
       "skin": "6a4430",
@@ -579,21 +593,21 @@
   },
   "portrait_dana_happy": {
     "extends": "portrait_dana",
-    "path": "res://art/portraits/portrait_dana_happy.png",
+    "path": "res://art/characters/portraits/portrait_dana_happy.png",
     "placeholder": {
       "mood": "happy"
     }
   },
   "portrait_dana_sad": {
     "extends": "portrait_dana",
-    "path": "res://art/portraits/portrait_dana_sad.png",
+    "path": "res://art/characters/portraits/portrait_dana_sad.png",
     "placeholder": {
       "mood": "sad"
     }
   },
   "portrait_dana_afraid": {
     "extends": "portrait_dana",
-    "path": "res://art/portraits/portrait_dana_afraid.png",
+    "path": "res://art/characters/portraits/portrait_dana_sad.png",
     "placeholder": {
       "mood": "afraid"
     }
@@ -695,7 +709,7 @@
     }
   },
   "tile_wall_top": {
-    "path": "res://art/tiles/tile_wall_top.png",
+    "path": "res://art/interior/tiles/wall_top.png",
     "placeholder": {
       "shape": "tile",
       "color": "2a2630",
@@ -703,7 +717,7 @@
     }
   },
   "tile_wall_face": {
-    "path": "res://art/tiles/tile_wall_face.png",
+    "path": "res://art/interior/tiles/wall_face_living.png",
     "placeholder": {
       "shape": "tile",
       "color": "8a7a68",
@@ -712,7 +726,7 @@
     }
   },
   "tile_floor_wood": {
-    "path": "res://art/tiles/tile_floor_wood.png",
+    "path": "res://art/interior/tiles/floor_wood.png",
     "placeholder": {
       "shape": "tile",
       "color": "8a6040",
@@ -721,7 +735,7 @@
     }
   },
   "tile_floor_kitchen": {
-    "path": "res://art/tiles/tile_floor_kitchen.png",
+    "path": "res://art/interior/tiles/floor_kitchen.png",
     "placeholder": {
       "shape": "tile",
       "color": "c8c0b0",
@@ -730,7 +744,7 @@
     }
   },
   "tile_carpet": {
-    "path": "res://art/tiles/tile_carpet.png",
+    "path": "res://art/interior/tiles/carpet_living.png",
     "placeholder": {
       "shape": "tile",
       "color": "6a3a3a",
@@ -740,7 +754,7 @@
     }
   },
   "tile_door": {
-    "path": "res://art/tiles/tile_door.png",
+    "path": "res://art/interior/tiles/door_threshold.png",
     "placeholder": {
       "shape": "tile",
       "color": "5a3a20",
@@ -749,7 +763,7 @@
     }
   },
   "tile_store_floor": {
-    "path": "res://art/tiles/tile_store_floor.png",
+    "path": "res://art/interior/tiles/floor_store.png",
     "placeholder": {
       "shape": "tile",
       "color": "d0d0c8",
@@ -758,7 +772,7 @@
     }
   },
   "tile_store_wall_face": {
-    "path": "res://art/tiles/tile_store_wall_face.png",
+    "path": "res://art/interior/tiles/wall_face_store.png",
     "placeholder": {
       "shape": "tile",
       "color": "b8c0c0",
@@ -767,7 +781,7 @@
     }
   },
   "tile_grass": {
-    "path": "res://art/tiles/tile_grass.png",
+    "path": "res://art/exterior/tiles/outdoor/grass_0.png",
     "placeholder": {
       "shape": "tile",
       "color": "3a5a30",
@@ -777,7 +791,7 @@
     }
   },
   "tile_sidewalk": {
-    "path": "res://art/tiles/tile_sidewalk.png",
+    "path": "res://art/exterior/tiles/outdoor/sidewalk_0.png",
     "placeholder": {
       "shape": "tile",
       "color": "9a968c",
@@ -786,7 +800,7 @@
     }
   },
   "tile_curb": {
-    "path": "res://art/tiles/tile_curb.png",
+    "path": "res://art/exterior/tiles/outdoor/curb_n.png",
     "placeholder": {
       "shape": "tile",
       "color": "8a867c",
@@ -795,7 +809,7 @@
     }
   },
   "tile_road": {
-    "path": "res://art/tiles/tile_road.png",
+    "path": "res://art/exterior/tiles/outdoor/road_0.png",
     "placeholder": {
       "shape": "tile",
       "color": "34343a",
@@ -805,7 +819,7 @@
     }
   },
   "tile_road_line": {
-    "path": "res://art/tiles/tile_road_line.png",
+    "path": "res://art/exterior/tiles/outdoor/road_line_h.png",
     "placeholder": {
       "shape": "tile",
       "color": "34343a",
@@ -815,7 +829,7 @@
     }
   },
   "tile_path": {
-    "path": "res://art/tiles/tile_path.png",
+    "path": "res://art/exterior/tiles/outdoor/sidewalk_1.png",
     "placeholder": {
       "shape": "tile",
       "color": "7a7064",
@@ -825,7 +839,7 @@
     }
   },
   "tile_driveway": {
-    "path": "res://art/tiles/tile_driveway.png",
+    "path": "res://art/exterior/tiles/outdoor/driveway.png",
     "placeholder": {
       "shape": "tile",
       "color": "5a5650",
@@ -834,54 +848,8 @@
       "density": 40
     }
   },
-  "tile_siding": {
-    "path": "res://art/tiles/tile_siding.png",
-    "placeholder": {
-      "shape": "tile",
-      "color": "b8a888",
-      "accent": "9a8a70",
-      "pattern": "siding"
-    }
-  },
-  "tile_siding_blue": {
-    "path": "res://art/tiles/tile_siding_blue.png",
-    "placeholder": {
-      "shape": "tile",
-      "color": "8a9ab0",
-      "accent": "6a7a90",
-      "pattern": "siding"
-    }
-  },
-  "tile_roof": {
-    "path": "res://art/tiles/tile_roof.png",
-    "placeholder": {
-      "shape": "tile",
-      "color": "4a3a3a",
-      "accent": "3a2a2a",
-      "pattern": "shingles"
-    }
-  },
-  "tile_store_brick": {
-    "path": "res://art/tiles/tile_store_brick.png",
-    "placeholder": {
-      "shape": "tile",
-      "color": "7a3a30",
-      "accent": "5a2a22",
-      "pattern": "brick"
-    }
-  },
-  "tile_store_roof": {
-    "path": "res://art/tiles/tile_store_roof.png",
-    "placeholder": {
-      "shape": "tile",
-      "color": "3a3a40",
-      "accent": "2e2e34",
-      "pattern": "noise",
-      "density": 30
-    }
-  },
   "bed": {
-    "path": "res://art/props/bed.png",
+    "path": "res://art/interior/props/bed.png",
     "placeholder": {
       "shape": "block",
       "size": [
@@ -904,7 +872,7 @@
     }
   },
   "desk": {
-    "path": "res://art/props/desk.png",
+    "path": "res://art/interior/props/desk.png",
     "placeholder": {
       "shape": "block",
       "size": [
@@ -915,31 +883,8 @@
       "color": "6a4a30"
     }
   },
-  "laptop": {
-    "path": "res://art/props/laptop.png",
-    "placeholder": {
-      "shape": "block",
-      "size": [
-        20,
-        14
-      ],
-      "top": 8,
-      "color": "5a5a66",
-      "details": [
-        {
-          "rect": [
-            3,
-            2,
-            14,
-            5
-          ],
-          "color": "8ab0d0"
-        }
-      ]
-    }
-  },
   "boxes": {
-    "path": "res://art/props/boxes.png",
+    "path": "res://art/interior/props/boxes.png",
     "placeholder": {
       "shape": "block",
       "size": [
@@ -962,7 +907,7 @@
     }
   },
   "shelf_small": {
-    "path": "res://art/props/shelf_small.png",
+    "path": "res://art/interior/props/shelf_small.png",
     "placeholder": {
       "shape": "block",
       "size": [
@@ -1003,7 +948,7 @@
     }
   },
   "poster": {
-    "path": "res://art/props/poster.png",
+    "path": "res://art/interior/props/poster.png",
     "placeholder": {
       "shape": "flat",
       "size": [
@@ -1026,7 +971,7 @@
     }
   },
   "window": {
-    "path": "res://art/props/window.png",
+    "path": "res://art/interior/props/window_evening.png",
     "placeholder": {
       "shape": "flat",
       "size": [
@@ -1056,70 +1001,8 @@
       ]
     }
   },
-  "window_lit": {
-    "path": "res://art/props/window_lit.png",
-    "placeholder": {
-      "shape": "flat",
-      "size": [
-        28,
-        24
-      ],
-      "color": "f0c070",
-      "details": [
-        {
-          "rect": [
-            13,
-            0,
-            2,
-            24
-          ],
-          "color": "5a4030"
-        },
-        {
-          "rect": [
-            0,
-            11,
-            28,
-            2
-          ],
-          "color": "5a4030"
-        }
-      ]
-    }
-  },
-  "window_dark": {
-    "path": "res://art/props/window_dark.png",
-    "placeholder": {
-      "shape": "flat",
-      "size": [
-        28,
-        24
-      ],
-      "color": "2a3040",
-      "details": [
-        {
-          "rect": [
-            13,
-            0,
-            2,
-            24
-          ],
-          "color": "4a4a50"
-        },
-        {
-          "rect": [
-            0,
-            11,
-            28,
-            2
-          ],
-          "color": "4a4a50"
-        }
-      ]
-    }
-  },
   "phone_small": {
-    "path": "res://art/props/phone_small.png",
+    "path": "res://art/interior/props/phone_small.png",
     "placeholder": {
       "shape": "block",
       "size": [
@@ -1142,7 +1025,7 @@
     }
   },
   "dining_table": {
-    "path": "res://art/props/dining_table.png",
+    "path": "res://art/interior/props/dining_table.png",
     "placeholder": {
       "shape": "block",
       "size": [
@@ -1155,7 +1038,7 @@
     }
   },
   "chair": {
-    "path": "res://art/props/chair.png",
+    "path": "res://art/interior/props/chair_front.png",
     "placeholder": {
       "shape": "block",
       "size": [
@@ -1167,7 +1050,7 @@
     }
   },
   "fridge": {
-    "path": "res://art/props/fridge.png",
+    "path": "res://art/interior/props/fridge.png",
     "placeholder": {
       "shape": "block",
       "size": [
@@ -1199,7 +1082,7 @@
     }
   },
   "stove": {
-    "path": "res://art/props/stove.png",
+    "path": "res://art/interior/props/stove.png",
     "placeholder": {
       "shape": "block",
       "size": [
@@ -1233,7 +1116,7 @@
     }
   },
   "counter": {
-    "path": "res://art/props/counter.png",
+    "path": "res://art/interior/props/counter.png",
     "placeholder": {
       "shape": "block",
       "size": [
@@ -1246,7 +1129,7 @@
     }
   },
   "cupboard": {
-    "path": "res://art/props/cupboard.png",
+    "path": "res://art/interior/props/cupboard.png",
     "placeholder": {
       "shape": "block",
       "size": [
@@ -1269,7 +1152,7 @@
     }
   },
   "calendar": {
-    "path": "res://art/props/calendar.png",
+    "path": "res://art/interior/props/calendar.png",
     "placeholder": {
       "shape": "flat",
       "size": [
@@ -1291,7 +1174,7 @@
     }
   },
   "radio": {
-    "path": "res://art/props/radio.png",
+    "path": "res://art/interior/props/radio.png",
     "placeholder": {
       "shape": "block",
       "size": [
@@ -1315,7 +1198,7 @@
     }
   },
   "mug": {
-    "path": "res://art/props/mug.png",
+    "path": "res://art/interior/props/mug.png",
     "placeholder": {
       "shape": "block",
       "size": [
@@ -1327,7 +1210,7 @@
     }
   },
   "bible": {
-    "path": "res://art/props/bible.png",
+    "path": "res://art/interior/props/bible.png",
     "placeholder": {
       "shape": "block",
       "size": [
@@ -1350,7 +1233,7 @@
     }
   },
   "couch": {
-    "path": "res://art/props/couch.png",
+    "path": "res://art/interior/props/couch.png",
     "placeholder": {
       "shape": "block",
       "size": [
@@ -1382,7 +1265,7 @@
     }
   },
   "recliner": {
-    "path": "res://art/props/recliner.png",
+    "path": "res://art/interior/props/recliner.png",
     "placeholder": {
       "shape": "block",
       "size": [
@@ -1394,7 +1277,7 @@
     }
   },
   "tv": {
-    "path": "res://art/props/tv.png",
+    "path": "res://art/interior/props/tv.png",
     "placeholder": {
       "shape": "block",
       "size": [
@@ -1417,7 +1300,7 @@
     }
   },
   "bookshelf": {
-    "path": "res://art/props/bookshelf.png",
+    "path": "res://art/interior/props/bookshelf.png",
     "placeholder": {
       "shape": "block",
       "size": [
@@ -1458,7 +1341,7 @@
     }
   },
   "keyboard": {
-    "path": "res://art/props/keyboard.png",
+    "path": "res://art/interior/props/keyboard.png",
     "placeholder": {
       "shape": "block",
       "size": [
@@ -1481,7 +1364,7 @@
     }
   },
   "photos": {
-    "path": "res://art/props/photos.png",
+    "path": "res://art/interior/props/photos.png",
     "placeholder": {
       "shape": "flat",
       "size": [
@@ -1521,7 +1404,7 @@
     }
   },
   "smoke_alarm": {
-    "path": "res://art/props/smoke_alarm.png",
+    "path": "res://art/interior/props/smoke_alarm.png",
     "placeholder": {
       "shape": "flat",
       "size": [
@@ -1543,7 +1426,7 @@
     }
   },
   "floor_lamp": {
-    "path": "res://art/props/floor_lamp.png",
+    "path": "res://art/interior/props/floor_lamp.png",
     "placeholder": {
       "shape": "lamp_post",
       "size": [
@@ -1555,7 +1438,7 @@
     }
   },
   "rug": {
-    "path": "res://art/props/rug.png",
+    "path": "res://art/interior/props/rug.png",
     "placeholder": {
       "shape": "flat",
       "size": [
@@ -1578,7 +1461,7 @@
     }
   },
   "doormat": {
-    "path": "res://art/props/doormat.png",
+    "path": "res://art/interior/props/doormat.png",
     "placeholder": {
       "shape": "flat",
       "size": [
@@ -1589,7 +1472,7 @@
     }
   },
   "key_hook": {
-    "path": "res://art/props/key_hook.png",
+    "path": "res://art/interior/props/coat_rack.png",
     "placeholder": {
       "shape": "flat",
       "size": [
@@ -1620,7 +1503,7 @@
     }
   },
   "slippers": {
-    "path": "res://art/props/slippers.png",
+    "path": "res://art/interior/props/slippers.png",
     "placeholder": {
       "shape": "block",
       "size": [
@@ -1632,7 +1515,7 @@
     }
   },
   "clothes_mom": {
-    "path": "res://art/props/clothes_mom.png",
+    "path": "res://art/interior/props/clothes_pile.png",
     "placeholder": {
       "shape": "pile",
       "size": [
@@ -1647,7 +1530,7 @@
     }
   },
   "clothes_hollis": {
-    "path": "res://art/props/clothes_hollis.png",
+    "path": "res://art/interior/props/clothes_pile.png",
     "placeholder": {
       "shape": "pile",
       "size": [
@@ -1662,7 +1545,7 @@
     }
   },
   "clothes_felix": {
-    "path": "res://art/props/clothes_felix.png",
+    "path": "res://art/interior/props/clothes_pile.png",
     "placeholder": {
       "shape": "pile",
       "size": [
@@ -1676,7 +1559,7 @@
     }
   },
   "clothes_noah": {
-    "path": "res://art/props/clothes_noah.png",
+    "path": "res://art/interior/props/clothes_pile.png",
     "placeholder": {
       "shape": "pile",
       "size": [
@@ -1690,7 +1573,7 @@
     }
   },
   "clothes_ines": {
-    "path": "res://art/props/clothes_ines.png",
+    "path": "res://art/interior/props/clothes_pile.png",
     "placeholder": {
       "shape": "pile",
       "size": [
@@ -1705,7 +1588,7 @@
     }
   },
   "clothes_generic": {
-    "path": "res://art/props/clothes_generic.png",
+    "path": "res://art/interior/props/clothes_pile.png",
     "placeholder": {
       "shape": "pile",
       "size": [
@@ -1720,7 +1603,7 @@
     }
   },
   "car_blue": {
-    "path": "res://art/props/car_blue.png",
+    "path": "res://art/exterior/props/car_teal.png",
     "placeholder": {
       "shape": "block",
       "size": [
@@ -1762,7 +1645,7 @@
     }
   },
   "car_red": {
-    "path": "res://art/props/car_red.png",
+    "path": "res://art/exterior/props/suv_red.png",
     "placeholder": {
       "shape": "block",
       "size": [
@@ -1804,7 +1687,7 @@
     }
   },
   "suv_silver": {
-    "path": "res://art/props/suv_silver.png",
+    "path": "res://art/exterior/props/car_silver.png",
     "placeholder": {
       "shape": "block",
       "size": [
@@ -1846,7 +1729,7 @@
     }
   },
   "car_wreck": {
-    "path": "res://art/props/car_wreck.png",
+    "path": "res://art/exterior/props/car_wreck.png",
     "placeholder": {
       "shape": "block",
       "size": [
@@ -1948,7 +1831,7 @@
     }
   },
   "bike": {
-    "path": "res://art/props/bike.png",
+    "path": "res://art/exterior/props/bike.png",
     "placeholder": {
       "shape": "block",
       "size": [
@@ -1982,7 +1865,7 @@
     }
   },
   "sneaker": {
-    "path": "res://art/props/sneaker.png",
+    "path": "res://art/interior/props/sneaker.png",
     "placeholder": {
       "shape": "block",
       "size": [
@@ -2005,7 +1888,7 @@
     }
   },
   "streetlight": {
-    "path": "res://art/props/streetlight.png",
+    "path": "res://art/exterior/props/streetlight.png",
     "placeholder": {
       "shape": "lamp_post",
       "size": [
@@ -2017,7 +1900,7 @@
     }
   },
   "tree": {
-    "path": "res://art/props/tree.png",
+    "path": "res://art/exterior/props/tree.png",
     "placeholder": {
       "shape": "tree",
       "size": [
@@ -2029,7 +1912,7 @@
     }
   },
   "hedge": {
-    "path": "res://art/props/hedge.png",
+    "path": "res://art/exterior/props/hedge.png",
     "placeholder": {
       "shape": "block",
       "size": [
@@ -2042,7 +1925,7 @@
     }
   },
   "fence": {
-    "path": "res://art/props/fence.png",
+    "path": "res://art/exterior/props/fence_picket.png",
     "placeholder": {
       "shape": "block",
       "size": [
@@ -2065,7 +1948,7 @@
     }
   },
   "mailbox": {
-    "path": "res://art/props/mailbox.png",
+    "path": "res://art/exterior/props/mailbox.png",
     "placeholder": {
       "shape": "block",
       "size": [
@@ -2077,7 +1960,7 @@
     }
   },
   "hydrant": {
-    "path": "res://art/props/hydrant.png",
+    "path": "res://art/exterior/props/hydrant.png",
     "placeholder": {
       "shape": "block",
       "size": [
@@ -2089,7 +1972,7 @@
     }
   },
   "trash_can": {
-    "path": "res://art/props/trash_can.png",
+    "path": "res://art/exterior/props/trash_can.png",
     "placeholder": {
       "shape": "block",
       "size": [
@@ -2101,7 +1984,7 @@
     }
   },
   "for_sale_sign": {
-    "path": "res://art/props/for_sale_sign.png",
+    "path": "res://art/exterior/props/for_sale_sign.png",
     "placeholder": {
       "shape": "block",
       "size": [
@@ -2133,7 +2016,7 @@
     }
   },
   "flyer": {
-    "path": "res://art/props/flyer.png",
+    "path": "res://art/exterior/props/flyer.png",
     "placeholder": {
       "shape": "flat",
       "size": [
@@ -2143,110 +2026,8 @@
       "color": "f0e8c8"
     }
   },
-  "porch": {
-    "path": "res://art/props/porch.png",
-    "placeholder": {
-      "shape": "block",
-      "size": [
-        64,
-        24
-      ],
-      "top": 12,
-      "color": "7a6a58"
-    }
-  },
-  "house_door": {
-    "path": "res://art/props/house_door.png",
-    "placeholder": {
-      "shape": "block",
-      "size": [
-        32,
-        48
-      ],
-      "top": 4,
-      "color": "5a3a24",
-      "details": [
-        {
-          "rect": [
-            24,
-            24,
-            3,
-            3
-          ],
-          "color": "d8b860"
-        }
-      ]
-    }
-  },
-  "store_door": {
-    "path": "res://art/props/store_door.png",
-    "placeholder": {
-      "shape": "block",
-      "size": [
-        48,
-        52
-      ],
-      "top": 4,
-      "color": "8ab0c0",
-      "details": [
-        {
-          "rect": [
-            23,
-            4,
-            2,
-            48
-          ],
-          "color": "3a4a50"
-        }
-      ]
-    }
-  },
-  "store_sign": {
-    "path": "res://art/props/store_sign.png",
-    "placeholder": {
-      "shape": "flat",
-      "size": [
-        160,
-        22
-      ],
-      "color": "c03030",
-      "details": [
-        {
-          "rect": [
-            8,
-            6,
-            144,
-            10
-          ],
-          "color": "f0e0c0"
-        }
-      ]
-    }
-  },
-  "store_window": {
-    "path": "res://art/props/store_window.png",
-    "placeholder": {
-      "shape": "flat",
-      "size": [
-        64,
-        36
-      ],
-      "color": "d8e8f0",
-      "details": [
-        {
-          "rect": [
-            31,
-            0,
-            2,
-            36
-          ],
-          "color": "6a7a80"
-        }
-      ]
-    }
-  },
   "leash": {
-    "path": "res://art/props/leash.png",
+    "path": "res://art/interior/props/leash.png",
     "placeholder": {
       "shape": "flat",
       "size": [
@@ -2258,23 +2039,22 @@
     }
   },
   "fire": {
-    "path": "res://art/props/fire.png",
     "placeholder": {
-      "shape": "pile",
-      "size": [
-        40,
-        28
-      ],
-      "colors": [
-        "ff8030",
-        "ffb040",
-        "c04020",
-        "ffd060"
+      "shape": "missing"
+    },
+    "path": "res://art/fx/fire.png",
+    "fx": {
+      "frames": 8,
+      "ms": 83,
+      "loop": true,
+      "origin": [
+        24,
+        54
       ]
     }
   },
   "glass_shards": {
-    "path": "res://art/props/glass_shards.png",
+    "path": "res://art/interior/props/glass_floor.png",
     "placeholder": {
       "shape": "flat",
       "size": [
@@ -2324,7 +2104,7 @@
     }
   },
   "store_shelf": {
-    "path": "res://art/props/store_shelf.png",
+    "path": "res://art/interior/props/store_shelf.png",
     "placeholder": {
       "shape": "block",
       "size": [
@@ -2393,7 +2173,7 @@
     }
   },
   "cooler": {
-    "path": "res://art/props/cooler.png",
+    "path": "res://art/interior/props/cooler.png",
     "placeholder": {
       "shape": "block",
       "size": [
@@ -2426,7 +2206,7 @@
     }
   },
   "bread_rack": {
-    "path": "res://art/props/bread_rack.png",
+    "path": "res://art/interior/props/bread_rack.png",
     "placeholder": {
       "shape": "block",
       "size": [
@@ -2458,7 +2238,7 @@
     }
   },
   "battery_hook": {
-    "path": "res://art/props/battery_hook.png",
+    "path": "res://art/interior/props/battery_hook.png",
     "placeholder": {
       "shape": "flat",
       "size": [
@@ -2480,7 +2260,7 @@
     }
   },
   "candy_rack": {
-    "path": "res://art/props/candy_rack.png",
+    "path": "res://art/interior/props/candy_rack.png",
     "placeholder": {
       "shape": "block",
       "size": [
@@ -2512,7 +2292,7 @@
     }
   },
   "store_counter": {
-    "path": "res://art/props/store_counter.png",
+    "path": "res://art/interior/props/store_counter.png",
     "placeholder": {
       "shape": "block",
       "size": [
@@ -2524,31 +2304,8 @@
       "top_color": "9a8a78"
     }
   },
-  "register": {
-    "path": "res://art/props/register.png",
-    "placeholder": {
-      "shape": "block",
-      "size": [
-        28,
-        22
-      ],
-      "top": 8,
-      "color": "3a3a40",
-      "details": [
-        {
-          "rect": [
-            4,
-            2,
-            20,
-            5
-          ],
-          "color": "60c080"
-        }
-      ]
-    }
-  },
   "lottery_screen": {
-    "path": "res://art/props/lottery_screen.png",
+    "path": "res://art/interior/props/lottery_kiosk.png",
     "placeholder": {
       "shape": "flat",
       "size": [
@@ -2570,7 +2327,7 @@
     }
   },
   "notice_board": {
-    "path": "res://art/props/notice_board.png",
+    "path": "res://art/interior/props/notice_board.png",
     "placeholder": {
       "shape": "flat",
       "size": [
@@ -2610,7 +2367,7 @@
     }
   },
   "small_tv": {
-    "path": "res://art/props/small_tv.png",
+    "path": "res://art/interior/props/small_tv.png",
     "placeholder": {
       "shape": "block",
       "size": [
@@ -2633,7 +2390,7 @@
     }
   },
   "glasses": {
-    "path": "res://art/props/glasses.png",
+    "path": "res://art/interior/props/glasses.png",
     "placeholder": {
       "shape": "block",
       "size": [
@@ -2645,7 +2402,7 @@
     }
   },
   "name_tag": {
-    "path": "res://art/props/name_tag.png",
+    "path": "res://art/interior/props/name_tag.png",
     "placeholder": {
       "shape": "flat",
       "size": [
@@ -2656,7 +2413,7 @@
     }
   },
   "mop": {
-    "path": "res://art/props/mop.png",
+    "path": "res://art/items/world/mop_world.png",
     "placeholder": {
       "shape": "block",
       "size": [
@@ -2679,7 +2436,7 @@
     }
   },
   "wet_floor_sign": {
-    "path": "res://art/props/wet_floor_sign.png",
+    "path": "res://art/interior/props/wet_floor_sign.png",
     "placeholder": {
       "shape": "block",
       "size": [
@@ -2817,5 +2574,2005 @@
       "glyph": "box",
       "color": "e07040"
     }
+  },
+  "hero_male_body_full": {
+    "path": "res://art/characters/full/hero_male_body_full.png",
+    "placeholder": {
+      "shape": "missing"
+    },
+    "sheet": {
+      "hframes": 9,
+      "vframes": 21,
+      "layout": "res://art/characters/full/hero_male_body_full.json"
+    },
+    "skin_swap": true
+  },
+  "hero_female_body_full": {
+    "path": "res://art/characters/full/hero_female_body_full.png",
+    "placeholder": {
+      "shape": "missing"
+    },
+    "sheet": {
+      "hframes": 9,
+      "vframes": 21,
+      "layout": "res://art/characters/full/hero_female_body_full.json"
+    },
+    "skin_swap": true
+  },
+  "mom_full": {
+    "path": "res://art/characters/full/mom_full.png",
+    "placeholder": {
+      "shape": "missing"
+    },
+    "sheet": {
+      "hframes": 8,
+      "vframes": 8,
+      "layout": "res://art/characters/full/mom_full.json"
+    },
+    "skin_swap": true
+  },
+  "hollis_full": {
+    "path": "res://art/characters/full/hollis_full.png",
+    "placeholder": {
+      "shape": "missing"
+    },
+    "sheet": {
+      "hframes": 7,
+      "vframes": 4,
+      "layout": "res://art/characters/full/hollis_full.json"
+    }
+  },
+  "dana_full": {
+    "path": "res://art/characters/full/dana_full.png",
+    "placeholder": {
+      "shape": "missing"
+    },
+    "sheet": {
+      "hframes": 8,
+      "vframes": 7,
+      "layout": "res://art/characters/full/dana_full.json"
+    }
+  },
+  "wade_full": {
+    "path": "res://art/characters/full/wade_full.png",
+    "placeholder": {
+      "shape": "missing"
+    },
+    "sheet": {
+      "hframes": 8,
+      "vframes": 18,
+      "layout": "res://art/characters/full/wade_full.json"
+    }
+  },
+  "looter_full": {
+    "path": "res://art/characters/full/looter_full.png",
+    "placeholder": {
+      "shape": "missing"
+    },
+    "sheet": {
+      "hframes": 8,
+      "vframes": 18,
+      "layout": "res://art/characters/full/looter_full.json"
+    }
+  },
+  "dog_full": {
+    "path": "res://art/characters/full/dog_full.png",
+    "placeholder": {
+      "shape": "missing"
+    },
+    "sheet": {
+      "hframes": 9,
+      "vframes": 14,
+      "layout": "res://art/characters/full/dog_full.json"
+    }
+  },
+  "hair_long_full": {
+    "path": "res://art/characters/full/hair_long_full.png",
+    "placeholder": {
+      "shape": "missing"
+    },
+    "sheet": {
+      "hframes": 9,
+      "vframes": 21,
+      "layout": "res://art/characters/full/hero_female_body_full.json"
+    }
+  },
+  "hair_bob_full": {
+    "path": "res://art/characters/full/hair_bob_full.png",
+    "placeholder": {
+      "shape": "missing"
+    },
+    "sheet": {
+      "hframes": 9,
+      "vframes": 21,
+      "layout": "res://art/characters/full/hero_female_body_full.json"
+    }
+  },
+  "hair_bun_full": {
+    "path": "res://art/characters/full/hair_bun_full.png",
+    "placeholder": {
+      "shape": "missing"
+    },
+    "sheet": {
+      "hframes": 9,
+      "vframes": 21,
+      "layout": "res://art/characters/full/hero_female_body_full.json"
+    }
+  },
+  "hair_short_full": {
+    "path": "res://art/characters/full/hair_short_full.png",
+    "placeholder": {
+      "shape": "missing"
+    },
+    "sheet": {
+      "hframes": 9,
+      "vframes": 21,
+      "layout": "res://art/characters/full/hero_male_body_full.json"
+    }
+  },
+  "hair_buzz_full": {
+    "path": "res://art/characters/full/hair_buzz_full.png",
+    "placeholder": {
+      "shape": "missing"
+    },
+    "sheet": {
+      "hframes": 9,
+      "vframes": 21,
+      "layout": "res://art/characters/full/hero_male_body_full.json"
+    }
+  },
+  "hair_curly_full": {
+    "path": "res://art/characters/full/hair_curly_full.png",
+    "placeholder": {
+      "shape": "missing"
+    },
+    "sheet": {
+      "hframes": 9,
+      "vframes": 21,
+      "layout": "res://art/characters/full/hero_male_body_full.json"
+    }
+  },
+  "portrait_mom_praying": {
+    "extends": "portrait_mom",
+    "path": "res://art/characters/portraits/portrait_mom_praying.png",
+    "placeholder": {
+      "mood": "praying"
+    }
+  },
+  "portrait_mom_soft": {
+    "extends": "portrait_mom",
+    "path": "res://art/characters/portraits/portrait_mom_soft.png",
+    "placeholder": {
+      "mood": "soft"
+    }
+  },
+  "portrait_mom_amused": {
+    "extends": "portrait_mom",
+    "path": "res://art/characters/portraits/portrait_mom_amused.png",
+    "placeholder": {
+      "mood": "amused"
+    }
+  },
+  "armchair_mom": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/armchair_mom.png"
+  },
+  "armchair_rose": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/armchair_rose.png"
+  },
+  "bible_open": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/bible_open.png"
+  },
+  "camp_stove": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/camp_stove.png"
+  },
+  "candy_rack_toppled": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/candy_rack_toppled.png"
+  },
+  "ceiling_fan": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/ceiling_fan.png"
+  },
+  "ceiling_light": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/ceiling_light.png"
+  },
+  "ceiling_light_dead": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/ceiling_light_dead.png"
+  },
+  "chair_back": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/chair_back.png"
+  },
+  "chair_front": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/chair_front.png"
+  },
+  "chair_left": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/chair_left.png"
+  },
+  "chair_mom": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/chair_mom.png"
+  },
+  "chair_right": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/chair_right.png"
+  },
+  "clock": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/clock.png"
+  },
+  "clothes_pile": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/clothes_pile.png"
+  },
+  "coat_rack": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/coat_rack.png"
+  },
+  "cooler_broken": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/cooler_broken.png"
+  },
+  "cooler_dark": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/cooler_dark.png"
+  },
+  "couch_back": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/couch_back.png"
+  },
+  "counter_sink": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/counter_sink.png"
+  },
+  "cross": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/cross.png"
+  },
+  "dad_photo": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/dad_photo.png"
+  },
+  "dish_towel": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/dish_towel.png"
+  },
+  "dishes": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/dishes.png"
+  },
+  "door": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/door.png"
+  },
+  "emergency_light": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/emergency_light.png"
+  },
+  "glass_floor": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/glass_floor.png"
+  },
+  "laundry_basket": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/laundry_basket.png"
+  },
+  "letter": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/letter.png"
+  },
+  "lottery_kiosk": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/lottery_kiosk.png"
+  },
+  "lottery_kiosk_dark": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/lottery_kiosk_dark.png"
+  },
+  "medicine_bottle": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/medicine_bottle.png"
+  },
+  "medkit": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/medkit.png"
+  },
+  "milk_spill": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/milk_spill.png"
+  },
+  "mop_bucket": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/mop_bucket.png"
+  },
+  "mop_bucket_empty": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/mop_bucket_empty.png"
+  },
+  "mug_small": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/mug_small.png"
+  },
+  "newspaper_rack": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/newspaper_rack.png"
+  },
+  "nightstand": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/nightstand.png"
+  },
+  "office_chair": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/office_chair.png"
+  },
+  "pharmacy_counter": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/pharmacy_counter.png"
+  },
+  "phone_dark": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/phone_dark.png"
+  },
+  "photo_small": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/photo_small.png"
+  },
+  "plant_small": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/plant_small.png"
+  },
+  "plant_tall": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/plant_tall.png"
+  },
+  "poster_band": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/poster_band.png"
+  },
+  "runner_rug": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/runner_rug.png"
+  },
+  "scanner_gun": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/scanner_gun.png"
+  },
+  "side_table_lamp": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/side_table_lamp.png"
+  },
+  "small_tv_off": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/small_tv_off.png"
+  },
+  "spilled_goods": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/spilled_goods.png"
+  },
+  "stairs_basement": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/stairs_basement.png"
+  },
+  "stairs_up": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/stairs_up.png"
+  },
+  "stairs_up_runner": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/stairs_up_runner.png"
+  },
+  "storage_boxes": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/storage_boxes.png"
+  },
+  "storage_shelf": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/storage_shelf.png"
+  },
+  "store_floor_wear": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/store_floor_wear.png"
+  },
+  "store_shelf_b": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/store_shelf_b.png"
+  },
+  "store_shelf_toppled": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/store_shelf_toppled.png"
+  },
+  "tv_breaking": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/tv_breaking.png"
+  },
+  "tv_on": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/tv_on.png"
+  },
+  "tv_small_breaking": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/tv_small_breaking.png"
+  },
+  "tv_small_on": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/tv_small_on.png"
+  },
+  "water_heater": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/water_heater.png"
+  },
+  "window_evening": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/window_evening.png"
+  },
+  "window_night": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/window_night.png"
+  },
+  "workbench": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/props/workbench.png"
+  },
+  "tile_carpet_bedroom": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/carpet_bedroom.png"
+  },
+  "tile_carpet_hall": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/carpet_hall.png"
+  },
+  "tile_carpet_living": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/carpet_living.png"
+  },
+  "tile_door_threshold": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/door_threshold.png"
+  },
+  "tile_floor_basement": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/floor_basement.png"
+  },
+  "tile_floor_basement_stain": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/floor_basement_stain.png"
+  },
+  "tile_floor_bathroom": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/floor_bathroom.png"
+  },
+  "tile_floor_kitchen_warm": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/floor_kitchen_warm.png"
+  },
+  "tile_floor_store": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/floor_store.png"
+  },
+  "tile_floor_store_0": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/floor_store_0.png"
+  },
+  "tile_floor_store_1": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/floor_store_1.png"
+  },
+  "tile_floor_store_2": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/floor_store_2.png"
+  },
+  "tile_floor_store_3": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/floor_store_3.png"
+  },
+  "tile_floor_store_4": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/floor_store_4.png"
+  },
+  "tile_floor_store_5": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/floor_store_5.png"
+  },
+  "tile_floor_store_6": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/floor_store_6.png"
+  },
+  "tile_floor_store_7": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/floor_store_7.png"
+  },
+  "tile_floor_store_scuffed": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/floor_store_scuffed.png"
+  },
+  "tile_floor_wood_1": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/floor_wood_1.png"
+  },
+  "tile_floor_wood_2": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/floor_wood_2.png"
+  },
+  "tile_floor_wood_3": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/floor_wood_3.png"
+  },
+  "tile_floor_wood_dark": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/floor_wood_dark.png"
+  },
+  "tile_floor_wood_walnut": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/floor_wood_walnut.png"
+  },
+  "tile_floor_wood_walnut_1": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/floor_wood_walnut_1.png"
+  },
+  "tile_store_wall_top": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/store_wall_top.png"
+  },
+  "tile_wall_face_basement": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_basement.png"
+  },
+  "tile_wall_face_basement_end_l": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_basement_end_l.png"
+  },
+  "tile_wall_face_basement_end_r": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_basement_end_r.png"
+  },
+  "tile_wall_face_basement_lower": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_basement_lower.png"
+  },
+  "tile_wall_face_basement_tall": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_basement_tall.png"
+  },
+  "tile_wall_face_basement_tall_end_l": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_basement_tall_end_l.png"
+  },
+  "tile_wall_face_basement_tall_end_r": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_basement_tall_end_r.png"
+  },
+  "tile_wall_face_basement_upper": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_basement_upper.png"
+  },
+  "tile_wall_face_bathroom": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_bathroom.png"
+  },
+  "tile_wall_face_bathroom_end_l": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_bathroom_end_l.png"
+  },
+  "tile_wall_face_bathroom_end_r": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_bathroom_end_r.png"
+  },
+  "tile_wall_face_bathroom_lower": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_bathroom_lower.png"
+  },
+  "tile_wall_face_bathroom_tall": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_bathroom_tall.png"
+  },
+  "tile_wall_face_bathroom_tall_end_l": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_bathroom_tall_end_l.png"
+  },
+  "tile_wall_face_bathroom_tall_end_r": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_bathroom_tall_end_r.png"
+  },
+  "tile_wall_face_bathroom_upper": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_bathroom_upper.png"
+  },
+  "tile_wall_face_bedroom": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_bedroom.png"
+  },
+  "tile_wall_face_bedroom_end_l": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_bedroom_end_l.png"
+  },
+  "tile_wall_face_bedroom_end_r": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_bedroom_end_r.png"
+  },
+  "tile_wall_face_bedroom_lower": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_bedroom_lower.png"
+  },
+  "tile_wall_face_bedroom_tall": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_bedroom_tall.png"
+  },
+  "tile_wall_face_bedroom_tall_end_l": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_bedroom_tall_end_l.png"
+  },
+  "tile_wall_face_bedroom_tall_end_r": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_bedroom_tall_end_r.png"
+  },
+  "tile_wall_face_bedroom_upper": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_bedroom_upper.png"
+  },
+  "tile_wall_face_hall": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_hall.png"
+  },
+  "tile_wall_face_hall_end_l": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_hall_end_l.png"
+  },
+  "tile_wall_face_hall_end_r": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_hall_end_r.png"
+  },
+  "tile_wall_face_hall_lower": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_hall_lower.png"
+  },
+  "tile_wall_face_hall_tall": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_hall_tall.png"
+  },
+  "tile_wall_face_hall_tall_end_l": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_hall_tall_end_l.png"
+  },
+  "tile_wall_face_hall_tall_end_r": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_hall_tall_end_r.png"
+  },
+  "tile_wall_face_hall_upper": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_hall_upper.png"
+  },
+  "tile_wall_face_kitchen": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_kitchen.png"
+  },
+  "tile_wall_face_kitchen_end_l": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_kitchen_end_l.png"
+  },
+  "tile_wall_face_kitchen_end_r": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_kitchen_end_r.png"
+  },
+  "tile_wall_face_kitchen_lower": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_kitchen_lower.png"
+  },
+  "tile_wall_face_kitchen_tall": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_kitchen_tall.png"
+  },
+  "tile_wall_face_kitchen_tall_end_l": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_kitchen_tall_end_l.png"
+  },
+  "tile_wall_face_kitchen_tall_end_r": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_kitchen_tall_end_r.png"
+  },
+  "tile_wall_face_kitchen_upper": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_kitchen_upper.png"
+  },
+  "tile_wall_face_living": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_living.png"
+  },
+  "tile_wall_face_living_end_l": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_living_end_l.png"
+  },
+  "tile_wall_face_living_end_r": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_living_end_r.png"
+  },
+  "tile_wall_face_living_lower": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_living_lower.png"
+  },
+  "tile_wall_face_living_tall": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_living_tall.png"
+  },
+  "tile_wall_face_living_tall_end_l": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_living_tall_end_l.png"
+  },
+  "tile_wall_face_living_tall_end_r": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_living_tall_end_r.png"
+  },
+  "tile_wall_face_living_upper": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_living_upper.png"
+  },
+  "tile_wall_face_store": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_store.png"
+  },
+  "tile_wall_face_store_end_l": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_store_end_l.png"
+  },
+  "tile_wall_face_store_end_r": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_store_end_r.png"
+  },
+  "tile_wall_face_store_lower": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_store_lower.png"
+  },
+  "tile_wall_face_store_tall": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_store_tall.png"
+  },
+  "tile_wall_face_store_tall_end_l": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_store_tall_end_l.png"
+  },
+  "tile_wall_face_store_tall_end_r": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_store_tall_end_r.png"
+  },
+  "tile_wall_face_store_upper": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_store_upper.png"
+  },
+  "tile_wall_top_e": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_top_e.png"
+  },
+  "tile_wall_top_n": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_top_n.png"
+  },
+  "tile_wall_top_s": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_top_s.png"
+  },
+  "tile_wall_top_w": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_top_w.png"
+  },
+  "bag_world": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/items/world/bag_world.png"
+  },
+  "bat_world": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/items/world/bat_world.png"
+  },
+  "battery_world": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/items/world/battery_world.png"
+  },
+  "bible_world": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/items/world/bible_world.png"
+  },
+  "box_cutter_world": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/items/world/box_cutter_world.png"
+  },
+  "bread_world": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/items/world/bread_world.png"
+  },
+  "card_world": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/items/world/card_world.png"
+  },
+  "cash_world": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/items/world/cash_world.png"
+  },
+  "coffee_spilled_world": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/items/world/coffee_spilled_world.png"
+  },
+  "crank_radio_world": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/items/world/crank_radio_world.png"
+  },
+  "flashlight_world": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/items/world/flashlight_world.png"
+  },
+  "food_world": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/items/world/food_world.png"
+  },
+  "grocery_bag_world": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/items/world/grocery_bag_world.png"
+  },
+  "key_world": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/items/world/key_world.png"
+  },
+  "letter_world": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/items/world/letter_world.png"
+  },
+  "medicine_world": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/items/world/medicine_world.png"
+  },
+  "medkit_world": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/items/world/medkit_world.png"
+  },
+  "milk_world": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/items/world/milk_world.png"
+  },
+  "mop_world": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/items/world/mop_world.png"
+  },
+  "painkillers_world": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/items/world/painkillers_world.png"
+  },
+  "phone_cracked_world": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/items/world/phone_cracked_world.png"
+  },
+  "phone_world": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/items/world/phone_world.png"
+  },
+  "water_jug_world": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/items/world/water_jug_world.png"
+  },
+  "water_world": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/items/world/water_world.png"
+  },
+  "icon_cash": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/items/icon_cash.png"
+  },
+  "icon_coffee_spilled": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/items/icon_coffee_spilled.png"
+  },
+  "icon_crank_radio": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/items/icon_crank_radio.png"
+  },
+  "icon_envelope": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/items/icon_envelope.png"
+  },
+  "icon_flashlight": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/items/icon_flashlight.png"
+  },
+  "icon_grocery_bag": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/items/icon_grocery_bag.png"
+  },
+  "icon_medkit": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/items/icon_medkit.png"
+  },
+  "icon_painkillers": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/items/icon_painkillers.png"
+  },
+  "icon_phone_cracked": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/items/icon_phone_cracked.png"
+  },
+  "icon_water_jug": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/items/icon_water_jug.png"
+  },
+  "tile_curb_e": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/exterior/tiles/outdoor/curb_e.png"
+  },
+  "tile_curb_n": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/exterior/tiles/outdoor/curb_n.png"
+  },
+  "tile_curb_n_driveway": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/exterior/tiles/outdoor/curb_n_driveway.png"
+  },
+  "tile_curb_s": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/exterior/tiles/outdoor/curb_s.png"
+  },
+  "tile_curb_w": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/exterior/tiles/outdoor/curb_w.png"
+  },
+  "tile_dirt": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/exterior/tiles/outdoor/dirt.png"
+  },
+  "tile_driveway_plain": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/exterior/tiles/outdoor/driveway_plain.png"
+  },
+  "tile_flowerbed": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/exterior/tiles/outdoor/flowerbed.png"
+  },
+  "tile_grass_0": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/exterior/tiles/outdoor/grass_0.png"
+  },
+  "tile_grass_1": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/exterior/tiles/outdoor/grass_1.png"
+  },
+  "tile_grass_2": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/exterior/tiles/outdoor/grass_2.png"
+  },
+  "tile_grass_flowers": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/exterior/tiles/outdoor/grass_flowers.png"
+  },
+  "tile_road_0": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/exterior/tiles/outdoor/road_0.png"
+  },
+  "tile_road_crack": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/exterior/tiles/outdoor/road_crack.png"
+  },
+  "tile_road_crosswalk": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/exterior/tiles/outdoor/road_crosswalk.png"
+  },
+  "tile_road_edge_h": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/exterior/tiles/outdoor/road_edge_h.png"
+  },
+  "tile_road_line_h": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/exterior/tiles/outdoor/road_line_h.png"
+  },
+  "tile_road_line_v": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/exterior/tiles/outdoor/road_line_v.png"
+  },
+  "tile_road_patch": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/exterior/tiles/outdoor/road_patch.png"
+  },
+  "tile_sidewalk_0": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/exterior/tiles/outdoor/sidewalk_0.png"
+  },
+  "tile_sidewalk_1": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/exterior/tiles/outdoor/sidewalk_1.png"
+  },
+  "tile_soil": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/exterior/tiles/outdoor/soil.png"
+  },
+  "basketball_hoop": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/exterior/props/basketball_hoop.png"
+  },
+  "car_silver": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/exterior/props/car_silver.png"
+  },
+  "car_teal": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/exterior/props/car_teal.png"
+  },
+  "car_wreck_burned": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/exterior/props/car_wreck_burned.png"
+  },
+  "delivery_bot": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/exterior/props/delivery_bot.png"
+  },
+  "ev_charger": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/exterior/props/ev_charger.png"
+  },
+  "fence_chainlink": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/exterior/props/fence_chainlink.png"
+  },
+  "fence_picket": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/exterior/props/fence_picket.png"
+  },
+  "fence_picket_broken": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/exterior/props/fence_picket_broken.png"
+  },
+  "fence_privacy": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/exterior/props/fence_privacy.png"
+  },
+  "hedge_32": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/exterior/props/hedge_32.png"
+  },
+  "news_drone": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/exterior/props/news_drone.png"
+  },
+  "planter": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/exterior/props/planter.png"
+  },
+  "recycling_bin": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/exterior/props/recycling_bin.png"
+  },
+  "suv_red": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/exterior/props/suv_red.png"
+  },
+  "house_dunmore": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/exterior/buildings/house_dunmore.png",
+    "footprint": [
+      0,
+      238,
+      330,
+      143
+    ],
+    "door": [
+      165,
+      333
+    ]
+  },
+  "house_dunmore_night": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/exterior/buildings/house_dunmore_night.png",
+    "footprint": [
+      0,
+      238,
+      330,
+      143
+    ],
+    "door": [
+      165,
+      333
+    ]
+  },
+  "house_hale": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/exterior/buildings/house_hale.png",
+    "footprint": [
+      0,
+      238,
+      330,
+      143
+    ],
+    "door": [
+      165,
+      333
+    ]
+  },
+  "house_hale_night": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/exterior/buildings/house_hale_night.png",
+    "footprint": [
+      0,
+      238,
+      330,
+      143
+    ],
+    "door": [
+      165,
+      333
+    ]
+  },
+  "house_okoro": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/exterior/buildings/house_okoro.png",
+    "footprint": [
+      0,
+      100,
+      345,
+      90
+    ],
+    "door": [
+      110,
+      174
+    ]
+  },
+  "store_ridge_mart": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/exterior/buildings/store_ridge_mart.png",
+    "footprint": [
+      0,
+      119,
+      242,
+      85
+    ],
+    "door": [
+      121,
+      191
+    ]
+  },
+  "store_ridge_mart_dark": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/exterior/buildings/store_ridge_mart_dark.png",
+    "footprint": [
+      0,
+      119,
+      242,
+      85
+    ],
+    "door": [
+      121,
+      191
+    ]
+  },
+  "fx_fire_small": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/fx/fire_small.png",
+    "fx": {
+      "frames": 8,
+      "ms": 90,
+      "loop": true,
+      "origin": [
+        10,
+        27
+      ]
+    }
+  },
+  "fx_fire_medium": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/fx/fire_medium.png",
+    "fx": {
+      "frames": 8,
+      "ms": 90,
+      "loop": true,
+      "origin": [
+        18,
+        51
+      ]
+    }
+  },
+  "fx_dust_puff": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/fx/dust_puff.png",
+    "fx": {
+      "frames": 6,
+      "ms": 70,
+      "loop": false,
+      "origin": [
+        16,
+        22
+      ]
+    }
+  },
+  "fx_hit_flash": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/fx/hit_flash.png",
+    "fx": {
+      "frames": 4,
+      "ms": 50,
+      "loop": false,
+      "origin": [
+        16,
+        16
+      ]
+    }
+  },
+  "fx_glass_burst": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/fx/glass_burst.png",
+    "fx": {
+      "frames": 8,
+      "ms": 60,
+      "loop": false,
+      "origin": [
+        28,
+        35
+      ]
+    }
+  },
+  "fx_fire": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/fx/fire.png",
+    "fx": {
+      "frames": 8,
+      "ms": 83,
+      "loop": true,
+      "origin": [
+        24,
+        54
+      ]
+    }
+  },
+  "fx_smoke": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/fx/smoke.png",
+    "fx": {
+      "frames": 16,
+      "ms": 100,
+      "loop": true,
+      "origin": [
+        24,
+        94
+      ]
+    }
+  },
+  "fx_sparks": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/fx/sparks.png",
+    "fx": {
+      "frames": 8,
+      "ms": 83,
+      "loop": false,
+      "origin": [
+        24,
+        24
+      ]
+    }
+  },
+  "fx_light_pool_cold": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/fx/light_pool_cold.png"
+  },
+  "fx_light_pool_fire": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/fx/light_pool_fire.png"
+  },
+  "fx_light_pool_fluorescent": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/fx/light_pool_fluorescent.png"
+  },
+  "fx_light_pool_neutral": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/fx/light_pool_neutral.png"
+  },
+  "fx_light_pool_red": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/fx/light_pool_red.png"
+  },
+  "fx_light_pool_red_small": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/fx/light_pool_red_small.png"
+  },
+  "fx_light_pool_street": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/fx/light_pool_street.png"
+  },
+  "fx_light_pool_tv": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/fx/light_pool_tv.png"
+  },
+  "fx_light_pool_warm": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/fx/light_pool_warm.png"
+  },
+  "fx_light_window_evening": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/fx/light_window_evening.png"
+  },
+  "fx_light_window_night": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/fx/light_window_night.png"
+  },
+  "fx_flashlight_cone": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/fx/flashlight_cone.png"
+  },
+  "tile_wall_face_basement_lower_end_l": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_basement_lower_end_l.png"
+  },
+  "tile_wall_face_basement_lower_end_r": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_basement_lower_end_r.png"
+  },
+  "tile_wall_face_basement_upper_end_l": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_basement_upper_end_l.png"
+  },
+  "tile_wall_face_basement_upper_end_r": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_basement_upper_end_r.png"
+  },
+  "tile_wall_face_bathroom_lower_end_l": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_bathroom_lower_end_l.png"
+  },
+  "tile_wall_face_bathroom_lower_end_r": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_bathroom_lower_end_r.png"
+  },
+  "tile_wall_face_bathroom_upper_end_l": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_bathroom_upper_end_l.png"
+  },
+  "tile_wall_face_bathroom_upper_end_r": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_bathroom_upper_end_r.png"
+  },
+  "tile_wall_face_bedroom_lower_end_l": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_bedroom_lower_end_l.png"
+  },
+  "tile_wall_face_bedroom_lower_end_r": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_bedroom_lower_end_r.png"
+  },
+  "tile_wall_face_bedroom_upper_end_l": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_bedroom_upper_end_l.png"
+  },
+  "tile_wall_face_bedroom_upper_end_r": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_bedroom_upper_end_r.png"
+  },
+  "tile_wall_face_hall_lower_end_l": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_hall_lower_end_l.png"
+  },
+  "tile_wall_face_hall_lower_end_r": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_hall_lower_end_r.png"
+  },
+  "tile_wall_face_hall_upper_end_l": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_hall_upper_end_l.png"
+  },
+  "tile_wall_face_hall_upper_end_r": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_hall_upper_end_r.png"
+  },
+  "tile_wall_face_kitchen_lower_end_l": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_kitchen_lower_end_l.png"
+  },
+  "tile_wall_face_kitchen_lower_end_r": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_kitchen_lower_end_r.png"
+  },
+  "tile_wall_face_kitchen_upper_end_l": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_kitchen_upper_end_l.png"
+  },
+  "tile_wall_face_kitchen_upper_end_r": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_kitchen_upper_end_r.png"
+  },
+  "tile_wall_face_living_lower_end_l": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_living_lower_end_l.png"
+  },
+  "tile_wall_face_living_lower_end_r": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_living_lower_end_r.png"
+  },
+  "tile_wall_face_living_upper_end_l": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_living_upper_end_l.png"
+  },
+  "tile_wall_face_living_upper_end_r": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_living_upper_end_r.png"
+  },
+  "tile_wall_face_store_lower_end_l": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_store_lower_end_l.png"
+  },
+  "tile_wall_face_store_lower_end_r": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_store_lower_end_r.png"
+  },
+  "tile_wall_face_store_upper_end_l": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_store_upper_end_l.png"
+  },
+  "tile_wall_face_store_upper_end_r": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/interior/tiles/wall_face_store_upper_end_r.png"
+  },
+  "fence_privacy_gate": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/exterior/props/fence_privacy_gate.png"
+  },
+  "fence_chainlink_gate": {
+    "placeholder": {
+      "shape": "missing"
+    },
+    "path": "res://art/exterior/props/fence_chainlink.png"
   }
 }

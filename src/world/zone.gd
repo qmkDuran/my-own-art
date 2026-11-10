@@ -22,7 +22,9 @@ func build(id: String) -> void:
 	name = "Zone_" + id
 	data = DB.zone(id)
 	_ground = GroundBuilder.new()
-	add_child(_ground.build(data.get("map", []), data.get("legend", {})))
+	var ground := _ground.build(data.get("map", []), data.get("legend", {}))
+	ground.z_index = -10   # below floor decals (rugs, mats, spills: z -1) and everything else
+	add_child(ground)
 	add_child(_make_bounds())
 	entities_root = Node2D.new()
 	entities_root.name = "Entities"

@@ -179,6 +179,21 @@ func _change_state(new_state: State) -> void:
 		visual.set_tint(Color.WHITE)
 	state = new_state
 	_state_time = 0.0
+	match new_state:
+		State.WINDUP:
+			if not visual.play_action("windup", float(stats.get("windup", 0.5)), true):
+				visual.play_action("growl", float(stats.get("windup", 0.5)), true)
+		State.ATTACK:
+			var attack_time := float(stats.get("attack_time", 0.18)) + 0.12
+			if not visual.play_action("attack", attack_time):
+				visual.play_action("lunge", attack_time)
+		State.HURT:
+			visual.play_hurt(HURT_TIME + 0.1)
+		State.DEAD:
+			pass
+		_:
+			if visual.current_action() != "hurt":
+				visual.clear_action()
 
 
 # --- Combat --------------------------------------------------------------------

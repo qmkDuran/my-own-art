@@ -1,23 +1,214 @@
 {
+  "wall_living": {
+    "art": "tile_wall_top",
+    "face_art": "tile_wall_face_living",
+    "face_tall": [
+      "tile_wall_face_living_upper",
+      "tile_wall_face_living_lower"
+    ],
+    "face_end": {
+      "l": [
+        "tile_wall_face_living_end_l",
+        "tile_wall_face_living_upper_end_l",
+        "tile_wall_face_living_lower_end_l"
+      ],
+      "r": [
+        "tile_wall_face_living_end_r",
+        "tile_wall_face_living_upper_end_r",
+        "tile_wall_face_living_lower_end_r"
+      ]
+    },
+    "solid": true,
+    "surface": "wood",
+    "wall": true
+  },
+  "wall_hall": {
+    "art": "tile_wall_top",
+    "face_art": "tile_wall_face_hall",
+    "face_tall": [
+      "tile_wall_face_hall_upper",
+      "tile_wall_face_hall_lower"
+    ],
+    "face_end": {
+      "l": [
+        "tile_wall_face_hall_end_l",
+        "tile_wall_face_hall_upper_end_l",
+        "tile_wall_face_hall_lower_end_l"
+      ],
+      "r": [
+        "tile_wall_face_hall_end_r",
+        "tile_wall_face_hall_upper_end_r",
+        "tile_wall_face_hall_lower_end_r"
+      ]
+    },
+    "solid": true,
+    "surface": "wood",
+    "wall": true
+  },
+  "wall_kitchen": {
+    "art": "tile_wall_top",
+    "face_art": "tile_wall_face_kitchen",
+    "face_tall": [
+      "tile_wall_face_kitchen_upper",
+      "tile_wall_face_kitchen_lower"
+    ],
+    "face_end": {
+      "l": [
+        "tile_wall_face_kitchen_end_l",
+        "tile_wall_face_kitchen_upper_end_l",
+        "tile_wall_face_kitchen_lower_end_l"
+      ],
+      "r": [
+        "tile_wall_face_kitchen_end_r",
+        "tile_wall_face_kitchen_upper_end_r",
+        "tile_wall_face_kitchen_lower_end_r"
+      ]
+    },
+    "solid": true,
+    "surface": "wood",
+    "wall": true
+  },
+  "wall_bedroom": {
+    "art": "tile_wall_top",
+    "face_art": "tile_wall_face_bedroom",
+    "face_tall": [
+      "tile_wall_face_bedroom_upper",
+      "tile_wall_face_bedroom_lower"
+    ],
+    "face_end": {
+      "l": [
+        "tile_wall_face_bedroom_end_l",
+        "tile_wall_face_bedroom_upper_end_l",
+        "tile_wall_face_bedroom_lower_end_l"
+      ],
+      "r": [
+        "tile_wall_face_bedroom_end_r",
+        "tile_wall_face_bedroom_upper_end_r",
+        "tile_wall_face_bedroom_lower_end_r"
+      ]
+    },
+    "solid": true,
+    "surface": "wood",
+    "wall": true
+  },
+  "wall_store": {
+    "art": "tile_store_wall_top",
+    "face_art": "tile_wall_face_store",
+    "face_tall": [
+      "tile_wall_face_store_upper",
+      "tile_wall_face_store_lower"
+    ],
+    "face_end": {
+      "l": [
+        "tile_wall_face_store_end_l",
+        "tile_wall_face_store_upper_end_l",
+        "tile_wall_face_store_lower_end_l"
+      ],
+      "r": [
+        "tile_wall_face_store_end_r",
+        "tile_wall_face_store_upper_end_r",
+        "tile_wall_face_store_lower_end_r"
+      ]
+    },
+    "solid": true,
+    "surface": "wood",
+    "wall": true
+  },
   "wall": {
     "art": "tile_wall_top",
-    "face_art": "tile_wall_face",
+    "face_art": "tile_wall_face_living",
+    "face_tall": [
+      "tile_wall_face_living_upper",
+      "tile_wall_face_living_lower"
+    ],
+    "face_end": {
+      "l": [
+        "tile_wall_face_living_end_l",
+        "tile_wall_face_living_upper_end_l",
+        "tile_wall_face_living_lower_end_l"
+      ],
+      "r": [
+        "tile_wall_face_living_end_r",
+        "tile_wall_face_living_upper_end_r",
+        "tile_wall_face_living_lower_end_r"
+      ]
+    },
     "solid": true,
-    "surface": "wood"
+    "surface": "wood",
+    "wall": true
   },
   "store_wall": {
-    "art": "tile_wall_top",
-    "face_art": "tile_store_wall_face",
+    "art": "tile_store_wall_top",
+    "face_art": "tile_wall_face_store",
+    "face_tall": [
+      "tile_wall_face_store_upper",
+      "tile_wall_face_store_lower"
+    ],
+    "face_end": {
+      "l": [
+        "tile_wall_face_store_end_l",
+        "tile_wall_face_store_upper_end_l",
+        "tile_wall_face_store_lower_end_l"
+      ],
+      "r": [
+        "tile_wall_face_store_end_r",
+        "tile_wall_face_store_upper_end_r",
+        "tile_wall_face_store_lower_end_r"
+      ]
+    },
     "solid": true,
-    "surface": "wood"
+    "surface": "wood",
+    "wall": true
   },
   "door": {
-    "art": "tile_door",
+    "art": "tile_floor_wood",
     "solid": true,
-    "surface": "wood"
+    "surface": "wood",
+    "door": true
+  },
+  "doorway": {
+    "art": "tile_floor_wood",
+    "variants": [
+      [
+        "tile_floor_wood",
+        4
+      ],
+      [
+        "tile_floor_wood_1",
+        3
+      ],
+      [
+        "tile_floor_wood_2",
+        3
+      ],
+      [
+        "tile_floor_wood_3",
+        3
+      ]
+    ],
+    "surface": "wood",
+    "doorway": true
   },
   "floor_wood": {
     "art": "tile_floor_wood",
+    "variants": [
+      [
+        "tile_floor_wood",
+        4
+      ],
+      [
+        "tile_floor_wood_1",
+        3
+      ],
+      [
+        "tile_floor_wood_2",
+        3
+      ],
+      [
+        "tile_floor_wood_3",
+        3
+      ]
+    ],
     "surface": "wood"
   },
   "floor_kitchen": {
@@ -28,56 +219,214 @@
     "art": "tile_carpet",
     "surface": "carpet"
   },
+  "carpet_bedroom": {
+    "art": "tile_carpet_bedroom",
+    "surface": "carpet"
+  },
+  "carpet_hall": {
+    "art": "tile_carpet_hall",
+    "surface": "carpet"
+  },
   "store_floor": {
-    "art": "tile_store_floor",
+    "art": "tile_floor_store_0",
+    "variants": [
+      [
+        "tile_floor_store_0",
+        6
+      ],
+      [
+        "tile_floor_store_1",
+        6
+      ],
+      [
+        "tile_floor_store_2",
+        6
+      ],
+      [
+        "tile_floor_store_3",
+        6
+      ],
+      [
+        "tile_floor_store_4",
+        6
+      ],
+      [
+        "tile_floor_store_5",
+        1
+      ],
+      [
+        "tile_floor_store_6",
+        1
+      ],
+      [
+        "tile_floor_store_7",
+        2
+      ]
+    ],
     "surface": "wood"
   },
   "grass": {
     "art": "tile_grass",
+    "variants": [
+      [
+        "tile_grass_0",
+        5
+      ],
+      [
+        "tile_grass_1",
+        5
+      ],
+      [
+        "tile_grass_2",
+        5
+      ],
+      [
+        "tile_grass_flowers",
+        1
+      ]
+    ],
     "surface": "grass"
   },
   "sidewalk": {
     "art": "tile_sidewalk",
-    "surface": "asphalt"
+    "variants": [
+      [
+        "tile_sidewalk_0",
+        6
+      ],
+      [
+        "tile_sidewalk_1",
+        1
+      ]
+    ],
+    "surface": "asphalt",
+    "paved": true,
+    "sidewalk": true
   },
   "curb": {
     "art": "tile_curb",
-    "surface": "asphalt"
+    "surface": "asphalt",
+    "paved": true,
+    "sidewalk": true
+  },
+  "curb_s": {
+    "art": "tile_curb_s",
+    "surface": "asphalt",
+    "paved": true,
+    "sidewalk": true
+  },
+  "curb_drive": {
+    "art": "tile_curb_n_driveway",
+    "surface": "asphalt",
+    "paved": true,
+    "vehicle_ok": true,
+    "driveway": true
   },
   "road": {
     "art": "tile_road",
-    "surface": "asphalt"
+    "variants": [
+      [
+        "tile_road_0",
+        12
+      ],
+      [
+        "tile_road_crack",
+        1
+      ]
+    ],
+    "surface": "asphalt",
+    "paved": true,
+    "vehicle_ok": true,
+    "road": true
   },
   "road_line": {
     "art": "tile_road_line",
-    "surface": "asphalt"
+    "surface": "asphalt",
+    "paved": true,
+    "vehicle_ok": true,
+    "road": true
+  },
+  "road_edge": {
+    "art": "tile_road_edge_h",
+    "surface": "asphalt",
+    "paved": true,
+    "vehicle_ok": true,
+    "road": true
+  },
+  "crosswalk": {
+    "art": "tile_road_crosswalk",
+    "surface": "asphalt",
+    "paved": true,
+    "vehicle_ok": true,
+    "road": true
   },
   "path": {
     "art": "tile_path",
-    "surface": "asphalt"
+    "surface": "asphalt",
+    "paved": true
   },
   "driveway": {
     "art": "tile_driveway",
-    "surface": "asphalt"
+    "variants": [
+      [
+        "tile_driveway",
+        1
+      ],
+      [
+        "tile_driveway_plain",
+        2
+      ]
+    ],
+    "surface": "asphalt",
+    "paved": true,
+    "vehicle_ok": true,
+    "driveway": true
   },
-  "house_wall": {
-    "art": "tile_siding",
-    "solid": true
+  "flowerbed": {
+    "art": "tile_flowerbed",
+    "surface": "grass"
   },
-  "house_wall_blue": {
-    "art": "tile_siding_blue",
-    "solid": true
+  "soil": {
+    "art": "tile_soil",
+    "surface": "grass"
   },
-  "roof": {
-    "art": "tile_roof",
-    "solid": true
+  "dirt": {
+    "art": "tile_dirt",
+    "surface": "grass"
   },
-  "store_front": {
-    "art": "tile_store_brick",
-    "solid": true
+  "doorway_sill": {
+    "art": "tile_floor_wood",
+    "variants": [
+      [
+        "tile_floor_wood",
+        4
+      ],
+      [
+        "tile_floor_wood_1",
+        3
+      ],
+      [
+        "tile_floor_wood_2",
+        3
+      ],
+      [
+        "tile_floor_wood_3",
+        3
+      ]
+    ],
+    "surface": "wood",
+    "doorway": true
   },
-  "store_roof": {
-    "art": "tile_store_roof",
-    "solid": true
+  "curb_e": {
+    "art": "tile_curb_e",
+    "surface": "asphalt",
+    "paved": true,
+    "sidewalk": true
+  },
+  "store_door": {
+    "art": "tile_floor_store_7",
+    "solid": true,
+    "surface": "wood",
+    "door": true
   }
 }
