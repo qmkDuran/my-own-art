@@ -13,6 +13,7 @@ config/features=PackedStringArray("4.7", "GL Compatibility")
 Audio="*res://scripts/core/audio.gd"
 SmokeTest="*res://tests/smoke_test.gd"
 Shots="*res://tests/shots.gd"
+CompareShots="*res://tests/compare_shots.gd"
 
 [display]
 

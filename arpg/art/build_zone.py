@@ -25,6 +25,10 @@ SIDE_N = (468, 500); ROAD = (500, 596); SIDE_S = (596, 628)                  # m
 SIDE_N2 = (905, 937); ROAD2 = (937, 1033); SIDE_S2 = (1033, 1065)           # lower street
 CROSS = (1504, 1600)                                                       # side street (x), main street -> lower street
 random.seed(11)
+# Step 2 style test: the left half of the suburb uses tiles and one house generated with Michael as the style reference
+# (art/gen_world_test.py); the right half keeps the reused Project R art, for comparison. False restores the old art.
+WORLD_TEST = True
+TEST_X = 960                                                               # test tiles west of this x (suburb only)
 
 # [art, x, base y, footprint w, footprint h]
 # Houses at true scale (doors ~1.15 x Michael): three tall houses north, two bungalows and the store south.
@@ -85,6 +89,7 @@ def ground():
         for tx in range(0, W, 32):
             bg.alpha_composite(random.choice(grass), (tx, ty))
     suburb(bg); highway(bg); park(bg); rift(bg)
+    if WORLD_TEST: test_tiles(bg)
     px = bg.load()
     for fx, fy in FIRES + FIRES_MORE + [[c[1], c[2] - 10] for c in CARS + HWY_CARS]:   # scorch grouped where things burned
         scorch(px, fx, fy + 14, random.randint(26, 40))
@@ -95,6 +100,41 @@ def ground():
     bg.save(G + 'ground.png')
     mini = bg.resize((W // 24, HT // 24), Image.BOX)
     mini.save('game/art/ui/minimap.png')
+
+
+def test_tiles(bg):
+    """Repaint the suburb west of TEST_X with the generated tiles: asphalt cracks over a dark asphalt fill, the
+    sidewalk slabs, and the lawn variants."""
+    raw = os.path.join(HEAVEN, 'art', 'raw', 'arpg_test_tile_%d.png')
+    t = lambda i: Image.open(raw % i).convert('RGBA')
+    asphalt = [t(i) for i in (0, 1, 2, 5)]
+    walk = [t(8), t(9)]
+    lawn = [t(12), t(13), t(12), t(13), t(14)]
+    rng = random.Random(4)
+    fill = lambda c: Image.new('RGBA', (32, 32), C(c))
+    for ty in range(0, SH, 32):                                   # lawn everywhere, then the bands on top
+        for tx in range(0, TEST_X, 32):
+            bg.paste(rng.choice(lawn), (tx, ty))
+    for y0, y1 in (ROAD, ROAD2):
+        for ty in range(y0, y1, 32):
+            for tx in range(0, TEST_X, 32):
+                tile_im = fill('3e3546'); tile_im.alpha_composite(rng.choice(asphalt)); bg.paste(tile_im, (tx, ty))
+    for y in (SIDE_N[0], SIDE_S[0], SIDE_N2[0], SIDE_S2[0]):
+        for tx in range(0, TEST_X, 32):
+            tile_im = fill('9babb2'); tile_im.alpha_composite(rng.choice(walk)); bg.paste(tile_im, (tx, y))
+    for y0, y1 in (ROAD, ROAD2):                                  # keep the lane markings
+        for tx in range(64, TEST_X, 96): bg.alpha_composite(tile('road_line_h'), (tx, (y0 + y1) // 2 - 16))
+
+
+def test_house():
+    """The generated house (variant 02, straight front) at true scale: Scale2x twice (4x, door ~64 px ~1.1 x Michael),
+    world palette, outline."""
+    sys.path.insert(0, os.path.join(HEAVEN, 'art'))
+    from upscale import upscale
+    im = Image.open(os.path.join(HEAVEN, 'art', 'raw', 'arpg_test_house_02.png')).convert('RGBA')
+    im = style.to_world_palette(im.crop(im.getbbox()))
+    big = upscale(upscale(im))
+    return style.outline(style.to_world_palette(big.crop(big.getbbox())))
 
 
 def suburb(bg):
@@ -283,6 +323,8 @@ def props():
     for n, im in out.items():
         im = to_style(n, im)
         im.save(G + n + '.png')
+    if WORLD_TEST:
+        test_house().save(G + 'house_test.png')
 
 
 def to_style(name, im):
@@ -368,7 +410,10 @@ def fence_run(art, x0, x1, base, gaps=()):
 
 
 def layout():
-    items = NORTH_ROW + SOUTH_ROW + CARS
+    north = [list(h) for h in NORTH_ROW]
+    if WORLD_TEST:
+        north[0] = ['house_test', 290, 470, 470, 70]               # generated house beside the reused ones
+    items = north + SOUTH_ROW + CARS
     items += fence_run('fence_picket_broken', 16, 1470, 664, gaps=((440, 540), (1000, 1064)))   # back fences, broken
     items += fence_run('fence_chainlink', 1632, 1920, 660) + fence_run('fence_picket', 1632, 1920, 300, gaps=((1700, 1764),))
     items += [['hedge', 560, 470, 56, 14], ['hedge', 1100, 470, 56, 14],

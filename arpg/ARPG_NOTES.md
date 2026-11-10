@@ -57,6 +57,16 @@ store's plan-view roof is foreshortened to 3/4. The suburb was relaid for the bi
 store south); tall roofs rise 150 px above the map edge over a dark strip. `tools/check_palette.py` checks palette,
 outline and scale; `game/tests/run_all.sh` runs every check. `out/reference_sheet.png`, `out/style_before_after.png`.
 
+## Step 2 world test (Michael as style reference)
+`art/gen_world_test.py` (paid, run from heaven/): `tiles` = create-tiles-pro 16 x 32 px (asphalt cracks, sidewalk,
+night lawn; style images = two 32 px crops of Michael; target palette = the world palette), `house` = image-v2 168 px,
+4 variants, the straight-front 3/4 wording + Michael's front sprite as style image (#02 used). `build_zone.WORLD_TEST`
+puts the test tiles west of x 960 in the suburb and the test house as the first north house; False restores the old art.
+`tests/compare_shots.gd` (`-- --fresh --compare`) writes `out/world_test_generated.png` / `world_test_reused.png`;
+sheet `out/world_test_compare.png`. Findings: the tiles fit (the asphalt came back as crack overlays on transparency, so
+they sit on a dark fill); a 168 px house is drawn at miniature scale (door ~16 px vs the 67 px rule), and 4x Scale2x makes
+it blobby next to Michael - buildings need a bigger canvas (image-v2 allows up to 512x512) or the styled reused houses.
+
 ## UI (fonts, layout, numbers)
 - Fonts (OFL, from github.com/google/fonts; licences in `game/fonts/OFL-*.txt`): **Pixelify Sans** for titles (20,
   weight 600) and body (10), **Silkscreen** for small labels and numbers (8). Whole-pixel sizes, antialiasing and hinting
@@ -144,7 +154,9 @@ modifiers Hasted, Ember-Burst, Shielded; hero Gravemaw. Places: Main Street, Hig
 | Item icons 32 px batch (64 variants, 8 per slot) | 10 |
 | **Total, first pass** | **39** (balance 129.5; USD unchanged) |
 | Locust, Impure Spirit, Fire Horse: one 64 px batch each (16 variants; #02, #04, #01 used) | 30 |
-| **Total** | **69** (balance 99.5; USD unchanged) |
+| **Total, enemies pass** | **69** (balance 99.5) |
+| Step 2 test: tiles (create-tiles-pro) 10, house 168 px 15 | 25 |
+| **Total** | **94** (balance 74.5; USD unchanged) |
 
 ## Known weak spots
 - Michael's walk template barely moves the legs facing down; the side row is the mirrored west walk. No cast animation

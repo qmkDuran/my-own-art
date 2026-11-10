@@ -72,3 +72,7 @@ arpg_item	cost=14.0	total_used=35.0	usd=2.18083018988485
 arpg_locust	cost=10.0	total_used=10.0	usd=2.18083018988485
 arpg_frog	cost=10.0	total_used=20.0	usd=2.18083018988485
 arpg_firehorse	cost=10.0	total_used=30.0	usd=2.18083018988485
+--- michael-style world test: START=99.5 CAP=25 ---
+--- world test (step 2): START=99.5 CAP=25 ---
+arpg_test_tiles	cost=10.0	total_used=10.0	usd=2.18083018988485
+arpg_test_house	cost=15.0	total_used=25.0	usd=2.18083018988485

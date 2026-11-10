@@ -38,7 +38,13 @@ Everything a new artist or agent needs to add art that matches. The reference is
 - `tools/check_palette.py` — palette, outline and scale checks (exit 1 on a problem).
 - `art/ext/` — read-only copies of Project R's exterior art (sources of the world pieces).
 
-## 4. Known gaps against the rules
+## 4. Generating new world art (lessons from the Step 2 test, `out/world_test_compare.png`)
+- Tiles: create-tiles-pro with two 32 px crops of Michael as style images and the world palette works; road tiles may
+  come back as overlays on transparency - lay them on a solid fill.
+- Buildings: generate at a canvas where the door is already ~67 px (house ~400+ px tall), not at 168 px: upscaling a
+  168 px house 4x reads blobby beside Michael. Keep the straight-front 3/4 wording.
+
+## 5. Known gaps against the rules
 - Project R houses keep their own shading density (a little busier than Michael); light direction already matches.
 - Houses come from four sources (mirrored/darkened for variety).
 - The overpass is a flat hand-drawn deck without an outline (it is drawn overhead).
