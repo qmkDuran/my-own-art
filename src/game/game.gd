@@ -55,6 +55,7 @@ func load_zone(zone_id: String, spawn_id: String, spawn_position: Variant) -> vo
 	player.camera.reset_smoothing()
 	set_vignette(float(zone.setting("vignette", 0.45)), 0.0)
 	zone.start_audio()
+	Events.interact_prompt_changed.emit("")
 	Events.zone_entered.emit(zone_id)
 
 

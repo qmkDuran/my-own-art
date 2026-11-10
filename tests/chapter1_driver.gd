@@ -23,12 +23,21 @@ func _ready() -> void:
 	for arg: String in OS.get_cmdline_user_args():
 		if arg.begins_with("--shots="):
 			_shots_dir = arg.trim_prefix("--shots=")
-	Events.card_shown.connect(func(_kind: String, title: String, _sub: String) -> void: _cards.append(title))
+	Events.card_shown.connect(_on_card)
 	GameState.delete_save()
 	_run.call_deferred()
 
 
 var _status_time := 0.0
+
+
+var _chapter_2_time := INF
+
+
+func _on_card(_kind: String, title: String, _subtitle: String) -> void:
+	_cards.append(title)
+	if title == "Chapter 2":
+		_chapter_2_time = _elapsed
 
 
 func _process(delta: float) -> void:
@@ -191,7 +200,7 @@ func _house_night() -> void:
 	await _face(Vector2.UP)
 	_shot("10_dawn")
 	await _interact([], func() -> void:
-		if _cards.has("Chapter 2"):
+		if _cards.has("Chapter 2") and _elapsed - _chapter_2_time > 1.2:
 			_shot("11_chapter_2_card"))
 	_check(_cards.has("Chapter 2"), "reached the Chapter 2 card")
 	await _wait_for(func() -> bool: return get_tree().current_scene != null and get_tree().current_scene.has_method("open_picker"), 15.0)

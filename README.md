@@ -214,6 +214,9 @@ Enemy stats are in `data/enemies.json`, items in `data/items.json`, light types 
 All art is referenced by id through `data/art.json`; nothing is hard-coded. Each entry has a
 `path` and a `placeholder`. **To swap in real art, save a PNG at the entry's `path`** (e.g.
 `res://art/props/fridge.png`) and run `--import`; the placeholder is used only while the file is missing.
+Placeholders are painted in code at run time (`src/art/placeholder_painter.gd`), so no placeholder
+files exist anywhere and `art/` belongs to the art team. If delivered files use other names or
+folders (see `art/ART_MANIFEST.md`), point the `path` fields in `data/art.json` at them.
 
 - Characters: sheets of 32x64 frames, 4 walk frames (columns) x 3 directions (rows: down, up,
   side; side faces right and is mirrored). Layout in the entry's `sheet`
