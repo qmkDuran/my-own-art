@@ -232,6 +232,8 @@ More entity and zone fields (all optional):
 | `"vehicle": true` | must stand on road/driveway tiles |
 | `"door_kind": "view"` | a door you only look through (the kitchen screen door); must sit on a wall face |
 | zone `"interior": true` | rooms enclosed by walls; checked for leaks, doorways and reachability |
+| zone `"rooms": {"kitchen": [x, y, w, h], ...}` | declared rooms (tiles); two rooms may only meet at a doorway |
+| `"draw_offset": [x, y]` | moves only the picture, not the sorting point (fire drawn on a car's bonnet but sorted in front of it) |
 | zone `"open_edges": [{"rect": [x, y, w, h], "why": "..."}]` | map edges (tiles) where open ground may run off the map |
 
 Tiles (`data/tiles.json`): `variants` (`[[art, weight], ...]`, picked per cell by hash) break up
@@ -245,7 +247,8 @@ are used by the layout check.
 `python3 tests/layout_check.py` rebuilds every zone's collision exactly as the engine does
 (solid tiles, entity solids, building footprints) in each story state, moves a player-sized box
 (18x10 px) through it on a 4 px grid and fails on: interiors reachable from outside without a
-door (gaps), doorways you can walk around (blocking a doorway must separate two rooms), door
+door (gaps), doorways you can walk around (blocking a doorway must separate two rooms, and
+declared `rooms` may only meet at doorways), door
 tiles not set into a wall, door interactions not on a door tile / building front, wall segments
 not connected to the other walls, floor areas nobody can reach, spawn points cut off from each
 other, overlapping solids, furniture sunk into walls or not standing on floor, interactions that

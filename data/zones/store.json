@@ -50,6 +50,14 @@
     "q": "store_floor",
     "D": "store_door"
   },
+  "rooms": {
+    "sales floor": [
+      1,
+      3,
+      20,
+      12
+    ]
+  },
   "entities": [
     {
       "kind": "spawn",

@@ -1780,7 +1780,7 @@
     }
   },
   "van": {
-    "path": "res://art/props/van.png",
+    "path": "res://art/exterior/props/van.png",
     "placeholder": {
       "shape": "block",
       "size": [

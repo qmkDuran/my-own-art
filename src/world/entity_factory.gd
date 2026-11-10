@@ -59,6 +59,9 @@ func _prop(entry: Dictionary, id: String) -> Node2D:
 		var sprite := _sprite(String(entry["art"]), String(entry.get("anchor", "bottom")))
 		if flip:
 			sprite.flip_h = true
+		# draw_offset moves only the picture: the node keeps its y for sorting (a fire sorted
+		# in front of the car it burns on, but drawn on the bonnet)
+		sprite.position += Tiles.vec2(entry.get("draw_offset"))
 		node.add_child(sprite)
 	if entry.get("above", false):
 		node.z_index = 20   # ceiling fixtures: drawn over everything in the room

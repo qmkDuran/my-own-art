@@ -28,6 +28,17 @@
     }
   ],
   "interior": false,
+  "open_edges": [
+    {
+      "rect": [
+        66,
+        17,
+        2,
+        9
+      ],
+      "why": "Linden Court continues east to Ridge Road; Chapter 1 never goes there"
+    }
+  ],
   "map": [
     "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg",
     "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg",
@@ -73,17 +84,6 @@
     "D": "curb_drive",
     "f": "flowerbed"
   },
-  "open_edges": [
-    {
-      "rect": [
-        66,
-        17,
-        2,
-        9
-      ],
-      "why": "Linden Court continues east to Ridge Road; Chapter 1 never goes there"
-    }
-  ],
   "entities": [
     {
       "kind": "spawn",
@@ -3538,11 +3538,11 @@
       "id": "s_lamp_2",
       "art": "streetlight",
       "pos": [
-        35,
+        28,
         17
       ],
       "offset": [
-        10,
+        4,
         12
       ],
       "solid": [
@@ -3984,28 +3984,36 @@
       "id": "c_fire",
       "art": "fx_fire",
       "pos": [
-        40,
-        19
+        39,
+        20
       ],
       "offset": [
-        -14,
+        4,
         -4
       ],
       "if": "vanished",
-      "on": "c_wreck"
+      "on": "c_wreck",
+      "draw_offset": [
+        0,
+        -30
+      ]
     },
     {
       "id": "c_smoke",
       "art": "fx_smoke",
       "pos": [
-        40,
-        18
+        39,
+        20
       ],
       "offset": [
-        -6,
-        8
+        12,
+        -3
       ],
       "on": "c_wreck",
+      "draw_offset": [
+        0,
+        -50
+      ],
       "if": "vanished"
     },
     {

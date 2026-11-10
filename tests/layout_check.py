@@ -130,6 +130,8 @@ def sprite_rect(e: dict):
     if size is None:
         return None
     x, y = position(e)
+    dx, dy = e.get("draw_offset", [0, 0])
+    x, y = x + dx, y + dy
     w, h = size
     fx = art_entry(art).get("fx")
     if fx:
@@ -473,6 +475,16 @@ def check_rooms(z: Zone, rep: Report, tag: str, free, doorway, reachable, void) 
                 rep.fail(f"{z.id} {tag}: doorway near tile {xs.min() * RES / TILE:.0f},{ys.min() * RES / TILE:.0f} can be walked around (both sides are the same room)")
             else:
                 rep.fail(f"{z.id} {tag}: doorway near tile {xs.min() * RES / TILE:.0f},{ys.min() * RES / TILE:.0f} is blocked on both sides")
+    # declared rooms ("rooms": {"name": [x, y, w, h]} in tiles) must only meet at doorways
+    rooms = z.data.get("rooms", {})
+    k = TILE // RES
+    owner: dict = {}
+    for name, (rx, ry, rw, rh) in rooms.items():
+        cells = lab[ry * k:(ry + rh) * k, rx * k:(rx + rw) * k]
+        for label in set(np.unique(cells)) - {0}:
+            if label in owner and owner[label] != name:
+                rep.fail(f"{z.id} {tag}: rooms '{owner[label]}' and '{name}' are joined by an opening that is not a doorway (you could walk around the door)")
+            owner.setdefault(label, name)
     # unreachable floor pockets a tile or bigger
     floor = np.zeros_like(free)
     k = TILE // RES
@@ -557,6 +569,7 @@ def check_placement(z: Zone, rep: Report, tag: str, active: list, flags: dict) -
             rep.fail(f"{z.id}: prop '{name}' does not say what it rests on (\"on\")")
             continue
         x, y = position(e)
+        x, y = x + e.get("draw_offset", [0, 0])[0], y + e.get("draw_offset", [0, 0])[1]
         if on in ("floor", "ground"):
             decal = e.get("floor", False) or e.get("anchor") == "center"
             if (pickup or not decal) and not e.get("story"):
@@ -683,7 +696,7 @@ def self_test() -> int:
         cases.append((name, hit))
 
     def wall_gap(z):          # knock a hole in the outer wall next to the front door
-        z.cells[20][5] = ""
+        z.cells[z.h - 1][5] = ""
     def bypass(z):            # a second opening in the kitchen wall makes the kitchen doorway pointless
         for y in (9, 10, 11):
             z.cells[y][22] = "floor_wood"
@@ -700,7 +713,7 @@ def self_test() -> int:
         z.entities.append({"id": "blocker", "art": "bookshelf", "pos": [4, 12], "offset": [0, 4], "solid": [60, 30]})
 
     case("gap in the outer wall", wall_gap, "leaks")
-    case("doorway you can walk around", bypass, "walked around")
+    case("doorway you can walk around", bypass, "not a doorway")
     case("door floating in a room", floating_door, "floating door")
     case("overlapping furniture", overlap_furniture, "overlaps")
     case("pickup lying loose on the floor", loose_pickup, "loose on the floor")

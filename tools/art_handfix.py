@@ -107,6 +107,13 @@ def buildings() -> None:
 def cars() -> None:
     for name in ["car_silver", "car_teal", "suv_red", "car_wreck", "car_wreck_burned"]:
         out = reoutline(reduce_2to1(original(f"art/exterior/props/{name}.png")))
+        # drop specks (generation dust) that are not part of the car body
+        lab, n = ndimage.label(out[..., 3] > 0, structure=np.ones((3, 3)))
+        if n > 1:
+            sizes = ndimage.sum(np.ones_like(lab), lab, range(1, n + 1))
+            for i, size in enumerate(sizes, 1):
+                if size < 12:
+                    out[lab == i] = 0
         ys, xs = np.nonzero(out[..., 3])
         out = out[: ys.max() + 1, xs.min(): xs.max() + 1]
         save(out, ROOT / f"art/exterior/props/{name}.png")
@@ -411,6 +418,18 @@ def couch_back() -> None:
     save(img, ROOT / "art/interior/props/couch_back.png")
 
 
+def delivery_van() -> None:
+    """Self-driving delivery van: the (reduced) SUV body repainted fleet white. No driver seat
+    shows through the dark glass, which is the point of the scene."""
+    arr = np.array(Image.open(ROOT / "art/exterior/props/suv_red.png").convert("RGBA"))
+    ramp = {"e83b3b": "ffffff", "ea4f36": "ffffff", "f57d4a": "ffffff", "b33831": "c7dcd0", "ae2334": "c7dcd0",
+            "c32454": "9babb2", "9e4539": "7f708a", "6e2727": "7f708a", "7a3045": "625565", "831c5d": "625565"}
+    masks = {src: is_colour(arr, hexc(src)) for src in ramp}
+    for src, dst in ramp.items():
+        arr[masks[src], :3] = hexc(dst)
+    save(arr, ROOT / "art/exterior/props/van.png")
+
+
 def mop_bucket_empty() -> None:
     arr = original("art/interior/props/mop_bucket.png")
     erase = np.zeros(arr.shape[:2], bool)
@@ -531,6 +550,7 @@ def main() -> None:
     engine_sheets()
     couch_back()
     mop_bucket_empty()
+    delivery_van()
     for name, geo in GEOMETRY.items():
         print(name, json.dumps(geo))
 
