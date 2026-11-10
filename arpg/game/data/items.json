@@ -1,0 +1,332 @@
+{
+ "_doc": "The armour of God (Eph 6:13-17) plus rings and an amulet. Names are plain; the verse is in the tooltip. icon_row indexes art/items/icons.png. Rolled values: min + per_level * ilvl, +-15%.",
+ "slots": {
+  "belt": {
+   "name": "Girdle",
+   "verse": "belt",
+   "icon_row": 0,
+   "implicit": {
+    "life": [
+     12,
+     2.0
+    ]
+   },
+   "armour_of_god": "Belt of truth"
+  },
+  "breastplate": {
+   "name": "Breastplate",
+   "verse": "breastplate",
+   "icon_row": 1,
+   "implicit": {
+    "armour": [
+     18,
+     3.0
+    ]
+   },
+   "armour_of_god": "Breastplate of righteousness"
+  },
+  "feet": {
+   "name": "Boots",
+   "verse": "feet",
+   "icon_row": 2,
+   "implicit": {
+    "move_pct": [
+     4,
+     0.4
+    ]
+   },
+   "armour_of_god": "Feet fitted with readiness"
+  },
+  "shield": {
+   "name": "Round Shield",
+   "verse": "shield",
+   "icon_row": 3,
+   "implicit": {
+    "block": [
+     8,
+     0.6
+    ]
+   },
+   "armour_of_god": "Shield of faith"
+  },
+  "helmet": {
+   "name": "Helm",
+   "verse": "helmet",
+   "icon_row": 4,
+   "implicit": {
+    "armour": [
+     8,
+     1.5
+    ],
+    "life": [
+     5,
+     1.0
+    ]
+   },
+   "armour_of_god": "Helmet of salvation"
+  },
+  "sword": {
+   "name": "Longsword",
+   "verse": "sword",
+   "icon_row": 5,
+   "implicit": {
+    "damage": [
+     7,
+     1.6
+    ]
+   },
+   "armour_of_god": "Sword of the Spirit"
+  },
+  "ring": {
+   "name": "Ring",
+   "verse": "",
+   "icon_row": 6,
+   "implicit": {
+    "glory": [
+     6,
+     0.8
+    ]
+   }
+  },
+  "amulet": {
+   "name": "Amulet",
+   "verse": "",
+   "icon_row": 7,
+   "implicit": {
+    "holy_pct": [
+     5,
+     0.5
+    ]
+   }
+  }
+ },
+ "equip_slots": [
+  "helmet",
+  "amulet",
+  "breastplate",
+  "sword",
+  "shield",
+  "belt",
+  "ring",
+  "ring2",
+  "feet"
+ ],
+ "rarities": {
+  "common": {
+   "color": "ffffff",
+   "affixes": [
+    0,
+    0
+   ],
+   "weight": 62
+  },
+  "magic": {
+   "color": "4d9be6",
+   "affixes": [
+    1,
+    2
+   ],
+   "weight": 28
+  },
+  "rare": {
+   "color": "f9c22b",
+   "affixes": [
+    3,
+    4
+   ],
+   "weight": 9
+  },
+  "unique": {
+   "color": "f79617",
+   "affixes": [
+    0,
+    0
+   ],
+   "weight": 1
+  }
+ },
+ "prefixes": {
+  "steadfast": {
+   "name": "Steadfast",
+   "stat": "life",
+   "value": [
+    10,
+    2.2
+   ]
+  },
+  "burnished": {
+   "name": "Burnished",
+   "stat": "armour",
+   "value": [
+    10,
+    2.0
+   ]
+  },
+  "bright": {
+   "name": "Bright",
+   "stat": "holy_pct",
+   "value": [
+    8,
+    0.9
+   ]
+  },
+  "fleet": {
+   "name": "Fleet",
+   "stat": "move_pct",
+   "value": [
+    4,
+    0.3
+   ]
+  },
+  "unbroken": {
+   "name": "Unbroken",
+   "stat": "block",
+   "value": [
+    4,
+    0.3
+   ]
+  },
+  "keen": {
+   "name": "Keen",
+   "stat": "damage",
+   "value": [
+    2,
+    0.6
+   ]
+  }
+ },
+ "suffixes": {
+  "dawn": {
+   "name": "of Dawn",
+   "stat": "glory_regen",
+   "value": [
+    1.0,
+    0.15
+   ]
+  },
+  "renewal": {
+   "name": "of Renewal",
+   "stat": "life_regen",
+   "value": [
+    1.0,
+    0.2
+   ]
+  },
+  "precision": {
+   "name": "of Precision",
+   "stat": "crit",
+   "value": [
+    3,
+    0.25
+   ]
+  },
+  "mercy": {
+   "name": "of Mercy",
+   "stat": "life_on_hit",
+   "value": [
+    1,
+    0.25
+   ]
+  },
+  "peace": {
+   "name": "of Peace",
+   "stat": "cooldown_pct",
+   "value": [
+    4,
+    0.3
+   ]
+  },
+  "truth": {
+   "name": "of Truth",
+   "stat": "attack_pct",
+   "value": [
+    4,
+    0.4
+   ]
+  }
+ },
+ "rare_words": [
+  [
+   "Dawn",
+   "Ash",
+   "Iron",
+   "Ember",
+   "Silver",
+   "Storm",
+   "Bright",
+   "Stone",
+   "Winter",
+   "Cinder"
+  ],
+  [
+   "Guard",
+   "Ward",
+   "Bastion",
+   "Mantle",
+   "Edge",
+   "Oath",
+   "Brand",
+   "Veil",
+   "Bulwark",
+   "Vow"
+  ]
+ ],
+ "uniques": [
+  {
+   "name": "Oathband",
+   "slot": "belt",
+   "icon": 5,
+   "stats": {
+    "life": 60,
+    "life_regen": 4,
+    "armour": 25
+   }
+  },
+  {
+   "name": "Swiftfoot",
+   "slot": "feet",
+   "icon": 4,
+   "stats": {
+    "move_pct": 18,
+    "dodge_pct": 30,
+    "life": 25
+   }
+  },
+  {
+   "name": "Dawnbreaker",
+   "slot": "sword",
+   "icon": 1,
+   "stats": {
+    "damage": 18,
+    "holy_pct": 35,
+    "crit": 8
+   }
+  },
+  {
+   "name": "Last Wall",
+   "slot": "shield",
+   "icon": 6,
+   "stats": {
+    "block": 22,
+    "armour": 40,
+    "glory_regen": 3
+   }
+  }
+ ],
+ "stat_names": {
+  "life": "+%d life",
+  "armour": "+%d armour",
+  "holy_pct": "+%d%% holy damage",
+  "move_pct": "+%d%% movement speed",
+  "block": "+%d%% block chance",
+  "damage": "+%d weapon damage",
+  "glory": "+%d glory",
+  "glory_regen": "+%.1f glory per second",
+  "life_regen": "+%.1f life per second",
+  "crit": "+%d%% critical strike chance",
+  "life_on_hit": "+%d life on hit",
+  "cooldown_pct": "+%d%% cooldown recovery",
+  "attack_pct": "+%d%% attack speed",
+  "dodge_pct": "+%d%% dodge recovery"
+ }
+}

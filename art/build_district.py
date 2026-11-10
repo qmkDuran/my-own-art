@@ -29,7 +29,7 @@ random.seed(21)
 
 YARD_BORDER = (238, 246)                   # low jasper border along the north side of the great street
 SOUTH_BORDER = (355, 362)                  # and along its south side, in front of the terrace garden
-SOUTH_GAPS = [(280, 320), (940, 980), (1600, 1640)]   # openings to the terrace and its view
+SOUTH_GAPS = [(280, 320), (940, 980), (1600, 1640)]   # openings to the terrace garden and its view (grass, no paving)
 FRUIT_TREES = [('fruit_tree_a', 'tree1', 0.6, 968, 206), ('fruit_tree_b', 'tree2', 0.55, 1432, 206),
                ('fruit_tree_a', 'tree1', 0.6, 1862, 206), ('fruit_tree_b', 'tree2', 0.55, 46, 206)]   # name, src, scale, x, base
 FLOWER_BEDS = [(398, 150, 18, 60), (566, 150, 18, 60), (968, 226, 70, 6), (1432, 226, 64, 6), (1862, 226, 50, 6),
@@ -64,19 +64,21 @@ def gardens(bg, px):
 
 
 def street(px):
-    """The great street: pure gold like transparent glass (Rev 21:21): bright, smooth, with long soft reflections,
-    and jasper curbs set with gems."""
+    """The great street: pure gold like transparent glass (Rev 21:21): rich gold with a lighter sheen band, long soft
+    reflections and deep-gold depth toward the near curb; jasper curbs set with gems."""
     y0, y1 = STREET
     for y in range(y0, y1):
         t = (y - y0) / (y1 - y0)
         for x in range(W):
             d = dith(x, y)
-            col = 'fbff86'
-            if d < 0.18 + 0.25 * t: col = 'fbb954'               # a touch deeper towards the near curb
-            u = (x + int(y * 1.6)) % 173                          # long diagonal glints on the glass
-            if u < 3: col = 'ffffff'
-            elif u < 7 and d < 0.6: col = 'ffffff'
-            if (x % 96 == 0 or (y - y0) % 50 == 0) and d < 0.5: col = 'f9c22b'   # faint joints, glassy not tiled
+            col = 'f9c22b'
+            sheen = 1 - abs(t - 0.35) / 0.35 if t < 0.7 else 0          # a soft lighter band across the upper half
+            if d < sheen * 0.55: col = 'fbb954'
+            if t > 0.7 and d < (t - 0.7) * 1.6: col = 'f79617'       # depth toward the near curb
+            u = (x + int(y * 1.6)) % 211                              # long diagonal reflections on the glass
+            if u < 2: col = 'fbff86'
+            elif u < 4 and d < 0.5: col = 'fbff86'
+            elif 9 <= u < 10: col = 'fbb954'
             px[x, y] = C(col)
     for yc in (y0 - 4, y1):
         for x in range(W):
@@ -142,17 +144,6 @@ def flowers(px, blocked):
             flower(x0 + random.randint(-9, 9), oy + random.randint(-3, 3), c1, c2)
 
 
-def terrace_walk(px, g0, g1):
-    """A short pearl walk through each opening of the south border to the balustrade."""
-    for y in range(SOUTH_BORDER[1] + 1, BALUSTRADE_Y - 3):           # pale jasper flagstones, like the riverside path
-        row = y - SOUTH_BORDER[1] - 1
-        for x in range(g0, g1):
-            if x in (g0, g1 - 1): col = '239063'
-            elif (x - g0 + (8 if (row // 10) % 2 else 0)) % 16 == 0 or row % 10 == 0: col = '9babb2'
-            else: col = 'c7dcd0' if dith(x, y) < 0.85 else '92a984'
-            px[x, y] = C(col)
-
-
 def fruit_tree(src, scale):
     """A small fruit tree: the tree-of-life art reduced (box filter, palette snap) and re-outlined."""
     im = Image.open(f'game/art/{src}.png').convert('RGBA'); im = im.crop(im.getbbox())
@@ -170,10 +161,9 @@ def distant_city(px):
     rng = random.Random(16)
     top_limit = BALUSTRADE_Y + 18
     rows = [  # base y (local), scale, wall light/shade, roof light/shade, windows, outline, gap range
-        (462, 0.4, ('ffffff', 'fbff86'), ('fbff86', 'fbb954'), 'fbff86', 'fbff86', (0, 8)),
-        (482, 0.55, ('ffffff', 'c7dcd0'), ('fbff86', 'fbb954'), 'fbb954', 'c7dcd0', (4, 18)),
-        (508, 0.75, ('ffffff', 'c7dcd0'), ('fbb954', 'f9c22b'), 'f9c22b', '9babb2', (10, 36)),
-        (546, 1.0, ('c7dcd0', '9babb2'), ('f9c22b', 'f79617'), 'fbff86', '7f708a', (26, 64)),
+        (470, 0.5, ('ffffff', 'ffffff'), ('fbff86', 'fbff86'), 'fbff86', 'ffffff', (6, 30)),
+        (500, 0.72, ('ffffff', 'c7dcd0'), ('fbff86', 'fbb954'), 'fbb954', 'c7dcd0', (16, 50)),
+        (548, 1.0, ('c7dcd0', '9babb2'), ('f9c22b', 'f79617'), 'fbff86', '7f708a', (40, 90)),
     ]
 
     def put(x, y, c):
@@ -182,7 +172,7 @@ def distant_city(px):
     for base, sc, wall, roof, win, line, gap in rows:             # far rows first; nearer rows hide their feet
         x = rng.randint(-30, 10)
         while x < W:
-            kind = rng.choice(('hall', 'hall', 'dome', 'tower'))
+            kind = rng.choice(('hall', 'hall', 'hall', 'dome', 'dome', 'tower'))
             w = int({'hall': rng.randint(34, 60), 'dome': rng.randint(26, 40), 'tower': rng.randint(12, 18)}[kind] * sc)
             h = int({'hall': rng.randint(20, 30), 'dome': rng.randint(18, 26), 'tower': rng.randint(46, 66)}[kind] * sc)
             top = base - h
@@ -190,8 +180,8 @@ def distant_city(px):
                 for xx in range(x, x + w):
                     c = wall[1] if xx >= x + int(w * 0.7) else wall[0]
                     wy, wx = (yy - top) % max(5, int(9 * sc)), (xx - x) % max(4, int(7 * sc))
-                    if 2 <= wy <= 2 + max(1, int(2 * sc)) and wx == max(2, int(3 * sc)) and x + 2 < xx < x + w - 3: c = win
-                    if xx in (x, x + w - 1) or yy == top: c = line
+                    if sc >= 0.75 and wy == 3 and wx == max(3, int(5 * sc)) and x + 3 < xx < x + w - 4 and yy < top + 3 * max(5, int(9 * sc)): c = win   # a few windows, near rows only
+                    if (xx in (x, x + w - 1) and yy < top + h) or yy == top: c = line
                     put(xx, yy, c)
             cx = x + w / 2
             if kind == 'hall':                                         # low pitched gold roof
@@ -215,10 +205,10 @@ def distant_city(px):
                     for xx in range(int(cx - half), int(cx + half) + 1):
                         put(xx, top - rh + k, roof[1] if xx > cx else roof[0])
             x += w + rng.randint(int(gap[0] * sc), int(gap[1] * sc) + 1)
-        for y in range(top_limit, HT):                                 # light over the rows behind, before nearer ones
+        for y in range(top_limit, HT):                                 # soft light over the rows behind, before nearer ones
             t = 1 - (y - top_limit) / (HT - top_limit)
             for x in range(W):
-                if dith(x, y) < 0.12 * t: px[x, y] = C('ffffff')
+                if dith(x, y) < 0.35 * t: px[x, y] = C('ffffff')
 
 
 def balustrade(px):
@@ -377,7 +367,6 @@ def main():
     for _, _, cx, base in DWELLINGS: blocked[:, cx - 16:cx + 17] |= np.arange(HT)[:, None] >= base - 2
     blocked[YARD_BORDER[0]:SOUTH_BORDER[1] + 1] = True
     for g0, g1 in SOUTH_GAPS: blocked[SOUTH_BORDER[1]:BALUSTRADE_Y, g0 - 4:g1 + 4] = True
-    for g0, g1 in SOUTH_GAPS: terrace_walk(px, g0, g1)
     blocked[:, GARDEN_STREET[0] - 3:GARDEN_STREET[1] + 3] = True
     flowers(px, blocked)
     balustrade(px)

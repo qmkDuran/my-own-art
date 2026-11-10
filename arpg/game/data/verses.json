@@ -1,0 +1,300 @@
+{
+ "_doc": "All Scripture shown in the ARPG prototype (NIV 2011). Fragments are exact substrings of the cited verses (checked by tools/check_verses.py against a local cache that is never shipped).",
+ "version": "NIV",
+ "edition": "2011",
+ "notice": "Scripture quotations taken from The Holy Bible, New International Version® NIV® Copyright © 1973, 1978, 1984, 2011 by Biblica, Inc.™ Used by permission. All rights reserved worldwide.",
+ "source": "Text copied from https://www.biblegateway.com (version=NIV), fetched and verified by tools/fetch_niv.py and tools/check_verses.py",
+ "verse_count": 29,
+ "verses": {
+  "heard": {
+   "ref": "Dan 10:12",
+   "verses": [
+    "Daniel 10:12"
+   ],
+   "parts": [
+    "Since the first day that you set your mind to gain understanding and to humble yourself before your God, your words were heard, and I have come in response to them."
+   ]
+  },
+  "michael_arise": {
+   "ref": "Dan 12:1",
+   "verses": [
+    "Daniel 12:1"
+   ],
+   "parts": [
+    "At that time Michael, the great prince who protects your people, will arise. There will be a time of distress such as has not happened from the beginning of nations until then."
+   ]
+  },
+  "chief_prince": {
+   "ref": "Dan 10:13",
+   "verses": [
+    "Daniel 10:13"
+   ],
+   "parts": [
+    "Then Michael, one of the chief princes, came to help me,",
+    "..."
+   ]
+  },
+  "war_heaven": {
+   "ref": "Rev 12:7",
+   "verses": [
+    "Revelation 12:7"
+   ],
+   "parts": [
+    "Then war broke out in heaven. Michael and his angels fought against the dragon, and the dragon and his angels fought back."
+   ]
+  },
+  "not_strong": {
+   "ref": "Rev 12:8",
+   "verses": [
+    "Revelation 12:8"
+   ],
+   "parts": [
+    "But he was not strong enough, and they lost their place in heaven."
+   ]
+  },
+  "hurled_down": {
+   "ref": "Rev 12:9",
+   "verses": [
+    "Revelation 12:9"
+   ],
+   "parts": [
+    "He was hurled to the earth, and his angels with him."
+   ]
+  },
+  "struggle": {
+   "ref": "Eph 6:12",
+   "verses": [
+    "Ephesians 6:12"
+   ],
+   "parts": [
+    "For our struggle is not against flesh and blood, but against the rulers, against the authorities, against the powers of this dark world and against the spiritual forces of evil in the heavenly realms."
+   ]
+  },
+  "full_armor": {
+   "ref": "Eph 6:13",
+   "verses": [
+    "Ephesians 6:13"
+   ],
+   "parts": [
+    "Therefore put on the full armor of God, so that when the day of evil comes, you may be able to stand your ground, and after you have done everything, to stand."
+   ]
+  },
+  "belt": {
+   "ref": "Eph 6:14",
+   "verses": [
+    "Ephesians 6:14"
+   ],
+   "parts": [
+    "with the belt of truth buckled around your waist,"
+   ]
+  },
+  "breastplate": {
+   "ref": "Eph 6:14",
+   "verses": [
+    "Ephesians 6:14"
+   ],
+   "parts": [
+    "with the breastplate of righteousness in place,"
+   ]
+  },
+  "feet": {
+   "ref": "Eph 6:15",
+   "verses": [
+    "Ephesians 6:15"
+   ],
+   "parts": [
+    "and with your feet fitted with the readiness that comes from the gospel of peace."
+   ]
+  },
+  "shield": {
+   "ref": "Eph 6:16",
+   "verses": [
+    "Ephesians 6:16"
+   ],
+   "parts": [
+    "take up the shield of faith, with which you can extinguish all the flaming arrows of the evil one."
+   ]
+  },
+  "helmet": {
+   "ref": "Eph 6:17",
+   "verses": [
+    "Ephesians 6:17"
+   ],
+   "parts": [
+    "Take the helmet of salvation"
+   ]
+  },
+  "sword": {
+   "ref": "Eph 6:17",
+   "verses": [
+    "Ephesians 6:17"
+   ],
+   "parts": [
+    "the sword of the Spirit, which is the word of God."
+   ]
+  },
+  "be_strong_lord": {
+   "ref": "Eph 6:10",
+   "verses": [
+    "Ephesians 6:10"
+   ],
+   "parts": [
+    "Finally, be strong in the Lord and in his mighty power."
+   ]
+  },
+  "pray_always": {
+   "ref": "Eph 6:18",
+   "verses": [
+    "Ephesians 6:18"
+   ],
+   "parts": [
+    "And pray in the Spirit on all occasions with all kinds of prayers and requests."
+   ]
+  },
+  "rebuke": {
+   "ref": "Jude 9",
+   "verses": [
+    "Jude 1:9"
+   ],
+   "parts": [
+    "The Lord rebuke you!"
+   ]
+  },
+  "trumpet": {
+   "ref": "1 Thess 4:16",
+   "verses": [
+    "1 Thessalonians 4:16"
+   ],
+   "parts": [
+    "with a loud command, with the voice of the archangel and with the trumpet call of God,"
+   ]
+  },
+  "sword_drawn": {
+   "ref": "Num 22:31",
+   "verses": [
+    "Numbers 22:31"
+   ],
+   "parts": [
+    "the angel of the Lord standing in the road with his sword drawn."
+   ]
+  },
+  "encamps": {
+   "ref": "Ps 34:7",
+   "verses": [
+    "Psalm 34:7"
+   ],
+   "parts": [
+    "The angel of the Lord encamps around those who fear him, and he delivers them."
+   ]
+  },
+  "incense": {
+   "ref": "Rev 8:4",
+   "verses": [
+    "Revelation 8:4"
+   ],
+   "parts": [
+    "The smoke of the incense, together with the prayers of God’s people, went up before God from the angel’s hand."
+   ]
+  },
+  "terror_night": {
+   "ref": "Ps 91:5",
+   "verses": [
+    "Psalm 91:5"
+   ],
+   "parts": [
+    "You will not fear the terror of night,"
+   ]
+  },
+  "guard_ways": {
+   "ref": "Ps 91:11",
+   "verses": [
+    "Psalm 91:11"
+   ],
+   "parts": [
+    "For he will command his angels concerning you to guard you in all your ways;"
+   ]
+  },
+  "be_strong": {
+   "ref": "Dan 10:19",
+   "verses": [
+    "Daniel 10:19"
+   ],
+   "parts": [
+    "Peace! Be strong now; be strong."
+   ]
+  },
+  "triumphed": {
+   "ref": "Rev 12:11",
+   "verses": [
+    "Revelation 12:11"
+   ],
+   "parts": [
+    "They triumphed over him by the blood of the Lamb and by the word of their testimony;"
+   ]
+  },
+  "starry_host": {
+   "ref": "Isa 40:26",
+   "verses": [
+    "Isaiah 40:26"
+   ],
+   "parts": [
+    "He who brings out the starry host one by one and calls forth each of them by name."
+   ]
+  },
+  "eagles": {
+   "ref": "Isa 40:31",
+   "verses": [
+    "Isaiah 40:31"
+   ],
+   "parts": [
+    "They will soar on wings like eagles; they will run and not grow weary,",
+    "..."
+   ]
+  },
+  "anchor": {
+   "ref": "Heb 6:19",
+   "verses": [
+    "Hebrews 6:19"
+   ],
+   "parts": [
+    "We have this hope as an anchor for the soul, firm and secure."
+   ]
+  },
+  "cedar": {
+   "ref": "Ps 92:12",
+   "verses": [
+    "Psalm 92:12"
+   ],
+   "parts": [
+    "The righteous will flourish like a palm tree, they will grow like a cedar of Lebanon;"
+   ]
+  },
+  "crown": {
+   "ref": "Rev 2:10",
+   "verses": [
+    "Revelation 2:10"
+   ],
+   "parts": [
+    "Be faithful, even to the point of death, and I will give you life as your victor’s crown."
+   ]
+  },
+  "vigil": {
+   "ref": "Eph 6:18",
+   "verses": [
+    "Ephesians 6:18"
+   ],
+   "parts": [
+    "be alert and always keep on praying for all the Lord’s people."
+   ]
+  },
+  "strength_weary": {
+   "ref": "Isa 40:29",
+   "verses": [
+    "Isaiah 40:29"
+   ],
+   "parts": [
+    "He gives strength to the weary and increases the power of the weak."
+   ]
+  }
+ }
+}

@@ -79,7 +79,7 @@ func pick_fruit(tree: Sprite2D) -> Sprite2D:
 	f.position = tree.position + Vector2(side * 18.0 + 0.1, -66.0)
 	f.scale = Vector2(0.4, 0.4)
 	add_child(f)
-	var land: Vector2 = player.global_position + Vector2(-side * 24.0, -50.0)      # beside the head, toward the tree
+	var land: Vector2 = player.global_position + Vector2(-side * 34.0, -30.0)      # held out at the side, clear of the head
 	var tw := create_tween()
 	tw.tween_property(f, "scale", Vector2(2.0, 2.0), 0.18)     # whole-pixel scales only: 16 px fruit shown at 32 px
 	tw.tween_property(f, "scale", Vector2(1.0, 1.0), 0.12)

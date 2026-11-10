@@ -141,7 +141,7 @@ Balance after the 'more stuff' pass: 168.5 generations (confirmed via balance GE
 ## 7. Known weak spots
 - Gold plaza grid and rigid horizontal city layout; flat bridge; synthetic-sounding music.
 - People: the 4-dir rotations differ slightly from the original front sprites; palm sway is still subtle (4 px at the tip). Skin pass: ramps are per character (front frame), not a single global ladder window, so light characters keep 5–6 shades; p00 was lifted one step (deep brown, not near-black) so his eyes read.
-- District: the distant city is procedural (rows of simple shapes) and very bright; yards are calm but plain; fruit trees are reduced tree-of-life art. Gate angel: one variant reused on both sides of the gate; side/back rows are the front view (it always faces arrivals).
+- District (after the polish pass: great street rich glassy gold f9c22b with a fbb954 sheen band and deep-gold near edge; distant city three calm rows, few windows, soft haze; terrace openings are plain grass): the distant city is still procedural (simple shapes); yards are calm but plain; fruit trees are reduced tree-of-life art. Gate angel: one variant reused on both sides of the gate; side/back rows are the front view (it always faces arrivals).
 - Lesson: a prompt saying a figure stands 'at a gate' makes the generator paint the gate; describe the figure only.
 - Shepherd: idle only (no walk), side view is the mirrored east rotation (the west one had the staff over the face); the light face is a hand ramp, readable at 2x/3x but small at 1x.
 - Creatures' wing motion is a shear (stepped edges); elders turn only left/right.

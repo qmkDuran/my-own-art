@@ -1,0 +1,89 @@
+{
+ "_doc": "Spiritual enemies only (Eph 6:12; Rev 12:7-9): shadowy, never human. Stats at area level 1; hp and damage grow by level_scale per level. Champions: empowered pack members. Hero: one named, much stronger demon. Sheet rows idle(2) move(4) attack(3), facing left.",
+ "level_scale": 0.16,
+ "kinds": {
+  "swarmer": {
+   "name": "Imp",
+   "sheet": "res://art/demons/swarmer.png",
+   "hp": 26,
+   "speed": 112,
+   "damage": 5,
+   "range": 30,
+   "attack_time": 0.85,
+   "xp": 12,
+   "knockback": 1.4,
+   "radius": 11,
+   "behaviour": "melee",
+   "rim": [
+    0.56,
+    0.37,
+    0.66
+   ]
+  },
+  "brute": {
+   "name": "Brute",
+   "sheet": "res://art/demons/brute.png",
+   "hp": 130,
+   "speed": 56,
+   "damage": 15,
+   "range": 42,
+   "attack_time": 1.5,
+   "xp": 44,
+   "knockback": 0.35,
+   "radius": 20,
+   "behaviour": "melee",
+   "rim": [
+    0.7,
+    0.22,
+    0.19
+   ]
+  },
+  "caster": {
+   "name": "Shade",
+   "sheet": "res://art/demons/caster.png",
+   "hp": 48,
+   "speed": 62,
+   "damage": 9,
+   "range": 210,
+   "attack_time": 2.1,
+   "xp": 28,
+   "knockback": 0.9,
+   "radius": 13,
+   "behaviour": "ranged",
+   "keep_away": 150,
+   "bolt_speed": 190,
+   "rim": [
+    0.66,
+    0.52,
+    0.95
+   ]
+  }
+ },
+ "champion": {
+  "chance": 0.22,
+  "members": 2,
+  "hp_mult": 2.4,
+  "damage_mult": 1.35,
+  "xp_mult": 3.0,
+  "tint": [
+   1.2,
+   0.9,
+   0.75
+  ],
+  "label": "Champion",
+  "loot_quality": 2.0
+ },
+ "hero": {
+  "kind": "brute",
+  "name": "Gravemaw",
+  "hp_mult": 7.0,
+  "damage_mult": 1.8,
+  "xp_mult": 12.0,
+  "tint": [
+   1.3,
+   0.7,
+   0.6
+  ],
+  "loot_quality": 5.0
+ }
+}

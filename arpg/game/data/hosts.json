@@ -1,0 +1,303 @@
+{
+ "_doc": "The Hosts (Isa 40:26): star groups. Stars cost star points (1 per level after the first + 1 per answered prayer). Within a group, stars are taken in order; a completed group grants its bonus. Some groups need others completed first.",
+ "verse": "starry_host",
+ "point_name": "Stars",
+ "groups": {
+  "vigil": {
+   "name": "Vigil",
+   "verse": "vigil",
+   "stars": [
+    {
+     "pos": [
+      -172,
+      -115
+     ],
+     "stats": {
+      "glory": 8
+     }
+    },
+    {
+     "pos": [
+      -123,
+      -123
+     ],
+     "stats": {
+      "glory_regen": 0.8
+     }
+    },
+    {
+     "pos": [
+      -134,
+      -77
+     ],
+     "stats": {
+      "cooldown_pct": 4
+     }
+    },
+    {
+     "pos": [
+      -186,
+      -85
+     ],
+     "stats": {
+      "glory": 8
+     }
+    }
+   ],
+   "bonus": {
+    "cooldown_pct": 10,
+    "glory_regen": 2
+   },
+   "requires": [],
+   "center": [
+    -150,
+    -100
+   ]
+  },
+  "anchor": {
+   "name": "Anchor",
+   "verse": "anchor",
+   "stars": [
+    {
+     "pos": [
+      128,
+      -115
+     ],
+     "stats": {
+      "armour": 14
+     }
+    },
+    {
+     "pos": [
+      177,
+      -123
+     ],
+     "stats": {
+      "life": 12
+     }
+    },
+    {
+     "pos": [
+      166,
+      -77
+     ],
+     "stats": {
+      "block": 3
+     }
+    },
+    {
+     "pos": [
+      114,
+      -85
+     ],
+     "stats": {
+      "armour": 14
+     }
+    }
+   ],
+   "bonus": {
+    "block": 6,
+    "armour_more": 15
+   },
+   "requires": [],
+   "center": [
+    150,
+    -100
+   ]
+  },
+  "eagle": {
+   "name": "Eagle",
+   "verse": "eagles",
+   "stars": [
+    {
+     "pos": [
+      -172,
+      5
+     ],
+     "stats": {
+      "move_pct": 3
+     }
+    },
+    {
+     "pos": [
+      -139,
+      -8
+     ],
+     "stats": {
+      "dodge_pct": 8
+     }
+    },
+    {
+     "pos": [
+      -125,
+      20
+     ],
+     "stats": {
+      "attack_pct": 4
+     }
+    },
+    {
+     "pos": [
+      -139,
+      48
+     ],
+     "stats": {
+      "move_pct": 3
+     }
+    },
+    {
+     "pos": [
+      -172,
+      35
+     ],
+     "stats": {
+      "dodge_pct": 8
+     }
+    }
+   ],
+   "bonus": {
+    "move_pct": 8,
+    "dodge_pct": 25
+   },
+   "requires": [],
+   "center": [
+    -150,
+    20
+   ]
+  },
+  "cedar": {
+   "name": "Cedar",
+   "verse": "cedar",
+   "stars": [
+    {
+     "pos": [
+      128,
+      5
+     ],
+     "stats": {
+      "life": 14
+     }
+    },
+    {
+     "pos": [
+      161,
+      -8
+     ],
+     "stats": {
+      "life_regen": 1.0
+     }
+    },
+    {
+     "pos": [
+      175,
+      20
+     ],
+     "stats": {
+      "life": 14
+     }
+    },
+    {
+     "pos": [
+      161,
+      48
+     ],
+     "stats": {
+      "life_on_hit": 1
+     }
+    },
+    {
+     "pos": [
+      128,
+      35
+     ],
+     "stats": {
+      "life": 14
+     }
+    }
+   ],
+   "bonus": {
+    "life_more": 12,
+    "life_regen": 3
+   },
+   "requires": [
+    "anchor"
+   ],
+   "center": [
+    150,
+    20
+   ]
+  },
+  "crown": {
+   "name": "Crown",
+   "verse": "crown",
+   "stars": [
+    {
+     "pos": [
+      -22,
+      85
+     ],
+     "stats": {
+      "holy_pct": 6
+     }
+    },
+    {
+     "pos": [
+      0,
+      71
+     ],
+     "stats": {
+      "crit": 2
+     }
+    },
+    {
+     "pos": [
+      22,
+      85
+     ],
+     "stats": {
+      "damage": 2
+     }
+    },
+    {
+     "pos": [
+      36,
+      115
+     ],
+     "stats": {
+      "holy_pct": 6
+     }
+    },
+    {
+     "pos": [
+      0,
+      129
+     ],
+     "stats": {
+      "crit": 2
+     }
+    },
+    {
+     "pos": [
+      -36,
+      115
+     ],
+     "stats": {
+      "damage": 3
+     }
+    }
+   ],
+   "bonus": {
+    "holy_pct": 25,
+    "crit": 5
+   },
+   "requires": [
+    "vigil",
+    "eagle"
+   ],
+   "center": [
+    0,
+    100
+   ]
+  }
+ }
+}
