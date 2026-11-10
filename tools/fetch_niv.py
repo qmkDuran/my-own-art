@@ -10,7 +10,7 @@ OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'art', 'niv
 CHAPTERS = [('Revelation', 4, 'Rev'), ('Revelation', 5, 'Rev'), ('Revelation', 7, 'Rev'), ('Revelation', 19, 'Rev'),
             ('Revelation', 21, 'Rev'), ('Revelation', 22, 'Rev'), ('Isaiah', 11, 'Isa'), ('Isaiah', 35, 'Isa'),
             ('Isaiah', 55, 'Isa'), ('Isaiah', 65, 'Isa'), ('John', 14, 'John'), ('Psalm', 16, 'Ps'), ('Psalm', 37, 'Ps'),
-            ('Micah', 4, 'Mic'), ('1 Corinthians', 2, '1Cor'), ('John', 10, 'John'), ('Matthew', 11, 'Matt')]
+            ('Micah', 4, 'Mic'), ('1 Corinthians', 2, '1Cor'), ('John', 10, 'John'), ('Matthew', 11, 'Matt'), ('Psalm', 150, 'Ps')]
 
 
 def url_for(book, ch):

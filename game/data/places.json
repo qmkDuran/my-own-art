@@ -2,7 +2,8 @@
  "_doc": "Fast travel (T / Tab): destinations in the places menu. scene, at (feet position), face.",
  "places": [
   {"name": "New earth village", "scene": "res://earth.tscn", "at": [262, 668], "face": "down"},
-  {"name": "Pearl gate (city side)", "scene": "res://main.tscn", "at": [482, 186], "face": "down"},
+  {"name": "Gate of Judah, city side (Rev 21:12)", "scene": "res://main.tscn", "at": [482, 236], "face": "up"},
+  {"name": "Gate of Judah, new earth side", "scene": "res://earth.tscn", "at": [960, 262], "face": "up"},
   {"name": "Garden river", "scene": "res://main.tscn", "at": [300, 306], "face": "right"},
   {"name": "The Shepherd", "scene": "res://main.tscn", "at": [140, 314], "face": "up"},
   {"name": "Great street", "scene": "res://main.tscn", "at": [480, 840], "face": "down"},

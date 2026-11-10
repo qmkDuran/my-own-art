@@ -3,7 +3,7 @@
 ## Scripture
 Scripture quotations taken from The Holy Bible, New International Version® NIV® Copyright © 1973, 1978, 1984, 2011 by Biblica, Inc.™ Used by permission. All rights reserved worldwide.
 
-The game quotes 51 distinct verses (well under Biblica's 500-verse limit, and far from a complete book or 25% of the work).
+The game quotes 59 distinct verses (well under Biblica's 500-verse limit, and far from a complete book or 25% of the work).
 All verse text lives in `game/data/verses.json`; every fragment is checked word for word against the NIV text
 (fetched from biblegateway.com by `tools/fetch_niv.py`) by `tools/check_verses.py`.
 

@@ -81,7 +81,7 @@ def overlaps():
     """No two characters' sprite boxes may overlap by more than 10% of the smaller box, in any scene."""
     for scene in ('city', 'earth'):
         c = json.load(open(f'game/data/{scene}.json'))
-        chars = [(f'p{q[0]:02d}', q[1], q[2], q[4]) for q in c['people']]
+        chars = [(q[0] if isinstance(q[0], str) else f'p{q[0]:02d}', q[1], q[2], q[4]) for q in c['people']]
         if c.get('shepherd'):
             sh = c['shepherd']; chars.append((sh['sheet'], sh['at'][0], sh['at'][1], sh['facing']))
         # where the player is placed to stand still: demo pauses and fast-travel spots

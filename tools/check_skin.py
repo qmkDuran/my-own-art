@@ -4,7 +4,7 @@ import json, sys
 sys.path.insert(0, 'art')
 from skin import ramps_used, front_ramp, shift_colour
 from fix_skin import CHARACTERS, load_frames, HERO_LAYOUT, PEOPLE_LAYOUT
-from build_district import RESIDENTS, BEARERS     # (new, source, steps[, gift]): ramp-shifted copies of a source person
+from build_district import RESIDENTS, BEARERS, MUSICIANS   # (new, source, steps[, gift/instrument]): ramp-shifted copies
 
 
 def source_ramp(source, steps):
@@ -23,7 +23,7 @@ def main():
     ok = True
     for name, (path, cols, rows) in CHARACTERS.items():
         ok &= report(name, load_frames(path, cols, rows)[1])
-    for name, source, steps in RESIDENTS:
+    for name, source, steps in RESIDENTS + [m[:3] for m in MUSICIANS]:
         ok &= report(name, load_frames(f'game/art/people/{name}.png', *PEOPLE_LAYOUT)[1], source_ramp(source, steps))
     boxes = json.load(open('game/art/district/layout.json')).get('gift_boxes', {})
     for name, source, steps, _ in BEARERS:
@@ -32,6 +32,7 @@ def main():
             for x0, y0, x1, y1 in boxes.get(name, [])[c % 8: c % 8 + 1] if r >= 3 else boxes.get(name, [])[:1]:
                 f[max(0, y0):y1, max(0, x0):x1, 3] = 0
         ok &= report(name, frames, source_ramp(source, steps))
+    ok &= report('gate_angel', load_frames('game/art/people/gate_angel.png', *PEOPLE_LAYOUT)[1])
     print('SKIN PASS: one skin ramp per character' if ok else 'SKIN FAIL')
     sys.exit(0 if ok else 1)
 

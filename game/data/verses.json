@@ -4,7 +4,7 @@
  "edition": "The Holy Bible, New International Version (2011)",
  "notice": "Scripture quotations taken from The Holy Bible, New International Version® NIV® Copyright © 1973, 1978, 1984, 2011 by Biblica, Inc.™ Used by permission. All rights reserved worldwide.",
  "source": "Text copied from https://www.biblegateway.com (version=NIV), fetched and verified by tools/fetch_niv.py and tools/check_verses.py",
- "verse_count": 51,
+ "verse_count": 59,
  "verses": {
   "gate_open": {
    "ref": "Revelation 21:25-26",
@@ -649,6 +649,92 @@
    ],
    "parts": [
     "Come to me, all you who are weary and burdened, and I will give you rest."
+   ]
+  },
+  "city_size": {
+   "ref": "Rev 21:16",
+   "verses": [
+    "Revelation 21:16"
+   ],
+   "parts": [
+    "The city was laid out like a square, as long as it was wide. He measured the city with the rod and found it to be 12,000 stadia in length, and as wide and high as it is long."
+   ]
+  },
+  "gate_angels": {
+   "ref": "Rev 21:12",
+   "verses": [
+    "Revelation 21:12"
+   ],
+   "parts": [
+    "It had a great, high wall with twelve gates, and with twelve angels at the gates. On the gates were written the names of the twelve tribes of Israel."
+   ]
+  },
+  "foundations_apostles": {
+   "ref": "Rev 21:14",
+   "verses": [
+    "Revelation 21:14"
+   ],
+   "parts": [
+    "The wall of the city had twelve foundations, and on them were the names of the twelve apostles of the Lamb."
+   ]
+  },
+  "book_of_life": {
+   "ref": "Rev 21:27",
+   "verses": [
+    "Revelation 21:27"
+   ],
+   "parts": [
+    "Nothing impure will ever enter it, nor will anyone who does what is shameful or deceitful, but only those whose names are written in the Lamb’s book of life."
+   ]
+  },
+  "foundation_stones_a": {
+   "ref": "Rev 21:19",
+   "verses": [
+    "Revelation 21:19"
+   ],
+   "parts": [
+    "The first foundation was jasper, the second sapphire, the third agate, the fourth emerald,",
+    "..."
+   ]
+  },
+  "foundation_stones_b": {
+   "ref": "Rev 21:20",
+   "verses": [
+    "Revelation 21:20"
+   ],
+   "parts": [
+    "the fifth onyx, the sixth ruby, the seventh chrysolite, the eighth beryl, the ninth topaz, the tenth turquoise, the eleventh jacinth, and the twelfth amethyst."
+   ]
+  },
+  "tree_crops": {
+   "ref": "Rev 22:2",
+   "verses": [
+    "Revelation 22:2"
+   ],
+   "parts": [
+    "bearing twelve crops of fruit, yielding its fruit every month.",
+    "And the leaves of the tree are for the healing of the nations."
+   ]
+  },
+  "harp_lyre": {
+   "ref": "Ps 150:3-4",
+   "verses": [
+    "Psalm 150:3",
+    "Psalm 150:4"
+   ],
+   "parts": [
+    "praise him with the harp and lyre,",
+    "praise him with timbrel and dancing,",
+    "..."
+   ]
+  },
+  "everything_breath": {
+   "ref": "Ps 150:6",
+   "verses": [
+    "Psalm 150:6"
+   ],
+   "parts": [
+    "Let everything that has breath praise the Lord. Praise the Lord."
    ]
   }
  }

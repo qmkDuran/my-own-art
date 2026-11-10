@@ -56,3 +56,6 @@ gifts	cost=10.0	total_used=25.0	usd=2.18083018988485
 --- shepherd + run/teleport: START=189.5 CAP=15 ---
 shepherd	cost=10.0	total_used=10.0	usd=2.18083018988485
 char4_shepherd	cost=1.0	total_used=11.0	usd=2.18083018988485
+--- free biblical additions: START=178.5 CAP=30 ---
+--- more stuff pass: START=178.5 CAP=30 ---
+gate_angel	cost=10.0	total_used=10.0	usd=2.18083018988485

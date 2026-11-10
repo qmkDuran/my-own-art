@@ -38,9 +38,10 @@ func _run() -> void:
 		_check(s[0], s[1])
 	await _check_transitions()
 	await _check_running()
+	await _check_tree_and_angel()
 	await _check_places()
 	if _failures.is_empty():
-		print("SMOKE PASS: ", SCENES.size(), " scenes + ", TRANSITIONS.size(), " transitions + running + fast travel")
+		print("SMOKE PASS: ", SCENES.size(), " scenes + ", TRANSITIONS.size(), " transitions + running + tree of life + gate angel + fast travel")
 		get_tree().quit(0)
 	else:
 		for f: String in _failures:
@@ -73,6 +74,30 @@ func _distance(player: Player, running: bool) -> float:
 	Input.action_release("move_down")
 	Input.action_release("run")
 	return player.global_position.distance_to(start)
+
+
+## E under a tree of life gives this month's fruit; E by the pearl gate speaks with its angel (Rev 21:12).
+func _check_tree_and_angel() -> void:
+	get_tree().change_scene_to_file("res://main.tscn")
+	for i: int in 30:
+		await get_tree().process_frame
+	var scene: SceneBase = get_tree().current_scene as SceneBase
+	var player: Player = get_tree().get_first_node_in_group("player") as Player
+	player.global_position = Vector2(320, 300)
+	await get_tree().physics_frame
+	var tree: Sprite2D = scene.call("tree_near", player.global_position)
+	var fruit: Sprite2D = scene.call("pick_fruit", tree) if tree != null else null
+	var month: int = int(Time.get_date_dict_from_system()["month"]) - 1
+	_expect(fruit != null and fruit.frame == month, "tree of life: no fruit for this month")
+	if fruit != null and fruit.frame == month:
+		print("SMOKE ok: tree of life gives crop %d of 12" % (month + 1))
+	player.global_position = Vector2(520, 236)
+	await get_tree().physics_frame
+	var who: Npc = scene.talk.nearest(player.global_position)
+	var ok: bool = who != null and who.get("_sheet_path").contains("gate_angel")
+	_expect(ok, "gate angel: not the nearest to talk to at the gate")
+	if ok:
+		print("SMOKE ok: the angel at the pearl gate speaks (Rev 21:12)")
 
 
 ## Fast travel: choose "Throne room" from the places menu in the city.

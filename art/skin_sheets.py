@@ -16,11 +16,13 @@ PEOPLE_PLACES = {0: 'city + earth', 1: 'city + earth', 2: 'city + earth', 5: 'ci
                  7: 'city + earth', 9: 'city + earth', 10: 'city + earth', 14: 'city + earth', 15: 'city + earth'}
 CAST = ([(f'P{i:02d}', f'game/art/people/p{i:02d}.png', f'p{i:02d}', PEOPLE_VIEWS, PEOPLE_PLACES[i]) for i in PEOPLE]
         + [(f'P{i}', f'game/art/people/p{i}.png', f'p{i}', PEOPLE_VIEWS, 'city (district)') for i in range(31, 36)]
+        + [(f'P{i}', f'game/art/people/p{i}.png', None, PEOPLE_VIEWS, 'district (Ps 150)') for i in (36, 37)]
         + [('Walker A', 'game/art/people/walkerA.png', 'walkerA', HERO_VIEWS, 'city + earth'),
            ('Walker B', 'game/art/people/walkerB.png', 'walkerB', HERO_VIEWS, 'city + earth')]
         + [(f'Bearer {k.upper()}', f'game/art/district/bearer_{k}.png', f'bearer_{k}', BEARER_VIEWS, 'district')
            for k in 'abcdef']
-        + [('Shepherd', 'game/art/people/shepherd.png', 'shepherd', PEOPLE_VIEWS, 'garden (Rev 7:17)'),
+        + [('Gate angel', 'game/art/people/gate_angel.png', None, PEOPLE_VIEWS, 'pearl gate (Rev 21:12)'),
+           ('Shepherd', 'game/art/people/shepherd.png', 'shepherd', PEOPLE_VIEWS, 'garden (Rev 7:17)'),
            ('PLAYER', 'game/art/hero.png', 'hero', HERO_VIEWS, 'you')])
 
 
@@ -35,7 +37,7 @@ def before_after():
     rows = (len(CAST) + cols - 1) // cols
     out = Image.new('RGBA', (block_w * cols + 40, block_h * rows + 70), BG); d = ImageDraw.Draw(out)
     d.text((20, 14), 'Skin pass: before (left three) | after (right three) - front, side, back at 3x', font=FONT, fill=INK)
-    for i, (label, path, key, views, _) in enumerate(CAST):
+    for i, (label, path, key, views, _) in enumerate([c for c in CAST if c[2]]):
         x0, y0 = 20 + (i % cols) * block_w, 60 + (i // cols) * block_h
         d.text((x0, y0), label, font=FONT, fill=INK)
         for j, v in enumerate(views):

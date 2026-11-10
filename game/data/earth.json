@@ -60,6 +60,55 @@
  "zones": [
   [
    880,
+   250,
+   160,
+   50,
+   "{wash_robes}"
+  ],
+  [
+   0,
+   160,
+   293,
+   24,
+   "{foundations_apostles}"
+  ],
+  [
+   293,
+   160,
+   293,
+   24,
+   "{foundation_stones_a}"
+  ],
+  [
+   586,
+   160,
+   293,
+   24,
+   "{foundation_stones_b}"
+  ],
+  [
+   1040,
+   160,
+   293,
+   24,
+   "{foundations_apostles}"
+  ],
+  [
+   1333,
+   160,
+   293,
+   24,
+   "{foundation_stones_a}"
+  ],
+  [
+   1626,
+   160,
+   293,
+   24,
+   "{foundation_stones_b}"
+  ],
+  [
+   880,
    160,
    160,
    90,
@@ -189,6 +238,14 @@
    "stand",
    "left",
    "{nations_light}"
+  ],
+  [
+   "gate_angel",
+   1010,
+   212,
+   "stand",
+   "down",
+   "{gate_angels}"
   ]
  ],
  "walkers": [

@@ -21,43 +21,63 @@ BALUSTRADE_Y = 412
 HAZE_Y = 430
 DWELLINGS = [('home_a', 'mansion_01', 230, 232), ('home_b', 'mansion_03', 740, 232),
              ('home_c', 'mansion_02', 1200, 232), ('home_d', 'mansion_00', 1660, 232)]   # name, src, centre x, base (local)
-PLANTERS = [(1430, 236), (80, 236)]
 GIFTS = [('gift_chest', 'gifts_03'), ('gift_jar', 'gifts_17'), ('gift_fruit', 'gifts_27'),
          ('gift_cloth', 'gifts_33'), ('gift_incense', 'gifts_41'), ('gift_gems', 'gifts_63')]
 SKIN_RAMP = ['fdcbb0', 'fca790', 'e6904e', 'cd683d', '9e4539', '6e2727']
 random.seed(21)
 
 
-def gold_ground(bg):
-    gold = [Image.open(f'art/raw/tA_{i:02d}.png').convert('RGBA') for i in (1, 2)]
-    for ty in range(HT // 32 + 1):
-        for tx in range(W // 32):
-            bg.paste(gold[0] if random.random() < 0.8 else gold[1], (tx * 32, ty * 32))
+YARD_BORDER = (238, 246)                   # low jasper border along the north side of the great street
+SOUTH_BORDER = (355, 362)                  # and along its south side, in front of the terrace garden
+SOUTH_GAPS = [(280, 320), (940, 980), (1600, 1640)]   # openings to the terrace and its view
+FRUIT_TREES = [('fruit_tree_a', 'tree1', 0.6, 968, 206), ('fruit_tree_b', 'tree2', 0.55, 1432, 206),
+               ('fruit_tree_a', 'tree1', 0.6, 1862, 206), ('fruit_tree_b', 'tree2', 0.55, 46, 206)]   # name, src, scale, x, base
+FLOWER_BEDS = [(398, 150, 18, 60), (566, 150, 18, 60), (968, 226, 70, 6), (1432, 226, 64, 6), (1862, 226, 50, 6),
+               (46, 226, 40, 6)]          # centre x, centre y, half width, half height (local)
+
+
+def tiles(bg, names, y0, y1, x0=0, x1=W):
+    """Same 32 px tile fill as the garden (art/build_scene.py), so textures continue across the screen seam."""
+    ims = [Image.open(f'art/raw/tA_{i:02d}.png').convert('RGBA') for i in names]
+    region = Image.new('RGBA', (W, HT))
+    for ty in range(0, HT, 32):
+        for tx in range(0, W, 32):
+            region.paste(random.choice(ims), (tx, ty))
+    bg.paste(region.crop((x0, y0, x1, y1)), (x0, y0))
 
 
 LIGHTER = {H(a): C(b) for a, b in (('e6904e', 'f79617'), ('f79617', 'f9c22b'), ('f9c22b', 'fbb954'), ('fbb954', 'fbff86'), ('fbff86', 'ffffff'))}
 
 
-DARKER = {H(a): C(b) for a, b in (('fbff86', 'fbb954'), ('fbb954', 'f9c22b'), ('f9c22b', 'f79617'), ('f79617', 'e6904e'))}
-
-
-def calm_yards(px):
-    """Courtyards and terrace one tone deeper than the great street, so the street of gold reads as the way."""
-    for y in list(range(0, STREET[0] - 4)) + list(range(STREET[1] + 5, BALUSTRADE_Y)):
-        for x in range(W):
-            c = px[x, y][:3]
-            if c in DARKER and dith(x, y) < 0.7: px[x, y] = DARKER[c]
+def gardens(bg, px):
+    """The yards are gardens: the garden's grass, with the garden's gold street continuing south between them."""
+    tiles(bg, (8, 9, 12), 0, YARD_BORDER[0])
+    tiles(bg, (8, 9, 12), SOUTH_BORDER[1], BALUSTRADE_Y)
+    x0, x1 = GARDEN_STREET
+    tiles(bg, (1, 1, 1, 1, 2), 0, YARD_BORDER[1], x0, x1)
+    for y in range(0, YARD_BORDER[1]):
+        for x in range(x0, x1):
+            u = (x + int((y + OY) * 0.75)) % 211
+            if (u < 9 or 15 <= u < 18) and px[x, y][:3] in LIGHTER: px[x, y] = LIGHTER[px[x, y][:3]]
+        for xe in (x0 - 3, x1):                    # the garden street's edge bands, as in the garden
+            px[xe, y] = OUT; px[xe + 1, y] = C('f9c22b'); px[xe + 2, y] = OUT
 
 
 def street(px):
-    """The great street: brighter glassy gold with jasper curbs set with gems (Rev 21:21)."""
+    """The great street: pure gold like transparent glass (Rev 21:21): bright, smooth, with long soft reflections,
+    and jasper curbs set with gems."""
     y0, y1 = STREET
     for y in range(y0, y1):
+        t = (y - y0) / (y1 - y0)
         for x in range(W):
-            c = px[x, y][:3]
-            if c in LIGHTER and dith(x, y) < 0.5: px[x, y] = LIGHTER[c]
-            u = (x + int(y * 0.75)) % 151
-            if u < 5 and px[x, y][:3] in LIGHTER: px[x, y] = C('ffffff')
+            d = dith(x, y)
+            col = 'fbff86'
+            if d < 0.18 + 0.25 * t: col = 'fbb954'               # a touch deeper towards the near curb
+            u = (x + int(y * 1.6)) % 173                          # long diagonal glints on the glass
+            if u < 3: col = 'ffffff'
+            elif u < 7 and d < 0.6: col = 'ffffff'
+            if (x % 96 == 0 or (y - y0) % 50 == 0) and d < 0.5: col = 'f9c22b'   # faint joints, glassy not tiled
+            px[x, y] = C(col)
     for yc in (y0 - 4, y1):
         for x in range(W):
             for k, col in enumerate((OUT, C('ffffff'), C('c7dcd0'), C('9babb2'), OUT)):
@@ -68,31 +88,146 @@ def street(px):
                 px[gx + dx, yc + dy] = col
 
 
-def garden_street(px):
-    """The garden's street continues down between the dwellings with the same edge bands as in the garden
-    (outline, gold, outline at x 429-431 and 528-530), so the seam between the screens lines up."""
-    x0, x1 = GARDEN_STREET
-    for y in range(0, STREET[0] - 4):
-        for xe in (x0 - 3, x1):
-            px[xe, y] = OUT; px[xe + 1, y] = C('f9c22b'); px[xe + 2, y] = OUT
+def low_border(px, y0, y1, gaps):
+    """A low jasper garden border (top face + front face), open where walks and streets pass."""
+    for x in range(W):
+        if any(g0 <= x < g1 for g0, g1 in gaps): continue
+        edge = any(x in (g0 - 1, g1) for g0, g1 in gaps)
+        for k, y in enumerate(range(y0, y1)):
+            col = (OUT, C('ffffff'), C('c7dcd0'), C('c7dcd0'), C('9babb2'), C('7f708a'), C('7f708a'), OUT)[k]
+            px[x, y] = OUT if edge else col
 
 
-def walkways(px):
-    """A pearl-white walk from each door down to the great street (doors face the street)."""
-    for _, _, cx, base in DWELLINGS:
-        for y in range(base - 6, STREET[0] - 4):
-            for x in range(cx - 16, cx + 17):
-                edge = x in (cx - 16, cx + 16)
-                px[x, y] = OUT if edge else (C('ffffff') if (y // 8 + (x - cx) // 16) % 2 else C('eaaded') if dith(x, y) < 0.2 else C('ffffff'))
+def door_steps_and_walks(px, sizes):
+    """Pearl steps at each door and a pearl walk across the garden to the great street; contact shadows ground the houses."""
+    for name, _, cx, base in DWELLINGS:
+        sw = int(sizes[name][0] * 0.94)
+        for y in range(base - 4, base + 6):                       # soft shadow on the grass at the house's foot
+            for x in range(cx - sw // 2, cx + sw // 2):
+                if ((x - cx) / (sw / 2)) ** 2 + ((y - base) / 6) ** 2 <= 1 and dith(x, y) < 0.6:
+                    px[x, y] = C('165a4c')
+        for y in range(base + 6, YARD_BORDER[1]):                 # the walk
+            for x in range(cx - 14, cx + 15):
+                edge = x in (cx - 14, cx + 14)
+                px[x, y] = OUT if edge else (C('c7dcd0') if (y + x // 10) % 6 == 0 else C('ffffff'))
+        for k in range(3):                                        # three steps, widening downwards
+            hw, y = 18 + 2 * k, base + 2 * k
+            for x in range(cx - hw, cx + hw + 1):
+                side = x in (cx - hw, cx + hw)
+                px[x, y] = OUT if side else C('ffffff')          # tread
+                px[x, y + 1] = OUT if side else C('9babb2')      # riser
+            if k == 2:
+                for x in range(cx - hw, cx + hw + 1): px[x, y + 2] = OUT
 
 
-def balustrade_and_haze(px):
-    """A jasper balustrade with gem posts at the terrace edge; beyond it the city lies in light (no night, Rev 22:5)."""
-    for y in range(HAZE_Y, HT):
-        t = (y - HAZE_Y) / (HT - HAZE_Y)
-        for x in range(W):
-            px[x, y] = C('ffffff') if dith(x, y) < 0.55 + t else C('fbff86')
+FLOW = [('f04f78', 'ed8099'), ('c32454', 'f04f78'), ('ffffff', 'fbff86'), ('f9c22b', 'fbff86'), ('a884f3', 'eaaded'), ('ea4f36', 'f68181')]
+
+
+def flowers(px, blocked):
+    """Flower beds in the yards and along the terrace garden."""
+    def flower(x, y, c1, c2):
+        for dx, dy, c in ((0, -1, c2), (-1, 0, c1), (1, 0, c1), (0, 1, c1), (0, 0, 'fbff86' if c1 != 'f9c22b' else 'f79617')):
+            X, Y = x + dx, y + dy
+            if 0 <= X < W and 0 <= Y < HT and not blocked[Y, X]: px[X, Y] = C(c)
+    for cx, cy, hw, hh in FLOWER_BEDS:                              # a few rose clusters per bed, one colour each
+        for _ in range(max(2, hw * hh // 180)):
+            c1, c2 = random.choice(FLOW[:2] if random.random() < 0.6 else FLOW)
+            ox, oy = cx + random.randint(-hw, hw), cy + random.randint(-hh, hh)
+            for _ in range(9):
+                flower(ox + random.randint(-6, 6), oy + random.randint(-3, 3), c1, c2)
+    for x0 in range(20, W, 120):                                   # terrace garden: rose clusters along the border
+        c1, c2 = random.choice(FLOW[:2] if random.random() < 0.6 else FLOW)
+        oy = random.randint(SOUTH_BORDER[1] + 12, BALUSTRADE_Y - 14)
+        for _ in range(10):
+            flower(x0 + random.randint(-9, 9), oy + random.randint(-3, 3), c1, c2)
+
+
+def terrace_walk(px, g0, g1):
+    """A short pearl walk through each opening of the south border to the balustrade."""
+    for y in range(SOUTH_BORDER[1] + 1, BALUSTRADE_Y - 3):           # pale jasper flagstones, like the riverside path
+        row = y - SOUTH_BORDER[1] - 1
+        for x in range(g0, g1):
+            if x in (g0, g1 - 1): col = '239063'
+            elif (x - g0 + (8 if (row // 10) % 2 else 0)) % 16 == 0 or row % 10 == 0: col = '9babb2'
+            else: col = 'c7dcd0' if dith(x, y) < 0.85 else '92a984'
+            px[x, y] = C(col)
+
+
+def fruit_tree(src, scale):
+    """A small fruit tree: the tree-of-life art reduced (box filter, palette snap) and re-outlined."""
+    im = Image.open(f'game/art/{src}.png').convert('RGBA'); im = im.crop(im.getbbox())
+    q = np.array(quant(im.resize((round(im.width * scale), round(im.height * scale)), Image.BOX)))
+    out = np.zeros((q.shape[0] + 2, q.shape[1] + 2, 4), np.uint8); out[1:-1, 1:-1] = q
+    a = out[..., 3] > 0; e = np.zeros_like(a)
+    e[1:] |= a[:-1]; e[:-1] |= a[1:]; e[:, 1:] |= a[:, :-1]; e[:, :-1] |= a[:, 1:]
+    out[e & ~a] = list(OUT[:3]) + [255]
+    return Image.fromarray(out)
+
+
+def distant_city(px):
+    """Beyond the balustrade the city goes on and on (Rev 21:16): rows of jasper halls, gold domes and towers,
+    the far rows small and pale up by the horizon light, the near rows larger below (Rev 21:23)."""
+    rng = random.Random(16)
+    top_limit = BALUSTRADE_Y + 18
+    rows = [  # base y (local), scale, wall light/shade, roof light/shade, windows, outline, gap range
+        (462, 0.4, ('ffffff', 'fbff86'), ('fbff86', 'fbb954'), 'fbff86', 'fbff86', (0, 8)),
+        (482, 0.55, ('ffffff', 'c7dcd0'), ('fbff86', 'fbb954'), 'fbb954', 'c7dcd0', (4, 18)),
+        (508, 0.75, ('ffffff', 'c7dcd0'), ('fbb954', 'f9c22b'), 'f9c22b', '9babb2', (10, 36)),
+        (546, 1.0, ('c7dcd0', '9babb2'), ('f9c22b', 'f79617'), 'fbff86', '7f708a', (26, 64)),
+    ]
+
+    def put(x, y, c):
+        if 0 <= x < W and top_limit <= y < HT: px[x, y] = C(c)
+
+    for base, sc, wall, roof, win, line, gap in rows:             # far rows first; nearer rows hide their feet
+        x = rng.randint(-30, 10)
+        while x < W:
+            kind = rng.choice(('hall', 'hall', 'dome', 'tower'))
+            w = int({'hall': rng.randint(34, 60), 'dome': rng.randint(26, 40), 'tower': rng.randint(12, 18)}[kind] * sc)
+            h = int({'hall': rng.randint(20, 30), 'dome': rng.randint(18, 26), 'tower': rng.randint(46, 66)}[kind] * sc)
+            top = base - h
+            for yy in range(top, HT):                                  # walls (down to the edge): lit left, shaded right
+                for xx in range(x, x + w):
+                    c = wall[1] if xx >= x + int(w * 0.7) else wall[0]
+                    wy, wx = (yy - top) % max(5, int(9 * sc)), (xx - x) % max(4, int(7 * sc))
+                    if 2 <= wy <= 2 + max(1, int(2 * sc)) and wx == max(2, int(3 * sc)) and x + 2 < xx < x + w - 3: c = win
+                    if xx in (x, x + w - 1) or yy == top: c = line
+                    put(xx, yy, c)
+            cx = x + w / 2
+            if kind == 'hall':                                         # low pitched gold roof
+                rh = max(3, int(w * 0.22))
+                for k in range(rh):
+                    half = w / 2 + 1 - (rh - 1 - k) * (w / 2) / rh * 0.9
+                    for xx in range(int(cx - half), int(cx + half) + 1):
+                        put(xx, top - rh + k, roof[1] if xx > cx else roof[0])
+                    put(int(cx - half) - 1, top - rh + k, line); put(int(cx + half) + 1, top - rh + k, line)
+            elif kind == 'dome':                                       # gold dome on a drum
+                r = w * 0.38
+                for k in range(int(r) + 1):
+                    half = (r * r - (r - k) ** 2) ** 0.5
+                    for xx in range(int(cx - half), int(cx + half) + 1):
+                        put(xx, top - int(r) + k, roof[1] if xx > cx + half * 0.2 else roof[0])
+                put(int(cx), top - int(r) - 1, roof[0]); put(int(cx), top - int(r) - 2, 'ffffff')
+            else:                                                      # tower with a gold spire
+                rh = max(4, int(w * 1.1))
+                for k in range(rh):
+                    half = (k + 1) * (w / 2) / rh
+                    for xx in range(int(cx - half), int(cx + half) + 1):
+                        put(xx, top - rh + k, roof[1] if xx > cx else roof[0])
+            x += w + rng.randint(int(gap[0] * sc), int(gap[1] * sc) + 1)
+        for y in range(top_limit, HT):                                 # light over the rows behind, before nearer ones
+            t = 1 - (y - top_limit) / (HT - top_limit)
+            for x in range(W):
+                if dith(x, y) < 0.12 * t: px[x, y] = C('ffffff')
+
+
+def balustrade(px):
+    """The jasper balustrade with gem posts at the terrace edge."""
     y0 = BALUSTRADE_Y
+    for y in range(y0 + 18, HT):                                  # the light behind everything
+        for x in range(W):
+            px[x, y] = C('ffffff') if dith(x, y) < 0.6 else C('fbff86')
+    distant_city(px)
     for x in range(W):
         for k, col in enumerate((OUT, C('ffffff'), C('c7dcd0'), C('c7dcd0'), C('9babb2'), OUT)):
             px[x, y0 + k] = col
@@ -106,28 +241,6 @@ def balustrade_and_haze(px):
                 px[x, y] = OUT if edge else (C('ffffff') if x < px0 + 3 else C('c7dcd0'))
         for dx, dy, col in ((2, -1, l), (3, -1, m), (4, -1, d), (3, -2, l)):
             px[px0 + dx, y0 + dy] = col
-
-
-def planters(px):
-    for cx, base in PLANTERS:
-        for y in range(base - 16, base):
-            for x in range(cx - 24, cx + 25):
-                edge = y in (base - 16, base - 1) or x in (cx - 24, cx + 24)
-                inner = base - 16 < y < base - 9
-                px[x, y] = OUT if edge else ((C('239063') if dith(x, y) < 0.6 else C('1ebc73')) if inner else C('c7dcd0'))
-        for _ in range(16):
-            x, y = random.randint(cx - 20, cx + 20), random.randint(base - 15, base - 10)
-            c1 = random.choice(('f04f78', 'ffffff', 'f9c22b', 'a884f3'))
-            px[x, y] = C(c1); px[x, y - 1] = C('fbff86')
-
-
-def contact_shadows(px, sizes):
-    for name, _, cx, base in DWELLINGS:
-        sw = int(sizes[name][0] * 0.92)
-        for y in range(base - 6, base + 5):
-            for x in range(cx - sw // 2, cx + sw // 2):
-                if ((x - cx) / (sw / 2)) ** 2 + ((y - base + 1) / 6) ** 2 <= 1 and dith(x, y) < 0.5:
-                    px[x, y] = C('e6904e')
 
 
 def dwellings():
@@ -187,7 +300,62 @@ BEARERS = [('bearer_a', 'walkerA', 3, 'gift_chest'), ('bearer_b', 'walkerB', -2,
            ('bearer_e', 'walkerA', 1, 'gift_incense'), ('bearer_f', 'walkerB', -1, 'gift_gems')]
 
 
+MUSICIANS = [('p36', 'p05', 1, 'lyre'), ('p37', 'p07', -1, 'timbrel')]   # Ps 150:3-4, in a garden yard
+INSTRUMENTS = {   # o outline, g gold, d deep gold, s string/skin highlight, b brown wood
+    'lyre': ['g.....g',
+             'gg...gg',
+             '.g...g.',
+             '.gdddg.',
+             '.gs.sg.',
+             '.gs.sg.',
+             '.gs.sg.',
+             '.gs.sg.',
+             '..gdg..',
+             '...g...'],
+    'timbrel': ['.bbbb.',
+                'bssssb',
+                'bssssb',
+                'bssssb',
+                'bssssb',
+                '.bbbb.'],
+}
+INSTR_COL = {'g': 'f9c22b', 'd': 'f79617', 's': 'fbff86', 'b': '9e4539'}
+
+
+def instrument_sheet(src, steps, kind, source_name):
+    a = np.array(shift_skin(Image.open(f'game/art/people/{src}.png').convert('RGBA'), steps, source_name))
+    pat = INSTRUMENTS[kind]
+    h, w = len(pat), len(pat[0])
+    for r, view in ((2, 'side'), (0, 'front')):
+        for c in range(4):
+            f = a[r * 64:(r + 1) * 64, c * 64:(c + 1) * 64]
+            sk = skin_mask(f, skin_colours('p00') | skin_colours('p05'))
+            ys, xs = np.nonzero(f[..., 3])
+            mid = (ys.min() + ys.max()) // 2
+            hy, hx = np.nonzero(sk[mid - 4:mid + 10])      # the hands: skin pixels around the middle of the figure
+            if not len(hy): continue
+            cy, cx = int(hy.mean()) + mid - 4, int(hx.mean())
+            x0 = cx - (w - 1 if view == 'side' else w // 2)            # side view: held out in front (to the left)
+            y0 = cy - h + 3
+            for yy in range(-1, h + 1):
+                for xx in range(-1, w + 1):
+                    inside = 0 <= yy < h and 0 <= xx < w and pat[yy][xx] != '.'
+                    near = any(0 <= yy + dy < h and 0 <= xx + dx < w and pat[yy + dy][xx + dx] != '.'
+                               for dy, dx in ((0, 1), (0, -1), (1, 0), (-1, 0)))
+                    X, Y = x0 + xx, y0 + yy
+                    if not (0 <= X < 64 and 0 <= Y < 64) or sk[Y, X]: continue
+                    if inside:
+                        ch = pat[yy][xx]
+                        if ch == 's' and c % 2 == 1 and yy % 2: ch = 'g'            # strings shimmer
+                        f[Y, X, :3] = C(INSTR_COL[ch])[:3]; f[Y, X, 3] = 255
+                    elif near and not f[Y, X, 3]:
+                        f[Y, X, :3] = OUT[:3]; f[Y, X, 3] = 255
+    return Image.fromarray(a)
+
+
 def people(gift_imgs):
+    for new, src, steps, kind in MUSICIANS:
+        instrument_sheet(src, steps, kind, src).save('game/art/people/' + new + '.png')
     for new, old, steps in RESIDENTS:
         shift_skin(Image.open(f'game/art/people/{old}.png').convert('RGBA'), steps, old).save('game/art/people/' + new + '.png')
     for name, walker, steps, gift in BEARERS:
@@ -196,17 +364,32 @@ def people(gift_imgs):
 
 def main():
     bg = Image.new('RGBA', (W, HT)); px = bg.load()
-    gold_ground(bg)
-    calm_yards(px); street(px); garden_street(px); walkways(px)
+    gardens(bg, px); street(px)
     sizes = dwellings()
-    contact_shadows(px, sizes)
-    planters(px); balustrade_and_haze(px)
+    walks = [(cx - 14, cx + 15) for _, _, cx, _ in DWELLINGS]
+    low_border(px, YARD_BORDER[0], YARD_BORDER[1], walks + [(GARDEN_STREET[0] - 3, GARDEN_STREET[1] + 3)])
+    low_border(px, SOUTH_BORDER[0], SOUTH_BORDER[1] + 1, SOUTH_GAPS)
+    door_steps_and_walks(px, sizes)
+    trees = []
+    for name, src, sc, x, base in FRUIT_TREES:
+        t = fruit_tree(src, sc); t.save(D + name + '.png'); trees.append([name, x, OY + base])
+    blocked = np.zeros((HT, W), bool)
+    for _, _, cx, base in DWELLINGS: blocked[:, cx - 16:cx + 17] |= np.arange(HT)[:, None] >= base - 2
+    blocked[YARD_BORDER[0]:SOUTH_BORDER[1] + 1] = True
+    for g0, g1 in SOUTH_GAPS: blocked[SOUTH_BORDER[1]:BALUSTRADE_Y, g0 - 4:g1 + 4] = True
+    for g0, g1 in SOUTH_GAPS: terrace_walk(px, g0, g1)
+    blocked[:, GARDEN_STREET[0] - 3:GARDEN_STREET[1] + 3] = True
+    flowers(px, blocked)
+    balustrade(px)
     snap_rgb(bg).save(D + 'dbg.png')
     people(gifts())
     layout = {
         'origin_y': OY, 'size': [W, HT], 'street': [OY + STREET[0], OY + STREET[1]], 'balustrade_y': OY + BALUSTRADE_Y,
         'dwellings': [[n, cx, OY + base, sizes[n][0]] for n, _, cx, base in DWELLINGS],
-        'planters': [[cx, OY + base] for cx, base in PLANTERS],
+        'fruit_trees': trees,
+        'yard_border': [OY + YARD_BORDER[0], OY + YARD_BORDER[1]], 'south_border': [OY + SOUTH_BORDER[0], OY + SOUTH_BORDER[1] + 1],
+        'north_gaps': [[cx - 14, cx + 15] for _, _, cx, _ in DWELLINGS] + [[GARDEN_STREET[0] - 3, GARDEN_STREET[1] + 3]],
+        'south_gaps': SOUTH_GAPS,
         'gift_boxes': GIFT_BOXES,
     }
     json.dump(layout, open(D + 'layout.json', 'w'), indent=1)

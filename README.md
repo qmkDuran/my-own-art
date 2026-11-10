@@ -19,8 +19,8 @@ First time only (or after changing art): `--headless --path . --import`.
 
 Controls:
 - Move: WASD or arrow keys (8-way). Run: hold Shift (gamepad B), about 1.8x with faster steps.
-- Talk: E near someone (gamepad A). In the throne room E is worship: you stand facing the throne while the music swells into "Holy, holy, holy" (Rev 4:8); E again to stop.
-- Places: T or Tab (gamepad Y) opens the fast-travel list (new earth village, pearl gate, garden river, the Shepherd, great street, throne room); arrows or 1-6 and Enter, Esc closes.
+- Talk: E near someone (gamepad A). Under a tree of life with nobody near, E gives this month's crop (Rev 22:2): one of twelve hand-drawn fruits, by the real current month, with the verse about the leaves for the healing of the nations. In the throne room E is worship: you stand facing the throne while the music swells into "Holy, holy, holy" (Rev 4:8); E again to stop.
+- Places: T or Tab (gamepad Y) opens the fast-travel list (new earth village, the gate of Judah from the city and from the new earth, garden river, the Shepherd, great street, throne room); arrows or 1-7 and Enter, Esc closes.
 - Zoom: mouse wheel or +/- (Z cycles): overview 1x (whole new earth), normal 2x, close 3x, always whole pixels.
 - Esc returns to the menu.
 
@@ -40,6 +40,11 @@ golden sash, white hair, glowing bronze feet, and a face that is only light, wit
 no sword, no stars. People stand at a respectful distance facing him. Press E near him: he speaks Rev 7:17, Rev 21:4-5,
 John 10:11 and Matt 11:28 in turn, and the music softens while he speaks.
 
+## Gates, foundations and the district (Rev 21:12-27; 22:14; Ps 150)
+- An angel stands at the pearl gate on both sides (Rev 21:12; angels may have wings, no halo); E speaks Rev 21:12. The gate bears the tribe's name JUDAH in small gold letters.
+- Along the foot of the wall the captions read Rev 21:14 (the names of the twelve apostles on the foundations) and Rev 21:19-20 (the twelve stones). Approaching the gate from the garden: Rev 21:27 (the Lamb's book of life); from the new earth: Rev 22:14 (who wash their robes ... go through the gates).
+- The district: only the great street is gold (bright, glassy); the yards are gardens with flowers, small fruit trees, low jasper borders and pearl walks to steps at each door; beyond the balustrade the rest of the city recedes into the light (Rev 21:16 caption on the terrace). Two musicians with lyre and timbrel stand under a fruit tree (Ps 150:3-4, 6).
+
 ## The new earth (Isa 11, 35, 65; Rev 21:1, 24-26)
 Walking into the light of the city's pearl gate now leads out onto the new earth; its pearl gate leads back in.
 Also on the menu (3) or `-- --earth`; `-- --earth-demo` records the walk out of the city and a tour.
@@ -52,7 +57,7 @@ The camera moves screen by screen so each view keeps its composition. `-- --dist
 
 ## Scripture
 Scripture quotations taken from The Holy Bible, New International Version® NIV® Copyright © 1973, 1978, 1984, 2011 by Biblica, Inc.™ Used by permission. All rights reserved worldwide.
-All verses (51 distinct) live in `game/data/verses.json`; verify with `python3 -I tools/check_verses.py` (re-fetch the source with `python3 -I tools/fetch_niv.py`; `art/niv_source.json` is a local check cache only and is never shipped). See `CREDITS.md`.
+All verses (59 distinct) live in `game/data/verses.json`; verify with `python3 -I tools/check_verses.py` (re-fetch the source with `python3 -I tools/fetch_niv.py`; `art/niv_source.json` is a local check cache only and is never shipped). See `CREDITS.md`.
 
 ## Ways through the city
 New earth → pearl gate → garden and river → (riverside path west, into the light: Rev 22:1) → throne room;
@@ -83,6 +88,7 @@ Full module map: `HEAVEN_NOTES.md` section 5.
     python3 -I tools/scan_layout.py                                    # trees on grass, nobody in water, props off paths
     python3 -I tools/check_skin.py                                     # one skin ramp per character (all frames)
     python3 -I tools/check_verses.py                                   # every NIV fragment exact (needs the local NIV cache)
+    xvfb-run -a <godot> --rendering-driver opengl3 --path game -- --shots   # review screenshots into out/
     <godot> --headless --fixed-fps 60 --path game -- --demo --probe    # position probe log (regressions)
 
 ## Files

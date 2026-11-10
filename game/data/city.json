@@ -5,7 +5,7 @@
   "y": 196
  },
  "caption_y": 508,
- "hint": "E: talk with someone nearby    Esc: menu",
+ "hint": "E: talk, or take fruit at a tree of life    T: places    Esc: menu",
  "player_start": [
   480,
   470
@@ -211,6 +211,48 @@
  ],
  "zones": [
   [
+   380,
+   196,
+   212,
+   40,
+   "{book_of_life}"
+  ],
+  [
+   0,
+   160,
+   126,
+   24,
+   "{foundations_apostles}"
+  ],
+  [
+   126,
+   160,
+   126,
+   24,
+   "{foundation_stones_a}"
+  ],
+  [
+   253,
+   160,
+   126,
+   24,
+   "{foundation_stones_b}"
+  ],
+  [
+   592,
+   160,
+   368,
+   24,
+   "{wall_jasper}"
+  ],
+  [
+   0,
+   898,
+   1920,
+   182,
+   "{city_size}"
+  ],
+  [
    30,
    186,
    220,
@@ -235,7 +277,7 @@
    0,
    890,
    1920,
-   190,
+   8,
    "{no_sun_needed}"
   ],
   [
@@ -265,13 +307,6 @@
    96,
    100,
    "{river}"
-  ],
-  [
-   0,
-   160,
-   960,
-   24,
-   "{wall_jasper}"
   ],
   [
    432,
@@ -346,8 +381,8 @@
   ],
   [
    2,
-   528,
-   204,
+   400,
+   206,
    "palm",
    "up",
    "{amen_praise}"
@@ -379,7 +414,7 @@
   [
    31,
    282,
-   786,
+   798,
    "stand",
    "down",
    "{hearts_troubled}"
@@ -403,7 +438,7 @@
   [
    34,
    1244,
-   786,
+   798,
    "palm",
    "down",
    "{all_new}"
@@ -411,10 +446,34 @@
   [
    35,
    1610,
-   788,
+   798,
    "stand",
    "right",
    "{victorious}"
+  ],
+  [
+   "gate_angel",
+   532,
+   212,
+   "stand",
+   "down",
+   "{gate_angels}"
+  ],
+  [
+   36,
+   1394,
+   770,
+   "stand",
+   "right",
+   "{harp_lyre}"
+  ],
+  [
+   37,
+   1470,
+   770,
+   "stand",
+   "left",
+   "{everything_breath}"
   ]
  ],
  "walkers": [

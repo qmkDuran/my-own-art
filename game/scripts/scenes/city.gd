@@ -16,6 +16,13 @@ const EARTH_SCENE: String = "res://earth.tscn"
 const THRONE_SCENE: String = "res://throne.tscn"
 const BRIDGE_AT := Vector2(423, 310)          # art/build_scene.py: bridge image origin
 const SHEPHERD_GLOW := Vector2(0.72, 0.66)         # ~15% stronger so he reads at 1x
+const TREE_REACH := Vector2(64, 46)            # E within this of a trunk base: the tree of life (x half-width, y below/above)
+const FRUIT_FRAMES: int = 12                   # art/build_fruits.py: one crop per month (Rev 22:2)
+const FRUIT_SECONDS: float = 6.5
+const MONTHS: Array[String] = ["January", "February", "March", "April", "May", "June", "July", "August",
+	"September", "October", "November", "December"]
+const ORDINALS: Array[String] = ["first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth",
+	"ninth", "tenth", "eleventh", "twelfth"]
 
 var _trees: Array[Sprite2D] = []
 var _water_a: Sprite2D
@@ -39,6 +46,56 @@ func _build_background() -> void:
 	_throne_glow = SpriteFactory.sprite(self, "res://art/glow_throne.png", SceneData.vec(data["throne_glow"]), -8, true)
 	SpriteFactory.sprite(self, "res://art/bridge.png", BRIDGE_AT, -7)
 	_gate_glow = SpriteFactory.sprite(self, "res://art/glow_gate.png", Vector2(380, 20), 5, true)
+
+
+## E: talk to the nearest person; with nobody near, at a tree of life it gives this month's crop (Rev 22:2).
+func _on_action() -> void:
+	if talk.nearest(player.global_position) == null:
+		var tree: Sprite2D = tree_near(player.global_position)
+		if tree != null:
+			pick_fruit(tree)
+			return
+	talk_nearest()
+
+
+func tree_near(p: Vector2) -> Sprite2D:
+	for t: Sprite2D in _trees:
+		var rel: Vector2 = p - t.position
+		if absf(rel.x) < TREE_REACH.x and rel.y > -12.0 and rel.y < TREE_REACH.y:
+			return t
+	return null
+
+
+## The tree yields its fruit every month: this month's crop drops from the canopy with a small pop, and the verse shows.
+## The twelve fruits are drawn, never named (Scripture does not name them).
+func pick_fruit(tree: Sprite2D) -> Sprite2D:
+	var month: int = int(Time.get_date_dict_from_system()["month"]) - 1
+	var f := Sprite2D.new()
+	f.texture = load("res://art/fruits.png") as Texture2D
+	f.hframes = FRUIT_FRAMES
+	f.frame = month
+	f.z_index = 6
+	var side: float = signf(player.global_position.x - tree.position.x)
+	f.position = tree.position + Vector2(side * 18.0 + 0.1, -66.0)
+	f.scale = Vector2(0.4, 0.4)
+	add_child(f)
+	var land: Vector2 = player.global_position + Vector2(-side * 24.0, -50.0)      # beside the head, toward the tree
+	var tw := create_tween()
+	tw.tween_property(f, "scale", Vector2(2.0, 2.0), 0.18)     # whole-pixel scales only: 16 px fruit shown at 32 px
+	tw.tween_property(f, "scale", Vector2(1.0, 1.0), 0.12)
+	tw.tween_property(f, "scale", Vector2(2.0, 2.0), 0.1)
+	tw.tween_property(f, "position", land, 0.55).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
+	tw.tween_interval(FRUIT_SECONDS - 1.6)
+	tw.tween_property(f, "modulate:a", 0.0, 0.75)
+	tw.tween_callback(f.queue_free)
+	var pop := Fx.sparkles(self, tree.position + Vector2(side * 18.0, -66.0), Vector2(14, 10), 8)
+	pop.one_shot = true                                # a single small burst where the fruit came from
+	pop.explosiveness = 0.7
+	get_tree().create_timer(4.0).timeout.connect(pop.queue_free)
+	Audio.sfx("gate_chime", -18.0, 1.6)
+	var label: String = "%s: the %s crop of the tree of life" % [MONTHS[month], ORDINALS[month]]
+	captions.say(label + "\n" + Scripture.caption("tree_crops"), FRUIT_SECONDS)
+	return f
 
 
 func _water_layer(path: String, alpha: float) -> Sprite2D:

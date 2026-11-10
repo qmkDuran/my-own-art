@@ -69,7 +69,8 @@ func _spawn_player() -> void:
 ## People from data: "people": [[person, x, y, mode, facing, verse], ...], "walkers": [{sheet, loop, verse, steps}, ...]
 func _spawn_people() -> void:
 	for p: Array in data.get("people", []):
-		world.add_child(Npc.standing(int(p[0]), Vector2(float(p[1]), float(p[2])), p[3], p[4], p[5]))
+		var who: Variant = p[0] if p[0] is String else int(p[0])      # pNN by number, or a named sheet (the gate angel)
+		world.add_child(Npc.standing(who, Vector2(float(p[1]), float(p[2])), p[3], p[4], p[5]))
 	for w: Dictionary in data.get("walkers", []):
 		var start: Vector2 = SceneData.vec(w["start"]) if w.has("start") else Vector2.INF
 		world.add_child(Npc.walker(w["sheet"], SceneData.points(w["loop"]), w["verse"], w.get("steps", ""),

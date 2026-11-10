@@ -23,14 +23,14 @@ def draw_sky(px, width):
 STONES = [  # (dark, mid, light) - the twelve foundations, Rev 21:19-20
     ('547e64', '92a984', 'c7dcd0'),  # jasper
     ('484a77', '4d65b4', '4d9be6'),  # sapphire
-    ('7f708a', '9babb2', 'c7dcd0'),  # chalcedony
+    ('7f708a', '9babb2', 'c7dcd0'),  # agate (NIV; chalcedony)
     ('165a4c', '239063', '1ebc73'),  # emerald
-    ('9e4539', 'cd683d', 'e6904e'),  # sardonyx
-    ('6e2727', 'b33831', 'e83b3b'),  # sardius
+    ('9e4539', 'cd683d', 'e6904e'),  # onyx (NIV; sardonyx)
+    ('6e2727', 'b33831', 'e83b3b'),  # ruby (NIV; carnelian)
     ('a2a947', 'd5e04b', 'fbff86'),  # chrysolite
     ('0b8a8f', '0eaf9b', '30e1b9'),  # beryl
     ('f79617', 'f9c22b', 'fbff86'),  # topaz
-    ('239063', '91db69', 'cddf6c'),  # chrysoprase
+    ('239063', '91db69', 'cddf6c'),  # turquoise (NIV; chrysoprase)
     ('b33831', 'ea4f36', 'f57d4a'),  # jacinth
     ('6b3e75', '905ea9', 'a884f3'),  # amethyst
 ]
@@ -101,6 +101,24 @@ def wall_strip(W):
     return wall
 
 
+GATE_NAME = 'JUDAH'           # Rev 21:12: on the gates the names of the twelve tribes of Israel (Rev 7:5 lists Judah first)
+GLYPHS = {'J': ['..#', '..#', '..#', '#.#', '.#.'], 'U': ['#.#', '#.#', '#.#', '#.#', '###'],
+          'D': ['##.', '#.#', '#.#', '#.#', '##.'], 'A': ['.#.', '#.#', '###', '#.#', '#.#'],
+          'H': ['#.#', '#.#', '###', '#.#', '#.#']}
+
+
+def inscribe(ga, text, cx, y0):
+    """Small gold capitals on the pearl, centred on cx (3x5 glyphs, 1 px apart)."""
+    w = len(text) * 4 - 1
+    x0 = cx - w // 2
+    for i, ch in enumerate(text):
+        for r, line in enumerate(GLYPHS[ch]):
+            for c, on in enumerate(line):
+                if on != '#': continue
+                x, y = x0 + i * 4 + c, y0 + r
+                ga[y, x, :3] = C('f79617')[:3]
+
+
 def pearl_gate():
     """The gate of one pearl, standing open; floating ornaments and the generated plinth removed."""
     g = Image.open('art/raw/gate_00.png').convert('RGBA')
@@ -123,6 +141,7 @@ def pearl_gate():
     pink = (ga[..., 0] == 0xea) & (ga[..., 1] == 0xad) & (ga[..., 2] == 0xed)
     yy, xx = np.mgrid[0:ga.shape[0], 0:ga.shape[1]]
     ga[pink & ((xx + yy) % 2 == 0), :3] = (0xff, 0xff, 0xff)
+    inscribe(ga, GATE_NAME, GATE_PASSAGE_FROM_LEFT, 49)
 
 
     return Image.fromarray(ga)

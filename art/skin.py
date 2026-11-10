@@ -26,6 +26,7 @@ SKIN_RULES = {
     'p09':      {'not': ['fbb954', 'e6904e']},                               # golden hair and its shading
     'p15':      {'skin': ['ab947a', '966c6c'], 'skip_feet': 4},              # the elder's grey-pink face shading
     'shepherd': {'not': ['fbb954', 'f68181'], 'skip_feet': 5},               # sash; bronze feet (Rev 1:15)
+    'gate_angel': {'not': ['fbb954']},                                       # gold belt and collar
 }
 HEAD_FRAC = 0.42         # the head is the top 42% of the figure
 
