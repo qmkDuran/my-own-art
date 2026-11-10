@@ -4,14 +4,20 @@ Premise (Dan 10:12-13; Dan 12:1; Jude 9; Rev 12:7-9): in the time of distress pe
 the archangel Michael is sent in answer. He fights only spiritual enemies (Eph 6:12) — shadowy demons, never humans,
 never gory — and protects those who pray (Rev 8:3-4). No God figure; Satan is not shown or fought.
 
-Godot 4.7.2 project: `arpg/game/` (run `godot --path arpg/game`; `-- --demo` plays itself and quits after 47 s;
+Godot 4.7.2 project: `arpg/game/` (run `godot --path arpg/game`; `-- --demo` plays itself and quits after 32 s;
 `-- --smoke` headless test; `-- --demo --shots` writes review screenshots to `arpg/out/`).
 
-## Controls
-WASD move (or click the ground), mouse aims. LMB Strike (click an enemy to walk up and strike; with WASD held a click
-strikes toward the mouse). RMB Descent. 1-4 (also Q E R F; W is a movement key) Rebuke, Shield of Faith, Trumpet Call,
-Radiance. Space dodge. I inventory, K skills, P stars (the Hosts), Esc pause / close panels. Items are picked up by
-walking over them or clicking their names.
+## Controls (click-to-move is primary)
+Hold LMB on the ground to keep walking toward the cursor; LMB on an enemy = walk to it and strike; hold Shift = stand
+still and strike/cast toward the cursor. RMB Descent; Q W E R skills (1-4 alternates); Space dodge; I / K / P panels;
+Esc pause. WASD movement is `wasd_movement` in `data/settings.json` (off; when on, W stays on 2 only). The game draws its
+own cursor (CursorView); the demo bot drives a virtual cursor and the same Game methods (`lmb_down`, `lmb`, `stand`,
+`press_skill`), so the recording shows the real controls.
+
+## View
+Camera zoom 1.5 (`camera_zoom` in settings): with the 2x window stretch every world pixel is 3x3 screen pixels at 1080p
+(whole pixels), so Michael, demons and people are 1.5x larger on screen than before, all at the same scale. The HUD stays
+at 2x: a compact bottom-centre cluster (life gauge | skill bar with a 4 px experience bar above it | glory gauge).
 
 ## Systems (mechanics inspired by classic dark ARPGs; all names, UI and art original)
 - **Skills (mastery style):** 3 skill points per level. The mastery bar (max 20) opens tiers at 1 / 4 / 8 and adds life
@@ -44,9 +50,11 @@ walking over them or clicking their names.
 | `game.gd` | builds the world, wires the systems, turns input into Michael's commands |
 
 ## Art pipeline (run from `arpg/`)
+- `art/build_zone.py`: the zone — one source of truth for the ground image, the prop sprites and `data/zone.json`
+  (two rows of houses facing two streets, a side street with crosswalks, back fences, wrecks on the road, scorch and rubble
+  grouped at the wrecks and fires, three small fires, bare trees with hand-drawn branches, streetlights).
 - `art/build_arpg.py`: Michael sheets (idle/walk/slash, rows down/up/left), demon sheets (rim light + hand animation: idle
-  bob, move lean, attack lunge), item icon atlas (8 slots x 8), praying people (heaven people, everyday clothes), zone ground
-  (Project R tiles + scorch and rubble), darkened/ruined props (dead tree by hand). Review sheets `out/sprites_3x.png`,
+  bob, move lean, attack lunge), item icon atlas (8 slots x 8), praying people (heaven people, everyday clothes). Review sheets `out/sprites_3x.png`,
   `out/item_icons_2x.png`.
 - `art/ext/`: read-only copies of `/home/user/project-revelation/art/exterior` (same Resurrect 64 palette).
 - `art/audio/synth.py`: all audio, procedural, CC0 (reuses heaven's synth instruments).
@@ -84,5 +92,7 @@ Enemies: Imp, Brute, Shade; Champion; hero Gravemaw.
   right = mirrored). No cast animation (skills use the idle pose + effects).
 - Demons have one facing (mirrored) and hand-made animation (bob / lean / lunge), no real walk cycles.
 - The zone is a 2x2-screen street; houses are Project R art darkened, not truly ruined; no doors to enter.
+- Audio: a hard limiter on the master bus (ceiling -1 dB) and per-sound ducking (each copy already playing makes the next
+  3.5 dB quieter, max 4 copies).
 - Balance is first-pass; the demo bot starts at level 6 so every skill appears in the recording.
-- Skill icons are simple drawn glyphs; the paper doll slots have no labels (tooltips name them).
+- Skill icons are simple drawn glyphs. Houses repeat (four art pieces, some mirrored/darkened) and cannot be entered.

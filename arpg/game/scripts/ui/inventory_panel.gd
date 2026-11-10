@@ -5,13 +5,13 @@ extends GamePanel
 
 const CELL: float = 28.0
 const COLS: int = 8
-const DOLL := Vector2(176, 132)
+const DOLL := Vector2(176, 150)
 const SLOT_POS: Dictionary = {
-	"helmet": Vector2(176, 44), "amulet": Vector2(232, 62), "breastplate": Vector2(176, 100), "sword": Vector2(96, 112),
-	"shield": Vector2(256, 112), "belt": Vector2(176, 156), "ring": Vector2(112, 172), "ring2": Vector2(240, 172),
-	"feet": Vector2(176, 210),
+	"helmet": Vector2(176, 50), "amulet": Vector2(256, 50), "sword": Vector2(90, 112), "breastplate": Vector2(176, 112),
+	"shield": Vector2(262, 112), "ring": Vector2(100, 174), "belt": Vector2(176, 174), "ring2": Vector2(252, 174),
+	"feet": Vector2(176, 236),
 }
-const BAG_ORIGIN := Vector2(64, 248)
+const BAG_ORIGIN := Vector2(64, 290)
 
 var _icons: Texture2D = preload("res://art/items/icons.png")
 var _doll: Texture2D = preload("res://art/michael/idle.png")
@@ -19,12 +19,13 @@ var _doll: Texture2D = preload("res://art/michael/idle.png")
 
 func _draw() -> void:
 	frame("Armour of God  (I)")
-	draw_texture_rect_region(_doll, Rect2(DOLL - Vector2(64, 96), Vector2(128, 128)), Rect2(0, 0, 64, 64), Color(1, 1, 1, 0.35))
+	draw_texture_rect_region(_doll, Rect2(DOLL - Vector2(64, 104), Vector2(128, 128)), Rect2(0, 0, 64, 64), Color(1, 1, 1, 0.3))
 	var tip := PackedStringArray()
 	var tip_col := Color.WHITE
 	for slot: String in SLOT_POS:
 		var r := _slot_rect(slot)
 		UiDraw.box(self, r, Color(0.1, 0.09, 0.14), UiDraw.FRAME)
+		UiDraw.text(self, Vector2(r.position.x - 30, r.end.y + 12), _slot_name(slot), UiDraw.DIM, 16, HORIZONTAL_ALIGNMENT_CENTER, r.size.x + 60)
 		if m.inv.equipped.has(slot):
 			var it: Dictionary = m.inv.equipped[slot]
 			_item_icon(it, r)
@@ -44,6 +45,10 @@ func _draw() -> void:
 	UiDraw.text(self, Vector2(16, size.y - 10), "Life %d   Armour %d   Damage %d   Block %d%%" % [
 		roundi(m.stats.v("life")), roundi(m.stats.v("armour")), roundi(m.stats.v("damage")), roundi(m.stats.v("block"))], UiDraw.DIM)
 	UiDraw.tooltip(self, hover, tip, tip_col)
+
+
+func _slot_name(slot: String) -> String:
+	return String(GameData.items["slots"][slot.trim_suffix("2")]["name"])
 
 
 func _slot_rect(slot: String) -> Rect2:

@@ -1,7 +1,7 @@
 """Builds every sprite of the ARPG prototype from the PixelLab outputs (heaven/art/raw/arpg_*, anim/michael/) and the
 Project R exterior art copied into arpg/art/ext/ (read-only source). No API calls. Run from heaven/arpg/:
     python3 art/build_arpg.py
-Outputs go to game/art/: michael/, demons/, items/, people/, zone/ + review sheets in out/."""
+Outputs go to game/art/: michael/, demons/, items/, people/ + review sheets in out/. The zone: art/build_zone.py."""
 import glob, json, os, random, sys
 import numpy as np
 from PIL import Image
@@ -123,79 +123,6 @@ def praying():
         save(Image.fromarray(a), G + f'people/{name}.png')
 
 
-# ------------------------------------------------------------------ zone: 1920x1080 ruined suburb at night
-EXT = 'art/ext/'
-W, HT = 1920, 1080
-ROAD = (500, 596)            # main street (y)
-SIDE_N = (468, 500)          # north sidewalk
-SIDE_S = (596, 628)          # south sidewalk
-CROSS = (1504, 1600)         # side street (x), runs south from the main street
-
-
-def tile(name): return Image.open(EXT + f'tiles/outdoor/{name}.png').convert('RGBA')
-
-
-def ground():
-    bg = Image.new('RGBA', (W, HT))
-    grass = [tile(f'grass_{i}') for i in range(3)]
-    for ty in range(0, HT, 32):
-        for tx in range(0, W, 32):
-            bg.alpha_composite(random.choice(grass), (tx, ty))
-    road = [tile('road_0')] * 6 + [tile('road_crack'), tile('road_patch')]
-    for tx in range(0, W, 32):
-        for ty in range(ROAD[0], ROAD[1], 32): bg.alpha_composite(random.choice(road), (tx, ty))
-        bg.alpha_composite(tile('sidewalk_0' if tx % 64 else 'sidewalk_1'), (tx, SIDE_N[0]))
-        bg.alpha_composite(tile('sidewalk_0' if tx % 64 else 'sidewalk_1'), (tx, SIDE_S[0]))
-    for ty in range(SIDE_S[1], HT, 32):
-        for tx in range(CROSS[0], CROSS[1], 32): bg.alpha_composite(random.choice(road), (tx, ty))
-        bg.alpha_composite(tile('sidewalk_0'), (CROSS[0] - 32, ty)); bg.alpha_composite(tile('sidewalk_0'), (CROSS[1], ty))
-    for tx in range(CROSS[0], CROSS[1], 32):                     # the side street opens into the main street
-        bg.alpha_composite(random.choice(road), (tx, SIDE_S[0]))
-    for tx in range(64, W, 96): bg.alpha_composite(tile('road_line_h'), (tx, (ROAD[0] + ROAD[1]) // 2 - 16))
-    px = bg.load()
-    for _ in range(26):                                           # scorch marks and rubble (the time of distress, Dan 12:1)
-        cx, cy, r = random.randint(40, W - 40), random.randint(ROAD[0] - 40, HT - 30), random.randint(10, 26)
-        for y in range(cy - r, cy + r):
-            for x in range(cx - r * 2, cx + r * 2):
-                if 0 <= x < W and 0 <= y < HT and ((x - cx) / (2 * r)) ** 2 + ((y - cy) / r) ** 2 < 1 and dith(x, y) < 0.45:
-                    px[x, y] = C('2e222f' if dith(x + 1, y) < 0.5 else '3e3546')
-        for _ in range(12):
-            x, y = cx + random.randint(-2 * r, 2 * r), cy + random.randint(-r, r)
-            if 0 < x < W - 1 and 0 < y < HT - 1:
-                px[x, y] = C('625565'); px[x + 1, y] = C('3e3546'); px[x, y - 1] = C('9babb2')
-    save(bg, G + 'zone/ground.png')
-
-
-def darken(im, k=0.72):
-    a = np.array(im).astype(float); a[..., :3] *= k
-    return quant(Image.fromarray(a.clip(0, 255).astype(np.uint8)))
-
-
-def zone_props():
-    props = {
-        'house_a': darken(Image.open(EXT + 'buildings/house_dunmore_night.png').convert('RGBA'), 0.9),
-        'house_b': darken(Image.open(EXT + 'buildings/house_hale_night.png').convert('RGBA'), 0.9),
-        'store': darken(Image.open(EXT + 'buildings/store_ridge_mart_dark.png').convert('RGBA'), 0.85),
-        'house_c': darken(Image.open(EXT + 'buildings/house_okoro.png').convert('RGBA'), 0.7),
-    }
-    for n in ('car_wreck_burned', 'car_wreck', 'suv_red', 'van', 'streetlight', 'fence_picket_broken', 'fence_chainlink',
-              'trash_can', 'hydrant', 'mailbox', 'recycling_bin', 'for_sale_sign', 'hedge'):
-        props[n] = Image.open(EXT + f'props/{n}.png').convert('RGBA')
-    props['tree_dead'] = dead_tree(Image.open(EXT + 'props/tree.png').convert('RGBA'))
-    for n, im in props.items(): save(im, G + f'zone/{n}.png')
-
-
-def dead_tree(im):
-    """The suburb's tree in the time of distress: most leaves gone, the rest withered to grey-brown."""
-    a = np.array(im); greens = {H(c) for c in ('1ebc73', '239063', '165a4c', '91db69', '0eaf9b', '547e64', '374e4a', 'cddf6c', 'f9c22b', 'fbb954')}
-    for y in range(a.shape[0]):
-        for x in range(a.shape[1]):
-            if a[y, x, 3] and tuple(a[y, x, :3]) in greens:
-                if dith(x, y) < 0.62: a[y, x, 3] = 0
-                else: a[y, x, :3] = H('676633' if dith(x + 2, y) < 0.5 else '4c3e24')
-    return keep_main(Image.fromarray(a), 0.1)
-
-
 def review(mi, dm):
     o = Image.new('RGBA', (F * 13, F * 2), (30, 28, 45, 255))
     o.alpha_composite(mi, (0, 0))
@@ -206,5 +133,5 @@ def review(mi, dm):
 
 if __name__ == '__main__':
     os.makedirs('out', exist_ok=True)
-    mi = michael(); dm = demons(); items(); praying(); ground(); zone_props(); review(mi, dm)
+    mi = michael(); dm = demons(); items(); praying(); review(mi, dm)
     print('arpg art ok')

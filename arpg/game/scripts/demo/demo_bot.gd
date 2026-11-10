@@ -1,23 +1,25 @@
 class_name DemoBot
 extends Node
-## --demo: plays the game for the recording. Fights the nearest packs with the sword and skills, picks up items,
-## answers a prayer, spends its points, and opens the inventory, skills and stars panels on a timeline.
+## --demo: plays the game for the recording through the same controls a player uses: a virtual cursor that glides to
+## its target, the left button held to walk or clicked on an enemy, Shift held to stand and strike when surrounded,
+## RMB and Q W E R for skills. Picks up items, answers a prayer, spends its points, shows the inventory once.
 
 const SEEK: float = 420.0
 const LOOT_GRAB: float = 240.0
 const SAFE: float = 110.0
 const START_XP: float = 1250.0
-const QUIT_AFTER: float = 47.0
-const TIMELINE: Array = [   # [seconds, action]
-	[21.0, "open_inventory"], [23.5, "equip"], [25.5, "close"], [31.0, "open_skills"], [33.5, "close"],
-	[34.0, "open_hosts"], [36.5, "close"],
-]
+const QUIT_AFTER: float = 32.0
+const CURSOR_SPEED: float = 1100.0
+const WALK_LEAD: float = 140.0          # a player holds the cursor a little ahead of Michael, not at the destination
+const TIMELINE: Array = [[17.0, "open_inventory"], [18.4, "equip"], [19.8, "close"]]
 
 var g: Game
 var m: Michael
 var _t: float = 0.0
 var _step: int = 0
 var _think: float = 0.0
+var _cursor_goal: Vector2
+var _clicked: Demon
 
 
 func setup(game: Game) -> void:
@@ -27,16 +29,20 @@ func setup(game: Game) -> void:
 	m.prog.leveled.connect(func(_l: int) -> void: _spend_points())
 	m.prog.add_xp(START_XP)                     # the recording starts a few levels in, so every skill is shown
 	m.life = m.stats.v("life")
+	_cursor_goal = m.global_position + Vector2(60, -20)
+	g.cursor_override = _cursor_goal
 
 
 func _physics_process(delta: float) -> void:
 	_t += delta
+	g.cursor_override = g.cursor_override.move_toward(_cursor_goal, CURSOR_SPEED * delta)
 	if _step < TIMELINE.size() and _t >= float(TIMELINE[_step][0]):
 		_do(String(TIMELINE[_step][1]))
 		_step += 1
-	if _t > QUIT_AFTER:
+	if _t > QUIT_AFTER and not OS.get_cmdline_user_args().has("--shots"):   # the screenshot pass quits by itself
 		get_tree().quit()
 	if g.panels_open() or _t < 2.0:
+		g.lmb = false
 		m.stop()
 		return
 	_think -= delta
@@ -46,47 +52,68 @@ func _physics_process(delta: float) -> void:
 	_act()
 
 
+## Aim the cursor; true once it has arrived (a click only lands where the cursor is).
+func _point(at: Vector2) -> bool:
+	_cursor_goal = at
+	return g.cursor_override.distance_to(at) < 6.0
+
+
 func _act() -> void:
+	g.stand = false
 	var close_item: GroundItem = _nearest_item(LOOT_GRAB)
 	if close_item != null and _nearest_demon(SAFE) == null:
-		m.move_to(close_item.global_position)
+		_walk(close_item.global_position)
 		return
 	var target: Demon = _nearest_demon(SEEK)
 	if target != null:
 		_fight(target)
 		return
-	var item: GroundItem = _nearest_item(SEEK)
-	if item != null:
-		m.move_to(item.global_position)
-		return
+	_clicked = null
 	for p: Dictionary in g.objective.points:
 		if int(p["state"]) == PrayerObjective.STATE_WAITING:
-			m.move_to(p["at"])
+			_walk(p["at"])
 			return
-	m.move_to(SceneData.vec(GameData.zone["final_pack"]["at"]))
+	_walk(SceneData.vec(GameData.zone["final_pack"]["at"]))
+
+
+## Hold the left button with the cursor a little ahead of Michael toward the goal.
+func _walk(to: Vector2) -> void:
+	_clicked = null
+	var lead: Vector2 = m.global_position + (to - m.global_position).limit_length(WALK_LEAD)
+	_point(lead)
+	if not g.lmb:
+		g.lmb_down()
 
 
 func _fight(d: Demon) -> void:
+	var aim: Vector2 = d.global_position + Vector2(0, -20)
+	if not _point(aim):
+		return
 	var dist: float = m.global_position.distance_to(d.global_position)
-	var near3: int = _count_within(150.0)
 	var sk: SkillSystem = m.skills
 	if m.life < m.stats.v("life") * 0.55 or (_bolt_near() and sk.can_use("shield")):
-		sk.use("shield", d.global_position)
+		g.press_skill("shield")
 	if _count_within(200.0) >= 4 and sk.can_use("trumpet"):
-		sk.use("trumpet", d.global_position)
-	elif near3 >= 3 and sk.can_use("rebuke"):
-		sk.use("rebuke", d.global_position)
-	elif dist > 130.0 and dist < 240.0 and sk.can_use("descent"):
-		sk.use("descent", d.global_position)
+		g.press_skill("trumpet")
 		return
-	if sk.learned("radiance") and not sk.radiance_on and near3 >= 2 and m.glory > 50.0:
-		sk.use("radiance", d.global_position)
-	if dist > float(GameData.skill("strike")["radius"]) * 0.75:
-		m.move_to(d.global_position)
-	else:
-		m.stop()
-		m.strike(d.global_position + Vector2(0, -16))
-
+	if _count_within(150.0) >= 3 and sk.can_use("rebuke"):
+		g.press_skill("rebuke")
+		return
+	if dist > 130.0 and dist < 240.0 and sk.can_use("descent"):
+		g.press_skill("descent")
+		return
+	if sk.learned("radiance") and not sk.radiance_on and _count_within(150.0) >= 2 and m.glory > 50.0:
+		g.press_skill("radiance")
+	if _count_within(80.0) >= 2:                 # surrounded: hold Shift and strike where he stands
+		g.stand = true
+		g.lmb = true
+		_clicked = null
+		return
+	if _clicked != d:                            # click the enemy: Michael goes to it and strikes
+		_clicked = d
+		g.lmb = false
+		g.lmb_down()
+		g.lmb = false
 
 func _count_within(r: float) -> int:
 	var n: int = 0

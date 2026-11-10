@@ -64,6 +64,26 @@ func _run() -> void:
 		if m.skills.use(s, m.global_position + Vector2(60, 0)):
 			used += 1
 	_expect(used == 5, "all five skills used (%d)" % used)
+	_expect(not InputMap.has_action("move_up") and InputMap.action_get_events("skill_2").any(
+		func(e: InputEvent) -> bool: return e is InputEventKey and (e as InputEventKey).physical_keycode == KEY_W),
+		"click-to-move by default; W is a skill key")
+	for x: Node in get_tree().get_nodes_in_group("demons"):     # a quiet street for the control checks
+		(x as Demon).queue_free()
+	m.life = m.stats.v("life")
+	await _frames(2)
+	g.cursor_override = m.global_position + Vector2(120, 0)
+	g.lmb_down()
+	await _frames(20)
+	_expect(m.global_position.x > g.cursor_override.x - 140.0 + 20.0, "holding LMB on the ground walks toward the cursor")
+	g.lmb = false
+	var p0: Vector2 = m.global_position
+	g.stand = true
+	g.lmb_down()
+	await _frames(20)
+	_expect(m.global_position.distance_to(p0) < 2.0, "Shift + LMB strikes in place (moved %.1f)" % m.global_position.distance_to(p0))
+	g.stand = false
+	g.lmb = false
+	g.cursor_override = Vector2.INF
 	var stars0: int = m.prog.star_points()
 	_expect(m.prog.take_star("vigil") and m.prog.star_points() == stars0 - 1, "a star is taken")
 	var p: Dictionary = g.objective.points[0]

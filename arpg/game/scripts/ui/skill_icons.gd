@@ -4,6 +4,7 @@ extends RefCounted
 
 
 static func draw_icon(ci: CanvasItem, id: String, c: Vector2, col: Color) -> void:
+	c += Vector2(0, 2)
 	var gold := Color("f9c22b") * col
 	var pale := Color("fbff86") * col
 	match id:

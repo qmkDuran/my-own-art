@@ -1,0 +1,5 @@
+{
+ "_doc": "Player options. wasd_movement: keyboard movement (WASD/arrows) in addition to click-to-move; off by default, and when on, the W skill moves to 2 only. camera_zoom: world pixels are shown at 2 x zoom screen pixels (1.5 -> 3x at 1080p, whole pixels).",
+ "wasd_movement": false,
+ "camera_zoom": 1.5
+}

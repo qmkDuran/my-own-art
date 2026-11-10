@@ -3,8 +3,8 @@ extends Control
 ## Esc: the game pauses; controls, the premise and the Biblica notice.
 
 const LINES: PackedStringArray = [
-	"Move: WASD, or click the ground.   Aim: mouse.   Strike: left click.   Descent: right click.",
-	"Skills: 1-4 (also Q E R F).   Dodge: Space.   Inventory: I.   Skills: K.   Stars: P.",
+	"Hold the left button to walk toward the cursor; click an enemy to strike it.   Shift: stand and strike.",
+	"Right button: Descent.   Q W E R (or 1-4): skills.   Space: dodge.   I inventory   K skills   P stars.",
 	"Walk over items to pick them up, or click their names.",
 ]
 

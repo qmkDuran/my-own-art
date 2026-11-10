@@ -1,14 +1,16 @@
 class_name Hud
 extends Control
-## Life (left) and glory (right) gauges, the skill bar with cooldowns, the experience bar, points to spend,
-## the objective, the targeted enemy's health, verse captions and short notices. Drawn by hand, original look.
+## A compact bottom-centre cluster: life gauge | skill bar (with a thin experience bar just above it) | glory gauge.
+## Also points to spend, the objective, the targeted enemy's health, verse captions and short notices.
+## Drawn by hand, original look.
 
-const ORB_R: float = 34.0
-const LIFE_POS := Vector2(56, 486)
-const GLORY_POS := Vector2(904, 486)
-const SLOT: float = 34.0
-const BAR_Y: float = 488.0
-const CAPTION_Y: float = 452.0
+const SLOT: float = 30.0
+const GAP: float = 3.0
+const BAR_Y: float = 502.0
+const ORB_R: float = 25.0
+const XP_H: float = 2.0                 # 4 px at 1080p
+const CAPTION_Y: float = 470.0
+const FLASH_TIME: float = 0.25
 const CAPTION_SECONDS: float = 6.0
 const NOTICE_SECONDS: float = 3.0
 
@@ -18,6 +20,18 @@ var _caption: PackedStringArray = []
 var _caption_t: float = 0.0
 var _notice: String = ""
 var _notice_t: float = 0.0
+var _flash: Dictionary = {}
+
+
+## Light up a skill's slot when it is used.
+func flash(id: String) -> void:
+	_flash[id] = FLASH_TIME
+
+
+func _bar_rect() -> Rect2:
+	var n: int = GameData.skills["slots"].size()
+	var w: float = n * (SLOT + GAP) - GAP
+	return Rect2(480.0 - w / 2.0, BAR_Y, w, SLOT)
 
 
 func setup(michael: Michael, obj: PrayerObjective) -> void:
@@ -42,14 +56,17 @@ func notice(s: String) -> void:
 func _process(delta: float) -> void:
 	_caption_t -= delta
 	_notice_t -= delta
+	for k: String in _flash:
+		_flash[k] = float(_flash[k]) - delta
 	queue_redraw()
 
 
 func _draw() -> void:
 	if m == null:
 		return
-	_orb(LIFE_POS, m.life / m.stats.v("life"), Color("b33831"), Color("e83b3b"), "%d" % roundi(m.life))
-	_orb(GLORY_POS, m.glory / m.stats.v("glory"), Color("c78b25"), Color("f9c22b"), "%d" % roundi(m.glory))
+	var bar: Rect2 = _bar_rect()
+	_orb(Vector2(bar.position.x - ORB_R - 10.0, bar.get_center().y + 2.0), m.life / m.stats.v("life"), Color("b33831"), Color("e83b3b"), "%d" % roundi(m.life))
+	_orb(Vector2(bar.end.x + ORB_R + 10.0, bar.get_center().y + 2.0), m.glory / m.stats.v("glory"), Color("c78b25"), Color("f9c22b"), "%d" % roundi(m.glory))
 	_skill_bar()
 	_xp_bar()
 	_target_bar()
@@ -87,18 +104,20 @@ func _orb(c: Vector2, frac: float, deep: Color, bright: Color, label: String) ->
 		var col: Color = bright if dy < -ORB_R * 0.2 else deep
 		draw_rect(Rect2(c.x - half, y, half * 2.0, 1.0), col)
 	draw_arc(c, ORB_R + 1.0, 0.0, TAU, 48, UiDraw.FRAME, 1.0)
-	draw_circle(c + Vector2(-12, -14), 4.0, Color(1, 1, 1, 0.25))
-	UiDraw.text(self, Vector2(c.x - 40, c.y + 6), label, Color.WHITE, 16, HORIZONTAL_ALIGNMENT_CENTER, 80.0)
+	draw_circle(c + Vector2(-9, -10), 3.0, Color(1, 1, 1, 0.25))
+	UiDraw.text(self, Vector2(c.x - 40, c.y + 5), label, Color.WHITE, 16, HORIZONTAL_ALIGNMENT_CENTER, 80.0)
 
 
 func _skill_bar() -> void:
 	var ids: Array = GameData.skills["slots"]
-	var x0: float = 480.0 - (SLOT + 4.0) * ids.size() / 2.0
+	var x0: float = _bar_rect().position.x
 	for i: int in ids.size():
 		var id: String = ids[i]
-		var r := Rect2(x0 + i * (SLOT + 4.0), BAR_Y, SLOT, SLOT)
+		var r := Rect2(x0 + i * (SLOT + GAP), BAR_Y, SLOT, SLOT)
 		var learned: bool = m.skills.learned(id)
-		UiDraw.box(self, r, Color(0.06, 0.05, 0.09, 0.95), UiDraw.GOLD if (id == "radiance" and m.skills.radiance_on) else UiDraw.FRAME)
+		var lit: bool = float(_flash.get(id, 0.0)) > 0.0 or (id == "radiance" and m.skills.radiance_on)
+		UiDraw.box(self, r, Color(0.25, 0.2, 0.06, 0.95) if float(_flash.get(id, 0.0)) > 0.0 else Color(0.06, 0.05, 0.09, 0.95),
+			Color("fbff86") if lit else UiDraw.FRAME)
 		SkillIcons.draw_icon(self, id, r.get_center(), Color.WHITE if learned else Color(0.4, 0.4, 0.45))
 		var cd: float = m.skills.remaining(id)
 		var total: float = m.stats.cooldown(float(GameData.skill(id)["cooldown"]))
@@ -107,11 +126,12 @@ func _skill_bar() -> void:
 			draw_rect(Rect2(r.position.x, r.end.y - h, SLOT, h), Color(0, 0, 0, 0.6))
 		elif learned and m.glory < float(GameData.skill(id)["cost"]):
 			draw_rect(r, Color(0.1, 0.1, 0.4, 0.5))
-		UiDraw.text(self, r.position + Vector2(2, 12), String(GameData.skill(id)["key"]).get_slice(" ", 0), Color("dcd3c0"))
+		UiDraw.text(self, r.position + Vector2(2, 11), String(GameData.skill(id)["key"]), Color("dcd3c0"))
 
 
 func _xp_bar() -> void:
-	var r := Rect2(110, 530, 740, 4)
+	var bar: Rect2 = _bar_rect()
+	var r := Rect2(bar.position.x, bar.position.y - XP_H - 3.0, bar.size.x, XP_H)
 	draw_rect(r.grow(1.0), UiDraw.INK)
 	draw_rect(Rect2(r.position, Vector2(r.size.x * m.prog.xp / Progression.xp_for(m.prog.level), r.size.y)), Color("8fd3ff"))
 

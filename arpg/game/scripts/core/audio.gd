@@ -1,18 +1,25 @@
 extends Node
 ## Small audio manager (autoload "Audio"). Music lives here so it can cross-fade between scenes;
 ## ambience loops are created as children of the scene that owns them, so they stop with it.
-## All sounds are original procedural audio (see res://audio/CREDITS.md).
+## All sounds are original procedural audio (art/audio/synth.py, CC0).
 
 const DIR: String = "res://audio/"
-const MASTER_DB: float = 5.0
+const MASTER_DB: float = 2.0
+const LIMIT_DB: float = -1.0            # a hard limiter on the master bus keeps stacked hits under 0 dBFS
+const DUCK_DB: float = 3.5              # each copy of a sound already playing makes the next one quieter
+const MAX_COPIES: int = 4
 
 var _music: AudioStreamPlayer
 var _music_name: String = ""
 var _music_target_db: float = -10.0
+var _playing: Dictionary = {}           # sound -> copies playing
 
 
 func _ready() -> void:
 	AudioServer.set_bus_volume_db(0, MASTER_DB)
+	var limiter := AudioEffectHardLimiter.new()
+	limiter.ceiling_db = LIMIT_DB
+	AudioServer.add_bus_effect(0, limiter)
 
 
 func _loop_stream(sound: String) -> AudioStream:
@@ -61,14 +68,20 @@ func loop_player(owner_node: Node, sound: String, volume_db: float) -> AudioStre
 	return p
 
 
-## A one-shot sound; the player frees itself when done.
+## A one-shot sound; the player frees itself when done. Copies of the same sound are ducked and capped.
 func sfx(sound: String, volume_db: float = -8.0, pitch: float = 1.0, delay: float = 0.0) -> void:
+	var copies: int = int(_playing.get(sound, 0))
+	if copies >= MAX_COPIES:
+		return
+	_playing[sound] = copies + 1
 	var p := AudioStreamPlayer.new()
 	p.stream = load(DIR + sound + ".wav") as AudioStream
-	p.volume_db = volume_db
+	p.volume_db = volume_db - DUCK_DB * copies
 	p.pitch_scale = pitch
 	add_child(p)
-	p.finished.connect(p.queue_free)
+	p.finished.connect(func() -> void:
+		_playing[sound] = maxi(0, int(_playing.get(sound, 1)) - 1)
+		p.queue_free())
 	if delay > 0.0:
 		get_tree().create_timer(delay).timeout.connect(p.play)
 	else:

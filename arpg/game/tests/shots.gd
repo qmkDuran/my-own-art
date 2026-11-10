@@ -24,13 +24,18 @@ func _process(delta: float) -> void:
 		get_tree().quit()
 		return
 	var s: Array = SHOTS[_i]
+	var g := get_tree().current_scene as Game
+	if s[2] in ["skills", "stars"] and _t > float(s[0]) - 0.5:
+		g.skill_panel.visible = s[2] == "skills"
+		g.hosts_panel.visible = s[2] == "stars"
 	if s[2] == "prayer" and _t > float(s[0]) - 2.0 and not has_meta("moved"):
 		set_meta("moved", true)
-		var g := get_tree().current_scene as Game
 		var p: Dictionary = g.objective.points[1]
 		g.michael.position = p["at"] + Vector2(0, 50)
 	if _t >= float(s[0]):
 		var img: Image = get_viewport().get_texture().get_image()
 		img.save_png(ProjectSettings.globalize_path("res://") + "../out/" + String(s[1]) + ".png")
 		print("SHOT ", s[1])
+		g.skill_panel.visible = false
+		g.hosts_panel.visible = false
 		_i += 1

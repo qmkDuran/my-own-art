@@ -51,6 +51,8 @@ func _ready() -> void:
 	camera.limit_bottom = int(size.y)
 	camera.position_smoothing_enabled = true
 	camera.position_smoothing_speed = 7.0
+	var zoom: float = float(GameData.settings.get("camera_zoom", 1.5))
+	camera.zoom = Vector2(zoom, zoom)
 	michael.add_child(camera)
 	_build_ui()
 	michael.prog.leveled.connect(_on_level)
@@ -78,7 +80,7 @@ func _build_ui() -> void:
 	hud.setup(michael, objective)
 	inventory_panel = InventoryPanel.new()
 	ui.add_child(inventory_panel)
-	inventory_panel.setup(michael, Rect2(590, 54, 352, 392))
+	inventory_panel.setup(michael, Rect2(590, 30, 352, 432))
 	skill_panel = SkillPanel.new()
 	ui.add_child(skill_panel)
 	skill_panel.setup(michael, Rect2(18, 54, 430, 392))
@@ -88,6 +90,9 @@ func _build_ui() -> void:
 	pause_panel = PausePanel.new()
 	ui.add_child(pause_panel)
 	pause_panel.setup()
+	var cursor := CursorView.new()
+	ui.add_child(cursor)
+	cursor.setup(self)
 
 
 func _on_level(level: int) -> void:
@@ -97,15 +102,25 @@ func _on_level(level: int) -> void:
 	SkillFx.ring(world, michael.global_position, 90.0, Color("fbff86"), 0.8)
 
 
-func mouse_world() -> Vector2:
-	return get_global_mouse_position()
-
-
 func panels_open() -> bool:
 	return inventory_panel.visible or skill_panel.visible or hosts_panel.visible
 
 
-# ------------------------------------------------------------------ input
+# ------------------------------------------------------------------ input (click-to-move first)
+## The pointer can be the mouse or, in the recorded demo, a virtual cursor the bot moves.
+var cursor_override: Vector2 = Vector2.INF
+var lmb: bool = false
+var stand: bool = false
+
+
+func mouse_world() -> Vector2:
+	return cursor_override if cursor_override != Vector2.INF else get_global_mouse_position()
+
+
+func cursor_screen() -> Vector2:
+	return get_viewport().get_canvas_transform() * mouse_world()
+
+
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("pause"):
 		if panels_open():
@@ -119,25 +134,34 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if event.is_action_pressed("inventory"):
 		inventory_panel.toggle()
-	elif event is InputEventKey and (event as InputEventKey).pressed and (event as InputEventKey).physical_keycode == KEY_K:
+	elif event.is_action_pressed("skills"):
 		skill_panel.toggle()
 	elif event.is_action_pressed("tree"):
 		hosts_panel.toggle()
 	elif event.is_action_pressed("dodge"):
 		michael.dodge()
 	elif event.is_action_pressed("charge"):
-		michael.skills.use("descent", mouse_world())
-	elif event.is_action_pressed("strike"):
-		_click(mouse_world())
+		press_skill("descent")
+	elif event.is_action_pressed("click"):
+		lmb_down()
+	elif event.is_action_released("click"):
+		lmb = false
 	else:
 		for i: int in 4:
 			if event.is_action_pressed("skill_%d" % (i + 1)):
-				michael.skills.use(GameData.skills["slots"][i + 2], mouse_world())
+				press_skill(GameData.skills["slots"][i + 2])
 
 
-## Left click: an item label -> go and pick it up; an enemy -> attack it; open ground -> walk there
-## (with WASD held, a click always strikes toward the mouse).
-func _click(at: Vector2) -> void:
+func press_skill(id: String) -> void:
+	if michael.skills.use(id, mouse_world()):
+		hud.flash(id)
+
+
+## Left button down: an item name -> go and pick it up; with Shift -> strike toward the cursor where you stand;
+## an enemy -> go to it and strike; open ground -> walk there (keep holding to keep walking).
+func lmb_down() -> void:
+	lmb = true
+	var at: Vector2 = mouse_world()
 	_attack_target = null
 	_pickup_target = null
 	for n: Node in world.get_children():
@@ -146,13 +170,17 @@ func _click(at: Vector2) -> void:
 			_pickup_target = g
 			michael.move_to(g.global_position)
 			return
+	if stand:
+		michael.stop()
+		michael.strike(at)
+		hud.flash("strike")
+		return
 	var d: Demon = demon_near(at, TARGET_RADIUS)
 	if d != null:
 		_attack_target = d
-	elif InputSetup.move_vector() != Vector2.ZERO:
-		michael.strike(at)
 	else:
 		michael.move_to(at)
+		SkillFx.ring(world, at, 12.0, Color("fbff86"), 0.3)
 
 
 func demon_near(at: Vector2, r: float) -> Demon:
@@ -170,7 +198,10 @@ func demon_near(at: Vector2, r: float) -> Demon:
 func _physics_process(delta: float) -> void:
 	_intro_t -= delta
 	if bot == null:
-		_drive_player()
+		stand = Input.is_action_pressed("stand")
+		if InputSetup.keyboard_movement:
+			michael.set_move_dir(InputSetup.move_vector())
+	_drive_pointer()
 	_follow_targets()
 	_auto_pickup()
 	var cap: String = zone.caption_at(michael.global_position)
@@ -180,20 +211,23 @@ func _physics_process(delta: float) -> void:
 			hud.caption("{%s}" % cap)
 
 
-func _drive_player() -> void:
-	if get_tree().paused:
+## While the left button is held: Shift -> keep striking toward the cursor without moving; otherwise keep walking
+## toward the cursor (unless chasing an enemy or an item).
+func _drive_pointer() -> void:
+	if get_tree().paused or panels_open():
 		return
-	michael.set_move_dir(InputSetup.move_vector())
-	if Input.is_action_pressed("strike") and not panels_open():
-		if _attack_target == null and _pickup_target == null and InputSetup.move_vector() == Vector2.ZERO:
-			var d: Demon = demon_near(mouse_world(), TARGET_RADIUS)
-			if d != null:
-				_attack_target = d
-			else:
-				michael.move_to(mouse_world())
-		elif InputSetup.move_vector() != Vector2.ZERO:
-			michael.strike(mouse_world())
-	michael.aim_at(mouse_world())
+	var at: Vector2 = mouse_world()
+	michael.aim_at(at)
+	if not lmb:
+		return
+	if stand:
+		_attack_target = null
+		michael.stop()
+		if not michael.busy():
+			michael.strike(at)
+			hud.flash("strike")
+	elif _attack_target == null and _pickup_target == null:
+		michael.move_to(at)
 
 
 ## Walk to a clicked enemy and strike it when in reach.
@@ -207,7 +241,9 @@ func _follow_targets() -> void:
 			michael.move_to(_attack_target.global_position)
 		else:
 			michael.stop()
-			michael.strike(_attack_target.global_position + Vector2(0, -16))
+			if not michael.busy():
+				michael.strike(_attack_target.global_position + Vector2(0, -16))
+				hud.flash("strike")
 
 
 func _auto_pickup() -> void:

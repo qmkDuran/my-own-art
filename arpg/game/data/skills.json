@@ -92,7 +92,7 @@
   "rebuke": {
    "name": "Rebuke",
    "tier": 1,
-   "key": "1 / Q",
+   "key": "Q",
    "verse": "rebuke",
    "desc": "A word of command: enemies nearby are struck and flee.",
    "damage": 0.7,
@@ -114,7 +114,7 @@
   "shield": {
    "name": "Shield of Faith",
    "tier": 1,
-   "key": "2 / E",
+   "key": "W",
    "verse": "shield",
    "desc": "Raise the shield: projectiles are put out, blows weakened.",
    "duration": 4.5,
@@ -136,7 +136,7 @@
   "trumpet": {
    "name": "Trumpet Call",
    "tier": 2,
-   "key": "3 / R",
+   "key": "E",
    "verse": "trumpet",
    "desc": "A great blast around you that hurls enemies away.",
    "damage": 2.6,
@@ -158,7 +158,7 @@
   "radiance": {
    "name": "Radiance",
    "tier": 2,
-   "key": "4 / F",
+   "key": "R",
    "verse": "encamps",
    "desc": "Toggle. Light burns enemies around you and mends you; drains glory.",
    "dps": 0.55,

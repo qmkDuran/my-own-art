@@ -7,6 +7,7 @@ static var skills: Dictionary = {}
 static var items: Dictionary = {}
 static var hosts: Dictionary = {}
 static var zone: Dictionary = {}
+static var settings: Dictionary = {}
 
 
 static func ensure() -> void:
@@ -17,6 +18,7 @@ static func ensure() -> void:
 	items = SceneData.load_json("res://data/items.json")
 	hosts = SceneData.load_json("res://data/hosts.json")
 	zone = SceneData.load_json("res://data/zone.json")
+	settings = SceneData.load_json("res://data/settings.json")
 
 
 static func skill(id: String) -> Dictionary:

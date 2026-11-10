@@ -1,7 +1,7 @@
 class_name Michael
 extends CharacterBody2D
 ## The archangel Michael (Jude 9; Rev 12:7; Dan 10:13), sent in answer to prayer: a light in the dark street.
-## Moves (WASD or click), strikes with the sword in a three-hit combo, dodges, and carries his own light.
+## Moves where he is sent (click-to-move), strikes with the sword in a three-hit combo, dodges, and carries his own light.
 ## Holds his numbers (Stats), growth (Progression) and the armour of God (Inventory). Skills live in SkillSystem.
 
 signal life_changed

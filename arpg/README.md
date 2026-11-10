@@ -6,12 +6,16 @@ protects those who pray, and is clothed in the armour of God (Ephesians 6:13-17)
 
 ## Run
     <godot> --path game                         # play
-    <godot> --path game -- --demo               # plays itself for 47 s (used for out/arpg_demo.mp4)
+    <godot> --path game -- --demo               # plays itself for 32 s with the real controls (out/arpg_controls.mp4)
     GODOT=<godot> game/tests/run_smoke.sh       # headless smoke test
     xvfb-run -a <godot> --rendering-driver opengl3 --path game -- --demo --shots   # screenshots into out/
 
-Controls: WASD or click to move, mouse to aim, LMB Strike, RMB Descent, 1-4 (or Q E R F) skills, Space dodge,
-I inventory, K skills, P stars, Esc pause.
+Controls (click-to-move):
+- Hold the left button on the ground to walk toward the cursor; click an enemy to go to it and strike.
+- Hold Shift to stand still and strike (left button) or cast toward the cursor.
+- Right button: Descent. Q W E R: Rebuke, Shield of Faith, Trumpet Call, Radiance (1-4 also work).
+- Space dodge. I inventory, K skills, P stars, Esc pause. Items: walk over them or click their names.
+- Keyboard movement (WASD/arrows) is an option in game/data/settings.json (off by default).
 
 ## Credits
 - Scripture: Scripture quotations taken from The Holy Bible, New International Version® NIV® Copyright © 1973, 1978, 1984, 2011 by Biblica, Inc.™ Used by permission. All rights reserved worldwide.
