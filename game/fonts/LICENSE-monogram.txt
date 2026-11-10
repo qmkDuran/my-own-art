@@ -1,0 +1,4 @@
+monogram — pixel font by datagoblin (Vinícius Menézio)
+Source: https://datagoblin.itch.io/monogram
+License: CC0 1.0 Universal (Creative Commons Zero, public domain dedication), as stated on the source page.
+https://creativecommons.org/publicdomain/zero/1.0/

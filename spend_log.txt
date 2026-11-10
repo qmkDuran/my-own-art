@@ -1,0 +1,51 @@
+char64	cost=10.0	total_used=10.0	usd=2.18083018988485
+char_create_v3_4dir	cost=1.0	total_used=11.0	usd=2.18083018988485
+anim_walk_template_south-north-west	cost=0.0	total_used=11.0	usd=2.18083018988485
+  (after jobs of walk) total_used=14.0	usd=2.18083018988485
+anim_walk-sk_skeleton-v3_west	cost=0.0	total_used=14.0	usd=2.18083018988485
+  (after jobs of walk-sk) total_used=17.0	usd=2.18083018988485
+tilesA_gold_grass	cost=10.0	total_used=27.0	usd=2.18083018988485
+wall	cost=15.0	total_used=42.0	usd=2.18083018988485
+gate	cost=15.0	total_used=57.0	usd=2.18083018988485
+tree	cost=10.0	total_used=67.0	usd=2.18083018988485
+--- throne room budget: START=413.5 CAP=90 ---
+elder	cost=10.0	total_used=10.0	usd=2.18083018988485
+cr_lion	cost=10.0	total_used=20.0	usd=2.18083018988485
+cr_ox	cost=10.0	total_used=30.0	usd=2.18083018988485
+cr_man	cost=10.0	total_used=40.0	usd=2.18083018988485
+cr_eagle	cost=10.0	total_used=50.0	usd=2.18083018988485
+cr_manB	cost=10.0	total_used=60.0	usd=2.18083018988485
+lamb	cost=10.0	total_used=70.0	usd=2.18083018988485
+angel	cost=10.0	total_used=80.0	usd=2.18083018988485
+--- hand-fix pass: CAP=0 ---
+--- people phase: START=333.5 CAP=30 ---
+people	cost=10.0	total_used=10.0	usd=2.18083018988485
+char_walkerA	cost=1.0	total_used=11.0	usd=2.18083018988485
+anim_walkerA_walk	cost=0.0	total_used=11.0	usd=2.18083018988485
+  (after jobs of walkerA) total_used=14.0	usd=2.18083018988485
+char_walkerB	cost=1.0	total_used=15.0	usd=2.18083018988485
+anim_walkerB_walk	cost=0.0	total_used=15.0	usd=2.18083018988485
+  (after jobs of walkerB) total_used=18.0	usd=2.18083018988485
+--- new earth phase: START=315.5 CAP=80 ---
+animA	cost=10.0	total_used=10.0	usd=2.18083018988485
+animB	cost=10.0	total_used=20.0	usd=2.18083018988485
+house	cost=10.0	total_used=30.0	usd=2.18083018988485
+frame	cost=10.0	total_used=40.0	usd=2.18083018988485
+vines	cost=10.0	total_used=50.0	usd=2.18083018988485
+--- people fix pass: START=265.5 CAP=15 ---
+char4_p00	cost=1.0	total_used=1.0	usd=2.18083018988485
+char4_p01	cost=1.0	total_used=2.0	usd=2.18083018988485
+char4_p02	cost=1.0	total_used=3.0	usd=2.18083018988485
+char4_p04	cost=1.0	total_used=4.0	usd=2.18083018988485
+char4_p05	cost=1.0	total_used=5.0	usd=2.18083018988485
+char4_p06	cost=1.0	total_used=6.0	usd=2.18083018988485
+char4_p07	cost=1.0	total_used=7.0	usd=2.18083018988485
+char4_p09	cost=1.0	total_used=8.0	usd=2.18083018988485
+char4_p10	cost=1.0	total_used=9.0	usd=2.18083018988485
+char4_p14	cost=1.0	total_used=10.0	usd=2.18083018988485
+char4_p15	cost=1.0	total_used=11.0	usd=2.18083018988485
+--- code cleanup: START=254.5 CAP=0 ---
+--- scale+zoom: START=254.5 CAP=40 ---
+house2x	cost=15.0	total_used=15.0	usd=2.18083018988485
+frame2x	cost=15.0	total_used=30.0	usd=2.18083018988485
+vines2x	cost=10.0	total_used=40.0	usd=2.18083018988485

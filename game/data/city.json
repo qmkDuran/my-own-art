@@ -1,0 +1,466 @@
+{
+ "_doc": "The holy city screen (Rev 21-22). Numbers mirror art/build_scene.py. Rects are [x, y, w, h]; demo waypoints [x, y, pause].",
+ "title": {
+  "text": "The New Jerusalem\nRevelation 21-22",
+  "y": 196
+ },
+ "caption_y": 508,
+ "hint": "E: talk with someone nearby    Esc: menu",
+ "player_start": [
+  480,
+  470
+ ],
+ "gate": {
+  "passage": [
+   462,
+   502
+  ],
+  "passage_end": 138,
+  "respawn": [
+   482,
+   186
+  ],
+  "verse": "And the gates of it shall not be shut at all by day...\nAnd they shall bring the glory and honour of the nations into it.\nRevelation 21:25-26",
+  "verse_y": 214
+ },
+ "river": [
+  272,
+  368
+ ],
+ "street_x": [
+  432,
+  528
+ ],
+ "banks": [
+  [
+   224,
+   272
+  ],
+  [
+   368,
+   416
+  ]
+ ],
+ "trees": [
+  [
+   "tree1",
+   90,
+   262,
+   false
+  ],
+  [
+   "tree2",
+   290,
+   262,
+   false
+  ],
+  [
+   "tree1",
+   670,
+   262,
+   true
+  ],
+  [
+   "tree2",
+   870,
+   262,
+   true
+  ],
+  [
+   "tree2",
+   140,
+   406,
+   true
+  ],
+  [
+   "tree1",
+   330,
+   406,
+   false
+  ],
+  [
+   "tree2",
+   630,
+   406,
+   false
+  ],
+  [
+   "tree1",
+   830,
+   406,
+   true
+  ]
+ ],
+ "colliders": [
+  [
+   -40,
+   -100,
+   502,
+   262
+  ],
+  [
+   502,
+   -100,
+   498,
+   262
+  ],
+  [
+   462,
+   -100,
+   40,
+   228
+  ],
+  [
+   -40,
+   268,
+   480,
+   104
+  ],
+  [
+   520,
+   268,
+   480,
+   104
+  ],
+  [
+   -40,
+   0,
+   40,
+   540
+  ],
+  [
+   960,
+   0,
+   40,
+   540
+  ],
+  [
+   0,
+   538,
+   960,
+   40
+  ]
+ ],
+ "motes": [
+  [
+   0,
+   0,
+   960,
+   540,
+   110,
+   0,
+   -5,
+   [
+    1,
+    0.98,
+    0.8
+   ]
+  ],
+  [
+   0,
+   232,
+   260,
+   176,
+   50,
+   14,
+   -3,
+   [
+    1,
+    1,
+    0.9
+   ]
+  ],
+  [
+   450,
+   40,
+   60,
+   120,
+   16,
+   0,
+   -6,
+   [
+    1,
+    1,
+    1
+   ]
+  ]
+ ],
+ "zones": [
+  [
+   440,
+   120,
+   80,
+   110,
+   "The twelve gates were twelve pearls; every gate was of one pearl.  Rev 21:21"
+  ],
+  [
+   440,
+   262,
+   80,
+   116,
+   "A pure river of water of life, clear as crystal, proceeding out of the throne.  Rev 22:1"
+  ],
+  [
+   0,
+   222,
+   960,
+   52,
+   "On either side of the river was the tree of life... the leaves were for the healing of the nations.  Rev 22:2"
+  ],
+  [
+   0,
+   366,
+   960,
+   54,
+   "The tree of life, which bare twelve manner of fruits, and yielded her fruit every month.  Rev 22:2"
+  ],
+  [
+   0,
+   160,
+   960,
+   62,
+   "The wall was of jasper; its foundations garnished with all manner of precious stones.  Rev 21:18-19"
+  ],
+  [
+   0,
+   420,
+   960,
+   120,
+   "The street of the city was pure gold, as it were transparent glass.  Rev 21:21"
+  ]
+ ],
+ "people": [
+  [
+   1,
+   200,
+   486,
+   "stand",
+   "right",
+   "Salvation to our God which sitteth upon the throne, and unto the Lamb.  Rev 7:10"
+  ],
+  [
+   7,
+   244,
+   489,
+   "stand",
+   "left",
+   "In thy presence is fulness of joy; at thy right hand there are pleasures for evermore.  Ps 16:11"
+  ],
+  [
+   9,
+   222,
+   510,
+   "stand",
+   "up",
+   "God shall wipe away all tears from their eyes; and there shall be no more death, neither sorrow, nor crying.  Rev 21:4"
+  ],
+  [
+   0,
+   150,
+   446,
+   "palm",
+   "down",
+   "Blessing, and honour, and glory, and power, be unto him that sitteth upon the throne, and unto the Lamb for ever and ever.  Rev 5:13"
+  ],
+  [
+   5,
+   752,
+   200,
+   "stand",
+   "right",
+   "There shall be no night there; and they need no candle, neither light of the sun; for the Lord God giveth them light.  Rev 22:5"
+  ],
+  [
+   14,
+   792,
+   204,
+   "palm",
+   "left",
+   "They shall obtain joy and gladness, and sorrow and sighing shall flee away.  Isa 35:10"
+  ],
+  [
+   4,
+   446,
+   198,
+   "kneel",
+   "up",
+   "Alleluia: for the Lord God omnipotent reigneth.  Rev 19:6"
+  ],
+  [
+   2,
+   520,
+   200,
+   "palm",
+   "up",
+   "Blessing, and glory, and wisdom, and thanksgiving, and honour, and power, and might, be unto our God for ever and ever. Amen.  Rev 7:12"
+  ],
+  [
+   15,
+   560,
+   398,
+   "stand",
+   "up",
+   "Eye hath not seen, nor ear heard... the things which God hath prepared for them that love him.  1 Cor 2:9"
+  ],
+  [
+   6,
+   190,
+   252,
+   "palm",
+   "down",
+   "Behold, the tabernacle of God is with men, and he will dwell with them, and they shall be his people.  Rev 21:3"
+  ],
+  [
+   10,
+   880,
+   440,
+   "stand",
+   "left",
+   "In my Father's house are many mansions... I go to prepare a place for you.  John 14:2"
+  ]
+ ],
+ "walkers": [
+  {
+   "sheet": "res://art/people/walkerA.png",
+   "loop": [
+    [
+     900,
+     470
+    ],
+    [
+     560,
+     470
+    ],
+    [
+     560,
+     505
+    ],
+    [
+     900,
+     505
+    ]
+   ],
+   "verse": "And they shall see his face; and his name shall be in their foreheads.  Rev 22:4",
+   "steps": "step_gold"
+  },
+  {
+   "sheet": "res://art/people/walkerB.png",
+   "loop": [
+    [
+     290,
+     520
+    ],
+    [
+     290,
+     450
+    ],
+    [
+     410,
+     450
+    ],
+    [
+     410,
+     520
+    ]
+   ],
+   "verse": "And they sung a new song, saying, Thou art worthy... for thou wast slain, and hast redeemed us to God by thy blood.  Rev 5:9",
+   "steps": "step_gold"
+  }
+ ],
+ "demo": {
+  "start": [
+   56,
+   500
+  ],
+  "pause": 3.0,
+  "waypoints": [
+   [
+    160,
+    494,
+    0
+   ],
+   [
+    161,
+    494,
+    4.2
+   ],
+   [
+    110,
+    426,
+    0
+   ],
+   [
+    480,
+    426,
+    0
+   ],
+   [
+    480,
+    318,
+    0
+   ],
+   [
+    481,
+    318,
+    1.2
+   ],
+   [
+    480,
+    246,
+    0
+   ],
+   [
+    372,
+    246,
+    0
+   ],
+   [
+    372,
+    247,
+    1.6
+   ],
+   [
+    480,
+    246,
+    0
+   ],
+   [
+    482,
+    198,
+    0
+   ],
+   [
+    482,
+    120,
+    0
+   ]
+  ],
+  "events": [
+   [
+    4.9,
+    "talk_nearest"
+   ]
+  ],
+  "quit_after": 38.5
+ },
+ "earth_demo": {
+  "start": [
+   482,
+   262
+  ],
+  "face": "up",
+  "pause": 1.2,
+  "waypoints": [
+   [
+    482,
+    198,
+    0
+   ],
+   [
+    482,
+    120,
+    0
+   ]
+  ]
+ }
+}

@@ -1,0 +1,10 @@
+CC0 1.0 Universal (Public Domain Dedication)
+
+The audio files in this folder were created procedurally for this project. To the extent possible under law,
+the author has waived all copyright and related or neighboring rights to these works, dedicating them to the
+public domain worldwide. You can copy, modify, distribute and perform the work, even for commercial purposes,
+all without asking permission.
+
+Full legal code: https://creativecommons.org/publicdomain/zero/1.0/legalcode
+
+The hymn tune NICAEA (John Bacchus Dykes, 1861) arranged in holy.wav is itself in the public domain.
