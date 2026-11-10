@@ -10,8 +10,8 @@ const LAMB_GLOW_SCALE := Vector2(0.14, 0.16)
 const BOLT_MIN: float = 1.8
 const BOLT_MAX: float = 4.2
 const LAMPS_HEAR: float = 300.0
-const KNEEL_FADE_IN: float = 0.8
-const KNEEL_FADE_OUT: float = 0.6
+const WORSHIP_FADE_IN: float = 0.8
+const WORSHIP_FADE_OUT: float = 0.6
 
 var _layout: Dictionary
 var _rng := RandomNumberGenerator.new()
@@ -24,6 +24,8 @@ var _next_bolt: float = 1.5
 var _next_worship: float = 0.0
 var _lamps_sound: AudioStreamPlayer
 var _holy: AudioStreamPlayer
+## True while the player stands still in worship (E).
+var worshipping: bool = false
 
 
 func _data_path() -> String:
@@ -107,7 +109,7 @@ func _begin() -> void:
 
 
 func _on_action() -> void:
-	toggle_kneel()
+	toggle_worship()
 
 
 func _tick(delta: float) -> void:
@@ -135,29 +137,31 @@ func _worship() -> void:
 	get_tree().create_timer(seconds).timeout.connect(func() -> void: captions.forced = "")
 
 
-## Kneel in worship (E): the music swells into "Holy, Holy, Holy" (NICAEA, Dykes 1861), instrumental; Rev 4:8.
-func toggle_kneel() -> void:
-	player.set_kneel(not player.kneeling)
-	captions.suppressed = player.kneeling
+## Worship (E): the player stands still facing the throne; the music swells into "Holy, Holy, Holy"
+## (NICAEA, Dykes 1861), instrumental, and Rev 4:8 is shown. E again ends it.
+func toggle_worship() -> void:
+	worshipping = not worshipping
+	player.frozen = worshipping
+	captions.suppressed = worshipping
 	var music := create_tween()
-	if player.kneeling:
+	if worshipping:
+		player.face("up")
 		Audio.set_music_volume(-22.0, 1.5)
 		_holy.volume_db = -30.0
 		_holy.play()
 		music.tween_property(_holy, "volume_db", -6.0, 2.0)
-		captions.show_verse(data["kneel"]["text"], float(data["kneel"]["y"]), KNEEL_FADE_IN)
+		captions.show_verse(data["worship_verse"]["text"], float(data["worship_verse"]["y"]), WORSHIP_FADE_IN)
 	else:
 		Audio.restore_music(2.0)
 		music.tween_property(_holy, "volume_db", -40.0, 1.8)
 		music.tween_callback(_holy.stop)
-		captions.hide_title(KNEEL_FADE_OUT)
+		captions.hide_title(WORSHIP_FADE_OUT)
 
 
-## Demo event: stop walking, face the throne and kneel.
-func demo_kneel() -> void:
+## Demo event: stop walking and worship facing the throne.
+func demo_worship() -> void:
 	player.autopilot.clear()
-	player.face("up")
-	toggle_kneel()
+	toggle_worship()
 
 
 func _zone_caption(p: Vector2) -> String:

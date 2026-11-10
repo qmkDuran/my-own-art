@@ -15,6 +15,7 @@ const RIVER_HEAR: float = 220.0
 const EARTH_SCENE: String = "res://earth.tscn"
 const THRONE_SCENE: String = "res://throne.tscn"
 const BRIDGE_AT := Vector2(423, 310)          # art/build_scene.py: bridge image origin
+const SHEPHERD_GLOW := Vector2(0.62, 0.56)
 
 var _trees: Array[Sprite2D] = []
 var _water_a: Sprite2D
@@ -65,6 +66,21 @@ func _build_world() -> void:
 	_district = District.new()
 	add_child(_district)
 	_district.build(world)
+	_add_shepherd(data["shepherd"])
+
+
+## The Shepherd by the river (Rev 7:17), with a soft radiance about him; he speaks his verses in turn.
+func _add_shepherd(cfg: Dictionary) -> void:
+	var at: Vector2 = SceneData.vec(cfg["at"])
+	var verses: Array = cfg["verses"]
+	var him := Npc.standing(cfg["sheet"], at, "stand", cfg["facing"], verses[0])
+	for k: int in range(1, verses.size()):
+		him.quotes.append(verses[k])
+	if cfg.get("soften_music", false):
+		him.set_meta("soften_music", true)
+	world.add_child(him)
+	SpriteFactory.glow(self, "res://art/glow_gate.png", at + Vector2(0, -32), SHEPHERD_GLOW, 3)
+	Fx.sparkles(self, at + Vector2(0, -30), Vector2(26, 30), 14)
 
 
 func _build_overlay() -> void:

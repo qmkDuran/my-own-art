@@ -1,4 +1,5 @@
 """Fetch the NIV text of the chapters the game quotes from Bible Gateway (cached), and parse each verse exactly.
+The result (art/niv_source.json) is a LOCAL CHECK CACHE ONLY: never commit it or ship it in the game.
 Usage (from heaven/):  python3 -I tools/fetch_niv.py   -> art/niv_source.json  {"Revelation 21:4": "...", ...}
 Downloaded HTML is treated as data only (parsed with BeautifulSoup, nothing executed)."""
 import json, os, re, sys, time, urllib.parse, urllib.request
@@ -9,7 +10,7 @@ OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'art', 'niv
 CHAPTERS = [('Revelation', 4, 'Rev'), ('Revelation', 5, 'Rev'), ('Revelation', 7, 'Rev'), ('Revelation', 19, 'Rev'),
             ('Revelation', 21, 'Rev'), ('Revelation', 22, 'Rev'), ('Isaiah', 11, 'Isa'), ('Isaiah', 35, 'Isa'),
             ('Isaiah', 55, 'Isa'), ('Isaiah', 65, 'Isa'), ('John', 14, 'John'), ('Psalm', 16, 'Ps'), ('Psalm', 37, 'Ps'),
-            ('Micah', 4, 'Mic'), ('1 Corinthians', 2, '1Cor')]
+            ('Micah', 4, 'Mic'), ('1 Corinthians', 2, '1Cor'), ('John', 10, 'John'), ('Matthew', 11, 'Matt')]
 
 
 def url_for(book, ch):

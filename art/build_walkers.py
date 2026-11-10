@@ -1,12 +1,12 @@
 """The two walking people (Rev 7:9): game/art/people/walkerA.png, walkerB.png in the hero.png layout
-(idle d/u/side x4, walk d/u/side x8, kneel d/u/side)."""
+(idle d/u/side x4, walk d/u/side x8)."""
 import glob, sys
 from PIL import Image
 sys.path.insert(0, 'art')
-from common import FRAME, FEET_ROW, quant, breathe, kneel
+from common import FRAME, FEET_ROW, quant, breathe
 
 OUTD = 'game/art/people/'
-DIRS = (('south', 'down'), ('north', 'up'), ('west', 'left'))
+DIRS = ('south', 'north', 'west')
 
 
 def walk_frames(name, d):
@@ -19,12 +19,11 @@ def walk_frames(name, d):
 
 
 def walker_sheet(name):
-    sh = Image.new('RGBA', (FRAME * 8, FRAME * 7))
-    for r, (d, facing) in enumerate(DIRS):
+    sh = Image.new('RGBA', (FRAME * 8, FRAME * 6))
+    for r, d in enumerate(DIRS):
         w = walk_frames(name, d)
         for i, f in enumerate([w[0], w[0], breathe(w[0]), breathe(w[0])]): sh.alpha_composite(f, (i * FRAME, r * FRAME))
         for i, f in enumerate(w): sh.alpha_composite(f, (i * FRAME, (r + 3) * FRAME))
-        sh.alpha_composite(kneel(w[0], facing), (r * FRAME, 6 * FRAME))
     sh.save(OUTD + f'{name}.png')
 
 

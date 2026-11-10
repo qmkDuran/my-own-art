@@ -1,9 +1,9 @@
 class_name Npc
 extends CharacterBody2D
 ## One of the great multitude of the redeemed (Rev 7:9): white robes, some with palms.
-## Modes: "stand" (breathing idle), "kneel", "palm" (sways a palm branch), "walk" (calm loop along a path).
+## Modes: "stand" (breathing idle), "palm" (sways a palm branch), "walk" (calm loop along a path).
 ## Standing people have four facings (down/up/left; right = mirrored left) and turn toward the player when spoken to.
-## Each carries one Scripture quotation (KJV) shown by the scene when the player talks to them.
+## Each carries one or more Scripture quotations (NIV, from data/verses.json), spoken in turn when the player talks to them.
 
 const SPEED: float = 34.0
 const FRAME: int = 64
@@ -12,13 +12,14 @@ const STRIDE: float = 22.0
 const FADE: float = 0.8
 const HEAR_DISTANCE: float = 260.0
 const ROWS: Dictionary = {"down": 0, "up": 1, "left": 2, "right": 2}
+const COLUMNS: int = 4
 const COL_IDLE: int = 0
 const COL_BREATHE: int = 1
-const COL_KNEEL: int = 2
-const COL_PALM_A: int = 3
-const COL_PALM_B: int = 4
+const COL_PALM_A: int = 2
+const COL_PALM_B: int = 3
 
-var quote: String = ""
+var quotes: Array[String] = []
+var _next_quote: int = 0
 var mode: String = "stand"
 var path: Array[Vector2] = []
 ## Footstep sound prefix for walkers (e.g. "step_gold" -> step_gold0..2), empty for silent.
@@ -40,15 +41,15 @@ var _step_acc: float = 0.0
 var _turned_until: float = -1.0
 
 
-## A standing / kneeling / palm-swaying person with a 4-direction sheet (art/people/pNN.png).
-static func standing(person: int, at: Vector2, how: String, facing: String, verse: String) -> Npc:
+## A standing / palm-swaying person with a 4-direction sheet: art/people/pNN.png (person number) or art/people/<name>.png.
+static func standing(person: Variant, at: Vector2, how: String, facing: String, verse: String) -> Npc:
 	var n := Npc.new()
-	n._sheet_path = "res://art/people/p%02d.png" % person
+	n._sheet_path = "res://art/people/%s.png" % (person if person is String else "p%02d" % int(person))
 	n.mode = how
 	n._home_facing = facing
 	n._facing = facing
 	n.position = at
-	n.quote = verse
+	n.quotes.append(verse)
 	return n
 
 
@@ -61,7 +62,7 @@ static func walker(sheet_path: String, loop: Array[Vector2], verse: String, step
 	n.one_way = procession
 	n.position = loop[0] if start == Vector2.INF else start
 	n._target = 0 if start == Vector2.INF else 1
-	n.quote = verse
+	n.quotes.append(verse)
 	n.step_sound = steps
 	n._sheet_path = sheet_path
 	return n
@@ -98,7 +99,7 @@ func _add_walker_sprite() -> void:
 func _add_sheet_sprite() -> void:
 	_sprite = Sprite2D.new()
 	_sprite.texture = load(_sheet_path) as Texture2D
-	_sprite.hframes = 5
+	_sprite.hframes = COLUMNS
 	_sprite.vframes = 3
 	_sprite.centered = false
 	_sprite.offset = Vector2(-FRAME / 2.0, -FEET_Y)
@@ -108,9 +109,16 @@ func _add_sheet_sprite() -> void:
 func _add_bubble() -> void:
 	_bubble = Sprite2D.new()
 	_bubble.texture = load("res://art/people/bubble.png")
-	_bubble.position = Vector2(10, -66 if mode != "kneel" else -57)
+	_bubble.position = Vector2(10, -66)
 	_bubble.visible = false
 	add_child(_bubble)
+
+
+## The verse to say now; several verses are said in turn on repeated talks.
+func take_quote() -> String:
+	var q: String = quotes[_next_quote % quotes.size()]
+	_next_quote += 1
+	return q
 
 
 ## Turn toward `who` (as far as four facings allow) and show the speech bubble for a while.
@@ -138,13 +146,11 @@ func _physics_process(delta: float) -> void:
 		_turned_until = -1.0
 		_facing = _home_facing
 	_sprite.flip_h = _facing == "right"
-	_sprite.frame = ROWS[_facing] * 5 + _column()
+	_sprite.frame = ROWS[_facing] * COLUMNS + _column()
 
 
 func _column() -> int:
 	match mode:
-		"kneel":
-			return COL_KNEEL
 		"palm":
 			var beat: int = int(_time * 1.2 + _phase) % 4   # idle, lean one way, idle, lean the other way
 			return [COL_IDLE, COL_PALM_A, COL_IDLE, COL_PALM_B][beat]

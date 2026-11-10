@@ -201,7 +201,7 @@ CROWN_SLOTS = [[CX + (c - 5.5) * 17, row_y] for row_y in (250, 263) for c in ran
 layout = {
     'throne': [CX, CY], 'horizon': HORIZON, 'dais': DAIS, 'lamps': LAMPS, 'lamb': [CX, 196],
     'creatures': [['lion', 318, 214], ['ox', 642, 214], ['man', 400, 386], ['eagle', 560, 386]],
-    'light': [CX, 122], 'crown_slots': CROWN_SLOTS, 'kneel': [CX, 304],
+    'light': [CX, 122], 'crown_slots': CROWN_SLOTS,
     'elders': elders,
 }
 json.dump(layout, open(D + 'layout.json', 'w'), indent=1)

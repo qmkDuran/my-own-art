@@ -9,6 +9,7 @@ from PIL import Image
 sys.path.insert(0, 'art')
 from common import C, OUT, H, dith, quant, snap_rgb, keep_main, FRAME
 from upscale import upscale
+from skin import skin_mask, skin_colours, shift_colour
 from wall import STONES
 
 D = 'game/art/district/'; os.makedirs(D, exist_ok=True)
@@ -147,36 +148,40 @@ def gifts():
     return out
 
 
-def shift_skin(sheet, steps):
-    """A new individual from an existing one: every skin-ramp colour moved `steps` along the ramp (palette only)."""
+def shift_skin(sheet, steps, source):
+    """A new individual from an existing one: every skin pixel of `source` (art/skin.py) moved `steps` along the skin
+    ladder (palette only), so the new person still has exactly one skin ramp."""
     a = np.array(sheet)
-    ramp = [H(c) for c in SKIN_RAMP]
+    m = skin_mask(a, skin_colours(source))
     src = a.copy()
-    for i, c in enumerate(ramp):
-        j = max(0, min(len(ramp) - 1, i + steps))
-        m = (src[..., 0] == c[0]) & (src[..., 1] == c[1]) & (src[..., 2] == c[2]) & (src[..., 3] > 0)
-        a[m, :3] = ramp[j]
+    for c in {tuple(int(v) for v in p) for p in src[m][:, :3]}:
+        a[m & (src[..., :3] == c).all(-1), :3] = shift_colour(c, steps)
     return Image.fromarray(a)
 
 
-def bearer_sheet(walker, steps, gift):
+GIFT_BOXES = {}   # bearer -> [x0, y0, x1, y1] of the carried gift per walk frame (for tools/check_skin.py)
+
+
+def bearer_sheet(walker, steps, gift, name=None):
     """A gift bearer: the walker's west walk with the gift carried before the chest; hero.png layout (all rows = side)."""
-    src = shift_skin(Image.open(f'game/art/people/{walker}.png').convert('RGBA'), steps)
+    src = shift_skin(Image.open(f'game/art/people/{walker}.png').convert('RGBA'), steps, walker)
     frames = []
     for i in range(8):
         f = src.crop((i * FRAME, 5 * FRAME, (i + 1) * FRAME, 6 * FRAME))
         b = f.getbbox()
         g = Image.new('RGBA', (FRAME, FRAME)); g.alpha_composite(f)
-        g.alpha_composite(gift, (max(0, b[0] - gift.width // 2 + 2), b[1] + 33 - gift.height // 2))   # carried before the chest
+        gx, gy = max(0, b[0] - gift.width // 2 + 2), b[1] + 33 - gift.height // 2
+        g.alpha_composite(gift, (gx, gy))   # carried before the chest
+        if name: GIFT_BOXES.setdefault(name, []).append([gx, gy, gx + gift.width, gy + gift.height])
         frames.append(g)
-    sh = Image.new('RGBA', (FRAME * 8, FRAME * 7))
-    for r in range(7):
+    sh = Image.new('RGBA', (FRAME * 8, FRAME * 6))
+    for r in range(6):
         row = frames if r in (3, 4, 5) else [frames[0]] * 4
         for i, f in enumerate(row): sh.alpha_composite(f, (i * FRAME, r * FRAME))
     return sh
 
 
-RESIDENTS = [('p31', 'p01', 3), ('p32', 'p15', 3), ('p33', 'p05', -2), ('p34', 'p07', 2), ('p35', 'p10', -2)]
+RESIDENTS = [('p31', 'p01', 3), ('p32', 'p15', 3), ('p33', 'p05', -2), ('p34', 'p07', 1), ('p35', 'p10', -2)]
 BEARERS = [('bearer_a', 'walkerA', 3, 'gift_chest'), ('bearer_b', 'walkerB', -2, 'gift_jar'),
            ('bearer_c', 'walkerA', -1, 'gift_fruit'), ('bearer_d', 'walkerB', 2, 'gift_cloth'),
            ('bearer_e', 'walkerA', 1, 'gift_incense'), ('bearer_f', 'walkerB', -1, 'gift_gems')]
@@ -184,9 +189,9 @@ BEARERS = [('bearer_a', 'walkerA', 3, 'gift_chest'), ('bearer_b', 'walkerB', -2,
 
 def people(gift_imgs):
     for new, old, steps in RESIDENTS:
-        shift_skin(Image.open(f'game/art/people/{old}.png').convert('RGBA'), steps).save('game/art/people/' + new + '.png')
+        shift_skin(Image.open(f'game/art/people/{old}.png').convert('RGBA'), steps, old).save('game/art/people/' + new + '.png')
     for name, walker, steps, gift in BEARERS:
-        bearer_sheet(walker, steps, gift_imgs[gift]).save(D + name + '.png')
+        bearer_sheet(walker, steps, gift_imgs[gift], name).save(D + name + '.png')
 
 
 def main():
@@ -202,6 +207,7 @@ def main():
         'origin_y': OY, 'size': [W, HT], 'street': [OY + STREET[0], OY + STREET[1]], 'balustrade_y': OY + BALUSTRADE_Y,
         'dwellings': [[n, cx, OY + base, sizes[n][0]] for n, _, cx, base in DWELLINGS],
         'planters': [[cx, OY + base] for cx, base in PLANTERS],
+        'gift_boxes': GIFT_BOXES,
     }
     json.dump(layout, open(D + 'layout.json', 'w'), indent=1)
     print('district ok', sizes)

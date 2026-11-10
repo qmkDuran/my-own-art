@@ -5,7 +5,7 @@
   "y": 300
  },
  "caption_y": 482,
- "hint": "E: kneel and worship    Esc: menu",
+ "hint": "E: worship    Esc: menu",
  "player_start": [
   480,
   500
@@ -29,10 +29,6 @@
    5
   ]
  ],
- "kneel": {
-  "text": "{holy_holy|block}",
-  "y": 430
- },
  "worship": {
   "every": 16.0,
   "first": 6.0,
@@ -133,11 +129,11 @@
   "events": [
    [
     22.0,
-    "demo_kneel"
+    "demo_worship"
    ],
    [
     30.0,
-    "toggle_kneel"
+    "toggle_worship"
    ]
   ],
   "quit_after": 33.0
@@ -166,5 +162,9 @@
     2.0
    ]
   ]
+ },
+ "worship_verse": {
+  "text": "{holy_holy|block}",
+  "y": 430
  }
 }

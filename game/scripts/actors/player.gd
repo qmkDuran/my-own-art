@@ -1,20 +1,23 @@
 class_name Player
 extends CharacterBody2D
+## The glorified man. 8-way movement (walk, or run while "run" is held), 4-direction animation (right = mirrored left).
 
 ## Emitted every stride while walking (the scene picks the footstep sound for the surface).
 signal stepped(at: Vector2)
-## The glorified man. 8-way movement, 4-direction animation (right = mirrored left).
 
 const SPEED: float = 78.0
+const RUN_FACTOR: float = 1.8
+const RUN_ANIM_SCALE: float = 1.6
+const STRIDE: float = 22.0
 const FRAME: int = 64
 const FEET_Y: int = 61  # feet row inside the 64x64 frame
+const ROWS: Array = [["idle_down", 4, 2.0], ["idle_up", 4, 2.0], ["idle_side", 4, 2.0],
+	["walk_down", 8, 10.0], ["walk_up", 8, 10.0], ["walk_side", 8, 10.0]]
 
-## Set by main.gd in demo mode: when not empty, the player walks to each (x, y) and then waits z seconds,
-## instead of reading input.
+## Scripted walks: the player walks to each (x, y) and then waits z seconds, instead of reading input.
 var autopilot: Array[Vector3] = []
 var autopilot_pause: float = 0.0
 var frozen: bool = false
-var kneeling: bool = false
 
 var _step_acc: float = 0.0
 var _facing: String = "down"
@@ -38,40 +41,22 @@ func _ready() -> void:
 	_sprite.play("idle_down")
 
 
-## Builds the animations from a hero.png-style sheet (also used by the walking NPCs).
+## Builds the animations from a hero.png-style sheet: rows idle down/up/side (4 frames), walk down/up/side (8 frames).
+## Also used by the walking people.
 static func build_frames(sheet: Texture2D) -> SpriteFrames:
 	var frames := SpriteFrames.new()
 	frames.remove_animation("default")
-	# Sheet rows: idle down/up/side (4 frames), walk down/up/side (8 frames).
-	var rows: Array = [["idle_down", 4, 2.0], ["idle_up", 4, 2.0], ["idle_side", 4, 2.0],
-		["walk_down", 8, 10.0], ["walk_up", 8, 10.0], ["walk_side", 8, 10.0]]
-	var has_kneel: bool = sheet.get_height() >= FRAME * 7
-	for r: int in rows.size():
-		var anim_name: String = rows[r][0]
+	for r: int in ROWS.size():
+		var anim_name: String = ROWS[r][0]
 		frames.add_animation(anim_name)
-		frames.set_animation_speed(anim_name, rows[r][2])
+		frames.set_animation_speed(anim_name, ROWS[r][2])
 		frames.set_animation_loop(anim_name, true)
-		for i: int in int(rows[r][1]):
+		for i: int in int(ROWS[r][1]):
 			var atlas := AtlasTexture.new()
 			atlas.atlas = sheet
 			atlas.region = Rect2(i * FRAME, r * FRAME, FRAME, FRAME)
 			frames.add_frame(anim_name, atlas)
-	if has_kneel:  # row 6: kneel down / up / side (single frames)
-		for i: int in 3:
-			var kneel_name: String = ["kneel_down", "kneel_up", "kneel_side"][i]
-			frames.add_animation(kneel_name)
-			var atlas := AtlasTexture.new()
-			atlas.atlas = sheet
-			atlas.region = Rect2(i * FRAME, 6 * FRAME, FRAME, FRAME)
-			frames.add_frame(kneel_name, atlas)
 	return frames
-
-
-## Kneel in worship (or rise again). While kneeling the player does not move.
-func set_kneel(on: bool) -> void:
-	kneeling = on
-	frozen = on
-	_sprite.play(("kneel_" if on else "idle_") + _facing)
 
 
 ## Turn to "down", "up", "side" (left) or "right" (side, mirrored).
@@ -80,6 +65,10 @@ func face(dir: String) -> void:
 	_flip = dir == "right"
 	_sprite.flip_h = _flip
 	_sprite.play("idle_" + _facing)
+
+
+func is_running() -> bool:
+	return autopilot.is_empty() and not frozen and Input.is_action_pressed("run")
 
 
 func _input_vector() -> Vector2:
@@ -101,19 +90,19 @@ func _input_vector() -> Vector2:
 func _physics_process(delta: float) -> void:
 	autopilot_pause = maxf(0.0, autopilot_pause - delta)
 	var dir: Vector2 = _input_vector()
-	velocity = dir * SPEED
+	var running: bool = is_running()
+	velocity = dir * SPEED * (RUN_FACTOR if running else 1.0)
 	var before: Vector2 = global_position
 	move_and_slide()
-	_step_acc += global_position.distance_to(before)
-	if _step_acc >= 22.0:
+	_step_acc += global_position.distance_to(before)   # running covers a stride sooner: faster footsteps
+	if _step_acc >= STRIDE:
 		_step_acc = 0.0
 		stepped.emit(global_position)
+	_sprite.speed_scale = RUN_ANIM_SCALE if running else 1.0
 	_animate(dir)
 
 
 func _animate(dir: Vector2) -> void:
-	if kneeling:
-		return
 	if dir.length() > 0.1:
 		if absf(dir.x) >= absf(dir.y) * 0.9:
 			_facing = "side"

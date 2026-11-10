@@ -1,13 +1,19 @@
 """Verifies every fragment in game/data/verses.json is an exact substring of the NIV text of its cited verses
 (art/niv_source.json from tools/fetch_niv.py), and records how many distinct verses the game quotes.
 Usage (from heaven/): python3 -I tools/check_verses.py"""
-import json, sys
+import json, os, sys
 
 TOKENS = ('...', '\n')
 
 
+SOURCE = 'art/niv_source.json'   # local cache from tools/fetch_niv.py (not in the repo, never shipped)
+
+
 def main():
-    src = json.load(open('art/niv_source.json'))['verses']
+    if not os.path.exists(SOURCE):
+        print(f'{SOURCE} not found: run  python3 -I tools/fetch_niv.py  first (it caches the NIV chapters locally). Nothing checked.')
+        sys.exit(0)
+    src = json.load(open(SOURCE))['verses']
     data = json.load(open('game/data/verses.json'))
     bad, used = [], set()
     for key, e in data['verses'].items():

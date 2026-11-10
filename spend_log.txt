@@ -53,3 +53,6 @@ vines2x	cost=10.0	total_used=40.0	usd=2.18083018988485
 mansion	cost=15.0	total_used=15.0	usd=2.18083018988485
 gifts	cost=10.0	total_used=25.0	usd=2.18083018988485
 --- garden fixes: START=189.5 CAP=0 ---
+--- shepherd + run/teleport: START=189.5 CAP=15 ---
+shepherd	cost=10.0	total_used=10.0	usd=2.18083018988485
+char4_shepherd	cost=1.0	total_used=11.0	usd=2.18083018988485

@@ -1,13 +1,13 @@
 extends Node
 ## Headless smoke test (autoload "SmokeTest", dormant unless the user arg --smoke is given): loads the menu and
-## each scene, runs it ~5 s, and checks the essentials: player spawned, colliders exist, talk / kneel works.
+## each scene, runs it ~5 s, and checks the essentials: player spawned, colliders exist, talk / worship works, running is faster, fast travel arrives.
 ## Run:  tests/run_smoke.sh   (godot --headless --fixed-fps 60 --path game -- --smoke)
 
 const FRAMES_PER_SCENE: int = 300
 const SCENES: Array = [
 	["res://menu.tscn", "menu"],
 	["res://main.tscn", "talk"],
-	["res://throne.tscn", "kneel"],
+	["res://throne.tscn", "worship"],
 	["res://earth.tscn", "talk"],
 ]
 
@@ -15,7 +15,7 @@ const TRANSITION_FRAMES: int = 330
 ## [scene to start in, put the player here, expected scene after, expected arrival spot (or none), label]
 const TRANSITIONS: Array = [
 	["res://main.tscn", Vector2(6, 308), "ThroneRoom", Vector2(480, 500), "garden river light -> throne"],
-	["", Vector2(480, 532), "Main", Vector2(34, 308), "throne -> back to the garden riverside"],
+	["", Vector2(480, 532), "Main", Vector2(34, 306), "throne -> back to the garden riverside"],
 	["res://main.tscn", Vector2(30, 836), "ThroneRoom", Vector2(480, 500), "great street light -> throne"],
 	["", Vector2(480, 532), "Main", Vector2(96, 840), "throne -> back to the great street"],
 	["res://main.tscn", Vector2(482, 130), "NewEarth", Vector2(960, 198), "pearl gate -> new earth"],
@@ -37,13 +37,60 @@ func _run() -> void:
 			await get_tree().process_frame
 		_check(s[0], s[1])
 	await _check_transitions()
+	await _check_running()
+	await _check_places()
 	if _failures.is_empty():
-		print("SMOKE PASS: ", SCENES.size(), " scenes + ", TRANSITIONS.size(), " transitions")
+		print("SMOKE PASS: ", SCENES.size(), " scenes + ", TRANSITIONS.size(), " transitions + running + fast travel")
 		get_tree().quit(0)
 	else:
 		for f: String in _failures:
 			print("SMOKE FAIL: ", f)
 		get_tree().quit(1)
+
+
+## Running (Shift) moves about 1.8x as far as walking in the same time.
+func _check_running() -> void:
+	get_tree().change_scene_to_file("res://main.tscn")
+	for i: int in 30:
+		await get_tree().process_frame
+	var player: Player = get_tree().get_first_node_in_group("player") as Player
+	var walked: float = await _distance(player, false)
+	var ran: float = await _distance(player, true)
+	_expect(walked > 10.0 and ran > walked * 1.6, "running: walked %.0f px, ran %.0f px" % [walked, ran])
+	if ran > walked * 1.6:
+		print("SMOKE ok: running is %.2fx walking" % (ran / walked))
+
+
+func _distance(player: Player, running: bool) -> float:
+	player.global_position = Vector2(480, 470)
+	await get_tree().physics_frame
+	var start: Vector2 = player.global_position
+	Input.action_press("move_down")
+	if running:
+		Input.action_press("run")
+	for i: int in 20:
+		await get_tree().physics_frame
+	Input.action_release("move_down")
+	Input.action_release("run")
+	return player.global_position.distance_to(start)
+
+
+## Fast travel: choose "Throne room" from the places menu in the city.
+func _check_places() -> void:
+	var scene: SceneBase = get_tree().current_scene as SceneBase
+	var target: int = -1
+	for i: int in scene.places.places.size():
+		if scene.places.places[i]["name"] == "Throne room":
+			target = i
+	scene.places.choose(target)
+	for i: int in TRANSITION_FRAMES:
+		await get_tree().process_frame
+	var now: Node = get_tree().current_scene
+	var p: Player = get_tree().get_first_node_in_group("player") as Player
+	var ok: bool = now != null and now.name == "ThroneRoom" and p != null and p.global_position.distance_to(Vector2(480, 500)) < 4.0
+	_expect(ok, "fast travel to the throne room failed")
+	if ok:
+		print("SMOKE ok: fast travel (places menu) -> throne room")
 
 
 ## Walk through each way between scenes: put the player in the way, wait for the fade, check where they arrive.
@@ -83,9 +130,10 @@ func _check(path: String, kind: String) -> void:
 		return
 	if kind == "talk":
 		_check_talk(scene as SceneBase, player, path)
-	elif kind == "kneel":
+	elif kind == "worship":
 		(scene as SceneBase)._on_action()
-		_expect(player.kneeling, path + ": kneeling did not start")
+		_expect(scene.get("worshipping") == true and player.frozen, path + ": worship did not start")
+		(scene as SceneBase)._on_action()
 	print("SMOKE ok: ", path)
 
 

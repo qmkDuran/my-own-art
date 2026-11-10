@@ -24,8 +24,10 @@ def garden():
         if not bank: issues.append(f'garden tree {x},{y}: canopy {y0}-{y1} not within one grass bank')
         if not (x1 < sx0 - 3 or x0 > sx1 + 3): issues.append(f'garden tree {x},{y}: canopy over the gold street')
         if y0 < 160: issues.append(f'garden tree {x},{y}: canopy over the wall')
-        if 300 <= y1 <= 316 and x0 < sx0: issues.append(f'garden tree {x},{y}: roots on the riverside path')
-    for p in c['people']:
+        if y1 > 292 and y1 <= 318 and x0 < sx0: issues.append(f'garden tree {x},{y}: roots on the riverside path')
+    shepherd = c.get('shepherd')
+    people = c['people'] + ([['shepherd', shepherd['at'][0], shepherd['at'][1]]] if shepherd else [])
+    for p in people:
         x, y = p[1], p[2]
         if y > 540: continue
         if r0 <= y <= r1 and not (sx0 <= x <= sx1): issues.append(f'garden person {p[0]} at {x},{y}: in the river')
@@ -33,6 +35,7 @@ def garden():
             if overlap(rect((x, y), PERSON), rect((tx, ty), CANOPY)) and y < ty:
                 issues.append(f'garden person {p[0]} at {x},{y}: hidden behind the tree at {tx},{ty}')
             if abs(x - tx) < 21 and ty - 9 <= y <= ty + 4: issues.append(f'garden person {p[0]}: on a tree trunk')
+        if 292 <= y <= 316 and x < sx0: issues.append(f'garden person {p[0]} at {x},{y}: standing on the riverside path')
 
 
 def earth():

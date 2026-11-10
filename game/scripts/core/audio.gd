@@ -41,7 +41,7 @@ func play_music(sound: String, volume_db: float = -10.0, fade: float = 1.5) -> v
 	create_tween().tween_property(_music, "volume_db", volume_db, fade)
 
 
-## Temporarily move the music level (e.g. duck under the kneeling hymn); restore with restore_music().
+## Temporarily move the music level (e.g. duck under the worship hymn); restore with restore_music().
 func set_music_volume(volume_db: float, fade: float = 1.0) -> void:
 	if _music != null:
 		create_tween().tween_property(_music, "volume_db", volume_db, fade)

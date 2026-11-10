@@ -31,7 +31,7 @@ No recordings, samples or sound libraries were used, and nothing was downloaded.
 | `pastoral_music.ogg` | New earth: pastoral loop in G (pads, harp, flute-like tune), original (29 s loop) |
 | `lamb.wav`, `cow.wav` | Very quiet lamb and cow voices on the new earth (formant synthesis) |
 | `knock.wav` | Gentle wooden hammer knock for the builder (Isa 65:21) |
-| `holy.wav` | Plays when the player kneels (E): the music swells into "Holy, Holy, Holy" (Rev 4:8) |
+| `holy.wav` | Plays when the player worships (E, standing before the throne): the music swells into "Holy, Holy, Holy" (Rev 4:8) |
 
 Loops are rendered so that their tails (note releases, reverb, filtered noise) wrap back onto their start, which makes them seamless.
 Rebuild everything with `python3 art/audio/synth.py` from the `heaven/` folder.

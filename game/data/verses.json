@@ -4,7 +4,7 @@
  "edition": "The Holy Bible, New International Version (2011)",
  "notice": "Scripture quotations taken from The Holy Bible, New International Version® NIV® Copyright © 1973, 1978, 1984, 2011 by Biblica, Inc.™ Used by permission. All rights reserved worldwide.",
  "source": "Text copied from https://www.biblegateway.com (version=NIV), fetched and verified by tools/fetch_niv.py and tools/check_verses.py",
- "verse_count": 49,
+ "verse_count": 51,
  "verses": {
   "gate_open": {
    "ref": "Revelation 21:25-26",
@@ -127,15 +127,6 @@
    ],
    "parts": [
     "Gladness and joy will overtake them, and sorrow and sighing will flee away."
-   ]
-  },
-  "hallelujah": {
-   "ref": "Rev 19:6",
-   "verses": [
-    "Revelation 19:6"
-   ],
-   "parts": [
-    "Hallelujah! For our Lord God Almighty reigns."
    ]
   },
   "amen_praise": {
@@ -609,6 +600,55 @@
    ],
    "parts": [
     "See, I will create new heavens and a new earth. The former things will not be remembered, nor will they come to mind."
+   ]
+  },
+  "shepherd_zone": {
+   "ref": "Rev 7:17",
+   "verses": [
+    "Revelation 7:17"
+   ],
+   "parts": [
+    "For the Lamb at the center of the throne will be their shepherd;",
+    "..."
+   ]
+  },
+  "shepherd_7_17": {
+   "ref": "Rev 7:17",
+   "verses": [
+    "Revelation 7:17"
+   ],
+   "parts": [
+    "For the Lamb at the center of the throne will be their shepherd; ‘he will lead them to springs of living water.’ ‘And God will wipe away every tear from their eyes.’"
+   ]
+  },
+  "shepherd_21_4_5": {
+   "ref": "Rev 21:4-5",
+   "verses": [
+    "Revelation 21:4",
+    "Revelation 21:5"
+   ],
+   "parts": [
+    "‘He will wipe every tear from their eyes. There will be no more death’ or mourning or crying or pain, for the old order of things has passed away.",
+    "\n",
+    "He who was seated on the throne said, “I am making everything new!”"
+   ]
+  },
+  "good_shepherd": {
+   "ref": "John 10:11",
+   "verses": [
+    "John 10:11"
+   ],
+   "parts": [
+    "I am the good shepherd. The good shepherd lays down his life for the sheep."
+   ]
+  },
+  "come_to_me": {
+   "ref": "Matt 11:28",
+   "verses": [
+    "Matthew 11:28"
+   ],
+   "parts": [
+    "Come to me, all you who are weary and burdened, and I will give you rest."
    ]
   }
  }

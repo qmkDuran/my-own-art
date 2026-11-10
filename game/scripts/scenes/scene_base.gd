@@ -13,6 +13,7 @@ var world: Node2D
 var captions: CaptionBar
 var talk: TalkSystem
 var camera: CameraRig
+var places: PlacesMenu
 var args: PackedStringArray
 var _leaving: bool = false
 
@@ -47,8 +48,14 @@ func _ready() -> void:
 		camera.rooms.append(SceneData.rect(r))
 	add_child(camera)
 	_setup_captions()
+	places = PlacesMenu.new()
+	add_child(places)
+	places.chosen.connect(_go_to_place)
 	_start_audio()
-	_begin()
+	if Travel.arriving == "place":
+		arrive_at(Travel.place_at, Travel.place_face)
+	else:
+		_begin()
 
 
 func _spawn_player() -> void:
@@ -76,7 +83,11 @@ func _setup_captions() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if InputSetup.is_escape(event):
+	if event.is_action_pressed("places") and not _leaving:
+		places.open()
+		player.frozen = true
+		places.visibility_changed.connect(_unfreeze_after_places, CONNECT_ONE_SHOT)
+	elif InputSetup.is_escape(event):
 		get_tree().change_scene_to_file(MENU)
 	elif event.is_action_pressed("zoom_in"):
 		camera.step(1)
@@ -120,6 +131,18 @@ func travel(to_scene: String, arriving: String, verse: String = "", verse_y: flo
 	tw.tween_callback(func() -> void:
 		Travel.arriving = arriving
 		get_tree().change_scene_to_file(to_scene))
+
+
+func _unfreeze_after_places() -> void:
+	if not _leaving:
+		player.frozen = false
+
+
+## Fast travel through light to a place from res://data/places.json.
+func _go_to_place(place: Dictionary) -> void:
+	Travel.place_at = SceneData.vec(place["at"])
+	Travel.place_face = place["face"]
+	travel(place["scene"], "place")
 
 
 ## Arrive out of light: fade in from white at a spot.

@@ -1,21 +1,21 @@
 """4-direction standing people (Rev 7:9) from the PixelLab rotations, finished by hand:
-game/art/people/pNN.png - 3 rows (down, up, left; right = mirrored) x 5 cols (idle, breathe, kneel, palm-left, palm-right),
+game/art/people/pNN.png - 3 rows (down, up, left; right = mirrored) x 4 cols (idle, breathe, palm-left, palm-right),
 and out/people4_sheet_3x.png."""
 import os, sys
 from PIL import Image
 sys.path.insert(0, 'art')
-from common import FRAME, C, OUT, quant, feet_to, breathe, kneel, sway
+from common import FRAME, C, OUT, quant, feet_to, breathe, sway
 
 D = 'game/art/people/'
-PEOPLE = [0, 1, 2, 4, 5, 6, 7, 9, 10, 14, 15]
+PEOPLE = [0, 1, 2, 5, 6, 7, 9, 10, 14, 15]   # 4 (the headscarf picture) removed at the user's request
 SWAY_PX = 4
 
 
 def person_sheet(idx):
-    sh = Image.new('RGBA', (FRAME * 5, FRAME * 3))
-    for r, (d, facing) in enumerate((('south', 'down'), ('north', 'up'), ('west', 'left'))):
+    sh = Image.new('RGBA', (FRAME * 4, FRAME * 3))
+    for r, d in enumerate(('south', 'north', 'west')):
         base = feet_to(quant(Image.open(f'art/raw/ch_p{idx:02d}_rot_{d}.png')))
-        frames = [base, breathe(base), kneel(base, facing), sway(base, -SWAY_PX) or base, sway(base, SWAY_PX) or base]
+        frames = [base, breathe(base), sway(base, -SWAY_PX) or base, sway(base, SWAY_PX) or base]
         for c, f in enumerate(frames): sh.alpha_composite(f, (c * FRAME, r * FRAME))
     sh.save(D + f'p{idx:02d}.png')
     return sh
@@ -36,8 +36,8 @@ def speech_bubble():
 
 
 def delivery_sheet(sheets):
-    o = Image.new('RGBA', (FRAME * 5 * 4 + 24, ((len(sheets) + 3) // 4) * (FRAME * 3 + 8)), (234, 226, 196, 255))
-    for k, s in enumerate(sheets): o.alpha_composite(s, ((k % 4) * (FRAME * 5 + 8), (k // 4) * (FRAME * 3 + 8)))
+    o = Image.new('RGBA', (FRAME * 4 * 4 + 24, ((len(sheets) + 3) // 4) * (FRAME * 3 + 8)), (234, 226, 196, 255))
+    for k, s in enumerate(sheets): o.alpha_composite(s, ((k % 4) * (FRAME * 4 + 8), (k // 4) * (FRAME * 3 + 8)))
     o.resize((o.width * 3, o.height * 3), Image.NEAREST).save('out/people4_sheet_3x.png')
 
 

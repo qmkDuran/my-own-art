@@ -21,6 +21,7 @@ var wait_for_title: bool = false
 var suppressed: bool = false
 var forced: String = ""
 
+var _hint: Label
 var _spoken: String = ""
 var _shown: String = ""
 
@@ -38,7 +39,8 @@ func _init(caption_y: float, hint: String) -> void:
 	caption.position.x = (VIEW_W - CAPTION_BOX.x) / 2.0
 	caption.size = CAPTION_BOX
 	caption.modulate.a = 0.0
-	make_label(SMALL, 526.0, hint).modulate.a = 0.75
+	_hint = make_label(SMALL, 526.0, hint)
+	_hint.modulate.a = 0.75
 
 
 func make_label(font_size: int, y: float, text: String) -> Label:
@@ -77,6 +79,7 @@ func say(text: String, seconds: float) -> void:
 
 
 func update(pos: Vector2, delta: float) -> void:
+	_hint.visible = fade.color.a < 0.3        # no key hint on the white fade screens
 	var want: String = _wanted(pos)
 	if want != _shown:
 		caption.modulate.a = maxf(0.0, caption.modulate.a - delta * FADE_OUT_RATE)

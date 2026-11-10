@@ -1,0 +1,11 @@
+{
+ "_doc": "Fast travel (T / Tab): destinations in the places menu. scene, at (feet position), face.",
+ "places": [
+  {"name": "New earth village", "scene": "res://earth.tscn", "at": [300, 668], "face": "down"},
+  {"name": "Pearl gate (city side)", "scene": "res://main.tscn", "at": [482, 186], "face": "down"},
+  {"name": "Garden river", "scene": "res://main.tscn", "at": [300, 306], "face": "right"},
+  {"name": "The Shepherd", "scene": "res://main.tscn", "at": [150, 306], "face": "up"},
+  {"name": "Great street", "scene": "res://main.tscn", "at": [480, 840], "face": "down"},
+  {"name": "Throne room", "scene": "res://throne.tscn", "at": [480, 500], "face": "up"}
+ ]
+}

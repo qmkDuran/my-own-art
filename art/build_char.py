@@ -1,14 +1,14 @@
-"""Hero sheet game/art/hero.png (64x64 frames, 8 cols x 7 rows):
-idle down/up/side (4), walk down/up/side (8), kneel down/up/side (1 each). Right = mirrored side.
+"""Hero sheet game/art/hero.png (64x64 frames, 8 cols x 6 rows):
+idle down/up/side (4), walk down/up/side (8). Right = mirrored side.
 Also writes out/character_sheet_3x.png."""
 import glob, sys
 import numpy as np
 from PIL import Image
 sys.path.insert(0, 'art')
-from common import FRAME, FEET_ROW, H, quant, breathe, kneel
+from common import FRAME, FEET_ROW, H, quant, breathe
 
 WEST_CROP = (14, 16, 78, 80)          # the skeleton-v3 west walk is a 96 px canvas
-DIRS = (('south', 'down'), ('north', 'up'), ('west', 'left'))
+DIRS = ('south', 'north', 'west')
 
 
 def walk_frames(d):
@@ -42,15 +42,13 @@ def fix_south(im):
 
 
 def build_sheet():
-    sheet = Image.new('RGBA', (FRAME * 8, FRAME * 7))
-    for r, (d, _) in enumerate(DIRS):
+    sheet = Image.new('RGBA', (FRAME * 8, FRAME * 6))
+    for r, d in enumerate(DIRS):
         w = walk_frames(d)
         for i, f in enumerate([w[0], w[0], breathe(w[0]), breathe(w[0])]): sheet.alpha_composite(f, (i * FRAME, r * FRAME))
         for i, f in enumerate(w): sheet.alpha_composite(f, (i * FRAME, (r + 3) * FRAME))
     for r in (0, 3):
         sheet.paste(fix_south(sheet.crop((0, r * FRAME, FRAME * 8, r * FRAME + FRAME))), (0, r * FRAME))
-    for i, (_, facing) in enumerate(DIRS):
-        sheet.alpha_composite(kneel(sheet.crop((0, i * FRAME, FRAME, i * FRAME + FRAME)), facing), (i * FRAME, 6 * FRAME))
     return sheet
 
 
