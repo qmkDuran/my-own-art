@@ -1,0 +1,43 @@
+{
+ "frame_w": 80,
+ "frame_h": 80,
+ "columns": 7,
+ "origin": "feet at bottom-centre: x = 40, lowest foot pixel on row 79 (frame-local)",
+ "side_faces": "right (mirror for left)",
+ "rows": [
+  {
+   "row": 0,
+   "anim": "idle",
+   "dir": "down",
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  {
+   "row": 1,
+   "anim": "idle",
+   "dir": "up",
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  {
+   "row": 2,
+   "anim": "idle",
+   "dir": "side",
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  {
+   "row": 3,
+   "anim": "talk",
+   "dir": "down",
+   "frames": 7,
+   "fps": 8,
+   "loop": true
+  }
+ ],
+ "skin_swap": false,
+ "notes": "talk: down only (he stands behind the counter)"
+}

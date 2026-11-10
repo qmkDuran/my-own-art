@@ -1,0 +1,183 @@
+{
+ "frame_w": 80,
+ "frame_h": 80,
+ "columns": 9,
+ "origin": "feet at bottom-centre: x = 40, lowest foot pixel on row 79 (frame-local)",
+ "side_faces": "right (mirror for left)",
+ "rows": [
+  {
+   "row": 0,
+   "anim": "idle",
+   "dir": "down",
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  {
+   "row": 1,
+   "anim": "idle",
+   "dir": "up",
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  {
+   "row": 2,
+   "anim": "idle",
+   "dir": "side",
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  {
+   "row": 3,
+   "anim": "walk",
+   "dir": "down",
+   "frames": 8,
+   "fps": 10,
+   "loop": true
+  },
+  {
+   "row": 4,
+   "anim": "walk",
+   "dir": "up",
+   "frames": 8,
+   "fps": 10,
+   "loop": true
+  },
+  {
+   "row": 5,
+   "anim": "walk",
+   "dir": "side",
+   "frames": 8,
+   "fps": 10,
+   "loop": true
+  },
+  {
+   "row": 6,
+   "anim": "run",
+   "dir": "down",
+   "frames": 8,
+   "fps": 14,
+   "loop": true
+  },
+  {
+   "row": 7,
+   "anim": "run",
+   "dir": "up",
+   "frames": 8,
+   "fps": 14,
+   "loop": true
+  },
+  {
+   "row": 8,
+   "anim": "run",
+   "dir": "side",
+   "frames": 8,
+   "fps": 14,
+   "loop": true
+  },
+  {
+   "row": 9,
+   "anim": "swing",
+   "dir": "down",
+   "frames": 9,
+   "fps": 18,
+   "loop": false
+  },
+  {
+   "row": 10,
+   "anim": "swing",
+   "dir": "up",
+   "frames": 9,
+   "fps": 18,
+   "loop": false
+  },
+  {
+   "row": 11,
+   "anim": "swing",
+   "dir": "side",
+   "frames": 9,
+   "fps": 18,
+   "loop": false
+  },
+  {
+   "row": 12,
+   "anim": "roll",
+   "dir": "down",
+   "frames": 9,
+   "fps": 16,
+   "loop": false
+  },
+  {
+   "row": 13,
+   "anim": "roll",
+   "dir": "up",
+   "frames": 9,
+   "fps": 16,
+   "loop": false
+  },
+  {
+   "row": 14,
+   "anim": "roll",
+   "dir": "side",
+   "frames": 9,
+   "fps": 16,
+   "loop": false
+  },
+  {
+   "row": 15,
+   "anim": "hurt",
+   "dir": "down",
+   "frames": 6,
+   "fps": 12,
+   "loop": false
+  },
+  {
+   "row": 16,
+   "anim": "hurt",
+   "dir": "up",
+   "frames": 6,
+   "fps": 12,
+   "loop": false
+  },
+  {
+   "row": 17,
+   "anim": "hurt",
+   "dir": "side",
+   "frames": 6,
+   "fps": 12,
+   "loop": false
+  },
+  {
+   "row": 18,
+   "anim": "down",
+   "dir": "down",
+   "frames": 7,
+   "fps": 10,
+   "loop": false
+  },
+  {
+   "row": 19,
+   "anim": "down",
+   "dir": "up",
+   "frames": 7,
+   "fps": 10,
+   "loop": false
+  },
+  {
+   "row": 20,
+   "anim": "down",
+   "dir": "side",
+   "frames": 7,
+   "fps": 10,
+   "loop": false
+  }
+ ],
+ "skin_swap": true,
+ "hair_layers": [
+  "hair_curly",
+  "hair_short",
+  "hair_buzz"
+ ]
+}

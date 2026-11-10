@@ -1,0 +1,67 @@
+{
+ "frame_w": 80,
+ "frame_h": 80,
+ "columns": 8,
+ "origin": "feet at bottom-centre: x = 40, lowest foot pixel on row 79 (frame-local)",
+ "side_faces": "right (mirror for left)",
+ "rows": [
+  {
+   "row": 0,
+   "anim": "idle",
+   "dir": "down",
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  {
+   "row": 1,
+   "anim": "idle",
+   "dir": "up",
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  {
+   "row": 2,
+   "anim": "idle",
+   "dir": "side",
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  {
+   "row": 3,
+   "anim": "walk",
+   "dir": "down",
+   "frames": 8,
+   "fps": 10,
+   "loop": true
+  },
+  {
+   "row": 4,
+   "anim": "walk",
+   "dir": "up",
+   "frames": 8,
+   "fps": 10,
+   "loop": true
+  },
+  {
+   "row": 5,
+   "anim": "walk",
+   "dir": "side",
+   "frames": 8,
+   "fps": 10,
+   "loop": true
+  },
+  {
+   "row": 6,
+   "anim": "trapped",
+   "dir": "down",
+   "frames": 7,
+   "fps": 8,
+   "loop": false
+  }
+ ],
+ "skin_swap": false,
+ "notes": "trapped: down only; play once and hold the last frame (pinned in the car seat / on the lawn)"
+}

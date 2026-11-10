@@ -1,0 +1,123 @@
+{
+ "frame_w": 80,
+ "frame_h": 80,
+ "columns": 9,
+ "origin": "feet at bottom-centre: x = 40, lowest foot pixel on row 79 (frame-local)",
+ "side_faces": "right (mirror for left)",
+ "rows": [
+  {
+   "row": 0,
+   "anim": "idle",
+   "dir": "down",
+   "frames": 8,
+   "fps": 6,
+   "loop": true
+  },
+  {
+   "row": 1,
+   "anim": "idle",
+   "dir": "up",
+   "frames": 8,
+   "fps": 6,
+   "loop": true
+  },
+  {
+   "row": 2,
+   "anim": "idle",
+   "dir": "side",
+   "frames": 8,
+   "fps": 6,
+   "loop": true
+  },
+  {
+   "row": 3,
+   "anim": "walk",
+   "dir": "down",
+   "frames": 8,
+   "fps": 10,
+   "loop": true
+  },
+  {
+   "row": 4,
+   "anim": "walk",
+   "dir": "up",
+   "frames": 8,
+   "fps": 10,
+   "loop": true
+  },
+  {
+   "row": 5,
+   "anim": "walk",
+   "dir": "side",
+   "frames": 8,
+   "fps": 10,
+   "loop": true
+  },
+  {
+   "row": 6,
+   "anim": "run",
+   "dir": "down",
+   "frames": 8,
+   "fps": 14,
+   "loop": true
+  },
+  {
+   "row": 7,
+   "anim": "run",
+   "dir": "up",
+   "frames": 8,
+   "fps": 14,
+   "loop": true
+  },
+  {
+   "row": 8,
+   "anim": "run",
+   "dir": "side",
+   "frames": 8,
+   "fps": 14,
+   "loop": true
+  },
+  {
+   "row": 9,
+   "anim": "growl",
+   "dir": "down",
+   "frames": 6,
+   "fps": 8,
+   "loop": true
+  },
+  {
+   "row": 10,
+   "anim": "growl",
+   "dir": "up",
+   "frames": 6,
+   "fps": 8,
+   "loop": true
+  },
+  {
+   "row": 11,
+   "anim": "growl",
+   "dir": "side",
+   "frames": 6,
+   "fps": 8,
+   "loop": true
+  },
+  {
+   "row": 12,
+   "anim": "lunge",
+   "dir": "side",
+   "frames": 9,
+   "fps": 14,
+   "loop": false
+  },
+  {
+   "row": 13,
+   "anim": "yelp",
+   "dir": "side",
+   "frames": 9,
+   "fps": 12,
+   "loop": false
+  }
+ ],
+ "skin_swap": false,
+ "notes": "reduced 3:4 from the 48 px PixelLab dog (Biscuit, ~30 px tall); lunge and yelp/flee: side only"
+}

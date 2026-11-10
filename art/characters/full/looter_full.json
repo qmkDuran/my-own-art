@@ -1,0 +1,155 @@
+{
+ "frame_w": 80,
+ "frame_h": 80,
+ "columns": 8,
+ "origin": "feet at bottom-centre: x = 40, lowest foot pixel on row 79 (frame-local)",
+ "side_faces": "right (mirror for left)",
+ "rows": [
+  {
+   "row": 0,
+   "anim": "idle",
+   "dir": "down",
+   "frames": 8,
+   "fps": 8,
+   "loop": true
+  },
+  {
+   "row": 1,
+   "anim": "idle",
+   "dir": "up",
+   "frames": 8,
+   "fps": 8,
+   "loop": true
+  },
+  {
+   "row": 2,
+   "anim": "idle",
+   "dir": "side",
+   "frames": 8,
+   "fps": 8,
+   "loop": true
+  },
+  {
+   "row": 3,
+   "anim": "walk",
+   "dir": "down",
+   "frames": 8,
+   "fps": 10,
+   "loop": true
+  },
+  {
+   "row": 4,
+   "anim": "walk",
+   "dir": "up",
+   "frames": 8,
+   "fps": 10,
+   "loop": true
+  },
+  {
+   "row": 5,
+   "anim": "walk",
+   "dir": "side",
+   "frames": 8,
+   "fps": 10,
+   "loop": true
+  },
+  {
+   "row": 6,
+   "anim": "windup",
+   "dir": "down",
+   "frames": 3,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "row": 7,
+   "anim": "windup",
+   "dir": "up",
+   "frames": 3,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "row": 8,
+   "anim": "windup",
+   "dir": "side",
+   "frames": 3,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "row": 9,
+   "anim": "attack",
+   "dir": "down",
+   "frames": 3,
+   "fps": 14,
+   "loop": false
+  },
+  {
+   "row": 10,
+   "anim": "attack",
+   "dir": "up",
+   "frames": 3,
+   "fps": 14,
+   "loop": false
+  },
+  {
+   "row": 11,
+   "anim": "attack",
+   "dir": "side",
+   "frames": 3,
+   "fps": 14,
+   "loop": false
+  },
+  {
+   "row": 12,
+   "anim": "hurt",
+   "dir": "down",
+   "frames": 6,
+   "fps": 12,
+   "loop": false
+  },
+  {
+   "row": 13,
+   "anim": "hurt",
+   "dir": "up",
+   "frames": 6,
+   "fps": 12,
+   "loop": false
+  },
+  {
+   "row": 14,
+   "anim": "hurt",
+   "dir": "side",
+   "frames": 6,
+   "fps": 12,
+   "loop": false
+  },
+  {
+   "row": 15,
+   "anim": "down",
+   "dir": "down",
+   "frames": 7,
+   "fps": 10,
+   "loop": false
+  },
+  {
+   "row": 16,
+   "anim": "down",
+   "dir": "up",
+   "frames": 7,
+   "fps": 10,
+   "loop": false
+  },
+  {
+   "row": 17,
+   "anim": "down",
+   "dir": "side",
+   "frames": 7,
+   "fps": 10,
+   "loop": false
+  }
+ ],
+ "skin_swap": false,
+ "notes": "windup = first frames of the punch (hold the last windup frame for the telegraph), attack = the strike + recovery"
+}
