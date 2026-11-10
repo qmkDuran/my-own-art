@@ -47,28 +47,6 @@
     }
   ],
   "interior": true,
-  "map": [
-    "BBBBBBBBBKKKKKKKKKKKKKKKKKKK",
-    "BBBBBBBBBKKKKKKKKKKKKKKKKKKK",
-    "BBBBBBBBBKKKKKKKKKKKKKKKKKKK",
-    "BcccccccBkkkkkkkkkkkkkkkkkkK",
-    "BcccccccBkkkkkkkkkkkkkkkkkkK",
-    "BcccccccBkkkkkkkkkkkkkkkkkkK",
-    "BcccccccBkkkkkkkkkkkkkkkkkkK",
-    "BcccccccBkkkkkkkkkkkkkkkkkkK",
-    "BcccccccBkkkkkkkkkkkkkkkkkkK",
-    "LLLLdLLLLLLLLddddLHHHHHHHHHH",
-    "LLLLdLLLLLLLLddddLHHHHHHHHHH",
-    "LLLLsLLLLLLLLssssLHHHHHHHHHH",
-    "L................L.........H",
-    "L................L.........H",
-    "L................L.........H",
-    "L................d.........H",
-    "L................d.........H",
-    "L................L.........H",
-    "L................L.........H",
-    "LLLLLLLLLLLLLLLLLLHHHHDHHHHH"
-  ],
   "rooms": {
     "bedroom": [
       1,
@@ -95,6 +73,28 @@
       7
     ]
   },
+  "map": [
+    "BBBBBBBBBKKKKKKKKKKKKKKKKKKK",
+    "BBBBBBBBBKKKKKKKKKKKKKKKKKKK",
+    "BBBBBBBBBKKKKKKKKKKKKKKKKKKK",
+    "BcccccccBkkkkkkkkkkkkkkkkkkK",
+    "BcccccccBkkkkkkkkkkkkkkkkkkK",
+    "BcccccccBkkkkkkkkkkkkkkkkkkK",
+    "BcccccccBkkkkkkkkkkkkkkkkkkK",
+    "BcccccccBkkkkkkkkkkkkkkkkkkK",
+    "BcccccccBkkkkkkkkkkkkkkkkkkK",
+    "LLLLdLLLLLLLLddddLHHHHHHHHHH",
+    "LLLLdLLLLLLLLddddLHHHHHHHHHH",
+    "LLLLsLLLLLLLLssssLHHHHHHHHHH",
+    "L................L.........H",
+    "L................L.........H",
+    "L................L.........H",
+    "L................d.........H",
+    "L................d.........H",
+    "L................L.........H",
+    "L................L.........H",
+    "LLLLLLLLLLLLLLLLLLHHHHDHHHHH"
+  ],
   "legend": {
     "B": "wall_bedroom",
     "K": "wall_kitchen",

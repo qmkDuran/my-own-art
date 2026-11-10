@@ -4180,7 +4180,7 @@
       "floor": true,
       "if": "vanished",
       "on": "ground",
-      "story": "The market's front window, blown in by the shockwave of the crash"
+      "story": "The market's front door glass, smashed when people pushed in after the power cut"
     },
     {
       "id": "c_clothes_1",

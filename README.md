@@ -22,6 +22,8 @@ python3 tests/layout_check.py                    # layout logic of every zone (s
 python3 tests/layout_check.py --self-test        # proves the check catches deliberately broken layouts
 xvfb-run -a godot --rendering-driver opengl3 --path . res://tests/zone_shots.tscn -- --out=/some/dir
                                                  # 1920x1080 screenshots of every zone/story state
+xvfb-run -a godot --rendering-driver opengl3 --path . res://tests/tour_video.tscn --fixed-fps 60 --write-movie /tmp/tour.avi
+                                                 # ~45 s walkthrough: street, house via its door, market via its door
 ```
 
 The driver prints `DRIVER PASS` / `DRIVER FAIL: ...` and exits with 0 / 1. Both tests should print
@@ -105,7 +107,7 @@ data/                    art, tiles, items, enemies, speakers, heroes, lights (.
 data/zones/              house, street, store (.json)
 data/dialogue/           ch1.dlg (game-flow glue), c1_script.dlg (GENERATED from docs/)
 tools/script_to_dlg.py   converts docs/CHAPTER_1_SCRIPT.md into c1_script.dlg
-tests/                   smoke_test, chapter1_driver, layout_check.py, zone_shots
+tests/                   smoke_test, chapter1_driver, layout_check.py, zone_shots, tour_video
 tools/pixel_ops.py,      hand fixes to the delivered art (rescaling, recolours, redrawn fire,
   art_handfix.py         store floor, character fixes); re-runnable, reads the originals from git
 art/                     drop real PNGs here (see "Art")
