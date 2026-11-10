@@ -1,0 +1,2821 @@
+{
+  "hero_male_body": {
+    "path": "res://art/characters/hero_male_body.png",
+    "sheet": {
+      "hframes": 4,
+      "vframes": 3,
+      "rows": {
+        "down": 0,
+        "up": 1,
+        "side": 2
+      },
+      "fps": 8
+    },
+    "placeholder": {
+      "shape": "character",
+      "skin": "c89070",
+      "hair_style": "none",
+      "shirt": "3a6a8a",
+      "pants": "34384a"
+    },
+    "skin_swap": true
+  },
+  "hero_female_body": {
+    "path": "res://art/characters/hero_female_body.png",
+    "sheet": {
+      "hframes": 4,
+      "vframes": 3,
+      "rows": {
+        "down": 0,
+        "up": 1,
+        "side": 2
+      },
+      "fps": 8
+    },
+    "placeholder": {
+      "shape": "character",
+      "skin": "c89070",
+      "hair_style": "none",
+      "shirt": "7a4a6a",
+      "pants": "34384a"
+    },
+    "skin_swap": true
+  },
+  "hair_short": {
+    "path": "res://art/characters/hair_short.png",
+    "sheet": {
+      "hframes": 4,
+      "vframes": 3,
+      "rows": {
+        "down": 0,
+        "up": 1,
+        "side": 2
+      },
+      "fps": 8
+    },
+    "placeholder": {
+      "shape": "hair",
+      "hair_style": "short",
+      "hair": "2a1e18"
+    }
+  },
+  "hair_buzz": {
+    "path": "res://art/characters/hair_buzz.png",
+    "sheet": {
+      "hframes": 4,
+      "vframes": 3,
+      "rows": {
+        "down": 0,
+        "up": 1,
+        "side": 2
+      },
+      "fps": 8
+    },
+    "placeholder": {
+      "shape": "hair",
+      "hair_style": "buzz",
+      "hair": "1e1612"
+    }
+  },
+  "hair_curly": {
+    "path": "res://art/characters/hair_curly.png",
+    "sheet": {
+      "hframes": 4,
+      "vframes": 3,
+      "rows": {
+        "down": 0,
+        "up": 1,
+        "side": 2
+      },
+      "fps": 8
+    },
+    "placeholder": {
+      "shape": "hair",
+      "hair_style": "curly",
+      "hair": "2a1a12"
+    }
+  },
+  "hair_long": {
+    "path": "res://art/characters/hair_long.png",
+    "sheet": {
+      "hframes": 4,
+      "vframes": 3,
+      "rows": {
+        "down": 0,
+        "up": 1,
+        "side": 2
+      },
+      "fps": 8
+    },
+    "placeholder": {
+      "shape": "hair",
+      "hair_style": "long",
+      "hair": "4a2a1a"
+    }
+  },
+  "hair_bun": {
+    "path": "res://art/characters/hair_bun.png",
+    "sheet": {
+      "hframes": 4,
+      "vframes": 3,
+      "rows": {
+        "down": 0,
+        "up": 1,
+        "side": 2
+      },
+      "fps": 8
+    },
+    "placeholder": {
+      "shape": "hair",
+      "hair_style": "bun",
+      "hair": "3a2418"
+    }
+  },
+  "hair_bob": {
+    "path": "res://art/characters/hair_bob.png",
+    "sheet": {
+      "hframes": 4,
+      "vframes": 3,
+      "rows": {
+        "down": 0,
+        "up": 1,
+        "side": 2
+      },
+      "fps": 8
+    },
+    "placeholder": {
+      "shape": "hair",
+      "hair_style": "bob",
+      "hair": "5a3420"
+    }
+  },
+  "mom": {
+    "path": "res://art/characters/mom.png",
+    "sheet": {
+      "hframes": 4,
+      "vframes": 3,
+      "rows": {
+        "down": 0,
+        "up": 1,
+        "side": 2
+      },
+      "fps": 8
+    },
+    "placeholder": {
+      "shape": "character",
+      "skin": "c89070",
+      "hair": "7a6a5a",
+      "hair_style": "bun",
+      "shirt": "b08058",
+      "pants": "4a4658"
+    },
+    "skin_swap": true
+  },
+  "hollis": {
+    "path": "res://art/characters/hollis.png",
+    "sheet": {
+      "hframes": 4,
+      "vframes": 3,
+      "rows": {
+        "down": 0,
+        "up": 1,
+        "side": 2
+      },
+      "fps": 8
+    },
+    "placeholder": {
+      "shape": "character",
+      "skin": "8a5a3a",
+      "hair": "d0d0d0",
+      "hair_style": "short",
+      "shirt": "3a7a4a",
+      "pants": "3a3a44"
+    }
+  },
+  "wade": {
+    "path": "res://art/characters/wade.png",
+    "sheet": {
+      "hframes": 4,
+      "vframes": 3,
+      "rows": {
+        "down": 0,
+        "up": 1,
+        "side": 2
+      },
+      "fps": 8
+    },
+    "placeholder": {
+      "shape": "character",
+      "skin": "c89878",
+      "hair": "5a4030",
+      "hair_style": "cap",
+      "shirt": "4a5a6a",
+      "pants": "2a3040"
+    }
+  },
+  "looter": {
+    "path": "res://art/characters/looter.png",
+    "sheet": {
+      "hframes": 4,
+      "vframes": 3,
+      "rows": {
+        "down": 0,
+        "up": 1,
+        "side": 2
+      },
+      "fps": 8
+    },
+    "placeholder": {
+      "shape": "character",
+      "skin": "b08060",
+      "hair_style": "hood",
+      "hood": "2a2a30",
+      "shirt": "3a3a40",
+      "pants": "202428"
+    }
+  },
+  "walt": {
+    "path": "res://art/characters/walt.png",
+    "sheet": {
+      "hframes": 4,
+      "vframes": 3,
+      "rows": {
+        "down": 0,
+        "up": 1,
+        "side": 2
+      },
+      "fps": 8
+    },
+    "placeholder": {
+      "shape": "character",
+      "skin": "d8b090",
+      "hair": "e0e0e0",
+      "hair_style": "cap",
+      "shirt": "6a7a5a",
+      "pants": "5a5040"
+    }
+  },
+  "felix": {
+    "path": "res://art/characters/felix.png",
+    "sheet": {
+      "hframes": 4,
+      "vframes": 3,
+      "rows": {
+        "down": 0,
+        "up": 1,
+        "side": 2
+      },
+      "fps": 8
+    },
+    "placeholder": {
+      "shape": "character",
+      "skin": "5a3a28",
+      "hair": "1a1410",
+      "hair_style": "short",
+      "shirt": "c09040",
+      "pants": "3a3a50"
+    }
+  },
+  "dana": {
+    "path": "res://art/characters/dana.png",
+    "sheet": {
+      "hframes": 4,
+      "vframes": 3,
+      "rows": {
+        "down": 0,
+        "up": 1,
+        "side": 2
+      },
+      "fps": 8
+    },
+    "placeholder": {
+      "shape": "character",
+      "skin": "6a4430",
+      "hair": "1a1410",
+      "hair_style": "bun",
+      "shirt": "4a8a9a",
+      "pants": "3a3a50"
+    }
+  },
+  "noah": {
+    "path": "res://art/characters/noah.png",
+    "sheet": {
+      "hframes": 4,
+      "vframes": 3,
+      "rows": {
+        "down": 0,
+        "up": 1,
+        "side": 2
+      },
+      "fps": 8
+    },
+    "placeholder": {
+      "shape": "character",
+      "skin": "e0b898",
+      "hair": "d8b060",
+      "hair_style": "short",
+      "shirt": "c04040",
+      "pants": "3a5a8a"
+    }
+  },
+  "erik": {
+    "path": "res://art/characters/erik.png",
+    "sheet": {
+      "hframes": 4,
+      "vframes": 3,
+      "rows": {
+        "down": 0,
+        "up": 1,
+        "side": 2
+      },
+      "fps": 8
+    },
+    "placeholder": {
+      "shape": "character",
+      "skin": "e0b898",
+      "hair": "b89050",
+      "hair_style": "short",
+      "shirt": "5a5a7a",
+      "pants": "303040"
+    }
+  },
+  "ines": {
+    "path": "res://art/characters/ines.png",
+    "sheet": {
+      "hframes": 4,
+      "vframes": 3,
+      "rows": {
+        "down": 0,
+        "up": 1,
+        "side": 2
+      },
+      "fps": 8
+    },
+    "placeholder": {
+      "shape": "character",
+      "skin": "d8b8a0",
+      "hair": "c8c8d0",
+      "hair_style": "bun",
+      "shirt": "8a5a7a",
+      "pants": "4a4a5a"
+    }
+  },
+  "dog": {
+    "path": "res://art/characters/dog.png",
+    "sheet": {
+      "hframes": 4,
+      "vframes": 3,
+      "rows": {
+        "down": 0,
+        "up": 1,
+        "side": 2
+      },
+      "fps": 8
+    },
+    "placeholder": {
+      "shape": "dog",
+      "fur": "9a7a50"
+    }
+  },
+  "shadow": {
+    "path": "res://art/characters/shadow.png",
+    "placeholder": {
+      "shape": "shadow",
+      "size": [
+        28,
+        10
+      ]
+    }
+  },
+  "portrait_mom": {
+    "path": "res://art/portraits/portrait_mom.png",
+    "placeholder": {
+      "shape": "portrait",
+      "skin": "c89070",
+      "hair": "7a6a5a",
+      "hair_style": "bun",
+      "shirt": "b08058",
+      "bg": "3a2a24"
+    },
+    "skin_swap": true
+  },
+  "portrait_mom_happy": {
+    "extends": "portrait_mom",
+    "path": "res://art/portraits/portrait_mom_happy.png",
+    "placeholder": {
+      "mood": "happy"
+    }
+  },
+  "portrait_mom_sad": {
+    "extends": "portrait_mom",
+    "path": "res://art/portraits/portrait_mom_sad.png",
+    "placeholder": {
+      "mood": "sad"
+    }
+  },
+  "portrait_mom_afraid": {
+    "extends": "portrait_mom",
+    "path": "res://art/portraits/portrait_mom_afraid.png",
+    "placeholder": {
+      "mood": "afraid"
+    }
+  },
+  "portrait_hollis": {
+    "path": "res://art/portraits/portrait_hollis.png",
+    "placeholder": {
+      "shape": "portrait",
+      "skin": "8a5a3a",
+      "hair": "d0d0d0",
+      "hair_style": "short",
+      "shirt": "3a7a4a",
+      "bg": "22342a"
+    }
+  },
+  "portrait_hollis_happy": {
+    "extends": "portrait_hollis",
+    "path": "res://art/portraits/portrait_hollis_happy.png",
+    "placeholder": {
+      "mood": "happy"
+    }
+  },
+  "portrait_hollis_sad": {
+    "extends": "portrait_hollis",
+    "path": "res://art/portraits/portrait_hollis_sad.png",
+    "placeholder": {
+      "mood": "sad"
+    }
+  },
+  "portrait_hollis_afraid": {
+    "extends": "portrait_hollis",
+    "path": "res://art/portraits/portrait_hollis_afraid.png",
+    "placeholder": {
+      "mood": "afraid"
+    }
+  },
+  "portrait_wade": {
+    "path": "res://art/portraits/portrait_wade.png",
+    "placeholder": {
+      "shape": "portrait",
+      "skin": "c89878",
+      "hair": "5a4030",
+      "hair_style": "cap",
+      "shirt": "4a5a6a",
+      "bg": "2a2a34"
+    }
+  },
+  "portrait_wade_sad": {
+    "extends": "portrait_wade",
+    "path": "res://art/portraits/portrait_wade_sad.png",
+    "placeholder": {
+      "mood": "sad"
+    }
+  },
+  "portrait_wade_afraid": {
+    "extends": "portrait_wade",
+    "path": "res://art/portraits/portrait_wade_afraid.png",
+    "placeholder": {
+      "mood": "afraid"
+    }
+  },
+  "portrait_wade_angry": {
+    "extends": "portrait_wade",
+    "path": "res://art/portraits/portrait_wade_angry.png",
+    "placeholder": {
+      "mood": "angry"
+    }
+  },
+  "portrait_looter": {
+    "path": "res://art/portraits/portrait_looter.png",
+    "placeholder": {
+      "shape": "portrait",
+      "skin": "b08060",
+      "hair_style": "hood",
+      "hood": "2a2a30",
+      "shirt": "3a3a40",
+      "bg": "201c20"
+    }
+  },
+  "portrait_looter_angry": {
+    "extends": "portrait_looter",
+    "path": "res://art/portraits/portrait_looter_angry.png",
+    "placeholder": {
+      "mood": "angry"
+    }
+  },
+  "portrait_walt": {
+    "path": "res://art/portraits/portrait_walt.png",
+    "placeholder": {
+      "shape": "portrait",
+      "skin": "d8b090",
+      "hair": "e0e0e0",
+      "hair_style": "cap",
+      "shirt": "6a7a5a",
+      "bg": "2a3024"
+    }
+  },
+  "portrait_walt_happy": {
+    "extends": "portrait_walt",
+    "path": "res://art/portraits/portrait_walt_happy.png",
+    "placeholder": {
+      "mood": "happy"
+    }
+  },
+  "portrait_walt_sad": {
+    "extends": "portrait_walt",
+    "path": "res://art/portraits/portrait_walt_sad.png",
+    "placeholder": {
+      "mood": "sad"
+    }
+  },
+  "portrait_walt_afraid": {
+    "extends": "portrait_walt",
+    "path": "res://art/portraits/portrait_walt_afraid.png",
+    "placeholder": {
+      "mood": "afraid"
+    }
+  },
+  "portrait_felix": {
+    "path": "res://art/portraits/portrait_felix.png",
+    "placeholder": {
+      "shape": "portrait",
+      "skin": "5a3a28",
+      "hair": "1a1410",
+      "hair_style": "short",
+      "shirt": "c09040",
+      "bg": "34301e"
+    }
+  },
+  "portrait_felix_happy": {
+    "extends": "portrait_felix",
+    "path": "res://art/portraits/portrait_felix_happy.png",
+    "placeholder": {
+      "mood": "happy"
+    }
+  },
+  "portrait_felix_sad": {
+    "extends": "portrait_felix",
+    "path": "res://art/portraits/portrait_felix_sad.png",
+    "placeholder": {
+      "mood": "sad"
+    }
+  },
+  "portrait_felix_afraid": {
+    "extends": "portrait_felix",
+    "path": "res://art/portraits/portrait_felix_afraid.png",
+    "placeholder": {
+      "mood": "afraid"
+    }
+  },
+  "portrait_dana": {
+    "path": "res://art/portraits/portrait_dana.png",
+    "placeholder": {
+      "shape": "portrait",
+      "skin": "6a4430",
+      "hair": "1a1410",
+      "hair_style": "bun",
+      "shirt": "4a8a9a",
+      "bg": "1e3034"
+    }
+  },
+  "portrait_dana_happy": {
+    "extends": "portrait_dana",
+    "path": "res://art/portraits/portrait_dana_happy.png",
+    "placeholder": {
+      "mood": "happy"
+    }
+  },
+  "portrait_dana_sad": {
+    "extends": "portrait_dana",
+    "path": "res://art/portraits/portrait_dana_sad.png",
+    "placeholder": {
+      "mood": "sad"
+    }
+  },
+  "portrait_dana_afraid": {
+    "extends": "portrait_dana",
+    "path": "res://art/portraits/portrait_dana_afraid.png",
+    "placeholder": {
+      "mood": "afraid"
+    }
+  },
+  "portrait_noah": {
+    "path": "res://art/portraits/portrait_noah.png",
+    "placeholder": {
+      "shape": "portrait",
+      "skin": "e0b898",
+      "hair": "d8b060",
+      "hair_style": "short",
+      "shirt": "c04040",
+      "bg": "342222"
+    }
+  },
+  "portrait_noah_happy": {
+    "extends": "portrait_noah",
+    "path": "res://art/portraits/portrait_noah_happy.png",
+    "placeholder": {
+      "mood": "happy"
+    }
+  },
+  "portrait_noah_sad": {
+    "extends": "portrait_noah",
+    "path": "res://art/portraits/portrait_noah_sad.png",
+    "placeholder": {
+      "mood": "sad"
+    }
+  },
+  "portrait_noah_afraid": {
+    "extends": "portrait_noah",
+    "path": "res://art/portraits/portrait_noah_afraid.png",
+    "placeholder": {
+      "mood": "afraid"
+    }
+  },
+  "portrait_erik": {
+    "path": "res://art/portraits/portrait_erik.png",
+    "placeholder": {
+      "shape": "portrait",
+      "skin": "e0b898",
+      "hair": "b89050",
+      "hair_style": "short",
+      "shirt": "5a5a7a",
+      "bg": "26263a"
+    }
+  },
+  "portrait_erik_happy": {
+    "extends": "portrait_erik",
+    "path": "res://art/portraits/portrait_erik_happy.png",
+    "placeholder": {
+      "mood": "happy"
+    }
+  },
+  "portrait_erik_sad": {
+    "extends": "portrait_erik",
+    "path": "res://art/portraits/portrait_erik_sad.png",
+    "placeholder": {
+      "mood": "sad"
+    }
+  },
+  "portrait_erik_afraid": {
+    "extends": "portrait_erik",
+    "path": "res://art/portraits/portrait_erik_afraid.png",
+    "placeholder": {
+      "mood": "afraid"
+    }
+  },
+  "portrait_ines": {
+    "path": "res://art/portraits/portrait_ines.png",
+    "placeholder": {
+      "shape": "portrait",
+      "skin": "d8b8a0",
+      "hair": "c8c8d0",
+      "hair_style": "bun",
+      "shirt": "8a5a7a",
+      "bg": "30243a"
+    }
+  },
+  "portrait_ines_happy": {
+    "extends": "portrait_ines",
+    "path": "res://art/portraits/portrait_ines_happy.png",
+    "placeholder": {
+      "mood": "happy"
+    }
+  },
+  "portrait_ines_sad": {
+    "extends": "portrait_ines",
+    "path": "res://art/portraits/portrait_ines_sad.png",
+    "placeholder": {
+      "mood": "sad"
+    }
+  },
+  "portrait_ines_afraid": {
+    "extends": "portrait_ines",
+    "path": "res://art/portraits/portrait_ines_afraid.png",
+    "placeholder": {
+      "mood": "afraid"
+    }
+  },
+  "tile_wall_top": {
+    "path": "res://art/tiles/tile_wall_top.png",
+    "placeholder": {
+      "shape": "tile",
+      "color": "2a2630",
+      "pattern": "wall_top"
+    }
+  },
+  "tile_wall_face": {
+    "path": "res://art/tiles/tile_wall_face.png",
+    "placeholder": {
+      "shape": "tile",
+      "color": "8a7a68",
+      "accent": "5a4a3a",
+      "pattern": "wall_face"
+    }
+  },
+  "tile_floor_wood": {
+    "path": "res://art/tiles/tile_floor_wood.png",
+    "placeholder": {
+      "shape": "tile",
+      "color": "8a6040",
+      "accent": "6a4628",
+      "pattern": "planks"
+    }
+  },
+  "tile_floor_kitchen": {
+    "path": "res://art/tiles/tile_floor_kitchen.png",
+    "placeholder": {
+      "shape": "tile",
+      "color": "c8c0b0",
+      "accent": "a89e8c",
+      "pattern": "checker"
+    }
+  },
+  "tile_carpet": {
+    "path": "res://art/tiles/tile_carpet.png",
+    "placeholder": {
+      "shape": "tile",
+      "color": "6a3a3a",
+      "accent": "5a3030",
+      "pattern": "noise",
+      "density": 60
+    }
+  },
+  "tile_door": {
+    "path": "res://art/tiles/tile_door.png",
+    "placeholder": {
+      "shape": "tile",
+      "color": "5a3a20",
+      "accent": "3a2410",
+      "pattern": "planks"
+    }
+  },
+  "tile_store_floor": {
+    "path": "res://art/tiles/tile_store_floor.png",
+    "placeholder": {
+      "shape": "tile",
+      "color": "d0d0c8",
+      "accent": "b0b0a8",
+      "pattern": "grid"
+    }
+  },
+  "tile_store_wall_face": {
+    "path": "res://art/tiles/tile_store_wall_face.png",
+    "placeholder": {
+      "shape": "tile",
+      "color": "b8c0c0",
+      "accent": "7a8484",
+      "pattern": "wall_face"
+    }
+  },
+  "tile_grass": {
+    "path": "res://art/tiles/tile_grass.png",
+    "placeholder": {
+      "shape": "tile",
+      "color": "3a5a30",
+      "accent": "2e4a26",
+      "pattern": "noise",
+      "density": 70
+    }
+  },
+  "tile_sidewalk": {
+    "path": "res://art/tiles/tile_sidewalk.png",
+    "placeholder": {
+      "shape": "tile",
+      "color": "9a968c",
+      "accent": "848076",
+      "pattern": "grid"
+    }
+  },
+  "tile_curb": {
+    "path": "res://art/tiles/tile_curb.png",
+    "placeholder": {
+      "shape": "tile",
+      "color": "8a867c",
+      "accent": "6a665c",
+      "pattern": "curb"
+    }
+  },
+  "tile_road": {
+    "path": "res://art/tiles/tile_road.png",
+    "placeholder": {
+      "shape": "tile",
+      "color": "34343a",
+      "accent": "2a2a30",
+      "pattern": "noise",
+      "density": 50
+    }
+  },
+  "tile_road_line": {
+    "path": "res://art/tiles/tile_road_line.png",
+    "placeholder": {
+      "shape": "tile",
+      "color": "34343a",
+      "accent": "2a2a30",
+      "pattern": "dash",
+      "line": "c8a040"
+    }
+  },
+  "tile_path": {
+    "path": "res://art/tiles/tile_path.png",
+    "placeholder": {
+      "shape": "tile",
+      "color": "7a7064",
+      "accent": "625a50",
+      "pattern": "noise",
+      "density": 40
+    }
+  },
+  "tile_driveway": {
+    "path": "res://art/tiles/tile_driveway.png",
+    "placeholder": {
+      "shape": "tile",
+      "color": "5a5650",
+      "accent": "4a4640",
+      "pattern": "noise",
+      "density": 40
+    }
+  },
+  "tile_siding": {
+    "path": "res://art/tiles/tile_siding.png",
+    "placeholder": {
+      "shape": "tile",
+      "color": "b8a888",
+      "accent": "9a8a70",
+      "pattern": "siding"
+    }
+  },
+  "tile_siding_blue": {
+    "path": "res://art/tiles/tile_siding_blue.png",
+    "placeholder": {
+      "shape": "tile",
+      "color": "8a9ab0",
+      "accent": "6a7a90",
+      "pattern": "siding"
+    }
+  },
+  "tile_roof": {
+    "path": "res://art/tiles/tile_roof.png",
+    "placeholder": {
+      "shape": "tile",
+      "color": "4a3a3a",
+      "accent": "3a2a2a",
+      "pattern": "shingles"
+    }
+  },
+  "tile_store_brick": {
+    "path": "res://art/tiles/tile_store_brick.png",
+    "placeholder": {
+      "shape": "tile",
+      "color": "7a3a30",
+      "accent": "5a2a22",
+      "pattern": "brick"
+    }
+  },
+  "tile_store_roof": {
+    "path": "res://art/tiles/tile_store_roof.png",
+    "placeholder": {
+      "shape": "tile",
+      "color": "3a3a40",
+      "accent": "2e2e34",
+      "pattern": "noise",
+      "density": 30
+    }
+  },
+  "bed": {
+    "path": "res://art/props/bed.png",
+    "placeholder": {
+      "shape": "block",
+      "size": [
+        48,
+        72
+      ],
+      "top": 54,
+      "color": "4a5a8a",
+      "details": [
+        {
+          "rect": [
+            6,
+            4,
+            36,
+            14
+          ],
+          "color": "e8e4d8"
+        }
+      ]
+    }
+  },
+  "desk": {
+    "path": "res://art/props/desk.png",
+    "placeholder": {
+      "shape": "block",
+      "size": [
+        56,
+        44
+      ],
+      "top": 20,
+      "color": "6a4a30"
+    }
+  },
+  "laptop": {
+    "path": "res://art/props/laptop.png",
+    "placeholder": {
+      "shape": "block",
+      "size": [
+        20,
+        14
+      ],
+      "top": 8,
+      "color": "5a5a66",
+      "details": [
+        {
+          "rect": [
+            3,
+            2,
+            14,
+            5
+          ],
+          "color": "8ab0d0"
+        }
+      ]
+    }
+  },
+  "boxes": {
+    "path": "res://art/props/boxes.png",
+    "placeholder": {
+      "shape": "block",
+      "size": [
+        40,
+        36
+      ],
+      "top": 12,
+      "color": "a08058",
+      "details": [
+        {
+          "rect": [
+            0,
+            18,
+            40,
+            3
+          ],
+          "color": "c8b088"
+        }
+      ]
+    }
+  },
+  "shelf_small": {
+    "path": "res://art/props/shelf_small.png",
+    "placeholder": {
+      "shape": "block",
+      "size": [
+        40,
+        60
+      ],
+      "top": 12,
+      "color": "5a4030",
+      "details": [
+        {
+          "rect": [
+            6,
+            18,
+            8,
+            10
+          ],
+          "color": "d0b040"
+        },
+        {
+          "rect": [
+            18,
+            20,
+            6,
+            8
+          ],
+          "color": "c0c0c0"
+        },
+        {
+          "rect": [
+            6,
+            38,
+            28,
+            3
+          ],
+          "color": "3a2a1a"
+        }
+      ]
+    }
+  },
+  "poster": {
+    "path": "res://art/props/poster.png",
+    "placeholder": {
+      "shape": "flat",
+      "size": [
+        28,
+        36
+      ],
+      "color": "2a3050",
+      "details": [
+        {
+          "rect": [
+            8,
+            10,
+            12,
+            12
+          ],
+          "color": "c8b070",
+          "ellipse": true
+        }
+      ]
+    }
+  },
+  "window": {
+    "path": "res://art/props/window.png",
+    "placeholder": {
+      "shape": "flat",
+      "size": [
+        40,
+        28
+      ],
+      "color": "2a3a5a",
+      "details": [
+        {
+          "rect": [
+            19,
+            0,
+            2,
+            28
+          ],
+          "color": "d8d0c0"
+        },
+        {
+          "rect": [
+            0,
+            13,
+            40,
+            2
+          ],
+          "color": "d8d0c0"
+        }
+      ]
+    }
+  },
+  "window_lit": {
+    "path": "res://art/props/window_lit.png",
+    "placeholder": {
+      "shape": "flat",
+      "size": [
+        28,
+        24
+      ],
+      "color": "f0c070",
+      "details": [
+        {
+          "rect": [
+            13,
+            0,
+            2,
+            24
+          ],
+          "color": "5a4030"
+        },
+        {
+          "rect": [
+            0,
+            11,
+            28,
+            2
+          ],
+          "color": "5a4030"
+        }
+      ]
+    }
+  },
+  "window_dark": {
+    "path": "res://art/props/window_dark.png",
+    "placeholder": {
+      "shape": "flat",
+      "size": [
+        28,
+        24
+      ],
+      "color": "2a3040",
+      "details": [
+        {
+          "rect": [
+            13,
+            0,
+            2,
+            24
+          ],
+          "color": "4a4a50"
+        },
+        {
+          "rect": [
+            0,
+            11,
+            28,
+            2
+          ],
+          "color": "4a4a50"
+        }
+      ]
+    }
+  },
+  "phone_small": {
+    "path": "res://art/props/phone_small.png",
+    "placeholder": {
+      "shape": "block",
+      "size": [
+        10,
+        14
+      ],
+      "top": 4,
+      "color": "202028",
+      "details": [
+        {
+          "rect": [
+            2,
+            5,
+            6,
+            6
+          ],
+          "color": "6090c0"
+        }
+      ]
+    }
+  },
+  "dining_table": {
+    "path": "res://art/props/dining_table.png",
+    "placeholder": {
+      "shape": "block",
+      "size": [
+        96,
+        56
+      ],
+      "top": 40,
+      "color": "6a4a30",
+      "top_color": "8a6440"
+    }
+  },
+  "chair": {
+    "path": "res://art/props/chair.png",
+    "placeholder": {
+      "shape": "block",
+      "size": [
+        24,
+        36
+      ],
+      "top": 14,
+      "color": "6a4a30"
+    }
+  },
+  "fridge": {
+    "path": "res://art/props/fridge.png",
+    "placeholder": {
+      "shape": "block",
+      "size": [
+        32,
+        64
+      ],
+      "top": 8,
+      "color": "d8d8d0",
+      "details": [
+        {
+          "rect": [
+            26,
+            20,
+            2,
+            14
+          ],
+          "color": "8a8a8a"
+        },
+        {
+          "rect": [
+            2,
+            30,
+            28,
+            1
+          ],
+          "color": "a0a098"
+        }
+      ]
+    }
+  },
+  "stove": {
+    "path": "res://art/props/stove.png",
+    "placeholder": {
+      "shape": "block",
+      "size": [
+        32,
+        44
+      ],
+      "top": 14,
+      "color": "9a9a9a",
+      "details": [
+        {
+          "rect": [
+            4,
+            3,
+            8,
+            6
+          ],
+          "color": "303030",
+          "ellipse": true
+        },
+        {
+          "rect": [
+            18,
+            3,
+            8,
+            6
+          ],
+          "color": "303030",
+          "ellipse": true
+        }
+      ]
+    }
+  },
+  "counter": {
+    "path": "res://art/props/counter.png",
+    "placeholder": {
+      "shape": "block",
+      "size": [
+        64,
+        44
+      ],
+      "top": 16,
+      "color": "7a6a5a",
+      "top_color": "c8c0b0"
+    }
+  },
+  "cupboard": {
+    "path": "res://art/props/cupboard.png",
+    "placeholder": {
+      "shape": "block",
+      "size": [
+        48,
+        52
+      ],
+      "top": 10,
+      "color": "8a6a4a",
+      "details": [
+        {
+          "rect": [
+            23,
+            12,
+            2,
+            38
+          ],
+          "color": "5a4030"
+        }
+      ]
+    }
+  },
+  "calendar": {
+    "path": "res://art/props/calendar.png",
+    "placeholder": {
+      "shape": "flat",
+      "size": [
+        20,
+        26
+      ],
+      "color": "e8e0d0",
+      "details": [
+        {
+          "rect": [
+            0,
+            0,
+            20,
+            6
+          ],
+          "color": "c04040"
+        }
+      ]
+    }
+  },
+  "radio": {
+    "path": "res://art/props/radio.png",
+    "placeholder": {
+      "shape": "block",
+      "size": [
+        24,
+        16
+      ],
+      "top": 6,
+      "color": "7a5a40",
+      "details": [
+        {
+          "rect": [
+            3,
+            8,
+            8,
+            6
+          ],
+          "color": "3a3030",
+          "ellipse": true
+        }
+      ]
+    }
+  },
+  "mug": {
+    "path": "res://art/props/mug.png",
+    "placeholder": {
+      "shape": "block",
+      "size": [
+        10,
+        10
+      ],
+      "top": 3,
+      "color": "e8e0d0"
+    }
+  },
+  "bible": {
+    "path": "res://art/props/bible.png",
+    "placeholder": {
+      "shape": "block",
+      "size": [
+        18,
+        12
+      ],
+      "top": 6,
+      "color": "4a2018",
+      "details": [
+        {
+          "rect": [
+            8,
+            2,
+            2,
+            8
+          ],
+          "color": "d8b860"
+        }
+      ]
+    }
+  },
+  "couch": {
+    "path": "res://art/props/couch.png",
+    "placeholder": {
+      "shape": "block",
+      "size": [
+        96,
+        44
+      ],
+      "top": 16,
+      "color": "5a3a4a",
+      "details": [
+        {
+          "rect": [
+            0,
+            16,
+            12,
+            28
+          ],
+          "color": "4a2e3c"
+        },
+        {
+          "rect": [
+            84,
+            16,
+            12,
+            28
+          ],
+          "color": "4a2e3c"
+        }
+      ]
+    }
+  },
+  "recliner": {
+    "path": "res://art/props/recliner.png",
+    "placeholder": {
+      "shape": "block",
+      "size": [
+        36,
+        44
+      ],
+      "top": 16,
+      "color": "6a5a3a"
+    }
+  },
+  "tv": {
+    "path": "res://art/props/tv.png",
+    "placeholder": {
+      "shape": "block",
+      "size": [
+        64,
+        48
+      ],
+      "top": 8,
+      "color": "202024",
+      "details": [
+        {
+          "rect": [
+            4,
+            10,
+            56,
+            30
+          ],
+          "color": "2a3a5a"
+        }
+      ]
+    }
+  },
+  "bookshelf": {
+    "path": "res://art/props/bookshelf.png",
+    "placeholder": {
+      "shape": "block",
+      "size": [
+        48,
+        64
+      ],
+      "top": 10,
+      "color": "5a4030",
+      "details": [
+        {
+          "rect": [
+            4,
+            14,
+            40,
+            10
+          ],
+          "color": "8a3a3a"
+        },
+        {
+          "rect": [
+            4,
+            30,
+            40,
+            10
+          ],
+          "color": "3a5a8a"
+        },
+        {
+          "rect": [
+            4,
+            46,
+            40,
+            10
+          ],
+          "color": "5a7a3a"
+        }
+      ]
+    }
+  },
+  "keyboard": {
+    "path": "res://art/props/keyboard.png",
+    "placeholder": {
+      "shape": "block",
+      "size": [
+        56,
+        28
+      ],
+      "top": 10,
+      "color": "2a2a2a",
+      "details": [
+        {
+          "rect": [
+            4,
+            2,
+            48,
+            5
+          ],
+          "color": "e8e8e8"
+        }
+      ]
+    }
+  },
+  "photos": {
+    "path": "res://art/props/photos.png",
+    "placeholder": {
+      "shape": "flat",
+      "size": [
+        40,
+        20
+      ],
+      "color": "3a2a1a",
+      "details": [
+        {
+          "rect": [
+            2,
+            2,
+            10,
+            14
+          ],
+          "color": "c0b090"
+        },
+        {
+          "rect": [
+            15,
+            2,
+            10,
+            14
+          ],
+          "color": "a0b0c0"
+        },
+        {
+          "rect": [
+            28,
+            2,
+            10,
+            14
+          ],
+          "color": "b0a0b0"
+        }
+      ]
+    }
+  },
+  "smoke_alarm": {
+    "path": "res://art/props/smoke_alarm.png",
+    "placeholder": {
+      "shape": "flat",
+      "size": [
+        12,
+        12
+      ],
+      "color": "e8e8e0",
+      "details": [
+        {
+          "rect": [
+            5,
+            5,
+            2,
+            2
+          ],
+          "color": "c03030"
+        }
+      ]
+    }
+  },
+  "floor_lamp": {
+    "path": "res://art/props/floor_lamp.png",
+    "placeholder": {
+      "shape": "lamp_post",
+      "size": [
+        16,
+        56
+      ],
+      "color": "4a3a2a",
+      "lamp": "ffd8a0"
+    }
+  },
+  "rug": {
+    "path": "res://art/props/rug.png",
+    "placeholder": {
+      "shape": "flat",
+      "size": [
+        96,
+        64
+      ],
+      "color": "7a4a3a",
+      "border_color": "5a3020",
+      "details": [
+        {
+          "rect": [
+            8,
+            8,
+            80,
+            48
+          ],
+          "color": "8a5a44"
+        }
+      ]
+    }
+  },
+  "doormat": {
+    "path": "res://art/props/doormat.png",
+    "placeholder": {
+      "shape": "flat",
+      "size": [
+        40,
+        20
+      ],
+      "color": "6a5a3a"
+    }
+  },
+  "key_hook": {
+    "path": "res://art/props/key_hook.png",
+    "placeholder": {
+      "shape": "flat",
+      "size": [
+        24,
+        16
+      ],
+      "color": "5a4030",
+      "details": [
+        {
+          "rect": [
+            4,
+            8,
+            4,
+            6
+          ],
+          "color": "d8b860"
+        },
+        {
+          "rect": [
+            14,
+            8,
+            6,
+            8
+          ],
+          "color": "c8b898"
+        }
+      ]
+    }
+  },
+  "slippers": {
+    "path": "res://art/props/slippers.png",
+    "placeholder": {
+      "shape": "block",
+      "size": [
+        22,
+        10
+      ],
+      "top": 4,
+      "color": "c8a0b0"
+    }
+  },
+  "clothes_mom": {
+    "path": "res://art/props/clothes_mom.png",
+    "placeholder": {
+      "shape": "pile",
+      "size": [
+        36,
+        20
+      ],
+      "colors": [
+        "b08058",
+        "4a4658",
+        "e8e0d0"
+      ]
+    }
+  },
+  "clothes_hollis": {
+    "path": "res://art/props/clothes_hollis.png",
+    "placeholder": {
+      "shape": "pile",
+      "size": [
+        36,
+        20
+      ],
+      "colors": [
+        "3a7a4a",
+        "3a3a44",
+        "d8d0c0"
+      ]
+    }
+  },
+  "clothes_felix": {
+    "path": "res://art/props/clothes_felix.png",
+    "placeholder": {
+      "shape": "pile",
+      "size": [
+        32,
+        18
+      ],
+      "colors": [
+        "c09040",
+        "3a3a50"
+      ]
+    }
+  },
+  "clothes_noah": {
+    "path": "res://art/props/clothes_noah.png",
+    "placeholder": {
+      "shape": "pile",
+      "size": [
+        24,
+        14
+      ],
+      "colors": [
+        "c04040",
+        "3a5a8a"
+      ]
+    }
+  },
+  "clothes_ines": {
+    "path": "res://art/props/clothes_ines.png",
+    "placeholder": {
+      "shape": "pile",
+      "size": [
+        32,
+        18
+      ],
+      "colors": [
+        "8a5a7a",
+        "4a4a5a",
+        "c8c8d0"
+      ]
+    }
+  },
+  "clothes_generic": {
+    "path": "res://art/props/clothes_generic.png",
+    "placeholder": {
+      "shape": "pile",
+      "size": [
+        32,
+        18
+      ],
+      "colors": [
+        "5070a0",
+        "303848",
+        "c0b8a8"
+      ]
+    }
+  },
+  "car_blue": {
+    "path": "res://art/props/car_blue.png",
+    "placeholder": {
+      "shape": "block",
+      "size": [
+        96,
+        56
+      ],
+      "top": 24,
+      "color": "3a5a8a",
+      "top_color": "5a7aa8",
+      "details": [
+        {
+          "rect": [
+            20,
+            4,
+            56,
+            16
+          ],
+          "color": "2a3444"
+        },
+        {
+          "rect": [
+            6,
+            44,
+            14,
+            10
+          ],
+          "color": "1a1a1a"
+        },
+        {
+          "rect": [
+            76,
+            44,
+            14,
+            10
+          ],
+          "color": "1a1a1a"
+        }
+      ]
+    }
+  },
+  "car_red": {
+    "path": "res://art/props/car_red.png",
+    "placeholder": {
+      "shape": "block",
+      "size": [
+        96,
+        56
+      ],
+      "top": 24,
+      "color": "8a3a34",
+      "top_color": "a85a50",
+      "details": [
+        {
+          "rect": [
+            20,
+            4,
+            56,
+            16
+          ],
+          "color": "2a3444"
+        },
+        {
+          "rect": [
+            6,
+            44,
+            14,
+            10
+          ],
+          "color": "1a1a1a"
+        },
+        {
+          "rect": [
+            76,
+            44,
+            14,
+            10
+          ],
+          "color": "1a1a1a"
+        }
+      ]
+    }
+  },
+  "suv_silver": {
+    "path": "res://art/props/suv_silver.png",
+    "placeholder": {
+      "shape": "block",
+      "size": [
+        104,
+        64
+      ],
+      "top": 28,
+      "color": "9a9ea6",
+      "top_color": "b8bcc4",
+      "details": [
+        {
+          "rect": [
+            18,
+            4,
+            68,
+            18
+          ],
+          "color": "2a3444"
+        },
+        {
+          "rect": [
+            8,
+            50,
+            16,
+            12
+          ],
+          "color": "1a1a1a"
+        },
+        {
+          "rect": [
+            80,
+            50,
+            16,
+            12
+          ],
+          "color": "1a1a1a"
+        }
+      ]
+    }
+  },
+  "car_wreck": {
+    "path": "res://art/props/car_wreck.png",
+    "placeholder": {
+      "shape": "block",
+      "size": [
+        104,
+        64
+      ],
+      "top": 28,
+      "color": "6a6e76",
+      "top_color": "8a8e96",
+      "details": [
+        {
+          "rect": [
+            18,
+            4,
+            30,
+            18
+          ],
+          "color": "2a3444"
+        },
+        {
+          "rect": [
+            60,
+            30,
+            44,
+            20
+          ],
+          "color": "3a3a3a"
+        },
+        {
+          "rect": [
+            8,
+            50,
+            16,
+            12
+          ],
+          "color": "1a1a1a"
+        },
+        {
+          "rect": [
+            70,
+            20,
+            30,
+            10
+          ],
+          "color": "c86030"
+        }
+      ]
+    }
+  },
+  "van": {
+    "path": "res://art/props/van.png",
+    "placeholder": {
+      "shape": "block",
+      "size": [
+        112,
+        64
+      ],
+      "top": 24,
+      "color": "d8d8d0",
+      "top_color": "f0f0e8",
+      "details": [
+        {
+          "rect": [
+            80,
+            6,
+            26,
+            16
+          ],
+          "color": "2a3444"
+        },
+        {
+          "rect": [
+            10,
+            30,
+            60,
+            6
+          ],
+          "color": "4a7ac0"
+        },
+        {
+          "rect": [
+            10,
+            52,
+            16,
+            12
+          ],
+          "color": "1a1a1a"
+        },
+        {
+          "rect": [
+            84,
+            52,
+            16,
+            12
+          ],
+          "color": "1a1a1a"
+        }
+      ]
+    }
+  },
+  "bike": {
+    "path": "res://art/props/bike.png",
+    "placeholder": {
+      "shape": "block",
+      "size": [
+        40,
+        24
+      ],
+      "top": 4,
+      "color": "c03030",
+      "details": [
+        {
+          "rect": [
+            0,
+            8,
+            14,
+            14
+          ],
+          "color": "202020",
+          "ellipse": true
+        },
+        {
+          "rect": [
+            26,
+            8,
+            14,
+            14
+          ],
+          "color": "202020",
+          "ellipse": true
+        }
+      ]
+    }
+  },
+  "sneaker": {
+    "path": "res://art/props/sneaker.png",
+    "placeholder": {
+      "shape": "block",
+      "size": [
+        14,
+        8
+      ],
+      "top": 3,
+      "color": "e0e0e0",
+      "details": [
+        {
+          "rect": [
+            0,
+            5,
+            14,
+            3
+          ],
+          "color": "c04040"
+        }
+      ]
+    }
+  },
+  "streetlight": {
+    "path": "res://art/props/streetlight.png",
+    "placeholder": {
+      "shape": "lamp_post",
+      "size": [
+        32,
+        112
+      ],
+      "color": "3a3c44",
+      "lamp": "ffe0a0"
+    }
+  },
+  "tree": {
+    "path": "res://art/props/tree.png",
+    "placeholder": {
+      "shape": "tree",
+      "size": [
+        64,
+        96
+      ],
+      "color": "2f5a34",
+      "trunk": "4a3420"
+    }
+  },
+  "hedge": {
+    "path": "res://art/props/hedge.png",
+    "placeholder": {
+      "shape": "block",
+      "size": [
+        64,
+        32
+      ],
+      "top": 14,
+      "color": "2e4a28",
+      "top_color": "3e6a36"
+    }
+  },
+  "fence": {
+    "path": "res://art/props/fence.png",
+    "placeholder": {
+      "shape": "block",
+      "size": [
+        32,
+        28
+      ],
+      "top": 6,
+      "color": "d8d0c0",
+      "details": [
+        {
+          "rect": [
+            0,
+            8,
+            32,
+            3
+          ],
+          "color": "b8b0a0"
+        }
+      ]
+    }
+  },
+  "mailbox": {
+    "path": "res://art/props/mailbox.png",
+    "placeholder": {
+      "shape": "block",
+      "size": [
+        16,
+        32
+      ],
+      "top": 8,
+      "color": "3a4a6a"
+    }
+  },
+  "hydrant": {
+    "path": "res://art/props/hydrant.png",
+    "placeholder": {
+      "shape": "block",
+      "size": [
+        16,
+        24
+      ],
+      "top": 6,
+      "color": "c03a2a"
+    }
+  },
+  "trash_can": {
+    "path": "res://art/props/trash_can.png",
+    "placeholder": {
+      "shape": "block",
+      "size": [
+        24,
+        32
+      ],
+      "top": 8,
+      "color": "4a5a4a"
+    }
+  },
+  "for_sale_sign": {
+    "path": "res://art/props/for_sale_sign.png",
+    "placeholder": {
+      "shape": "block",
+      "size": [
+        28,
+        36
+      ],
+      "top": 6,
+      "color": "e8e8e0",
+      "details": [
+        {
+          "rect": [
+            2,
+            2,
+            24,
+            14
+          ],
+          "color": "c03030"
+        },
+        {
+          "rect": [
+            13,
+            16,
+            2,
+            20
+          ],
+          "color": "5a4030"
+        }
+      ]
+    }
+  },
+  "flyer": {
+    "path": "res://art/props/flyer.png",
+    "placeholder": {
+      "shape": "flat",
+      "size": [
+        12,
+        16
+      ],
+      "color": "f0e8c8"
+    }
+  },
+  "porch": {
+    "path": "res://art/props/porch.png",
+    "placeholder": {
+      "shape": "block",
+      "size": [
+        64,
+        24
+      ],
+      "top": 12,
+      "color": "7a6a58"
+    }
+  },
+  "house_door": {
+    "path": "res://art/props/house_door.png",
+    "placeholder": {
+      "shape": "block",
+      "size": [
+        32,
+        48
+      ],
+      "top": 4,
+      "color": "5a3a24",
+      "details": [
+        {
+          "rect": [
+            24,
+            24,
+            3,
+            3
+          ],
+          "color": "d8b860"
+        }
+      ]
+    }
+  },
+  "store_door": {
+    "path": "res://art/props/store_door.png",
+    "placeholder": {
+      "shape": "block",
+      "size": [
+        48,
+        52
+      ],
+      "top": 4,
+      "color": "8ab0c0",
+      "details": [
+        {
+          "rect": [
+            23,
+            4,
+            2,
+            48
+          ],
+          "color": "3a4a50"
+        }
+      ]
+    }
+  },
+  "store_sign": {
+    "path": "res://art/props/store_sign.png",
+    "placeholder": {
+      "shape": "flat",
+      "size": [
+        160,
+        22
+      ],
+      "color": "c03030",
+      "details": [
+        {
+          "rect": [
+            8,
+            6,
+            144,
+            10
+          ],
+          "color": "f0e0c0"
+        }
+      ]
+    }
+  },
+  "store_window": {
+    "path": "res://art/props/store_window.png",
+    "placeholder": {
+      "shape": "flat",
+      "size": [
+        64,
+        36
+      ],
+      "color": "d8e8f0",
+      "details": [
+        {
+          "rect": [
+            31,
+            0,
+            2,
+            36
+          ],
+          "color": "6a7a80"
+        }
+      ]
+    }
+  },
+  "leash": {
+    "path": "res://art/props/leash.png",
+    "placeholder": {
+      "shape": "flat",
+      "size": [
+        24,
+        6
+      ],
+      "color": "c04040",
+      "border": false
+    }
+  },
+  "fire": {
+    "path": "res://art/props/fire.png",
+    "placeholder": {
+      "shape": "pile",
+      "size": [
+        40,
+        28
+      ],
+      "colors": [
+        "ff8030",
+        "ffb040",
+        "c04020",
+        "ffd060"
+      ]
+    }
+  },
+  "glass_shards": {
+    "path": "res://art/props/glass_shards.png",
+    "placeholder": {
+      "shape": "flat",
+      "size": [
+        40,
+        16
+      ],
+      "color": "00000000",
+      "border": false,
+      "details": [
+        {
+          "rect": [
+            4,
+            4,
+            4,
+            2
+          ],
+          "color": "c0e0f0"
+        },
+        {
+          "rect": [
+            16,
+            9,
+            3,
+            2
+          ],
+          "color": "c0e0f0"
+        },
+        {
+          "rect": [
+            28,
+            3,
+            5,
+            2
+          ],
+          "color": "c0e0f0"
+        },
+        {
+          "rect": [
+            33,
+            11,
+            3,
+            2
+          ],
+          "color": "c0e0f0"
+        }
+      ]
+    }
+  },
+  "store_shelf": {
+    "path": "res://art/props/store_shelf.png",
+    "placeholder": {
+      "shape": "block",
+      "size": [
+        96,
+        48
+      ],
+      "top": 16,
+      "color": "6a7080",
+      "top_color": "8a90a0",
+      "details": [
+        {
+          "rect": [
+            4,
+            20,
+            14,
+            10
+          ],
+          "color": "c04040"
+        },
+        {
+          "rect": [
+            22,
+            20,
+            14,
+            10
+          ],
+          "color": "40a060"
+        },
+        {
+          "rect": [
+            40,
+            20,
+            14,
+            10
+          ],
+          "color": "d0b040"
+        },
+        {
+          "rect": [
+            58,
+            20,
+            14,
+            10
+          ],
+          "color": "4070c0"
+        },
+        {
+          "rect": [
+            76,
+            20,
+            14,
+            10
+          ],
+          "color": "c07030"
+        },
+        {
+          "rect": [
+            4,
+            34,
+            88,
+            2
+          ],
+          "color": "4a5060"
+        }
+      ]
+    }
+  },
+  "cooler": {
+    "path": "res://art/props/cooler.png",
+    "placeholder": {
+      "shape": "block",
+      "size": [
+        64,
+        64
+      ],
+      "top": 10,
+      "color": "a8c8d8",
+      "top_color": "d0e0e8",
+      "details": [
+        {
+          "rect": [
+            4,
+            14,
+            56,
+            46
+          ],
+          "color": "d8f0f8"
+        },
+        {
+          "rect": [
+            31,
+            14,
+            2,
+            46
+          ],
+          "color": "8aa0a8"
+        }
+      ]
+    }
+  },
+  "bread_rack": {
+    "path": "res://art/props/bread_rack.png",
+    "placeholder": {
+      "shape": "block",
+      "size": [
+        48,
+        48
+      ],
+      "top": 12,
+      "color": "8a6a4a",
+      "details": [
+        {
+          "rect": [
+            4,
+            16,
+            18,
+            10
+          ],
+          "color": "d8a860"
+        },
+        {
+          "rect": [
+            26,
+            16,
+            18,
+            10
+          ],
+          "color": "c89850"
+        }
+      ]
+    }
+  },
+  "battery_hook": {
+    "path": "res://art/props/battery_hook.png",
+    "placeholder": {
+      "shape": "flat",
+      "size": [
+        24,
+        32
+      ],
+      "color": "5a5a60",
+      "details": [
+        {
+          "rect": [
+            6,
+            6,
+            12,
+            18
+          ],
+          "color": "d0b040"
+        }
+      ]
+    }
+  },
+  "candy_rack": {
+    "path": "res://art/props/candy_rack.png",
+    "placeholder": {
+      "shape": "block",
+      "size": [
+        32,
+        40
+      ],
+      "top": 8,
+      "color": "5a5060",
+      "details": [
+        {
+          "rect": [
+            4,
+            12,
+            24,
+            8
+          ],
+          "color": "e07040"
+        },
+        {
+          "rect": [
+            4,
+            24,
+            24,
+            8
+          ],
+          "color": "c04090"
+        }
+      ]
+    }
+  },
+  "store_counter": {
+    "path": "res://art/props/store_counter.png",
+    "placeholder": {
+      "shape": "block",
+      "size": [
+        96,
+        40
+      ],
+      "top": 16,
+      "color": "6a5a4a",
+      "top_color": "9a8a78"
+    }
+  },
+  "register": {
+    "path": "res://art/props/register.png",
+    "placeholder": {
+      "shape": "block",
+      "size": [
+        28,
+        22
+      ],
+      "top": 8,
+      "color": "3a3a40",
+      "details": [
+        {
+          "rect": [
+            4,
+            2,
+            20,
+            5
+          ],
+          "color": "60c080"
+        }
+      ]
+    }
+  },
+  "lottery_screen": {
+    "path": "res://art/props/lottery_screen.png",
+    "placeholder": {
+      "shape": "flat",
+      "size": [
+        40,
+        26
+      ],
+      "color": "1a1a2a",
+      "details": [
+        {
+          "rect": [
+            4,
+            4,
+            32,
+            18
+          ],
+          "color": "d0a030"
+        }
+      ]
+    }
+  },
+  "notice_board": {
+    "path": "res://art/props/notice_board.png",
+    "placeholder": {
+      "shape": "flat",
+      "size": [
+        40,
+        30
+      ],
+      "color": "a08058",
+      "details": [
+        {
+          "rect": [
+            4,
+            4,
+            10,
+            10
+          ],
+          "color": "f0f0e0"
+        },
+        {
+          "rect": [
+            18,
+            6,
+            12,
+            9
+          ],
+          "color": "f0e0a0"
+        },
+        {
+          "rect": [
+            8,
+            17,
+            14,
+            9
+          ],
+          "color": "e0f0f0"
+        }
+      ]
+    }
+  },
+  "small_tv": {
+    "path": "res://art/props/small_tv.png",
+    "placeholder": {
+      "shape": "block",
+      "size": [
+        36,
+        26
+      ],
+      "top": 6,
+      "color": "202024",
+      "details": [
+        {
+          "rect": [
+            3,
+            8,
+            30,
+            15
+          ],
+          "color": "3a4a6a"
+        }
+      ]
+    }
+  },
+  "glasses": {
+    "path": "res://art/props/glasses.png",
+    "placeholder": {
+      "shape": "block",
+      "size": [
+        14,
+        6
+      ],
+      "top": 2,
+      "color": "303030"
+    }
+  },
+  "name_tag": {
+    "path": "res://art/props/name_tag.png",
+    "placeholder": {
+      "shape": "flat",
+      "size": [
+        12,
+        8
+      ],
+      "color": "e8e0c0"
+    }
+  },
+  "mop": {
+    "path": "res://art/props/mop.png",
+    "placeholder": {
+      "shape": "block",
+      "size": [
+        8,
+        48
+      ],
+      "top": 4,
+      "color": "8a7a5a",
+      "details": [
+        {
+          "rect": [
+            0,
+            38,
+            8,
+            10
+          ],
+          "color": "c0c0b0"
+        }
+      ]
+    }
+  },
+  "wet_floor_sign": {
+    "path": "res://art/props/wet_floor_sign.png",
+    "placeholder": {
+      "shape": "block",
+      "size": [
+        20,
+        30
+      ],
+      "top": 6,
+      "color": "e0c030"
+    }
+  },
+  "icon_food": {
+    "path": "res://art/items/icon_food.png",
+    "placeholder": {
+      "shape": "icon",
+      "glyph": "can",
+      "color": "c08040"
+    }
+  },
+  "icon_water": {
+    "path": "res://art/items/icon_water.png",
+    "placeholder": {
+      "shape": "icon",
+      "glyph": "bottle",
+      "color": "5a9ad0"
+    }
+  },
+  "icon_medicine": {
+    "path": "res://art/items/icon_medicine.png",
+    "placeholder": {
+      "shape": "icon",
+      "glyph": "pills",
+      "color": "c04040"
+    }
+  },
+  "icon_bat": {
+    "path": "res://art/items/icon_bat.png",
+    "placeholder": {
+      "shape": "icon",
+      "glyph": "bat",
+      "color": "b08850"
+    }
+  },
+  "icon_mop": {
+    "path": "res://art/items/icon_mop.png",
+    "placeholder": {
+      "shape": "icon",
+      "glyph": "bat",
+      "color": "9a9a8a"
+    }
+  },
+  "icon_key": {
+    "path": "res://art/items/icon_key.png",
+    "placeholder": {
+      "shape": "icon",
+      "glyph": "key",
+      "color": "d8b860"
+    }
+  },
+  "icon_bible": {
+    "path": "res://art/items/icon_bible.png",
+    "placeholder": {
+      "shape": "icon",
+      "glyph": "book",
+      "color": "4a2018"
+    }
+  },
+  "icon_letter": {
+    "path": "res://art/items/icon_letter.png",
+    "placeholder": {
+      "shape": "icon",
+      "glyph": "paper",
+      "color": "f0e8d8"
+    }
+  },
+  "icon_milk": {
+    "path": "res://art/items/icon_milk.png",
+    "placeholder": {
+      "shape": "icon",
+      "glyph": "carton",
+      "color": "f0f0f0"
+    }
+  },
+  "icon_bread": {
+    "path": "res://art/items/icon_bread.png",
+    "placeholder": {
+      "shape": "icon",
+      "glyph": "box",
+      "color": "d8a860"
+    }
+  },
+  "icon_battery": {
+    "path": "res://art/items/icon_battery.png",
+    "placeholder": {
+      "shape": "icon",
+      "glyph": "box",
+      "color": "d0b040"
+    }
+  },
+  "icon_card": {
+    "path": "res://art/items/icon_card.png",
+    "placeholder": {
+      "shape": "icon",
+      "glyph": "paper",
+      "color": "4a8ac0"
+    }
+  },
+  "icon_bag": {
+    "path": "res://art/items/icon_bag.png",
+    "placeholder": {
+      "shape": "icon",
+      "glyph": "box",
+      "color": "c8b898"
+    }
+  },
+  "icon_box_cutter": {
+    "path": "res://art/items/icon_box_cutter.png",
+    "placeholder": {
+      "shape": "icon",
+      "glyph": "key",
+      "color": "d0c040"
+    }
+  },
+  "icon_phone": {
+    "path": "res://art/items/icon_phone.png",
+    "placeholder": {
+      "shape": "icon",
+      "glyph": "box",
+      "color": "303038"
+    }
+  },
+  "icon_candy": {
+    "path": "res://art/items/icon_candy.png",
+    "placeholder": {
+      "shape": "icon",
+      "glyph": "box",
+      "color": "e07040"
+    }
+  }
+}

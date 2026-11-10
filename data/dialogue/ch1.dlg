@@ -1,0 +1,336 @@
+# Chapter 1 "Night One": game-flow glue for the greybox.
+#
+# The story's words live in c1_script.dlg, generated from docs/CHAPTER_1_SCRIPT.md by
+# tools/script_to_dlg.py. This file only sequences those nodes ("~ call c1_script#NODE"),
+# adds the cinematic beats (vanishing, lights, audio, cards, fights) and a few short
+# PLACEHOLDER lines where the greybox needs words the script does not have yet.
+# Scenes not greyboxed yet: S02 upstairs, S10 basement, S11 stranger, S12 before dawn.
+
+# ---------------------------------------------------------------- House, evening
+
+== cold_open
+~ call c1_script#C1_S00.lines
+~ call c1_script#C1_S01.lines
+~ set C1_T01
+
+== kitchen_enter
+~ call c1_script#C1_S03.lines
+~ set C1_T02
+~ toast Set the table: plates (cupboard), forks (drawer), iced tea (fridge).
+
+== mom
+~ if C1_LAST_WORDS -> mom_bye
+~ if C1_ERRAND -> mom_errand
+~ if !C1_T02 -> kitchen_enter
+# PLACEHOLDER
+mom(happy): Plates, forks, iced tea. The table won't set itself, Picasso.
+
+== mom_errand
+# PLACEHOLDER
+mom: Card's on the hook by the front door. Milk, bread, nine-volt.
+
+== mom_bye
+~ call c1_script#C1_S03b_L040
+
+== cupboard
+~ call c1_script#C1_OBJ_CUPBOARD
+~ if !C1_T02 | table_plates end
+~ set table_plates
+-> check_table
+
+== fork_drawer
+~ call c1_script#C1_OBJ_FORK_DRAWER
+~ if !C1_T02 | table_forks end
+~ set table_forks
+~ call c1_script#C1_S03_L010.single
+~ call c1_script#C1_S03_L011.single
+~ call c1_script#C1_S03_L012.single
+-> check_table
+
+== fridge
+~ call c1_script#C1_OBJ_FRIDGE
+~ if !C1_T02 | table_tea end
+~ set table_tea
+~ call c1_script#C1_S03_L013.single
+-> check_table
+
+== check_table
+~ if table_plates & table_forks & table_tea -> dinner
+~ toast Keep setting the table.
+
+== dinner
+~ set table_set
+~ call c1_script#C1_S03.dialogue
+~ call c1_script#C1_S03.choices
+~ call c1_script#C1_S03.choices_2
+~ set C1_ERRAND
+~ toast New task: take Mom's card from the hook by the front door.
+
+== key_hook
+~ call c1_script#C1_OBJ_KEY_HOOK
+~ give mom_card
+~ give tote_bag
+~ give house_key
+~ set took_card
+
+== at_the_door
+~ call c1_script#C1_S03b.lines
+~ call c1_script#C1_S03b.choices
+~ toast New task: milk, bread and a 9-volt battery at Ridge Corner Market (east end of the street).
+
+== front_door_locked
+# PLACEHOLDER
+{vanished} hero: Not without knowing where she is.
+{!vanished & !C1_ERRAND} hero: Dinner first. Mom would kill me.
+{!vanished & C1_ERRAND & !took_card} hero: Mom's card. It's on the hook by the door.
+{!vanished & took_card} hero: Mom's still talking. Say goodbye first.
+
+== radio
+~ if C1_DAWN -> broadcast
+~ call c1_script#C1_OBJ_RADIO_KITCHEN
+
+== stove
+~ call c1_script#C1_OBJ_STOVE_NIGHT
+
+# ---------------------------------------------------------------- Linden Court, dusk
+
+== street_dusk
+# PLACEHOLDER
+hero: Ridge Corner Market. East end of the street. Milk, bread, nine-volt.
+
+== walt
+~ if vanished -> walt_bark
+~ call c1_script#C1_S04.walt
+
+== okoros
+~ call c1_script#C1_S04.okoros
+
+== noah
+~ call c1_script#C1_S04.noah
+
+== erik
+~ if vanished -> erik_bark
+~ call c1_script#C1_S04.noah
+
+== ines
+~ set calm_success
+~ call c1_script#C1_S04.ines_and_biscuit
+
+== look_up
+~ call c1_script#C1_OBJ_SKY
+
+== home_blocked
+# PLACEHOLDER
+hero: Not with him out here. I'm not leading him to Mom.
+
+# ---------------------------------------------------------------- Ridge Corner Market
+
+== store_enter
+~ sfx store_door_chime
+~ call c1_script#C1_S05.lines
+~ set hollis_greeted
+
+== hollis
+~ if has:milk & has:bread & has:battery_9v -> checkout
+# PLACEHOLDER
+hollis(happy): Milk's in the back cooler, bread by the window, batteries on the hook. Take your time.
+
+== took_battery
+~ call c1_script#C1_OBJ_STORE_BATTERY_HOOK
+~ set C1_HAS_BATTERY true
+
+== wade_busy
+~ call c1_script#C1_S05_L010.single
+
+# THE MOMENT (script C1_S05_MOMENT): the line stops mid-word, Hollis is simply gone,
+# four seconds of total silence, then the world breaks.
+== checkout
+~ call c1_script#C1_S05.checkout
+~ vanish hollis
+~ mute_all
+~ wait 4
+~ close_box
+~ unmute_all
+~ music_stop 0
+~ ambience_clear 0
+~ sfx car_crash
+~ shake 6 0.8
+~ sfx power_cut
+~ lights store off 1.4
+~ ambient #262634 1.2
+~ wait 0.6
+~ ambience car_alarm_loop -10 0.5
+~ sfx scream_distant
+~ ambience drone_tension_loop -8 3
+~ wait 1.0
+~ set vanished
+~ sfx phone_buzz
+~ call c1_script#C1_S05_MOMENT.lines
+~ checkpoint
+-> wade
+
+== wade
+~ unset C1_NEXT
+~ call c1_script#C1_S06.lines
+~ call c1_script#C1_S06.choices
+~ if C1_NEXT == COMBAT_C1_WADE -> wade_fight
+~ set wade_gone
+~ hide wade
+
+== wade_fight
+~ set wade_hostile
+~ music chaos 0.5
+~ toast Attack: J / (X).  Dodge: Space / (B).  A mop handle leans by the wet-floor sign.
+
+== wade_beaten
+~ call c1_script#COMBAT_C1_WADE.win_lines
+~ set wade_gone
+~ set item_available ITEM_BOX_CUTTER
+~ music_stop 2
+~ checkpoint
+
+== took_mop
+# PLACEHOLDER
+hero: Better than nothing.
+~ equip mop_handle
+
+# ---------------------------------------------------------------- The street, after
+
+== street_chaos
+~ call c1_script#C1_S07.lines_entry
+~ toast Get home to Mom (west end of the street).
+
+== walt_bark
+~ call c1_script#C1_S07_L014.single
+~ call c1_script#C1_S07_L015.single
+
+== erik_bark
+~ call c1_script#C1_S07_L010.single
+~ call c1_script#C1_S07_L011.single
+
+== noah_clothes
+# PLACEHOLDER
+hero: Noah's shirt. His shorts. His shoes, laces still tied.
+
+== found_bat
+# PLACEHOLDER
+hero: Somebody's Little League bat. Better than my hands.
+~ equip bat
+
+# PLACEHOLDER: the script has no street looter yet (Wade is the store looter). The brief asks
+# for a looter fight on the street, so a nameless one stands between the store and home.
+== street_looter
+looter(angry): Back off! This is mine now. All of it.
+hero: I just want to get home.
+looter(angry): Then you should've stayed there.
+~ toast Attack: J / (X).  Dodge: Space / (B).  Hold Shift to run.
+
+== street_looter_beaten
+hero(afraid): ...
+hero: Keep moving. Home.
+
+== biscuit
+~ unset C1_NEXT
+~ call c1_script#C1_S07a.lines
+~ call c1_script#C1_S07a.choices
+~ if C1_NEXT == CALM_MINIGAME -> biscuit_calm
+~ if C1_NEXT == BACKYARD_ROUTE -> biscuit_around
+~ set biscuit_gone
+
+# The calm minigame is not built yet: meeting Mrs. Albright earlier makes it succeed.
+== biscuit_calm
+~ if C1_MET_INES -> biscuit_befriended
+# PLACEHOLDER
+hero: Easy... easy, buddy...
+~ sfx dog_growl
+~ set C1_BISCUIT scared_off
+~ set biscuit_hostile
+~ toast He's terrified. He snaps!
+
+== biscuit_befriended
+~ call c1_script#C1_S07a.success_lines
+~ set C1_BISCUIT befriended
+
+== biscuit_around
+~ set C1_BISCUIT avoided
+~ toast You go the long way, through the backyards.
+
+== biscuit_bolted
+# PLACEHOLDER
+hero: ...Sorry, buddy. Go home. Go find her.
+
+== biscuit_friend
+# PLACEHOLDER
+hero: Stay close, Biscuit.
+
+== dana
+~ if dana_resolved -> wreck_after
+~ unset C1_NEXT
+~ call c1_script#C1_S07b.lines
+~ call c1_script#C1_S07b.choices
+~ set dana_resolved
+~ if C1_NEXT == RESCUE_DANA -> rescue_dana
+
+# The rescue sequence is not built yet; it plays as a short beat.
+== rescue_dana
+~ call c1_script#RESCUE_DANA.lines
+~ shake 3 0.5
+~ sfx glass_break
+~ wait 0.8
+~ call c1_script#RESCUE_DANA.success_lines
+
+== wreck_after
+# PLACEHOLDER (from the script's direction)
+examine[The Okoros' SUV]: The driver's seat is empty. Felix's seatbelt is still buckled across nothing.
+
+# ---------------------------------------------------------------- Home, Mom gone
+
+== home_empty
+~ call c1_script#C1_S08.entry_lines
+~ set C1_T06
+~ toast Find Mom.
+
+== mom_chair
+~ call c1_script#C1_OBJ_MOM_CHAIR
+~ if saw_chair end
+~ set saw_chair
+~ call c1_script#C1_S08.fixed_shot_lines
+
+== bible_and_letter
+~ call c1_script#C1_OBJ_BIBLE_OPEN
+~ give letter
+~ music_stop 1.5
+~ call c1_script#C1_S09.enter
+~ call c1_script#C1_S09.pages
+~ call c1_script#C1_S09.after_letter
+~ set C1_READ_LETTER
+~ card timeskip "Hours later." "6:02 AM. The power is out."
+~ set C1_DAWN
+~ lights house off 0.1
+~ lights dawn on 0.1
+~ ambient #a89cb0 0.1
+~ vignette 0.5 0.1
+~ ambience_clear 0.5
+~ ambience dawn_quiet_loop
+~ checkpoint
+# PLACEHOLDER
+hero: Mom's radio. Battery-powered. "In case."
+~ toast Turn on the radio on the kitchen windowsill.
+
+== read_bible
+examine[Mom's Bible]: Open to First Thessalonians, chapter four. Her red pen, everywhere.
+~ call c1_script#C1_S13.optional_read
+
+== broadcast
+~ sfx emergency_broadcast_tone
+~ call c1_script#C1_S13.station_1_emergency
+~ call c1_script#C1_S13.station_2_ridge_radio
+~ call c1_script#C1_S13.station_3_far_station
+~ call c1_script#C1_S13.feed_murmur
+~ call c1_script#C1_S13.end_lines
+~ music dawn_hope 2
+~ call c1_script#C1_S13.optional_read
+~ set chapter1_complete
+~ card timeskip "Of the people who vanished, no one came back." "Of the people who stayed, everyone had a theory."
+~ card chapter "Chapter 2" "Three months later..."
+~ end_chapter 2

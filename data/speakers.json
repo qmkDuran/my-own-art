@@ -1,0 +1,86 @@
+{
+  "hero": {
+    "name": "{HERO}",
+    "portrait": ""
+  },
+  "mom": {
+    "name": "Mom",
+    "portrait": "portrait_mom"
+  },
+  "walt": {
+    "name": "Walt",
+    "portrait": "portrait_walt"
+  },
+  "felix": {
+    "name": "Felix",
+    "portrait": "portrait_felix"
+  },
+  "dana": {
+    "name": "Dana",
+    "portrait": "portrait_dana"
+  },
+  "noah": {
+    "name": "Noah",
+    "portrait": "portrait_noah"
+  },
+  "erik": {
+    "name": "Erik",
+    "portrait": "portrait_erik"
+  },
+  "ines": {
+    "name": "Mrs. Albright",
+    "portrait": "portrait_ines"
+  },
+  "hollis": {
+    "name": "Hollis",
+    "portrait": "portrait_hollis"
+  },
+  "wade": {
+    "name": "Wade",
+    "portrait": "portrait_wade"
+  },
+  "looter": {
+    "name": "Man in a hoodie",
+    "portrait": "portrait_looter"
+  },
+  "stranger": {
+    "name": "Stranger",
+    "portrait": ""
+  },
+  "phone": {
+    "name": "Phone",
+    "portrait": ""
+  },
+  "tv": {
+    "name": "TV",
+    "portrait": ""
+  },
+  "radio": {
+    "name": "Radio",
+    "portrait": ""
+  },
+  "feed": {
+    "name": "Murmur feed",
+    "portrait": ""
+  },
+  "caption": {
+    "name": "",
+    "portrait": ""
+  },
+  "prompt": {
+    "name": "",
+    "portrait": ""
+  },
+  "letter": {
+    "name": "Mom's letter",
+    "portrait": ""
+  },
+  "examine": {
+    "name": "",
+    "portrait": ""
+  },
+  "narrator": {
+    "name": "",
+    "portrait": ""
+  }
+}

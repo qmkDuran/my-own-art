@@ -1,0 +1,1032 @@
+{
+ "name": "12 Linden Court",
+ "map": [
+  "############################",
+  "#.......#kkkkkkkkkkkkkkkkkk#",
+  "#.......#kkkkkkkkkkkkkkkkkk#",
+  "#.......#kkkkkkkkkkkkkkkkkk#",
+  "#.......#kkkkkkkkkkkkkkkkkk#",
+  "#.......#kkkkkkkkkkkkkkkkkk#",
+  "#.......#kkkkkkkkkkkkkkkkkk#",
+  "####.########kkkk###########",
+  "#..........................#",
+  "#..........................#",
+  "#....cccccccccc............#",
+  "#....cccccccccc............#",
+  "#....cccccccccc............#",
+  "#....cccccccccc............#",
+  "#..........................#",
+  "#..........................#",
+  "#############D##############"
+ ],
+ "legend": {
+  "#": "wall",
+  ".": "floor_wood",
+  "k": "floor_kitchen",
+  "c": "carpet",
+  "D": "door"
+ },
+ "ambient": "#d8b49c",
+ "vignette": 0.4,
+ "music": "home_evening",
+ "ambience": [
+  "suburban_evening_loop",
+  "fridge_hum_loop"
+ ],
+ "variants": [
+  {
+   "if": "C1_DAWN",
+   "ambient": "#a89cb0",
+   "vignette": 0.5,
+   "music": "",
+   "ambience": [
+    "dawn_quiet_loop"
+   ]
+  },
+  {
+   "if": "vanished",
+   "ambient": "#4a5070",
+   "vignette": 0.6,
+   "music": "aftermath",
+   "ambience": [
+    "crickets_night_loop",
+    "wind_loop",
+    "fridge_hum_loop"
+   ]
+  },
+  {
+   "if": "C1_ERRAND",
+   "ambient": "#a88ca0",
+   "vignette": 0.45
+  }
+ ],
+ "on_enter": [
+  {
+   "id": "house_cold_open",
+   "if": "!vanished",
+   "run": "ch1#cold_open"
+  },
+  {
+   "id": "house_empty",
+   "if": "vanished",
+   "run": "ch1#home_empty"
+  }
+ ],
+ "entities": [
+  {
+   "kind": "spawn",
+   "id": "bed",
+   "pos": [
+    3,
+    5
+   ]
+  },
+  {
+   "kind": "spawn",
+   "id": "front_door",
+   "pos": [
+    13,
+    14
+   ]
+  },
+  {
+   "id": "h_bed",
+   "art": "bed",
+   "pos": [
+    2,
+    3
+   ],
+   "solid": [
+    44,
+    40
+   ],
+   "interact": {
+    "type": "examine",
+    "dialogue": "c1_script#C1_OBJ_BED",
+    "radius": 24
+   }
+  },
+  {
+   "id": "h_desk",
+   "art": "desk",
+   "pos": [
+    6,
+    2
+   ],
+   "solid": [
+    52,
+    18
+   ],
+   "light": {
+    "type": "lamp",
+    "offset": [
+     10,
+     -30
+    ],
+    "group": "house"
+   }
+  },
+  {
+   "id": "h_laptop",
+   "art": "laptop",
+   "pos": [
+    6,
+    2
+   ],
+   "offset": [
+    -8,
+    -22
+   ],
+   "interact": {
+    "type": "examine",
+    "dialogue": "c1_script#C1_OBJ_LAPTOP",
+    "offset": [
+     0,
+     20
+    ]
+   }
+  },
+  {
+   "id": "h_drawer",
+   "pos": [
+    7,
+    2
+   ],
+   "interact": {
+    "type": "examine",
+    "dialogue": "c1_script#C1_OBJ_DESK_DRAWER",
+    "radius": 12,
+    "offset": [
+     4,
+     0
+    ]
+   }
+  },
+  {
+   "id": "h_phone",
+   "art": "phone_small",
+   "pos": [
+    1,
+    4
+   ],
+   "interact": {
+    "type": "pickup",
+    "item": "phone",
+    "dialogue": "c1_script#C1_OBJ_PHONE"
+   }
+  },
+  {
+   "id": "h_boxes",
+   "art": "boxes",
+   "pos": [
+    6,
+    5
+   ],
+   "solid": [
+    38,
+    16
+   ],
+   "interact": {
+    "type": "examine",
+    "dialogue": "c1_script#C1_OBJ_BOXES"
+   }
+  },
+  {
+   "id": "h_trophy",
+   "art": "shelf_small",
+   "pos": [
+    3,
+    1
+   ],
+   "offset": [
+    0,
+    4
+   ],
+   "solid": [
+    36,
+    12
+   ],
+   "interact": {
+    "type": "examine",
+    "dialogue": "c1_script#C1_OBJ_TROPHY",
+    "offset": [
+     0,
+     6
+    ]
+   }
+  },
+  {
+   "id": "h_poster",
+   "art": "poster",
+   "pos": [
+    5,
+    0
+   ],
+   "offset": [
+    0,
+    10
+   ],
+   "interact": {
+    "type": "examine",
+    "dialogue": "c1_script#C1_OBJ_POSTER",
+    "offset": [
+     0,
+     20
+    ]
+   }
+  },
+  {
+   "id": "h_window_bed",
+   "art": "window",
+   "pos": [
+    1,
+    0
+   ],
+   "offset": [
+    6,
+    10
+   ],
+   "interact": {
+    "type": "examine",
+    "dialogue": "c1_script#C1_OBJ_WINDOW",
+    "offset": [
+     0,
+     20
+    ]
+   }
+  },
+  {
+   "id": "k_window",
+   "art": "window",
+   "pos": [
+    14,
+    0
+   ],
+   "offset": [
+    0,
+    10
+   ],
+   "light": {
+    "type": "window",
+    "offset": [
+     0,
+     30
+    ],
+    "if": "!vanished"
+   }
+  },
+  {
+   "id": "k_radio",
+   "art": "radio",
+   "pos": [
+    15,
+    0
+   ],
+   "offset": [
+    0,
+    18
+   ],
+   "interact": {
+    "type": "examine",
+    "dialogue": "ch1#radio",
+    "offset": [
+     0,
+     18
+    ]
+   }
+  },
+  {
+   "id": "k_stove",
+   "art": "stove",
+   "pos": [
+    10,
+    1
+   ],
+   "offset": [
+    0,
+    4
+   ],
+   "solid": [
+    30,
+    14
+   ],
+   "interact": {
+    "type": "examine",
+    "dialogue": "ch1#stove",
+    "offset": [
+     0,
+     4
+    ]
+   }
+  },
+  {
+   "id": "k_counter",
+   "art": "counter",
+   "pos": [
+    12,
+    1
+   ],
+   "offset": [
+    0,
+    4
+   ],
+   "solid": [
+    62,
+    14
+   ]
+  },
+  {
+   "id": "k_cupboard",
+   "art": "cupboard",
+   "pos": [
+    19,
+    1
+   ],
+   "offset": [
+    0,
+    4
+   ],
+   "solid": [
+    46,
+    14
+   ],
+   "interact": {
+    "type": "examine",
+    "dialogue": "ch1#cupboard",
+    "offset": [
+     0,
+     4
+    ],
+    "verb": "Take plates"
+   }
+  },
+  {
+   "id": "k_drawer",
+   "art": "counter",
+   "pos": [
+    21,
+    1
+   ],
+   "offset": [
+    0,
+    4
+   ],
+   "solid": [
+    62,
+    14
+   ],
+   "interact": {
+    "type": "examine",
+    "dialogue": "ch1#fork_drawer",
+    "offset": [
+     0,
+     4
+    ],
+    "verb": "Open drawer"
+   }
+  },
+  {
+   "id": "k_calendar",
+   "art": "calendar",
+   "pos": [
+    23,
+    0
+   ],
+   "offset": [
+    0,
+    12
+   ],
+   "interact": {
+    "type": "examine",
+    "dialogue": "c1_script#C1_OBJ_CALENDAR",
+    "offset": [
+     0,
+     22
+    ]
+   }
+  },
+  {
+   "id": "k_fridge",
+   "art": "fridge",
+   "pos": [
+    25,
+    1
+   ],
+   "offset": [
+    0,
+    6
+   ],
+   "solid": [
+    30,
+    14
+   ],
+   "interact": {
+    "type": "examine",
+    "dialogue": "ch1#fridge",
+    "offset": [
+     0,
+     4
+    ],
+    "verb": "Open fridge"
+   }
+  },
+  {
+   "id": "k_garden_door",
+   "art": "window",
+   "pos": [
+    26,
+    3
+   ],
+   "offset": [
+    10,
+    0
+   ],
+   "interact": {
+    "type": "examine",
+    "dialogue": "c1_script#C1_OBJ_GARDEN_DOOR"
+   }
+  },
+  {
+   "id": "k_table",
+   "art": "dining_table",
+   "pos": [
+    17,
+    4
+   ],
+   "offset": [
+    16,
+    0
+   ],
+   "solid": [
+    94,
+    26
+   ],
+   "interact": {
+    "type": "examine",
+    "dialogue": "c1_script#C1_OBJ_BIBLE_KITCHEN",
+    "offset": [
+     0,
+     4
+    ],
+    "radius": 24,
+    "verb": "Look at the table",
+    "if": "!vanished"
+   }
+  },
+  {
+   "id": "k_bible_closed",
+   "art": "bible",
+   "pos": [
+    17,
+    3
+   ],
+   "offset": [
+    20,
+    6
+   ],
+   "if": "!vanished"
+  },
+  {
+   "id": "k_mug",
+   "art": "mug",
+   "pos": [
+    16,
+    3
+   ],
+   "offset": [
+    6,
+    4
+   ],
+   "interact": {
+    "type": "examine",
+    "dialogue": "c1_script#C1_OBJ_TEA_MUG",
+    "offset": [
+     0,
+     30
+    ]
+   },
+   "if": "!vanished"
+  },
+  {
+   "id": "k_chair_mom",
+   "art": "chair",
+   "pos": [
+    15,
+    4
+   ],
+   "offset": [
+    0,
+    2
+   ],
+   "solid": [
+    22,
+    10
+   ]
+  },
+  {
+   "id": "k_chair_hero",
+   "art": "chair",
+   "pos": [
+    20,
+    4
+   ],
+   "offset": [
+    0,
+    2
+   ],
+   "solid": [
+    22,
+    10
+   ]
+  },
+  {
+   "id": "k_light",
+   "kind": "light",
+   "pos": [
+    17,
+    3
+   ],
+   "light": {
+    "type": "ceiling",
+    "group": "house"
+   }
+  },
+  {
+   "id": "mom",
+   "kind": "npc",
+   "art": "mom",
+   "pos": [
+    14,
+    3
+   ],
+   "facing": "right",
+   "if": "!vanished",
+   "interact": {
+    "type": "talk",
+    "dialogue": "ch1#mom"
+   }
+  },
+  {
+   "id": "trg_kitchen",
+   "kind": "trigger",
+   "rect": [
+    9,
+    1,
+    18,
+    6
+   ],
+   "run": "ch1#kitchen_enter",
+   "if": "!vanished"
+  },
+  {
+   "id": "l_tv",
+   "art": "tv",
+   "pos": [
+    8,
+    8
+   ],
+   "offset": [
+    0,
+    -4
+   ],
+   "solid": [
+    60,
+    12
+   ],
+   "light": {
+    "type": "tv",
+    "offset": [
+     0,
+     10
+    ],
+    "group": "house"
+   },
+   "interact": {
+    "type": "examine",
+    "dialogue": "c1_script#C1_OBJ_TV",
+    "offset": [
+     0,
+     6
+    ],
+    "if": "!vanished"
+   }
+  },
+  {
+   "id": "l_tv_night",
+   "pos": [
+    8,
+    8
+   ],
+   "interact": {
+    "type": "examine",
+    "dialogue": "c1_script#C1_OBJ_TV_NIGHT",
+    "offset": [
+     0,
+     -2
+    ]
+   },
+   "if": "vanished"
+  },
+  {
+   "id": "l_rug",
+   "art": "rug",
+   "pos": [
+    9,
+    11
+   ],
+   "anchor": "center",
+   "offset": [
+    16,
+    16
+   ],
+   "floor": true
+  },
+  {
+   "id": "l_couch",
+   "art": "couch",
+   "pos": [
+    9,
+    13
+   ],
+   "offset": [
+    16,
+    6
+   ],
+   "solid": [
+    94,
+    20
+   ]
+  },
+  {
+   "id": "l_recliner",
+   "art": "recliner",
+   "pos": [
+    14,
+    12
+   ],
+   "offset": [
+    0,
+    6
+   ],
+   "solid": [
+    34,
+    16
+   ],
+   "interact": {
+    "type": "examine",
+    "dialogue": "c1_script#C1_OBJ_RECLINER"
+   }
+  },
+  {
+   "id": "l_bookshelf",
+   "art": "bookshelf",
+   "pos": [
+    2,
+    8
+   ],
+   "offset": [
+    0,
+    -2
+   ],
+   "solid": [
+    46,
+    12
+   ],
+   "interact": {
+    "type": "examine",
+    "dialogue": "c1_script#C1_OBJ_BOOKSHELF",
+    "offset": [
+     0,
+     4
+    ]
+   }
+  },
+  {
+   "id": "l_keyboard",
+   "art": "keyboard",
+   "pos": [
+    19,
+    8
+   ],
+   "offset": [
+    0,
+    -2
+   ],
+   "solid": [
+    54,
+    12
+   ],
+   "interact": {
+    "type": "examine",
+    "dialogue": "c1_script#C1_OBJ_PIANO_KEYS",
+    "offset": [
+     0,
+     4
+    ]
+   }
+  },
+  {
+   "id": "l_photos",
+   "art": "photos",
+   "pos": [
+    23,
+    7
+   ],
+   "offset": [
+    0,
+    12
+   ],
+   "interact": {
+    "type": "examine",
+    "dialogue": "c1_script#C1_OBJ_HALL_PHOTOS",
+    "offset": [
+     0,
+     24
+    ]
+   }
+  },
+  {
+   "id": "l_dad_photo",
+   "art": "poster",
+   "pos": [
+    25,
+    7
+   ],
+   "offset": [
+    0,
+    12
+   ],
+   "interact": {
+    "type": "examine",
+    "dialogue": "c1_script#C1_OBJ_DAD_PHOTO",
+    "offset": [
+     0,
+     24
+    ]
+   }
+  },
+  {
+   "id": "l_smoke_alarm",
+   "art": "smoke_alarm",
+   "pos": [
+    16,
+    7
+   ],
+   "offset": [
+    0,
+    10
+   ],
+   "interact": {
+    "type": "examine",
+    "dialogue": "c1_script#C1_OBJ_SMOKE_ALARM",
+    "offset": [
+     0,
+     24
+    ]
+   }
+  },
+  {
+   "id": "l_lamp",
+   "art": "floor_lamp",
+   "pos": [
+    24,
+    13
+   ],
+   "solid": [
+    12,
+    8
+   ],
+   "light": {
+    "type": "lamp",
+    "offset": [
+     0,
+     -40
+    ],
+    "group": "house"
+   }
+  },
+  {
+   "id": "l_doormat",
+   "art": "doormat",
+   "pos": [
+    13,
+    15
+   ],
+   "anchor": "center",
+   "offset": [
+    0,
+    8
+   ],
+   "floor": true
+  },
+  {
+   "id": "l_key_hook",
+   "art": "key_hook",
+   "pos": [
+    11,
+    15
+   ],
+   "offset": [
+    0,
+    20
+   ],
+   "if": "!took_card",
+   "interact": {
+    "type": "examine",
+    "dialogue": "ch1#key_hook",
+    "offset": [
+     0,
+     -6
+    ],
+    "verb": "Take card and keys",
+    "requires": "C1_ERRAND",
+    "locked_lines": [
+     "Mom's card and keys. Dinner first."
+    ]
+   }
+  },
+  {
+   "id": "front_door",
+   "pos": [
+    13,
+    15
+   ],
+   "interact": {
+    "type": "door",
+    "to": "street",
+    "spawn": "house_front",
+    "offset": [
+     0,
+     12
+    ],
+    "radius": 16,
+    "verb": "Go outside",
+    "requires": "C1_LAST_WORDS & !vanished",
+    "locked_dialogue": "ch1#front_door_locked"
+   }
+  },
+  {
+   "id": "l_porch_switch",
+   "pos": [
+    14,
+    15
+   ],
+   "offset": [
+    6,
+    0
+   ],
+   "interact": {
+    "type": "examine",
+    "dialogue": "c1_script#C1_OBJ_PORCH_LIGHT",
+    "radius": 10
+   },
+   "if": "vanished"
+  },
+  {
+   "id": "trg_at_door",
+   "kind": "trigger",
+   "rect": [
+    10,
+    13,
+    7,
+    3
+   ],
+   "run": "ch1#at_the_door",
+   "if": "took_card & !C1_LAST_WORDS"
+  },
+  {
+   "id": "n_clothes_mom",
+   "art": "clothes_mom",
+   "pos": [
+    15,
+    4
+   ],
+   "offset": [
+    0,
+    8
+   ],
+   "if": "vanished",
+   "interact": {
+    "type": "examine",
+    "dialogue": "ch1#mom_chair",
+    "offset": [
+     0,
+     -2
+    ],
+    "verb": "Mom's chair"
+   }
+  },
+  {
+   "id": "n_slippers",
+   "art": "slippers",
+   "pos": [
+    16,
+    4
+   ],
+   "offset": [
+    -4,
+    10
+   ],
+   "if": "vanished",
+   "interact": {
+    "type": "examine",
+    "dialogue": "c1_script#C1_OBJ_MOM_SLIPPERS",
+    "radius": 10
+   }
+  },
+  {
+   "id": "n_mug",
+   "art": "mug",
+   "pos": [
+    16,
+    3
+   ],
+   "offset": [
+    6,
+    4
+   ],
+   "if": "vanished",
+   "interact": {
+    "type": "examine",
+    "dialogue": "c1_script#C1_OBJ_MOM_MUG_NIGHT",
+    "offset": [
+     0,
+     30
+    ],
+    "radius": 12
+   }
+  },
+  {
+   "id": "n_phone",
+   "art": "phone_small",
+   "pos": [
+    19,
+    3
+   ],
+   "offset": [
+    8,
+    6
+   ],
+   "if": "vanished",
+   "interact": {
+    "type": "examine",
+    "dialogue": "c1_script#C1_OBJ_MOM_PHONE_NIGHT",
+    "offset": [
+     0,
+     30
+    ],
+    "radius": 12
+   }
+  },
+  {
+   "id": "n_stove",
+   "pos": [
+    10,
+    2
+   ],
+   "if": "vanished",
+   "interact": {
+    "type": "examine",
+    "dialogue": "c1_script#C1_OBJ_STOVE_NIGHT",
+    "radius": 14
+   }
+  },
+  {
+   "id": "n_bible",
+   "art": "bible",
+   "pos": [
+    17,
+    3
+   ],
+   "offset": [
+    20,
+    6
+   ],
+   "if": "vanished",
+   "interact": {
+    "type": "pickup",
+    "item": "bible",
+    "verb": "Take",
+    "dialogue": "ch1#bible_and_letter",
+    "offset": [
+     0,
+     30
+    ],
+    "radius": 14
+   }
+  },
+  {
+   "id": "n_dawn_light",
+   "kind": "light",
+   "pos": [
+    14,
+    1
+   ],
+   "light": {
+    "type": "dawn",
+    "group": "dawn",
+    "start_off": true
+   }
+  }
+ ]
+}

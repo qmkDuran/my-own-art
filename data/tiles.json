@@ -1,0 +1,83 @@
+{
+  "wall": {
+    "art": "tile_wall_top",
+    "face_art": "tile_wall_face",
+    "solid": true,
+    "surface": "wood"
+  },
+  "store_wall": {
+    "art": "tile_wall_top",
+    "face_art": "tile_store_wall_face",
+    "solid": true,
+    "surface": "wood"
+  },
+  "door": {
+    "art": "tile_door",
+    "solid": true,
+    "surface": "wood"
+  },
+  "floor_wood": {
+    "art": "tile_floor_wood",
+    "surface": "wood"
+  },
+  "floor_kitchen": {
+    "art": "tile_floor_kitchen",
+    "surface": "wood"
+  },
+  "carpet": {
+    "art": "tile_carpet",
+    "surface": "carpet"
+  },
+  "store_floor": {
+    "art": "tile_store_floor",
+    "surface": "wood"
+  },
+  "grass": {
+    "art": "tile_grass",
+    "surface": "grass"
+  },
+  "sidewalk": {
+    "art": "tile_sidewalk",
+    "surface": "asphalt"
+  },
+  "curb": {
+    "art": "tile_curb",
+    "surface": "asphalt"
+  },
+  "road": {
+    "art": "tile_road",
+    "surface": "asphalt"
+  },
+  "road_line": {
+    "art": "tile_road_line",
+    "surface": "asphalt"
+  },
+  "path": {
+    "art": "tile_path",
+    "surface": "asphalt"
+  },
+  "driveway": {
+    "art": "tile_driveway",
+    "surface": "asphalt"
+  },
+  "house_wall": {
+    "art": "tile_siding",
+    "solid": true
+  },
+  "house_wall_blue": {
+    "art": "tile_siding_blue",
+    "solid": true
+  },
+  "roof": {
+    "art": "tile_roof",
+    "solid": true
+  },
+  "store_front": {
+    "art": "tile_store_brick",
+    "solid": true
+  },
+  "store_roof": {
+    "art": "tile_store_roof",
+    "solid": true
+  }
+}

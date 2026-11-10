@@ -1,0 +1,100 @@
+{
+  "start": {
+    "zone": "house",
+    "spawn": "bed"
+  },
+  "skin_key": "#c89070",
+  "skin_tones": [
+    {
+      "name": "Tone 1",
+      "color": "#f2d2bc"
+    },
+    {
+      "name": "Tone 2",
+      "color": "#e0b090"
+    },
+    {
+      "name": "Tone 3",
+      "color": "#c89070"
+    },
+    {
+      "name": "Tone 4",
+      "color": "#a06a48"
+    },
+    {
+      "name": "Tone 5",
+      "color": "#7a4a30"
+    },
+    {
+      "name": "Tone 6",
+      "color": "#4e3020"
+    }
+  ],
+  "chapter_titles": {
+    "1": "Night One",
+    "2": "Peace and Safety"
+  },
+  "text_variables": {
+    "kid": "kiddo",
+    "child_word": "kid",
+    "hero_full": "Alex Hale"
+  },
+  "male": {
+    "name": "Alex",
+    "label": "Male",
+    "body": "hero_male_body",
+    "hair_styles": [
+      {
+        "id": "short",
+        "name": "Short",
+        "art": "hair_short"
+      },
+      {
+        "id": "buzz",
+        "name": "Buzz",
+        "art": "hair_buzz"
+      },
+      {
+        "id": "curly",
+        "name": "Curly",
+        "art": "hair_curly"
+      }
+    ],
+    "pronouns": {
+      "they": "he",
+      "them": "him",
+      "their": "his",
+      "theirs": "his",
+      "themself": "himself"
+    }
+  },
+  "female": {
+    "name": "Alex",
+    "label": "Female",
+    "body": "hero_female_body",
+    "hair_styles": [
+      {
+        "id": "long",
+        "name": "Long",
+        "art": "hair_long"
+      },
+      {
+        "id": "bun",
+        "name": "Bun",
+        "art": "hair_bun"
+      },
+      {
+        "id": "bob",
+        "name": "Bob",
+        "art": "hair_bob"
+      }
+    ],
+    "pronouns": {
+      "they": "she",
+      "them": "her",
+      "their": "her",
+      "theirs": "hers",
+      "themself": "herself"
+    }
+  }
+}

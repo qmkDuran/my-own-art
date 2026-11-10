@@ -1,0 +1,173 @@
+{
+  "fists": {
+    "name": "Fists",
+    "hidden": true,
+    "weapon": {
+      "damage": 1,
+      "reach": 20,
+      "radius": 12,
+      "knockback": 160,
+      "windup": 0.05,
+      "active": 0.1,
+      "recover": 0.14,
+      "sfx_swing": "whoosh"
+    }
+  },
+  "bat": {
+    "name": "Baseball bat",
+    "icon": "icon_bat",
+    "kind": "weapon",
+    "description": "Aluminium, dented. Somebody's Little League bat.",
+    "weapon": {
+      "damage": 3,
+      "reach": 26,
+      "radius": 16,
+      "knockback": 260,
+      "windup": 0.09,
+      "active": 0.13,
+      "recover": 0.22,
+      "sfx_swing": "bat_swing"
+    }
+  },
+  "mop_handle": {
+    "name": "Mop handle",
+    "icon": "icon_mop",
+    "kind": "weapon",
+    "description": "Long, light, better than nothing.",
+    "weapon": {
+      "damage": 2,
+      "reach": 30,
+      "radius": 14,
+      "knockback": 240,
+      "windup": 0.08,
+      "active": 0.12,
+      "recover": 0.2,
+      "sfx_swing": "whoosh"
+    }
+  },
+  "food": {
+    "name": "Canned beans",
+    "icon": "icon_food",
+    "kind": "food",
+    "description": "Cold beans. Still food.",
+    "use": {
+      "heal": 2,
+      "text": "Cold beans. You eat them anyway.",
+      "sfx": "cutlery_clink"
+    }
+  },
+  "water": {
+    "name": "Bottled water",
+    "icon": "icon_water",
+    "kind": "water",
+    "description": "A litre of water. Worth more every hour.",
+    "use": {
+      "heal": 1,
+      "text": "You drink. Your hands stop shaking, a little."
+    }
+  },
+  "medicine": {
+    "name": "Painkillers",
+    "icon": "icon_medicine",
+    "kind": "medicine",
+    "description": "Spilled from the store shelf. Nobody's paying tonight.",
+    "use": {
+      "heal": 4,
+      "text": "Two pills, dry. The edge comes off."
+    }
+  },
+  "milk": {
+    "name": "Milk",
+    "icon": "icon_milk",
+    "kind": "food",
+    "description": "The store brand. For Mom.",
+    "use": {
+      "text": "It's for Mom."
+    }
+  },
+  "bread": {
+    "name": "Bread",
+    "icon": "icon_bread",
+    "kind": "food",
+    "description": "The one Mom likes, with the seeds.",
+    "use": {
+      "heal": 1,
+      "text": "You tear off a piece. It tastes like home."
+    }
+  },
+  "battery_9v": {
+    "name": "9-volt battery",
+    "icon": "icon_battery",
+    "kind": "key",
+    "description": "For the smoke alarm in the hall.",
+    "use": {
+      "text": "For the smoke alarm. It's been chirping for a week."
+    }
+  },
+  "mom_card": {
+    "name": "Mom's card",
+    "icon": "icon_card",
+    "kind": "key",
+    "description": "Her bank card, worn at the corners.",
+    "use": {
+      "text": "You have pride. Take the card."
+    }
+  },
+  "tote_bag": {
+    "name": "Tote bag",
+    "icon": "icon_bag",
+    "kind": "key",
+    "description": "Canvas. It says 'READ.' Of course it does."
+  },
+  "house_key": {
+    "name": "House keys",
+    "icon": "icon_key",
+    "kind": "key",
+    "description": "Mom's spare set on a faded keyring.",
+    "use": {
+      "text": "12 Linden Court. Home."
+    }
+  },
+  "box_cutter": {
+    "name": "Box cutter",
+    "icon": "icon_box_cutter",
+    "kind": "tool",
+    "description": "Wade dropped it. Sharp enough for a seatbelt."
+  },
+  "phone": {
+    "name": "Phone",
+    "icon": "icon_phone",
+    "kind": "key",
+    "description": "Battery 31%. Network busy.",
+    "use": {
+      "text": "Calling MOM... Call failed. Network busy."
+    }
+  },
+  "candy": {
+    "name": "Peanut butter cups",
+    "icon": "icon_candy",
+    "kind": "food",
+    "description": "Mom's favourite.",
+    "use": {
+      "text": "Not yet. Not these."
+    }
+  },
+  "bible": {
+    "name": "Mom's Bible",
+    "icon": "icon_bible",
+    "kind": "document",
+    "description": "Soft leather, cracked at the spine. Red ink and sticky notes.",
+    "use": {
+      "dialogue": "ch1#read_bible"
+    }
+  },
+  "letter": {
+    "name": "Mom's letter",
+    "icon": "icon_letter",
+    "kind": "document",
+    "description": "'Read this if I'm ever suddenly gone.'",
+    "use": {
+      "dialogue": "c1_script#C1_S09.pages"
+    }
+  }
+}
