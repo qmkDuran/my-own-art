@@ -35,6 +35,6 @@ func nearest(from: Vector2) -> Npc:
 	var best: Npc = null
 	for n: Npc in people:
 		var d: float = n.global_position.distance_to(from)
-		if d < REACH and (best == null or d < best.global_position.distance_to(from)):
+		if d < float(n.get_meta("reach", REACH)) and (best == null or d < best.global_position.distance_to(from)):
 			best = n
 	return best

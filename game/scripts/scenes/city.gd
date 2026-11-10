@@ -15,7 +15,7 @@ const RIVER_HEAR: float = 220.0
 const EARTH_SCENE: String = "res://earth.tscn"
 const THRONE_SCENE: String = "res://throne.tscn"
 const BRIDGE_AT := Vector2(423, 310)          # art/build_scene.py: bridge image origin
-const SHEPHERD_GLOW := Vector2(0.62, 0.56)
+const SHEPHERD_GLOW := Vector2(0.72, 0.66)         # ~15% stronger so he reads at 1x
 
 var _trees: Array[Sprite2D] = []
 var _water_a: Sprite2D
@@ -78,9 +78,12 @@ func _add_shepherd(cfg: Dictionary) -> void:
 		him.quotes.append(verses[k])
 	if cfg.get("soften_music", false):
 		him.set_meta("soften_music", true)
+	if cfg.has("reach"):                             # people keep clear space around him, so he is heard from further
+		him.set_meta("reach", float(cfg["reach"]))
 	world.add_child(him)
 	SpriteFactory.glow(self, "res://art/glow_gate.png", at + Vector2(0, -32), SHEPHERD_GLOW, 3)
-	Fx.sparkles(self, at + Vector2(0, -30), Vector2(26, 30), 14)
+	SpriteFactory.glow(self, "res://art/glow_gate.png", at + Vector2(0, -34), SHEPHERD_GLOW * 0.45, 3)   # brighter core
+	Fx.sparkles(self, at + Vector2(0, -30), Vector2(30, 34), 18)
 
 
 func _build_overlay() -> void:

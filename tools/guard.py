@@ -1,7 +1,7 @@
 """HARD budget guard for the heaven demo. Every PixelLab POST must go through paid_post().
 Floor: subscription generations may not drop below FLOOR. USD credits must not change."""
 import json, urllib.request, urllib.error, sys, time
-B="https://api.pixellab.ai/v2"; START=189.5; CAP=15.0; FLOOR=START-CAP; USD0=2.18083018988485
+B="https://api.pixellab.ai/v2"; START=178.5; CAP=0.0; FLOOR=START-CAP; USD0=2.18083018988485
 LOG="/tmp/claude-0/-home-user-my-own-art/cb019c91-d4b5-5ec5-a8ec-8aef6ba03cf6/scratchpad/heaven/spend_log.txt"
 def _req(method,path,body=None):
     r=urllib.request.Request(B+path,data=None if body is None else json.dumps(body).encode(),method=method,

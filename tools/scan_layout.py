@@ -59,6 +59,58 @@ def earth():
         if touches(path, (x - w / 2 + 20, base - 30, x + w / 2 - 20, base - 16)): issues.append(f'earth house {n}: on a path')
 
 
+ROWS = {'down': 0, 'up': 1, 'left': 2, 'right': 2}
+_boxes = {}
+
+
+def sprite_box(sheet, facing, x, y):
+    """World box of a standing character's opaque pixels (origin at the feet, frame centred on x)."""
+    key = (sheet, facing)
+    if key not in _boxes:
+        path = 'game/art/hero.png' if sheet == 'PLAYER' else f'game/art/people/{sheet}.png'
+        a = np.array(Image.open(path).convert('RGBA'))[ROWS[facing] * 64:ROWS[facing] * 64 + 64, :64, 3]
+        ys, xs = np.nonzero(a)
+        x0, x1 = xs.min() - 32, xs.max() + 1 - 32
+        if facing == 'right': x0, x1 = -x1, -x0
+        _boxes[key] = (x0, ys.min() - ys.max() - 1, x1, 0)
+    b = _boxes[key]
+    return (x + b[0], y + b[1], x + b[2], y + b[3])
+
+
+def overlaps():
+    """No two characters' sprite boxes may overlap by more than 10% of the smaller box, in any scene."""
+    for scene in ('city', 'earth'):
+        c = json.load(open(f'game/data/{scene}.json'))
+        chars = [(f'p{q[0]:02d}', q[1], q[2], q[4]) for q in c['people']]
+        if c.get('shepherd'):
+            sh = c['shepherd']; chars.append((sh['sheet'], sh['at'][0], sh['at'][1], sh['facing']))
+        # where the player is placed to stand still: demo pauses and fast-travel spots
+        prev = c['demo'].get('start', c['player_start'])
+        for w in c['demo']['waypoints']:          # facing = direction of the last move into the stop
+            dx, dy = w[0] - prev[0], w[1] - prev[1]
+            face = ('right' if dx > 0 else 'left') if abs(dx) > abs(dy) else ('down' if dy > 0 else 'up')
+            if w[2] > 0: chars.append(('PLAYER', w[0], w[1], face))
+            prev = w
+        tscn = {'city': 'res://main.tscn', 'earth': 'res://earth.tscn'}[scene]
+        for pl in json.load(open('game/data/places.json'))['places']:
+            if pl['scene'] == tscn: chars.append(('PLAYER', pl['at'][0], pl['at'][1], pl.get('face', 'down')))
+        boxes = [(n, sprite_box(n, f, x, y)) for n, x, y, f in chars]
+        if scene == 'city':                          # nobody (player stops included) standing behind a garden canopy
+            for n, b in boxes:
+                for t in c['trees']:
+                    cb = rect((t[1], t[2]), CANOPY)
+                    if b[3] < t[2] and b[3] > cb[1] and min(b[2], cb[2]) - max(b[0], cb[0]) > 2 and b[3] <= 540:
+                        issues.append(f'city: {n} at foot y {b[3]} stands behind the tree canopy at {t[1]},{t[2]}')
+        for i, (n, a) in enumerate(boxes):
+            for m, b in boxes[i + 1:]:
+                if n == m == 'PLAYER': continue
+                w = min(a[2], b[2]) - max(a[0], b[0]); h = min(a[3], b[3]) - max(a[1], b[1])
+                if w <= 0 or h <= 0: continue
+                small = min((a[2] - a[0]) * (a[3] - a[1]), (b[2] - b[0]) * (b[3] - b[1]))
+                if w * h > 0.10 * small:
+                    issues.append(f'{scene}: {n} and {m} overlap {100 * w * h / small:.0f}% of the smaller sprite')
+
+
 def district():
     L = json.load(open('game/art/district/layout.json'))
     s0, s1 = L['street']
@@ -70,6 +122,6 @@ def district():
 
 
 if __name__ == '__main__':
-    garden(); earth(); district()
+    garden(); earth(); district(); overlaps()
     for i in issues: print(i)
     print(f'{len(issues)} layout issues')
