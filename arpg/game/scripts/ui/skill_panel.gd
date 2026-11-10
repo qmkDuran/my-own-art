@@ -22,39 +22,39 @@ func _mastery() -> String:
 func _draw() -> void:
 	var p: Progression = m.prog
 	frame("Skills  (K)      skill points %d   attribute points %d" % [p.skill_points(), p.attribute_points()])
-	UiDraw.text(self, Vector2(0, 34), p.class_title(), UiDraw.GOLD, 16, HORIZONTAL_ALIGNMENT_RIGHT, size.x - 14.0)
-	var tip := PackedStringArray()
+	UiDraw.text(self, Vector2(0, 34), p.class_title(), UiDraw.GOLD, UiDraw.BODY, HORIZONTAL_ALIGNMENT_RIGHT, size.x - 14.0)
+	var tip: Variant = []
 	for i: int in 2:
 		var r := _tab_rect(i)
 		if i < p.masteries.size():
 			var mid: String = p.masteries[i]
 			UiDraw.box(self, r, Color(0.25, 0.2, 0.06) if i == tab and not _choosing else Color(0.08, 0.07, 0.11), UiDraw.FRAME)
-			UiDraw.text(self, r.position + Vector2(0, 13), String(GameData.skills["masteries"][mid]["name"]), Color.WHITE, 16, HORIZONTAL_ALIGNMENT_CENTER, r.size.x)
+			UiDraw.text(self, r.position + Vector2(0, 13), String(GameData.skills["masteries"][mid]["name"]), Color.WHITE, UiDraw.BODY, HORIZONTAL_ALIGNMENT_CENTER, r.size.x)
 		elif p.can_choose_mastery():
 			UiDraw.box(self, r, Color(0.25, 0.2, 0.06) if _choosing else Color(0.12, 0.1, 0.05), UiDraw.GOLD)
-			UiDraw.text(self, r.position + Vector2(0, 13), "+ second mastery", UiDraw.GOLD, 16, HORIZONTAL_ALIGNMENT_CENTER, r.size.x)
+			UiDraw.text(self, r.position + Vector2(0, 13), "+ second mastery", UiDraw.GOLD, UiDraw.BODY, HORIZONTAL_ALIGNMENT_CENTER, r.size.x)
 		else:
 			UiDraw.box(self, r, Color(0.06, 0.06, 0.08), Color(0.25, 0.25, 0.25))
-			UiDraw.text(self, r.position + Vector2(0, 13), "level %d" % int(GameData.skills["second_mastery_level"]), UiDraw.DIM, 16, HORIZONTAL_ALIGNMENT_CENTER, r.size.x)
+			UiDraw.text(self, r.position + Vector2(0, 13), "level %d" % int(GameData.skills["second_mastery_level"]), UiDraw.DIM, UiDraw.BODY, HORIZONTAL_ALIGNMENT_CENTER, r.size.x)
 	if _choosing:
 		tip = _draw_choices()
 	else:
-		var t: PackedStringArray = _draw_mastery(_mastery())
+		var t: Variant = _draw_mastery(_mastery())
 		if not t.is_empty():
 			tip = t
-	var t2: PackedStringArray = _draw_attributes()
+	var t2: Variant = _draw_attributes()
 	if not t2.is_empty():
 		tip = t2
 	var rr: Rect2 = _respec_rect()
 	UiDraw.box(self, rr, Color(0.12, 0.06, 0.06), Color("b33831"))
-	UiDraw.text(self, rr.position + Vector2(0, 13), "Respec", Color.WHITE, 16, HORIZONTAL_ALIGNMENT_CENTER, rr.size.x)
+	UiDraw.text(self, rr.position + Vector2(0, 13), "Respec", Color.WHITE, UiDraw.BODY, HORIZONTAL_ALIGNMENT_CENTER, rr.size.x)
 	if rr.has_point(hover):
 		tip = PackedStringArray(["Respec", "Refund every skill and attribute point (masteries stay chosen)."])
 	UiDraw.tooltip(self, hover, tip, UiDraw.GOLD)
 
 
-func _draw_choices() -> PackedStringArray:
-	var tip := PackedStringArray()
+func _draw_choices() -> Variant:
+	var tip: Variant = []
 	var i: int = 0
 	for mid: String in GameData.skills["masteries"]:
 		if m.prog.masteries.has(mid):
@@ -73,9 +73,9 @@ func _draw_choices() -> PackedStringArray:
 	return tip
 
 
-func _draw_mastery(mid: String) -> PackedStringArray:
+func _draw_mastery(mid: String) -> Variant:
 	if mid == "":
-		return PackedStringArray()
+		return []
 	var p: Progression = m.prog
 	var md: Dictionary = GameData.skills["masteries"][mid]
 	var mx: int = int(GameData.skills["max_mastery"])
@@ -87,7 +87,7 @@ func _draw_mastery(mid: String) -> PackedStringArray:
 		var x: float = BAR.position.x + BAR.size.x * float(t) / mx
 		draw_line(Vector2(x, BAR.position.y - 3), Vector2(x, BAR.end.y + 3), Color("fbff86"), 1.0)
 	_plus(_mastery_plus())
-	var tip := PackedStringArray()
+	var tip: Variant = []
 	if Rect2(BAR.position - Vector2(0, 16), BAR.size + Vector2(0, 18)).has_point(hover):
 		var per: PackedStringArray = []
 		for k: String in md["per_point"]:
@@ -97,35 +97,34 @@ func _draw_mastery(mid: String) -> PackedStringArray:
 		tip.append_array(UiDraw.verse_lines(md["verse"], 48))
 	var skills: Array = md["skills"]
 	for i: int in skills.size():
-		var t: PackedStringArray = _row(i, skills[i][0])
+		var t: Variant = _row(i, skills[i][0])
 		if not t.is_empty():
 			tip = t
 	return tip
 
 
-func _row(i: int, id: String) -> PackedStringArray:
+func _row(i: int, id: String) -> Variant:
 	var p: Progression = m.prog
 	var s: Dictionary = GameData.skill(id)
 	var y: float = ROW_Y + i * ROW_H
 	var open: bool = p.skill_open(id)
 	var icon := Rect2(20, y, 32, 32)
 	UiDraw.box(self, icon, Color(0.06, 0.05, 0.09), UiDraw.FRAME if open else Color(0.3, 0.3, 0.3))
-	SkillIcons.draw_icon(self, id, icon.get_center() - Vector2(0, 2), Color.WHITE if p.rank(id) > 0 else Color(0.45, 0.45, 0.5))
+	SkillIcons.draw_icon(self, id, icon.get_center(), Color.WHITE if p.rank(id) > 0 else Color(0.45, 0.45, 0.5))
 	UiDraw.text(self, Vector2(60, y + 13), String(s["name"]), Color.WHITE if open else UiDraw.DIM)
 	var rank_s: String = "%d / %d" % [p.rank(id), int(GameData.skills["max_rank"])] if open \
 		else "needs %d" % int(GameData.skills["tiers"][p.tier_of(id)])
 	UiDraw.text(self, Vector2(60, y + 28), rank_s, UiDraw.DIM)
 	if open:
 		_plus(_rank_plus(i))
-	var tip := PackedStringArray()
+	var tip: Variant = []
 	if Rect2(20, y, 150, 32).has_point(hover):
-		tip = PackedStringArray([s["name"], s["desc"], "Glory %d   Cooldown %.1fs" % [int(s["cost"]), float(s["cooldown"])]])
-		tip.append_array(UiDraw.verse_lines(s["verse"], 48))
+		tip = SkillInfo.lines(m, id)
 	if p.rank(id) > 0 and id != "strike":
 		var kr: Rect2 = _key_rect(i)
 		var key: String = p.slot_of(id)
 		UiDraw.box(self, kr, Color(0.1, 0.1, 0.16), Color("8fd3ff"))
-		UiDraw.text(self, kr.position + Vector2(0, 13), key if key != "" else "-", Color("8fd3ff"), 16, HORIZONTAL_ALIGNMENT_CENTER, kr.size.x)
+		UiDraw.text(self, kr.position + Vector2(0, 13), key if key != "" else "-", Color("8fd3ff"), UiDraw.BODY, HORIZONTAL_ALIGNMENT_CENTER, kr.size.x)
 		if kr.has_point(hover):
 			tip = PackedStringArray(["Key: " + (key if key != "" else "none"), "Click to move this skill to the next key."])
 	var mods: Array = s["mods"].keys()
@@ -134,14 +133,14 @@ func _row(i: int, id: String) -> PackedStringArray:
 		var taken: bool = p.has_mod(id, mods[k])
 		UiDraw.box(self, r, Color(0.35, 0.27, 0.08, 0.9) if taken else Color(0.08, 0.07, 0.11), UiDraw.GOLD if taken else Color(0.35, 0.32, 0.26))
 		UiDraw.text(self, r.position + Vector2(0, 13), String(s["mods"][mods[k]]["name"]), Color.WHITE if taken else UiDraw.DIM,
-			16, HORIZONTAL_ALIGNMENT_CENTER, r.size.x)
+			UiDraw.BODY, HORIZONTAL_ALIGNMENT_CENTER, r.size.x)
 		if r.has_point(hover):
 			tip = PackedStringArray([s["mods"][mods[k]]["name"], s["mods"][mods[k]]["desc"], "Costs 1 point; needs rank 1"])
 	return tip
 
 
-func _draw_attributes() -> PackedStringArray:
-	var tip := PackedStringArray()
+func _draw_attributes() -> Variant:
+	var tip: Variant = []
 	var attr: Dictionary = GameData.skills["attributes"]
 	var i: int = 0
 	for a: String in attr:
@@ -161,7 +160,7 @@ func _draw_attributes() -> PackedStringArray:
 func _plus(r: Rect2, can: bool = true) -> void:
 	can = can and (m.prog.skill_points() > 0 or r.position.y >= ATTR_Y)
 	UiDraw.box(self, r, Color(0.2, 0.16, 0.05) if can else Color(0.08, 0.08, 0.1), UiDraw.GOLD if can else Color(0.3, 0.3, 0.3))
-	UiDraw.text(self, r.position + Vector2(0, 13), "+", Color.WHITE if can else UiDraw.DIM, 16, HORIZONTAL_ALIGNMENT_CENTER, r.size.x)
+	UiDraw.text(self, r.position + Vector2(0, 13), "+", Color.WHITE if can else UiDraw.DIM, UiDraw.BODY, HORIZONTAL_ALIGNMENT_CENTER, r.size.x)
 
 
 func _tab_rect(i: int) -> Rect2:

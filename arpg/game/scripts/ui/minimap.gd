@@ -4,7 +4,8 @@ extends Control
 ## chests and the rift. Drawn by code.
 
 const SCALE: float = 1.0 / 24.0
-const AT := Vector2(792, 6)
+const AT_Y: float = 6.0
+const W: float = 160.0
 const RANGE: float = 900.0
 
 var game: Game
@@ -13,12 +14,14 @@ var _tex: Texture2D = preload("res://art/ui/minimap.png")
 
 func setup(g: Game) -> void:
 	game = g
-	position = AT
+	position = Vector2(get_viewport_rect().size.x - W - 8.0, AT_Y)
 	size = _tex.get_size()
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 
 func _process(_delta: float) -> void:
+	visible = not (game.inventory_panel.visible or game.hosts_panel.visible)   # out of the way of the right-hand panels
+	position.x = get_viewport_rect().size.x - W - 8.0
 	queue_redraw()
 
 
@@ -45,5 +48,5 @@ func _draw() -> void:
 		if d.global_position.distance_to(m) < RANGE:
 			draw_rect(Rect2(_p(d.global_position), Vector2(1, 1)), Color("e83b3b") if d.rank == "" else Color("f57d4a"))
 	draw_circle(_p(m), 2.5, Color.WHITE)
-	var view: Vector2 = Vector2(960, 540) / game.camera.zoom
+	var view: Vector2 = get_viewport_rect().size / game.camera.zoom
 	draw_rect(Rect2(_p(m - view / 2.0), view * SCALE), Color(1, 1, 1, 0.35), false, 1.0)

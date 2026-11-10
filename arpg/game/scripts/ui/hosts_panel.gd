@@ -9,7 +9,7 @@ const STAR_HIT: float = 9.0
 
 func _draw() -> void:
 	frame("The Hosts  (P)      stars %d" % m.prog.star_points())
-	var tip := PackedStringArray()
+	var tip: Variant = []
 	var groups: Dictionary = GameData.hosts["groups"]
 	var t: float = Time.get_ticks_msec() / 1000.0
 	for g: String in groups:
@@ -32,10 +32,10 @@ func _draw() -> void:
 				tip = _tip(g, i)
 		var c: Vector2 = CENTER + SceneData.vec(grp["center"])
 		var col: Color = UiDraw.GOLD if m.prog.group_done(g) else (Color.WHITE if open else UiDraw.DIM)
-		UiDraw.text(self, c + Vector2(-60, 46), String(grp["name"]), col, 16, HORIZONTAL_ALIGNMENT_CENTER, 120.0)
+		UiDraw.text(self, c + Vector2(-60, 46), String(grp["name"]), col, UiDraw.BODY, HORIZONTAL_ALIGNMENT_CENTER, 120.0)
 	var v: PackedStringArray = UiDraw.verse_lines(GameData.hosts["verse"], 80)
 	for i: int in v.size():
-		UiDraw.text(self, Vector2(0, size.y - 30 + 14 * i), v[i], UiDraw.DIM, 16, HORIZONTAL_ALIGNMENT_CENTER, size.x)
+		UiDraw.text(self, Vector2(0, size.y - 30 + 14 * i), v[i], UiDraw.DIM, UiDraw.BODY, HORIZONTAL_ALIGNMENT_CENTER, size.x)
 	UiDraw.tooltip(self, hover, tip, UiDraw.GOLD)
 
 

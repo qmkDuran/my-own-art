@@ -32,11 +32,7 @@ func _ready() -> void:
 	_sprite.light_mask = 1 | Demon.CHARACTER_LIGHT_MASK
 	Blockers.footprint(self, Vector2.ZERO, Vector2(24, 10))
 	_label = Label.new()
-	var ls := LabelSettings.new()
-	ls.font_size = 16
-	ls.font_color = Color("c7dcd0") if kind != "waystone" else Color("8fd3ff")
-	ls.outline_size = 4
-	ls.outline_color = Color("2e222f")
+	var ls := UiDraw.label_settings(UiDraw.BODY, Color("c7dcd0") if kind != "waystone" else Color("8fd3ff"))
 	_label.label_settings = ls
 	_label.text = title
 	_label.size = Vector2(140, 16)

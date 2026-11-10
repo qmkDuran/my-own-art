@@ -47,7 +47,7 @@ func data(id: String) -> Dictionary:
 
 
 func learned(id: String) -> bool:
-	return m.prog.rank(id) > 0
+	return id == "dash" or m.prog.rank(id) > 0
 
 
 func remaining(id: String) -> float:
@@ -77,6 +77,8 @@ func use(id: String, target: Vector2) -> bool:
 	cooldowns[id] = m.stats.cooldown(float(d["cooldown"]))
 	m.aim_at(target)
 	m.face_toward(m.aim())
+	if id != "descent":
+		m.cast_lock()
 	if id == "descent" and m.inv.has_proc("descent_cdr"):
 		cooldowns[id] = float(cooldowns[id]) * 0.5
 	match id:

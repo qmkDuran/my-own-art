@@ -2,7 +2,7 @@ class_name LabelStack
 extends Node
 ## Keeps item labels from overlapping: labels that would cover each other are lifted in rows. Alt shows/hides labels.
 
-const ROW: float = 18.0
+const ROW: float = 14.0
 
 static var shown: bool = true
 

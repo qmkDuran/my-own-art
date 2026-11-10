@@ -14,6 +14,8 @@ from PIL import Image
 HEAVEN = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..')
 sys.path.insert(0, os.path.join(HEAVEN, 'art'))
 from common import C, H, quant, keep_main, dith   # noqa: E402
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import style   # noqa: E402
 
 EXT = 'art/ext/'
 G = 'game/art/zone/'
@@ -25,15 +27,14 @@ CROSS = (1504, 1600)                                                       # sid
 random.seed(11)
 
 # [art, x, base y, footprint w, footprint h]
-NORTH_ROW = [['house_a', 200, 470, 290, 60], ['house_b', 560, 470, 290, 60], ['house_b_m', 920, 470, 290, 60],
-             ['house_a_m', 1280, 470, 290, 60]]
-SOUTH_ROW = [['house_c', 190, 905, 310, 56], ['store', 540, 905, 220, 50], ['house_c_m', 860, 905, 310, 56],
-             ['house_c_dark', 1290, 905, 310, 56]]
+# Houses at true scale (doors ~1.15 x Michael): three tall houses north, two bungalows and the store south.
+NORTH_ROW = [['house_a', 290, 470, 440, 70], ['house_b', 830, 470, 440, 70], ['house_a_m', 1370, 470, 440, 70]]
+SOUTH_ROW = [['house_c', 250, 905, 410, 62], ['store', 650, 905, 270, 56], ['house_c_m', 1060, 905, 410, 62]]
 CARS = [['car_wreck_burned', 700, 586, 96, 30], ['car_wreck', 1180, 576, 96, 30], ['van', 1240, 1010, 96, 30],
         ['suv_red', 1700, 470, 96, 30], ['car_wreck', 330, 1015, 96, 30]]
 FIRES = [[700, 560], [1340, 700], [1560, 1000]]                            # the wreck, a back yard, the side street
 LIGHTS = [[380, 330, 0.5, 'flicker', True], [1100, 330, 0.0, 'lamp', False], [700, 760, 0.45, 'flicker', True],
-          [1650, 760, 0.0, 'lamp', True]]                                    # x, y, energy, kind, pole drawn
+          [1700, 760, 0.0, 'lamp', True]]                                    # x, y, energy, kind, pole drawn
 # Highway (x >= HX): two carriageways with a median barrier, guardrails along both edges.
 HX = 2048
 LANES = ((360, 540), (560, 740))
@@ -90,6 +91,7 @@ def ground():
     for _ in range(10):                                          # loose debris along the curbs
         x = random.randint(20, SW - 20); y = random.choice((SIDE_N[1] + 3, SIDE_S[0] - 4, SIDE_N2[1] + 3, SIDE_S2[0] - 4))
         rubble(px, x, y, 6)
+    bg = style.to_world_palette(bg)
     bg.save(G + 'ground.png')
     mini = bg.resize((W // 24, HT // 24), Image.BOX)
     mini.save('game/art/ui/minimap.png')
@@ -277,7 +279,33 @@ def props():
     for n, (closed, opened) in {'crate': crate(False), 'lockbox': crate(True)}.items():
         out[n] = closed; out[n + '_open'] = opened
     out['waystone'], out['waystone_lit'] = waystone(False), waystone(True)
-    for n, im in out.items(): im.save(G + n + '.png')
+    out['store'] = store_roof_3q(out['store'])
+    for n, im in out.items():
+        im = to_style(n, im)
+        im.save(G + n + '.png')
+
+
+def to_style(name, im):
+    """Michael is the reference: true scale, the world palette, a 1 px #2e222f outline."""
+    base = name.replace('_m', '').replace('_dark', '')
+    if base in style.PIECES:
+        sc = style.PIECES[base][2]
+        from fractions import Fraction
+        f = Fraction(sc).limit_denominator(6)
+        im = style.pixel_rescale(im, f.numerator, f.denominator)
+    im = style.to_world_palette(im)
+    if name not in ('overpass',):
+        im = style.outline(im)
+    return im
+
+
+def store_roof_3q(im):
+    """The store's flat roof was drawn straight down; seen from the 3/4 angle of the houses it is foreshortened:
+    the roof rows (2..51) are halved and the parapet face kept."""
+    a = np.array(im)
+    roof = a[2:52][::2]
+    out = np.concatenate([a[:2], roof, a[52:]], 0)
+    return Image.fromarray(out)
 
 
 def overpass():
@@ -335,16 +363,17 @@ def waystone(lit):
 
 
 def fence_run(art, x0, x1, base, gaps=()):
-    return [[art, x + 16, base, 32, 10] for x in range(x0, x1, 32) if not any(g0 <= x < g1 for g0, g1 in gaps)]
+    w = Image.open(G + art + '.png').width - 2                        # the outline adds 1 px each side; pieces overlap it
+    return [[art, x + w // 2, base, w, 10] for x in range(x0, x1, w) if not any(g0 <= x < g1 for g0, g1 in gaps)]
 
 
 def layout():
     items = NORTH_ROW + SOUTH_ROW + CARS
-    items += fence_run('fence_picket_broken', 16, 1470, 664, gaps=((360, 420), (1000, 1064)))   # back fences, broken
+    items += fence_run('fence_picket_broken', 16, 1470, 664, gaps=((440, 540), (1000, 1064)))   # back fences, broken
     items += fence_run('fence_chainlink', 1632, 1920, 660) + fence_run('fence_picket', 1632, 1920, 300, gaps=((1700, 1764),))
-    items += [['hedge', 380, 470, 56, 14], ['hedge', 740, 470, 56, 14], ['hedge', 1100, 470, 56, 14],
+    items += [['hedge', 560, 470, 56, 14], ['hedge', 1100, 470, 56, 14],
               ['tree_dead', 1840, 430, 26, 12], ['tree_dead', 1780, 860, 26, 12], ['tree_dead', 40, 1072, 26, 12],
-              ['mailbox', 330, 476, 14, 8], ['trash_can', 1120, 905, 22, 10], ['recycling_bin', 1150, 905, 22, 10],
+              ['mailbox', 470, 478, 14, 8], ['trash_can', 1300, 905, 22, 10], ['recycling_bin', 1330, 905, 22, 10],
               ['hydrant', 1470, 506, 12, 8], ['for_sale_sign', 1660, 860, 14, 8], ['trash_can', 1350, 690, 22, 10]]
     for x, y, _, _, pole in LIGHTS:
         if pole: items.append(['streetlight', x, y + 170, 10, 8])
@@ -412,8 +441,8 @@ ZONE = {
     ],
     'prayer_radius': 70,
     'final_pack': {'at': [3000, 1460], 'kinds': ['firehorse', 'locust', 'frog', 'shade', 'imp', 'imp', 'cinder']},
-    'chests': [['lockbox', 305, 922],            # by the first house's garage door
-               ['crate', 540, 686],              # behind the store (its back room)
+    'chests': [['lockbox', 420, 924],            # by the first house's garage door
+               ['crate', 500, 690],              # by the store's back room door, behind it
                ['crate', 2775, 538],             # beside the wrecked van under the overpass
                ['crate', 600, 1372],             # an abandoned supply crate by the park hedge
                ['lockbox', 3640, 1262]],         # by a burned stump at the rift's edge

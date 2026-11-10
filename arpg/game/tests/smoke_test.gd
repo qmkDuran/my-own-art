@@ -106,6 +106,36 @@ func _run() -> void:
 	g.stand = false
 	g.lmb = false
 	g.cursor_override = Vector2.INF
+	# --- the character sheet is the real numbers: recompute from equipment + attributes by hand
+	var st := Stats.new()
+	st.compute(5, [{"life": 10.0, "might": 2.0, "fire_res": 90.0}], [{"might": 1.0}, {"damage": 1.0}])
+	var want_life: float = 160.0 + 12.0 * 4.0 + 10.0 + 3.0 * 3.0
+	var want_dmg: float = (12.0 + 1.5 * 4.0 + 1.0) * (1.0 + 2.0 * 3.0 / 100.0)
+	var rg: Vector2 = st.damage_range()
+	_expect(is_equal_approx(st.v("life"), want_life) and is_equal_approx(rg.x, want_dmg * 0.85) and is_equal_approx(rg.y, want_dmg * 1.15)
+		and st.v("fire_res") == Stats.RES_CAP, "stats recompute from equipment and attributes (life %d, damage %d-%d, fire res capped)" % [roundi(st.v("life")), roundi(rg.x), roundi(rg.y)])
+	var in_range: bool = true
+	for k: int in 200:
+		var roll: Vector2 = st.roll_damage(1.0)
+		var top: float = rg.y * (1.0 + st.v("crit_damage") / 100.0 if roll.y > 0.0 else 1.0)
+		in_range = in_range and roll.x >= rg.x - 0.01 and roll.x <= top + 0.01
+	_expect(in_range, "every rolled hit lies in the sheet's damage range")
+	var sheet: Array = CharacterPanel.rows(m)
+	var life_row: Array = sheet.filter(func(r: Array) -> bool: return r[1] == "Life")[0]
+	_expect(life_row[2] == "%d" % roundi(m.stats.v("life")), "the character sheet shows the live numbers")
+	_expect(m.stats.mitigate(100.0, "fire") < 100.0 or m.stats.v("fire_res") == 0.0, "resistances reduce fire damage")
+	# --- Dash: untouchable while it lasts, then on cooldown
+	m.position = Vector2(760, 548)
+	var life_before: float = m.life
+	m.dodge()
+	m.take_hit(50.0, null, false)
+	_expect(m.invulnerable and m.life == life_before and m.dodge_ready() > 0.0, "Dash: no damage while dashing, then a cooldown")
+	await _frames(30)
+	var hud_bar: Rect2 = g.hud.bar_rect()
+	var orbs: Array[Vector2] = g.hud.orb_centers()
+	var vs: Vector2 = g.hud.get_viewport_rect().size
+	_expect(orbs.all(func(c: Vector2) -> bool: return c.y + Hud.ORB_R + 3.0 <= vs.y and c.y - Hud.ORB_R - 14.0 >= 0.0 and c.x - Hud.ORB_R >= 0.0 and c.x + Hud.ORB_R <= vs.x)
+		and hud_bar.end.y <= vs.y, "the HUD cluster is fully on screen")
 	var stars0: int = m.prog.star_points()
 	_expect(m.prog.take_star("vigil") and m.prog.star_points() == stars0 - 1, "a star is taken")
 	var p: Dictionary = g.objective.points[0]

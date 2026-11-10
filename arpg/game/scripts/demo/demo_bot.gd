@@ -9,6 +9,7 @@ const LOOT_GRAB: float = 240.0
 const SAFE: float = 110.0
 const START_XP: float = 1250.0
 const QUIT_AFTER: float = 46.0
+const DASH_EVERY: float = 2.6             # the --dash-demo shows Dash often
 const CURSOR_SPEED: float = 1100.0
 const WALK_LEAD: float = 140.0          # a player holds the cursor a little ahead of Michael, not at the destination
 const TIMELINE: Array = [[17.0, "open_inventory"], [18.4, "equip"], [19.8, "close"], [27.0, "open_skills"], [29.5, "close"],
@@ -25,6 +26,7 @@ var _clicked: Demon
 var _taking: GroundItem
 var _taking_t: float = 0.0
 var _skip: Array = []
+var _dash_t: float = 3.0
 
 
 func setup(game: Game) -> void:
@@ -44,13 +46,25 @@ func _physics_process(delta: float) -> void:
 	if _step < TIMELINE.size() and _t >= float(TIMELINE[_step][0]):
 		_do(String(TIMELINE[_step][1]))
 		_step += 1
-	if _t > QUIT_AFTER and not OS.get_cmdline_user_args().has("--shots"):   # the screenshot pass quits by itself
+	if _t > (21.0 if OS.get_cmdline_user_args().has("--dash-demo") else QUIT_AFTER) and not OS.get_cmdline_user_args().has("--shots"):   # the screenshot pass quits by itself
 		get_tree().quit()
-	if g.panels_open() or _t < 2.0:
+	if (g.panels_open() and not OS.get_cmdline_user_args().has("--shots")) or _t < 2.0:
 		g.lmb = false
 		m.stop()
 		return
 	_think -= delta
+	_dash_t -= delta
+	if OS.get_cmdline_user_args().has("--dash-demo") and _dash_t <= 0.0 and m.dodge_ready() <= 0.0:
+		_dash_t = DASH_EVERY
+		var d: Demon = _nearest_demon(220.0)
+		var away: Vector2 = (m.global_position - d.global_position).normalized() if d != null else Vector2(1, 0)
+		g.cursor_override = m.global_position + away.rotated(randf_range(-0.6, 0.6)) * 120.0 + Vector2(0, -20)
+		_cursor_goal = g.cursor_override
+		m.stop()
+		m.aim_at(g.cursor_override)
+		m.dodge()
+		g.hud.flash("dash")
+		return
 	if _think > 0.0:
 		return
 	_think = 0.1

@@ -146,11 +146,7 @@ func display_name() -> String:
 
 func _name_label(text: String) -> void:
 	var l := Label.new()
-	var ls := LabelSettings.new()
-	ls.font_size = 16
-	ls.font_color = Color("f57d4a") if rank == "hero" else Color("fbb954")
-	ls.outline_size = 4
-	ls.outline_color = Color("2e222f")
+	var ls := UiDraw.label_settings(UiDraw.BODY, Color("f57d4a") if rank == "hero" else Color("fbb954"))
 	l.label_settings = ls
 	l.text = text
 	l.size = Vector2(160, 16)
@@ -187,7 +183,7 @@ func _physics_process(delta: float) -> void:
 		_charge_t -= delta
 		want = _charge_v
 		if global_position.distance_to(target.global_position) < float(data["radius"]) + 18.0:
-			target.take_hit(float(data["charge"]["damage"]) * damage / float(data["damage"]), self, false)
+			target.take_hit(float(data["charge"]["damage"]) * damage / float(data["damage"]), self, false, "physical")
 			_charge_t = 0.0
 	elif _wind_t > 0.0:
 		_wind_t -= delta
@@ -240,7 +236,7 @@ func _breathe(delta: float, to: Vector2) -> void:
 	Fx.flame(get_parent(), mouth, dir)
 	var rel: Vector2 = target.global_position + Vector2(0, -20) - mouth
 	if rel.length() < float(b["range"]) and absf(rad_to_deg(dir.angle_to(rel))) < float(b["angle"]) / 2.0:
-		target.take_hit(float(b["dps"]) * 0.2 * (1.0 + 0.16 * float(level - 1)), self, true)
+		target.take_hit(float(b["dps"]) * 0.2 * (1.0 + 0.16 * float(level - 1)), self, true, "fire")
 
 
 func _specials(to: Vector2, dist: float) -> void:
@@ -379,7 +375,7 @@ func _explode(ex: Dictionary) -> void:
 	Impact.explosion(get_parent(), global_position + Vector2(0, -10), r)
 	Audio.sfx("burst", -4.0, 0.8)
 	if global_position.distance_to(target.global_position) < r:
-		target.take_hit(float(ex["damage"]) * (1.0 + 0.16 * float(level - 1)), self, false)
+		target.take_hit(float(ex["damage"]) * (1.0 + 0.16 * float(level - 1)), self, true, "fire")
 	if not dead:
 		hp = 0.0
 		_die()

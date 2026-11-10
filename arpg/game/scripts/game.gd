@@ -21,6 +21,7 @@ var hosts_panel: HostsPanel
 var pause_panel: PausePanel
 var bot: DemoBot
 var travel_panel: TravelPanel
+var character_panel: CharacterPanel
 var stones: Array = []
 
 var _attack_target: Demon
@@ -58,6 +59,8 @@ func _ready() -> void:
 	add_child(LabelStack.new())
 	camera = Camera2D.new()
 	var size: Vector2 = SceneData.vec(GameData.zone["size"])
+	camera.limit_left = 0
+	camera.limit_top = -int(Zone.ROOF_ROOM)
 	camera.limit_right = int(size.x)
 	camera.limit_bottom = int(size.y)
 	camera.position_smoothing_enabled = true
@@ -95,7 +98,7 @@ func _build_ui() -> void:
 	hud.setup(michael, objective)
 	inventory_panel = InventoryPanel.new()
 	ui.add_child(inventory_panel)
-	inventory_panel.setup(michael, Rect2(590, 30, 352, 432))
+	inventory_panel.setup(michael, Rect2(590, 24, 352, 460))
 	skill_panel = SkillPanel.new()
 	ui.add_child(skill_panel)
 	skill_panel.setup(michael, Rect2(18, 54, 430, 392))
@@ -105,6 +108,9 @@ func _build_ui() -> void:
 	pause_panel = PausePanel.new()
 	ui.add_child(pause_panel)
 	pause_panel.setup()
+	character_panel = CharacterPanel.new()
+	ui.add_child(character_panel)
+	character_panel.setup(michael, Rect2(18, 24, 380, 400))
 	travel_panel = TravelPanel.new()
 	ui.add_child(travel_panel)
 	travel_panel.setup(michael, Rect2(360, 150, 240, 40 + 22 * stones.size()))
@@ -116,6 +122,16 @@ func _build_ui() -> void:
 	var cursor := CursorView.new()
 	ui.add_child(cursor)
 	cursor.setup(self)
+	_layout_ui()
+	get_viewport().size_changed.connect(_layout_ui)
+
+
+## Panels keep their places relative to the screen edges at any window size.
+func _layout_ui() -> void:
+	var vs: Vector2 = get_viewport_rect().size
+	inventory_panel.position = Vector2(vs.x - inventory_panel.size.x - 18.0, 24.0)
+	hosts_panel.position = ((vs - hosts_panel.size) / 2.0).round()
+	travel_panel.position = ((vs - travel_panel.size) / 2.0).round()
 
 
 func _on_level(level: int) -> void:
@@ -126,7 +142,7 @@ func _on_level(level: int) -> void:
 
 
 func panels_open() -> bool:
-	return inventory_panel.visible or skill_panel.visible or hosts_panel.visible or travel_panel.visible
+	return inventory_panel.visible or skill_panel.visible or hosts_panel.visible or travel_panel.visible or character_panel.visible
 
 
 ## Travel to a found waystone: a short white-out, then Michael stands beside it.
@@ -158,7 +174,7 @@ func cursor_screen() -> Vector2:
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("pause"):
 		if panels_open():
-			for p: GamePanel in [inventory_panel, skill_panel, hosts_panel, travel_panel]:
+			for p: GamePanel in [inventory_panel, skill_panel, hosts_panel, travel_panel, character_panel]:
 				p.visible = false
 		else:
 			get_tree().paused = not get_tree().paused
@@ -170,6 +186,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		inventory_panel.toggle()
 	elif event.is_action_pressed("skills"):
 		skill_panel.toggle()
+		character_panel.visible = false
+	elif event.is_action_pressed("character"):
+		character_panel.toggle()
+		skill_panel.visible = false
 	elif event.is_action_pressed("tree"):
 		hosts_panel.toggle()
 	elif event.is_action_pressed("dodge"):

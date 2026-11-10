@@ -8,12 +8,7 @@ const TIME: float = 0.8
 
 static func spawn(_parent: Node, at: Vector2, text: String, color: Color, big: bool = false) -> void:
 	var f := FloatText.new()
-	var ls := LabelSettings.new()
-	ls.font_size = 32 if big else 16
-	ls.font_color = color
-	ls.outline_size = 6 if big else 4
-	ls.outline_color = Color("2e222f")
-	f.label_settings = ls
+	f.label_settings = UiDraw.label_settings(UiDraw.TITLE if big else UiDraw.BODY, color)
 	f.text = text
 	f.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	f.size = Vector2(120, 20)

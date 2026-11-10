@@ -11,7 +11,7 @@ var stones: Array = []
 
 func _draw() -> void:
 	frame("Waystones")
-	var tip := PackedStringArray()
+	var tip: Variant = []
 	for i: int in stones.size():
 		var it: Interactable = stones[i]
 		var r := Rect2(16, 34 + i * ROW_H, size.x - 32, ROW_H - 4)

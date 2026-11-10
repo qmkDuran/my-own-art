@@ -36,15 +36,11 @@ func _ready() -> void:
 		beam.position = Vector2(0, -12)
 		add_child(beam)
 	label = Label.new()
-	var ls := LabelSettings.new()
-	ls.font_size = 16
-	ls.font_color = col
-	ls.outline_size = 4
-	ls.outline_color = Color("2e222f")
+	var ls := UiDraw.label_settings(UiDraw.BODY, col)
 	label.label_settings = ls
 	label.text = item["name"]
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	label.size = Vector2(LABEL_W, 16)
+	label.size = Vector2(LABEL_W, 14)
 	label.position = Vector2(-LABEL_W / 2.0, -46)
 	Overlay.follower(self).add_child(label)
 	add_to_group("ground_items")
@@ -57,12 +53,12 @@ var stack_lift: float = 0.0             # set by LabelStack so labels never over
 
 
 func label_rect() -> Rect2:
-	var w: float = label.get_theme_font("font").get_string_size(label.text, HORIZONTAL_ALIGNMENT_LEFT, -1, 16).x + 8.0
-	return Rect2(global_position + Vector2(-w / 2.0, -46 - stack_lift), Vector2(w, 18))
+	var w: float = label.label_settings.font.get_string_size(label.text, HORIZONTAL_ALIGNMENT_LEFT, -1, UiDraw.BODY).x + 8.0
+	return Rect2(global_position + Vector2(-w / 2.0, -44 - stack_lift), Vector2(w, 14))
 
 
 func _process(_delta: float) -> void:
-	label.position.y = -46 - stack_lift
+	label.position.y = -44 - stack_lift
 	label.visible = LabelStack.shown
 
 

@@ -1,11 +1,10 @@
 class_name SkillIcons
 extends RefCounted
-## Small hand-drawn skill glyphs (original): blade, spin, descending arrow, wind, sound waves, a closed mouth line,
+## Small hand-drawn skill glyphs (each fits a 22 px square centred on `c`) (original): blade, spin, descending arrow, wind, sound waves, a closed mouth line,
 ## shield, shield edge, horn, radiant sun, a line of light.
 
 
 static func draw_icon(ci: CanvasItem, id: String, c: Vector2, col: Color) -> void:
-	c += Vector2(0, 2)
 	var gold := Color("f9c22b") * col
 	var pale := Color("fbff86") * col
 	match id:
@@ -47,3 +46,7 @@ static func draw_icon(ci: CanvasItem, id: String, c: Vector2, col: Color) -> voi
 		"lance":
 			ci.draw_line(c + Vector2(-11, 8), c + Vector2(11, -8), pale, 3.0)
 			ci.draw_circle(c + Vector2(11, -8), 3.0, gold)
+		"dash":
+			ci.draw_colored_polygon(PackedVector2Array([c + Vector2(2, -7), c + Vector2(10, 0), c + Vector2(2, 7)]), pale)
+			for i: int in 3:
+				ci.draw_line(c + Vector2(-11 + i * 2, -5 + i * 5), c + Vector2(0, -5 + i * 5), Color("8fd3ff") * col, 2.0)

@@ -45,6 +45,8 @@ var _dodge_cd: float = 0.0
 var _anim_t: float = 0.0
 var _step_t: float = 0.0
 var _spawn: Vector2
+var _cast_t: float = 0.0
+var _afterimage_t: float = 0.0
 
 
 func _ready() -> void:
@@ -117,7 +119,7 @@ func aim_at(p: Vector2) -> void:
 
 
 func busy() -> bool:
-	return down or _slash_t >= 0.0 or _dash_t > 0.0 or skills.charging()
+	return down or _slash_t >= 0.0 or _dash_t > 0.0 or _cast_t > 0.0 or skills.charging()
 
 
 ## The sword (Eph 6:17): three swings, the last wider and heavier.
@@ -133,22 +135,62 @@ func strike(p: Vector2) -> void:
 	Audio.sfx("swing", -10.0, randf_range(0.95, 1.1) + 0.06 * _combo)
 
 
+## Dash (Space): a quick move toward where he walks (or aims), untouchable while it lasts; afterimages and a smoke
+## trail mark it.
 func dodge() -> void:
 	if down or _dodge_cd > 0.0 or skills.charging():
 		return
-	var d: Vector2 = _move_dir if _move_dir != Vector2.ZERO else _aim
-	var dd: Dictionary = GameData.skills["dodge"]
+	var d: Vector2 = _velocity_dir()
+	var dd: Dictionary = GameData.skill("dash")
 	_dash_t = float(dd["time"])
-	_dash_v = d.normalized() * float(dd["distance"]) / float(dd["time"])
-	_dodge_cd = float(dd["cooldown"]) / (1.0 + stats.v("dodge_pct") / 100.0)
+	_dash_v = d * float(dd["distance"]) / float(dd["time"])
+	_dodge_cd = dash_cooldown()
 	_slash_t = -1.0
+	_cast_t = 0.0
+	_afterimage_t = 0.0
 	invulnerable = true
-	Audio.sfx("dash", -9.0)
-	Fx.sparkles(get_parent(), global_position + Vector2(0, -24), Vector2(10, 16), 6).one_shot = true
+	facing = _dir_name(d)
+	Audio.sfx("dash", -6.0)
+	Fx.shadow_puff(get_parent(), global_position + Vector2(0, -16))
+
+
+func _velocity_dir() -> Vector2:
+	if _move_dir != Vector2.ZERO:
+		return _move_dir.normalized()
+	if _move_to != Vector2.INF and _move_to.distance_to(global_position) > ARRIVE:
+		return (_move_to - global_position).normalized()
+	return _aim
+
+
+func dash_cooldown() -> float:
+	return float(GameData.skill("dash")["cooldown"]) / (1.0 + stats.v("dodge_pct") / 100.0)
 
 
 func dodge_ready() -> float:
-	return _dodge_cd
+	return maxf(0.0, _dodge_cd)
+
+
+## A brief stand after a skill (cast speed shortens it).
+func cast_lock() -> void:
+	_cast_t = stats.cast_time()
+
+
+func _afterimage() -> void:
+	var ghost := Sprite2D.new()
+	ghost.texture = _sprite.texture
+	ghost.hframes = _sprite.hframes
+	ghost.vframes = _sprite.vframes
+	ghost.frame = _sprite.frame
+	ghost.flip_h = _sprite.flip_h
+	ghost.centered = false
+	ghost.offset = _sprite.offset
+	ghost.position = global_position
+	ghost.modulate = Color(0.6, 0.75, 1.0, 0.55)
+	ghost.z_index = -1
+	get_parent().add_child(ghost)
+	var tw := ghost.create_tween()
+	tw.tween_property(ghost, "modulate:a", 0.0, 0.3)
+	tw.tween_callback(ghost.queue_free)
 
 
 # ------------------------------------------------------------------ frame
@@ -162,6 +204,11 @@ func _physics_process(delta: float) -> void:
 		return
 	if _dash_t > 0.0:
 		_dash_t -= delta
+		_afterimage_t -= delta
+		if _afterimage_t <= 0.0:
+			_afterimage_t = 0.035
+			_afterimage()
+			Fx.shadow_puff(get_parent(), global_position + Vector2(0, -8)).amount = 4
 		velocity = _dash_v
 		move_and_slide()
 		if _dash_t <= 0.0:
@@ -170,6 +217,11 @@ func _physics_process(delta: float) -> void:
 		return
 	if skills.charging():
 		move_and_slide()
+		return
+	if _cast_t > 0.0:
+		_cast_t -= delta
+		velocity = Vector2.ZERO
+		_set_anim("slash", 2)
 		return
 	if _slash_t >= 0.0:
 		_update_slash(delta)
@@ -241,14 +293,15 @@ func face_toward(v: Vector2) -> void:
 
 
 # ------------------------------------------------------------------ being struck
-func take_hit(raw: float, source: Node2D, ranged: bool) -> void:
+## A blow (physical), a bolt (shadow) or fire. Blows can be blocked: a block takes off the block amount.
+func take_hit(raw: float, _source: Node2D, ranged: bool, kind: String = "physical") -> void:
 	if down or invulnerable:
 		return
-	if not ranged and randf() * 100.0 < stats.v("block"):
-		FloatText.spawn(get_parent(), global_position, "Blocked", Color("8fd3ff"))
+	var dmg: float = stats.mitigate(raw, kind)
+	if not ranged and kind == "physical" and randf() * 100.0 < stats.v("block"):
+		dmg = maxf(0.0, dmg - stats.v("block_amount"))
+		FloatText.spawn(get_parent(), global_position + Vector2(0, -12), "Block", Color("8fd3ff"))
 		Audio.sfx("shield", -14.0, 1.3)
-		return
-	var dmg: float = stats.mitigate(raw)
 	if skills.shield_on():
 		dmg *= 1.0 - skills.shield_reduce()
 	life -= dmg

@@ -388,13 +388,13 @@
  "chests": [
   [
    "lockbox",
-   305,
-   922
+   420,
+   924
   ],
   [
    "crate",
-   540,
-   686
+   500,
+   690
   ],
   [
    "crate",
@@ -488,59 +488,45 @@
  "props": [
   [
    "house_a",
-   200,
-   470,
    290,
-   60
+   470,
+   440,
+   70
   ],
   [
    "house_b",
-   560,
+   830,
    470,
-   290,
-   60
-  ],
-  [
-   "house_b_m",
-   920,
-   470,
-   290,
-   60
+   440,
+   70
   ],
   [
    "house_a_m",
-   1280,
+   1370,
    470,
-   290,
-   60
+   440,
+   70
   ],
   [
    "house_c",
-   190,
+   250,
    905,
-   310,
-   56
+   410,
+   62
   ],
   [
    "store",
-   540,
+   650,
    905,
-   220,
-   50
+   270,
+   56
   ],
   [
    "house_c_m",
-   860,
+   1060,
    905,
-   310,
-   56
-  ],
-  [
-   "house_c_dark",
-   1290,
-   905,
-   310,
-   56
+   410,
+   62
   ],
   [
    "car_wreck_burned",
@@ -579,420 +565,525 @@
   ],
   [
    "fence_picket_broken",
-   32,
+   28,
    664,
-   32,
+   25,
    10
   ],
   [
    "fence_picket_broken",
-   64,
+   53,
    664,
-   32,
+   25,
    10
   ],
   [
    "fence_picket_broken",
-   96,
+   78,
    664,
-   32,
+   25,
+   10
+  ],
+  [
+   "fence_picket_broken",
+   103,
+   664,
+   25,
    10
   ],
   [
    "fence_picket_broken",
    128,
    664,
-   32,
+   25,
    10
   ],
   [
    "fence_picket_broken",
-   160,
+   153,
    664,
-   32,
+   25,
    10
   ],
   [
    "fence_picket_broken",
-   192,
+   178,
    664,
-   32,
+   25,
    10
   ],
   [
    "fence_picket_broken",
-   224,
+   203,
    664,
-   32,
+   25,
    10
   ],
   [
    "fence_picket_broken",
-   256,
+   228,
    664,
-   32,
+   25,
    10
   ],
   [
    "fence_picket_broken",
-   288,
+   253,
    664,
-   32,
+   25,
    10
   ],
   [
    "fence_picket_broken",
-   320,
+   278,
    664,
-   32,
+   25,
    10
   ],
   [
    "fence_picket_broken",
-   352,
+   303,
    664,
-   32,
+   25,
    10
   ],
   [
    "fence_picket_broken",
-   448,
+   328,
    664,
-   32,
+   25,
    10
   ],
   [
    "fence_picket_broken",
-   480,
+   353,
    664,
-   32,
+   25,
    10
   ],
   [
    "fence_picket_broken",
-   512,
+   378,
    664,
-   32,
+   25,
    10
   ],
   [
    "fence_picket_broken",
-   544,
+   403,
    664,
-   32,
+   25,
    10
   ],
   [
    "fence_picket_broken",
-   576,
+   428,
    664,
-   32,
+   25,
    10
   ],
   [
    "fence_picket_broken",
-   608,
+   553,
    664,
-   32,
+   25,
    10
   ],
   [
    "fence_picket_broken",
-   640,
+   578,
    664,
-   32,
+   25,
    10
   ],
   [
    "fence_picket_broken",
-   672,
+   603,
    664,
-   32,
+   25,
    10
   ],
   [
    "fence_picket_broken",
-   704,
+   628,
    664,
-   32,
+   25,
    10
   ],
   [
    "fence_picket_broken",
-   736,
+   653,
    664,
-   32,
+   25,
    10
   ],
   [
    "fence_picket_broken",
-   768,
+   678,
    664,
-   32,
+   25,
    10
   ],
   [
    "fence_picket_broken",
-   800,
+   703,
    664,
-   32,
+   25,
    10
   ],
   [
    "fence_picket_broken",
-   832,
+   728,
    664,
-   32,
+   25,
    10
   ],
   [
    "fence_picket_broken",
-   864,
+   753,
    664,
-   32,
+   25,
    10
   ],
   [
    "fence_picket_broken",
-   896,
+   778,
    664,
-   32,
+   25,
+   10
+  ],
+  [
+   "fence_picket_broken",
+   803,
+   664,
+   25,
+   10
+  ],
+  [
+   "fence_picket_broken",
+   828,
+   664,
+   25,
+   10
+  ],
+  [
+   "fence_picket_broken",
+   853,
+   664,
+   25,
+   10
+  ],
+  [
+   "fence_picket_broken",
+   878,
+   664,
+   25,
+   10
+  ],
+  [
+   "fence_picket_broken",
+   903,
+   664,
+   25,
    10
   ],
   [
    "fence_picket_broken",
    928,
    664,
-   32,
+   25,
    10
   ],
   [
    "fence_picket_broken",
-   960,
+   953,
    664,
-   32,
+   25,
    10
   ],
   [
    "fence_picket_broken",
-   992,
+   978,
    664,
-   32,
+   25,
    10
   ],
   [
    "fence_picket_broken",
-   1088,
+   1003,
    664,
-   32,
+   25,
    10
   ],
   [
    "fence_picket_broken",
-   1120,
+   1078,
    664,
-   32,
+   25,
    10
   ],
   [
    "fence_picket_broken",
-   1152,
+   1103,
    664,
-   32,
+   25,
    10
   ],
   [
    "fence_picket_broken",
-   1184,
+   1128,
    664,
-   32,
+   25,
    10
   ],
   [
    "fence_picket_broken",
-   1216,
+   1153,
    664,
-   32,
+   25,
    10
   ],
   [
    "fence_picket_broken",
-   1248,
+   1178,
    664,
-   32,
+   25,
    10
   ],
   [
    "fence_picket_broken",
-   1280,
+   1203,
    664,
-   32,
+   25,
    10
   ],
   [
    "fence_picket_broken",
-   1312,
+   1228,
    664,
-   32,
+   25,
    10
   ],
   [
    "fence_picket_broken",
-   1344,
+   1253,
    664,
-   32,
+   25,
    10
   ],
   [
    "fence_picket_broken",
-   1376,
+   1278,
    664,
-   32,
+   25,
    10
   ],
   [
    "fence_picket_broken",
-   1408,
+   1303,
    664,
-   32,
+   25,
    10
   ],
   [
    "fence_picket_broken",
-   1440,
+   1328,
    664,
-   32,
+   25,
    10
   ],
   [
    "fence_picket_broken",
-   1472,
+   1353,
    664,
-   32,
+   25,
+   10
+  ],
+  [
+   "fence_picket_broken",
+   1378,
+   664,
+   25,
+   10
+  ],
+  [
+   "fence_picket_broken",
+   1403,
+   664,
+   25,
+   10
+  ],
+  [
+   "fence_picket_broken",
+   1428,
+   664,
+   25,
+   10
+  ],
+  [
+   "fence_picket_broken",
+   1453,
+   664,
+   25,
+   10
+  ],
+  [
+   "fence_picket_broken",
+   1478,
+   664,
+   25,
    10
   ],
   [
    "fence_chainlink",
-   1648,
+   1644,
    660,
-   32,
+   24,
    10
   ],
   [
    "fence_chainlink",
-   1680,
+   1668,
    660,
-   32,
+   24,
    10
   ],
   [
    "fence_chainlink",
-   1712,
+   1692,
    660,
-   32,
+   24,
    10
   ],
   [
    "fence_chainlink",
-   1744,
+   1716,
    660,
-   32,
+   24,
    10
   ],
   [
    "fence_chainlink",
-   1776,
+   1740,
    660,
-   32,
+   24,
    10
   ],
   [
    "fence_chainlink",
-   1808,
+   1764,
    660,
-   32,
+   24,
    10
   ],
   [
    "fence_chainlink",
-   1840,
+   1788,
    660,
-   32,
+   24,
    10
   ],
   [
    "fence_chainlink",
-   1872,
+   1812,
    660,
-   32,
+   24,
    10
   ],
   [
    "fence_chainlink",
-   1904,
+   1836,
    660,
-   32,
+   24,
+   10
+  ],
+  [
+   "fence_chainlink",
+   1860,
+   660,
+   24,
+   10
+  ],
+  [
+   "fence_chainlink",
+   1884,
+   660,
+   24,
+   10
+  ],
+  [
+   "fence_chainlink",
+   1908,
+   660,
+   24,
    10
   ],
   [
    "fence_picket",
-   1648,
+   1644,
    300,
-   32,
+   25,
    10
   ],
   [
    "fence_picket",
-   1680,
+   1669,
    300,
-   32,
+   25,
    10
   ],
   [
    "fence_picket",
-   1712,
+   1694,
    300,
-   32,
+   25,
    10
   ],
   [
    "fence_picket",
-   1808,
+   1794,
    300,
-   32,
+   25,
    10
   ],
   [
    "fence_picket",
-   1840,
+   1819,
    300,
-   32,
+   25,
    10
   ],
   [
    "fence_picket",
-   1872,
+   1844,
    300,
-   32,
+   25,
    10
   ],
   [
    "fence_picket",
-   1904,
+   1869,
    300,
-   32,
+   25,
+   10
+  ],
+  [
+   "fence_picket",
+   1894,
+   300,
+   25,
+   10
+  ],
+  [
+   "fence_picket",
+   1919,
+   300,
+   25,
    10
   ],
   [
    "hedge",
-   380,
-   470,
-   56,
-   14
-  ],
-  [
-   "hedge",
-   740,
+   560,
    470,
    56,
    14
@@ -1027,21 +1118,21 @@
   ],
   [
    "mailbox",
-   330,
-   476,
+   470,
+   478,
    14,
    8
   ],
   [
    "trash_can",
-   1120,
+   1300,
    905,
    22,
    10
   ],
   [
    "recycling_bin",
-   1150,
+   1330,
    905,
    22,
    10
@@ -1083,7 +1174,7 @@
   ],
   [
    "streetlight",
-   1650,
+   1700,
    930,
    10,
    8
@@ -1237,156 +1328,212 @@
   ],
   [
    "fence_chainlink",
-   2064,
+   2060,
    300,
-   32,
+   24,
    10
   ],
   [
    "fence_chainlink",
-   2096,
+   2084,
    300,
-   32,
+   24,
    10
   ],
   [
    "fence_chainlink",
-   2128,
+   2108,
    300,
-   32,
+   24,
    10
   ],
   [
    "fence_chainlink",
-   2160,
+   2132,
    300,
-   32,
+   24,
    10
   ],
   [
    "fence_chainlink",
-   2192,
+   2156,
    300,
-   32,
+   24,
    10
   ],
   [
    "fence_chainlink",
-   2224,
+   2180,
    300,
-   32,
+   24,
    10
   ],
   [
    "fence_chainlink",
-   2256,
+   2204,
    300,
-   32,
+   24,
    10
   ],
   [
    "fence_chainlink",
-   2288,
+   2228,
    300,
-   32,
+   24,
    10
   ],
   [
    "fence_chainlink",
-   2320,
+   2252,
    300,
-   32,
+   24,
    10
   ],
   [
    "fence_chainlink",
-   2352,
+   2276,
    300,
-   32,
+   24,
    10
   ],
   [
    "fence_chainlink",
-   2384,
+   2300,
    300,
-   32,
+   24,
    10
   ],
   [
    "fence_chainlink",
-   3516,
+   2324,
    300,
-   32,
+   24,
    10
   ],
   [
    "fence_chainlink",
-   3548,
+   2348,
    300,
-   32,
+   24,
    10
   ],
   [
    "fence_chainlink",
-   3580,
+   2372,
    300,
-   32,
+   24,
    10
   ],
   [
    "fence_chainlink",
-   3612,
+   2396,
    300,
-   32,
+   24,
    10
   ],
   [
    "fence_chainlink",
-   3644,
+   3512,
    300,
-   32,
+   24,
    10
   ],
   [
    "fence_chainlink",
-   3676,
+   3536,
    300,
-   32,
+   24,
    10
   ],
   [
    "fence_chainlink",
-   3708,
+   3560,
    300,
-   32,
+   24,
    10
   ],
   [
    "fence_chainlink",
-   3740,
+   3584,
    300,
-   32,
+   24,
    10
   ],
   [
    "fence_chainlink",
-   3772,
+   3608,
    300,
-   32,
+   24,
    10
   ],
   [
    "fence_chainlink",
-   3804,
+   3632,
    300,
-   32,
+   24,
    10
   ],
   [
    "fence_chainlink",
-   3836,
+   3656,
    300,
-   32,
+   24,
+   10
+  ],
+  [
+   "fence_chainlink",
+   3680,
+   300,
+   24,
+   10
+  ],
+  [
+   "fence_chainlink",
+   3704,
+   300,
+   24,
+   10
+  ],
+  [
+   "fence_chainlink",
+   3728,
+   300,
+   24,
+   10
+  ],
+  [
+   "fence_chainlink",
+   3752,
+   300,
+   24,
+   10
+  ],
+  [
+   "fence_chainlink",
+   3776,
+   300,
+   24,
+   10
+  ],
+  [
+   "fence_chainlink",
+   3800,
+   300,
+   24,
+   10
+  ],
+  [
+   "fence_chainlink",
+   3824,
+   300,
+   24,
+   10
+  ],
+  [
+   "fence_chainlink",
+   3848,
+   300,
+   24,
    10
   ],
   [
@@ -1905,7 +2052,7 @@
    "flicker"
   ],
   [
-   1650,
+   1700,
    760,
    0.0,
    "lamp"

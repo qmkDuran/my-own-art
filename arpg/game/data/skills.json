@@ -24,11 +24,6 @@
  "max_rank": 8,
  "glory_regen": 5.0,
  "glory_on_hit": 2.0,
- "dodge": {
-  "distance": 120,
-  "time": 0.22,
-  "cooldown": 1.1
- },
  "slot_keys": [
   "RMB",
   "Q",
@@ -376,6 +371,16 @@
      "desc": "50% longer."
     }
    }
+  },
+  "dash": {
+   "name": "Dash",
+   "verse": "eagles",
+   "desc": "A quick dash in the direction you move (or aim). You cannot be hit while dashing.",
+   "cost": 0,
+   "cooldown": 1.1,
+   "distance": 120,
+   "time": 0.22,
+   "mods": {}
   }
  }
 }

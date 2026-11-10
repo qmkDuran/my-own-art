@@ -45,6 +45,10 @@
     "block": [
      8,
      0.6
+    ],
+    "block_amount": [
+     10,
+     1.5
     ]
    },
    "armour_of_god": "Shield of faith"
@@ -193,6 +197,22 @@
     2,
     0.6
    ]
+  },
+  "warded": {
+   "name": "Warded",
+   "stat": "shadow_res",
+   "value": [
+    6,
+    0.4
+   ]
+  },
+  "tempered": {
+   "name": "Tempered",
+   "stat": "fire_res",
+   "value": [
+    6,
+    0.4
+   ]
   }
  },
  "suffixes": {
@@ -266,6 +286,22 @@
    "value": [
     2,
     0.3
+   ]
+  },
+  "force": {
+   "name": "of Force",
+   "stat": "crit_damage",
+   "value": [
+    8,
+    0.8
+   ]
+  },
+  "command": {
+   "name": "of Command",
+   "stat": "cast_pct",
+   "value": [
+    6,
+    0.5
    ]
   }
  },
@@ -363,6 +399,11 @@
   "might": "+%d Might",
   "agility": "+%d Agility",
   "spirit": "+%d Spirit",
-  "damage_pct": "+%d%% damage"
+  "damage_pct": "+%d%% damage",
+  "crit_damage": "+%d%% critical damage",
+  "cast_pct": "+%d%% cast speed",
+  "block_amount": "+%d block amount",
+  "fire_res": "+%d%% fire resistance",
+  "shadow_res": "+%d%% shadow resistance"
  }
 }

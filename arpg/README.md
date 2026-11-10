@@ -13,8 +13,8 @@ protects those who pray, and is clothed in the armour of God (Ephesians 6:13-17)
 Controls (click-to-move):
 - Hold the left button on the ground to walk; click an enemy to strike it; click an item's name to take it;
   click a crate, lockbox or waystone to use it. Hold Shift to stand and strike/cast toward the cursor.
-- Right button and Q W E R: the skills on those keys (1-4 also work). Space dodge.
-- I inventory, K skills (masteries, attributes, keys, respec), P stars, Alt labels, Esc pause.
+- Right button and Q W E R: the skills on those keys (1-4 also work). Space: Dash.
+- C character sheet, I inventory, K skills (masteries, attributes, keys, respec), P stars, Alt labels, Esc pause.
 - Options in game/data/settings.json: keyboard movement, camera zoom, screen shake, auto-pickup.
 - Progress is saved in user:// (start with `-- --fresh` to ignore it).
 
@@ -22,7 +22,7 @@ Controls (click-to-move):
 - Scripture: Scripture quotations taken from The Holy Bible, New International Version® NIV® Copyright © 1973, 1978, 1984, 2011 by Biblica, Inc.™ Used by permission. All rights reserved worldwide.
 - Art: Michael, demons and item icons generated with PixelLab and finished by hand; suburb tiles, houses and props from
   Project R's exterior art (same author, Resurrect 64 palette); praying people from the heaven demo.
-- Font: monogram by datagoblin (CC0), extended (see game/fonts/LICENSE-monogram.txt).
+- Fonts: Pixelify Sans and Silkscreen (SIL Open Font License; game/fonts/OFL-*.txt), from github.com/google/fonts.
 - Audio: original procedural audio (CC0), art/audio/synth.py.
 
 Details: ARPG_NOTES.md.

@@ -46,7 +46,7 @@ func _physics_process(delta: float) -> void:
 		target.shield_blocked(global_position)
 		queue_free()
 	elif global_position.distance_to(hit_at) < HIT_RADIUS:
-		target.take_hit(damage, self, true)
+		target.take_hit(damage, self, true, "shadow")
 		queue_free()
 	elif _age > LIFE:
 		queue_free()

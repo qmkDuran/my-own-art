@@ -10,7 +10,7 @@ Godot 4.7.2 project: `arpg/game/` (run `godot --path arpg/game`; `-- --demo` pla
 ## Controls (click-to-move is primary)
 Hold LMB on the ground to keep walking toward the cursor; LMB on an enemy = walk to it and strike; LMB on an item's
 name = walk to it and take it (clicking the ground never takes an item); LMB on a crate/lockbox/waystone = use it;
-hold Shift = stand still and strike/cast toward the cursor. RMB and Q W E R use the skills placed on those keys
+hold Shift = stand still and strike/cast toward the cursor; Space = Dash; C = character sheet. RMB and Q W E R use the skills placed on those keys
 (1-4 alternates); Space dodge; I inventory, K skills, P stars, Alt item labels on/off, Esc pause. Options in
 `data/settings.json`: `wasd_movement` (off), `camera_zoom` (1.0 default; 1.5 = larger), `screen_shake` (0..1),
 `auto_pickup` (none / all / a rarity and better). The demo bot drives a virtual cursor through the same Game methods.
@@ -49,6 +49,35 @@ Captain, Vanguard, Sentinel, Herald, Guardian, Keeper, Messenger, Witness, Beaco
 Uniques have build effects: Dawnbreaker (third swing bursts light), Last Wall (Shield of Faith throws bolts back),
 Swiftfoot (Descent recovers twice as fast), Oathband (Rebuke restores 8% life). Progress saves to
 `user://great_prince_save.json` (every 5 s when changed and on quit; not in --demo/--smoke/--fresh).
+
+## Style (see STYLE.md)
+Michael is the reference. World art goes through `build_zone.to_style`: true scale by measured doors/cars/fences
+(`style.PIECES`; houses 1.33-1.5x, store 1.2x, fences 0.75-0.8x), the 31-colour world palette, a 1 px outline; the
+store's plan-view roof is foreshortened to 3/4. The suburb was relaid for the bigger houses (3 houses north, 2 bungalows +
+store south); tall roofs rise 150 px above the map edge over a dark strip. `tools/check_palette.py` checks palette,
+outline and scale; `game/tests/run_all.sh` runs every check. `out/reference_sheet.png`, `out/style_before_after.png`.
+
+## UI (fonts, layout, numbers)
+- Fonts (OFL, from github.com/google/fonts; licences in `game/fonts/OFL-*.txt`): **Pixelify Sans** for titles (20,
+  weight 600) and body (10), **Silkscreen** for small labels and numbers (8). Whole-pixel sizes, antialiasing and hinting
+  off, kerning off, +2 px word spacing (`fonts/body.tres`, `title.tres`, theme `fonts/ui_theme.tres`). All glyphs the
+  game uses are present (checked against every data file). `UiDraw.TITLE/BODY/SMALL` and `UiDraw.label_settings()` are the
+  only way text is sized.
+- Window stretch `aspect=expand`: the HUD and panels lay out from the viewport size (HUD cluster anchored to the bottom
+  with a 6 px margin, minimap and inventory to the right edge, pause/stars/travel centred). Tested and screenshotted at
+  1920x1080, 1280x720 and 1440x900 (16:10); the smoke test checks the cluster is on screen.
+- Hotbar: LMB, RMB, Q, W, E, R, Space (Dash). 36 px slots: key label top-left in Silkscreen, the 22 px icon centred
+  below it, a clockwise cooldown sweep with seconds; hover for the skill's numbers.
+- Character sheet (C): `CharacterPanel.rows()` - every value comes from `Stats` (damage range, attack speed in swings/s,
+  cast time, crit chance and damage, holy damage, cooldown recovery, life on hit, life/glory and regen, armour and its
+  reduction, block chance and amount, fire and shadow resistance (cap 75%), dash cooldown, move speed). Damage types:
+  blows are physical (armour, block), bolts are shadow, fire breath and bursts are fire. The smoke test recomputes stats
+  by hand from equipment + attributes, rolls 200 hits against the shown range, and compares the sheet to the live stats.
+- Tooltips: skills (`SkillInfo`) show damage ranges at the current and next rank, area, durations, cost and cooldown
+  after recovery, modifiers (taken in green); items show all stats, item level, and for bag items the difference against
+  the worn item (green/red); the target bar shows name, champion modifiers, health numbers and a barrier line.
+- Dash (Space): 120 px in 0.22 s, untouchable while it lasts, 1.1 s cooldown (Agility/dash recovery shortens it),
+  afterimages and a smoke trail. Using a skill holds Michael for the cast time (cast speed shortens it).
 
 ## Loot
 Drops land in a ring on open ground (never in a wall, prop, wreck, the chasm or a fire, never under Michael's feet);

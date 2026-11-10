@@ -39,4 +39,4 @@ func clicked(_at: Vector2) -> void:
 
 func frame(title: String) -> void:
 	UiDraw.box(self, Rect2(Vector2.ZERO, size))
-	UiDraw.text(self, Vector2(0, 18), title, UiDraw.GOLD, 16, HORIZONTAL_ALIGNMENT_CENTER, size.x)
+	UiDraw.text(self, Vector2(0, 18), title, UiDraw.GOLD, UiDraw.BODY, HORIZONTAL_ALIGNMENT_CENTER, size.x)

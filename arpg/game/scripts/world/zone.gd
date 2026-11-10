@@ -9,6 +9,7 @@ const LAMP_COLOR := Color(1.0, 0.82, 0.55)
 const FIRE_COLOR := Color(1.0, 0.5, 0.2)
 const RIFT_COLOR := Color(0.85, 0.15, 0.1)
 const OVERHEAD_SEE_THROUGH: float = 0.45
+const ROOF_ROOM: float = 150.0                # the tallest roofs rise this far above the map's top edge
 
 var world: Node2D
 var _flickers: Array[PointLight2D] = []
@@ -20,6 +21,12 @@ func build(into_world: Node2D) -> void:
 	world = into_world
 	var z: Dictionary = GameData.zone
 	SpriteFactory.sprite(self, PROP_DIR + "ground.png", Vector2.ZERO, -20)
+	var beyond := ColorRect.new()                           # back yards beyond the map's top edge, under the tall roofs
+	beyond.color = Color("374e4a")
+	beyond.position = Vector2(0, -ROOF_ROOM)
+	beyond.size = Vector2(SceneData.vec(GameData.zone["size"]).x, ROOF_ROOM)
+	beyond.z_index = -20
+	add_child(beyond)
 	var night := CanvasModulate.new()
 	night.color = SceneData.color(z["night"])
 	add_child(night)
