@@ -86,25 +86,31 @@ func _menu() -> void:
 
 func _house_evening() -> void:
 	_check(_zone() == "house", "starts in the house")
-	await _walk([Vector2(4, 6), Vector2(4, 8.4), Vector2(14, 8.4), Vector2(14, 6)])
+	# bedroom -> through the bedroom doorway -> living room -> kitchen opening -> kitchen
+	await _go([Vector2(144, 240), Vector2(144, 430), Vector2(470, 430), Vector2(470, 270)])
 	await _finish_dialogue()
 	_shot("02_kitchen_mom")
-	await _walk([Vector2(21, 6), Vector2(21, 2.6), Vector2(19, 2.4)])
+	await _go([Vector2(440, 270), Vector2(440, 150), Vector2(650, 140)])
+	await _face(Vector2.UP)
 	await _interact()
-	await _walk([Vector2(21, 2.6), Vector2(21, 2.4)])
+	await _go([Vector2(418, 140)])
+	await _face(Vector2.UP)
 	await _interact()
-	await _walk([Vector2(25, 2.6), Vector2(25, 2.4)])
+	await _go([Vector2(700, 140)])
+	await _face(Vector2.UP)
 	await _interact([0, 0])
 	_check(GameState.flags.is_set("C1_ERRAND"), "dinner done, errand given")
 	_check(GameState.flags.get_value("C1_GRACE") == "bowed", "grace choice stored")
-	await _walk([Vector2(21, 6), Vector2(15, 6), Vector2(15, 8.4), Vector2(12, 9), Vector2(12, 14.6), Vector2(11, 14.6)])
-	await _face(Vector2.DOWN)
+	# kitchen -> living room -> doorway into the foyer -> the coat hooks by the stairs
+	await _go([Vector2(660, 270), Vector2(480, 270), Vector2(480, 512), Vector2(640, 512), Vector2(700, 410)])
+	await _face(Vector2.UP)
 	await _interact()
 	_check(GameState.inventory.has_item("mom_card"), "took Mom's card")
 	await _seconds(0.3)
 	await _finish_dialogue([0])
 	_check(GameState.flags.get_value("C1_LAST_WORDS") == "kind", "last words choice stored")
-	await _walk([Vector2(13, 14.6), Vector2(13, 15.3)])
+	await _go([Vector2(720, 590)])
+	await _face(Vector2.DOWN)
 	await _interact()
 	await _wait_zone("street")
 
@@ -112,27 +118,30 @@ func _house_evening() -> void:
 func _street_dusk() -> void:
 	await _finish_dialogue()
 	_shot("03_street_dusk")
-	await _walk([Vector2(7, 8.4), Vector2(7, 9.3), Vector2(38, 9.3)])
-	await _walk([Vector2(53, 9.3), Vector2(53, 6), Vector2(53, 5.4)])
+	# down the front path, then east along the curb side of the sidewalk to the market's lot
+	await _go([Vector2(208, 520), Vector2(208, 592), Vector2(800, 592), Vector2(1400, 592), Vector2(2000, 592), Vector2(2000, 470)])
+	await _face(Vector2.UP)
 	await _interact()
 	await _wait_zone("store")
 
 
 func _store() -> void:
 	await _finish_dialogue()
-	await _walk([Vector2(11, 10), Vector2(11, 3.2)])
+	# up the first cross aisle into aisle 2 (Wade's background lines)
+	await _go([Vector2(320, 440), Vector2(320, 262), Vector2(420, 262)])
 	await _finish_dialogue()
-	await _walk([Vector2(15, 3.2)])
+	await _go([Vector2(320, 262), Vector2(320, 140), Vector2(366, 140)])
 	await _face(Vector2.UP)
 	await _interact()
-	await _walk([Vector2(11, 3.2), Vector2(7, 3.2)])
+	await _go([Vector2(140, 140)])
 	await _face(Vector2.UP)
 	await _interact()
-	await _walk([Vector2(11, 3.2), Vector2(11, 10.4), Vector2(16.5, 10.4), Vector2(16.5, 9.6), Vector2(17.4, 9.6)])
+	await _go([Vector2(300, 140), Vector2(300, 440), Vector2(178, 440)])
+	await _face(Vector2.UP)
 	await _interact()
 	_check(GameState.inventory.has_item("milk") and GameState.inventory.has_item("bread") and GameState.inventory.has_item("battery_9v"), "shopping list complete")
 	_shot("04_store_shopping")
-	await _walk([Vector2(16.5, 10.6), Vector2(4.5, 10.6)])
+	await _go([Vector2(150, 414)])
 	await _face(Vector2.UP)
 	await _interact([], func() -> void:
 		if GameState.flags.is_set("vanished"):
@@ -143,11 +152,12 @@ func _store() -> void:
 	await _fight(["wade_enemy"], 40.0)
 	await _finish_dialogue()
 	_check(GameState.flags.is_set("wade_gone"), "Wade fight resolved")
-	await _walk([Vector2(11, 10.4), Vector2(11, 6.5), Vector2(10.3, 6.5)])
+	await _go([Vector2(300, 440), Vector2(300, 140), Vector2(66, 138)])
+	await _face(Vector2.UP)
 	await _interact()
 	_check(GameState.inventory.has_item("medicine"), "picked up painkillers")
 	await _use_item("medicine")
-	await _walk([Vector2(11, 10.4), Vector2(9, 10.4), Vector2(9, 11.3)])
+	await _go([Vector2(300, 140), Vector2(300, 440), Vector2(336, 470)])
 	await _face(Vector2.DOWN)
 	await _interact()
 	await _wait_zone("street")
@@ -163,40 +173,43 @@ func _street_after() -> void:
 	await _wait_for(func() -> bool: return not Router.is_busy() and Router.game.player.state != Player.State.DEAD, 10.0)
 	_check(_zone() == "street" and GameState.flags.is_set("vanished") and GameState.hp == GameState.max_hp, "retry at checkpoint restores the street")
 	await _finish_dialogue()
-	# Walk west along the north sidewalk; Biscuit blocks the alley (calm without having met
+	# West along the north sidewalk: Biscuit is in front of the Okoros' (calm without having met
 	# Mrs. Albright fails, so he snaps), Dana is in the wreck, the looter waits further on.
-	await _walk([Vector2(53, 7.9), Vector2(44, 7.9)], [0])
+	await _go([Vector2(2000, 560), Vector2(1745, 560)], [0])
 	await _finish_dialogue([0])
 	if Router.game.zone.is_entity_active("biscuit"):
 		await _fight(["biscuit"], 25.0)
 	await _finish_dialogue()
 	_check(GameState.flags.is_set("C1_BISCUIT"), "Biscuit beat resolved")
-	await _walk([Vector2(36, 7.9)])
+	await _go([Vector2(1300, 560)])
 	await _face(Vector2.DOWN)
 	await _interact([0])
 	_check(GameState.flags.is_set("C1_HELPED_DANA"), "Dana choice stored")
-	await _walk([Vector2(31, 7.9)])
+	await _go([Vector2(1040, 560)])
 	await _finish_dialogue()
 	await _fight(["street_looter"], 40.0)
 	await _finish_dialogue()
 	_check(GameState.flags.is_set("street_looter_defeated"), "street looter defeated")
 	_shot("08_street_after_fight")
-	await _walk([Vector2(20, 7.9), Vector2(7, 7.9), Vector2(7, 5.4)])
+	await _go([Vector2(600, 560), Vector2(208, 560), Vector2(208, 446)])
+	await _face(Vector2.UP)
 	await _interact()
 	await _wait_zone("house")
 
 
 func _house_night() -> void:
 	await _finish_dialogue()
-	await _walk([Vector2(12, 9), Vector2(14, 8.2), Vector2(14.5, 6), Vector2(15, 5.3)])
+	# foyer -> living room -> kitchen: Mom's chair
+	await _go([Vector2(720, 520), Vector2(480, 512), Vector2(480, 300), Vector2(505, 264)])
 	await _face(Vector2.UP)
 	await _interact()
 	_shot("09_empty_chair")
-	await _walk([Vector2(17.6, 5.6), Vector2(17.6, 5.0)])
+	await _go([Vector2(580, 270)])
+	await _face(Vector2.UP)
 	await _interact()
 	_check(GameState.flags.is_set("C1_READ_LETTER") and GameState.inventory.has_item("letter"), "found the Bible and the letter")
 	_check(GameState.flags.is_set("C1_DAWN"), "dawn")
-	await _walk([Vector2(14, 5.6), Vector2(14, 2.5), Vector2(15, 1.9)])
+	await _go([Vector2(660, 270), Vector2(774, 140)])
 	await _face(Vector2.UP)
 	_shot("10_dawn")
 	await _interact([], func() -> void:
@@ -208,6 +221,12 @@ func _house_night() -> void:
 
 
 # --- Actions -------------------------------------------------------------------------
+
+## Walks through pixel waypoints (feet position).
+func _go(points: Array, choices: Array = []) -> void:
+	for point: Vector2 in points:
+		await _walk_to(point / Tiles.SIZE - Vector2(0.5, 0.5), choices)
+
 
 func _walk(points: Array, choices: Array = []) -> void:
 	for point: Vector2 in points:

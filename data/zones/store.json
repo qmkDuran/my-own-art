@@ -1,677 +1,1183 @@
 {
- "name": "Ridge Corner Market",
- "map": [
-  "####################",
-  "#qqqqqqqqqqqqqqqqqq#",
-  "#qqqqqqqqqqqqqqqqqq#",
-  "#qqqqqqqqqqqqqqqqqq#",
-  "#qqqqqqqqqqqqqqqqqq#",
-  "#qqqqqqqqqqqqqqqqqq#",
-  "#qqqqqqqqqqqqqqqqqq#",
-  "#qqqqqqqqqqqqqqqqqq#",
-  "#qqqqqqqqqqqqqqqqqq#",
-  "#qqqqqqqqqqqqqqqqqq#",
-  "#qqqqqqqqqqqqqqqqqq#",
-  "#qqqqqqqqqqqqqqqqqq#",
-  "#########D##########"
- ],
- "legend": {
-  "#": "store_wall",
-  "q": "store_floor",
-  "D": "door"
- },
- "ambient": "#c4c4cc",
- "vignette": 0.35,
- "music": "unease",
- "ambience": [
-  "fluorescent_hum_loop",
-  "fridge_hum_loop"
- ],
- "variants": [
-  {
-   "if": "vanished",
-   "ambient": "#262634",
-   "vignette": 0.7,
-   "music": "",
-   "ambience": [
-    "car_alarm_loop",
-    "drone_tension_loop"
-   ]
-  }
- ],
- "on_enter": [
-  {
-   "id": "store_enter",
-   "if": "!vanished",
-   "run": "ch1#store_enter"
-  }
- ],
- "entities": [
-  {
-   "kind": "spawn",
-   "id": "entrance",
-   "pos": [
-    9,
-    10
-   ]
+  "name": "Ridge Corner Market",
+  "ambient": "#c4c4cc",
+  "vignette": 0.35,
+  "music": "unease",
+  "ambience": [
+    "fluorescent_hum_loop",
+    "fridge_hum_loop"
+  ],
+  "variants": [
+    {
+      "if": "vanished",
+      "ambient": "#262634",
+      "vignette": 0.7,
+      "music": "",
+      "ambience": [
+        "car_alarm_loop",
+        "drone_tension_loop"
+      ]
+    }
+  ],
+  "on_enter": [
+    {
+      "id": "store_enter",
+      "if": "!vanished",
+      "run": "ch1#store_enter"
+    }
+  ],
+  "interior": true,
+  "map": [
+    "######################",
+    "######################",
+    "######################",
+    "#qqqqqqqqqqqqqqqqqqqq#",
+    "#qqqqqqqqqqqqqqqqqqqq#",
+    "#qqqqqqqqqqqqqqqqqqqq#",
+    "#qqqqqqqqqqqqqqqqqqqq#",
+    "#qqqqqqqqqqqqqqqqqqqq#",
+    "#qqqqqqqqqqqqqqqqqqqq#",
+    "#qqqqqqqqqqqqqqqqqqqq#",
+    "#qqqqqqqqqqqqqqqqqqqq#",
+    "#qqqqqqqqqqqqqqqqqqqq#",
+    "#qqqqqqqqqqqqqqqqqqqq#",
+    "#qqqqqqqqqqqqqqqqqqqq#",
+    "#qqqqqqqqqqqqqqqqqqqq#",
+    "##########D###########"
+  ],
+  "legend": {
+    "#": "store_wall",
+    "q": "store_floor",
+    "D": "store_door"
   },
-  {
-   "id": "st_door",
-   "pos": [
-    9,
-    11
-   ],
-   "interact": {
-    "type": "door",
-    "to": "street",
-    "spawn": "store_front",
-    "verb": "Leave",
-    "offset": [
-     0,
-     10
-    ],
-    "radius": 16,
-    "requires": "!vanished | wade_gone",
-    "locked_lines": [
-     "Wade is between you and the door."
-    ]
-   }
-  },
-  {
-   "id": "st_cooler_1",
-   "art": "cooler",
-   "pos": [
-    12,
-    1
-   ],
-   "offset": [
-    16,
-    4
-   ],
-   "solid": [
-    62,
-    14
-   ],
-   "light": {
-    "type": "window",
-    "offset": [
-     0,
-     10
-    ],
-    "color": "#d0f0ff"
-   }
-  },
-  {
-   "id": "st_cooler_2",
-   "art": "cooler",
-   "pos": [
-    15,
-    1
-   ],
-   "offset": [
-    0,
-    4
-   ],
-   "solid": [
-    62,
-    14
-   ],
-   "light": {
-    "type": "window",
-    "offset": [
-     0,
-     10
-    ],
-    "color": "#d0f0ff"
-   }
-  },
-  {
-   "id": "st_milk",
-   "art": "icon_milk",
-   "pos": [
-    15,
-    2
-   ],
-   "offset": [
-    0,
-    4
-   ],
-   "if": "C1_ERRAND",
-   "interact": {
-    "type": "pickup",
-    "item": "milk",
-    "dialogue": "c1_script#C1_OBJ_STORE_FRIDGE"
-   }
-  },
-  {
-   "id": "st_bread_rack",
-   "art": "bread_rack",
-   "pos": [
-    7,
-    1
-   ],
-   "offset": [
-    0,
-    4
-   ],
-   "solid": [
-    46,
-    14
-   ]
-  },
-  {
-   "id": "st_bread",
-   "art": "icon_bread",
-   "pos": [
-    7,
-    2
-   ],
-   "offset": [
-    0,
-    2
-   ],
-   "if": "C1_ERRAND",
-   "interact": {
-    "type": "pickup",
-    "item": "bread",
-    "dialogue": "c1_script#C1_OBJ_STORE_BREAD"
-   }
-  },
-  {
-   "id": "st_battery_hook",
-   "art": "battery_hook",
-   "pos": [
-    18,
-    8
-   ],
-   "offset": [
-    10,
-    0
-   ]
-  },
-  {
-   "id": "st_battery",
-   "art": "icon_battery",
-   "pos": [
-    18,
-    9
-   ],
-   "offset": [
-    0,
-    -4
-   ],
-   "if": "C1_ERRAND",
-   "interact": {
-    "type": "pickup",
-    "item": "battery_9v",
-    "dialogue": "ch1#took_battery"
-   }
-  },
-  {
-   "id": "st_shelf_a",
-   "art": "store_shelf",
-   "pos": [
-    7,
-    4
-   ],
-   "offset": [
-    16,
-    0
-   ],
-   "solid": [
-    94,
-    20
-   ]
-  },
-  {
-   "id": "st_shelf_b",
-   "art": "store_shelf",
-   "pos": [
-    7,
-    7
-   ],
-   "offset": [
-    16,
-    0
-   ],
-   "solid": [
-    94,
-    20
-   ]
-  },
-  {
-   "id": "st_shelf_c",
-   "art": "store_shelf",
-   "pos": [
-    14,
-    4
-   ],
-   "offset": [
-    16,
-    0
-   ],
-   "solid": [
-    94,
-    20
-   ]
-  },
-  {
-   "id": "st_shelf_d",
-   "art": "store_shelf",
-   "pos": [
-    14,
-    7
-   ],
-   "offset": [
-    16,
-    0
-   ],
-   "solid": [
-    94,
-    20
-   ]
-  },
-  {
-   "id": "st_candy",
-   "art": "candy_rack",
-   "pos": [
-    6,
-    9
-   ],
-   "offset": [
-    0,
-    6
-   ],
-   "solid": [
-    30,
-    10
-   ],
-   "interact": {
-    "type": "pickup",
-    "item": "candy",
-    "dialogue": "c1_script#C1_OBJ_STORE_SNACKS"
-   }
-  },
-  {
-   "id": "st_lottery",
-   "art": "lottery_screen",
-   "pos": [
-    1,
-    6
-   ],
-   "offset": [
-    4,
-    0
-   ],
-   "interact": {
-    "type": "examine",
-    "dialogue": "c1_script#C1_OBJ_STORE_LOTTERY",
-    "offset": [
-     10,
-     6
-    ]
-   }
-  },
-  {
-   "id": "st_notice",
-   "art": "notice_board",
-   "pos": [
-    13,
-    11
-   ],
-   "offset": [
-    0,
-    20
-   ],
-   "interact": {
-    "type": "examine",
-    "dialogue": "c1_script#C1_OBJ_STORE_NOTICE",
-    "offset": [
-     0,
-     -10
-    ]
-   }
-  },
-  {
-   "id": "st_counter",
-   "art": "store_counter",
-   "pos": [
-    3,
-    9
-   ],
-   "offset": [
-    16,
-    6
-   ],
-   "solid": [
-    94,
-    18
-   ]
-  },
-  {
-   "id": "st_register",
-   "art": "register",
-   "pos": [
-    2,
-    9
-   ],
-   "offset": [
-    8,
-    -10
-   ]
-  },
-  {
-   "id": "st_tv",
-   "art": "small_tv",
-   "pos": [
-    1,
-    7
-   ],
-   "offset": [
-    10,
-    2
-   ],
-   "interact": {
-    "type": "examine",
-    "dialogue": "c1_script#C1_OBJ_STORE_TV",
-    "offset": [
-     0,
-     4
-    ]
-   },
-   "if": "!vanished"
-  },
-  {
-   "id": "hollis",
-   "kind": "npc",
-   "art": "hollis",
-   "pos": [
-    4,
-    8
-   ],
-   "leaves": "clothes_hollis",
-   "leftover_interact": {
-    "type": "examine",
-    "dialogue": "c1_script#C1_OBJ_HOLLIS_TAG",
-    "offset": [
-     0,
-     44
-    ],
-    "radius": 16
-   },
-   "interact": {
-    "type": "talk",
-    "dialogue": "ch1#hollis",
-    "offset": [
-     0,
-     48
-    ],
-    "radius": 18
-   }
-  },
-  {
-   "id": "st_hollis_phone",
-   "art": "phone_small",
-   "pos": [
-    3,
-    9
-   ],
-   "offset": [
-    8,
-    -12
-   ],
-   "if": "vanished",
-   "interact": {
-    "type": "examine",
-    "dialogue": "c1_script#C1_OBJ_HOLLIS_PHONE",
-    "offset": [
-     0,
-     30
-    ],
-    "radius": 12
-   }
-  },
-  {
-   "id": "st_hollis_glasses",
-   "art": "glasses",
-   "pos": [
-    4,
-    9
-   ],
-   "offset": [
-    8,
-    -12
-   ],
-   "if": "vanished",
-   "interact": {
-    "type": "examine",
-    "dialogue": "c1_script#C1_OBJ_HOLLIS_GLASSES",
-    "offset": [
-     0,
-     30
-    ],
-    "radius": 12
-   }
-  },
-  {
-   "id": "st_mop",
-   "art": "mop",
-   "pos": [
-    11,
-    9
-   ],
-   "offset": [
-    0,
-    4
-   ],
-   "if": "vanished",
-   "interact": {
-    "type": "pickup",
-    "item": "mop_handle",
-    "dialogue": "ch1#took_mop"
-   }
-  },
-  {
-   "id": "st_wet_sign",
-   "art": "wet_floor_sign",
-   "pos": [
-    12,
-    9
-   ],
-   "offset": [
-    0,
-    4
-   ],
-   "solid": [
-    16,
-    8
-   ]
-  },
-  {
-   "id": "wade",
-   "kind": "npc",
-   "art": "wade",
-   "pos": [
-    12,
-    5
-   ],
-   "facing": "up",
-   "if": "!wade_hostile & !wade_gone",
-   "interact": {
-    "type": "talk",
-    "dialogue": "ch1#wade_busy"
-   }
-  },
-  {
-   "id": "wade_enemy",
-   "kind": "enemy",
-   "enemy": "wade",
-   "pos": [
-    12,
-    5
-   ],
-   "if": "wade_hostile",
-   "defeat_flag": "wade_defeated",
-   "on_defeat": "ch1#wade_beaten"
-  },
-  {
-   "id": "trg_aisle2",
-   "kind": "trigger",
-   "rect": [
-    11,
-    3,
-    3,
-    6
-   ],
-   "run": "c1_script#C1_S05.wade_background",
-   "if": "!vanished"
-  },
-  {
-   "id": "st_painkillers",
-   "art": "icon_medicine",
-   "pos": [
-    9,
-    6
-   ],
-   "if": "vanished",
-   "interact": {
-    "type": "pickup",
-    "item": "medicine",
-    "dialogue": "c1_script#ITEM_PAINKILLERS"
-   }
-  },
-  {
-   "id": "st_water_case",
-   "art": "icon_water",
-   "pos": [
-    17,
-    3
-   ],
-   "if": "vanished",
-   "interact": {
-    "type": "pickup",
-    "item": "water",
-    "count": 2,
-    "dialogue": "c1_script#ITEM_WATER_BOTTLES"
-   }
-  },
-  {
-   "id": "st_box_cutter",
-   "art": "icon_box_cutter",
-   "pos": [
-    6,
-    10
-   ],
-   "if": "item_available == ITEM_BOX_CUTTER | wade_defeated",
-   "interact": {
-    "type": "pickup",
-    "item": "box_cutter"
-   }
-  },
-  {
-   "id": "st_food",
-   "art": "icon_food",
-   "pos": [
-    16,
-    6
-   ],
-   "if": "vanished",
-   "interact": {
-    "type": "pickup",
-    "item": "food"
-   }
-  },
-  {
-   "kind": "light",
-   "pos": [
-    4,
-    3
-   ],
-   "light": {
-    "type": "fluorescent",
-    "group": "store"
-   }
-  },
-  {
-   "kind": "light",
-   "pos": [
-    10,
-    3
-   ],
-   "light": {
-    "type": "fluorescent",
-    "group": "store"
-   }
-  },
-  {
-   "kind": "light",
-   "pos": [
-    16,
-    3
-   ],
-   "light": {
-    "type": "fluorescent",
-    "group": "store"
-   }
-  },
-  {
-   "kind": "light",
-   "pos": [
-    4,
-    9
-   ],
-   "light": {
-    "type": "fluorescent",
-    "group": "store"
-   }
-  },
-  {
-   "kind": "light",
-   "pos": [
-    10,
-    9
-   ],
-   "light": {
-    "type": "fluorescent",
-    "group": "store"
-   }
-  },
-  {
-   "kind": "light",
-   "pos": [
-    16,
-    9
-   ],
-   "light": {
-    "type": "fluorescent",
-    "group": "store"
-   }
-  },
-  {
-   "id": "st_emergency",
-   "kind": "light",
-   "pos": [
-    9,
-    1
-   ],
-   "light": {
-    "type": "emergency"
-   },
-   "if": "vanished"
-  },
-  {
-   "id": "st_street_glow",
-   "kind": "light",
-   "pos": [
-    9,
-    12
-   ],
-   "light": {
-    "type": "fire",
-    "radius": 110,
-    "energy": 0.7
-   },
-   "if": "vanished"
-  }
- ]
+  "entities": [
+    {
+      "kind": "spawn",
+      "id": "entrance",
+      "pos": [
+        10,
+        14
+      ],
+      "offset": [
+        0,
+        -12
+      ]
+    },
+    {
+      "id": "st_door",
+      "pos": [
+        10,
+        15
+      ],
+      "interact": {
+        "type": "door",
+        "to": "street",
+        "spawn": "store_front",
+        "verb": "Leave",
+        "offset": [
+          0,
+          -24
+        ],
+        "radius": 16,
+        "requires": "!vanished | wade_gone",
+        "locked_lines": [
+          "Wade is between you and the door."
+        ]
+      }
+    },
+    {
+      "id": "st_wear",
+      "art": "store_floor_wear",
+      "pos": [
+        11,
+        9
+      ],
+      "offset": [
+        -16,
+        -16
+      ],
+      "anchor": "center",
+      "floor": true,
+      "on": "floor"
+    },
+    {
+      "id": "st_pharmacy",
+      "art": "pharmacy_counter",
+      "pos": [
+        2,
+        3
+      ],
+      "offset": [
+        -6,
+        0
+      ],
+      "solid": [
+        62,
+        16
+      ],
+      "interact": {
+        "type": "examine",
+        "text": "The pharmacy window. Closed at six. A bell, a sign: RING FOR SERVICE.",
+        "offset": [
+          0,
+          -4
+        ]
+      },
+      "if": "!vanished"
+    },
+    {
+      "id": "st_pharmacy_after",
+      "art": "pharmacy_counter",
+      "pos": [
+        2,
+        3
+      ],
+      "offset": [
+        -6,
+        0
+      ],
+      "solid": [
+        62,
+        16
+      ],
+      "if": "vanished"
+    },
+    {
+      "id": "st_painkillers",
+      "art": "painkillers_world",
+      "pos": [
+        2,
+        2
+      ],
+      "offset": [
+        -14,
+        -8
+      ],
+      "if": "vanished",
+      "interact": {
+        "type": "pickup",
+        "item": "medicine",
+        "dialogue": "c1_script#ITEM_PAINKILLERS",
+        "offset": [
+          0,
+          34
+        ]
+      },
+      "on": "st_pharmacy_after"
+    },
+    {
+      "id": "st_bread_rack",
+      "art": "bread_rack",
+      "pos": [
+        4,
+        3
+      ],
+      "offset": [
+        -4,
+        0
+      ],
+      "solid": [
+        37,
+        14
+      ]
+    },
+    {
+      "id": "st_bread",
+      "art": "bread_world",
+      "pos": [
+        4,
+        2
+      ],
+      "offset": [
+        -4,
+        8
+      ],
+      "if": "C1_ERRAND",
+      "interact": {
+        "type": "pickup",
+        "item": "bread",
+        "dialogue": "c1_script#C1_OBJ_STORE_BREAD",
+        "offset": [
+          0,
+          18
+        ]
+      },
+      "on": "st_bread_rack"
+    },
+    {
+      "id": "st_notice",
+      "art": "notice_board",
+      "pos": [
+        6,
+        2
+      ],
+      "offset": [
+        -10,
+        -10
+      ],
+      "interact": {
+        "type": "examine",
+        "dialogue": "c1_script#C1_OBJ_STORE_NOTICE",
+        "offset": [
+          0,
+          30
+        ]
+      },
+      "on": "wall"
+    },
+    {
+      "id": "st_emergency_lamp",
+      "art": "emergency_light",
+      "pos": [
+        8,
+        1
+      ],
+      "offset": [
+        -10,
+        -2
+      ],
+      "on": "wall"
+    },
+    {
+      "id": "st_emergency",
+      "kind": "light",
+      "pos": [
+        8,
+        1
+      ],
+      "offset": [
+        -10,
+        12
+      ],
+      "light": {
+        "type": "emergency"
+      },
+      "if": "vanished"
+    },
+    {
+      "id": "st_cooler_1",
+      "art": "cooler",
+      "pos": [
+        10,
+        3
+      ],
+      "offset": [
+        -6,
+        0
+      ],
+      "solid": [
+        34,
+        16
+      ],
+      "light": {
+        "type": "window",
+        "offset": [
+          0,
+          10
+        ],
+        "color": "#d0f0ff"
+      },
+      "if": "!vanished"
+    },
+    {
+      "id": "st_cooler_1_after",
+      "art": "cooler_dark",
+      "pos": [
+        10,
+        3
+      ],
+      "offset": [
+        -6,
+        0
+      ],
+      "solid": [
+        34,
+        16
+      ],
+      "if": "vanished"
+    },
+    {
+      "id": "st_cooler_2",
+      "art": "cooler",
+      "pos": [
+        11,
+        3
+      ],
+      "offset": [
+        -2,
+        0
+      ],
+      "solid": [
+        34,
+        16
+      ],
+      "light": {
+        "type": "window",
+        "offset": [
+          0,
+          10
+        ],
+        "color": "#d0f0ff"
+      },
+      "if": "!vanished"
+    },
+    {
+      "id": "st_cooler_2_after",
+      "art": "cooler_broken",
+      "pos": [
+        11,
+        3
+      ],
+      "offset": [
+        -2,
+        0
+      ],
+      "solid": [
+        34,
+        16
+      ],
+      "if": "vanished"
+    },
+    {
+      "id": "st_cooler_3",
+      "art": "cooler",
+      "pos": [
+        12,
+        3
+      ],
+      "offset": [
+        2,
+        0
+      ],
+      "solid": [
+        34,
+        16
+      ],
+      "light": {
+        "type": "window",
+        "offset": [
+          0,
+          10
+        ],
+        "color": "#d0f0ff"
+      },
+      "if": "!vanished"
+    },
+    {
+      "id": "st_cooler_3_after",
+      "art": "cooler_dark",
+      "pos": [
+        12,
+        3
+      ],
+      "offset": [
+        2,
+        0
+      ],
+      "solid": [
+        34,
+        16
+      ],
+      "if": "vanished"
+    },
+    {
+      "id": "st_cooler_4",
+      "art": "cooler",
+      "pos": [
+        13,
+        3
+      ],
+      "offset": [
+        6,
+        0
+      ],
+      "solid": [
+        34,
+        16
+      ],
+      "light": {
+        "type": "window",
+        "offset": [
+          0,
+          10
+        ],
+        "color": "#d0f0ff"
+      },
+      "if": "!vanished"
+    },
+    {
+      "id": "st_cooler_4_after",
+      "art": "cooler_dark",
+      "pos": [
+        13,
+        3
+      ],
+      "offset": [
+        6,
+        0
+      ],
+      "solid": [
+        34,
+        16
+      ],
+      "if": "vanished"
+    },
+    {
+      "id": "st_milk",
+      "art": "milk_world",
+      "pos": [
+        11,
+        3
+      ],
+      "offset": [
+        -2,
+        -14
+      ],
+      "if": "C1_ERRAND & !vanished",
+      "interact": {
+        "type": "pickup",
+        "item": "milk",
+        "dialogue": "c1_script#C1_OBJ_STORE_FRIDGE",
+        "offset": [
+          0,
+          16
+        ]
+      },
+      "on": "st_cooler_2"
+    },
+    {
+      "id": "st_water_case",
+      "art": "water_world",
+      "pos": [
+        13,
+        3
+      ],
+      "offset": [
+        6,
+        -14
+      ],
+      "if": "vanished",
+      "interact": {
+        "type": "pickup",
+        "item": "water",
+        "count": 2,
+        "dialogue": "c1_script#ITEM_WATER_BOTTLES",
+        "offset": [
+          0,
+          16
+        ]
+      },
+      "on": "st_cooler_4_after"
+    },
+    {
+      "id": "st_milk_spill",
+      "art": "milk_spill",
+      "pos": [
+        11,
+        4
+      ],
+      "offset": [
+        4,
+        -4
+      ],
+      "on": "floor",
+      "floor": true,
+      "story": "A carton of milk dropped from the broken cooler",
+      "if": "vanished"
+    },
+    {
+      "id": "st_back_shelf",
+      "art": "store_shelf_b",
+      "pos": [
+        17,
+        3
+      ],
+      "solid": [
+        68,
+        16
+      ]
+    },
+    {
+      "id": "st_mop_bucket",
+      "art": "mop_bucket",
+      "pos": [
+        20,
+        3
+      ],
+      "offset": [
+        -16,
+        0
+      ],
+      "solid": [
+        28,
+        14
+      ],
+      "if": "!taken:st_mop"
+    },
+    {
+      "id": "st_mop_bucket_empty",
+      "art": "mop_bucket_empty",
+      "pos": [
+        20,
+        3
+      ],
+      "offset": [
+        -16,
+        0
+      ],
+      "solid": [
+        28,
+        14
+      ],
+      "if": "taken:st_mop"
+    },
+    {
+      "id": "st_mop",
+      "pos": [
+        20,
+        3
+      ],
+      "offset": [
+        -16,
+        0
+      ],
+      "if": "vanished",
+      "interact": {
+        "type": "pickup",
+        "item": "mop_handle",
+        "dialogue": "ch1#took_mop",
+        "offset": [
+          0,
+          -4
+        ],
+        "verb": "Take the mop"
+      }
+    },
+    {
+      "id": "st_wet_sign",
+      "art": "wet_floor_sign",
+      "pos": [
+        15,
+        4
+      ],
+      "offset": [
+        -10,
+        2
+      ],
+      "on": "floor",
+      "story": "Hollis mopped the cooler aisle; the sign stays out until it dries"
+    },
+    {
+      "id": "st_shelf_a",
+      "art": "store_shelf",
+      "pos": [
+        7,
+        6
+      ],
+      "offset": [
+        -10,
+        0
+      ],
+      "solid": [
+        80,
+        16
+      ]
+    },
+    {
+      "id": "st_shelf_c",
+      "art": "store_shelf_b",
+      "pos": [
+        12,
+        6
+      ],
+      "offset": [
+        10,
+        0
+      ],
+      "solid": [
+        68,
+        16
+      ],
+      "if": "!vanished"
+    },
+    {
+      "id": "st_shelf_c_toppled",
+      "art": "store_shelf_toppled",
+      "pos": [
+        12,
+        6
+      ],
+      "offset": [
+        10,
+        8
+      ],
+      "solid": [
+        94,
+        16
+      ],
+      "if": "vanished"
+    },
+    {
+      "id": "st_spilled",
+      "art": "spilled_goods",
+      "pos": [
+        14,
+        7
+      ],
+      "offset": [
+        6,
+        10
+      ],
+      "on": "floor",
+      "floor": true,
+      "story": "Wade's looting: a shelf pulled over, goods everywhere",
+      "if": "vanished"
+    },
+    {
+      "id": "st_shelf_b",
+      "art": "store_shelf",
+      "pos": [
+        7,
+        10
+      ],
+      "offset": [
+        -10,
+        -16
+      ],
+      "solid": [
+        80,
+        16
+      ]
+    },
+    {
+      "id": "st_shelf_e",
+      "art": "store_shelf",
+      "pos": [
+        17,
+        6
+      ],
+      "offset": [
+        12,
+        0
+      ],
+      "solid": [
+        80,
+        16
+      ]
+    },
+    {
+      "id": "st_shelf_f",
+      "art": "store_shelf_b",
+      "pos": [
+        17,
+        10
+      ],
+      "offset": [
+        12,
+        -16
+      ],
+      "solid": [
+        68,
+        16
+      ]
+    },
+    {
+      "id": "st_shelf_d",
+      "art": "store_shelf_b",
+      "pos": [
+        12,
+        10
+      ],
+      "offset": [
+        10,
+        -16
+      ],
+      "solid": [
+        68,
+        16
+      ]
+    },
+    {
+      "id": "st_food",
+      "art": "food_world",
+      "pos": [
+        12,
+        9
+      ],
+      "offset": [
+        -4,
+        -14
+      ],
+      "if": "vanished",
+      "interact": {
+        "type": "pickup",
+        "item": "food",
+        "offset": [
+          0,
+          38
+        ]
+      },
+      "on": "st_shelf_d"
+    },
+    {
+      "id": "wade",
+      "kind": "npc",
+      "art": "wade",
+      "pos": [
+        13,
+        8
+      ],
+      "offset": [
+        0,
+        4
+      ],
+      "facing": "up",
+      "if": "!wade_hostile & !wade_gone",
+      "interact": {
+        "type": "talk",
+        "dialogue": "ch1#wade_busy"
+      }
+    },
+    {
+      "id": "wade_enemy",
+      "kind": "enemy",
+      "pos": [
+        13,
+        8
+      ],
+      "offset": [
+        0,
+        4
+      ],
+      "enemy": "wade",
+      "if": "wade_hostile",
+      "defeat_flag": "wade_defeated",
+      "on_defeat": "ch1#wade_beaten"
+    },
+    {
+      "id": "trg_aisle2",
+      "kind": "trigger",
+      "rect": [
+        11,
+        7,
+        4,
+        3
+      ],
+      "run": "c1_script#C1_S05.wade_background",
+      "if": "!vanished"
+    },
+    {
+      "id": "st_counter",
+      "art": "store_counter",
+      "pos": [
+        4,
+        12
+      ],
+      "offset": [
+        6,
+        0
+      ],
+      "solid": [
+        69,
+        14
+      ]
+    },
+    {
+      "id": "st_battery_hook",
+      "art": "battery_hook",
+      "pos": [
+        5,
+        11
+      ],
+      "offset": [
+        2,
+        4
+      ],
+      "on": "st_counter"
+    },
+    {
+      "id": "st_battery",
+      "art": "battery_world",
+      "pos": [
+        5,
+        11
+      ],
+      "offset": [
+        2,
+        -6
+      ],
+      "if": "C1_ERRAND",
+      "interact": {
+        "type": "pickup",
+        "item": "battery_9v",
+        "dialogue": "ch1#took_battery",
+        "offset": [
+          0,
+          46
+        ],
+        "radius": 14
+      },
+      "on": "st_battery_hook"
+    },
+    {
+      "id": "st_box_cutter",
+      "art": "box_cutter_world",
+      "pos": [
+        3,
+        11
+      ],
+      "offset": [
+        10,
+        10
+      ],
+      "if": "item_available == ITEM_BOX_CUTTER | wade_defeated",
+      "interact": {
+        "type": "pickup",
+        "item": "box_cutter",
+        "offset": [
+          0,
+          30
+        ],
+        "radius": 14
+      },
+      "on": "st_counter"
+    },
+    {
+      "id": "hollis",
+      "kind": "npc",
+      "art": "hollis",
+      "pos": [
+        4,
+        11
+      ],
+      "offset": [
+        6,
+        -8
+      ],
+      "leaves": "clothes_hollis",
+      "leftover_interact": {
+        "type": "examine",
+        "dialogue": "c1_script#C1_OBJ_HOLLIS_TAG",
+        "offset": [
+          0,
+          36
+        ],
+        "radius": 16
+      },
+      "interact": {
+        "type": "talk",
+        "dialogue": "ch1#hollis",
+        "offset": [
+          0,
+          46
+        ],
+        "radius": 18
+      }
+    },
+    {
+      "id": "st_hollis_phone",
+      "art": "phone_small",
+      "pos": [
+        4,
+        11
+      ],
+      "offset": [
+        -10,
+        6
+      ],
+      "if": "vanished",
+      "interact": {
+        "type": "examine",
+        "dialogue": "c1_script#C1_OBJ_HOLLIS_PHONE",
+        "offset": [
+          0,
+          30
+        ],
+        "radius": 12
+      },
+      "on": "st_counter"
+    },
+    {
+      "id": "st_hollis_glasses",
+      "art": "glasses",
+      "pos": [
+        5,
+        11
+      ],
+      "offset": [
+        -16,
+        8
+      ],
+      "if": "vanished",
+      "interact": {
+        "type": "examine",
+        "dialogue": "c1_script#C1_OBJ_HOLLIS_GLASSES",
+        "offset": [
+          0,
+          28
+        ],
+        "radius": 12
+      },
+      "on": "st_counter"
+    },
+    {
+      "id": "st_tv",
+      "art": "small_tv",
+      "pos": [
+        1,
+        9
+      ],
+      "offset": [
+        0,
+        -4
+      ],
+      "interact": {
+        "type": "examine",
+        "dialogue": "c1_script#C1_OBJ_STORE_TV",
+        "offset": [
+          16,
+          100
+        ]
+      },
+      "if": "!vanished",
+      "on": "above",
+      "above": true
+    },
+    {
+      "id": "st_lottery",
+      "art": "lottery_kiosk",
+      "pos": [
+        6,
+        12
+      ],
+      "offset": [
+        -2,
+        0
+      ],
+      "interact": {
+        "type": "examine",
+        "dialogue": "c1_script#C1_OBJ_STORE_LOTTERY",
+        "offset": [
+          0,
+          -4
+        ]
+      },
+      "solid": [
+        19,
+        14
+      ],
+      "if": "!vanished"
+    },
+    {
+      "id": "st_lottery_dark",
+      "art": "lottery_kiosk_dark",
+      "pos": [
+        6,
+        12
+      ],
+      "offset": [
+        -2,
+        0
+      ],
+      "solid": [
+        19,
+        14
+      ],
+      "if": "vanished"
+    },
+    {
+      "id": "st_candy_rack",
+      "art": "candy_rack",
+      "pos": [
+        2,
+        13
+      ],
+      "offset": [
+        12,
+        0
+      ],
+      "solid": [
+        28,
+        12
+      ],
+      "if": "!vanished"
+    },
+    {
+      "id": "st_candy_rack_toppled",
+      "art": "candy_rack_toppled",
+      "pos": [
+        2,
+        13
+      ],
+      "offset": [
+        12,
+        4
+      ],
+      "solid": [
+        52,
+        12
+      ],
+      "if": "vanished"
+    },
+    {
+      "id": "st_candy",
+      "pos": [
+        2,
+        13
+      ],
+      "offset": [
+        12,
+        0
+      ],
+      "interact": {
+        "type": "pickup",
+        "item": "candy",
+        "dialogue": "c1_script#C1_OBJ_STORE_SNACKS",
+        "offset": [
+          0,
+          -6
+        ]
+      }
+    },
+    {
+      "id": "st_news",
+      "art": "newspaper_rack",
+      "pos": [
+        13,
+        14
+      ],
+      "offset": [
+        -12,
+        6
+      ],
+      "solid": [
+        28,
+        12
+      ]
+    },
+    {
+      "id": "st_glass",
+      "art": "glass_floor",
+      "pos": [
+        9,
+        14
+      ],
+      "offset": [
+        -4,
+        2
+      ],
+      "on": "floor",
+      "floor": true,
+      "story": "The front window cracked when the car hit the pole outside",
+      "if": "vanished"
+    },
+    {
+      "id": "st_light_1",
+      "kind": "light",
+      "pos": [
+        7,
+        8
+      ],
+      "offset": [
+        -10,
+        -12
+      ],
+      "light": {
+        "type": "fluorescent",
+        "group": "store",
+        "energy": 0.32,
+        "radius": 170
+      }
+    },
+    {
+      "id": "st_light_2",
+      "kind": "light",
+      "pos": [
+        12,
+        8
+      ],
+      "offset": [
+        10,
+        -12
+      ],
+      "light": {
+        "type": "fluorescent",
+        "group": "store",
+        "energy": 0.32,
+        "radius": 170
+      }
+    },
+    {
+      "id": "st_light_3",
+      "kind": "light",
+      "pos": [
+        17,
+        8
+      ],
+      "offset": [
+        10,
+        -12
+      ],
+      "light": {
+        "type": "fluorescent",
+        "group": "store",
+        "energy": 0.32,
+        "radius": 170
+      }
+    },
+    {
+      "id": "st_light_4",
+      "kind": "light",
+      "pos": [
+        4,
+        13
+      ],
+      "offset": [
+        6,
+        -12
+      ],
+      "light": {
+        "type": "fluorescent",
+        "group": "store",
+        "energy": 0.32,
+        "radius": 170
+      }
+    },
+    {
+      "id": "st_light_5",
+      "kind": "light",
+      "pos": [
+        12,
+        5
+      ],
+      "offset": [
+        0,
+        -16
+      ],
+      "light": {
+        "type": "fluorescent",
+        "group": "store",
+        "energy": 0.32,
+        "radius": 170
+      }
+    },
+    {
+      "id": "st_street_glow",
+      "kind": "light",
+      "pos": [
+        10,
+        15
+      ],
+      "offset": [
+        0,
+        4
+      ],
+      "light": {
+        "type": "fire",
+        "radius": 110,
+        "energy": 0.7
+      },
+      "if": "vanished"
+    }
+  ]
 }

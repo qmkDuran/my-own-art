@@ -18,6 +18,10 @@ godot --headless --path . --import               # (re)import assets, e.g. after
 godot --headless --path . res://tests/smoke_test.tscn      # opens every scene and zone state
 godot --headless --path . res://tests/chapter1_driver.tscn # plays Chapter 1 automatically
 godot --path . res://tests/chapter1_driver.tscn -- --shots=/some/dir   # same, saving PNGs
+python3 tests/layout_check.py                    # layout logic of every zone (see "Layout check")
+python3 tests/layout_check.py --self-test        # proves the check catches deliberately broken layouts
+xvfb-run -a godot --rendering-driver opengl3 --path . res://tests/zone_shots.tscn -- --out=/some/dir
+                                                 # 1920x1080 screenshots of every zone/story state
 ```
 
 The driver prints `DRIVER PASS` / `DRIVER FAIL: ...` and exits with 0 / 1. Both tests should print
@@ -101,7 +105,9 @@ data/                    art, tiles, items, enemies, speakers, heroes, lights (.
 data/zones/              house, street, store (.json)
 data/dialogue/           ch1.dlg (game-flow glue), c1_script.dlg (GENERATED from docs/)
 tools/script_to_dlg.py   converts docs/CHAPTER_1_SCRIPT.md into c1_script.dlg
-tests/                   smoke_test, chapter1_driver
+tests/                   smoke_test, chapter1_driver, layout_check.py, zone_shots
+tools/pixel_ops.py,      hand fixes to the delivered art (rescaling, recolours, redrawn fire,
+  art_handfix.py         store floor, character fixes); re-runnable, reads the originals from git
 art/                     drop real PNGs here (see "Art")
 docs/                    story (written by the story team)
 audio/                   sound and music (written by the audio team)
@@ -209,6 +215,47 @@ appear and disappear by themselves as flags change. Pickups and one-shot trigger
 themselves (`taken:<id>`, `done:<id>`). Entity ids should be unique across the game.
 Enemy stats are in `data/enemies.json`, items in `data/items.json`, light types in `data/lights.json`.
 
+More entity and zone fields (all optional):
+
+| field | meaning |
+|---|---|
+| `"solid": "art"` | collision = the art entry's `footprint` (+ `solid_extra`), `[x, y, w, h]` in the image's own pixels (buildings) |
+| `"solid_rects": [[x, y, w, h], ...]` | extra solid rectangles in image pixels |
+| `"solid_offset": [x, y]` | moves a `[w, h]` solid (e.g. onto a lamp post's foot) |
+| `"flip": true` | mirrors the sprite (and its image-space solids) |
+| `"above": true` | drawn over everything (ceiling/side-wall fixtures) |
+| `"floor": true` | floor decal (rug, mat, spill): drawn on the floor under everything |
+| `"on"` | what a non-solid prop rests on: a host entity id (`"k_table"`), `"wall"` (wall face), `"floor"` (decals), `"ground"` (outdoors), `"above"` (ceiling). Checked by the layout check |
+| `"story": "..."` | why a loose object lies on the floor/ground (required for loose clutter and pickups there) |
+| `"building": true` | a building sprite; a `door` interaction on it sits at its front wall |
+| `"fence": true` | fence/hedge module; runs must end against something solid |
+| `"vehicle": true` | must stand on road/driveway tiles |
+| `"door_kind": "view"` | a door you only look through (the kitchen screen door); must sit on a wall face |
+| zone `"interior": true` | rooms enclosed by walls; checked for leaks, doorways and reachability |
+| zone `"open_edges": [{"rect": [x, y, w, h], "why": "..."}]` | map edges (tiles) where open ground may run off the map |
+
+Tiles (`data/tiles.json`): `variants` (`[[art, weight], ...]`, picked per cell by hash) break up
+repetition; walls take `face_art`, `face_tall` (two-row faces: `[upper, lower]`) and `face_end`
+(shaded end pieces where a face row stops); flags `wall`, `door` (solid door tile in a wall),
+`doorway` (walkable opening between rooms), `paved`, `sidewalk`, `road`, `driveway`, `vehicle_ok`
+are used by the layout check.
+
+### Layout check
+
+`python3 tests/layout_check.py` rebuilds every zone's collision exactly as the engine does
+(solid tiles, entity solids, building footprints) in each story state, moves a player-sized box
+(18x10 px) through it on a 4 px grid and fails on: interiors reachable from outside without a
+door (gaps), doorways you can walk around (blocking a doorway must separate two rooms), door
+tiles not set into a wall, door interactions not on a door tile / building front, wall segments
+not connected to the other walls, floor areas nobody can reach, spawn points cut off from each
+other, overlapping solids, furniture sunk into walls or not standing on floor, interactions that
+cannot be reached, props without a support (`on`) or loose on the floor without a `story`, fence
+runs ending in mid-air, vehicles off the road/driveway, driveways that do not reach the road,
+building doors without a paved path to the sidewalk, and walkable map edges not declared in
+`open_edges`. `--self-test` breaks the house on purpose (a wall gap, a bypassable doorway, a
+floating door, overlapping furniture, a loose pickup, a wall stub, a blocked doorway) and checks
+each is caught. `-v` lists every door, doorway and room count.
+
 ## Art
 
 All art is referenced by id through `data/art.json`; nothing is hard-coded. Each entry has a
@@ -218,9 +265,13 @@ Placeholders are painted in code at run time (`src/art/placeholder_painter.gd`),
 files exist anywhere and `art/` belongs to the art team. If delivered files use other names or
 folders (see `art/ART_MANIFEST.md`), point the `path` fields in `data/art.json` at them.
 
-- Characters: sheets of 32x64 frames, 4 walk frames (columns) x 3 directions (rows: down, up,
-  side; side faces right and is mirrored). Layout in the entry's `sheet`
+- Characters: engine sheets of 64x64 frames, 4 walk frames (columns) x 3 directions (rows: down,
+  up, side; side faces right and is mirrored). Layout in the entry's `sheet`
   (`hframes`, `vframes`, `rows`, `fps`), so other layouts work too. Origin = feet.
+  An entry with `"full": "<id>_full"` uses the full animation sheet instead (80x80 frames, one row
+  per animation and direction, layout JSON in `sheet.layout`): idle, walk, run (when running),
+  swing (bat / mop), roll (dodge), hurt, down (knocked out), windup/attack (looters), growl/lunge/
+  yelp (the dog). Hair layers follow the body's frame in lockstep; the skin swap still applies.
 - Hero: a body sheet per gender (`hero_male_body`, `hero_female_body`) plus hair sheets
   (`hair_short`, `hair_buzz`, `hair_curly`, `hair_long`, `hair_bun`, `hair_bob`) with the **same
   frame layout**, drawn on top. Styles per gender are listed in `data/heroes.json`.
@@ -231,6 +282,11 @@ folders (see `art/ART_MANIFEST.md`), point the `path` fields in `data/art.json` 
 - Portraits: 128x128 (`portrait_<speaker>`, moods as `portrait_<speaker>_<mood>`); the hero has none.
 - Tiles: 32x32, one PNG per tile id (`data/tiles.json` maps tile ids to art; `face_art` gives
   walls a front face where the tile below is floor). Props: any size, anchored at the bottom centre.
+- Effects: entries with `"fx": {"frames", "ms", "loop", "origin"}` are animated strips
+  (`fx_fire`, `fx_smoke`, ...); the origin pixel sits on the entity's position.
+- Scale (after the hand fixes in `tools/art_handfix.py`): characters ~58 px tall, house doors ~60 px
+  (a person is about door height), cars 84-111 px long (~1.5-1.9x a person), the colonial houses
+  330x403, the ranch 345x206, the market 242x218.
 - Items: 32x32 icons (`icon_*`).
 
 ## Audio

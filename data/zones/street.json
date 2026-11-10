@@ -1,1495 +1,4399 @@
 {
- "name": "Linden Court and Ridge Road",
- "map": [
-  "gggRRRRRRRRRggRRRRRRRRggRRRRRRRRggRRRRRRRgppppgTTTTTTTTTTTTTTggg",
-  "gggRRRRRRRRRggRRRRRRRRggRRRRRRRRggRRRRRRRgppppgTTTTTTTTTTTTTTggg",
-  "gggRRRRRRRRRggRRRRRRRRggRRRRRRRRggRRRRRRRgppppgTTTTTTTTTTTTTTggg",
-  "gggHHHHHHHHHggBBBBBBBBggHHHHHHHHggBBBBBBBgppppgSSSSSSSSSSSSSSggg",
-  "gggHHHHHHHHHggBBBBBBBBggHHHHHHHHggBBBBBBBgppppgSSSSSSSSSSSSSSggg",
-  "gggggggpgggggggggpgggggggggpgggggggggpggggppppssssssssssssssssgg",
-  "gggggggpgggggggggpgggggggggpgggggggggpggggppppssssssssssssssssgg",
-  "gggggggpgggggggggpgggggggggpgggggggggpggggppppssssssssssssssssgg",
-  "ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
-  "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
-  "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr",
-  "-r-r-r-r-r-r-r-r-r-r-r-r-r-r-r-r-r-r-r-r-r-r-r-r-r-r-r-r-r-r-r-r",
-  "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr",
-  "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr",
-  "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
-  "ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
-  "ggggggggggggggggggggggdddggggggggggggggggggggggggggggggggggggggg",
-  "ggggggggggggggggggggggdddggggggggggggggggggggggggggggggggggggggg",
-  "ggggggggggggggggggggggdddggggggggggggggggggggggggggggggggggggggg",
-  "gRRRRRRRRRRRRgggRRRRRRRRRRRRRRgggRRRRRRRRRRRRRgggRRRRRRRRRRRRRRg",
-  "gRRRRRRRRRRRRgggRRRRRRRRRRRRRRgggRRRRRRRRRRRRRgggRRRRRRRRRRRRRRg",
-  "gRRRRRRRRRRRRgggRRRRRRRRRRRRRRgggRRRRRRRRRRRRRgggRRRRRRRRRRRRRRg"
- ],
- "legend": {
-  "g": "grass",
-  "s": "sidewalk",
-  "c": "curb",
-  "r": "road",
-  "-": "road_line",
-  "p": "path",
-  "d": "driveway",
-  "R": "roof",
-  "H": "house_wall",
-  "B": "house_wall_blue",
-  "T": "store_roof",
-  "S": "store_front"
- },
- "ambient": "#6a5a88",
- "vignette": 0.5,
- "music": "unease",
- "ambience": [
-  "crickets_night_loop"
- ],
- "variants": [
-  {
-   "if": "vanished",
-   "ambient": "#3a3048",
-   "vignette": 0.65,
-   "music": "chaos",
-   "ambience": [
-    "chaos_city_far_loop",
-    "car_alarm_loop",
-    "fire_crackle_loop",
-    "crowd_panic_far_loop"
-   ]
-  }
- ],
- "on_enter": [
-  {
-   "id": "street_dusk",
-   "if": "!vanished",
-   "run": "ch1#street_dusk"
-  }
- ],
- "entities": [
-  {
-   "kind": "spawn",
-   "id": "house_front",
-   "pos": [
-    7,
-    6
-   ]
-  },
-  {
-   "kind": "spawn",
-   "id": "store_front",
-   "pos": [
-    53,
-    6
-   ]
-  },
-  {
-   "id": "s_house_door",
-   "art": "house_door",
-   "pos": [
-    7,
-    4
-   ],
-   "offset": [
-    0,
-    14
-   ],
-   "solid": [
-    30,
-    8
-   ],
-   "interact": {
-    "type": "door",
-    "to": "house",
-    "spawn": "front_door",
-    "verb": "Go home",
-    "offset": [
-     0,
-     4
-    ],
-    "radius": 16,
-    "requires": "!vanished | street_looter_defeated",
-    "locked_dialogue": "ch1#home_blocked"
-   }
-  },
-  {
-   "id": "s_porch_light",
-   "kind": "light",
-   "pos": [
-    8,
-    4
-   ],
-   "offset": [
-    0,
-    8
-   ],
-   "light": "porch",
-   "if": "C1_LAST_WORDS"
-  },
-  {
-   "id": "s_store_door",
-   "art": "store_door",
-   "pos": [
-    53,
-    4
-   ],
-   "offset": [
-    0,
-    14
-   ],
-   "solid": [
-    46,
-    8
-   ],
-   "interact": {
-    "type": "door",
-    "to": "store",
-    "spawn": "entrance",
-    "verb": "Enter the market",
-    "offset": [
-     0,
-     4
-    ],
-    "radius": 18,
-    "requires": "!vanished",
-    "locked_lines": [
-     "Not back in there. Not now."
-    ]
-   }
-  },
-  {
-   "id": "s_store_sign",
-   "art": "store_sign",
-   "pos": [
-    53,
-    2
-   ],
-   "offset": [
-    0,
-    10
-   ],
-   "light": {
-    "type": "sign",
-    "offset": [
-     0,
-     40
-    ]
-   }
-  },
-  {
-   "id": "s_store_win1",
-   "art": "store_window",
-   "pos": [
-    49,
-    4
-   ],
-   "offset": [
-    0,
-    12
-   ],
-   "light": {
-    "type": "window",
-    "offset": [
-     0,
-     28
-    ],
-    "color": "#d8f0ff",
-    "if": "!vanished"
-   }
-  },
-  {
-   "id": "s_store_win2",
-   "art": "store_window",
-   "pos": [
-    57,
-    4
-   ],
-   "offset": [
-    0,
-    12
-   ],
-   "light": {
-    "type": "window",
-    "offset": [
-     0,
-     28
-    ],
-    "color": "#d8f0ff"
-   }
-  },
-  {
-   "id": "s_flyer",
-   "art": "flyer",
-   "pos": [
-    13,
-    8
-   ],
-   "offset": [
-    10,
-    -40
-   ],
-   "interact": {
-    "type": "examine",
-    "dialogue": "c1_script#C1_OBJ_CHURCH_FLYER",
-    "offset": [
-     0,
-     40
-    ]
-   }
-  },
-  {
-   "id": "s_for_sale",
-   "art": "for_sale_sign",
-   "pos": [
-    27,
-    6
-   ],
-   "solid": [
-    8,
-    6
-   ],
-   "interact": {
-    "type": "examine",
-    "dialogue": "c1_script#C1_OBJ_FOR_SALE"
-   }
-  },
-  {
-   "id": "s_walt_porch",
-   "art": "porch",
-   "pos": [
-    18,
-    5
-   ],
-   "offset": [
-    0,
-    4
-   ],
-   "solid": [
-    62,
-    10
-   ],
-   "interact": {
-    "type": "examine",
-    "dialogue": "c1_script#C1_OBJ_WALT_FLAG"
-   }
-  },
-  {
-   "id": "s_sky",
-   "pos": [
-    33,
-    6
-   ],
-   "interact": {
-    "type": "examine",
-    "dialogue": "ch1#look_up",
-    "verb": "Look up"
-   }
-  },
-  {
-   "art": "window_lit",
-   "pos": [
-    4,
-    3
-   ],
-   "offset": [
-    0,
-    4
-   ],
-   "light": {
-    "type": "window",
-    "offset": [
-     0,
-     40
-    ]
-   }
-  },
-  {
-   "art": "window_lit",
-   "pos": [
-    10,
-    3
-   ],
-   "offset": [
-    0,
-    4
-   ],
-   "light": {
-    "type": "window",
-    "offset": [
-     0,
-     40
-    ]
-   }
-  },
-  {
-   "art": "window_lit",
-   "pos": [
-    15,
-    3
-   ],
-   "offset": [
-    0,
-    4
-   ],
-   "light": {
-    "type": "window",
-    "offset": [
-     0,
-     40
-    ]
-   }
-  },
-  {
-   "art": "window_lit",
-   "pos": [
-    20,
-    3
-   ],
-   "offset": [
-    0,
-    4
-   ],
-   "light": {
-    "type": "window",
-    "offset": [
-     0,
-     40
-    ]
-   }
-  },
-  {
-   "art": "window_lit",
-   "pos": [
-    25,
-    3
-   ],
-   "offset": [
-    0,
-    4
-   ],
-   "light": {
-    "type": "window",
-    "offset": [
-     0,
-     40
-    ]
-   }
-  },
-  {
-   "art": "window_lit",
-   "pos": [
-    30,
-    3
-   ],
-   "offset": [
-    0,
-    4
-   ],
-   "light": {
-    "type": "window",
-    "offset": [
-     0,
-     40
-    ]
-   }
-  },
-  {
-   "art": "window_lit",
-   "pos": [
-    35,
-    3
-   ],
-   "offset": [
-    0,
-    4
-   ],
-   "light": {
-    "type": "window",
-    "offset": [
-     0,
-     40
-    ]
-   }
-  },
-  {
-   "art": "window_lit",
-   "pos": [
-    39,
-    3
-   ],
-   "offset": [
-    0,
-    4
-   ],
-   "light": {
-    "type": "window",
-    "offset": [
-     0,
-     40
-    ]
-   }
-  },
-  {
-   "art": "mailbox",
-   "pos": [
-    5,
-    7
-   ],
-   "offset": [
-    0,
-    12
-   ],
-   "solid": [
-    12,
-    6
-   ]
-  },
-  {
-   "art": "mailbox",
-   "pos": [
-    15,
-    7
-   ],
-   "offset": [
-    0,
-    12
-   ],
-   "solid": [
-    12,
-    6
-   ]
-  },
-  {
-   "art": "mailbox",
-   "pos": [
-    25,
-    7
-   ],
-   "offset": [
-    0,
-    12
-   ],
-   "solid": [
-    12,
-    6
-   ]
-  },
-  {
-   "art": "mailbox",
-   "pos": [
-    35,
-    7
-   ],
-   "offset": [
-    0,
-    12
-   ],
-   "solid": [
-    12,
-    6
-   ]
-  },
-  {
-   "art": "tree",
-   "pos": [
-    1,
-    6
-   ],
-   "offset": [
-    0,
-    10
-   ],
-   "solid": [
-    14,
-    8
-   ]
-  },
-  {
-   "art": "tree",
-   "pos": [
-    12,
-    6
-   ],
-   "offset": [
-    0,
-    10
-   ],
-   "solid": [
-    14,
-    8
-   ]
-  },
-  {
-   "art": "tree",
-   "pos": [
-    22,
-    6
-   ],
-   "offset": [
-    0,
-    10
-   ],
-   "solid": [
-    14,
-    8
-   ]
-  },
-  {
-   "art": "tree",
-   "pos": [
-    32,
-    6
-   ],
-   "offset": [
-    0,
-    10
-   ],
-   "solid": [
-    14,
-    8
-   ]
-  },
-  {
-   "art": "tree",
-   "pos": [
-    62,
-    6
-   ],
-   "offset": [
-    0,
-    10
-   ],
-   "solid": [
-    14,
-    8
-   ]
-  },
-  {
-   "art": "tree",
-   "pos": [
-    6,
-    17
-   ],
-   "offset": [
-    0,
-    10
-   ],
-   "solid": [
-    14,
-    8
-   ]
-  },
-  {
-   "art": "tree",
-   "pos": [
-    14,
-    17
-   ],
-   "offset": [
-    0,
-    10
-   ],
-   "solid": [
-    14,
-    8
-   ]
-  },
-  {
-   "art": "tree",
-   "pos": [
-    30,
-    17
-   ],
-   "offset": [
-    0,
-    10
-   ],
-   "solid": [
-    14,
-    8
-   ]
-  },
-  {
-   "art": "tree",
-   "pos": [
-    40,
-    17
-   ],
-   "offset": [
-    0,
-    10
-   ],
-   "solid": [
-    14,
-    8
-   ]
-  },
-  {
-   "art": "tree",
-   "pos": [
-    47,
-    17
-   ],
-   "offset": [
-    0,
-    10
-   ],
-   "solid": [
-    14,
-    8
-   ]
-  },
-  {
-   "art": "tree",
-   "pos": [
-    58,
-    17
-   ],
-   "offset": [
-    0,
-    10
-   ],
-   "solid": [
-    14,
-    8
-   ]
-  },
-  {
-   "art": "hedge",
-   "pos": [
-    9,
-    6
-   ],
-   "offset": [
-    16,
-    8
-   ],
-   "solid": [
-    62,
-    12
-   ]
-  },
-  {
-   "art": "hedge",
-   "pos": [
-    19,
-    6
-   ],
-   "offset": [
-    16,
-    8
-   ],
-   "solid": [
-    62,
-    12
-   ]
-  },
-  {
-   "art": "hedge",
-   "pos": [
-    29,
-    6
-   ],
-   "offset": [
-    16,
-    8
-   ],
-   "solid": [
-    62,
-    12
-   ]
-  },
-  {
-   "art": "hedge",
-   "pos": [
-    38,
-    6
-   ],
-   "offset": [
-    16,
-    8
-   ],
-   "solid": [
-    62,
-    12
-   ]
-  },
-  {
-   "art": "hydrant",
-   "pos": [
-    44,
-    8
-   ],
-   "offset": [
-    0,
-    10
-   ],
-   "solid": [
-    10,
-    6
-   ]
-  },
-  {
-   "art": "trash_can",
-   "pos": [
-    46,
-    7
-   ],
-   "offset": [
-    0,
-    12
-   ],
-   "solid": [
-    20,
-    8
-   ]
-  },
-  {
-   "art": "streetlight",
-   "pos": [
-    2,
-    8
-   ],
-   "offset": [
-    0,
-    12
-   ],
-   "solid": [
-    8,
-    6
-   ],
-   "light": {
-    "type": "street",
-    "offset": [
-     8,
-     -8
-    ],
-    "group": "streetlights"
-   }
-  },
-  {
-   "art": "streetlight",
-   "pos": [
-    13,
-    8
-   ],
-   "offset": [
-    0,
-    12
-   ],
-   "solid": [
-    8,
-    6
-   ],
-   "light": {
-    "type": "street",
-    "offset": [
-     8,
-     -8
-    ],
-    "group": "streetlights"
-   }
-  },
-  {
-   "art": "streetlight",
-   "pos": [
-    23,
-    8
-   ],
-   "offset": [
-    0,
-    12
-   ],
-   "solid": [
-    8,
-    6
-   ],
-   "light": {
-    "type": "street",
-    "offset": [
-     8,
-     -8
-    ],
-    "group": "streetlights"
-   }
-  },
-  {
-   "art": "streetlight",
-   "pos": [
-    33,
-    8
-   ],
-   "offset": [
-    0,
-    12
-   ],
-   "solid": [
-    8,
-    6
-   ],
-   "light": {
-    "type": "street",
-    "offset": [
-     8,
-     -8
-    ],
-    "group": "streetlights"
-   }
-  },
-  {
-   "art": "streetlight",
-   "pos": [
-    46,
-    8
-   ],
-   "offset": [
-    0,
-    12
-   ],
-   "solid": [
-    8,
-    6
-   ],
-   "light": {
-    "type": "street",
-    "offset": [
-     8,
-     -8
-    ],
-    "group": "streetlights"
-   }
-  },
-  {
-   "art": "streetlight",
-   "pos": [
-    61,
-    8
-   ],
-   "offset": [
-    0,
-    12
-   ],
-   "solid": [
-    8,
-    6
-   ],
-   "light": {
-    "type": "street",
-    "offset": [
-     8,
-     -8
-    ],
-    "group": "streetlights"
-   }
-  },
-  {
-   "art": "streetlight",
-   "pos": [
-    8,
-    15
-   ],
-   "offset": [
-    0,
-    12
-   ],
-   "solid": [
-    8,
-    6
-   ],
-   "light": {
-    "type": "street",
-    "offset": [
-     8,
-     -8
-    ],
-    "group": "streetlights"
-   }
-  },
-  {
-   "art": "streetlight",
-   "pos": [
-    18,
-    15
-   ],
-   "offset": [
-    0,
-    12
-   ],
-   "solid": [
-    8,
-    6
-   ],
-   "light": {
-    "type": "street",
-    "offset": [
-     8,
-     -8
-    ],
-    "group": "streetlights"
-   }
-  },
-  {
-   "art": "streetlight",
-   "pos": [
-    28,
-    15
-   ],
-   "offset": [
-    0,
-    12
-   ],
-   "solid": [
-    8,
-    6
-   ],
-   "light": {
-    "type": "street",
-    "offset": [
-     8,
-     -8
-    ],
-    "group": "streetlights"
-   }
-  },
-  {
-   "art": "streetlight",
-   "pos": [
-    40,
-    15
-   ],
-   "offset": [
-    0,
-    12
-   ],
-   "solid": [
-    8,
-    6
-   ],
-   "light": {
-    "type": "street",
-    "offset": [
-     8,
-     -8
-    ],
-    "group": "streetlights"
-   }
-  },
-  {
-   "art": "streetlight",
-   "pos": [
-    54,
-    15
-   ],
-   "offset": [
-    0,
-    12
-   ],
-   "solid": [
-    8,
-    6
-   ],
-   "light": {
-    "type": "street",
-    "offset": [
-     8,
-     -8
-    ],
-    "group": "streetlights"
-   }
-  },
-  {
-   "art": "car_blue",
-   "pos": [
-    10,
-    13
-   ],
-   "offset": [
-    0,
-    10
-   ],
-   "solid": [
-    94,
-    26
-   ]
-  },
-  {
-   "art": "car_red",
-   "pos": [
-    58,
-    10
-   ],
-   "offset": [
-    0,
-    4
-   ],
-   "solid": [
-    94,
-    26
-   ]
-  },
-  {
-   "id": "walt",
-   "kind": "npc",
-   "art": "walt",
-   "pos": [
-    17,
-    6
-   ],
-   "interact": {
-    "type": "talk",
-    "dialogue": "ch1#walt"
-   }
-  },
-  {
-   "id": "okoro_suv",
-   "art": "suv_silver",
-   "pos": [
-    23,
-    13
-   ],
-   "offset": [
-    0,
-    12
-   ],
-   "solid": [
-    100,
-    28
-   ],
-   "if": "!vanished",
-   "interact": {
-    "type": "examine",
-    "dialogue": "c1_script#C1_OBJ_OKORO_SUV",
-    "offset": [
-     0,
-     6
-    ],
-    "radius": 26
-   }
-  },
-  {
-   "id": "felix",
-   "kind": "npc",
-   "art": "felix",
-   "pos": [
-    21,
-    15
-   ],
-   "if": "!vanished",
-   "leaves": "clothes_felix",
-   "interact": {
-    "type": "talk",
-    "dialogue": "ch1#okoros"
-   }
-  },
-  {
-   "id": "dana",
-   "kind": "npc",
-   "art": "dana",
-   "pos": [
-    25,
-    15
-   ],
-   "facing": "left",
-   "if": "!vanished",
-   "interact": {
-    "type": "talk",
-    "dialogue": "ch1#okoros"
-   }
-  },
-  {
-   "id": "noah",
-   "kind": "npc",
-   "art": "noah",
-   "pos": [
-    31,
-    16
-   ],
-   "if": "!vanished",
-   "interact": {
-    "type": "talk",
-    "dialogue": "ch1#noah"
-   }
-  },
-  {
-   "id": "noah_bike",
-   "art": "bike",
-   "pos": [
-    32,
-    16
-   ],
-   "offset": [
-    8,
-    6
-   ],
-   "if": "!vanished",
-   "interact": {
-    "type": "examine",
-    "dialogue": "c1_script#C1_OBJ_NOAH_BIKE"
-   }
-  },
-  {
-   "id": "erik",
-   "kind": "npc",
-   "art": "erik",
-   "pos": [
-    35,
-    17
-   ],
-   "interact": {
-    "type": "talk",
-    "dialogue": "ch1#erik"
-   }
-  },
-  {
-   "id": "ines",
-   "kind": "npc",
-   "art": "ines",
-   "pos": [
-    40,
-    8
-   ],
-   "facing": "left",
-   "if": "!vanished",
-   "interact": {
-    "type": "talk",
-    "dialogue": "ch1#ines"
-   }
-  },
-  {
-   "id": "biscuit_walk",
-   "kind": "npc",
-   "art": "dog",
-   "pos": [
-    39,
-    8
-   ],
-   "facing": "right",
-   "if": "!vanished",
-   "solid": [
-    20,
-    8
-   ],
-   "interact": {
-    "type": "talk",
-    "dialogue": "ch1#ines",
-    "verb": "Pet"
-   }
-  },
-  {
-   "id": "c_wreck",
-   "art": "car_wreck",
-   "pos": [
-    36,
-    9
-   ],
-   "offset": [
-    0,
-    8
-   ],
-   "solid": [
-    100,
-    28
-   ],
-   "if": "vanished",
-   "light": {
-    "type": "fire",
-    "offset": [
-     30,
-     -20
-    ]
-   },
-   "interact": {
-    "type": "examine",
-    "dialogue": "ch1#dana",
-    "verb": "The Okoros' SUV",
-    "offset": [
-     0,
-     6
-    ],
-    "radius": 28
-   }
-  },
-  {
-   "id": "c_fire",
-   "art": "fire",
-   "pos": [
-    37,
-    9
-   ],
-   "offset": [
-    12,
-    -14
-   ],
-   "if": "vanished"
-  },
-  {
-   "id": "c_bike_night",
-   "art": "bike",
-   "pos": [
-    30,
-    12
-   ],
-   "if": "vanished",
-   "interact": {
-    "type": "examine",
-    "dialogue": "c1_script#C1_OBJ_NOAH_BIKE_NIGHT"
-   }
-  },
-  {
-   "id": "c_van",
-   "art": "van",
-   "pos": [
-    48,
-    12
-   ],
-   "offset": [
-    0,
-    4
-   ],
-   "solid": [
-    108,
-    26
-   ],
-   "if": "vanished",
-   "light": {
-    "type": "hazard",
-    "offset": [
-     50,
-     -20
-    ]
-   },
-   "interact": {
-    "type": "examine",
-    "dialogue": "c1_script#C1_OBJ_DELIVERY_VAN",
-    "offset": [
-     0,
-     6
-    ],
-    "radius": 26
-   }
-  },
-  {
-   "id": "c_sneaker",
-   "art": "sneaker",
-   "pos": [
-    14,
-    14
-   ],
-   "if": "vanished",
-   "interact": {
-    "type": "examine",
-    "dialogue": "c1_script#C1_OBJ_SHOE_STREET"
-   }
-  },
-  {
-   "id": "c_sky",
-   "pos": [
-    20,
-    9
-   ],
-   "if": "vanished",
-   "interact": {
-    "type": "examine",
-    "dialogue": "c1_script#C1_OBJ_SKY_NIGHT",
-    "verb": "Look up"
-   }
-  },
-  {
-   "id": "c_glass",
-   "art": "glass_shards",
-   "pos": [
-    50,
-    6
-   ],
-   "anchor": "center",
-   "floor": true,
-   "if": "vanished"
-  },
-  {
-   "id": "c_clothes_1",
-   "art": "clothes_generic",
-   "pos": [
-    44,
-    9
-   ],
-   "if": "vanished"
-  },
-  {
-   "id": "c_clothes_noah",
-   "art": "clothes_noah",
-   "pos": [
-    31,
-    15
-   ],
-   "if": "vanished",
-   "interact": {
-    "type": "examine",
-    "dialogue": "ch1#noah_clothes"
-   }
-  },
-  {
-   "id": "c_leash",
-   "art": "leash",
-   "pos": [
-    44,
-    6
-   ],
-   "anchor": "center",
-   "floor": true,
-   "if": "vanished"
-  },
-  {
-   "id": "c_bat",
-   "art": "icon_bat",
-   "pos": [
-    20,
-    9
-   ],
-   "offset": [
-    10,
-    6
-   ],
-   "if": "vanished",
-   "interact": {
-    "type": "pickup",
-    "item": "bat",
-    "dialogue": "ch1#found_bat"
-   }
-  },
-  {
-   "id": "c_water",
-   "art": "icon_water",
-   "pos": [
-    12,
-    7
-   ],
-   "offset": [
-    0,
-    8
-   ],
-   "if": "vanished",
-   "interact": {
-    "type": "pickup",
-    "item": "water"
-   }
-  },
-  {
-   "id": "street_looter",
-   "kind": "enemy",
-   "enemy": "looter",
-   "pos": [
-    27,
-    9
-   ],
-   "if": "vanished",
-   "defeat_flag": "street_looter_defeated",
-   "on_defeat": "ch1#street_looter_beaten"
-  },
-  {
-   "id": "biscuit_scared",
-   "kind": "npc",
-   "art": "dog",
-   "pos": [
-    44,
-    5
-   ],
-   "if": "vanished & !C1_BISCUIT",
-   "solid": [
-    20,
-    8
-   ],
-   "interact": {
-    "type": "talk",
-    "dialogue": "ch1#biscuit",
-    "verb": "Biscuit"
-   }
-  },
-  {
-   "id": "biscuit",
-   "kind": "enemy",
-   "enemy": "dog",
-   "pos": [
-    44,
-    5
-   ],
-   "if": "biscuit_hostile",
-   "defeat_flag": "biscuit_gone",
-   "on_defeat": "ch1#biscuit_bolted"
-  },
-  {
-   "id": "biscuit_friend",
-   "kind": "npc",
-   "art": "dog",
-   "pos": [
-    8,
-    7
-   ],
-   "facing": "left",
-   "if": "C1_BISCUIT == befriended",
-   "interact": {
-    "type": "talk",
-    "dialogue": "ch1#biscuit_friend",
-    "verb": "Biscuit"
-   }
-  },
-  {
-   "id": "trg_chaos",
-   "kind": "trigger",
-   "rect": [
-    50,
-    5,
-    7,
-    4
-   ],
-   "run": "ch1#street_chaos",
-   "if": "vanished"
-  },
-  {
-   "id": "trg_looter",
-   "kind": "trigger",
-   "rect": [
-    30,
-    5,
-    3,
-    5
-   ],
-   "run": "ch1#street_looter",
-   "if": "vanished & !street_looter_defeated"
-  },
-  {
-   "id": "trg_biscuit",
-   "kind": "trigger",
-   "rect": [
-    42,
-    5,
-    3,
-    5
-   ],
-   "run": "ch1#biscuit",
-   "if": "vanished & !C1_BISCUIT"
-  },
-  {
-   "id": "trg_erik",
-   "kind": "trigger",
-   "rect": [
-    33,
-    14,
-    5,
-    2
-   ],
-   "run": "ch1#erik_bark",
-   "if": "vanished"
-  },
-  {
-   "id": "trg_walt",
-   "kind": "trigger",
-   "rect": [
-    14,
-    7,
-    7,
-    3
-   ],
-   "run": "ch1#walt_bark",
-   "if": "vanished"
-  }
- ]
+  "name": "Linden Court and Ridge Road",
+  "ambient": "#6a5a88",
+  "vignette": 0.5,
+  "music": "unease",
+  "ambience": [
+    "crickets_night_loop"
+  ],
+  "variants": [
+    {
+      "if": "vanished",
+      "ambient": "#3a3048",
+      "vignette": 0.65,
+      "music": "chaos",
+      "ambience": [
+        "chaos_city_far_loop",
+        "car_alarm_loop",
+        "fire_crackle_loop",
+        "crowd_panic_far_loop"
+      ]
+    }
+  ],
+  "on_enter": [
+    {
+      "id": "street_dusk",
+      "if": "!vanished",
+      "run": "ch1#street_dusk"
+    }
+  ],
+  "interior": false,
+  "map": [
+    "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg",
+    "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg",
+    "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg",
+    "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg",
+    "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg",
+    "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg",
+    "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg",
+    "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg",
+    "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg",
+    "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg",
+    "ggggggggggggdddgggggggggggdddgggggggggggdddggggggggggggggggggggggggg",
+    "ggggggggggggdddgggggggggggdddgggggggggggdddggggggggggggggggggggggggg",
+    "ggggggggggggdddgggggggggggdddgggggggggggdddggggggggggggggggggggggggg",
+    "ggggggpgggggdddgggggpgggggdddgggggpgggggdddggggpgggdddgggggggggggggg",
+    "ggffffpffffgdddgffffpffffgdddgffffpffffgdddggffpfffdddggggdddddddddg",
+    "ggggggpgggggdddgggggpgggggdddgggggpgggggdddggggpgggdddggggdddddddddg",
+    "ggggggpgggggdddgggggpgggggdddgggggpgggggdddggggpgggdddggggdddddddddg",
+    "gsssssssssssdddsssssssssssdddsssssssssssdddssssssssdddsssssddddddsss",
+    "gsccccccccccDDDcccccccccccDDDcccccccccccDDDccccccccDDDcccccDDDDDDccc",
+    "gserrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr",
+    "gserrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr",
+    "gse-----------------------------------------------------------------",
+    "gserrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr",
+    "gserrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr",
+    "gsuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu",
+    "gsssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
+    "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg",
+    "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg",
+    "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg",
+    "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg"
+  ],
+  "legend": {
+    "g": "grass",
+    "s": "sidewalk",
+    "c": "curb",
+    "u": "curb_s",
+    "r": "road",
+    "-": "road_line",
+    "e": "curb_e",
+    "p": "path",
+    "d": "driveway",
+    "D": "curb_drive",
+    "f": "flowerbed"
+  },
+  "open_edges": [
+    {
+      "rect": [
+        66,
+        17,
+        2,
+        9
+      ],
+      "why": "Linden Court continues east to Ridge Road; Chapter 1 never goes there"
+    }
+  ],
+  "entities": [
+    {
+      "kind": "spawn",
+      "id": "house_front",
+      "pos": [
+        6,
+        14
+      ],
+      "offset": [
+        0,
+        6
+      ]
+    },
+    {
+      "kind": "spawn",
+      "id": "store_front",
+      "pos": [
+        62,
+        14
+      ],
+      "offset": [
+        0,
+        12
+      ]
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        -2
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        12
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        1
+      ],
+      "offset": [
+        0,
+        -6
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        1
+      ],
+      "offset": [
+        0,
+        8
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        2
+      ],
+      "offset": [
+        0,
+        -10
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        2
+      ],
+      "offset": [
+        0,
+        4
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        3
+      ],
+      "offset": [
+        0,
+        -14
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        3
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        3
+      ],
+      "offset": [
+        0,
+        14
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        4
+      ],
+      "offset": [
+        0,
+        -4
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        4
+      ],
+      "offset": [
+        0,
+        10
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        5
+      ],
+      "offset": [
+        0,
+        -8
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        5
+      ],
+      "offset": [
+        0,
+        6
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        6
+      ],
+      "offset": [
+        0,
+        -12
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        6
+      ],
+      "offset": [
+        0,
+        2
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        7
+      ],
+      "offset": [
+        0,
+        -16
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        7
+      ],
+      "offset": [
+        0,
+        -2
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        7
+      ],
+      "offset": [
+        0,
+        12
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        8
+      ],
+      "offset": [
+        0,
+        -6
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        8
+      ],
+      "offset": [
+        0,
+        8
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        9
+      ],
+      "offset": [
+        0,
+        -10
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        9
+      ],
+      "offset": [
+        0,
+        4
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        10
+      ],
+      "offset": [
+        0,
+        -14
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        10
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        10
+      ],
+      "offset": [
+        0,
+        14
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        11
+      ],
+      "offset": [
+        0,
+        -4
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        11
+      ],
+      "offset": [
+        0,
+        10
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        12
+      ],
+      "offset": [
+        0,
+        -8
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        12
+      ],
+      "offset": [
+        0,
+        6
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        13
+      ],
+      "offset": [
+        0,
+        -12
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        13
+      ],
+      "offset": [
+        0,
+        2
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        14
+      ],
+      "offset": [
+        0,
+        -16
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        14
+      ],
+      "offset": [
+        0,
+        -2
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        14
+      ],
+      "offset": [
+        0,
+        12
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        15
+      ],
+      "offset": [
+        0,
+        -6
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        15
+      ],
+      "offset": [
+        0,
+        8
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        16
+      ],
+      "offset": [
+        0,
+        -10
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        16
+      ],
+      "offset": [
+        0,
+        4
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        17
+      ],
+      "offset": [
+        0,
+        -14
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        17
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        17
+      ],
+      "offset": [
+        0,
+        14
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        18
+      ],
+      "offset": [
+        0,
+        -4
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        18
+      ],
+      "offset": [
+        0,
+        10
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        19
+      ],
+      "offset": [
+        0,
+        -8
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        19
+      ],
+      "offset": [
+        0,
+        6
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        20
+      ],
+      "offset": [
+        0,
+        -12
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        20
+      ],
+      "offset": [
+        0,
+        2
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        21
+      ],
+      "offset": [
+        0,
+        -16
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        21
+      ],
+      "offset": [
+        0,
+        -2
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        21
+      ],
+      "offset": [
+        0,
+        12
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        22
+      ],
+      "offset": [
+        0,
+        -6
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        22
+      ],
+      "offset": [
+        0,
+        8
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        23
+      ],
+      "offset": [
+        0,
+        -10
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        23
+      ],
+      "offset": [
+        0,
+        4
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        24
+      ],
+      "offset": [
+        0,
+        -14
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        24
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        24
+      ],
+      "offset": [
+        0,
+        14
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        25
+      ],
+      "offset": [
+        0,
+        -4
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        25
+      ],
+      "offset": [
+        0,
+        10
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        26
+      ],
+      "offset": [
+        0,
+        -8
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        26
+      ],
+      "offset": [
+        0,
+        6
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        27
+      ],
+      "offset": [
+        0,
+        -12
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        27
+      ],
+      "offset": [
+        0,
+        2
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        28
+      ],
+      "offset": [
+        0,
+        -16
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        28
+      ],
+      "offset": [
+        0,
+        -2
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        28
+      ],
+      "offset": [
+        0,
+        12
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        29
+      ],
+      "offset": [
+        0,
+        -6
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        0,
+        29
+      ],
+      "offset": [
+        0,
+        8
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        67,
+        0
+      ],
+      "offset": [
+        -16,
+        -2
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        67,
+        0
+      ],
+      "offset": [
+        -16,
+        12
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        67,
+        1
+      ],
+      "offset": [
+        -16,
+        -6
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        67,
+        1
+      ],
+      "offset": [
+        -16,
+        8
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        67,
+        2
+      ],
+      "offset": [
+        -16,
+        -10
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        67,
+        2
+      ],
+      "offset": [
+        -16,
+        4
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        67,
+        3
+      ],
+      "offset": [
+        -16,
+        -14
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        67,
+        3
+      ],
+      "offset": [
+        -16,
+        0
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        67,
+        3
+      ],
+      "offset": [
+        -16,
+        14
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        67,
+        4
+      ],
+      "offset": [
+        -16,
+        -4
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        67,
+        4
+      ],
+      "offset": [
+        -16,
+        10
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        67,
+        5
+      ],
+      "offset": [
+        -16,
+        -8
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        67,
+        5
+      ],
+      "offset": [
+        -16,
+        6
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        67,
+        6
+      ],
+      "offset": [
+        -16,
+        -12
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        67,
+        6
+      ],
+      "offset": [
+        -16,
+        2
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        67,
+        7
+      ],
+      "offset": [
+        -16,
+        -16
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        67,
+        7
+      ],
+      "offset": [
+        -16,
+        -2
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        67,
+        7
+      ],
+      "offset": [
+        -16,
+        12
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        67,
+        8
+      ],
+      "offset": [
+        -16,
+        -6
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        67,
+        8
+      ],
+      "offset": [
+        -16,
+        8
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        67,
+        9
+      ],
+      "offset": [
+        -16,
+        -10
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        67,
+        9
+      ],
+      "offset": [
+        -16,
+        4
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        67,
+        10
+      ],
+      "offset": [
+        -16,
+        -14
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        67,
+        10
+      ],
+      "offset": [
+        -16,
+        0
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        67,
+        10
+      ],
+      "offset": [
+        -16,
+        14
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        67,
+        11
+      ],
+      "offset": [
+        -16,
+        -4
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        67,
+        11
+      ],
+      "offset": [
+        -16,
+        10
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        67,
+        12
+      ],
+      "offset": [
+        -16,
+        -8
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        67,
+        12
+      ],
+      "offset": [
+        -16,
+        6
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        67,
+        13
+      ],
+      "offset": [
+        -16,
+        -12
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        67,
+        13
+      ],
+      "offset": [
+        -16,
+        2
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        67,
+        14
+      ],
+      "offset": [
+        -16,
+        -16
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        67,
+        14
+      ],
+      "offset": [
+        -16,
+        -2
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        67,
+        14
+      ],
+      "offset": [
+        -16,
+        12
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        67,
+        15
+      ],
+      "offset": [
+        -16,
+        -6
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        67,
+        15
+      ],
+      "offset": [
+        -16,
+        8
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        67,
+        16
+      ],
+      "offset": [
+        -16,
+        -10
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        67,
+        16
+      ],
+      "offset": [
+        -16,
+        4
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        67,
+        17
+      ],
+      "offset": [
+        -16,
+        -14
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        67,
+        26
+      ],
+      "offset": [
+        -16,
+        0
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        67,
+        26
+      ],
+      "offset": [
+        -16,
+        14
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        67,
+        27
+      ],
+      "offset": [
+        -16,
+        -4
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        67,
+        27
+      ],
+      "offset": [
+        -16,
+        10
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        67,
+        28
+      ],
+      "offset": [
+        -16,
+        -8
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        67,
+        28
+      ],
+      "offset": [
+        -16,
+        6
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        67,
+        29
+      ],
+      "offset": [
+        -16,
+        -12
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        67,
+        29
+      ],
+      "offset": [
+        -16,
+        2
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge_32",
+      "pos": [
+        67,
+        30
+      ],
+      "offset": [
+        -16,
+        -16
+      ],
+      "solid": [
+        32,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge",
+      "pos": [
+        1,
+        29
+      ],
+      "offset": [
+        0,
+        8
+      ],
+      "solid": [
+        64,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge",
+      "pos": [
+        3,
+        29
+      ],
+      "offset": [
+        0,
+        8
+      ],
+      "solid": [
+        64,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge",
+      "pos": [
+        5,
+        29
+      ],
+      "offset": [
+        0,
+        8
+      ],
+      "solid": [
+        64,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge",
+      "pos": [
+        7,
+        29
+      ],
+      "offset": [
+        0,
+        8
+      ],
+      "solid": [
+        64,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge",
+      "pos": [
+        9,
+        29
+      ],
+      "offset": [
+        0,
+        8
+      ],
+      "solid": [
+        64,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge",
+      "pos": [
+        11,
+        29
+      ],
+      "offset": [
+        0,
+        8
+      ],
+      "solid": [
+        64,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge",
+      "pos": [
+        13,
+        29
+      ],
+      "offset": [
+        0,
+        8
+      ],
+      "solid": [
+        64,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge",
+      "pos": [
+        15,
+        29
+      ],
+      "offset": [
+        0,
+        8
+      ],
+      "solid": [
+        64,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge",
+      "pos": [
+        17,
+        29
+      ],
+      "offset": [
+        0,
+        8
+      ],
+      "solid": [
+        64,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge",
+      "pos": [
+        19,
+        29
+      ],
+      "offset": [
+        0,
+        8
+      ],
+      "solid": [
+        64,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge",
+      "pos": [
+        21,
+        29
+      ],
+      "offset": [
+        0,
+        8
+      ],
+      "solid": [
+        64,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge",
+      "pos": [
+        23,
+        29
+      ],
+      "offset": [
+        0,
+        8
+      ],
+      "solid": [
+        64,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge",
+      "pos": [
+        25,
+        29
+      ],
+      "offset": [
+        0,
+        8
+      ],
+      "solid": [
+        64,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge",
+      "pos": [
+        27,
+        29
+      ],
+      "offset": [
+        0,
+        8
+      ],
+      "solid": [
+        64,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge",
+      "pos": [
+        29,
+        29
+      ],
+      "offset": [
+        0,
+        8
+      ],
+      "solid": [
+        64,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge",
+      "pos": [
+        31,
+        29
+      ],
+      "offset": [
+        0,
+        8
+      ],
+      "solid": [
+        64,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge",
+      "pos": [
+        33,
+        29
+      ],
+      "offset": [
+        0,
+        8
+      ],
+      "solid": [
+        64,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge",
+      "pos": [
+        35,
+        29
+      ],
+      "offset": [
+        0,
+        8
+      ],
+      "solid": [
+        64,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge",
+      "pos": [
+        37,
+        29
+      ],
+      "offset": [
+        0,
+        8
+      ],
+      "solid": [
+        64,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge",
+      "pos": [
+        39,
+        29
+      ],
+      "offset": [
+        0,
+        8
+      ],
+      "solid": [
+        64,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge",
+      "pos": [
+        41,
+        29
+      ],
+      "offset": [
+        0,
+        8
+      ],
+      "solid": [
+        64,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge",
+      "pos": [
+        43,
+        29
+      ],
+      "offset": [
+        0,
+        8
+      ],
+      "solid": [
+        64,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge",
+      "pos": [
+        45,
+        29
+      ],
+      "offset": [
+        0,
+        8
+      ],
+      "solid": [
+        64,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge",
+      "pos": [
+        47,
+        29
+      ],
+      "offset": [
+        0,
+        8
+      ],
+      "solid": [
+        64,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge",
+      "pos": [
+        49,
+        29
+      ],
+      "offset": [
+        0,
+        8
+      ],
+      "solid": [
+        64,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge",
+      "pos": [
+        51,
+        29
+      ],
+      "offset": [
+        0,
+        8
+      ],
+      "solid": [
+        64,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge",
+      "pos": [
+        53,
+        29
+      ],
+      "offset": [
+        0,
+        8
+      ],
+      "solid": [
+        64,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge",
+      "pos": [
+        55,
+        29
+      ],
+      "offset": [
+        0,
+        8
+      ],
+      "solid": [
+        64,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge",
+      "pos": [
+        57,
+        29
+      ],
+      "offset": [
+        0,
+        8
+      ],
+      "solid": [
+        64,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge",
+      "pos": [
+        59,
+        29
+      ],
+      "offset": [
+        0,
+        8
+      ],
+      "solid": [
+        64,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge",
+      "pos": [
+        61,
+        29
+      ],
+      "offset": [
+        0,
+        8
+      ],
+      "solid": [
+        64,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge",
+      "pos": [
+        63,
+        29
+      ],
+      "offset": [
+        0,
+        8
+      ],
+      "solid": [
+        64,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "art": "hedge",
+      "pos": [
+        65,
+        29
+      ],
+      "offset": [
+        0,
+        8
+      ],
+      "solid": [
+        64,
+        14
+      ],
+      "fence": true
+    },
+    {
+      "id": "s_hale",
+      "art": "house_hale_night",
+      "pos": [
+        6,
+        14
+      ],
+      "offset": [
+        0,
+        -16
+      ],
+      "solid": "art",
+      "building": true,
+      "interact": {
+        "type": "door",
+        "to": "house",
+        "spawn": "front_door",
+        "verb": "Go home",
+        "offset": [
+          0,
+          -24
+        ],
+        "radius": 16,
+        "requires": "!vanished | street_looter_defeated",
+        "locked_dialogue": "ch1#home_blocked"
+      }
+    },
+    {
+      "id": "s_porch_light",
+      "kind": "light",
+      "pos": [
+        7,
+        11
+      ],
+      "offset": [
+        -4,
+        -16
+      ],
+      "light": "porch",
+      "if": "C1_LAST_WORDS"
+    },
+    {
+      "id": "s_walt_house",
+      "art": "house_dunmore_night",
+      "pos": [
+        20,
+        14
+      ],
+      "offset": [
+        0,
+        -16
+      ],
+      "solid": "art",
+      "building": true
+    },
+    {
+      "id": "s_walt_porch",
+      "pos": [
+        20,
+        14
+      ],
+      "offset": [
+        0,
+        -16
+      ],
+      "interact": {
+        "type": "examine",
+        "dialogue": "c1_script#C1_OBJ_WALT_FLAG",
+        "offset": [
+          0,
+          -22
+        ],
+        "radius": 18
+      }
+    },
+    {
+      "kind": "light",
+      "pos": [
+        21,
+        11
+      ],
+      "offset": [
+        -4,
+        -16
+      ],
+      "light": "porch"
+    },
+    {
+      "id": "s_house_nine",
+      "art": "house_dunmore",
+      "pos": [
+        34,
+        14
+      ],
+      "offset": [
+        0,
+        -16
+      ],
+      "flip": true,
+      "solid": "art",
+      "building": true
+    },
+    {
+      "id": "s_okoro_house",
+      "art": "house_okoro",
+      "pos": [
+        49,
+        14
+      ],
+      "offset": [
+        -1,
+        -16
+      ],
+      "solid": "art",
+      "building": true
+    },
+    {
+      "kind": "light",
+      "pos": [
+        48,
+        12
+      ],
+      "offset": [
+        -12,
+        0
+      ],
+      "light": "porch"
+    },
+    {
+      "id": "s_store_open",
+      "art": "store_ridge_mart",
+      "pos": [
+        62,
+        14
+      ],
+      "offset": [
+        0,
+        -16
+      ],
+      "solid": "art",
+      "building": true,
+      "light": {
+        "type": "sign",
+        "offset": [
+          0,
+          -150
+        ]
+      },
+      "interact": {
+        "type": "door",
+        "to": "store",
+        "spawn": "entrance",
+        "verb": "Enter the market",
+        "offset": [
+          0,
+          -16
+        ],
+        "radius": 18
+      },
+      "if": "!vanished"
+    },
+    {
+      "id": "s_store_dark",
+      "art": "store_ridge_mart_dark",
+      "pos": [
+        62,
+        14
+      ],
+      "offset": [
+        0,
+        -16
+      ],
+      "solid": "art",
+      "building": true,
+      "interact": {
+        "type": "door",
+        "to": "store",
+        "spawn": "entrance",
+        "verb": "Enter the market",
+        "offset": [
+          0,
+          -16
+        ],
+        "radius": 18,
+        "requires": "!vanished",
+        "locked_lines": [
+          "Not back in there. Not now."
+        ]
+      },
+      "if": "vanished"
+    },
+    {
+      "id": "s_store_win1",
+      "kind": "light",
+      "art": "store_window",
+      "pos": [
+        60,
+        13
+      ],
+      "offset": [
+        4,
+        8
+      ],
+      "light": {
+        "type": "window",
+        "color": "#ffd8a0",
+        "radius": 80,
+        "if": "!vanished"
+      }
+    },
+    {
+      "id": "s_store_win2",
+      "kind": "light",
+      "art": "store_window",
+      "pos": [
+        64,
+        13
+      ],
+      "offset": [
+        -4,
+        8
+      ],
+      "light": {
+        "type": "window",
+        "color": "#ffd8a0",
+        "radius": 80,
+        "if": "!vanished"
+      }
+    },
+    {
+      "art": "fence_privacy",
+      "pos": [
+        12,
+        10
+      ],
+      "offset": [
+        -11,
+        -6
+      ],
+      "solid": [
+        32,
+        8
+      ],
+      "fence": true
+    },
+    {
+      "id": "s_hale_gate",
+      "art": "fence_privacy_gate",
+      "pos": [
+        13,
+        10
+      ],
+      "offset": [
+        -14.33,
+        -6
+      ],
+      "solid": [
+        32,
+        8
+      ],
+      "fence": true,
+      "interact": {
+        "type": "examine",
+        "text": "The side gate to the backyard. Latched from the inside.",
+        "offset": [
+          0,
+          -4
+        ],
+        "radius": 14
+      }
+    },
+    {
+      "art": "fence_privacy",
+      "pos": [
+        13,
+        10
+      ],
+      "offset": [
+        14.33,
+        -6
+      ],
+      "solid": [
+        32,
+        8
+      ],
+      "fence": true
+    },
+    {
+      "art": "fence_privacy",
+      "pos": [
+        14,
+        10
+      ],
+      "offset": [
+        11,
+        -6
+      ],
+      "solid": [
+        32,
+        8
+      ],
+      "fence": true
+    },
+    {
+      "art": "fence_privacy",
+      "pos": [
+        26,
+        10
+      ],
+      "offset": [
+        -11,
+        -6
+      ],
+      "solid": [
+        32,
+        8
+      ],
+      "fence": true
+    },
+    {
+      "id": "s_walt_gate",
+      "art": "fence_privacy_gate",
+      "pos": [
+        27,
+        10
+      ],
+      "offset": [
+        -14.33,
+        -6
+      ],
+      "solid": [
+        32,
+        8
+      ],
+      "fence": true,
+      "interact": {
+        "type": "examine",
+        "text": "The side gate to the backyard. Latched from the inside.",
+        "offset": [
+          0,
+          -4
+        ],
+        "radius": 14
+      }
+    },
+    {
+      "art": "fence_privacy",
+      "pos": [
+        27,
+        10
+      ],
+      "offset": [
+        14.33,
+        -6
+      ],
+      "solid": [
+        32,
+        8
+      ],
+      "fence": true
+    },
+    {
+      "art": "fence_privacy",
+      "pos": [
+        28,
+        10
+      ],
+      "offset": [
+        11,
+        -6
+      ],
+      "solid": [
+        32,
+        8
+      ],
+      "fence": true
+    },
+    {
+      "art": "fence_privacy",
+      "pos": [
+        40,
+        10
+      ],
+      "offset": [
+        -11,
+        14
+      ],
+      "solid": [
+        32,
+        8
+      ],
+      "fence": true
+    },
+    {
+      "id": "s_nine_gate",
+      "art": "fence_privacy_gate",
+      "pos": [
+        41,
+        10
+      ],
+      "offset": [
+        -15.75,
+        14
+      ],
+      "solid": [
+        32,
+        8
+      ],
+      "fence": true,
+      "interact": {
+        "type": "examine",
+        "text": "The side gate to the backyard. Latched from the inside.",
+        "offset": [
+          0,
+          -4
+        ],
+        "radius": 14
+      }
+    },
+    {
+      "art": "fence_privacy",
+      "pos": [
+        41,
+        10
+      ],
+      "offset": [
+        11.5,
+        14
+      ],
+      "solid": [
+        32,
+        8
+      ],
+      "fence": true
+    },
+    {
+      "art": "fence_privacy",
+      "pos": [
+        42,
+        10
+      ],
+      "offset": [
+        6.75,
+        14
+      ],
+      "solid": [
+        32,
+        8
+      ],
+      "fence": true
+    },
+    {
+      "art": "fence_privacy",
+      "pos": [
+        43,
+        10
+      ],
+      "offset": [
+        2,
+        14
+      ],
+      "solid": [
+        32,
+        8
+      ],
+      "fence": true
+    },
+    {
+      "art": "fence_chainlink",
+      "pos": [
+        55,
+        11
+      ],
+      "offset": [
+        -5,
+        -16
+      ],
+      "solid": [
+        32,
+        8
+      ],
+      "fence": true
+    },
+    {
+      "art": "fence_chainlink",
+      "pos": [
+        56,
+        11
+      ],
+      "offset": [
+        -6.33,
+        -16
+      ],
+      "solid": [
+        32,
+        8
+      ],
+      "fence": true
+    },
+    {
+      "art": "fence_chainlink",
+      "pos": [
+        57,
+        11
+      ],
+      "offset": [
+        -7.67,
+        -16
+      ],
+      "solid": [
+        32,
+        8
+      ],
+      "fence": true
+    },
+    {
+      "art": "fence_chainlink",
+      "pos": [
+        58,
+        11
+      ],
+      "offset": [
+        -9,
+        -16
+      ],
+      "solid": [
+        32,
+        8
+      ],
+      "fence": true
+    },
+    {
+      "id": "s_ev_charger",
+      "art": "ev_charger",
+      "pos": [
+        12,
+        13
+      ],
+      "offset": [
+        -8,
+        -12
+      ],
+      "solid": [
+        14,
+        8
+      ]
+    },
+    {
+      "id": "s_hale_car",
+      "art": "car_blue",
+      "pos": [
+        13,
+        15
+      ],
+      "offset": [
+        0,
+        10
+      ],
+      "solid": [
+        74,
+        28
+      ],
+      "vehicle": true,
+      "interact": {
+        "type": "examine",
+        "text": "Mom's little teal hatchback, plugged in for the night.",
+        "offset": [
+          0,
+          -8
+        ],
+        "radius": 22
+      }
+    },
+    {
+      "art": "recycling_bin",
+      "pos": [
+        14,
+        12
+      ],
+      "offset": [
+        -8,
+        12
+      ],
+      "solid": [
+        22,
+        8
+      ]
+    },
+    {
+      "art": "trash_can",
+      "pos": [
+        14,
+        13
+      ],
+      "offset": [
+        6,
+        0
+      ],
+      "solid": [
+        22,
+        8
+      ]
+    },
+    {
+      "art": "mailbox",
+      "pos": [
+        11,
+        17
+      ],
+      "offset": [
+        4,
+        14
+      ],
+      "solid": [
+        6,
+        4
+      ],
+      "solid_offset": [
+        1,
+        0
+      ]
+    },
+    {
+      "id": "walt",
+      "kind": "npc",
+      "art": "walt",
+      "pos": [
+        22,
+        15
+      ],
+      "offset": [
+        4,
+        10
+      ],
+      "interact": {
+        "type": "talk",
+        "dialogue": "ch1#walt"
+      }
+    },
+    {
+      "art": "mailbox",
+      "pos": [
+        25,
+        17
+      ],
+      "offset": [
+        4,
+        14
+      ],
+      "solid": [
+        6,
+        4
+      ],
+      "solid_offset": [
+        1,
+        0
+      ]
+    },
+    {
+      "art": "car_silver",
+      "pos": [
+        27,
+        16
+      ],
+      "offset": [
+        0,
+        -8
+      ],
+      "solid": [
+        90,
+        26
+      ],
+      "vehicle": true
+    },
+    {
+      "art": "tree",
+      "pos": [
+        18,
+        16
+      ],
+      "offset": [
+        -2,
+        -8
+      ],
+      "solid": [
+        16,
+        10
+      ],
+      "solid_offset": [
+        3,
+        0
+      ]
+    },
+    {
+      "id": "s_for_sale",
+      "art": "for_sale_sign",
+      "pos": [
+        32,
+        16
+      ],
+      "offset": [
+        -10,
+        -8
+      ],
+      "solid": [
+        6,
+        4
+      ],
+      "interact": {
+        "type": "examine",
+        "dialogue": "c1_script#C1_OBJ_FOR_SALE",
+        "offset": [
+          0,
+          -4
+        ]
+      },
+      "solid_offset": [
+        -11,
+        0
+      ]
+    },
+    {
+      "art": "mailbox",
+      "pos": [
+        39,
+        17
+      ],
+      "offset": [
+        4,
+        14
+      ],
+      "solid": [
+        6,
+        4
+      ],
+      "solid_offset": [
+        1,
+        0
+      ]
+    },
+    {
+      "id": "okoro_suv",
+      "art": "car_red",
+      "pos": [
+        52,
+        16
+      ],
+      "offset": [
+        0,
+        -6
+      ],
+      "solid": [
+        92,
+        28
+      ],
+      "if": "!vanished",
+      "interact": {
+        "type": "examine",
+        "dialogue": "c1_script#C1_OBJ_OKORO_SUV",
+        "offset": [
+          0,
+          -6
+        ],
+        "radius": 26
+      },
+      "vehicle": true
+    },
+    {
+      "id": "felix",
+      "kind": "npc",
+      "art": "felix",
+      "pos": [
+        49,
+        15
+      ],
+      "offset": [
+        14,
+        4
+      ],
+      "if": "!vanished",
+      "leaves": "clothes_felix",
+      "interact": {
+        "type": "talk",
+        "dialogue": "ch1#okoros"
+      }
+    },
+    {
+      "id": "dana",
+      "kind": "npc",
+      "art": "dana",
+      "pos": [
+        53,
+        17
+      ],
+      "offset": [
+        -10,
+        -12
+      ],
+      "facing": "left",
+      "if": "!vanished",
+      "interact": {
+        "type": "talk",
+        "dialogue": "ch1#okoros"
+      }
+    },
+    {
+      "art": "basketball_hoop",
+      "pos": [
+        54,
+        13
+      ],
+      "offset": [
+        8,
+        8
+      ],
+      "solid": [
+        8,
+        6
+      ],
+      "solid_offset": [
+        24,
+        0
+      ]
+    },
+    {
+      "id": "noah",
+      "kind": "npc",
+      "art": "noah",
+      "pos": [
+        55,
+        16
+      ],
+      "offset": [
+        14,
+        -8
+      ],
+      "if": "!vanished",
+      "interact": {
+        "type": "talk",
+        "dialogue": "ch1#noah"
+      }
+    },
+    {
+      "id": "noah_bike",
+      "art": "bike",
+      "pos": [
+        56,
+        16
+      ],
+      "offset": [
+        14,
+        -8
+      ],
+      "if": "!vanished",
+      "interact": {
+        "type": "examine",
+        "dialogue": "c1_script#C1_OBJ_NOAH_BIKE",
+        "offset": [
+          0,
+          -8
+        ]
+      },
+      "solid": [
+        30,
+        6
+      ]
+    },
+    {
+      "art": "mailbox",
+      "pos": [
+        50,
+        17
+      ],
+      "offset": [
+        0,
+        14
+      ],
+      "solid": [
+        6,
+        4
+      ],
+      "solid_offset": [
+        1,
+        0
+      ]
+    },
+    {
+      "art": "trash_can",
+      "pos": [
+        55,
+        12
+      ],
+      "offset": [
+        14,
+        4
+      ],
+      "solid": [
+        22,
+        8
+      ]
+    },
+    {
+      "art": "recycling_bin",
+      "pos": [
+        56,
+        12
+      ],
+      "offset": [
+        14,
+        4
+      ],
+      "solid": [
+        22,
+        8
+      ]
+    },
+    {
+      "art": "planter",
+      "pos": [
+        61,
+        15
+      ],
+      "offset": [
+        -8,
+        -6
+      ],
+      "solid": [
+        46,
+        12
+      ],
+      "solid_offset": [
+        -4,
+        0
+      ]
+    },
+    {
+      "art": "planter",
+      "pos": [
+        63,
+        15
+      ],
+      "offset": [
+        8,
+        -6
+      ],
+      "solid": [
+        46,
+        12
+      ],
+      "solid_offset": [
+        -4,
+        0
+      ]
+    },
+    {
+      "id": "s_delivery_bot",
+      "art": "delivery_bot",
+      "pos": [
+        65,
+        16
+      ],
+      "offset": [
+        -6,
+        -8
+      ],
+      "solid": [
+        30,
+        10
+      ],
+      "solid_offset": [
+        -1,
+        0
+      ],
+      "interact": {
+        "type": "examine",
+        "text": "A six-wheeled delivery robot, waiting by the market door with its lid shut.",
+        "offset": [
+          0,
+          -10
+        ]
+      }
+    },
+    {
+      "art": "hydrant",
+      "pos": [
+        57,
+        17
+      ],
+      "offset": [
+        0,
+        10
+      ],
+      "solid": [
+        12,
+        6
+      ],
+      "solid_offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "s_lamp_0",
+      "art": "streetlight",
+      "pos": [
+        3,
+        17
+      ],
+      "offset": [
+        4,
+        12
+      ],
+      "solid": [
+        8,
+        6
+      ],
+      "solid_offset": [
+        34,
+        0
+      ],
+      "light": {
+        "type": "street",
+        "offset": [
+          -26,
+          -150
+        ],
+        "group": "streetlights"
+      }
+    },
+    {
+      "id": "s_lamp_1",
+      "art": "streetlight",
+      "pos": [
+        16,
+        17
+      ],
+      "offset": [
+        -2,
+        12
+      ],
+      "solid": [
+        8,
+        6
+      ],
+      "solid_offset": [
+        34,
+        0
+      ],
+      "light": {
+        "type": "street",
+        "offset": [
+          -26,
+          -150
+        ],
+        "group": "streetlights"
+      }
+    },
+    {
+      "id": "s_lamp_2",
+      "art": "streetlight",
+      "pos": [
+        35,
+        17
+      ],
+      "offset": [
+        10,
+        12
+      ],
+      "solid": [
+        8,
+        6
+      ],
+      "solid_offset": [
+        34,
+        0
+      ],
+      "light": {
+        "type": "street",
+        "offset": [
+          -26,
+          -150
+        ],
+        "group": "streetlights"
+      }
+    },
+    {
+      "id": "s_lamp_3",
+      "art": "streetlight",
+      "pos": [
+        40,
+        17
+      ],
+      "offset": [
+        0,
+        12
+      ],
+      "solid": [
+        8,
+        6
+      ],
+      "solid_offset": [
+        34,
+        0
+      ],
+      "light": {
+        "type": "street",
+        "offset": [
+          -26,
+          -150
+        ],
+        "group": "streetlights"
+      }
+    },
+    {
+      "id": "s_lamp_4",
+      "art": "streetlight",
+      "pos": [
+        55,
+        17
+      ],
+      "offset": [
+        -10,
+        12
+      ],
+      "solid": [
+        8,
+        6
+      ],
+      "solid_offset": [
+        34,
+        0
+      ],
+      "light": {
+        "type": "street",
+        "offset": [
+          -26,
+          -150
+        ],
+        "group": "streetlights"
+      }
+    },
+    {
+      "id": "s_lamp_5",
+      "art": "streetlight",
+      "pos": [
+        10,
+        25
+      ],
+      "offset": [
+        -10,
+        12
+      ],
+      "solid": [
+        8,
+        6
+      ],
+      "solid_offset": [
+        34,
+        0
+      ],
+      "light": {
+        "type": "street",
+        "offset": [
+          -26,
+          -150
+        ],
+        "group": "streetlights"
+      }
+    },
+    {
+      "id": "s_lamp_6",
+      "art": "streetlight",
+      "pos": [
+        29,
+        25
+      ],
+      "offset": [
+        2,
+        12
+      ],
+      "solid": [
+        8,
+        6
+      ],
+      "solid_offset": [
+        34,
+        0
+      ],
+      "light": {
+        "type": "street",
+        "offset": [
+          -26,
+          -150
+        ],
+        "group": "streetlights"
+      }
+    },
+    {
+      "id": "s_lamp_7",
+      "art": "streetlight",
+      "pos": [
+        48,
+        25
+      ],
+      "offset": [
+        -6,
+        12
+      ],
+      "solid": [
+        8,
+        6
+      ],
+      "solid_offset": [
+        34,
+        0
+      ],
+      "light": {
+        "type": "street",
+        "offset": [
+          -26,
+          -150
+        ],
+        "group": "streetlights"
+      }
+    },
+    {
+      "id": "s_lamp_8",
+      "art": "streetlight",
+      "pos": [
+        63,
+        25
+      ],
+      "offset": [
+        14,
+        12
+      ],
+      "solid": [
+        8,
+        6
+      ],
+      "solid_offset": [
+        34,
+        0
+      ],
+      "light": {
+        "type": "street",
+        "offset": [
+          -26,
+          -150
+        ],
+        "group": "streetlights"
+      }
+    },
+    {
+      "id": "s_flyer",
+      "art": "flyer",
+      "pos": [
+        17,
+        16
+      ],
+      "offset": [
+        -2,
+        12
+      ],
+      "interact": {
+        "type": "examine",
+        "dialogue": "c1_script#C1_OBJ_CHURCH_FLYER",
+        "offset": [
+          0,
+          20
+        ]
+      },
+      "on": "s_lamp_1"
+    },
+    {
+      "art": "tree",
+      "pos": [
+        4,
+        28
+      ],
+      "offset": [
+        -4,
+        -7
+      ],
+      "solid": [
+        16,
+        10
+      ],
+      "solid_offset": [
+        3,
+        0
+      ]
+    },
+    {
+      "art": "tree",
+      "pos": [
+        16,
+        28
+      ],
+      "offset": [
+        -8,
+        -7
+      ],
+      "solid": [
+        16,
+        10
+      ],
+      "solid_offset": [
+        3,
+        0
+      ]
+    },
+    {
+      "art": "tree",
+      "pos": [
+        26,
+        28
+      ],
+      "offset": [
+        -8,
+        -7
+      ],
+      "solid": [
+        16,
+        10
+      ],
+      "solid_offset": [
+        3,
+        0
+      ]
+    },
+    {
+      "art": "tree",
+      "pos": [
+        39,
+        28
+      ],
+      "offset": [
+        -14,
+        -7
+      ],
+      "solid": [
+        16,
+        10
+      ],
+      "solid_offset": [
+        3,
+        0
+      ]
+    },
+    {
+      "art": "tree",
+      "pos": [
+        51,
+        28
+      ],
+      "offset": [
+        12,
+        -7
+      ],
+      "solid": [
+        16,
+        10
+      ],
+      "solid_offset": [
+        3,
+        0
+      ]
+    },
+    {
+      "art": "tree",
+      "pos": [
+        61,
+        28
+      ],
+      "offset": [
+        -8,
+        -7
+      ],
+      "solid": [
+        16,
+        10
+      ],
+      "solid_offset": [
+        3,
+        0
+      ]
+    },
+    {
+      "id": "s_sky",
+      "pos": [
+        28,
+        17
+      ],
+      "offset": [
+        -12,
+        6
+      ],
+      "interact": {
+        "type": "examine",
+        "dialogue": "ch1#look_up",
+        "verb": "Look up",
+        "offset": [
+          0,
+          -8
+        ]
+      }
+    },
+    {
+      "id": "erik",
+      "kind": "npc",
+      "art": "erik",
+      "pos": [
+        34,
+        25
+      ],
+      "offset": [
+        -4,
+        0
+      ],
+      "interact": {
+        "type": "talk",
+        "dialogue": "ch1#erik"
+      }
+    },
+    {
+      "id": "ines",
+      "kind": "npc",
+      "art": "ines",
+      "pos": [
+        35,
+        17
+      ],
+      "offset": [
+        14,
+        -4
+      ],
+      "facing": "left",
+      "if": "!vanished",
+      "interact": {
+        "type": "talk",
+        "dialogue": "ch1#ines"
+      }
+    },
+    {
+      "id": "biscuit_walk",
+      "kind": "npc",
+      "art": "dog",
+      "pos": [
+        34,
+        17
+      ],
+      "offset": [
+        12,
+        2
+      ],
+      "facing": "right",
+      "if": "!vanished",
+      "solid": [
+        20,
+        8
+      ],
+      "interact": {
+        "type": "talk",
+        "dialogue": "ch1#ines",
+        "verb": "Pet"
+      }
+    },
+    {
+      "id": "c_wreck",
+      "art": "car_wreck",
+      "pos": [
+        40,
+        20
+      ],
+      "offset": [
+        4,
+        -10
+      ],
+      "solid": [
+        96,
+        30
+      ],
+      "if": "vanished",
+      "light": {
+        "type": "fire",
+        "offset": [
+          -20,
+          -40
+        ]
+      },
+      "interact": {
+        "type": "examine",
+        "dialogue": "ch1#dana",
+        "verb": "The Okoros' SUV",
+        "offset": [
+          0,
+          -46
+        ],
+        "radius": 28
+      },
+      "vehicle": true
+    },
+    {
+      "id": "c_fire",
+      "art": "fx_fire",
+      "pos": [
+        40,
+        19
+      ],
+      "offset": [
+        -14,
+        -4
+      ],
+      "if": "vanished",
+      "on": "c_wreck"
+    },
+    {
+      "id": "c_smoke",
+      "art": "fx_smoke",
+      "pos": [
+        40,
+        18
+      ],
+      "offset": [
+        -6,
+        8
+      ],
+      "on": "c_wreck",
+      "if": "vanished"
+    },
+    {
+      "id": "c_van",
+      "art": "van",
+      "pos": [
+        56,
+        22
+      ],
+      "offset": [
+        12,
+        0
+      ],
+      "solid": [
+        108,
+        26
+      ],
+      "if": "vanished",
+      "light": {
+        "type": "hazard",
+        "offset": [
+          50,
+          -20
+        ]
+      },
+      "interact": {
+        "type": "examine",
+        "dialogue": "c1_script#C1_OBJ_DELIVERY_VAN",
+        "offset": [
+          0,
+          -6
+        ],
+        "radius": 26
+      },
+      "vehicle": true
+    },
+    {
+      "id": "c_bike_night",
+      "art": "bike",
+      "pos": [
+        55,
+        17
+      ],
+      "offset": [
+        4,
+        -4
+      ],
+      "if": "vanished",
+      "interact": {
+        "type": "examine",
+        "dialogue": "c1_script#C1_OBJ_NOAH_BIKE_NIGHT",
+        "offset": [
+          0,
+          -6
+        ]
+      },
+      "on": "ground",
+      "story": "Noah's bike, dropped where he vanished"
+    },
+    {
+      "id": "c_clothes_noah",
+      "art": "clothes_noah",
+      "pos": [
+        55,
+        16
+      ],
+      "offset": [
+        14,
+        2
+      ],
+      "if": "vanished",
+      "interact": {
+        "type": "examine",
+        "dialogue": "ch1#noah_clothes",
+        "offset": [
+          0,
+          -6
+        ]
+      },
+      "on": "ground",
+      "story": "Noah's clothes, where he stood"
+    },
+    {
+      "id": "c_bat",
+      "art": "bat_world",
+      "pos": [
+        56,
+        16
+      ],
+      "offset": [
+        8,
+        8
+      ],
+      "if": "vanished",
+      "interact": {
+        "type": "pickup",
+        "item": "bat",
+        "dialogue": "ch1#found_bat",
+        "offset": [
+          0,
+          -6
+        ]
+      },
+      "on": "ground",
+      "story": "Noah's Little League bat, dropped with his clothes"
+    },
+    {
+      "id": "c_sneaker",
+      "art": "sneaker",
+      "pos": [
+        45,
+        21
+      ],
+      "offset": [
+        4,
+        2
+      ],
+      "if": "vanished",
+      "interact": {
+        "type": "examine",
+        "dialogue": "c1_script#C1_OBJ_SHOE_STREET",
+        "offset": [
+          0,
+          -6
+        ]
+      },
+      "on": "ground",
+      "floor": true,
+      "story": "A child's sneaker in the road"
+    },
+    {
+      "id": "c_sky",
+      "pos": [
+        20,
+        17
+      ],
+      "offset": [
+        -16,
+        6
+      ],
+      "if": "vanished",
+      "interact": {
+        "type": "examine",
+        "dialogue": "c1_script#C1_OBJ_SKY_NIGHT",
+        "verb": "Look up",
+        "offset": [
+          0,
+          -8
+        ]
+      }
+    },
+    {
+      "id": "c_glass",
+      "art": "glass_floor",
+      "pos": [
+        60,
+        14
+      ],
+      "offset": [
+        4,
+        6
+      ],
+      "anchor": "bottom",
+      "floor": true,
+      "if": "vanished",
+      "on": "ground",
+      "story": "The market's front window, blown in by the shockwave of the crash"
+    },
+    {
+      "id": "c_clothes_1",
+      "art": "clothes_generic",
+      "pos": [
+        25,
+        17
+      ],
+      "offset": [
+        -16,
+        6
+      ],
+      "if": "vanished",
+      "on": "ground",
+      "story": "Somebody walking home with groceries, gone"
+    },
+    {
+      "id": "c_groceries",
+      "art": "grocery_bag_world",
+      "pos": [
+        25,
+        17
+      ],
+      "offset": [
+        8,
+        8
+      ],
+      "on": "ground",
+      "story": "Their grocery bag, dropped with the clothes",
+      "if": "vanished"
+    },
+    {
+      "id": "c_water",
+      "art": "water_world",
+      "pos": [
+        26,
+        17
+      ],
+      "offset": [
+        -14,
+        12
+      ],
+      "if": "vanished",
+      "interact": {
+        "type": "pickup",
+        "item": "water",
+        "offset": [
+          0,
+          -6
+        ]
+      },
+      "on": "ground",
+      "story": "A water bottle rolled out of the dropped grocery bag"
+    },
+    {
+      "id": "c_clothes_ines",
+      "art": "clothes_ines",
+      "pos": [
+        35,
+        17
+      ],
+      "offset": [
+        14,
+        6
+      ],
+      "on": "ground",
+      "story": "Mrs. Albright, gone mid-walk",
+      "if": "vanished"
+    },
+    {
+      "id": "c_leash",
+      "art": "leash",
+      "pos": [
+        35,
+        17
+      ],
+      "offset": [
+        -4,
+        12
+      ],
+      "anchor": "center",
+      "floor": true,
+      "if": "vanished",
+      "on": "ground",
+      "story": "Biscuit's empty leash, still clipped to nothing"
+    },
+    {
+      "id": "street_looter",
+      "kind": "enemy",
+      "pos": [
+        29,
+        17
+      ],
+      "offset": [
+        -4,
+        0
+      ],
+      "enemy": "looter",
+      "if": "vanished",
+      "defeat_flag": "street_looter_defeated",
+      "on_defeat": "ch1#street_looter_beaten"
+    },
+    {
+      "id": "biscuit_scared",
+      "kind": "npc",
+      "art": "dog",
+      "pos": [
+        53,
+        17
+      ],
+      "offset": [
+        -12,
+        6
+      ],
+      "if": "vanished & !C1_BISCUIT",
+      "solid": [
+        20,
+        8
+      ],
+      "interact": {
+        "type": "talk",
+        "dialogue": "ch1#biscuit",
+        "verb": "Biscuit"
+      },
+      "facing": "left"
+    },
+    {
+      "id": "biscuit",
+      "kind": "enemy",
+      "pos": [
+        53,
+        17
+      ],
+      "offset": [
+        -12,
+        6
+      ],
+      "enemy": "dog",
+      "if": "biscuit_hostile",
+      "defeat_flag": "biscuit_gone",
+      "on_defeat": "ch1#biscuit_bolted"
+    },
+    {
+      "id": "biscuit_friend",
+      "kind": "npc",
+      "art": "dog",
+      "pos": [
+        8,
+        16
+      ],
+      "offset": [
+        8,
+        -8
+      ],
+      "facing": "left",
+      "if": "C1_BISCUIT == befriended",
+      "interact": {
+        "type": "talk",
+        "dialogue": "ch1#biscuit_friend",
+        "verb": "Biscuit"
+      }
+    },
+    {
+      "id": "trg_chaos",
+      "kind": "trigger",
+      "rect": [
+        56,
+        14,
+        10,
+        4
+      ],
+      "run": "ch1#street_chaos",
+      "if": "vanished"
+    },
+    {
+      "id": "trg_looter",
+      "kind": "trigger",
+      "rect": [
+        31,
+        15,
+        3,
+        4
+      ],
+      "run": "ch1#street_looter",
+      "if": "vanished & !street_looter_defeated"
+    },
+    {
+      "id": "trg_biscuit",
+      "kind": "trigger",
+      "rect": [
+        52,
+        16,
+        3,
+        3
+      ],
+      "run": "ch1#biscuit",
+      "if": "vanished & !C1_BISCUIT"
+    },
+    {
+      "id": "trg_erik",
+      "kind": "trigger",
+      "rect": [
+        32,
+        24,
+        5,
+        3
+      ],
+      "run": "ch1#erik_bark",
+      "if": "vanished"
+    },
+    {
+      "id": "trg_walt",
+      "kind": "trigger",
+      "rect": [
+        18,
+        14,
+        7,
+        4
+      ],
+      "run": "ch1#walt_bark",
+      "if": "vanished"
+    }
+  ]
 }
