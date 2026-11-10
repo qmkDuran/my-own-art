@@ -55,6 +55,8 @@ All build scripts import shared helpers from **`art/common.py`**: palette (`PALA
 | `art/build_wings.py` | wing flap frames (column shear) for creatures and angels |
 | `art/wall.py` | shared city outer works: `draw_sky`, `wall_strip(width)` (jasper bands + 12-stone foundation), `pearl_gate()`, `add_city_top(bg, gate_x)` — any width |
 | `art/upscale.py` | Scale2x + outline thinning for true-scale buildings |
+| `art/build_district.py` | city district (rooms below/right of the garden): `game/art/district/dbg.png` (1920x540 at world y 540: calm gold yards, bright great street with gem-set curbs, door walkways, planters, jasper balustrade, light haze), dwellings (Scale2x), gifts, gift-bearer sheets (walkers' west walk + gift composited before the chest), new residents `people/p31-p35.png` (skin-ramp shifts of existing people = new individuals, no duplicates), `layout.json` |
+| `art/gen_district.py` | **paid**: dwellings (straight-front wording reused) and gifts |
 | `art/build_earth.py` | **1920x1080** new-earth map: wall + gate across the top, main path + cross road + door paths, stream, roses, contact shadows; animals, hay stack, 5 houses (Scale2x), straight-front vine rows raised by hand, field trees, hammer, basket, `art/earth/layout.json` (map_size, houses, vine_rows, animals, trees, stream_rects) |
 | `art/audio/synth.py` | **all audio** (procedural, CC0) into `game/audio/` |
 | `art/mock*.py` | quick PIL composites to check layouts before Godot |
@@ -79,15 +81,18 @@ Thin scenes over shared, typed components. **Content lives in data**: `game/data
 | | `UiText` | the one label factory (monogram 16/32, outlined) |
 | `scripts/talk` | `TalkSystem` | nearest Npc within 52 px → `speak` + caption for 5.5 s |
 | `scripts/demo` | `DemoRecorder` | data-driven scripted walks: start/face/pause/waypoints, timed events (scene method names), SceneTree-bound quit |
-| `scripts/camera` | `CameraRig` | follow camera with **integer screen scales** 1 = overview, 2 = normal, 3 = close (camera zoom = scale / 2, since the window is 2x). Steps go through a 0.2 s soft white veil (no blurry in-between zoom). `min_scale()` from map bounds (one-screen maps: 2 and 3 only), clamped; `go_to/step/cycle/tour` |
+| `scripts/camera` | `CameraRig` (rooms) | optional `rooms` (data `"rooms"`): at normal scale the camera frames the target's room and slides 0.6 s to the next, so each screen keeps its composition; `snap_to_target()` on start/respawn |
+| | `CameraRig` | follow camera with **integer screen scales** 1 = overview, 2 = normal, 3 = close (camera zoom = scale / 2, since the window is 2x). Steps go through a 0.2 s soft white veil (no blurry in-between zoom). `min_scale()` from map bounds (one-screen maps: 2 and 3 only), clamped; `go_to/step/cycle/tour` |
 | `scripts/scenes` | `SceneBase` | skeleton: data → background → y-sorted world → player → people → overlay → captions/talk/camera → audio → `_begin()`. Hooks: `_build_background/_build_world/_build_overlay/_setup_captions/_start_audio/_on_action/_tick/_begin`. Esc → menu |
 | | `city.gd`, `throne.gd`, `earth.gd`, `menu.gd` | the scenes (main.tscn = city). Zoom input in SceneBase: mouse wheel, `+`/`-`, `Z` cycles. Demo events `zoom_overview/zoom_normal/zoom_close`. Scenes give `_map_bounds()` (earth: from layout map_size) |
 | `scripts/throne` | `HeavenlyHost`, `ThroneLight`, `LivingCreatures`, `ElderCircle` | angels; burst/lamps/lightning; creatures + wings; elders, crowns, bowls, worship |
 | `scripts/earth` | `Herd`, `Builder` | animals (idles, voices); hammer + knock |
+| `scripts/city` | `District` | district bg, dwellings + footprints, planters, west-end light (glow + slowly turning rays, sparkles), motes |
 | `tests` | `probe.gd` (autoload, `--probe`), `smoke_test.gd` (autoload, `--smoke`), `run_smoke.sh` | regression probes and the smoke test |
 
 - **Collision:** Blockers from data rects or layout numbers; the wall is open only at the gate passage x 462–502, the city river only on the bridge deck x 440–520, and the stream rects come from the art mask.
-- **Gate flow:** city gate light → new earth (Rev 21:25-26); the earth gate → city (spawn 482,186).
+- **Gate flow:** city gate light → new earth (Rev 21:25-26); the earth gate → city (spawn 482,186). City map is 1920x1080 in three rooms: garden (0,0), district (0,1) and (1,1); the garden street continues south between dwellings into the great street.
+- **Record args:** also `--district-demo` (garden → district → light → homes, with talk and a close zoom on the bearers).
 - **Tests:**
   - `GODOT=<bin> game/tests/run_smoke.sh` loads menu/city/throne/earth for about 5 s each and checks: player spawned, colliders > 0, talk returns the nearest person (city/earth), kneel works (throne), no script errors.
   - Probe: `godot --headless --fixed-fps 60 --path game -- --demo --probe` logs `PROBE scene f=.. p=x,y blockers=N npcs=N` every 30 frames. Baselines are in `art/baseline/*.log`; player paths are deterministic (verified twice).
@@ -107,20 +112,18 @@ Thin scenes over shared, typed components. **Content lives in data**: `game/data
 | New earth | 80 | 50 | animals 20, houses 10, frame 10, vines 10 |
 | People fix pass | 15 | 11 | 11 x 4-dir create-character-v3 (1 each, ~3 min each) |
 | Code cleanup | 0 | 0 | refactor only; behaviour verified identical |
+| City district | 30 | 25 | dwellings 15 (168 px, straight-front 4/4 usable), gifts 10 (64 x 32 px); bearers and residents made by hand |
 | Scale + zoom | 40 | 40 | house2x 15, frame2x 15 (168 px = 15 each), vines2x 10 (came out oblique: unused; the straight v1 row was raised by hand instead) |
-Balance after scale + zoom: 214.5 generations; USD 2.18083 throughout.
+Balance after the city district: 189.5 generations; USD 2.18083 throughout.
 
 ## 7. Known weak spots
 - Gold plaza grid and rigid horizontal city layout; flat bridge; synthetic-sounding music.
 - People: the 4-dir rotations differ slightly from the original front sprites; palm sway is still subtle (4 px at the tip); the kneel is a hand-drawn robe pool (simple); side-view kneel is weakest.
 - Creatures' wing motion is a shear (stepped edges); elders turn only left/right.
-- New earth: houses are straight-front now but their roofs are seen fairly low (more side than top-down); the meadow is large and evenly speckled (can feel empty between groups); the animals' idle is only a 1–2 px head dip; the builder's hammer is small.
+- New earth: houses are straight-front now but their roofs are seen fairly low; the meadow is a calm hand-painted base (soft patches, tufts, clustered roses) and is roomy between groups; the animals' idle is only a 1–2 px head dip; the builder's hammer is small.
 - Zoom: the overview (1x) makes 64 px people small; captions stay screen-size (by design).
+- District: dwellings only on the north side of the great street (front-view art can't face north); the south terrace below the street is open gold + balustrade + haze (calm but plain); bearers all walk west in two lanes; residents/bearers are recolours of existing people (new individuals by skin tone, same builds).
+- Lesson: before paying for a piece, reuse the exact view wording/settings that already worked (the district dwellings came out 4/4 usable that way); an oblique vine batch was wasted in the scale pass.
 
-## 8. Queued phases (wait for the coordinator's go and guard reset)
-1. **City district screen** (cap ~30): an adjacent city screen (camera transition at an edge of the current city screen; the garden heart stays unchanged) with:
-   - the great street of gold toward the throne's light at the far end (light only);
-   - dwellings (John 14:2) of jasper, gold, pearl and gems with doors on the street, people at their homes, a few walkers;
-   - nations bringing glory and honour, carrying gifts toward the throne (Rev 21:24-26).
-
-   Keep it uncluttered and generously spaced. Reuse: `art/wall.py`, `upscale.py`, SceneBase/CameraRig (bounds for a 2-screen city), Npc/TalkSystem, data JSON.
+## 8. Queued phases
+None queued. Ideas if asked: back-view dwellings for a south row; more individuals by hair recolours; a slow procession lane east (people returning) for variety.

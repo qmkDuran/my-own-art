@@ -9,6 +9,7 @@ const SPEED: float = 34.0
 const FRAME: int = 64
 const FEET_Y: int = 61
 const STRIDE: float = 22.0
+const FADE: float = 0.8
 const HEAR_DISTANCE: float = 260.0
 const ROWS: Dictionary = {"down": 0, "up": 1, "left": 2, "right": 2}
 const COL_IDLE: int = 0
@@ -22,6 +23,8 @@ var mode: String = "stand"
 var path: Array[Vector2] = []
 ## Footstep sound prefix for walkers (e.g. "step_gold" -> step_gold0..2), empty for silent.
 var step_sound: String = ""
+## Walk the path once, fade away at its end and begin again at its start (a procession), instead of looping.
+var one_way: bool = false
 
 var _sheet_path: String = ""
 var _home_facing: String = "down"
@@ -50,11 +53,14 @@ static func standing(person: int, at: Vector2, how: String, facing: String, vers
 
 
 ## A person who walks a calm loop (sheet in the hero.png layout).
-static func walker(sheet_path: String, loop: Array[Vector2], verse: String, steps: String = "") -> Npc:
+static func walker(sheet_path: String, loop: Array[Vector2], verse: String, steps: String = "",
+		procession: bool = false, start: Vector2 = Vector2.INF) -> Npc:
 	var n := Npc.new()
 	n.mode = "walk"
 	n.path = loop
-	n.position = loop[0]
+	n.one_way = procession
+	n.position = loop[0] if start == Vector2.INF else start
+	n._target = 0 if start == Vector2.INF else 1
 	n.quote = verse
 	n.step_sound = steps
 	n._sheet_path = sheet_path
@@ -154,6 +160,9 @@ func _walk(delta: float) -> void:
 		return
 	var to: Vector2 = path[_target] - global_position
 	if to.length() < 2.0:
+		if one_way and _target == path.size() - 1:
+			_begin_again()
+			return
 		_target = (_target + 1) % path.size()
 		_wait = randf_range(1.0, 2.5)          # a calm pause at each turn
 		return
@@ -167,6 +176,18 @@ func _walk(delta: float) -> void:
 		dir = Vector2.ZERO
 	_footsteps(moved)
 	_set_anim(dir)
+
+
+
+## End of a procession: fade into the light, reappear at the start and fade in.
+func _begin_again() -> void:
+	_wait = FADE * 2.0 + 0.2
+	var tw := create_tween()
+	tw.tween_property(self, "modulate:a", 0.0, FADE)
+	tw.tween_callback(func() -> void:
+		position = path[0]
+		_target = 1)
+	tw.tween_property(self, "modulate:a", 1.0, FADE)
 
 
 func _footsteps(moved: float) -> void:

@@ -11,6 +11,8 @@ static func run(scene: Node, player: Player, demo: Dictionary) -> void:
 		player.position = SceneData.vec(demo["start"])
 	if demo.has("face"):
 		player.face(demo["face"])
+	if scene is SceneBase:
+		(scene as SceneBase).camera.snap_to_target()
 	player.autopilot = SceneData.waypoints(demo.get("waypoints", []))
 	player.autopilot_pause = float(demo.get("pause", 0.0))
 	var tree: SceneTree = scene.get_tree()

@@ -49,3 +49,6 @@ char4_p15	cost=1.0	total_used=11.0	usd=2.18083018988485
 house2x	cost=15.0	total_used=15.0	usd=2.18083018988485
 frame2x	cost=15.0	total_used=30.0	usd=2.18083018988485
 vines2x	cost=10.0	total_used=40.0	usd=2.18083018988485
+--- city district: START=214.5 CAP=30 ---
+mansion	cost=15.0	total_used=15.0	usd=2.18083018988485
+gifts	cost=10.0	total_used=25.0	usd=2.18083018988485

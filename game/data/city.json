@@ -1,5 +1,5 @@
 {
- "_doc": "The holy city screen (Rev 21-22). Numbers mirror art/build_scene.py. Rects are [x, y, w, h]; demo waypoints [x, y, pause].",
+ "_doc": "The holy city (Rev 21-22): the garden heart (room 0,0, unchanged) and the district below it (rooms 0,1 and 1,1). Numbers mirror art/build_scene.py and art/build_district.py. Rects [x, y, w, h]; demo waypoints [x, y, pause].",
  "title": {
   "text": "The New Jerusalem\nRevelation 21-22",
   "y": 196
@@ -135,9 +135,33 @@
    540
   ],
   [
-   0,
-   538,
    960,
+   500,
+   960,
+   40
+  ],
+  [
+   -40,
+   540,
+   100,
+   540
+  ],
+  [
+   1920,
+   540,
+   40,
+   540
+  ],
+  [
+   0,
+   948,
+   1920,
+   14
+  ],
+  [
+   0,
+   1078,
+   1920,
    40
   ]
  ],
@@ -186,6 +210,34 @@
   ]
  ],
  "zones": [
+  [
+   0,
+   540,
+   330,
+   540,
+   "And there shall be no more curse: but the throne of God and of the Lamb shall be in it; and his servants shall serve him.  Rev 22:3"
+  ],
+  [
+   330,
+   790,
+   1590,
+   100,
+   "And the nations of them which are saved shall walk in the light of it: and the kings of the earth do bring their glory and honour into it.  Rev 21:24"
+  ],
+  [
+   0,
+   890,
+   1920,
+   190,
+   "And the city had no need of the sun, neither of the moon, to shine in it: for the glory of God did lighten it, and the Lamb is the light thereof.  Rev 21:23"
+  ],
+  [
+   330,
+   540,
+   1590,
+   250,
+   "In my Father's house are many mansions: if it were not so, I would have told you. I go to prepare a place for you.  John 14:2"
+  ],
   [
    440,
    120,
@@ -317,6 +369,46 @@
    "stand",
    "left",
    "In my Father's house are many mansions... I go to prepare a place for you.  John 14:2"
+  ],
+  [
+   31,
+   282,
+   786,
+   "stand",
+   "down",
+   "Let not your heart be troubled... In my Father's house are many mansions.  John 14:1-2"
+  ],
+  [
+   32,
+   700,
+   800,
+   "stand",
+   "right",
+   "And his servants shall serve him: and they shall see his face.  Rev 22:3-4"
+  ],
+  [
+   33,
+   742,
+   802,
+   "stand",
+   "left",
+   "Blessed are they that do his commandments, that they may have right to the tree of life, and may enter in through the gates into the city.  Rev 22:14"
+  ],
+  [
+   34,
+   1244,
+   786,
+   "palm",
+   "down",
+   "And he that sat upon the throne said, Behold, I make all things new.  Rev 21:5"
+  ],
+  [
+   35,
+   1610,
+   788,
+   "stand",
+   "right",
+   "He that overcometh shall inherit all things; and I will be his God, and he shall be my son.  Rev 21:7"
   ]
  ],
  "walkers": [
@@ -365,6 +457,126 @@
    ],
    "verse": "And they sung a new song, saying, Thou art worthy... for thou wast slain, and hast redeemed us to God by thy blood.  Rev 5:9",
    "steps": "step_gold"
+  },
+  {
+   "sheet": "res://art/district/bearer_a.png",
+   "loop": [
+    [
+     1890,
+     860
+    ],
+    [
+     90,
+     860
+    ]
+   ],
+   "start": [
+    1880,
+    860
+   ],
+   "verse": "And they shall bring the glory and honour of the nations into it.  Rev 21:26",
+   "steps": "step_gold",
+   "procession": true
+  },
+  {
+   "sheet": "res://art/district/bearer_b.png",
+   "loop": [
+    [
+     1890,
+     868
+    ],
+    [
+     90,
+     868
+    ]
+   ],
+   "start": [
+    1560,
+    868
+   ],
+   "verse": "And the kings of the earth do bring their glory and honour into it.  Rev 21:24",
+   "steps": "step_gold",
+   "procession": true
+  },
+  {
+   "sheet": "res://art/district/bearer_c.png",
+   "loop": [
+    [
+     1890,
+     860
+    ],
+    [
+     90,
+     860
+    ]
+   ],
+   "start": [
+    1240,
+    860
+   ],
+   "verse": "And they shall bring the glory and honour of the nations into it.  Rev 21:26",
+   "steps": "step_gold",
+   "procession": true
+  },
+  {
+   "sheet": "res://art/district/bearer_d.png",
+   "loop": [
+    [
+     1890,
+     868
+    ],
+    [
+     90,
+     868
+    ]
+   ],
+   "start": [
+    920,
+    868
+   ],
+   "verse": "And the kings of the earth do bring their glory and honour into it.  Rev 21:24",
+   "steps": "step_gold",
+   "procession": true
+  },
+  {
+   "sheet": "res://art/district/bearer_e.png",
+   "loop": [
+    [
+     1890,
+     860
+    ],
+    [
+     90,
+     860
+    ]
+   ],
+   "start": [
+    600,
+    860
+   ],
+   "verse": "And they shall bring the glory and honour of the nations into it.  Rev 21:26",
+   "steps": "step_gold",
+   "procession": true
+  },
+  {
+   "sheet": "res://art/district/bearer_f.png",
+   "loop": [
+    [
+     1890,
+     868
+    ],
+    [
+     90,
+     868
+    ]
+   ],
+   "start": [
+    280,
+    868
+   ],
+   "verse": "And the kings of the earth do bring their glory and honour into it.  Rev 21:24",
+   "steps": "step_gold",
+   "procession": true
   }
  ],
  "demo": {
@@ -462,5 +674,88 @@
     0
    ]
   ]
+ },
+ "map_size": [
+  1920,
+  1080
+ ],
+ "rooms": [
+  [
+   0,
+   0,
+   960,
+   540
+  ],
+  [
+   0,
+   540,
+   960,
+   540
+  ],
+  [
+   960,
+   540,
+   960,
+   540
+  ]
+ ],
+ "district_demo": {
+  "start": [
+   480,
+   470
+  ],
+  "face": "down",
+  "pause": 1.5,
+  "waypoints": [
+   [
+    480,
+    600,
+    0
+   ],
+   [
+    480,
+    830,
+    0
+   ],
+   [
+    300,
+    822,
+    4.0
+   ],
+   [
+    140,
+    836,
+    2.5
+   ],
+   [
+    1000,
+    822,
+    0
+   ],
+   [
+    1215,
+    800,
+    4.0
+   ]
+  ],
+  "events": [
+   [
+    8.8,
+    "talk_nearest"
+   ],
+   [
+    21.0,
+    "zoom_close"
+   ],
+   [
+    25.0,
+    "zoom_normal"
+   ],
+   [
+    31.2,
+    "talk_nearest"
+   ]
+  ],
+  "quit_after": 35.0
  }
 }

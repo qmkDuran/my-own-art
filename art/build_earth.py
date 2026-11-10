@@ -31,12 +31,40 @@ TREES = [['ftree2', 80, 300], ['ftree1', 1090, 300], ['ftree2', 1880, 560], ['ft
          ['ftree1', 1700, 300]]
 
 
+MEADOW_CELL = 96            # size of the soft light/shade patches in the meadow
+
+
+def _value_noise(seed):
+    """Smooth low-frequency noise in 0..1 over the map (bilinear between random cell values)."""
+    rng = np.random.default_rng(seed)
+    gw, gh = W // MEADOW_CELL + 2, H // MEADOW_CELL + 2
+    g = rng.random((gh, gw))
+    ys, xs = np.mgrid[0:H, 0:W] / MEADOW_CELL
+    x0, y0 = xs.astype(int), ys.astype(int)
+    fx, fy = xs - x0, ys - y0
+    fx, fy = fx * fx * (3 - 2 * fx), fy * fy * (3 - 2 * fy)
+    top = g[y0, x0] * (1 - fx) + g[y0, x0 + 1] * fx
+    bot = g[y0 + 1, x0] * (1 - fx) + g[y0 + 1, x0 + 1] * fx
+    return top * (1 - fy) + bot * fy
+
+
 def ground_and_light(bg, px):
-    """Meadow tiles everywhere below the wall, with the city's light spilling over the ground by the wall (Rev 21:24)."""
-    grass = [Image.open(f'art/raw/tA_{i:02d}.png').convert('RGBA') for i in (8, 9, 12)]
-    for ty in range(WALL_BOTTOM // 32, H // 32 + 1):
-        for tx in range(W // 32):
-            bg.paste(random.choice(grass), (tx * 32, ty * 32))
+    """A calm meadow: one main green with broad soft patches of lighter and deeper grass and a few short blades;
+    the city's light spills over the ground by the wall (Rev 21:24)."""
+    n = _value_noise(5)
+    for y in range(WALL_BOTTOM, H):
+        for x in range(W):
+            v = n[y, x]; d = dith(x, y)
+            col = '239063'
+            if v > 0.66 and d < (v - 0.66) * 2.6: col = '1ebc73'
+            elif v < 0.26 and d < (0.26 - v) * 1.8: col = '165a4c'
+            px[x, y] = C(col)
+    rnd = random.Random(8)
+    for _ in range(W * H // 260):                                   # short grass tufts: a little pixel texture
+        x, y = rnd.randrange(1, W - 1), rnd.randrange(WALL_BOTTOM + 2, H)
+        dark = n[y, x] < 0.5
+        tip, base = ('1ebc73', '165a4c') if dark else ('91db69', '239063')
+        px[x - 1, y] = C(base); px[x + 1, y] = C(base); px[x, y - 1] = C(tip)
     for y in range(WALL_BOTTOM, WALL_BOTTOM + 40):
         for x in range(W):
             if dith(x, y) < (1 - (y - WALL_BOTTOM) / 40) * 0.5:
@@ -110,12 +138,12 @@ def paint_flowers(px, blocked):
         for dx, dy, c in ((0, -1, c2), (-1, 0, c1), (1, 0, c1), (0, 1, c1), (0, 0, 'fbff86' if c1 != 'f9c22b' else 'f79617')):
             X, Y = x + dx, y + dy
             if 0 <= X < W and WALL_BOTTOM + 4 <= Y < H and not blocked[Y, X]: px[X, Y] = C(c)
-    for _ in range(120):
+    for _ in range(150):
         cx, cy = random.randint(10, W - 10), random.randint(WALL_BOTTOM + 30, H - 6)
         c1, c2 = random.choice(FLOW[:2] if random.random() < 0.6 else FLOW)
-        for _ in range(random.randint(4, 9)):
-            flower(cx + random.randint(-14, 14), cy + random.randint(-7, 7), c1, c2)
-    for _ in range(520):
+        for _ in range(random.randint(10, 20)):
+            flower(cx + random.randint(-12, 12), cy + random.randint(-6, 6), c1, c2)
+    for _ in range(90):
         c1, c2 = random.choice(FLOW)
         flower(random.randint(4, W - 4), random.randint(WALL_BOTTOM + 20, H - 3), c1, c2)
 

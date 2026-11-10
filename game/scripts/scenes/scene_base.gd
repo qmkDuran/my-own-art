@@ -42,6 +42,8 @@ func _ready() -> void:
 	camera = CameraRig.new()
 	camera.bounds = _map_bounds()
 	camera.target = player
+	for r: Array in data.get("rooms", []):
+		camera.rooms.append(SceneData.rect(r))
 	add_child(camera)
 	_setup_captions()
 	_start_audio()
@@ -61,7 +63,9 @@ func _spawn_people() -> void:
 	for p: Array in data.get("people", []):
 		world.add_child(Npc.standing(int(p[0]), Vector2(float(p[1]), float(p[2])), p[3], p[4], p[5]))
 	for w: Dictionary in data.get("walkers", []):
-		world.add_child(Npc.walker(w["sheet"], SceneData.points(w["loop"]), w["verse"], w.get("steps", "")))
+		var start: Vector2 = SceneData.vec(w["start"]) if w.has("start") else Vector2.INF
+		world.add_child(Npc.walker(w["sheet"], SceneData.points(w["loop"]), w["verse"], w.get("steps", ""),
+			w.get("procession", false), start))
 
 
 func _setup_captions() -> void:

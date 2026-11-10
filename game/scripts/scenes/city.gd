@@ -1,7 +1,8 @@
 extends SceneBase
-## One screen of the New Jerusalem (Revelation 21-22): the street of gold, the river of the water of life
+## The New Jerusalem (Revelation 21-22). The garden heart: the street of gold, the river of the water of life
 ## flowing from the throne's light, the trees of life, the jasper wall and the gate of one pearl.
-## Content lives in res://data/city.json; art numbers mirror art/build_scene.py.
+## Below it the district with the great street to the throne's light (scripts/city/district.gd).
+## Content lives in res://data/city.json; art numbers mirror art/build_scene.py and art/build_district.py.
 
 const RIPPLE_W: float = 240.0
 const RIPPLE_SPEED_A: float = 14.0
@@ -19,6 +20,7 @@ var _water_b: Sprite2D
 var _throne_glow: Sprite2D
 var _gate_glow: Sprite2D
 var _river_sound: AudioStreamPlayer
+var _district: District
 var _in_light: bool = false
 var _time: float = 0.0
 
@@ -58,11 +60,18 @@ func _build_world() -> void:
 		_trees.append(s)
 		Blockers.footprint(self, s.position, TREE_TRUNK, 3.0)
 	Blockers.add_all(self, data["colliders"])
+	_district = District.new()
+	add_child(_district)
+	_district.build(world)
 
 
 func _build_overlay() -> void:
 	for m: Array in data["motes"]:
 		Fx.motes(self, SceneData.rect(m), int(m[4]), Vector2(float(m[5]), float(m[6])), SceneData.color(m[7]))
+
+
+func _map_bounds() -> Rect2:
+	return Rect2(Vector2.ZERO, SceneData.vec(data["map_size"]))
 
 
 func _setup_captions() -> void:
@@ -102,6 +111,8 @@ func _begin() -> void:
 	elif args.has("--earth-demo"):
 		Travel.demo = true
 		run_demo("earth_demo")
+	elif args.has("--district-demo"):
+		run_demo("district_demo")
 	elif args.has("--demo"):
 		run_demo("demo")
 
@@ -114,6 +125,7 @@ func _tick(delta: float) -> void:
 	_throne_glow.modulate.a = 0.85 + 0.15 * sin(_time * 0.9)
 	_gate_glow.modulate.a = 0.8 + 0.2 * sin(_time * 1.3 + 1.0)
 	_update_tree_fade(delta)
+	_district.animate(_time)
 	_update_river_sound()
 	if not _in_light and _in_passage(player.global_position):
 		_enter_light()
@@ -161,5 +173,6 @@ func _arrive_from_earth() -> void:
 	Travel.arriving = ""
 	player.global_position = SceneData.vec(data["gate"]["respawn"])
 	player.face("down")
+	camera.snap_to_target()
 	captions.fade.color.a = 1.0
 	create_tween().tween_property(captions.fade, "color:a", 0.0, 1.2)

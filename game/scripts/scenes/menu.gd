@@ -8,7 +8,7 @@ const SCENES: Array = [
 	["3   The new earth   (Isaiah 11, 35, 65)", "res://earth.tscn"],
 ]
 ## First matching user arg wins -> scene index.
-const SKIP_ARGS: Array = [["--throne", 1], ["--earth", 2], ["--earth-demo", 0], ["--city", 0], ["--demo", 0]]
+const SKIP_ARGS: Array = [["--throne", 1], ["--earth", 2], ["--earth-demo", 0], ["--district-demo", 0], ["--city", 0], ["--demo", 0]]
 const BACKGROUND := Color(0.9937, 1.0, 0.8102)   # pale gold light (fbff86 blended 60% to white)
 const SELECTED := Color("f9c22b")
 const FIRST_ROW_Y: float = 250.0

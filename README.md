@@ -33,6 +33,11 @@ Walking into the light of the city's pearl gate now leads out onto the new earth
 Also on the menu (3) or `-- --earth`; `-- --earth-demo` records the walk out of the city and a tour.
 Built by `art/build_earth.py`, scene `game/scripts/scenes/earth.gd`.
 
+## The city district (John 14:2; Rev 21:21-26)
+From the garden walk south along the gold street: below lies the great street of gold running west to the light of the throne
+(light only), dwellings with pearl doors on the street, people at their homes, and the nations carrying their gifts into the light.
+The camera moves screen by screen so each view keeps its composition. `-- --district-demo` records a tour.
+
 ## Font
 Captions use the pixel font **monogram** by datagoblin (CC0): `game/fonts/monogram.ttf`, licence note `game/fonts/LICENSE-monogram.txt`.
 
@@ -62,4 +67,4 @@ Full module map: `HEAVEN_NOTES.md` section 5.
 - `art/common.py` + `art/build_*.py`: rebuild the final art from the PixelLab outputs in `art/raw/` (no API calls).
 - `art/gen_*.py`, `art/mkchar.py`, `tools/anim.py`: the PixelLab generation scripts (paid; all routed through `tools/guard.py`).
 - `spend_log.txt`: every paid call and the running total.
-- `out/`: city screenshots + `new_jerusalem_walk.mp4` + `character_sheet_3x.png`; throne room `throne_screenshot_*.png` + `throne_room_walk.mp4` + `throne_sprites_3x.png`; with sound: `city_with_sound.mp4`, `throne_with_sound.mp4`, `wings_closeup.mp4`; `elder_heads_fix.png` (before/after); new earth: `new_earth_v2.mp4` (larger map, zooming), `new_earth_v2_{overview_1x,normal_2x,close_3x}.png`, older `new_earth.mp4`, `new_earth_*.png`, `new_earth_sprites_3x.png`; people: `city_people.mp4`, `city_people_talk.png`, `city_people_bank.png`, `people_sheet_3x.png`, `people4_sheet_3x.png` (4-direction people).
+- `out/`: city screenshots + `new_jerusalem_walk.mp4` + `character_sheet_3x.png`; throne room `throne_screenshot_*.png` + `throne_room_walk.mp4` + `throne_sprites_3x.png`; with sound: `city_with_sound.mp4`, `throne_with_sound.mp4`, `wings_closeup.mp4`; `elder_heads_fix.png` (before/after); city district: `city_district.mp4`, `city_district_*.png`; new earth: `new_earth_v2.mp4` (larger map, zooming), `new_earth_v2_{overview_1x,normal_2x,close_3x}.png`, older `new_earth.mp4`, `new_earth_*.png`, `new_earth_sprites_3x.png`; people: `city_people.mp4`, `city_people_talk.png`, `city_people_bank.png`, `people_sheet_3x.png`, `people4_sheet_3x.png` (4-direction people).
