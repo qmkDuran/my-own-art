@@ -98,6 +98,7 @@ func _make_body() -> void:
 		if name == "step":
 			Audio.sfx("step", STEP_DB, randf_range(0.9, 1.1)))
 	sprite = anim.body
+	sprite.self_modulate = Color.WHITE * ZoneView.actor_gain()
 	var mat := ShaderMaterial.new()
 	mat.shader = preload("res://shaders/hit_flash.gdshader")
 	mat.set_shader_parameter("flash_color", Pal.c("rose"))

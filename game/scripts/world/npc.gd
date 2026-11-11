@@ -25,6 +25,7 @@ func make_sprite() -> Sprite2D:
 	s.offset = Vector2(0, -32 + 3 + (SEAT_DROP if bool(prop.get("seated", false)) else 0.0))
 	PropSprite.add_glow(s, "res://art/actors/npc_%s_glow.png" % npc_id)
 	s.add_child(PropSprite.shadow(28.0))
+	s.self_modulate = Color.WHITE * ZoneView.actor_gain()
 	return s
 
 

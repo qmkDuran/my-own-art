@@ -350,6 +350,8 @@ Glazier + Nim, death/respawn, save/load). Review screenshots: `--shots` (needs x
   scale 2x with `-sws_flags neighbor` (pixel-identical to 1080p, 4x faster to render in software GL).
 
 ## 13. Lessons
+- With 2D HDR on, `--write-movie` frames come out sRGB-encoded twice (washed out): encode videos with a 2.2 gamma
+  (`ffmpeg -vf lutrgb=r='255*pow(val/255\,2.2)':...`). Screenshots from the viewport are right as they are.
 - Software GL (xvfb) is slow with per-pixel noise: compute the border warp once per pixel; record at 960x540.
 - Cell-based terrain looks like stairs; draw water/paths/stone from their true geometry inside blocked cells.
 - Props must avoid every route (not just dirt paths) or they plug narrow trails — LayoutCheck caught it.

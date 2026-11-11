@@ -7,6 +7,8 @@ extends Node2D
 const GROUND_Z: int = -20
 const BRIDGE_Z: int = -19
 const TRUNK := Vector2(7, 4)             ## a tree's shadow-casting base (half sizes)
+const ACTOR_SHARE: float = 0.8
+const ACTOR_LIFT: float = 0.15          ## dark-clad figures (the Lamplighter's coat) need a little more than the ground
 const BUILT_W: float = 200.0           ## props wider than this are building parts: no shadow, never mirrored
 const CRYSTAL_LIGHT_RANGE: float = 80.0
 const CRYSTAL_LIGHT_ENERGY: float = 0.55
@@ -186,6 +188,11 @@ func _trees(world: Node2D) -> void:
 		fade.add(s)
 		s.add_to_group("tall_props")
 		shadows.add_caster(t["pos"], TRUNK)
+
+
+## People and creatures are lifted too, a little less than the scenery, so they read against it in their own colours.
+static func actor_gain() -> float:
+	return 1.0 + (gain() - 1.0) * ACTOR_SHARE + ACTOR_LIFT
 
 
 ## How far this zone lifts its terrain and trees out of the dark (biome ambient "scenery_gain"; HDR above 1).

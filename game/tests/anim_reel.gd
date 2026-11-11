@@ -3,6 +3,7 @@ extends Node
 ## he runs two circles (all eight facings), streams Wickbolts in four directions, casts, throws the lantern and calls
 ## it back, dashes, takes two hits, falls and rises again. No enemies: only him and his light.
 
+const OPEN_ROLE: String = "field"             ## an open clearing (Hollin's Ford), so the camera keeps him centred
 const RING: float = 80.0
 const RING_POINTS: int = 16
 const STEP: float = 0.42
@@ -32,7 +33,9 @@ func _run() -> void:
 	h.clear_near(100000.0)
 	g.camera.frames = []                                    # keep him centred: no arrival pan, no lean to landmarks
 	g.camera.intro(g.player.global_position, 0.0)
-	h.place_player(g.layout.free_spot_near(g.player.global_position + Vector2(0, 260), 40.0))
+	var open: Dictionary = g.layout.clearing_of_role(OPEN_ROLE)
+	var at: Vector2 = g.layout.center_of(open["center"]) if not open.is_empty() else g.player.global_position
+	h.place_player(g.layout.free_spot_near(at, 40.0))
 	g.player.light.value = 70.0
 	await _wait(1.0)
 	await _circles()
