@@ -127,8 +127,9 @@ func _make_sprite() -> void:
 	sprite.scale = Vector2.ONE * float(GameData.enemies["ranks"][rank]["scale"])
 	add_child(sprite)
 	PropSprite.add_glow(sprite, "res://art/actors/%s_glow.png" % data["sprite"])
+	sprite.light_mask = 1 | Fx.STANDING_MASK
 	if rank == "boss":                                      # its own dim light: the whole silhouette always reads
-		sprite.light_mask = 1 | BOSS_LIGHT_MASK
+		sprite.light_mask = 1 | BOSS_LIGHT_MASK | Fx.STANDING_MASK
 		var l := PointLight2D.new()
 		l.range_item_cull_mask = BOSS_LIGHT_MASK             # it lights the boss, not the floor: the boss is the focus
 		l.texture = LightTex.soft(128)

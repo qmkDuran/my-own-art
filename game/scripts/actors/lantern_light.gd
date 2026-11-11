@@ -27,6 +27,7 @@ var _blaze_t: float = 0.0
 var shown_radius: float = 0.0
 var _light: PointLight2D
 var _halo: PointLight2D
+var _floor: PointLight2D
 var _state: String = "calm"
 var _hit_flash: float = 0.0
 var _t: float = 0.0
@@ -36,8 +37,9 @@ var _pane: float = 1.0
 func _ready() -> void:
 	var L: Dictionary = GameData.light
 	value = float(L["start"])
-	_light = _make_light(LightTex.banded(), ENERGY)
-	_halo = _make_light(LightTex.soft(256), HALO_ENERGY)
+	_light = _make_light(LightTex.banded(), ENERGY, Fx.STANDING_MASK, false)    # people, props, trees: no shadows on them
+	_floor = _make_light(LightTex.banded(), ENERGY, Fx.FLOOR_MASK, true)        # the ground: shadows fall here, away from the light
+	_halo = _make_light(LightTex.soft(256), HALO_ENERGY, Fx.FLOOR_MASK | Fx.STANDING_MASK, false)
 	z_index = RING_Z
 	z_as_relative = false
 	material = Fx.unshaded()
@@ -45,9 +47,12 @@ func _ready() -> void:
 	shown_radius = target_radius()
 
 
-func _make_light(tex: Texture2D, energy: float) -> PointLight2D:
+## A lantern light touching only `mask`; `shadows`: trunks, pillars and walls throw moving shadows (on the floor only,
+## so a house is never darkened by its own shadow and nobody standing in front of it is covered).
+func _make_light(tex: Texture2D, energy: float, mask: int, shadows: bool) -> PointLight2D:
 	var l := PointLight2D.new()
-	l.shadow_enabled = int(Atmosphere.quality()["shadows"]) > 0     # trunks, pillars and walls throw moving shadows
+	l.range_item_cull_mask = mask
+	l.shadow_enabled = shadows and int(Atmosphere.quality()["shadows"]) > 0
 	l.shadow_filter = Atmosphere.quality()["filter"]
 	l.shadow_color = Color(0, 0, 0, SHADOW_ALPHA)
 	l.texture = tex
@@ -72,6 +77,7 @@ func light_pos() -> Vector2:
 ## gutters (his death) and brings it back as it relights. The Light ring and the gameplay radius stay put.
 func sway(at: Vector2, pane: float) -> void:
 	_light.position = at
+	_floor.position = at
 	_halo.position = at
 	_pane = pane
 
@@ -138,6 +144,8 @@ func _process(delta: float) -> void:
 	var flick: float = 1.0 + sin(_t * 13.0) * FLICKER * 0.5 + sin(_t * 7.3) * FLICKER * 0.5
 	_light.texture_scale = shown_radius / TEX_RADIUS
 	_light.energy = ENERGY * flick * _pane
+	_floor.texture_scale = _light.texture_scale
+	_floor.energy = _light.energy
 	_halo.texture_scale = shown_radius * HALO_SCALE / TEX_RADIUS
 	_hit_flash = maxf(0.0, _hit_flash - delta)
 	Audio.set_muffled(thrown or _smother_t > 0.0)

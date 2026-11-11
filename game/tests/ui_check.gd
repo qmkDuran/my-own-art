@@ -21,6 +21,7 @@ func _run() -> void:
 	for vs: Vector2 in SIZES:
 		_check_size(g, vs)
 	_check_names(g)
+	_check_menu_labels(g)
 	print("UI %s (%d sizes, %d problems)" % ["PASS" if _fails.is_empty() else "FAIL", SIZES.size(), _fails.size()])
 	for f: String in _fails:
 		print("UI problem: ", f)
@@ -34,6 +35,10 @@ func _check_size(g: Game, vs: Vector2) -> void:
 		"xp": L["xp"], "tracker": L["tracker"], "minimap": (L["minimap"] as Rect2).grow(2.0), "top bar": L["bar"]}
 	for i: int in (L["slots"] as Array).size():
 		named["slot %d" % i] = L["slots"][i]
+	for i: int in (L["buttons"] as Array).size():
+		named["hud button %d" % i] = L["buttons"][i]
+	if not screen.encloses(TutorialTips.panel_rect(vs)):
+		_fails.append("tutorial tip cut off at %s" % vs)
 	for k: String in named:
 		if not screen.encloses(named[k]):
 			_fails.append("%s cut off at %s" % [k, vs])
@@ -44,6 +49,10 @@ func _check_size(g: Game, vs: Vector2) -> void:
 				_fails.append("%s overlaps %s at %s" % [keys[i], keys[j], vs])
 	for p: GamePanel in g.ui.panels():
 		var r: Rect2 = p.place_rect(vs)
+		p.size = r.size
+		for inner: Rect2 in p.layout_rects():                # everything a panel draws stays inside it
+			if not Rect2(Vector2.ZERO, r.size).encloses(inner):
+				_fails.append("%s panel content %s spills out of %s at %s" % [p.title, inner, r.size, vs])
 		if not screen.encloses(r):
 			_fails.append("%s panel cut off at %s" % [p.title, vs])
 		if r.intersects(L["cluster"]):
@@ -67,3 +76,13 @@ func _check_names(g: Game) -> void:
 			var shown: String = String(n["name"]) if UiDraw.text_width(ci, String(n["name"]), UiDraw.SMALL) <= w else String(n["name"]).split(" ")[-1]
 			if UiDraw.text_width(ci, shown, UiDraw.SMALL) > w:
 				_fails.append("passive node name '%s' does not fit" % n["name"])
+
+
+## Every Esc-menu label fits inside its button.
+func _check_menu_labels(g: Game) -> void:
+	var pause: PausePanel = g.ui.pause
+	pause.size = PausePanel.panel_size_for()
+	for i: int in PausePanel.ITEMS.size():
+		var w: float = UiDraw.text_width(pause, pause._label(PausePanel.ITEMS[i]), UiDraw.BODY)
+		if w > PausePanel.BTN.x - 6.0:
+			_fails.append("menu label '%s' is wider than its button" % pause._label(PausePanel.ITEMS[i]))

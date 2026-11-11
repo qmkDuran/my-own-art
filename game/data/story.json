@@ -1,10 +1,14 @@
 {
  "_doc": "Words the player reads. Rule: one or two short sentences per line, a speaker on every line, nothing longer than a breath. Lore notes are optional reading.",
  "intro": [
-  "Three hundred years ago, the sun went out.",
-  "Tallow lives under the last Great Lantern. Tonight, for seven heartbeats, it went dark.",
-  "Something came over the wall in those seven heartbeats. It took a child.",
-  "You are the Ninth Lamplighter. The other eight are dead or missing. Go."
+  "Three hundred years ago, the sun went to sleep. It did not set. It simply closed its eye, and the world has been dusk ever since.",
+  "In the long dusk, the Dusk came. Not night: something that lives where light used to be, and remembers things that should stay forgotten.",
+  "Forests turned to glass. Rivers forgot which way was down. Towns lost their days, one by one, and did not notice.",
+  "Only light holds it back. Lantern-light, fire-light, any light you carry. Where the light goes, the Dusk must remember to be afraid.",
+  "Tallow is the last lit city. It huddles under the Great Lantern, a flame the size of a house that has not gone out in three hundred years.",
+  "The Order of Lamplighters kept the roads lit, once. Nine of them walked out into the dusk with a staff and a lantern. Eight never came home.",
+  "You are the Ninth. Your lantern is new and your staff has never been raised against anything. Mother Ottilie, keeper of the Great Lantern, has sent for you.",
+  "It is evening in Tallow. The lamps are being lit. Nothing has gone wrong yet."
  ],
  "captions": {
   "ambush": "They're through the gate! Lamplighter!",

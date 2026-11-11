@@ -16,7 +16,7 @@
  ],
  "start": [
   1024,
-  1220
+  1100
  ],
  "ambient": {
   "darkness": [
@@ -402,7 +402,11 @@
    "at": [
     1024,
     1300
-   ]
+   ],
+   "locked_until": {
+    "quest_done": "first_light"
+   },
+   "locked_text": "Captain Marr bars the gate. \"Not until you've learned which end of that staff the light comes out of.\""
   },
   {
    "kind": "exit",
@@ -421,6 +425,15 @@
    "npc": "ysolde",
    "at": [
     1080,
+    1200
+   ]
+  },
+  {
+   "kind": "exit",
+   "to": "yard",
+   "sprite": "road_gate",
+   "at": [
+    700,
     1200
    ]
   }

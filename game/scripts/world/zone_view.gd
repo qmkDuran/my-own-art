@@ -52,7 +52,7 @@ func _ground() -> void:
 	s.centered = false
 	s.scale = Vector2(z.cell, z.cell)
 	s.z_index = GROUND_Z
-	s.light_mask = SCENERY_MASK
+	s.light_mask = SCENERY_MASK | Fx.FLOOR_MASK
 	var mat := ShaderMaterial.new()
 	mat.shader = load("res://shaders/ground.gdshader")
 	mat.set_shader_parameter("map_tex", s.texture)
@@ -116,6 +116,7 @@ func _bridges() -> void:
 			s.centered = false
 			s.position = Vector2(x * z.cell, y * z.cell)
 			s.z_index = BRIDGE_Z
+			s.light_mask = SCENERY_MASK | Fx.FLOOR_MASK
 			add_child(s)
 
 
@@ -145,7 +146,7 @@ func _props(world: Node2D) -> void:
 		if INTERACTIVE.has(p["kind"]) or not GameData.props.has(p["kind"]):
 			continue
 		var s := PropSprite.make(p["kind"])
-		s.light_mask = SCENERY_MASK
+		s.light_mask = SCENERY_MASK | Fx.STANDING_MASK
 		s.self_modulate = prop_tint()
 		s.position = p["pos"]
 		var foot_w: float = (p["foot"] as Rect2).size.x
@@ -156,6 +157,8 @@ func _props(world: Node2D) -> void:
 		elif foot_w > 0.0 and not built:
 			s.add_child(PropSprite.shadow(foot_w * 1.2))
 		world.add_child(s)
+		if bool(GameData.props[p["kind"]]["flat"]):
+			s.light_mask = SCENERY_MASK | Fx.FLOOR_MASK           # a floor takes shadows like the ground
 		if float(GameData.props[p["kind"]]["size"][1]) >= TALL_PROP:
 			fade.add(s)
 			s.add_to_group("tall_props")
@@ -178,7 +181,7 @@ func _glow_light(s: Node2D, col: Color) -> void:
 func _trees(world: Node2D) -> void:
 	for t: Dictionary in z.trees:
 		var s := PropSprite.make(t["kind"])
-		s.light_mask = SCENERY_MASK
+		s.light_mask = SCENERY_MASK | Fx.STANDING_MASK
 		s.self_modulate = prop_tint()
 		s.position = t["pos"]
 		s.flip_h = int(t["pos"].x + t["pos"].y) % 2 == 0

@@ -83,6 +83,11 @@ func _content() -> void:
 	pass
 
 
+## Rects of what the panel draws inside itself, for the UI check (each must lie inside the panel).
+func layout_rects() -> Array[Rect2]:
+	return []
+
+
 func _click(_at: Vector2, _button: int) -> void:
 	pass
 

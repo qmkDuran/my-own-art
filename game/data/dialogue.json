@@ -6,6 +6,42 @@
    {
     "when": {
      "quest_step": [
+      "first_light",
+      1
+     ]
+    },
+    "lines": [
+     [
+      "Ysolde",
+      "So you're the Ninth. You're shorter than the stories."
+     ],
+     [
+      "Ysolde",
+      "The Order drilled in the yard behind the west houses. Targets are still standing. Nobody's used them in years."
+     ],
+     [
+      "Ysolde",
+      "Go and remember which end of that staff the light comes out of. Then come back and stand the wall with me."
+     ]
+    ]
+   },
+   {
+    "when": {
+     "quest_step": [
+      "first_light",
+      8
+     ]
+    },
+    "lines": [
+     [
+      "Ysolde",
+      "Stay by me. They're coming through the gate. Keep your light up and don't let them circle you."
+     ]
+    ]
+   },
+   {
+    "when": {
+     "quest_step": [
       "one_tuesday",
       0
      ]
@@ -199,6 +235,43 @@
  "ottilie": {
   "name": "Mother Ottilie Brask",
   "topics": [
+   {
+    "when": {
+     "quest_step": [
+      "first_light",
+      0
+     ]
+    },
+    "do": {
+     "flag": "has_staff"
+    },
+    "lines": [
+     [
+      "Ottilie",
+      "There you are. Ninth of the Order, and the first in forty years. Let me look at you."
+     ],
+     [
+      "Ottilie",
+      "This is your staff. Hook at the top, lantern on the hook. Every Lamplighter before you carried one like it."
+     ],
+     [
+      "Ottilie",
+      "The lantern is not a lamp. It is a little of the Great Lantern's own fire. What you cast, you cast out of it."
+     ],
+     [
+      "Ottilie",
+      "Its Light is the circle around you. Inside it, the Dusk is only what it is. Outside, it is more. Stay in your light."
+     ],
+     [
+      "Ottilie",
+      "Getting hit dims it. Putting things down feeds it. You'll learn the rest the way we all did."
+     ],
+     [
+      "Ottilie",
+      "Captain Marr is at the gate. She'll want to see you hold that staff the right way up."
+     ]
+    ]
+   },
    {
     "when": {
      "quest_step": [

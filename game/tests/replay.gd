@@ -7,11 +7,13 @@ extends Node
 ## per step and REPLAY PASS / FAIL; any step that does not move the quest on within its time is a failure.
 
 const LAST: Array = ["moth_hollow", 2]            ## Act 1 ends when this step is done (back to Ottilie)
+## (the opening, "First Light", comes first: Ottilie, Ysolde, the practice yard, the gate)
 const STEP_TIMEOUT: float = 150.0
 const POLL: float = 0.25
 const RETURN_RANGE: float = 600.0                  ## after a death, the bot is walked back if it woke farther
 const BOSS_STAND: Vector2 = Vector2(0, 120)
-const MAX_STEPS: int = 20
+const MAX_STEPS: int = 30
+const NEAR_TARGET: float = 200.0
 
 var g: Game
 var _deaths: int = 0
@@ -52,10 +54,10 @@ func _title() -> void:
 	await _wait(0.5)
 	var title: Node = get_tree().current_scene
 	title.call("_choose", "new")
-	for i: int in 20:
-		if Game.current != null:
+	for i: int in 40:                                       # read every story card: complete it, then go on
+		if Game.current != null or title.get("_intro") == null:
 			break
-		title.call("_next_card")
+		(title.get("_intro") as IntroCards).press()
 		await _wait(0.1)
 	while Game.current == null:
 		await get_tree().process_frame
@@ -114,6 +116,34 @@ func _act(st: Dictionary) -> void:
 		"boss_seen", "boss_down": _to_ring()
 		"lamp_lit": _relight(at)
 		"enter_zone": await _travel(String(goal[1]))
+		"yard": _drill(String(goal[1]))
+		"gate": _hold_gate()
+
+
+## The practice yard, done the way it asks: walk to the marker, bolt the targets, Wickstep, Flare the cluster.
+func _drill(what: String) -> void:
+	var at: Vector2 = g.event_target
+	if at == Vector2.INF:
+		return
+	match what:
+		"move":
+			g.player.walk_to(at)
+		"bolt":
+			if g.player.global_position.distance_to(at) > NEAR_TARGET:
+				ShotHelper.new(g).place_player(at + Vector2(0, 90))
+		"dash":
+			ShotHelper.new(g).place_player(at + Vector2(-110, 0))
+			g.player._dash_cd = 0.0
+			g.player.dash(at)
+		"flare":
+			ShotHelper.new(g).place_player(at + Vector2(0, 40))
+			g.player.skills.try_use("flare", at)
+
+
+## The gate: stand by it; the bot fights the wave beside Captain Marr.
+func _hold_gate() -> void:
+	if g.event_target != Vector2.INF and g.player.global_position.distance_to(g.event_target) > RETURN_RANGE:
+		ShotHelper.new(g).place_player(g.event_target + Vector2(0, -60))
 
 
 ## Dialogue and notes are read through, as a player clicking on.

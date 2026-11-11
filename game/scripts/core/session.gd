@@ -27,7 +27,7 @@ static func reset() -> void:
 	stash.resize(STASH_CELLS)
 	stash.fill({})
 	arrive_at_lamp = false
-	campaign.start("seven_heartbeats")
+	campaign.start("first_light")
 
 
 static func zone_state(id: String) -> Dictionary:

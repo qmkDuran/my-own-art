@@ -357,6 +357,24 @@
    "call": 4,
    "stop_time": 2.5,
    "lore": "The sun's fear of the day that would not end. He keeps the town's appointments. He will keep yours."
+  },
+  "dummy": {
+   "name": "Practice target",
+   "sprite": "dummy",
+   "life": 18.0,
+   "damage": 0.0,
+   "speed": 0.0,
+   "radius": 12.0,
+   "ai": "dummy",
+   "type": "blunt",
+   "xp": 0.0,
+   "range": 0.0,
+   "windup": 1.0,
+   "cooldown": 9.0,
+   "lunge": 0.0,
+   "fps": 6.0,
+   "lore": "Straw and sacking with a painted sun for a face. Every Lamplighter's first enemy.",
+   "no_loot": true
   }
  }
 }

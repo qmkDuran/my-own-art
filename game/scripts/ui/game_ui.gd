@@ -22,6 +22,8 @@ var stash: StashPanel
 var respec: RespecPanel
 var bestiary: BestiaryPanel
 var forge: ForgePanel
+var help: HelpPanel
+var tips: TutorialTips
 var tooltip: TooltipLayer
 var _fade: ColorRect
 
@@ -40,7 +42,7 @@ func setup(game: Game) -> void:
 	character = _panel(CharacterPanel.new(), "Character", Vector2(300, 436), "left")
 	skills = _panel(SkillPanel.new(), "Skills", Vector2(560, 400), "left")
 	passives = _panel(PassivePanel.new(), "Passives", Vector2(660, 400), "center")
-	pause = _panel(PausePanel.new(), "Paused", Vector2(300, 190), "center")
+	pause = _panel(PausePanel.new(), "Paused", PausePanel.panel_size_for(), "center")
 	quests = _panel(QuestPanel.new(), "Quests", Vector2(360, 400), "left")
 	filter = _panel(FilterPanel.new(), "Loot Filter", Vector2(300, 330), "center")
 	travel = _panel(TravelPanel.new(), "Nim's Maps", Vector2(320, 200), "center")
@@ -48,6 +50,10 @@ func setup(game: Game) -> void:
 	respec = _panel(RespecPanel.new(), "The Order's Ledger", Vector2(320, 400), "center")
 	bestiary = _panel(BestiaryPanel.new(), "Bestiary", Vector2(400, 400), "left")
 	forge = _panel(ForgePanel.new(), "The Ember Forge", Vector2(340, 330), "left")
+	help = _panel(HelpPanel.new(), "Help", Vector2(560, 400), "center") as HelpPanel
+	tips = TutorialTips.new()
+	add_child(tips)
+	tips.setup(g)
 	tooltip = TooltipLayer.new()
 	add_child(tooltip)
 	_fade = ColorRect.new()
@@ -64,7 +70,7 @@ func _panel(p: GamePanel, title: String, sz: Vector2, side: String) -> GamePanel
 
 
 func panels() -> Array[GamePanel]:
-	return [inventory, character, skills, passives, pause, quests, filter, travel, stash, respec, bestiary, forge]
+	return [inventory, character, skills, passives, pause, quests, filter, travel, stash, respec, bestiary, forge, help]
 
 
 func left_panels() -> Array[GamePanel]:
@@ -72,7 +78,7 @@ func left_panels() -> Array[GamePanel]:
 
 
 func center_panels() -> Array[GamePanel]:
-	return [passives, pause, filter, travel, respec]
+	return [passives, pause, filter, travel, respec, help]
 
 
 func blocking() -> bool:
@@ -109,29 +115,49 @@ func close_all() -> void:
 		p.visible = false
 
 
+## The UI layer always processes, so its keys work while the game is paused (Esc closes the menu again).
+func _unhandled_input(event: InputEvent) -> void:
+	if handle_global(event):
+		get_viewport().set_input_as_handled()
+
+
 ## Keys that work whatever is under the mouse. Returns true if the event was used.
 func handle_global(event: InputEvent) -> bool:
 	if hud.messages.modal() and (event.is_action_pressed("click") or event.is_action_pressed("interact")):
 		hud.messages.advance()
 		return true
 	if event.is_action_pressed("menu"):
-		if panels().any(func(p: GamePanel) -> bool: return p.visible and p != pause):
-			close_all()
-			minimap.visible = true
-			hud.tracker_hidden = false
-		else:
-			set_paused(not pause.visible)
+		escape()
 		return true
+	if get_tree().paused and not help.visible:
+		return false
 	var map: Dictionary = {"inventory": inventory, "character": character, "skills": skills, "passives": passives,
-		"quests": quests, "filter": filter}
+		"quests": quests, "filter": filter, "help": help}
 	for action: String in map:
 		if event.is_action_pressed(action):
 			open(map[action])
 			return true
+	if event.is_action_pressed("map"):
+		minimap.toggle_large()
+		return true
 	if event.is_action_pressed("labels"):
 		LabelStack.shown = not LabelStack.shown
 		return true
 	return false
+
+
+## Esc closes the top-most thing first: a tip, then Help, then other panels, and only then opens or closes the menu.
+func escape() -> void:
+	if tips.is_open():
+		tips.dismiss()
+	elif help.visible:
+		help.toggle()
+	elif panels().any(func(p: GamePanel) -> bool: return p.visible and p != pause):
+		close_all()
+		minimap.visible = true
+		hud.tracker_hidden = false
+	else:
+		set_paused(not pause.visible)
 
 
 ## Fade to black, do something (a jump in place or time), fade back.

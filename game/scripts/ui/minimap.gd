@@ -14,6 +14,7 @@ const COLORS: Dictionary = {0: "", 1: "moss_lt", 2: "amber", 3: "glass_lt", 4: "
 const FOG := Color(0.05, 0.05, 0.08, 0.85)
 const ARROW: float = 4.0
 const ZOOM: float = 2.0
+const LARGE: float = 3.0
 
 var g: Game
 var _base: Image
@@ -23,8 +24,19 @@ var _seen: PackedByteArray
 var _last_cell := Vector2i(-99, -99)
 
 
+static var large: bool = false        ## M: the map at its large size, centred
+
+
 static func rect_for(vs: Vector2) -> Rect2:
+	if large:
+		var sz := Vector2(W, H) * LARGE
+		return Rect2(roundf((vs.x - sz.x) / 2.0), TOP + 30.0, sz.x, sz.y)
 	return Rect2(vs.x - EDGE - W, TOP, W, H)
+
+
+func toggle_large() -> void:
+	large = not large
+	Audio.sfx("ui_open", -8.0)
 
 
 func setup(game: Game) -> void:
@@ -90,7 +102,7 @@ func _draw() -> void:
 	var src: Rect2 = Rect2(_origin(), size / ZOOM).intersection(Rect2(Vector2.ZERO, Vector2(g.layout.cols, g.layout.rows)))
 	if src.size.x > 0.0 and src.size.y > 0.0:
 		draw_texture_rect_region(_tex, Rect2((src.position - _origin()) * ZOOM, src.size * ZOOM), src)
-	UiDraw.text(self, Vector2(0, -6), String(GameData.biome["name"]), UiDraw.GOLD, UiDraw.SMALL, HORIZONTAL_ALIGNMENT_RIGHT, W)
+	UiDraw.text(self, Vector2(0, -6), String(GameData.biome["name"]), UiDraw.GOLD, UiDraw.SMALL, HORIZONTAL_ALIGNMENT_RIGHT, size.x)
 	for n: Node in get_tree().get_nodes_in_group("interactables"):
 		_marker(n as Interactable)
 	var me: Vector2 = g.player.global_position
@@ -114,14 +126,18 @@ func _arrow(at: Vector2, dir: Vector2) -> void:
 	draw_polyline(PackedVector2Array([pts[0], pts[1], pts[2], pts[0]]), UiDraw.INK, 1.0)
 
 
-## Where the story wants you: a pulsing gold diamond.
+## Where the story wants you: a large pulsing gold diamond with a dark outline and a ring around it.
 func _objective() -> void:
 	var t: Vector2 = Objectives.target(g)
 	if t == Vector2.INF:
 		return
-	var c: Vector2 = _p(t).clamp(Vector2(4, 4), size - Vector2(4, 4))
-	var k: float = 3.0 + sin(Time.get_ticks_msec() / 200.0)
-	draw_colored_polygon(PackedVector2Array([c + Vector2(0, -k), c + Vector2(k, 0), c + Vector2(0, k), c + Vector2(-k, 0)]), Pal.c("gold"))
+	var c: Vector2 = _p(t).clamp(Vector2(6, 6), size - Vector2(6, 6))
+	var k: float = 5.0 + 1.5 * sin(Time.get_ticks_msec() / 200.0)
+	var pts := PackedVector2Array([c + Vector2(0, -k), c + Vector2(k, 0), c + Vector2(0, k), c + Vector2(-k, 0)])
+	draw_colored_polygon(pts, Pal.c("gold"))
+	pts.append(pts[0])
+	draw_polyline(pts, UiDraw.INK, 1.0)
+	draw_arc(c, k + 3.0, 0.0, TAU, 16, Color(Pal.c("gold"), 0.5), 1.0)
 
 
 func _marker(it: Interactable) -> void:

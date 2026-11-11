@@ -114,8 +114,8 @@ func _make_body() -> void:
 ## His own lantern lights him warmly from its side (a small light that touches only him), so he never reads as a
 ## silhouette in the dark.
 func _make_warm_light() -> void:
-	sprite.light_mask = 1 | SELF_LIGHT_MASK
-	anim.lantern.light_mask = 1 | SELF_LIGHT_MASK
+	sprite.light_mask = 1 | SELF_LIGHT_MASK | Fx.STANDING_MASK
+	anim.lantern.light_mask = 1 | SELF_LIGHT_MASK | Fx.STANDING_MASK
 	_warm = PointLight2D.new()
 	_warm.texture = LightTex.soft(64)
 	_warm.texture_scale = SELF_LIGHT_RADIUS / 32.0
@@ -167,6 +167,10 @@ func walk_to(p: Vector2) -> void:
 
 func stop() -> void:
 	_path.clear()
+
+
+func dashing() -> bool:
+	return _dash_t > 0.0
 
 
 func walking() -> bool:

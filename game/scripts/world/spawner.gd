@@ -130,6 +130,8 @@ func _on_died(e: Enemy) -> void:
 
 
 func _drop_loot(e: Enemy) -> void:
+	if bool(e.data.get("no_loot", false)):                  # practice targets
+		return
 	var D: Dictionary = GameData.items["drop"]
 	var source: String = e.rank
 	MaterialDrop.roll(world, e.global_position, source)

@@ -1,6 +1,6 @@
 {
  "_doc": "The zones of the campaign and how they connect. A new game starts at `start`. Each zone has its biome file (data/biomes/<biome>.json), a seed, enemy levels and its music. Exits are defined in the biome (which set-piece leads where). links: neighbouring zones (for routing the objective marker).",
- "start": "glasswood",
+ "start": "tallow",
  "hub": "tallow",
  "zones": {
   "tallow": {
@@ -15,7 +15,8 @@
    "safe": true,
    "links": [
     "glasswood",
-    "hollins"
+    "hollins",
+    "yard"
    ]
   },
   "glasswood": {
@@ -156,6 +157,19 @@
    "music": "explore",
    "links": [
     "tuesday"
+   ]
+  },
+  "yard": {
+   "name": "The Practice Yard",
+   "biome": "yard",
+   "seed": 9200,
+   "level": [
+    1,
+    1
+   ],
+   "music": "explore",
+   "links": [
+    "tallow"
    ]
   }
  }

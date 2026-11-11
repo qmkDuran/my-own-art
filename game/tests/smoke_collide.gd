@@ -37,6 +37,7 @@ func run(h: ShotHelper) -> void:
 	expect(await _fast_enemy(edge), "a pouncing hound never passes through a wall")
 	expect(await _pushed(edge), "knockback and Tether pulls never push a body into a wall")
 	await _depth(h)
+	_shadow_layers()
 
 
 ## Is this body position solid ground (not inside a footprint, not on blocked terrain)?
@@ -139,3 +140,17 @@ func _depth(h: ShotHelper) -> void:
 	p.global_position = tall.global_position + IN_FRONT
 	await t.get_tree().create_timer(0.5).timeout
 	expect(p.global_position.y > tall.global_position.y and tall.modulate.a > 0.9, "standing in front of it: he draws over it and it stays solid (dy %d, alpha %.2f)" % [p.global_position.y - tall.global_position.y, tall.modulate.a])
+
+
+## Lantern shadows fall only on the ground: the shadow-casting lantern light touches nothing but the floor, and
+## buildings, props and people are lit by a shadowless light, so a house never darkens its own front and nobody in
+## front of it is covered by its shadow.
+func _shadow_layers() -> void:
+	var lights: Array = p.light.get_children().filter(func(n: Node) -> bool: return n is PointLight2D)
+	var shadowed: Array = lights.filter(func(l: PointLight2D) -> bool: return l.shadow_enabled)
+	expect(shadowed.all(func(l: PointLight2D) -> bool: return l.range_item_cull_mask == Fx.FLOOR_MASK),
+		"the lantern's shadow-casting light touches only the floor")
+	var standing: Array = [p.sprite]
+	standing.append_array(t.get_tree().get_nodes_in_group("tall_props").slice(0, 20))
+	expect(standing.all(func(c: CanvasItem) -> bool: return c.light_mask & Fx.FLOOR_MASK == 0 and c.light_mask & Fx.STANDING_MASK != 0),
+		"people and tall props take the lantern's light but never its shadows")

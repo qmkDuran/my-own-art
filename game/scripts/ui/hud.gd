@@ -40,6 +40,9 @@ func setup(game: Game) -> void:
 	_oil.setup(Pal.c("rust"), Pal.c("ember"), Pal.c("gold"))
 	add_child(_life)
 	add_child(_oil)
+	var buttons := HudButtons.new()
+	add_child(buttons)
+	buttons.setup(g)
 	messages = HudMessages.new()
 	add_child(messages)
 	messages.setup(self)
@@ -63,6 +66,7 @@ static func layout(vs: Vector2) -> Dictionary:
 		"cluster": Rect2(x0, gauge.position.y - GAUGE_LABEL, total, bottom - gauge.position.y + GAUGE_LABEL),
 		"tracker": TRACKER, "minimap": Minimap.rect_for(vs),
 		"bar": Rect2(roundf((vs.x - BAR_W) / 2.0), 22.0, BAR_W, BAR_H),
+		"buttons": HudButtons.rects(Vector2(x0 - ORB_GAP, bottom)),
 	}
 
 

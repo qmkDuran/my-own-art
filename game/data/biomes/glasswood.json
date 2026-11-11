@@ -543,14 +543,6 @@
  },
  "events": {
   "caption": "The Glasswood. It was a forest, once.",
-  "ambush": {
-   "kind": "gloam",
-   "count": 5,
-   "offset": [
-    180,
-    60
-   ]
-  },
   "boss": {
    "kind": "glazier",
    "trigger": 300,

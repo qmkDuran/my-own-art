@@ -21,7 +21,7 @@ CLASSES = {"lamplighter": (56, 72), "npc": (36, 64), "gloam": (24, 44), "hound":
            "crawler": (16, 36), "matron": (110, 158),
            "undertow": (40, 62), "drowned": (24, 52),
            "bellwright": (140, 176), "heron": (40, 72), "lurker": (24, 52),
-           "mayor": (110, 160), "repeater": (36, 64), "clockface": (36, 64)}
+           "mayor": (110, 160), "repeater": (36, 64), "clockface": (36, 64), "dummy": (36, 56)}
 FEET_TOLERANCE = 3
 STRIDE_TOLERANCE = 6      # rig-drawn walks: a planted foot moving back along the ground also moves up the 3/4 view
 

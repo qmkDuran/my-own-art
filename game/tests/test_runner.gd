@@ -17,6 +17,9 @@ func _ready() -> void:
 			GameData.ensure()
 			Session.reset()
 			Session.zone_id = a.substr(7)
+			if not ["tallow", "yard"].has(Session.zone_id):        # tests set elsewhere start after the opening
+				Session.campaign.place(Opening.QUEST, ShotHelper.ALL_STEPS)
+				Session.campaign.start("seven_heartbeats")
 	if args.has("--demo") or args.has("--demo2") or args.has("--demo3"):
 		var reel := DemoReel.new()
 		reel.process_mode = Node.PROCESS_MODE_ALWAYS

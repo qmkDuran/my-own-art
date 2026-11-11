@@ -5,7 +5,9 @@ extends RefCounted
 
 const SPARK: String = "res://art/fx/spark.png"
 const FX_Z: int = 20
-const GROUND_LIGHT_MASK: int = 2                     ## light layer the ground, trees and props also listen on
+const GROUND_LIGHT_MASK: int = 2
+const FLOOR_MASK: int = 32        ## only the ground: the lantern's shadow-casting light touches just this
+const STANDING_MASK: int = 64     ## everything standing up (props, trees, people): lit by the lantern without shadows                     ## light layer the ground, trees and props also listen on
 
 static var _glow_mat: CanvasItemMaterial
 static var _add_mat: CanvasItemMaterial

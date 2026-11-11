@@ -1,0 +1,149 @@
+{
+ "_doc": "The Lamplighters' practice yard behind Tallow's west houses: a walled lawn with straw targets, where the Ninth learns to walk, cast, Wickstep and Flare. Safe: nothing here fights back.",
+ "name": "The Practice Yard",
+ "cols": 56,
+ "rows": 40,
+ "cell": 32,
+ "border": 2,
+ "path": {
+  "half_width": 1.4,
+  "verge": 2.0,
+  "jitter": 0.15
+ },
+ "clearing_spacing": 12,
+ "clearings": [
+  {
+   "role": "start",
+   "r": [
+    7,
+    5
+   ],
+   "at_frac": [
+    0.5,
+    0.84
+   ]
+  },
+  {
+   "role": "yard",
+   "r": [
+    15,
+    9
+   ],
+   "at_frac": [
+    0.5,
+    0.38
+   ]
+  }
+ ],
+ "extra_links": 0,
+ "required": [
+  "start",
+  "yard"
+ ],
+ "setpieces": {
+  "start": [
+   {
+    "kind": "exit",
+    "to": "tallow",
+    "sprite": "road_gate",
+    "at": [
+     0,
+     70
+    ]
+   },
+   {
+    "kind": "banner_a",
+    "at": [
+     -80,
+     0
+    ]
+   },
+   {
+    "kind": "banner_b",
+    "at": [
+     80,
+     0
+    ]
+   }
+  ],
+  "yard": [
+   {
+    "kind": "bench",
+    "at": [
+     -180,
+     -110
+    ]
+   },
+   {
+    "kind": "barrels",
+    "at": [
+     200,
+     -110
+    ]
+   },
+   {
+    "kind": "planter",
+    "at": [
+     -220,
+     60
+    ]
+   },
+   {
+    "kind": "planter",
+    "at": [
+     220,
+     60
+    ]
+   }
+  ]
+ },
+ "trees": {
+  "edge_spacing": 44,
+  "deep_spacing": 90,
+  "edge_depth": 2,
+  "kinds": {
+   "hedge_a": 50,
+   "hedge_b": 50
+  }
+ },
+ "edge_props": {},
+ "packs": {
+  "count": 0,
+  "spacing": 10,
+  "safe_radius": 14,
+  "elites": 0,
+  "table": [
+   {
+    "from": 0.0,
+    "kinds": {
+     "dummy": 1.0
+    },
+    "size": [
+     1,
+     1
+    ]
+   }
+  ]
+ },
+ "relight": {},
+ "ambient": {
+  "darkness": [
+   0.68,
+   0.59,
+   0.53
+  ],
+  "motes_color": "amber",
+  "scenery_gain": 1.0
+ },
+ "ground": {
+  "c_moss_dk": "moss_dk",
+  "c_moss": "moss",
+  "c_moss_lt": "moss_lt"
+ },
+ "stone_style": "flags",
+ "stone_wear": 0.2,
+ "events": {
+  "caption": "The practice yard. Straw targets, a painted sun on each. Nobody has trained here in forty years."
+ },
+ "tutorial": true
+}

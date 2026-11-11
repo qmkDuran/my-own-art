@@ -30,6 +30,7 @@ var lamps: Array[Waylamp] = []
 var exits: Array[ZoneExit] = []
 var cocoon: Cocoon
 var loop: TuesdayLoop                    ## set in the Town of One Tuesday
+var event_target: Vector2 = Vector2.INF  ## where a scripted moment wants you (the tracker's "event" target)
 var flags: Dictionary = {}               ## this zone's own flags (boss, boss_down)
 var _dirty: bool = false
 var _save_t: float = 0.0
@@ -53,6 +54,9 @@ func _ready() -> void:
 		var dev := DevTools.new()
 		add_child(dev)
 		dev.setup(self)
+	var guide := ObjectiveGuide.new()
+	world.get_parent().add_child(guide)
+	guide.setup(self)
 	var mood := Atmosphere.new()
 	add_child(mood)
 	mood.setup(self)
@@ -60,6 +64,10 @@ func _ready() -> void:
 	events = ZoneEvents.new()
 	add_child(events)
 	events.setup(self)
+	if Session.campaign.step_index(Opening.QUEST) >= 0:
+		var opening := Opening.new()
+		add_child(opening)
+		opening.setup(self)
 	if GameData.biome.get("loop", false):
 		loop = TuesdayLoop.new()
 		add_child(loop)
@@ -73,6 +81,8 @@ func _ready() -> void:
 
 func _exit_tree() -> void:
 	Audio.set_muffled(false)
+	if get_tree().node_added.is_connected(_standing):
+		get_tree().node_added.disconnect(_standing)
 	if current == self:
 		Session.campaign.quest_done.disconnect(_on_quest_done)
 		Session.campaign.changed.disconnect(mark_dirty)
@@ -82,6 +92,7 @@ func _exit_tree() -> void:
 
 
 func _build_world() -> void:
+	get_tree().node_added.connect(_standing)
 	var view := ZoneView.new()
 	add_child(view)
 	world = Node2D.new()
@@ -248,6 +259,13 @@ func shift_darkness(to: Color, hold: float, back: float) -> void:
 	tw.tween_property(dark, "color", to, 0.12)
 	tw.tween_interval(hold)
 	tw.tween_property(dark, "color", darkness, back)
+
+
+## Everything placed in the world (props, people, effects) stands up: the lantern lights it without shadows; only
+## the ground (ZoneView, outside the world node) takes the lantern's shadows.
+func _standing(n: Node) -> void:
+	if n is CanvasItem and world != null and (world.is_ancestor_of(n) or (fx_layer != null and fx_layer.is_ancestor_of(n))):
+		(n as CanvasItem).light_mask |= Fx.STANDING_MASK
 
 
 func lit_lamps() -> int:

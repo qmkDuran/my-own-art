@@ -26,6 +26,7 @@ func make_sprite() -> Sprite2D:
 	PropSprite.add_glow(s, "res://art/actors/npc_%s_glow.png" % npc_id)
 	s.add_child(PropSprite.shadow(28.0))
 	s.self_modulate = ZoneView.person_modulate()
+	s.light_mask = 1 | Fx.STANDING_MASK
 	return s
 
 

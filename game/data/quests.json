@@ -1,5 +1,115 @@
 {
  "_doc": "Quests: ordered steps; a step is done when its goal event happens ([event, argument] or [event, argument, count]). Events: enter_zone, talk, boss_seen, boss_down, lamp_lit (argument: zone), read (note id), flag. target says where the tracker and minimap point: zone + a place (circle, npc:<id>, exit:<zone>, lamp, role:<clearing role>).",
+ "first_light": {
+  "title": "First Light",
+  "main": true,
+  "next": "seven_heartbeats",
+  "reward": {
+   "xp": 120
+  },
+  "steps": [
+   {
+    "goal": [
+     "talk",
+     "ottilie"
+    ],
+    "target": {
+     "zone": "tallow",
+     "at": "npc:ottilie"
+    },
+    "text": "Meet Mother Ottilie at the Great Lantern"
+   },
+   {
+    "goal": [
+     "talk",
+     "ysolde"
+    ],
+    "target": {
+     "zone": "tallow",
+     "at": "npc:ysolde"
+    },
+    "text": "Report to Captain Marr by the gate"
+   },
+   {
+    "goal": [
+     "enter_zone",
+     "yard"
+    ],
+    "target": {
+     "zone": "yard",
+     "at": "event"
+    },
+    "text": "Go to the practice yard"
+   },
+   {
+    "goal": [
+     "yard",
+     "move"
+    ],
+    "target": {
+     "zone": "yard",
+     "at": "event"
+    },
+    "text": "Walk to the lit marker (left click the ground)"
+   },
+   {
+    "goal": [
+     "yard",
+     "bolt",
+     3
+    ],
+    "target": {
+     "zone": "yard",
+     "at": "event"
+    },
+    "text": "Strike the targets with Wickbolt (left click them)"
+   },
+   {
+    "goal": [
+     "yard",
+     "dash"
+    ],
+    "target": {
+     "zone": "yard",
+     "at": "event"
+    },
+    "text": "Wickstep toward the far marker (Space)"
+   },
+   {
+    "goal": [
+     "yard",
+     "flare"
+    ],
+    "target": {
+     "zone": "yard",
+     "at": "event"
+    },
+    "text": "Flare the cluster of targets (right click)"
+   },
+   {
+    "goal": [
+     "enter_zone",
+     "tallow"
+    ],
+    "target": {
+     "zone": "tallow",
+     "at": "npc:ysolde"
+    },
+    "text": "Go back to Tallow"
+   },
+   {
+    "goal": [
+     "gate",
+     "held"
+    ],
+    "target": {
+     "zone": "tallow",
+     "at": "event"
+    },
+    "text": "Hold the gate with Captain Marr"
+   }
+  ]
+ },
  "seven_heartbeats": {
   "title": "Seven Heartbeats",
   "main": true,

@@ -617,7 +617,30 @@ def _mayor_head(s: Spr, cx: int, top: int) -> None:
     s.line([(cx - 11, top - 10), (cx + 11, top - 10)], "rose")
 
 
-KINDS = {"gloam": (gloam, 48, 48), "hound": (hound, 64, 48), "moth": (moth, 64, 56), "glazier": (glazier, 128, 128), "husk": (husk, 64, 64),
+def dummy(pose: str, i: int) -> Spr:
+    """A practice target in the Lamplighters' yard: a straw-stuffed sack on a cross post, a painted sun for a face.
+    It sways when struck."""
+    s = Spr(48, 56)
+    sway = pick({"idle": (0, 0, 0, 0), "move": (0, 1, 0, -1), "attack": (2, -2, 1)}, pose, i)
+    cx = 24 + sway
+    s.rect(22, 30, 25, 52, "earth_dk")
+    s.rect(14, 51, 34, 53, "earth")
+    s.line([(cx - 13, 24), (cx + 13, 24)], "earth", width=3)
+    s.ellipse(cx, 30, 9, 13, "earth_lt")
+    s.ellipse(cx - 2, 27, 5, 8, "amber")
+    for y in (22, 30, 38):
+        s.line([(cx - 8, y), (cx + 8, y + 1)], "earth")
+    s.ellipse(cx, 12, 7, 7, "earth_lt")
+    s.ellipse(cx, 12, 4, 4, "gold")
+    for a in range(8):
+        import math as _m
+        s.px(cx + _m.cos(a * 0.785) * 6, 12 + _m.sin(a * 0.785) * 6, "flame")
+    s.outline()
+    s.recolor_edge(-1, 0, "stone_lt", only={"earth_lt", "earth"})
+    return s
+
+
+KINDS = {"dummy": (dummy, 48, 56), "gloam": (gloam, 48, 48), "hound": (hound, 64, 48), "moth": (moth, 64, 56), "glazier": (glazier, 128, 128), "husk": (husk, 64, 64),
          "crawler": (crawler, 48, 40), "matron": (matron, 176, 160),
          "undertow": (undertow, 64, 64), "drowned": (drowned_lantern, 48, 56),
          "bellwright": (bellwright, 160, 176), "heron": (heron, 64, 72), "lurker": (lurker, 48, 52),

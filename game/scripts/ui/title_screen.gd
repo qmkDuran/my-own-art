@@ -1,12 +1,11 @@
 class_name TitleScreen
 extends Control
 ## The title: the dark, one lantern burning, embers rising, the name, and the menu (Continue / New Game / Quit).
-## New Game plays four short story cards (click to skip ahead), then the Glasswood.
+## New Game plays the story cards (IntroCards: they type out and wait for a press; hold Esc to skip), then Tallow.
 
 const BIG: int = 40
 const ITEM_H: float = 22.0
 const ITEM_W: float = 170.0
-const CARD_TIME: float = 3.4
 const EMBERS: int = 50
 const GAME_SCENE: String = "res://scenes/game.tscn"
 const FIGURE_SCALE: float = 2.0
@@ -14,9 +13,7 @@ const LIGHT_Y: float = 0.25
 const LOGO_DROP: float = 155.0
 
 var _items: Array[String] = []
-var _cards: Array = []
-var _card: int = -1
-var _card_t: float = 0.0
+var _intro: IntroCards
 var _t: float = 0.0
 var _hover: int = -1
 var _embers: CPUParticles2D
@@ -33,7 +30,6 @@ func _ready() -> void:
 	if SaveGame.exists():
 		_items.append("continue")
 	_items.append_array(["new", "quit"])
-	_cards = GameData.story["intro"]
 	var holder := Node2D.new()
 	add_child(holder)
 	_embers = Fx.motes(holder, Vector2(300, 40), EMBERS, Pal.c("amber"))
@@ -44,14 +40,18 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	if not is_inside_tree():
+		return
 	_t += delta
 	var vs: Vector2 = get_viewport_rect().size
 	if _embers != null:
 		(_embers.get_parent() as Node2D).position = Vector2(vs.x * 0.5, vs.y * 0.62)
-	if _card >= 0:
-		_card_t += delta
-		if _card_t > CARD_TIME:
-			_next_card()
+	if _intro != null:
+		_intro.tick(delta)
+		if _intro.done():
+			_intro = null
+			get_tree().change_scene_to_file(GAME_SCENE)
+			return
 	_hover = -1
 	for i: int in _items.size():
 		if _item_rect(i).has_point(get_local_mouse_position()):
@@ -68,8 +68,8 @@ func _gui_input(event: InputEvent) -> void:
 	var mb := event as InputEventMouseButton
 	if mb == null or not mb.pressed or mb.button_index != MOUSE_BUTTON_LEFT:
 		return
-	if _card >= 0:
-		_next_card()
+	if _intro != null:
+		_intro.press()
 	elif _hover >= 0:
 		Audio.sfx("ui_click", -6.0)
 		_choose(_items[_hover])
@@ -84,17 +84,15 @@ func _choose(id: String) -> void:
 		"new":
 			SaveGame.erase()
 			Session.reset()
-			_card = 0
-			_card_t = 0.0
+			_intro = IntroCards.new(GameData.story["intro"])
 		"quit":
 			get_tree().quit()
 
 
-func _next_card() -> void:
-	_card += 1
-	_card_t = 0.0
-	if _card >= _cards.size():
-		get_tree().change_scene_to_file(GAME_SCENE)
+func _unhandled_key_input(event: InputEvent) -> void:
+	var k := event as InputEventKey
+	if _intro != null and k != null and k.pressed and not k.echo and k.keycode in [KEY_SPACE, KEY_ENTER, KEY_KP_ENTER]:
+		_intro.press()
 
 
 func _draw() -> void:
@@ -105,7 +103,7 @@ func _draw() -> void:
 	for k: int in 6:
 		draw_circle(c, (150.0 - k * 22.0) * pulse, Color(Pal.c("amber"), 0.035 + k * 0.02))
 	_draw_figure(c)
-	if _card >= 0:
+	if _intro != null and not _intro.done():
 		_draw_card(vs)
 		return
 	_draw_logo(c)
@@ -149,8 +147,4 @@ func _draw_item(i: int) -> void:
 
 
 func _draw_card(vs: Vector2) -> void:
-	var a: float = clampf(minf(_card_t, CARD_TIME - _card_t) * 2.0, 0.0, 1.0)
-	var lines: PackedStringArray = UiDraw.wrap(self, String(_cards[_card]), vs.x * 0.6, UiDraw.TITLE)
-	for i: int in lines.size():
-		UiDraw.text(self, Vector2(0, vs.y * 0.62 + i * 26.0), lines[i], Color(UiDraw.TEXT, a), UiDraw.TITLE, HORIZONTAL_ALIGNMENT_CENTER, vs.x)
-	UiDraw.text(self, Vector2(0, vs.y - 12.0), "click to continue", Color(UiDraw.DIM, a), UiDraw.SMALL, HORIZONTAL_ALIGNMENT_CENTER, vs.x)
+	_intro.draw(self, vs)

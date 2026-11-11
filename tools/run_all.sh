@@ -11,7 +11,7 @@ python3 -I tools/check_code.py >/dev/null || status=1
 python3 -I tools/check_art.py >/dev/null || status=1
 "$GODOT" --headless --path game --import >/dev/null 2>&1
 for mode in layout ui smoke; do
-  out=$(timeout 900 "$GODOT" --headless --path game -- --$mode 2>&1)
+  out=$(timeout 900 "$GODOT" --headless --path game -- --$mode --zone=glasswood 2>&1)
   echo "$out" | grep -E "^(LAYOUT|UI|SMOKE) (PASS|FAIL)|SMOKE FAIL:|UI problem|SCRIPT ERROR" | head -20
   echo "$out" | grep -qE "SCRIPT ERROR|Parse Error" && { echo "$mode: script errors"; status=1; }
   echo "$out" | grep -qE "^(LAYOUT|UI|SMOKE) PASS" || status=1

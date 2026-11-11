@@ -25,7 +25,11 @@ func pick_rect() -> Rect2:
 	return Rect2(global_position - Vector2(36, 70), Vector2(72, 80))
 
 
+## Some ways out open only later in the story ("locked_until", a dialogue condition); until then they say why.
 func use(g: Game) -> void:
+	if prop.has("locked_until") and not Dialogue.holds(prop["locked_until"], Session.campaign):
+		g.hud.caption(String(prop.get("locked_text", "Not yet.")))
+		return
 	g.ui.fade_through(func() -> void: Session.travel(g, to))
 
 

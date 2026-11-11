@@ -34,6 +34,7 @@ func _ready() -> void:
 	_sprite.vframes = 2
 	_sprite.offset = Vector2(0, -29)
 	_sprite.self_modulate = ZoneView.person_modulate()
+	_sprite.light_mask = 1 | Fx.STANDING_MASK
 	add_child(_sprite)
 	_wait = randf_range(PAUSE.x, PAUSE.y)
 

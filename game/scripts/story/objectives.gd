@@ -6,7 +6,7 @@ extends RefCounted
 const MAX_QUESTS: int = 3
 
 
-static func lines(_g: Game) -> Array:
+static func lines(g: Game) -> Array:
 	var c: Campaign = Session.campaign
 	var out: Array = []
 	for id: String in c.active().slice(0, MAX_QUESTS):
@@ -16,9 +16,20 @@ static func lines(_g: Game) -> Array:
 		var count: String = " (%d/%d)" % [int(c.quests[id]["count"]), int(goal[2])] if goal.size() > 2 else ""
 		out.append([String(q["title"]), UiDraw.GOLD if bool(q["main"]) else Color("9fc4ff")])
 		out.append(["  " + String(st["text"]) + count, UiDraw.TEXT])
+		var way: String = way_line(g, st)
+		if way != "" and out.size() <= 2:                       # the main quest's concrete next step
+			out.append(["  > " + way, UiDraw.GOLD])
 	if out.is_empty():
 		out.append(["Explore, or rest in Tallow.", UiDraw.DIM])
 	return out
+
+
+## When the goal is in another zone: which way out ("Take the gate to the Glasswood").
+static func way_line(g: Game, st: Dictionary) -> String:
+	var t: Dictionary = st.get("target", {})
+	if t.is_empty() or String(t["zone"]) == g.zone_id:
+		return ""
+	return "Take the way to %s" % String(GameData.zone(next_hop(g.zone_id, String(t["zone"])))["name"])
 
 
 ## Where the main goal is in this zone (INF if nothing to point at).
@@ -46,6 +57,8 @@ static func place(g: Game, at: String) -> Vector2:
 	if at.begins_with("role:"):
 		var cl: Dictionary = g.layout.clearing_of_role(at.substr(5))
 		return g.layout.center_of(cl["center"]) if not cl.is_empty() else Vector2.INF
+	if at == "event":
+		return g.event_target
 	if at == "lamp":
 		return _nearest_unlit(g)
 	return Vector2.INF

@@ -37,8 +37,6 @@ func standing() -> bool:
 
 # ------------------------------------------------------------------ events
 func _unhandled_input(event: InputEvent) -> void:
-	if g.ui.handle_global(event):
-		return
 	if get_tree().paused or g.ui.blocking():
 		return
 	if event.is_action_pressed("click"):

@@ -104,7 +104,7 @@ func gear_up(lv: int) -> void:
 ## Puts the campaign where a staged scene sits in the story: every quest before `quest` done, `quest` at `step`.
 func story_at(quest: String, step: int) -> void:
 	var c: Campaign = Session.campaign
-	var order: Array[String] = ["seven_heartbeats", "ember_road", "moth_hollow", "upward_river", "rising_falls", "saltmarsh",
+	var order: Array[String] = [Opening.QUEST, "seven_heartbeats", "ember_road", "moth_hollow", "upward_river", "rising_falls", "saltmarsh",
 		"drowned_belfry"]
 	for id: String in order:
 		if id == quest:
