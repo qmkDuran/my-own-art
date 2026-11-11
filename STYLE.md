@@ -26,6 +26,7 @@ sprite pixel must be in the palette (`tools/check_art.py`). UI uses palette name
   ambient from above-left, the lantern from the Lamplighter's right.
 - Size classes (visible body): the Lamplighter 52–62 px (with hat and staff), people 36–64 (children ~40),
   small enemies 24–44, medium 24–52, mini-bosses 100–126; bosses later 128–192. Checked by `check_art.py`.
+- Crowds stay readable: enemies keep 1.3x their touching distance apart (`Enemy.PERSONAL_SPACE`).
 - Feet stay on the same line through idle/walk/move frames (no sliding); attacks may leap.
 - Silhouettes first: every character has one unmistakable shape (the Lamplighter's brim + hooked lantern staff +
   capelet; Ysolde's pike and helm; Lio's pointed hood; Hask's smoke horns; Teague's hood, cape and cold lantern).
@@ -36,7 +37,12 @@ sprite pixel must be in the palette (`tools/check_art.py`). UI uses palette name
 - **Glasswood**: moss and dark glass, teal glints, glass stream. **Ember Road**: ash-dark fields with pale stubble,
   burnt bramble hedgerows with live embers, a black canal with ember glints. **Moth Hollow**: near-black cave rock,
   dusty floors, black pools, violet hunger nests, a silk-web nest floor. **Tallow**: round cobbles, warm windows,
-  the Great Lantern's huge warm light, rampart tops seen from above.
+  the Great Lantern's huge warm light, rampart tops seen from above. **Upward River / Rising Falls / Saltmarsh**:
+  cold glass-blue water, rising drops, reed beds, drowned lanterns as the only warm points. **Hollin's Ford / the
+  Town of One Tuesday**: hedged fields, then flagstone squares and lit houses; every clock stopped at four.
+- **Clocks are one family** (`pix.clock_dial`): brass bezel (rust ring, amber highlight), a cool pale face with a
+  shadowed lower-right, dark 12/3/6/9 ticks, hands at four, a small rose pip that glows. Never a flat white disc:
+  pure bone/white areas larger than a few pixels read as holes in the dark scene.
 - Tall things (trees, stalagmites, buildings) turn see-through when they stand in front of someone or of the caption.
 
 ## Ground
