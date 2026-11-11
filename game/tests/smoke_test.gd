@@ -52,6 +52,9 @@ func _run() -> void:
 	await _boss(h)
 	await _death()
 	_save_load()
+	_filter_and_stash()
+	await _act1_foes(h)
+	await _campaign()
 	print("SMOKE %s (%d checks, %d failed)" % ["PASS" if _fails.is_empty() else "FAIL", _count, _fails.size()])
 	get_tree().quit(0 if _fails.is_empty() else 1)
 
@@ -269,3 +272,64 @@ func _save_load() -> void:
 	SaveGame.apply_character(g, back["character"])
 	expect(p.prog.level == level and p.inv.bag_items().size() == bag, "save and load restore level %d and %d bag items" % [level, bag])
 	expect(p.prog.mastery == "duskwalker", "save keeps the mastery")
+
+
+func _filter_and_stash() -> void:
+	LootFilter.toggle_rarity("normal")
+	var plain: Dictionary = LootGen.make(3, "normal")
+	expect(not LootFilter.shows(plain) and LootFilter.shows(LootGen.make(3, "rare")), "the loot filter hides plain items, keeps rares")
+	LootFilter.toggle_rarity("normal")
+	var it: Dictionary = LootGen.make(3, "magic")
+	expect(g.ui.stash.store(it) and Session.stash.has(it), "an item goes into Fenn's lockers")
+
+
+func _act1_foes(h: ShotHelper) -> void:
+	h.clear_near(100000.0)
+	await frames(2)
+	p.global_position = g.layout.free_spot_near(p.global_position, p.radius)
+	await get_tree().create_timer(Player.INVULN_AFTER_RISE).timeout
+	var life0: float = p.life
+	var husk: Enemy = h.pack_near(["husk"], Vector2(30, 0))[0]
+	await frames(2)
+	Combat.hit_enemy(husk, 99999.0)
+	await get_tree().create_timer(1.0).timeout
+	expect(p.life < life0, "a Husk bursts when it falls and burns whoever stands too close")
+	p.walk_to(p.global_position + Vector2(200, 0))
+	var free_speed: float = p._follow_path().length()
+	p.slow(0.5, 1.0)
+	expect(p._follow_path().length() < free_speed * 0.6, "silk slows the Lamplighter")
+	p.stop()
+	var hz: HungerZone = HungerZone.make(g.world, p.global_position, 100.0)
+	var lv: float = p.light.value
+	await get_tree().create_timer(0.5).timeout
+	expect(p.light.value < lv, "a hunger nest drinks the lantern's Light")
+	hz.queue_free()
+	var m: Enemy = g.spawner.spawn("matron", p.global_position + Vector2(200, 0), "boss", [], 12)
+	m.wake()
+	await get_tree().create_timer(6.0).timeout
+	expect(is_instance_valid(m) and not m.dead, "the Moth Matron fights for six seconds without errors")
+	m.queue_free()
+
+
+## Quests and dialogue across zones: Nim's quest moves on, the travel keeps the character, Ottilie starts the road.
+func _campaign() -> void:
+	var c: Campaign = Session.campaign
+	expect(c.past("seven_heartbeats", 1), "breaking the Glazier moves Seven Heartbeats on")
+	var nim: Npc = get_tree().get_nodes_in_group("interactables").filter(func(n: Node) -> bool: return n is Npc and (n as Npc).npc_id == "nim")[0]
+	nim.use(g)
+	while g.hud.messages.advance():
+		pass
+	expect(c.step_index("seven_heartbeats") == 3, "talking to Nim: now bring her home")
+	var level: int = p.prog.level
+	Session.travel(g, "tallow")
+	await frames(30)
+	g = Game.current
+	p = g.player
+	expect(g.zone_id == "tallow" and p.prog.level == level, "travel to Tallow keeps the character (level %d)" % level)
+	expect(c.step_index("seven_heartbeats") == 4, "arriving home moves the quest on")
+	var ott: Npc = get_tree().get_nodes_in_group("interactables").filter(func(n: Node) -> bool: return n is Npc and (n as Npc).npc_id == "ottilie")[0]
+	ott.use(g)
+	while g.hud.messages.advance():
+		pass
+	expect(c.is_done("seven_heartbeats") and c.step_index("ember_road") == 0, "Ottilie sends you down the Ember Road")
+	expect(ActorCheck.problems(g).is_empty(), "nobody stands inside a building in Tallow %s" % ActorCheck.problems(g))
