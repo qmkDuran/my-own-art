@@ -7,8 +7,8 @@ and y-sorting (whatever stands lower on screen is in front). Ground anchor = bot
 
 ## Rendering
 - Base viewport 960 x 540, integer scaling (2x at 1080p), nearest filtering, pixel snap. Camera zoom 1.
-- The world is **dark and muted** (CanvasModulate ~ (0.075, 0.08, 0.13)); light comes from the lantern (banded,
-  warm), lit waylamps, glass crystals (faint teal) and effects. **Abilities shine**: bright, saturated, additive,
+- The world is moody but readable (see Mood below); light comes from the lantern (a smooth warm falloff, never
+  bands or rings: `LightTex.pool()`; checked by `tools/check_banding.py`), lit waylamps, glass crystals (faint teal) and effects. **Abilities shine**: bright, saturated, additive,
   unlit (`Fx.glow_material()`), and every big moment briefly lights its surroundings (`Fx.flash`). Effects stay
   short (≤ 0.35 s for hits) so combat stays readable.
 - Emissive layers (`*_glow.png`): lantern panes, eyes, glints. In darkness you read creatures by their eyes and

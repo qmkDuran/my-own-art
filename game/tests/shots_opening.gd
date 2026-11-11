@@ -169,3 +169,20 @@ func _shadow_object_within(room: float) -> Array:
 
 func _open(at: Vector2) -> bool:
 	return g.layout.walkable(g.layout.cell_of(at))
+
+
+## The lantern's pool on open ground with nothing else around, for the banding check: a sidecar file gives the
+## pool's centre and radius on screen.
+func _shot_lightpool() -> void:
+	_bot().clear_near(100000.0)
+	var field: Dictionary = g.layout.clearing_of_role("field")
+	_bot().place_player(g.layout.center_of(field["center"]) if not field.is_empty() else g.player.global_position)
+	g.camera.frames = []
+	g.player.light.value = 70.0
+	await _wait(2.0)
+	var xf: Transform2D = get_viewport().get_canvas_transform()
+	var c: Vector2 = xf * g.player.light.global_position
+	var r: float = g.player.light.light_radius() * xf.get_scale().x
+	await _save("lightpool")
+	var f := FileAccess.open("%s/lightpool.txt" % _out, FileAccess.WRITE)
+	f.store_string("%f %f %f %f" % [c.x, c.y, r, float(get_viewport().get_visible_rect().size.x)])

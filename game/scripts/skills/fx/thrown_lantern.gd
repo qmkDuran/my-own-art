@@ -47,7 +47,7 @@ func _ready() -> void:
 	glow.material = Fx.glow_material()
 	_sprite.add_child(glow)
 	_light = PointLight2D.new()
-	_light.texture = LightTex.banded()
+	_light.texture = LightTex.pool()
 	_light.color = LanternLight.COLOR
 	_light.energy = LIGHT_ENERGY
 	add_child(_light)

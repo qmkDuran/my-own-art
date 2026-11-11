@@ -22,7 +22,7 @@ func _ready() -> void:
 	super()
 	add_to_group(LightField.GROUP)
 	_light = PointLight2D.new()
-	_light.texture = LightTex.banded()
+	_light.texture = LightTex.pool()
 	_light.color = LanternLight.COLOR
 	_light.position = Vector2(0, -56)
 	_light.energy = 0.0

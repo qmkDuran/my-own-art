@@ -9,7 +9,7 @@ declare -A ZONE=([light]=glasswood [dark]=glasswood [skills]=glasswood [passives
   [character]=glasswood [boss]=glasswood [overview]=glasswood [title]=glasswood [tallow]=tallow [forge]=tallow
   [quests]=tallow [filter]=tallow [stash]=tallow [road]=ember_road [eclipse]=ember_road [noon]=ember_road
   [keystones]=ember_road [eclipse_tree]=ember_road [hollow]=moth_hollow [matron]=moth_hollow [river]=riverbank
-  [falls]=falls [marsh]=saltmarsh [bellwright]=belfry [hollins]=hollins [orbs]=glasswood [yard_move]=yard [yard_bolt]=yard [yard_flare]=yard [gate]=tallow [zonemap]=glasswood [tips]=glasswood [help]=glasswood [menu]=glasswood [house]=tallow [intro]=glasswood [school]=schoolhouse [wren]=tuesday [town]=tuesday [mayor]=tuesday)
+  [falls]=falls [marsh]=saltmarsh [bellwright]=belfry [hollins]=hollins [orbs]=glasswood [yard_move]=yard [yard_bolt]=yard [yard_flare]=yard [gate]=tallow [zonemap]=glasswood [tips]=glasswood [help]=glasswood [menu]=glasswood [house]=tallow [lightpool]=hollins [intro]=glasswood [school]=schoolhouse [wren]=tuesday [town]=tuesday [mayor]=tuesday)
 SHOTS=("$@")
 if [ "${SHOTS[0]:-}" = "shadows" ]; then                 # one shadow still per zone
   for z in tallow hollins tuesday schoolhouse glasswood belfry moth_hollow ember_road; do

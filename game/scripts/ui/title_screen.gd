@@ -11,6 +11,8 @@ const GAME_SCENE: String = "res://scenes/game.tscn"
 const FIGURE_SCALE: float = 2.0
 const LIGHT_Y: float = 0.25
 const LOGO_DROP: float = 155.0
+const GLOW_R: float = 170.0
+const GLOW_ALPHA: float = 0.2
 
 var _items: Array[String] = []
 var _intro: IntroCards
@@ -100,8 +102,8 @@ func _draw() -> void:
 	draw_rect(Rect2(Vector2.ZERO, vs), Pal.c("void"))
 	var c := Vector2(vs.x * 0.5, vs.y * LIGHT_Y)
 	var pulse: float = 1.0 + sin(_t * 2.1) * 0.04 + sin(_t * 7.0) * 0.015
-	for k: int in 6:
-		draw_circle(c, (150.0 - k * 22.0) * pulse, Color(Pal.c("amber"), 0.035 + k * 0.02))
+	var r: float = GLOW_R * pulse                              # a smooth glow, no rings
+	draw_texture_rect(LightTex.pool(), Rect2(c - Vector2(r, r), Vector2(r, r) * 2.0), false, Color(Pal.c("amber"), GLOW_ALPHA))
 	_draw_figure(c)
 	if _intro != null and not _intro.done():
 		_draw_card(vs)

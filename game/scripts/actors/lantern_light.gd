@@ -2,7 +2,7 @@ class_name LanternLight
 extends Node2D
 ## The lantern's Light (data/light.json): a value from min to max that sets the radius. Hits dim it, kills feed
 ## it, and it drifts back into a calm band so a bad moment never stays punishing. Blazing (high) adds damage;
-## Guttering (low) is a warning. Drawn as a banded warm light with a faint ring at the radius that matters.
+## Guttering (low) is a warning. Drawn as a smooth warm light with a faint ring at the radius that matters.
 
 signal state_changed(state: String)
 
@@ -38,8 +38,8 @@ var _pane: float = 1.0
 func _ready() -> void:
 	var L: Dictionary = GameData.light
 	value = float(L["start"])
-	_light = _make_light(LightTex.banded(), ENERGY, Fx.STANDING_MASK, false)    # people, props, trees: no shadows on them
-	_floor = _make_light(LightTex.banded(), ENERGY, Fx.FLOOR_MASK, true)        # the ground: shadows fall here, away from the light
+	_light = _make_light(LightTex.pool(), ENERGY, Fx.STANDING_MASK, false)    # people, props, trees: no shadows on them
+	_floor = _make_light(LightTex.pool(), ENERGY, Fx.FLOOR_MASK, true)        # the ground: shadows fall here, away from the light
 	_halo = _make_light(LightTex.soft(256), HALO_ENERGY, Fx.FLOOR_MASK | Fx.STANDING_MASK, false)
 	z_index = RING_Z
 	z_as_relative = false
