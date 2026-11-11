@@ -101,10 +101,12 @@ func pass3(h: ShotHelper) -> void:
 
 func more_skills(h: ShotHelper) -> void:
 	h.level_up(12)
+	p.prog.skills["cinder_rain"]["nodes"]["guided"] = 1             # cinders seek the one target (random spots may miss)
 	for id: String in ["kindle", "hook", "glass_ward", "cinder_rain", "wick_trap", "lull"]:
 		var foe: Enemy = h.pack_near(["hound"], Vector2(60, 0))[0]
 		foe.max_life = 99999.0
 		foe.life = 99999.0
+		foe.stun_t = 3.0                                       # a still target: these tests are about the skill, not aim
 		await frames(3)
 		expect(h.cast(id, foe.global_position), "%s can be used" % id)
 		if id == "kindle":
