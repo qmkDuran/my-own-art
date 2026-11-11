@@ -1,7 +1,8 @@
 class_name Minimap
 extends Control
-## The zone at one pixel per cell, top-right, revealed as you explore (fog of war): you, the camera view, enemies
-## near you, waylamps (lit or not), unopened chests, people, the boss. Never covered by panels on the right.
+## A local map, top-right: the explored ground around you at two pixels per cell (fog of war beyond), you as an
+## arrow, enemies near you, waylamps (lit or not), unopened chests, people, and the objective (pinned to the edge
+## when it lies beyond the map). Never covered by panels on the right.
 
 const W: float = 150.0
 const H: float = 96.0
@@ -12,6 +13,7 @@ const ENEMY_RANGE: float = 700.0
 const COLORS: Dictionary = {0: "", 1: "moss_lt", 2: "amber", 3: "glass_lt", 4: "earth_lt", 5: "pale", 6: "stone"}
 const FOG := Color(0.05, 0.05, 0.08, 0.85)
 const ARROW: float = 4.0
+const ZOOM: float = 2.0
 
 var g: Game
 var _base: Image
@@ -72,14 +74,22 @@ func _reveal(c: Vector2i) -> void:
 		_tex.update(_shown)
 
 
+## Cell at the map's top-left corner (the map is centred on the Lamplighter).
+func _origin() -> Vector2:
+	return g.player.global_position / float(g.layout.cell) - size / ZOOM / 2.0
+
+
 func _p(world: Vector2) -> Vector2:
-	return world / float(g.layout.cell)
+	return (world / float(g.layout.cell) - _origin()) * ZOOM
 
 
 func _draw() -> void:
 	var r := Rect2(Vector2.ZERO, size)
 	UiDraw.box(self, r.grow(2.0), Color(0.02, 0.02, 0.04, 0.9))
-	draw_texture_rect(_tex, r, false)
+	draw_rect(r, FOG)
+	var src: Rect2 = Rect2(_origin(), size / ZOOM).intersection(Rect2(Vector2.ZERO, Vector2(g.layout.cols, g.layout.rows)))
+	if src.size.x > 0.0 and src.size.y > 0.0:
+		draw_texture_rect_region(_tex, Rect2((src.position - _origin()) * ZOOM, src.size * ZOOM), src)
 	UiDraw.text(self, Vector2(0, -6), String(GameData.biome["name"]), UiDraw.GOLD, UiDraw.SMALL, HORIZONTAL_ALIGNMENT_RIGHT, W)
 	for n: Node in get_tree().get_nodes_in_group("interactables"):
 		_marker(n as Interactable)
@@ -88,9 +98,10 @@ func _draw() -> void:
 		var e := n as Enemy
 		if e.global_position.distance_to(me) < ENEMY_RANGE or e.rank == "boss":
 			var col: Color = Pal.c("violet_lt") if e.rank == "boss" else (Pal.c("flame") if e.rank != "normal" else Pal.c("rose"))
-			draw_rect(Rect2(_p(e.global_position) - Vector2(0.5, 0.5), Vector2(2, 2) if e.rank != "normal" else Vector2(1, 1)), col)
+			if r_has(_p(e.global_position)):
+				draw_rect(Rect2(_p(e.global_position) - Vector2(1, 1), Vector2(3, 3) if e.rank != "normal" else Vector2(2, 2)), col)
 	var view: Vector2 = get_viewport_rect().size / g.camera.zoom
-	draw_rect(Rect2(_p(g.camera.get_screen_center_position() - view / 2.0), view / float(g.layout.cell)), Color(1, 1, 1, 0.3), false, 1.0)
+	draw_rect(Rect2(_p(g.camera.get_screen_center_position() - view / 2.0), view / float(g.layout.cell) * ZOOM), Color(1, 1, 1, 0.25), false, 1.0)
 	_objective()
 	_arrow(_p(me), g.player.aim)
 
@@ -108,7 +119,7 @@ func _objective() -> void:
 	var t: Vector2 = Objectives.target(g)
 	if t == Vector2.INF:
 		return
-	var c: Vector2 = _p(t)
+	var c: Vector2 = _p(t).clamp(Vector2(4, 4), size - Vector2(4, 4))
 	var k: float = 3.0 + sin(Time.get_ticks_msec() / 200.0)
 	draw_colored_polygon(PackedVector2Array([c + Vector2(0, -k), c + Vector2(k, 0), c + Vector2(0, k), c + Vector2(-k, 0)]), Pal.c("gold"))
 
@@ -128,4 +139,9 @@ func _marker(it: Interactable) -> void:
 		col = Color("8fdc6a")
 	else:
 		return
-	draw_rect(Rect2(_p(it.global_position) - Vector2(1, 1), Vector2(3, 3)), col)
+	if r_has(_p(it.global_position)):
+		draw_rect(Rect2(_p(it.global_position) - Vector2(2, 2), Vector2(4, 4)), col)
+
+
+func r_has(p: Vector2) -> bool:
+	return Rect2(Vector2.ZERO, size).has_point(p)

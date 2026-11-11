@@ -153,6 +153,8 @@ func _beats() -> void:
 
 
 func start_boss() -> void:
+	if flags.has("boss"):
+		return
 	flags["boss"] = true
 	var b: Enemy = spawner.spawn_boss()
 	b.wake()

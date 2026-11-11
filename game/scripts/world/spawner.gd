@@ -11,6 +11,7 @@ const CHECK_EVERY: float = 0.4
 const WAVE_RING: float = 260.0
 const AMBUSH_SPREAD: float = 60.0
 const ARRIVAL_TRIES: int = 8
+const AMBUSH_NEAR: float = 600.0
 
 var world: Node2D
 var z: ZoneLayout
@@ -48,6 +49,8 @@ func spawn_boss() -> Enemy:
 
 ## The gloams that came over the wall: they arrive from the forest's edge east of the gate.
 func opening_ambush() -> void:
+	if player.global_position.distance_to(z.start) > AMBUSH_NEAR:
+		return
 	var a: Dictionary = GameData.biome["opening_ambush"]
 	var base: Vector2 = player.global_position + Vector2(float(a["offset"][0]), float(a["offset"][1]))
 	for k: int in int(a["count"]):
