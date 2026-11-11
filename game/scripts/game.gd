@@ -172,7 +172,10 @@ func _framing() -> void:
 	var view: Dictionary = GameData.biome.get("view", {})
 	for f: Array in view.get("frames", []):
 		camera.frames.append([Vector2(float(f[0]), float(f[1])), float(f[2]), float(f[3])])
-	if view.has("intro"):
+	if Session.establishing and view.has("establish"):
+		Session.establishing = false
+		_establish(view["establish"])
+	elif view.has("intro"):
 		var at: Array = view["intro"]
 		camera.intro(Vector2(float(at[0]), float(at[1])), float(at[2]))
 	for w: Dictionary in GameData.biome.get("walkers", []):
@@ -180,6 +183,15 @@ func _framing() -> void:
 		for q: Array in w["route"]:
 			pts.append(Vector2(float(q[0]), float(q[1])))
 		Walker.make(world, String(w["folk"]), pts)
+
+
+## A new game opens in black on the Great Lantern, fades in, holds, and pans down to the Lamplighter with a caption.
+func _establish(e: Dictionary) -> void:
+	camera.establish(Vector2(float(e["at"][0]), float(e["at"][1])), float(e["hold"]), float(e["pan"]))
+	ui.fade_in(float(e["fade"]))
+	get_tree().create_timer(float(e["hold"]), false).timeout.connect(func() -> void:
+		if is_instance_valid(hud):
+			hud.caption(String(e["caption"])))
 
 
 func _arrival() -> Vector2:

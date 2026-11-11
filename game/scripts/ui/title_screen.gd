@@ -13,12 +13,14 @@ const LIGHT_Y: float = 0.25
 const LOGO_DROP: float = 155.0
 const GLOW_R: float = 170.0
 const GLOW_ALPHA: float = 0.2
+const FADE_OUT: float = 1.2              ## after the last card, the screen goes to black before Tallow fades in
 
 var _items: Array[String] = []
 var _intro: IntroCards
 var _t: float = 0.0
 var _hover: int = -1
 var _embers: CPUParticles2D
+var _leaving: float = -1.0               ## counts up while fading to black after the cards
 
 
 func _ready() -> void:
@@ -48,11 +50,17 @@ func _process(delta: float) -> void:
 	var vs: Vector2 = get_viewport_rect().size
 	if _embers != null:
 		(_embers.get_parent() as Node2D).position = Vector2(vs.x * 0.5, vs.y * 0.62)
+	if _leaving >= 0.0:
+		_leaving += delta
+		queue_redraw()
+		if _leaving >= FADE_OUT:
+			Session.establishing = true
+			get_tree().change_scene_to_file(GAME_SCENE)
+		return
 	if _intro != null:
 		_intro.tick(delta)
 		if _intro.done():
-			_intro = null
-			get_tree().change_scene_to_file(GAME_SCENE)
+			_leaving = 0.0
 			return
 	_hover = -1
 	for i: int in _items.size():
@@ -105,6 +113,9 @@ func _draw() -> void:
 	var r: float = GLOW_R * pulse                              # a smooth glow, no rings
 	draw_texture_rect(LightTex.pool(), Rect2(c - Vector2(r, r), Vector2(r, r) * 2.0), false, Color(Pal.c("amber"), GLOW_ALPHA))
 	_draw_figure(c)
+	if _leaving >= 0.0:
+		draw_rect(Rect2(Vector2.ZERO, vs), Color(0, 0, 0, clampf(_leaving / FADE_OUT, 0.0, 1.0)))
+		return
 	if _intro != null and not _intro.done():
 		_draw_card(vs)
 		return

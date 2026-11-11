@@ -14,7 +14,7 @@ func setup(game: Game) -> void:
 	g = game
 	ev = GameData.biome.get("events", {})
 	var C: Dictionary = GameData.story["captions"]
-	if ev.has("caption"):
+	if ev.has("caption") and not g.camera.establishing():    # a new game's establishing shot has its own
 		g.hud.caption(String(ev["caption"]))
 	if ev.has("ambush") and not Session.campaign.flags.has("ambush_" + g.zone_id):
 		Session.campaign.set_flag("ambush_" + g.zone_id)

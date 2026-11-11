@@ -38,7 +38,7 @@ func standing() -> bool:
 
 # ------------------------------------------------------------------ events
 func _unhandled_input(event: InputEvent) -> void:
-	if get_tree().paused or g.ui.blocking():
+	if get_tree().paused or g.ui.blocking() or g.camera.establishing():
 		return
 	if event.is_action_pressed("click"):
 		press()
@@ -86,7 +86,7 @@ func _clear_targets() -> void:
 func _physics_process(delta: float) -> void:
 	_hover()
 	_repath -= delta
-	if g.player.dead:
+	if g.player.dead or g.camera.establishing():
 		return
 	if lmb_held and standing():
 		use_slot(HOLD_SLOT)

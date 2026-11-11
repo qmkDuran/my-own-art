@@ -1,16 +1,21 @@
 class_name Opening
 extends Node
-## The first hour's hand-holding, while "First Light" runs. In the practice yard: a lit marker to walk to, three
-## straw targets for Wickbolt, a far marker to Wickstep toward, a cluster to Flare (each step completes when done).
-## Back in Tallow: the Great Lantern goes dark for seven heartbeats, something comes over the wall, and a small
-## wave breaks through the gate; Captain Marr fights beside you. Game.event_target is where the tracker points.
+## The first hour's hand-holding, while "First Light" runs, all inside Tallow. On the fenced practice ground in the
+## north of town: a lit marker to walk to, three straw targets for Wickbolt, a far marker to Wickstep toward, a
+## cluster to Flare (each step completes when done). Then back to Captain Marr at the gate: the Great Lantern goes
+## dark for seven heartbeats, something comes over the wall, and a small wave breaks through the gate; Marr fights
+## beside you. Game.event_target is where the tracker points.
 
 const QUEST: String = "first_light"
 const MARKER_NEAR: float = 40.0
-const MOVE_AT := Vector2(200, -40)
-const BOLT_AT := Vector2(-150, -90)
-const DASH_AT := Vector2(220, -120)
-const FLARE_AT := Vector2(0, -70)
+const ENTRY_AT := Vector2(0, 110)          ## just inside the gap in the ground's south fence
+const GROUND_HALF := Vector2(240, 120)     ## half the fenced ground: inside it, you have arrived
+const BACK_NEAR: float = 140.0             ## this close to Captain Marr counts as reporting back
+const MOVE_AT := Vector2(140, 40)
+const BOLT_AT := Vector2(-140, -30)
+const DASH_AT := Vector2(140, -60)
+const FLARE_AT := Vector2(0, -20)
+const MARKS: Array[Vector2] = [ENTRY_AT, MOVE_AT, BOLT_AT, DASH_AT, FLARE_AT]   ## every drill spot (the layout check keeps them clear)
 const DARK_BEATS: int = 7
 const BEAT: float = 0.8
 const DARK := Color(0.08, 0.07, 0.1)
@@ -35,9 +40,10 @@ func _process(_delta: float) -> void:
 	if step != _step:
 		_step = step
 		_enter(step)
-	if g.zone_id == "yard":
-		_yard_tick(step)
-	elif step == 8 and not _wave.is_empty() and _wave.all(func(e: Variant) -> bool: return not is_instance_valid(e) or (e as Enemy).dead):
+	if g.zone_id != "tallow":
+		return
+	_yard_tick(step)
+	if step == 8 and not _wave.is_empty() and _wave.all(func(e: Variant) -> bool: return not is_instance_valid(e) or (e as Enemy).dead):
 		_wave.clear()
 		if _ally != null:
 			_ally.queue_free()
@@ -46,20 +52,27 @@ func _process(_delta: float) -> void:
 
 
 func _enter(step: int) -> void:
-	if g.zone_id == "yard":
-		match step:
-			3: _mark(MOVE_AT)
-			4: _spawn_targets()
-			5: _mark(DASH_AT)
-			6: _spawn_cluster()
-	elif g.zone_id == "tallow" and step == 8:
-		_lantern_goes_dark()
+	if g.zone_id != "tallow":
+		return
+	match step:
+		2: g.event_target = _at(ENTRY_AT)
+		3: _mark(MOVE_AT)
+		4: _spawn_targets()
+		5: _mark(DASH_AT)
+		6: _spawn_cluster()
+		7: _clear_marker()
+		8: _lantern_goes_dark()
 
 
 func _yard_tick(step: int) -> void:
 	var c: Campaign = Session.campaign
 	var me: Vector2 = g.player.global_position
-	if step == 3 and me.distance_to(_at(MOVE_AT)) < MARKER_NEAR:
+	var rel: Vector2 = (me - _at(Vector2.ZERO)).abs()
+	if step == 2 and rel.x < GROUND_HALF.x and rel.y < GROUND_HALF.y:
+		c.notify("yard", "enter")
+	elif step == 7 and me.distance_to(Objectives.place(g, "npc:ysolde")) < BACK_NEAR:
+		c.notify("yard", "back")
+	elif step == 3 and me.distance_to(_at(MOVE_AT)) < MARKER_NEAR:
 		c.notify("yard", "move")
 	elif step == 5 and g.player.dashing() and me.distance_to(_at(DASH_AT)) < MARKER_NEAR * 3.0:
 		c.notify("yard", "dash")
@@ -69,9 +82,14 @@ func _at(offset: Vector2) -> Vector2:
 	return g.layout.center_of(g.layout.clearing_of_role("yard")["center"]) + offset
 
 
-func _mark(offset: Vector2) -> void:
+func _clear_marker() -> void:
 	if _marker != null:
 		_marker.queue_free()
+		_marker = null
+
+
+func _mark(offset: Vector2) -> void:
+	_clear_marker()
 	_marker = Node2D.new()
 	_marker.position = _at(offset)
 	_marker.set_script(preload("res://scripts/world/yard_marker.gd"))
@@ -80,8 +98,7 @@ func _mark(offset: Vector2) -> void:
 
 
 func _spawn_targets() -> void:
-	if _marker != null:
-		_marker.queue_free()
+	_clear_marker()
 	_targets = ShotHelper.new(g).pack_near(["dummy", "dummy", "dummy"], _at(BOLT_AT) - g.player.global_position)
 	g.event_target = _at(BOLT_AT)
 	for t: Enemy in _targets:
@@ -89,8 +106,7 @@ func _spawn_targets() -> void:
 
 
 func _spawn_cluster() -> void:
-	if _marker != null:
-		_marker.queue_free()
+	_clear_marker()
 	var cluster: Array[Enemy] = ShotHelper.new(g).pack_near(["dummy", "dummy", "dummy"], _at(FLARE_AT) - g.player.global_position)
 	g.event_target = _at(FLARE_AT)
 	g.player.skills.used.connect(func(id: String) -> void:

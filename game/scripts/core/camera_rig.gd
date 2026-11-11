@@ -19,6 +19,9 @@ var frames: Array = []                 ## [point, radius, weight]: landmarks the
 var focus: Node2D                      ## a boss: the view frames you and it together
 var _intro_t: float = 0.0
 var _intro_at: Vector2
+var _pan_t: float = -1.0               ## establishing shot: time since it began (-1: none)
+var _pan_hold: float = 0.0
+var _pan_len: float = 0.0
 var _noise := FastNoiseLite.new()
 var _t: float = 0.0
 
@@ -64,9 +67,35 @@ func intro(at: Vector2, seconds: float) -> void:
 	reset_smoothing()
 
 
+## Establishing shot of a new game: hold on `at`, then pan slowly (eased) down to the Lamplighter. Input waits.
+func establish(at: Vector2, hold: float, pan: float) -> void:
+	intro(at, 0.0)
+	_intro_at = at
+	_pan_t = 0.0
+	_pan_hold = hold
+	_pan_len = pan
+	position_smoothing_enabled = false
+
+
+func establishing() -> bool:
+	return _pan_t >= 0.0
+
+
+func _pan(delta: float) -> void:
+	_pan_t += delta
+	var k: float = clampf((_pan_t - _pan_hold) / _pan_len, 0.0, 1.0)
+	global_position = _intro_at.lerp(target.global_position + Vector2(0, -16), smoothstep(0.0, 1.0, k))
+	if k >= 1.0:
+		_pan_t = -1.0
+		position_smoothing_enabled = true
+		reset_smoothing()
+
+
 func _physics_process(delta: float) -> void:
 	_intro_t -= delta
-	if _intro_t > 0.0:
+	if _pan_t >= 0.0 and is_instance_valid(target):
+		_pan(delta)
+	elif _intro_t > 0.0:
 		global_position = _intro_at
 	elif is_instance_valid(target):
 		global_position = target.global_position + Vector2(0, -16) + _lean()

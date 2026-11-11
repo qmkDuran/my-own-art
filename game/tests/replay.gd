@@ -116,16 +116,22 @@ func _act(st: Dictionary) -> void:
 		"boss_seen", "boss_down": _to_ring()
 		"lamp_lit": _relight(at)
 		"enter_zone": await _travel(String(goal[1]))
-		"yard": _drill(String(goal[1]))
+		"yard": _drill(String(goal[1]), at)
 		"gate": _hold_gate()
 
 
-## The practice yard, done the way it asks: walk to the marker, bolt the targets, Wickstep, Flare the cluster.
-func _drill(what: String) -> void:
+## The practice ground, done the way it asks: walk in, walk to the marker, bolt the targets, Wickstep, Flare the
+## cluster, then go back to Captain Marr. `goal_at` is where the step's tracker points.
+func _drill(what: String, goal_at: Vector2) -> void:
+	if what == "back":
+		g.player.walk_to(goal_at)
+		return
 	var at: Vector2 = g.event_target
 	if at == Vector2.INF:
 		return
 	match what:
+		"enter":
+			g.player.walk_to(at + Vector2(0, -150))
 		"move":
 			g.player.walk_to(at)
 		"bolt":

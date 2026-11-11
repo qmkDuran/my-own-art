@@ -11,6 +11,7 @@ static var character: Dictionary = {}
 static var campaign := Campaign.new()
 static var zones: Dictionary = {}           ## zone id -> {lamps, opened, flags}
 static var stash: Array = []                ## Fenn's lockers (shared by every visit), STASH_CELLS entries
+static var establishing: bool = false      ## a new game: Tallow opens on the Great Lantern and pans down to you
 static var arrive_at_lamp: bool = false     ## travelled by map: stand by the zone's first lit waylamp
 
 const STASH_CELLS: int = 48

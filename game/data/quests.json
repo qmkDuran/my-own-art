@@ -32,14 +32,14 @@
    },
    {
     "goal": [
-     "enter_zone",
-     "yard"
+     "yard",
+     "enter"
     ],
     "target": {
-     "zone": "yard",
+     "zone": "tallow",
      "at": "event"
     },
-    "text": "Go to the practice yard"
+    "text": "Go to the practice ground in the north of town"
    },
    {
     "goal": [
@@ -47,7 +47,7 @@
      "move"
     ],
     "target": {
-     "zone": "yard",
+     "zone": "tallow",
      "at": "event"
     },
     "text": "Walk to the lit marker (left click the ground)"
@@ -59,7 +59,7 @@
      3
     ],
     "target": {
-     "zone": "yard",
+     "zone": "tallow",
      "at": "event"
     },
     "text": "Strike the targets with Wickbolt (left click them)"
@@ -70,7 +70,7 @@
      "dash"
     ],
     "target": {
-     "zone": "yard",
+     "zone": "tallow",
      "at": "event"
     },
     "text": "Wickstep toward the far marker (Space)"
@@ -81,21 +81,21 @@
      "flare"
     ],
     "target": {
-     "zone": "yard",
+     "zone": "tallow",
      "at": "event"
     },
     "text": "Flare the cluster of targets (right click)"
    },
    {
     "goal": [
-     "enter_zone",
-     "tallow"
+     "yard",
+     "back"
     ],
     "target": {
      "zone": "tallow",
      "at": "npc:ysolde"
     },
-    "text": "Go back to Tallow"
+    "text": "Go back to Captain Marr at the gate"
    },
    {
     "goal": [

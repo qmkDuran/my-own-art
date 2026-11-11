@@ -8,6 +8,7 @@ const CHEST_REASONS: Array[String] = ["hut", "tower", "cart", "bedroll", "campfi
 	"house_b", "house_c", "dock", "barrels", "stall_a", "stall_b", "well", "bookshelf_a", "bookshelf_b", "desk_a", "desk_b"]
 const CHEST_REASON_DIST: float = 110.0
 const START_CLEAR: float = 420.0
+const MARK_CLEAR: float = 40.0          ## a drill marker's ring, and the targets standing on it, need this much room
 
 
 static func problems(z: ZoneLayout) -> PackedStringArray:
@@ -20,7 +21,20 @@ static func problems(z: ZoneLayout) -> PackedStringArray:
 	_border(z, out)
 	_chests(z, out)
 	_spawns(z, out)
+	_drill_marks(z, out)
 	return out
+
+
+## The practice ground's markers and target spots sit on open ground with room around them: no fence, rack or
+## bale may stand on one (a fence once covered the Wickstep marker).
+static func _drill_marks(z: ZoneLayout, out: PackedStringArray) -> void:
+	var yard: Dictionary = z.clearing_of_role("yard")
+	if yard.is_empty():
+		return
+	for off: Vector2 in Opening.MARKS:
+		var at: Vector2 = z.center_of(yard["center"]) + off
+		if not z.point_free(at, MARK_CLEAR):
+			out.append("drill marker at %s is not clear of props by %d px" % [at, MARK_CLEAR])
 
 
 ## Every clearing the biome requires was placed; a zone with a boss has its arena and boss.

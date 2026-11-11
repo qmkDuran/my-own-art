@@ -1,5 +1,5 @@
 extends "res://tests/shots_late.gd"
-## Review shots of the opening and the guidance: the practice yard's drill steps, the zone map, first-time tips,
+## Review shots of the opening and the guidance: the practice ground's drill steps, the zone map, first-time tips,
 ## Help, the Esc menu, and a Tallow house with its lantern shadow on the ground.
 
 

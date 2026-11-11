@@ -23,6 +23,9 @@ func expect(ok: bool, what: String) -> void:
 		_fails.append(what)
 
 
+const TAKE_FRAMES: int = 180
+
+
 func frames(n: int) -> void:
 	for i: int in n:
 		await get_tree().physics_frame
@@ -208,13 +211,15 @@ func _drops_and_labels() -> void:
 
 
 func _walk_and_take() -> void:
+	for i: int in p.inv.bag.size():                      # room in the bag (earlier checks' loot can fill it)
+		p.inv.bag[i] = {}
 	var gi := get_tree().get_nodes_in_group("ground_items")[0] as GroundItem
 	var item: Dictionary = gi.item
 	g.input.cursor_override = gi.label_rect().get_center()
 	await frames(2)
 	g.input.press()
 	g.input.lmb_held = false
-	await frames(120)
+	await frames(TAKE_FRAMES)
 	g.input.cursor_override = Vector2.INF
 	expect(p.inv.bag.has(item), "clicking an item's name walks there and takes it")
 	var from: Vector2 = p.global_position

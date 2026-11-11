@@ -15,6 +15,8 @@ const KEYSTONE_WRAP: float = 260.0
 
 var tab: String = "lamplighter"
 var _glyphs: Texture2D
+var _art := TreeArt.new()
+var _over: String = ""                ## id of the node under the mouse
 
 
 func _ready() -> void:
@@ -27,6 +29,11 @@ func tab_rect(i: int) -> Rect2:
 
 func node_rect(n: Dictionary) -> Rect2:
 	return Rect2(Vector2(52.0, GRID_Y) + Vector2(float(n["pos"][0]), float(n["pos"][1])) * STEP, NODE)
+
+
+## The framed ground the nodes stand on.
+func tree_rect() -> Rect2:
+	return Rect2(6.0, GRID_Y - 10.0, size.x - 12.0, (ROWS - 1) * STEP.y + NODE.y + 14.0)
 
 
 func choose_rect() -> Rect2:
@@ -43,14 +50,24 @@ func _content() -> void:
 		UiDraw.BODY, HORIZONTAL_ALIGNMENT_RIGHT, size.x - 14.0)
 	var tree: Dictionary = GameData.passives["trees"][tab]
 	UiDraw.text(self, Vector2(14, CONTENT_Y + 38.0), String(tree["desc"]), UiDraw.DIM, UiDraw.SMALL)
+	var t: float = Time.get_ticks_msec() / 1000.0
+	_art.backdrop(self, tree_rect(), t)
+	for l: Array in TreeArt.links(tree["nodes"]):
+		_art.connector(self, node_rect(l[0]).get_center(), node_rect(l[1]).get_center(),
+			_rank(l[0]) > 0 and _rank(l[1]) > 0, t)
 	for row: int in ROWS:
 		var req: int = _row_req(tree, row)
 		if req >= 0:
 			UiDraw.text(self, Vector2(10, GRID_Y + row * STEP.y + 22.0), "%d pts" % req, UiDraw.DIM, UiDraw.SMALL)
 	for n: Dictionary in tree["nodes"]:
-		_node(n)
+		_node(n, t)
+	_art.draw_sparks(self, get_process_delta_time())
 	if tree.get("mastery", false):
 		_mastery_footer(tree)
+
+
+func _rank(n: Dictionary) -> int:
+	return int(g.player.prog.passives.get(n["id"], 0))
 
 
 func _fit(s: String, w: float) -> String:
@@ -65,14 +82,11 @@ func _row_req(tree: Dictionary, row: int) -> int:
 	return -1
 
 
-func _node(n: Dictionary) -> void:
+func _node(n: Dictionary, t: float) -> void:
 	var r: Rect2 = node_rect(n)
-	var p: Progression = g.player.prog
-	var rk: int = int(p.passives.get(n["id"], 0))
-	var open: bool = rk > 0 or p.passive_block(String(n["id"])) == ""
-	UiDraw.box(self, r, Color(0.2, 0.12, 0.05) if rk > 0 else Color(0.05, 0.045, 0.07), UiDraw.FRAME_LIT if rk > 0 else (UiDraw.FRAME if open else UiDraw.LOCKED))
-	if n.get("keystone", false):                     # keystones: a second, gold frame
-		draw_rect(r.grow(-3.0), UiDraw.GOLD if open else UiDraw.LOCKED, false, 1.0)
+	var rk: int = _rank(n)
+	var open: bool = rk > 0 or g.player.prog.passive_block(String(n["id"])) == ""
+	_art.node_frame(self, r, TreeArt.kind_of(n), rk > 0, open, _over == n["id"], t)
 	var gi: int = (GameData.sprites["icons"]["glyphs"] as Array).find(String(n["glyph"]))
 	draw_texture_rect_region(_glyphs, Rect2(r.position + Vector2(5, 10), Vector2(GLYPH, GLYPH)), Rect2(gi * GLYPH, 0, GLYPH, GLYPH),
 		Color.WHITE if open else Color(0.4, 0.4, 0.5))
@@ -104,8 +118,11 @@ func _click(at: Vector2, button_index: int) -> void:
 		return
 	for n: Dictionary in GameData.passives["trees"][tab]["nodes"]:
 		if node_rect(n).has_point(at):
-			var ok: bool = p.add_passive(String(n["id"])) if button_index == MOUSE_BUTTON_LEFT else p.remove_passive(String(n["id"]))
+			var add: bool = button_index == MOUSE_BUTTON_LEFT
+			var ok: bool = p.add_passive(String(n["id"])) if add else p.remove_passive(String(n["id"]))
 			Audio.sfx("ui_click" if ok else "hiss", -6.0 if ok else -14.0)
+			if ok and add:
+				_art.burst(node_rect(n).get_center())
 			return
 
 
@@ -117,9 +134,11 @@ func _point_effect(n: Dictionary) -> Array:
 
 
 func _hover(at: Vector2) -> void:
+	_over = ""
 	var p: Progression = g.player.prog
 	for n: Dictionary in GameData.passives["trees"][tab]["nodes"]:
 		if node_rect(n).has_point(at):
+			_over = String(n["id"])
 			var rows: Array = [String(n["name"]), ["Points %d / %d   (needs %d in this tree)" % [int(p.passives.get(n["id"], 0)), int(n["max"]), int(n["req"])], UiDraw.GOLD]]
 			for k: String in n["stats"]:
 				rows.append([GameData.stat_line(k, float(n["stats"][k])) + " per point", UiDraw.TEXT])

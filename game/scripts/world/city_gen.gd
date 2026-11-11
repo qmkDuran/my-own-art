@@ -15,6 +15,8 @@ func run() -> void:
 	z.circle = Vector3(float(sq[0]), float(sq[1]), CITY_RADIUS)
 	z.start = _vec(b["start"])
 	z.clearings.append({"role": "start", "center": z.cell_of(z.start), "r": Vector2.ONE, "secret": false})
+	if b.has("yard"):                                     # the practice ground the opening drills on
+		z.clearings.append({"role": "yard", "center": z.cell_of(_vec(b["yard"])), "r": Vector2.ONE, "secret": false})
 
 
 ## Cobbles everywhere, ramparts around the edge, the gate opening in the south rampart.

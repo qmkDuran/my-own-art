@@ -163,6 +163,12 @@ func escape() -> void:
 		set_paused(not pause.visible)
 
 
+## Start in black and fade the game in.
+func fade_in(seconds: float) -> void:
+	_fade.color.a = 1.0
+	create_tween().tween_property(_fade, "color:a", 0.0, seconds).set_ease(Tween.EASE_IN)
+
+
 ## Fade to black, do something (a jump in place or time), fade back.
 func fade_through(action: Callable) -> void:
 	var tw := create_tween()

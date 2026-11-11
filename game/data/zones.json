@@ -15,8 +15,7 @@
    "safe": true,
    "links": [
     "glasswood",
-    "hollins",
-    "yard"
+    "hollins"
    ]
   },
   "glasswood": {
@@ -157,19 +156,6 @@
    "music": "explore",
    "links": [
     "tuesday"
-   ]
-  },
-  "yard": {
-   "name": "The Practice Yard",
-   "biome": "yard",
-   "seed": 9200,
-   "level": [
-    1,
-    1
-   ],
-   "music": "explore",
-   "links": [
-    "tallow"
    ]
   }
  }
