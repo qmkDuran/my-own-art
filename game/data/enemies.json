@@ -1,32 +1,206 @@
 {
  "_doc": "Enemy kinds. life/damage at level 1; each level adds life_per_level / damage_per_level (fractions). ai: swarm (close and bite), leaper (wind up, leap), ranged (keep distance, shoot shards), boss (the Glazier's pattern). radius = body for collision and overlap checks.",
- "life_per_level": 0.22, "damage_per_level": 0.12, "xp_per_level": 0.18,
- "wake_range": 380.0, "sleep_range": 1400.0,
+ "life_per_level": 0.22,
+ "damage_per_level": 0.12,
+ "xp_per_level": 0.18,
+ "wake_range": 380.0,
+ "sleep_range": 1400.0,
  "ranks": {
-  "normal": {"life": 1.0, "damage": 1.0, "xp": 1.0, "scale": 1.0, "mods": 0},
-  "magic": {"life": 1.7, "damage": 1.15, "xp": 2.2, "scale": 1.0, "mods": 1},
-  "rare": {"life": 3.4, "damage": 1.35, "xp": 6.0, "scale": 1.2, "mods": 2},
-  "boss": {"life": 1.0, "damage": 1.0, "xp": 1.0, "scale": 1.0, "mods": 0}
+  "normal": {
+   "life": 1.0,
+   "damage": 1.0,
+   "xp": 1.0,
+   "scale": 1.0,
+   "mods": 0
+  },
+  "magic": {
+   "life": 1.7,
+   "damage": 1.15,
+   "xp": 2.2,
+   "scale": 1.0,
+   "mods": 1
+  },
+  "rare": {
+   "life": 3.4,
+   "damage": 1.35,
+   "xp": 6.0,
+   "scale": 1.2,
+   "mods": 2
+  },
+  "boss": {
+   "life": 1.0,
+   "damage": 1.0,
+   "xp": 1.0,
+   "scale": 1.0,
+   "mods": 0
+  }
  },
  "mods": {
-  "hasted": {"name": "Hasted", "speed": 1.35, "attack_speed": 1.3},
-  "glass_skin": {"name": "Glass-Skinned", "life": 1.5, "damage_taken": 0.8},
-  "light_drinker": {"name": "Light-Drinker", "light_drain": 6.0},
-  "shard_burst": {"name": "Shard-Burst", "death_shards": 6}
+  "hasted": {
+   "name": "Hasted",
+   "speed": 1.35,
+   "attack_speed": 1.3
+  },
+  "glass_skin": {
+   "name": "Glass-Skinned",
+   "life": 1.5,
+   "damage_taken": 0.8
+  },
+  "light_drinker": {
+   "name": "Light-Drinker",
+   "light_drain": 6.0
+  },
+  "shard_burst": {
+   "name": "Shard-Burst",
+   "death_shards": 6
+  }
  },
  "kinds": {
-  "gloam": {"name": "Gloam", "sprite": "gloam", "life": 22.0, "damage": 5.0, "speed": 96.0, "radius": 10.0, "ai": "swarm",
-   "type": "dusk", "xp": 6.0, "range": 26.0, "windup": 0.28, "cooldown": 1.0, "lunge": 70.0, "fps": 7.0,
-   "lore": "A drop of the Dusk that learned to want. They gather where a light is about to fail."},
-  "hound": {"name": "Splinter Hound", "sprite": "hound", "life": 46.0, "damage": 9.0, "speed": 128.0, "radius": 14.0, "ai": "leaper",
-   "type": "blunt", "xp": 13.0, "range": 34.0, "windup": 0.45, "cooldown": 1.6, "leap_min": 70.0, "leap_max": 170.0, "leap_speed": 420.0, "fps": 9.0,
-   "lore": "Farm dogs, once. The glass grows in when they sleep and they have not slept since."},
-  "moth": {"name": "Mirror Moth", "sprite": "moth", "life": 32.0, "damage": 7.0, "speed": 72.0, "radius": 13.0, "ai": "ranged",
-   "type": "dusk", "xp": 11.0, "range": 230.0, "keep": 160.0, "windup": 0.6, "cooldown": 2.2, "shot_speed": 210.0, "fps": 10.0, "hover": 14.0,
-   "lore": "Its wings hold every light it has ever seen. It is trying to get yours."},
-  "glazier": {"name": "The Glazier", "sprite": "glazier", "life": 1100.0, "damage": 16.0, "speed": 58.0, "radius": 26.0, "ai": "boss",
-   "type": "blunt", "xp": 320.0, "range": 70.0, "windup": 0.8, "cooldown": 1.2, "fps": 6.0,
-   "slam_radius": 90.0, "volley": 10, "shot_speed": 190.0, "rain_count": 7, "rain_delay": 1.0, "rain_radius": 42.0,
-   "lore": "A memory of the hands that cut the first sunshard. It is still trying to put the pieces back."}
+  "gloam": {
+   "name": "Gloam",
+   "sprite": "gloam",
+   "life": 22.0,
+   "damage": 5.0,
+   "speed": 96.0,
+   "radius": 10.0,
+   "ai": "swarm",
+   "type": "dusk",
+   "xp": 6.0,
+   "range": 26.0,
+   "windup": 0.28,
+   "cooldown": 1.0,
+   "lunge": 70.0,
+   "fps": 7.0,
+   "lore": "A drop of the Dusk that learned to want. They gather where a light is about to fail."
+  },
+  "hound": {
+   "name": "Splinter Hound",
+   "sprite": "hound",
+   "life": 46.0,
+   "damage": 9.0,
+   "speed": 128.0,
+   "radius": 14.0,
+   "ai": "leaper",
+   "type": "blunt",
+   "xp": 13.0,
+   "range": 34.0,
+   "windup": 0.45,
+   "cooldown": 1.6,
+   "leap_min": 70.0,
+   "leap_max": 170.0,
+   "leap_speed": 420.0,
+   "fps": 9.0,
+   "lore": "Farm dogs, once. The glass grows in when they sleep and they have not slept since."
+  },
+  "moth": {
+   "name": "Mirror Moth",
+   "sprite": "moth",
+   "life": 32.0,
+   "damage": 7.0,
+   "speed": 72.0,
+   "radius": 13.0,
+   "ai": "ranged",
+   "type": "dusk",
+   "xp": 11.0,
+   "range": 230.0,
+   "keep": 160.0,
+   "windup": 0.6,
+   "cooldown": 2.2,
+   "shot_speed": 210.0,
+   "fps": 10.0,
+   "hover": 14.0,
+   "lore": "Its wings hold every light it has ever seen. It is trying to get yours."
+  },
+  "glazier": {
+   "name": "The Glazier",
+   "sprite": "glazier",
+   "life": 1100.0,
+   "damage": 16.0,
+   "speed": 58.0,
+   "radius": 26.0,
+   "ai": "boss",
+   "type": "blunt",
+   "xp": 320.0,
+   "range": 70.0,
+   "windup": 0.8,
+   "cooldown": 1.2,
+   "fps": 6.0,
+   "slam_radius": 90.0,
+   "volley": 10,
+   "shot_speed": 190.0,
+   "rain_count": 7,
+   "rain_delay": 1.0,
+   "rain_radius": 42.0,
+   "lore": "A memory of the hands that cut the first sunshard. It is still trying to put the pieces back."
+  },
+  "husk": {
+   "name": "Husk",
+   "sprite": "husk",
+   "life": 70.0,
+   "damage": 12.0,
+   "speed": 64.0,
+   "radius": 14.0,
+   "ai": "swarm",
+   "type": "blunt",
+   "xp": 18.0,
+   "range": 30.0,
+   "windup": 0.5,
+   "cooldown": 1.4,
+   "lunge": 50.0,
+   "fps": 6.0,
+   "death_burst": {
+    "radius": 56.0,
+    "delay": 0.7,
+    "damage": 1.2
+   },
+   "lore": "Straw in a dead man's coat. The seams glow because something is still burning inside. Stand back when it falls."
+  },
+  "crawler": {
+   "name": "Silk Crawler",
+   "sprite": "crawler",
+   "life": 30.0,
+   "damage": 6.0,
+   "speed": 82.0,
+   "radius": 11.0,
+   "ai": "ranged",
+   "type": "dusk",
+   "xp": 12.0,
+   "range": 210.0,
+   "keep": 130.0,
+   "windup": 0.5,
+   "cooldown": 1.9,
+   "shot_speed": 190.0,
+   "fps": 9.0,
+   "shot": "silk",
+   "slow": [
+    0.45,
+    1.6
+   ],
+   "lore": "It spins the Matron's roads. Its silk clings and slows; its bite is nothing. The moths come when it calls."
+  },
+  "matron": {
+   "name": "The Moth Matron",
+   "sprite": "matron",
+   "life": 3200.0,
+   "damage": 17.0,
+   "speed": 72.0,
+   "radius": 34.0,
+   "ai": "matron",
+   "type": "dusk",
+   "xp": 700.0,
+   "range": 90.0,
+   "windup": 0.8,
+   "cooldown": 1.3,
+   "fps": 8.0,
+   "hover": 18.0,
+   "gust_range": 230.0,
+   "gust_arc": 70.0,
+   "dust_count": 3,
+   "dust_radius": 70.0,
+   "dust_time": 6.0,
+   "brood": 4,
+   "smother_time": 4.0,
+   "lore": "The sun's fear of being devoured, given wings. Her belly holds every light the road lost."
+  }
  }
 }

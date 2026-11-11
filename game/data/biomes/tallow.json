@@ -1,0 +1,314 @@
+{
+ "_doc": "Tallow, the hub: laid by hand (city). Buildings and objects at pixel positions (bottom-centre anchors); ramparts on every side with the gate in the south rampart (gate: first column, width in cells).",
+ "name": "Tallow",
+ "city": true,
+ "cols": 64,
+ "rows": 44,
+ "cell": 32,
+ "border": 2,
+ "gate": [
+  30,
+  4
+ ],
+ "square": [
+  1024,
+  640
+ ],
+ "start": [
+  1024,
+  1220
+ ],
+ "ambient": {
+  "darkness": [
+   0.17,
+   0.14,
+   0.15
+  ],
+  "motes_color": "amber"
+ },
+ "relight": {},
+ "buildings": [
+  {
+   "kind": "house_a",
+   "at": [
+    150,
+    250
+   ]
+  },
+  {
+   "kind": "house_b",
+   "at": [
+    310,
+    250
+   ]
+  },
+  {
+   "kind": "house_c",
+   "at": [
+    470,
+    250
+   ]
+  },
+  {
+   "kind": "house_a",
+   "at": [
+    630,
+    250
+   ]
+  },
+  {
+   "kind": "house_c",
+   "at": [
+    1410,
+    250
+   ]
+  },
+  {
+   "kind": "house_a",
+   "at": [
+    1570,
+    250
+   ]
+  },
+  {
+   "kind": "house_b",
+   "at": [
+    1730,
+    250
+   ]
+  },
+  {
+   "kind": "house_c",
+   "at": [
+    1890,
+    250
+   ]
+  },
+  {
+   "kind": "great_lantern",
+   "at": [
+    1024,
+    600
+   ]
+  },
+  {
+   "kind": "forge",
+   "at": [
+    420,
+    500
+   ]
+  },
+  {
+   "kind": "archive",
+   "at": [
+    1630,
+    500
+   ]
+  },
+  {
+   "kind": "house_b",
+   "at": [
+    230,
+    820
+   ]
+  },
+  {
+   "kind": "house_c",
+   "at": [
+    250,
+    1080
+   ]
+  },
+  {
+   "kind": "house_a",
+   "at": [
+    450,
+    1180
+   ]
+  },
+  {
+   "kind": "house_c",
+   "at": [
+    1810,
+    820
+   ]
+  },
+  {
+   "kind": "house_a",
+   "at": [
+    1820,
+    1080
+   ]
+  },
+  {
+   "kind": "house_b",
+   "at": [
+    1600,
+    1180
+   ]
+  },
+  {
+   "kind": "stall_a",
+   "at": [
+    640,
+    880
+   ]
+  },
+  {
+   "kind": "stall_b",
+   "at": [
+    790,
+    880
+   ]
+  },
+  {
+   "kind": "crates",
+   "at": [
+    560,
+    520
+   ]
+  },
+  {
+   "kind": "crates",
+   "at": [
+    900,
+    890
+   ]
+  },
+  {
+   "kind": "crates",
+   "at": [
+    1480,
+    520
+   ]
+  }
+ ],
+ "objects": [
+  {
+   "kind": "npc",
+   "npc": "ottilie",
+   "at": [
+    962,
+    668
+   ]
+  },
+  {
+   "kind": "ledger",
+   "at": [
+    920,
+    660
+   ]
+  },
+  {
+   "kind": "npc",
+   "npc": "fenn",
+   "at": [
+    500,
+    560
+   ]
+  },
+  {
+   "kind": "lockers",
+   "at": [
+    580,
+    560
+   ]
+  },
+  {
+   "kind": "npc",
+   "npc": "lio",
+   "at": [
+    1556,
+    560
+   ]
+  },
+  {
+   "kind": "npc",
+   "npc": "mara",
+   "at": [
+    716,
+    940
+   ]
+  },
+  {
+   "kind": "map_table",
+   "at": [
+    1250,
+    760
+   ]
+  },
+  {
+   "kind": "npc",
+   "npc": "nim",
+   "at": [
+    1306,
+    770
+   ],
+   "when": {
+    "quest_past": [
+     "seven_heartbeats",
+     2
+    ]
+   }
+  },
+  {
+   "kind": "waylamp",
+   "lamp": "square",
+   "lit": true,
+   "at": [
+    820,
+    690
+   ]
+  },
+  {
+   "kind": "waylamp",
+   "lamp": "market",
+   "lit": true,
+   "at": [
+    1230,
+    560
+   ]
+  },
+  {
+   "kind": "waylamp",
+   "lamp": "gate_in",
+   "lit": true,
+   "at": [
+    930,
+    1180
+   ]
+  },
+  {
+   "kind": "waylamp",
+   "lamp": "west",
+   "lit": true,
+   "at": [
+    640,
+    1150
+   ]
+  },
+  {
+   "kind": "waylamp",
+   "lamp": "east",
+   "lit": true,
+   "at": [
+    1420,
+    1150
+   ]
+  },
+  {
+   "kind": "exit",
+   "to": "glasswood",
+   "sprite": "road_gate",
+   "at": [
+    1024,
+    1300
+   ]
+  }
+ ],
+ "required": [],
+ "events": {
+  "caption": "Tallow, under the Great Lantern. Home, for now."
+ },
+ "stone_wear": 0.25
+}

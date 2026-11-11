@@ -66,8 +66,6 @@ func _at_gate(sp: Dictionary, ci: int) -> Dictionary:
 
 ## Ground under a prop must be open moss or stone of a clearing (never a path, bridge or water), clear of other
 ## props; shore props (reeds, the fisher) must also stand within two cells of water.
-
-
 func _fits(prop: Dictionary, others: Array[Dictionary]) -> bool:
 	var r: Rect2 = prop["foot"]
 	var probe: Rect2 = r if r.size.x > 0.0 else Rect2(r.position - Vector2(6, 4), Vector2(12, 4))
@@ -103,7 +101,8 @@ func _stone_circle(ci: int, center: Vector2, spec: Array) -> void:
 	for k: int in n:
 		var a: float = TAU * (k + 0.5) / n
 		var pos: Vector2 = (center + Vector2(cos(a), sin(a) * 0.8) * rad).round()
-		var kind: String = "menhir_a" if k % 2 else "menhir_b"
+		var stones: Array = ring.get("stones", ["menhir_a", "menhir_b"])
+		var kind: String = String(stones[k % stones.size()])
 		var prop := {"kind": kind, "pos": pos, "foot": ZoneLayout.footprint(kind, pos), "clearing": ci}
 		if _fits(prop, []):
 			z.props.append(prop)
@@ -129,8 +128,6 @@ func _rebuild_blocked() -> void:
 
 
 ## Glass creeping out of the forest: crystals and rocks where open ground meets the thicket, never by a path.
-
-
 func _edge_props() -> void:
 	var cand: Array[Vector2i] = []
 	for y: int in z.rows:

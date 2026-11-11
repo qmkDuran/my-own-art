@@ -47,8 +47,6 @@ func _pack_cell_ok(c: Vector2i, pk: Dictionary) -> bool:
 
 
 ## Elite packs: past the first third of the zone, and far apart (two elite packs together overwhelm early on).
-
-
 func _elite_packs(centers: Array[Vector2], far: float, n: int) -> Array[int]:
 	var idx: Array[int] = []
 	for i: int in centers.size():

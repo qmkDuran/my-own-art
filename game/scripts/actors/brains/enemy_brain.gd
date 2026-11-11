@@ -26,6 +26,7 @@ static func make(enemy: Enemy) -> EnemyBrain:
 		"leaper": b = LeaperBrain.new()
 		"ranged": b = RangedBrain.new()
 		"boss": b = GlazierBrain.new()
+		"matron": b = MatronBrain.new()
 		_: b = SwarmBrain.new()
 	b.e = enemy
 	b.cd = randf_range(0.2, 0.8)
@@ -87,13 +88,19 @@ func melee(reach: float) -> bool:
 	return false
 
 
+## A shot: a shard of stolen light, or (crawlers) a gob of silk that slows.
 func shoot(dir: Vector2, spd: float) -> void:
 	var from: Vector2 = e.global_position + Vector2(0, -SHOT_HEIGHT)
 	var src_id: int = e.get_instance_id()
 	var dmg: float = e.damage
 	var kind: String = String(e.data["type"])
-	Projectile.spawn(Game.current.fx_layer, from, dir.normalized() * spd, PropSprite.tex(SHARD_TEX), Pal.c("glint"), true,
-		func(_p: Node2D) -> void: Combat.hit_player(instance_from_id(src_id) as Enemy, dmg, kind, from))
+	var slow: Array = e.data.get("slow", [])
+	var col: Color = Pal.c("bone") if String(e.data.get("shot", "")) == "silk" else Pal.c("glint")
+	Projectile.spawn(Game.current.fx_layer, from, dir.normalized() * spd, PropSprite.tex(SHARD_TEX), col, true,
+		func(p: Node2D) -> void:
+			Combat.hit_player(instance_from_id(src_id) as Enemy, dmg, kind, from)
+			if not slow.is_empty():
+				(p as Player).slow(float(slow[0]), float(slow[1])))
 
 
 func shard_ring(n: int) -> void:

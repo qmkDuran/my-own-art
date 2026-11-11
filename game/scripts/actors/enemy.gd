@@ -168,12 +168,29 @@ func _die() -> void:
 	CameraRig.shake(Combat.KILL_SHAKE * size)
 	if mods.has("shard_burst"):
 		brain.shard_ring(int(GameData.enemies["mods"]["shard_burst"]["death_shards"]))
+	if data.has("death_burst"):
+		_death_burst(data["death_burst"])
 	died.emit(self)
 	var tw := create_tween()
 	tw.set_parallel()
 	tw.tween_property(sprite, "scale", Vector2(sprite.scale.x * 1.4, sprite.scale.y * 0.2), DEATH_TIME)
 	tw.tween_property(self, "modulate:a", 0.0, DEATH_TIME)
 	tw.chain().tween_callback(queue_free)
+
+
+## Husks burst when they fall: a circle warns, then the embers inside it burn.
+func _death_burst(db: Dictionary) -> void:
+	var at: Vector2 = global_position
+	var r: float = float(db["radius"])
+	var dmg: float = damage * float(db["damage"])
+	var fx: Node2D = Game.current.fx_layer
+	Telegraph.circle(fx, at, r, float(db["delay"])).fired.connect(func() -> void:
+		Fx.burst(fx, at, 24, Vector2(60, 180), 0.5, [Pal.c("gold"), Pal.c("flame"), Pal.c("ember", 0.0)])
+		Fx.flash(fx, at, r * 2.0, Pal.c("flame"), 1.4, 0.3)
+		Audio.sfx("flare", -10.0, 1.4)
+		var p: Player = Game.current.player
+		if p.global_position.distance_to(at) < r + p.radius:
+			Combat.hit_player(null, dmg, "blunt", at))
 
 
 # ------------------------------------------------------------------ frame
@@ -237,3 +254,5 @@ func _animate(delta: float, want: Vector2) -> void:
 	var target: Player = Game.current.player
 	sprite.flip_h = target.global_position.x < global_position.x if kind == "hound" else false
 	PropSprite.set_frame(sprite, row * 4 + f)
+	if data.has("hover"):                                     # fliers float above their shadow
+		sprite.position.y = -float(data["hover"]) + sin(_anim_t * 0.8) * 2.0

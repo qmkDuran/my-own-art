@@ -27,6 +27,9 @@ static func generate(biome: Dictionary, seed_value: int) -> ZoneLayout:
 	noise.frequency = 0.08
 	var z := ZoneLayout.new()
 	z.setup(int(biome["cols"]), int(biome["rows"]), int(biome["cell"]), seed_value)
+	if biome.get("city", false):
+		(CityGen.new().with(z, biome, rng, noise) as CityGen).run()
+		return z
 	var geo := ZoneGeography.new().with(z, biome, rng, noise) as ZoneGeography
 	geo.run()
 	(ZonePaths.new().with(z, biome, rng, noise) as ZonePaths).run()

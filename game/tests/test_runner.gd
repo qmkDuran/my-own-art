@@ -11,6 +11,11 @@ const MODES: Dictionary = {
 
 func _ready() -> void:
 	var args: PackedStringArray = OS.get_cmdline_user_args()
+	for a: String in args:
+		if a.begins_with("--zone="):                      # start in a given zone (tests, screenshots)
+			GameData.ensure()
+			Session.reset()
+			Session.zone_id = a.substr(7)
 	for flag: String in MODES:
 		if args.has(flag):
 			var node: Node = (load(MODES[flag]) as GDScript).new()

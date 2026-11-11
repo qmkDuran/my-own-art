@@ -49,9 +49,13 @@ func _ground() -> void:
 	mat.set_shader_parameter("path_scale", float(PATH_TEXEL))
 	mat.set_shader_parameter("pond", Vector4(z.pond.x, z.pond.y, maxf(1.0, z.pond.z - z.cell * 0.5), maxf(1.0, z.pond.w - z.cell * 0.5)))
 	mat.set_shader_parameter("circle", z.circle)
+	mat.set_shader_parameter("stone_wear", float(GameData.biome.get("stone_wear", 1.0)))
 	for n: String in ["void", "ink", "moss_dk", "moss", "moss_lt", "earth_dk", "earth", "earth_lt", "stone_dk", "stone",
 			"stone_lt", "glass_dp", "glass_dk", "glass", "glass_lt", "glint"]:
 		mat.set_shader_parameter("c_" + n, Pal.c(n))
+	var ground: Dictionary = GameData.biome.get("ground", {})
+	for uniform: String in ground:                       # a biome recolours its ground (ash fields, cave rock, silk)
+		mat.set_shader_parameter(uniform, Pal.c(String(ground[uniform])))
 	s.material = mat
 	add_child(s)
 
@@ -59,7 +63,7 @@ func _ground() -> void:
 ## The stream's centre per row (in cells) as a one-pixel-high float texture the shader interpolates.
 func _stream_tex() -> ImageTexture:
 	var img := Image.create(z.rows, 1, false, Image.FORMAT_RF)
-	for y: int in z.rows:
+	for y: int in mini(z.rows, z.stream_center.size()):
 		img.set_pixel(y, 0, Color(z.stream_center[y], 0, 0))
 	return ImageTexture.create_from_image(img)
 
@@ -100,6 +104,8 @@ func _bridges() -> void:
 
 ## The wall's face runs along the bottom of the wall rows; the gate stands where the road leaves the city.
 func _wall(world: Node2D) -> void:
+	if z.wall_cols == 0:
+		return
 	var base_y: float = z.wall_rows * z.cell
 	var gate_x: float = z.gate_col * z.cell
 	var gate := PropSprite.make("gate")

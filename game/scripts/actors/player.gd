@@ -18,6 +18,7 @@ const HIT_FLASH: float = 0.07
 const HURT_SHAKE: float = 0.3
 const DASH_GHOSTS: int = 4
 const INVULN_AFTER_RISE: float = 2.0
+const PUSH_DECAY: float = 6.0
 
 var stats := Stats.new()
 var prog := Progression.new()
@@ -44,6 +45,9 @@ var _dash_dir: Vector2
 var _invuln: float = 0.0
 var _tonic_t: float = 0.0
 var _tonic_heal: float = 0.0
+var _slow: float = 0.0
+var _slow_t: float = 0.0
+var _push: Vector2 = Vector2.ZERO
 
 
 func _ready() -> void:
@@ -221,6 +225,17 @@ func _rise() -> void:
 	life_changed.emit()
 
 
+## Silk and the like: move slower for a while (the strongest slow wins).
+func slow(fraction: float, seconds: float) -> void:
+	_slow = maxf(_slow if _slow_t > 0.0 else 0.0, fraction)
+	_slow_t = maxf(_slow_t, seconds)
+
+
+## A shove (a wing gust): slides the Lamplighter, decaying quickly.
+func push(v: Vector2) -> void:
+	_push += v
+
+
 func gain_life(v: float) -> void:
 	life = minf(stats.max_life(), life + v)
 
@@ -238,6 +253,8 @@ func _physics_process(delta: float) -> void:
 		velocity = Vector2.ZERO
 	else:
 		velocity = _follow_path()
+	velocity += _push
+	_push = _push.lerp(Vector2.ZERO, minf(1.0, PUSH_DECAY * delta))
 	move_and_slide()
 	_animate(delta)
 
@@ -249,6 +266,7 @@ func _timers(delta: float) -> void:
 	_dash_cd = maxf(0.0, _dash_cd - delta)
 	_invuln = maxf(0.0, _invuln - delta)
 	_flash_t = maxf(0.0, _flash_t - delta)
+	_slow_t = maxf(0.0, _slow_t - delta)
 	(sprite.material as ShaderMaterial).set_shader_parameter("flash", 0.35 if _flash_t > 0.0 else 0.0)
 	sprite.modulate.a = 0.5 if _invuln > 0.0 and int(_invuln * 10.0) % 2 == 0 else 1.0
 	if dead:
@@ -268,7 +286,7 @@ func _follow_path() -> Vector2:
 	var dir: Vector2 = (_path[0] - global_position).normalized()
 	if absf(dir.x) > 0.2:
 		sprite.flip_h = dir.x < 0.0
-	return dir * stats.move_speed() * skills.move_mult()
+	return dir * stats.move_speed() * skills.move_mult() * (1.0 - (_slow if _slow_t > 0.0 else 0.0))
 
 
 func _animate(delta: float) -> void:

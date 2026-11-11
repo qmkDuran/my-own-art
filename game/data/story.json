@@ -37,21 +37,50 @@
     "Rule two: it is not a stone.",
     "Rule three: if it speaks, it is dreaming. Do not answer."
    ]
+  },
+  "teague_road": {
+   "title": "A note in the roadside shrine",
+   "lines": [
+    "The road lamps aren't failing. Something drinks them.",
+    "The moths carry the light east, into the hills. Like bees. Like offerings.",
+    "\u2014 T."
+   ]
+  },
+  "teague_hollow": {
+   "title": "Teague's last camp",
+   "lines": [
+    "Followed the moths down. They feed her. She feeds on what the sun dreams.",
+    "It is remembering, Ottilie. The Dusk is remembering.",
+    "\u2014 T."
+   ]
   }
  },
  "signs": {
-  "road": "Tallow  -  Glasswood Road  -  (someone scratched: TURN BACK)",
+  "road": "The Ember Road  -  Tallow west, the hills east",
   "east": "East: the Ember Road  -  (scratched under it: the lamps are out)"
  },
  "lamps": {
   "gate": "Gate Waylamp",
   "tower": "Watchtower Waylamp",
-  "camp": "Old Camp Waylamp"
+  "camp": "Old Camp Waylamp",
+  "square": "Square Lamp",
+  "market": "Market Lamp",
+  "gate_in": "Gate Lamp",
+  "west": "West Lamp",
+  "east": "East Lamp",
+  "road1": "Road Lamp",
+  "road2": "Road Lamp",
+  "road3": "Road Lamp",
+  "road4": "Road Lamp",
+  "road5": "Road Lamp",
+  "hollow": "Hollow Lamp"
  },
  "chests": {
   "hut": "Woodcutter's Chest",
   "tower": "Watch Locker",
   "camp": "Expedition Crate",
-  "secret": "Lamplighter's Cache"
+  "secret": "Lamplighter's Cache",
+  "farm": "Farmhouse Chest",
+  "hollow": "Teague's Pack"
  }
 }

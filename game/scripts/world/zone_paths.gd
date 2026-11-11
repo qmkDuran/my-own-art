@@ -104,8 +104,6 @@ func _disc(c: Vector2i, rad: float, v: int, over: Array) -> void:
 
 
 ## The drawn line of a path: the stretches outside clearings (one cell into each), corners rounded (Chaikin).
-
-
 func _record_lines(cells: Array[Vector2i]) -> void:
 	var run := PackedVector2Array()
 	for i: int in cells.size():
@@ -133,8 +131,6 @@ func _chaikin(pts: PackedVector2Array) -> PackedVector2Array:
 
 
 ## Where a path crosses the stream, a plank bridge three cells wide spans it from bank to bank.
-
-
 func _bridge(cells: Array[Vector2i]) -> void:
 	var group: Array[Vector2i] = []
 	for i: int in cells.size() + 1:
@@ -175,8 +171,6 @@ func _span(group: Array[Vector2i]) -> void:
 
 
 ## The secret clearing hangs off its nearest clearing by a narrow deer trail (moss, no dirt, no bridge).
-
-
 func _secret_trail() -> void:
 	for i: int in z.clearings.size():
 		if not z.clearings[i]["secret"]:

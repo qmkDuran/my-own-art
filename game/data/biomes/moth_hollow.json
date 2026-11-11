@@ -1,0 +1,320 @@
+{
+ "_doc": "Moth Hollow (Act 1): caves where the moths carry stolen light. Rock is the thicket, caverns the clearings, black pools the water; hunger nests drain your Light; the Matron waits in her nest.",
+ "name": "Moth Hollow",
+ "cols": 150,
+ "rows": 100,
+ "cell": 32,
+ "border": 2,
+ "path": {
+  "half_width": 0.9,
+  "verge": 2.2,
+  "jitter": 0.22
+ },
+ "clearing_spacing": 20,
+ "clearings": [
+  {
+   "role": "start",
+   "r": [
+    8,
+    6
+   ],
+   "at_frac": [
+    0.08,
+    0.2
+   ]
+  },
+  {
+   "role": "circle",
+   "r": [
+    11,
+    9
+   ],
+   "at_frac": [
+    0.84,
+    0.8
+   ]
+  },
+  {
+   "role": "camp",
+   "r": [
+    8,
+    6
+   ]
+  },
+  {
+   "role": "hunger",
+   "r": [
+    9,
+    7
+   ],
+   "count": 3
+  },
+  {
+   "role": "pool",
+   "r": [
+    10,
+    8
+   ]
+  },
+  {
+   "role": "cavern",
+   "r": [
+    8,
+    7
+   ],
+   "count": 4
+  },
+  {
+   "role": "lamp",
+   "r": [
+    6,
+    5
+   ]
+  }
+ ],
+ "extra_links": 3,
+ "required": [
+  "start",
+  "circle",
+  "camp",
+  "hunger",
+  "lamp"
+ ],
+ "setpieces": {
+  "start": [
+   {
+    "kind": "exit",
+    "to": "ember_road",
+    "sprite": "cave_mouth",
+    "at": [
+     0,
+     -40
+    ]
+   }
+  ],
+  "camp": [
+   {
+    "kind": "campfire",
+    "at": [
+     0,
+     0
+    ]
+   },
+   {
+    "kind": "bedroll",
+    "at": [
+     -44,
+     -26
+    ]
+   },
+   {
+    "kind": "note",
+    "at": [
+     40,
+     -20
+    ],
+    "note": "teague_hollow"
+   },
+   {
+    "kind": "chest",
+    "at": [
+     6,
+     50
+    ],
+    "chest": "hollow"
+   }
+  ],
+  "hunger": [
+   {
+    "kind": "hunger",
+    "at": [
+     0,
+     0
+    ],
+    "r": 150
+   },
+   {
+    "kind": "cocoon_pod",
+    "at": [
+     -60,
+     -30
+    ]
+   },
+   {
+    "kind": "cocoon_pod",
+    "at": [
+     60,
+     -20
+    ]
+   },
+   {
+    "kind": "cocoon_pod",
+    "at": [
+     10,
+     50
+    ]
+   }
+  ],
+  "pool": [
+   {
+    "kind": "pond",
+    "at": [
+     0,
+     -100
+    ],
+    "r": [
+     5,
+     2.2
+    ]
+   },
+   {
+    "kind": "stalagmite_a",
+    "at": [
+     -90,
+     10
+    ]
+   }
+  ],
+  "cavern": [
+   {
+    "kind": "cocoon_pod",
+    "at": [
+     -30,
+     -20
+    ]
+   },
+   {
+    "kind": "rock_b",
+    "at": [
+     50,
+     20
+    ]
+   }
+  ],
+  "lamp": [
+   {
+    "kind": "waylamp",
+    "at": [
+     0,
+     -10
+    ],
+    "lamp": "hollow",
+    "lit": false
+   }
+  ],
+  "circle": [
+   {
+    "kind": "stone_ring",
+    "r": 170,
+    "count": 10,
+    "stones": [
+     "stalagmite_a",
+     "stalagmite_b"
+    ]
+   },
+   {
+    "kind": "boss",
+    "enemy": "matron",
+    "at": [
+     0,
+     -60
+    ]
+   }
+  ]
+ },
+ "trees": {
+  "edge_spacing": 44,
+  "deep_spacing": 96,
+  "edge_depth": 2,
+  "kinds": {
+   "stalagmite_a": 55,
+   "stalagmite_b": 45
+  }
+ },
+ "edge_props": {
+  "cocoon_pod": 14,
+  "silk_web": 10,
+  "rock_a": 12
+ },
+ "packs": {
+  "count": 32,
+  "spacing": 11,
+  "safe_radius": 16,
+  "elites": 4,
+  "table": [
+   {
+    "from": 0.0,
+    "kinds": {
+     "crawler": 0.5,
+     "gloam": 0.5
+    },
+    "size": [
+     3,
+     5
+    ]
+   },
+   {
+    "from": 0.35,
+    "kinds": {
+     "crawler": 0.4,
+     "moth": 0.4,
+     "gloam": 0.2
+    },
+    "size": [
+     3,
+     6
+    ]
+   },
+   {
+    "from": 0.65,
+    "kinds": {
+     "crawler": 0.35,
+     "moth": 0.45,
+     "hound": 0.2
+    },
+    "size": [
+     4,
+     7
+    ]
+   }
+  ]
+ },
+ "relight": {
+  "waves": 2,
+  "wave_size": 7,
+  "duration": 15.0,
+  "kinds": {
+   "crawler": 0.5,
+   "moth": 0.5
+  }
+ },
+ "ambient": {
+  "darkness": [
+   0.05,
+   0.045,
+   0.08
+  ],
+  "motes_color": "amber"
+ },
+ "ground": {
+  "c_moss_dk": "ink",
+  "c_moss": "night",
+  "c_moss_lt": "dusk1",
+  "c_ink": "void",
+  "c_earth_dk": "stone_dk",
+  "c_earth": "dusk1",
+  "c_stone_dk": "dusk1",
+  "c_stone": "mist",
+  "c_stone_lt": "pale",
+  "c_glint": "amber"
+ },
+ "events": {
+  "caption": "Moth Hollow. The dark down here is warm, and it hums.",
+  "boss": {
+   "kind": "matron",
+   "trigger": 340,
+   "music": "boss",
+   "caption": "The Matron's nest. Every light the road lost is in her belly."
+  }
+ }
+}

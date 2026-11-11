@@ -20,6 +20,7 @@ const HIT_FLASH_TIME: float = 0.35
 var value: float
 var stats: Stats
 var thrown: bool = false
+var _smother_t: float = 0.0
 var shown_radius: float = 0.0
 var _light: PointLight2D
 var _halo: PointLight2D
@@ -51,7 +52,7 @@ func _make_light(tex: Texture2D, energy: float) -> PointLight2D:
 
 func target_radius() -> float:
 	var L: Dictionary = GameData.light
-	var v: float = float(L["thrown_lantern_self_light"]) if thrown else value
+	var v: float = float(L["thrown_lantern_self_light"]) if thrown or _smother_t > 0.0 else value
 	var mult: float = stats.light_radius_mult() if stats != null else 1.0
 	return (float(L["radius_base"]) + float(L["radius_per_light"]) * v) * mult
 
@@ -71,6 +72,15 @@ func state() -> String:
 	if value < float(L["guttering_below"]):
 		return "guttering"
 	return "calm"
+
+
+## Something folds its wings over the lantern: the light shrinks to an ember for a while.
+func smother(seconds: float) -> void:
+	_smother_t = maxf(_smother_t, seconds)
+
+
+func smothered() -> bool:
+	return _smother_t > 0.0
 
 
 func add(amount: float) -> void:
@@ -95,6 +105,7 @@ func on_kill(rank: String) -> void:
 
 func _process(delta: float) -> void:
 	_t += delta
+	_smother_t = maxf(0.0, _smother_t - delta)
 	_drift(delta)
 	shown_radius = lerpf(shown_radius, target_radius(), minf(1.0, delta * RADIUS_LERP))
 	var flick: float = 1.0 + sin(_t * 13.0) * FLICKER * 0.5 + sin(_t * 7.3) * FLICKER * 0.5

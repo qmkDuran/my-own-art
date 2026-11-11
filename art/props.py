@@ -80,8 +80,8 @@ def glass_tree(w: int, h: int, seed: int) -> Spr:
     return s
 
 
-def dead_tree(seed: int) -> Spr:
-    """An ordinary dead oak the glass has half taken: black branches, glass at the tips."""
+def dead_tree(seed: int, glass: bool = True) -> Spr:
+    """An ordinary dead oak: on the Glasswood the glass has taken its tips; on the Ember Road it simply burned."""
     rnd = random.Random(seed)
     s = Spr(72, 104)
     cx, ground = 36, 101
@@ -92,7 +92,10 @@ def dead_tree(seed: int) -> Spr:
         ex, ey = x + math.sin(ang) * length, y - math.cos(ang) * length
         s.line([(x, y), (ex, ey)], "earth_dk", width=max(1, depth))
         if depth <= 1:
-            _prism(s, (ex, ey), ang, rnd.uniform(5, 9), 1.6, ("glass_dk", "glass", "glass_lt"))
+            if glass:
+                _prism(s, (ex, ey), ang, rnd.uniform(5, 9), 1.6, ("glass_dk", "glass", "glass_lt"))
+            else:
+                s.px(ex, ey, "ember", glow=rnd.random() < 0.3)
             return
         for d in (-0.5, 0.45):
             branch(ex, ey, ang + d + rnd.uniform(-0.2, 0.2), length * 0.7, depth - 1)
@@ -458,6 +461,7 @@ MANIFEST: dict[str, dict] = {
     "tree_b": {"draw": lambda: glass_tree(80, 116, 2), "foot": [12, 8]},
     "tree_c": {"draw": lambda: glass_tree(56, 80, 3), "foot": [10, 8]},
     "tree_dead": {"draw": lambda: dead_tree(4), "foot": [10, 8]},
+    "tree_burnt": {"draw": lambda: dead_tree(9, glass=False), "foot": [10, 8]},
     "crystal": {"draw": lambda: crystal(32, 32, 5), "foot": [16, 8], "light": "glass_lt"},
     "crystal_big": {"draw": lambda: crystal(48, 52, 6), "foot": [26, 10], "light": "glass_lt"},
     "rock_a": {"draw": lambda: rock(28, 20, 7), "foot": [24, 10]},

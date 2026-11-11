@@ -110,6 +110,9 @@ func _interactables() -> void:
 	var by_kind: Dictionary = {"chest": Chest, "waylamp": Waylamp, "npc": Npc, "cocoon": Cocoon, "note": LoreObject,
 		"cairn": LoreObject, "statue_fisher": LoreObject, "signpost": LoreObject, "exit": ZoneExit}
 	for p: Dictionary in layout.props:
+		if p["kind"] == "hunger":
+			HungerZone.make(world, p["pos"], float(p.get("r", 150.0)))
+			continue
 		if not by_kind.has(p["kind"]) or not Dialogue.holds(p.get("when", {}), Session.campaign):
 			continue
 		var it: Interactable = (by_kind[p["kind"]] as GDScript).new().setup(p)

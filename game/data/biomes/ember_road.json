@@ -1,0 +1,344 @@
+{
+ "_doc": "The Ember Road (Act 1): burnt farmland along the old Lamplighters' road. Dead hedgerows and orchards are the thicket; fields are the clearings; a black, ash-choked canal crosses it. Five road lamps to relight.",
+ "name": "The Ember Road",
+ "cols": 170,
+ "rows": 84,
+ "cell": 32,
+ "border": 2,
+ "stream": {
+  "x_frac": 0.45,
+  "width": 3,
+  "amp": [
+   4,
+   7
+  ],
+  "freq": [
+   0.04,
+   0.07
+  ]
+ },
+ "path": {
+  "half_width": 1.1,
+  "verge": 2.4,
+  "jitter": 0.22
+ },
+ "clearing_spacing": 20,
+ "clearings": [
+  {
+   "role": "start",
+   "r": [
+    8,
+    6
+   ],
+   "at_frac": [
+    0.06,
+    0.5
+   ]
+  },
+  {
+   "role": "exit_east",
+   "r": [
+    8,
+    7
+   ],
+   "at_frac": [
+    0.93,
+    0.5
+   ]
+  },
+  {
+   "role": "farm",
+   "r": [
+    12,
+    9
+   ],
+   "count": 2
+  },
+  {
+   "role": "orchard",
+   "r": [
+    8,
+    7
+   ]
+  },
+  {
+   "role": "shrine",
+   "r": [
+    6,
+    5
+   ]
+  },
+  {
+   "role": "lamp",
+   "r": [
+    6,
+    5
+   ],
+   "count": 5
+  },
+  {
+   "role": "field",
+   "r": [
+    12,
+    9
+   ],
+   "count": 3
+  }
+ ],
+ "extra_links": 3,
+ "required": [
+  "start",
+  "exit_east",
+  "farm",
+  "shrine",
+  "lamp"
+ ],
+ "setpieces": {
+  "start": [
+   {
+    "kind": "exit",
+    "to": "glasswood",
+    "sprite": "road_gate",
+    "at": [
+     -60,
+     -10
+    ]
+   },
+   {
+    "kind": "signpost",
+    "at": [
+     50,
+     30
+    ],
+    "sign": "road"
+   }
+  ],
+  "exit_east": [
+   {
+    "kind": "exit",
+    "to": "moth_hollow",
+    "sprite": "cave_mouth",
+    "at": [
+     0,
+     -30
+    ]
+   },
+   {
+    "kind": "silk_web",
+    "at": [
+     -90,
+     30
+    ]
+   },
+   {
+    "kind": "scarecrow",
+    "at": [
+     80,
+     40
+    ]
+   }
+  ],
+  "farm": [
+   {
+    "kind": "farmhouse",
+    "at": [
+     0,
+     -30
+    ]
+   },
+   {
+    "kind": "well",
+    "at": [
+     -90,
+     20
+    ]
+   },
+   {
+    "kind": "haystack",
+    "at": [
+     90,
+     10
+    ]
+   },
+   {
+    "kind": "chest",
+    "at": [
+     70,
+     -40
+    ],
+    "chest": "farm"
+   },
+   {
+    "kind": "scarecrow",
+    "at": [
+     -40,
+     60
+    ]
+   }
+  ],
+  "orchard": [
+   {
+    "kind": "haystack",
+    "at": [
+     -50,
+     -20
+    ]
+   },
+   {
+    "kind": "scarecrow",
+    "at": [
+     40,
+     10
+    ]
+   },
+   {
+    "kind": "stump",
+    "at": [
+     0,
+     50
+    ]
+   }
+  ],
+  "shrine": [
+   {
+    "kind": "lamp_shrine",
+    "at": [
+     0,
+     -10
+    ],
+    "note": "teague_road"
+   },
+   {
+    "kind": "rock_a",
+    "at": [
+     50,
+     20
+    ]
+   }
+  ],
+  "lamp": [
+   {
+    "kind": "waylamp",
+    "at": [
+     0,
+     -10
+    ],
+    "lamp": "road1",
+    "lit": false
+   },
+   {
+    "kind": "signpost",
+    "at": [
+     50,
+     30
+    ],
+    "sign": "road"
+   }
+  ],
+  "field": [
+   {
+    "kind": "scarecrow",
+    "at": [
+     0,
+     0
+    ]
+   },
+   {
+    "kind": "haystack",
+    "at": [
+     70,
+     30
+    ]
+   }
+  ]
+ },
+ "trees": {
+  "edge_spacing": 30,
+  "deep_spacing": 64,
+  "edge_depth": 3,
+  "kinds": {
+   "hedge_a": 40,
+   "hedge_b": 40,
+   "tree_burnt": 20
+  }
+ },
+ "edge_props": {
+  "rock_a": 20,
+  "haystack": 8,
+  "rock_b": 8
+ },
+ "packs": {
+  "count": 36,
+  "spacing": 11,
+  "safe_radius": 16,
+  "elites": 4,
+  "table": [
+   {
+    "from": 0.0,
+    "kinds": {
+     "husk": 0.5,
+     "gloam": 0.5
+    },
+    "size": [
+     3,
+     5
+    ]
+   },
+   {
+    "from": 0.35,
+    "kinds": {
+     "husk": 0.5,
+     "hound": 0.3,
+     "gloam": 0.2
+    },
+    "size": [
+     3,
+     6
+    ]
+   },
+   {
+    "from": 0.65,
+    "kinds": {
+     "husk": 0.4,
+     "hound": 0.3,
+     "moth": 0.3
+    },
+    "size": [
+     4,
+     7
+    ]
+   }
+  ]
+ },
+ "relight": {
+  "waves": 2,
+  "wave_size": 6,
+  "duration": 14.0,
+  "kinds": {
+   "husk": 0.5,
+   "gloam": 0.5
+  }
+ },
+ "ambient": {
+  "darkness": [
+   0.12,
+   0.095,
+   0.1
+  ],
+  "motes_color": "ember"
+ },
+ "ground": {
+  "c_moss_dk": "moss_dk",
+  "c_moss": "earth_dk",
+  "c_moss_lt": "earth_lt",
+  "c_ink": "ember_dk",
+  "c_glass_dp": "ink",
+  "c_glass_dk": "night",
+  "c_glass": "dusk2",
+  "c_glass_lt": "dusk3",
+  "c_glint": "ember"
+ },
+ "events": {
+  "caption": "The Ember Road. The lamps that kept it are dark, and something walks the fields."
+ }
+}

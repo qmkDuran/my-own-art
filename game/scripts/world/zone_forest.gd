@@ -11,8 +11,6 @@ func run() -> void:
 
 
 ## Distance (in cells) from every cell to the nearest walkable cell, by breadth-first search.
-
-
 func _depth() -> PackedInt32Array:
 	var d := PackedInt32Array()
 	d.resize(z.cols * z.rows)
@@ -36,8 +34,6 @@ func _depth() -> PackedInt32Array:
 
 ## Trees stand only in the thicket, trunks clear of open ground (so what you see blocks you exactly where it
 ## stands), denser at the forest's edge than deep inside.
-
-
 func _trees() -> void:
 	var tr: Dictionary = b["trees"]
 	var depth: PackedInt32Array = _depth()

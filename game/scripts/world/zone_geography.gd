@@ -19,6 +19,8 @@ func close_border() -> void:
 
 
 func _wall() -> void:
+	if not b.has("wall"):
+		return
 	var w: Dictionary = b["wall"]
 	z.wall_cols = int(w["cols"])
 	z.wall_rows = int(w["rows"])
@@ -41,8 +43,10 @@ func stream_x(row: float) -> float:
 
 
 func _stream() -> void:
-	var half: int = int(b["stream"]["width"]) / 2
 	z.stream_center.resize(z.rows)
+	if not b.has("stream"):
+		return
+	var half: int = int(b["stream"]["width"]) / 2
 	for y: int in z.rows:
 		z.stream_center[y] = stream_x(y)
 		var cx: int = roundi(stream_x(y))
@@ -55,13 +59,19 @@ func _stream() -> void:
 
 func _clearings() -> void:
 	for spec: Dictionary in b["clearings"]:
-		var r := Vector2(float(spec["r"][0]), float(spec["r"][1]))
-		var at: Vector2i = _clearing_spot(spec, r)
-		if at.x < 0:
-			continue
-		var c := {"role": String(spec["role"]), "center": at, "r": r, "secret": bool(spec.get("secret", false))}
-		z.clearings.append(c)
-		_carve_clearing(z.clearings.size() - 1)
+		for k: int in int(spec.get("count", 1)):
+			_clearing(spec)
+	if not b.has("wall"):                        # no city gate: the zone starts in its start clearing
+		z.start = z.center_of(z.clearing_of_role("start")["center"]) + Vector2(0, z.cell)
+
+
+func _clearing(spec: Dictionary) -> void:
+	var r := Vector2(float(spec["r"][0]), float(spec["r"][1]))
+	var at: Vector2i = _clearing_spot(spec, r)
+	if at.x < 0:
+		return
+	z.clearings.append({"role": String(spec["role"]), "center": at, "r": r, "secret": bool(spec.get("secret", false))})
+	_carve_clearing(z.clearings.size() - 1)
 
 
 func _clearing_spot(spec: Dictionary, r: Vector2) -> Vector2i:
@@ -82,7 +92,7 @@ func _clearing_ok(c: Vector2i, r: Vector2) -> bool:
 	if c.x - r.x < z.wall_cols + 2 and c.y - r.y < z.wall_rows + 3:
 		return false
 	for y: int in range(c.y - int(r.y) - 1, c.y + int(r.y) + 2):
-		if absf(stream_x(y) - c.x) < r.x + 4.0:
+		if b.has("stream") and absf(stream_x(y) - c.x) < r.x + 4.0:
 			return false
 	for o: Dictionary in z.clearings:
 		var oc: Vector2i = o["center"]

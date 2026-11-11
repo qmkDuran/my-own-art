@@ -160,7 +160,25 @@ def silk_web() -> Spr:
     return _finish(s, "bone", {"stone_dk"})
 
 
+def hedge(seed: int) -> Spr:
+    """A burnt bramble hedgerow: black thorny mass, a few embers still alive in it. Nothing walks through."""
+    rnd = random.Random(seed)
+    s = Spr(44, 36)
+    for _ in range(9):
+        x, y = rnd.uniform(8, 36), rnd.uniform(12, 28)
+        s.ellipse(x, y, rnd.uniform(5, 9), rnd.uniform(4, 7), rnd.choice(["ink", "ember_dk", "night"]))
+    for _ in range(10):
+        x, y = rnd.uniform(4, 40), rnd.uniform(6, 30)
+        a = rnd.uniform(0, math.tau)
+        s.line([(x, y), (x + math.cos(a) * 5, y + math.sin(a) * 4)], "earth_dk")
+    for _ in range(3):
+        s.px(rnd.uniform(10, 34), rnd.uniform(10, 26), "ember", glow=True)
+    return _finish(s, "rust", {"ember_dk"})
+
+
 MANIFEST: dict[str, dict] = {
+    "hedge_a": {"draw": lambda: hedge(61), "foot": [30, 10]},
+    "hedge_b": {"draw": lambda: hedge(62), "foot": [30, 10]},
     "road_gate": {"draw": road_gate, "foot": [0, 0]},
     "cave_mouth": {"draw": cave_mouth, "foot": [0, 0]},
     "scarecrow": {"draw": scarecrow, "foot": [10, 6]},

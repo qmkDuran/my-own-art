@@ -55,6 +55,20 @@
   "flat": false,
   "glow": false
  },
+ "tree_burnt": {
+  "size": [
+   72,
+   104
+  ],
+  "frames": 1,
+  "foot": [
+   10,
+   8
+  ],
+  "light": "",
+  "flat": false,
+  "glow": true
+ },
  "crystal": {
   "size": [
    32,
@@ -427,6 +441,34 @@
   "frames": 2,
   "foot": [
    26,
+   10
+  ],
+  "light": "",
+  "flat": false,
+  "glow": true
+ },
+ "hedge_a": {
+  "size": [
+   44,
+   36
+  ],
+  "frames": 1,
+  "foot": [
+   30,
+   10
+  ],
+  "light": "",
+  "flat": false,
+  "glow": true
+ },
+ "hedge_b": {
+  "size": [
+   44,
+   36
+  ],
+  "frames": 1,
+  "foot": [
+   30,
    10
   ],
   "light": "",

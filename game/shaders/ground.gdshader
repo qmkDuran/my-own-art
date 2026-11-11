@@ -13,6 +13,7 @@ uniform float path_scale = 8.0;
 uniform vec4 pond;
 uniform vec3 circle;
 uniform float stream_half = 1.0;
+uniform float stone_wear = 1.0;
 uniform vec4 c_void : source_color;
 uniform vec4 c_ink : source_color;
 uniform vec4 c_moss_dk : source_color;
@@ -36,6 +37,7 @@ const int PATH = 2;
 const int WATER = 3;
 const int BRIDGE = 4;
 const int STONE = 5;
+const int WALL = 6;
 
 float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
 
@@ -135,12 +137,23 @@ vec4 stone(vec2 px, float edge) {
 	vec2 f = fract(q);
 	vec2 id = floor(q);
 	float h = hash(id);
-	float wear = edge * edge * 0.9 + fbm(px * 0.03) * 0.35;
+	float wear = (edge * edge * 0.9 + fbm(px * 0.03) * 0.35) * stone_wear;
 	if (h < wear * 0.32) { return dith(c_earth_dk, c_moss_dk, fbm(px * 0.1), px); }
 	if (f.x < 0.07 || f.y < 0.1) { return (h > 0.6 || wear > 0.55) ? c_moss_dk : c_stone_dk; }
 	vec4 col = dith(c_stone, c_stone_lt, h * 0.6 + fbm(px * 0.1) * 0.35 - 0.15 - wear * 0.3, px);
 	if (hash(id + 7.0) > 0.72 && abs(f.x - f.y * (hash(id + 3.0) - 0.5) * 1.6 - 0.5) < 0.035) { col = c_stone_dk; }
-	if (fbm(px * 0.06 + 11.0) > 0.66 - wear * 0.25) { col = dith(col, c_moss, 0.55, px); }
+	if (fbm(px * 0.06 + 11.0) > 0.66 - wear * 0.25 + (1.0 - stone_wear) * 0.3) { col = dith(col, c_moss, 0.55, px); }
+	return col;
+}
+
+// The top of a rampart seen from above: big dark blocks, a lit inner edge where it meets the street.
+vec4 rampart(vec2 px, vec2 w) {
+	vec2 q = px / vec2(24.0, 16.0);
+	q.x += floor(q.y) * 0.5;
+	vec2 f = fract(q);
+	if (f.x < 0.06 || f.y < 0.1) { return c_ink; }
+	vec4 col = dith(c_stone_dk, c_stone, hash(floor(q)) * 0.5, px);
+	if (terr(px + vec2(0.0, 6.0)) == STONE || terr(px + vec2(0.0, -6.0)) == STONE) { col = c_stone_lt; }
 	return col;
 }
 
@@ -152,7 +165,9 @@ void fragment() {
 	int raw = int(texelFetch(map_tex, cc, 0).r * 255.0 + 0.5);
 	bool is_stream = texelFetch(map_tex, cc, 0).g > 0.5;
 	vec4 col = c_ink;
-	if (raw == WATER || raw == BRIDGE) {
+	if (raw == WALL) {
+		col = rampart(px, w);
+	} else if (raw == WATER || raw == BRIDGE) {
 		col = water(px, raw == BRIDGE ? -cell : water_edge(px, is_stream));
 	} else if (t == THICKET) { col = thicket(px); }
 	else if (t == STONE && length(px - circle.xy) < circle.z) { col = stone(px, length(px - circle.xy) / circle.z); }
