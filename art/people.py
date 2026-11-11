@@ -170,6 +170,9 @@ def _held(s: Spr, f: Fig, item: str, hand: tuple[float, float]) -> None:
         s.line([(x + 4, y + 2), (x + 7, y)], "glass_lt")
         s.rect(x - 1, y - 1, x + 1, y, "glass")
         s.px(x - 1, y + 2, "glint")
+    elif item == "oar":
+        s.line([(x - 2, y + 14), (x + 2, y - 30)], "earth_lt", width=2)
+        s.poly([(x - 4, y + 12), (x + 1, y + 12), (x, y + 22), (x - 5, y + 22)], "earth")
     elif item == "shadow_hand":
         s.line([(x, y), (x + 2, y + 8), (x - 1, y + 13)], "void", width=2)
         s.px(x + 1, y + 6, "violet_lt", glow=True)
@@ -368,6 +371,9 @@ NPCS = {
     "mara": {"name": "Mara Brennick", "role": "The woodcutter's daughter", "head": "bun", "hat": ("earth_dk", "earth", "earth_lt"),
              "coat": ("glass_dp", "glass_dk", "glass"), "cape": "rust", "hem": 57, "hem_w": 11, "held_r": "teapot",
              "skin": "skin_lt", "apron": "bone", "split": False, "width": 0.95, "scarf": ("rust", "ember_dk")},
+    "odile": {"name": "Odile Vane", "role": "Ferrywoman of the Upward River", "head": "brim", "hat": ("glass_dp", "glass_dk", "glass_lt"),
+              "band": "glint", "coat": ("glass_dp", "glass_dk", "glass"), "cape": "night", "hem": 56, "hem_w": 12, "held_r": "oar",
+              "skin": "skin", "belt": "earth_dk", "trim": "glint", "buttons": [27, 31], "scarf": ("glass_lt", "glass")},
     "teague": {"name": "Teague Morrow", "role": "The Eighth Lamplighter (missing)", "head": "hood",
                "hat": ("ink", "night", "mist"), "coat": ("ink", "night", "dusk2"), "cape": "dusk1", "held_r": "lantern",
                "held_l": "whip", "skin": "pale", "eyes": "glint", "eyes_glow": True, "scarf": ("stone", "stone_dk"),

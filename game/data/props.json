@@ -447,6 +447,48 @@
   "flat": false,
   "glow": true
  },
+ "boat": {
+  "size": [
+   80,
+   36
+  ],
+  "frames": 1,
+  "foot": [
+   0,
+   0
+  ],
+  "light": "",
+  "flat": false,
+  "glow": true
+ },
+ "dock": {
+  "size": [
+   64,
+   40
+  ],
+  "frames": 1,
+  "foot": [
+   0,
+   0
+  ],
+  "light": "",
+  "flat": false,
+  "glow": false
+ },
+ "rising_drops": {
+  "size": [
+   28,
+   72
+  ],
+  "frames": 1,
+  "foot": [
+   0,
+   0
+  ],
+  "light": "glass_lt",
+  "flat": false,
+  "glow": true
+ },
  "hedge_a": {
   "size": [
    44,

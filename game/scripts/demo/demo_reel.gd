@@ -6,9 +6,12 @@ extends Node
 ## Quits at the end.
 
 const DEMO_SEED: int = 7
+const TRAVEL: Dictionary = {"road": "ember_road", "hollow": "moth_hollow", "river": "riverbank", "glass": "glasswood"}
+const ARRIVE_PAN: float = 2.5
 const REELS: Dictionary = {
 	"act1": [[0.0, "gate"], [15.0, "elite"], [29.0, "boss"], [46.0, "end"]],
 	"act2": [[0.0, "hub"], [10.5, "road"], [25.0, "hollow"], [45.0, "end"]],
+	"final": [[0.0, "arrive"], [9.0, "road"], [21.0, "river"], [33.0, "hollow"], [50.0, "glass"], [61.0, "end"]],
 }
 const BOSS_LIFE: float = 0.13
 const MATRON_LIFE: float = 0.22
@@ -30,7 +33,8 @@ var _left: Game
 
 func _ready() -> void:
 	seed(DEMO_SEED)
-	_reel = REELS["act2" if OS.get_cmdline_user_args().has("--demo2") else "act1"]
+	var args: PackedStringArray = OS.get_cmdline_user_args()
+	_reel = REELS["final" if args.has("--demo3") else ("act2" if args.has("--demo2") else "act1")]
 	add_child(DemoBot.new())
 
 
@@ -51,11 +55,14 @@ func _enter(id: String, g: Game) -> void:
 			get_tree().quit()
 		"gate", "hub":
 			_setup(id, g)
-		"road", "hollow":
+		"road", "hollow", "river", "glass":
 			_left = g
 			_pending = id
-			var to: String = "ember_road" if id == "road" else "moth_hollow"
+			var to: String = String(TRAVEL[id])
 			g.ui.fade_through(func() -> void: Session.travel(g, to))
+		"arrive":
+			_setup("hub", g)
+			g.camera.intro(Vector2(1024, 760), ARRIVE_PAN)
 		_:
 			g.ui.fade_through(func() -> void: _setup(id, g))
 
@@ -67,7 +74,9 @@ func _setup(id: String, g: Game) -> void:
 		"boss": _boss(g, h, 8, "beacon", BOSS_LIFE)
 		"hub": _hub(g, h)
 		"road": _road(g, h)
-		"hollow": _boss(g, h, 14, "mothwright", MATRON_LIFE)
+		"hollow": _hollow(g, h)
+		"river": _river(g, h)
+		"glass": _glass(g, h)
 
 
 func _build(g: Game, h: ShotHelper, level: int) -> void:
@@ -142,3 +151,29 @@ func _road(g: Game, h: ShotHelper) -> void:
 	g.player.light.value = 65.0
 	lamp.use(g)
 	lamp.progress = ROAD_PROGRESS
+
+
+## The Matron, with Eclipse and Noon on E and R.
+func _hollow(g: Game, h: ShotHelper) -> void:
+	_boss(g, h, 14, "mothwright", MATRON_LIFE)
+	g.player.prog.set_slot("e", "eclipse")
+	g.player.prog.set_slot("r", "noon")
+
+
+## The Upward River: a pack of Undertows and Drowned Lanterns; Lull and Cinder Rain on E and R.
+func _river(g: Game, h: ShotHelper) -> void:
+	_build(g, h, 16)
+	h.clear_near(100000.0)
+	var at: Vector2 = g.layout.center_of(g.layout.clearing_of_role("pool")["center"])
+	h.place_player(at + Vector2(-80, 40))
+	h.pack_near(["undertow", "undertow", "drowned", "undertow", "drowned", "undertow"], Vector2(150, 0))
+	g.player.light.value = 70.0
+	g.player.prog.set_slot("e", "lull")
+	g.player.prog.set_slot("r", "cinder_rain")
+
+
+## Back in the Glasswood, at the Glazier's ring, for the last word: Kindle and Wick Trap ready.
+func _glass(g: Game, h: ShotHelper) -> void:
+	_boss(g, h, 12, "beacon", BOSS_LIFE)
+	g.player.prog.set_slot("e", "kindle")
+	g.player.prog.set_slot("r", "glass_ward")

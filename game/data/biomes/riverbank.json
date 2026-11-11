@@ -1,0 +1,360 @@
+{
+ "_doc": "The Upward River (Act 2): a river that runs into the sky. Reed beds and drowned orchards are the thicket; the river crosses it with ferries' landings; pools rain upward. Odile the ferrywoman waits at the hamlet.",
+ "name": "The Upward River",
+ "cols": 160,
+ "rows": 96,
+ "cell": 32,
+ "border": 2,
+ "stream": {
+  "x_frac": 0.5,
+  "width": 5,
+  "amp": [
+   5,
+   8
+  ],
+  "freq": [
+   0.03,
+   0.05
+  ]
+ },
+ "path": {
+  "half_width": 1.0,
+  "verge": 2.4,
+  "jitter": 0.22
+ },
+ "clearing_spacing": 20,
+ "clearings": [
+  {
+   "role": "start",
+   "r": [
+    8,
+    6
+   ],
+   "at_frac": [
+    0.08,
+    0.82
+   ]
+  },
+  {
+   "role": "hamlet",
+   "r": [
+    11,
+    8
+   ]
+  },
+  {
+   "role": "dock",
+   "r": [
+    8,
+    6
+   ]
+  },
+  {
+   "role": "pool",
+   "r": [
+    10,
+    8
+   ],
+   "count": 2
+  },
+  {
+   "role": "lamp",
+   "r": [
+    6,
+    5
+   ],
+   "count": 3
+  },
+  {
+   "role": "shrine",
+   "r": [
+    6,
+    5
+   ]
+  },
+  {
+   "role": "reeds",
+   "r": [
+    8,
+    6
+   ],
+   "count": 3
+  }
+ ],
+ "extra_links": 3,
+ "required": [
+  "start",
+  "hamlet",
+  "dock",
+  "pool",
+  "lamp",
+  "shrine"
+ ],
+ "setpieces": {
+  "start": [
+   {
+    "kind": "exit",
+    "to": "ember_road",
+    "sprite": "road_gate",
+    "at": [
+     -60,
+     -10
+    ]
+   },
+   {
+    "kind": "signpost",
+    "at": [
+     50,
+     30
+    ],
+    "sign": "river"
+   }
+  ],
+  "hamlet": [
+   {
+    "kind": "house_b",
+    "at": [
+     -90,
+     -40
+    ]
+   },
+   {
+    "kind": "house_a",
+    "at": [
+     80,
+     -50
+    ]
+   },
+   {
+    "kind": "npc",
+    "npc": "odile",
+    "at": [
+     0,
+     40
+    ]
+   },
+   {
+    "kind": "chest",
+    "at": [
+     -140,
+     0
+    ],
+    "chest": "hamlet"
+   },
+   {
+    "kind": "barrels",
+    "at": [
+     150,
+     10
+    ]
+   },
+   {
+    "kind": "well",
+    "at": [
+     -40,
+     70
+    ]
+   }
+  ],
+  "dock": [
+   {
+    "kind": "dock",
+    "at": [
+     0,
+     -10
+    ]
+   },
+   {
+    "kind": "boat",
+    "at": [
+     10,
+     40
+    ]
+   },
+   {
+    "kind": "crates",
+    "at": [
+     -70,
+     -20
+    ]
+   }
+  ],
+  "pool": [
+   {
+    "kind": "pond",
+    "at": [
+     0,
+     -100
+    ],
+    "r": [
+     5,
+     2.2
+    ]
+   },
+   {
+    "kind": "rising_drops",
+    "at": [
+     -30,
+     -90
+    ]
+   },
+   {
+    "kind": "rising_drops",
+    "at": [
+     40,
+     -100
+    ]
+   },
+   {
+    "kind": "reeds",
+    "at": [
+     -80,
+     -8
+    ]
+   },
+   {
+    "kind": "reeds",
+    "at": [
+     90,
+     -10
+    ]
+   }
+  ],
+  "lamp": [
+   {
+    "kind": "waylamp",
+    "at": [
+     0,
+     -10
+    ],
+    "lamp": "river",
+    "lit": false
+   }
+  ],
+  "shrine": [
+   {
+    "kind": "lamp_shrine",
+    "at": [
+     0,
+     -10
+    ],
+    "note": "river_note"
+   },
+   {
+    "kind": "rock_a",
+    "at": [
+     50,
+     20
+    ]
+   }
+  ],
+  "reeds": [
+   {
+    "kind": "reeds",
+    "at": [
+     -30,
+     -10
+    ]
+   },
+   {
+    "kind": "reeds",
+    "at": [
+     30,
+     20
+    ]
+   },
+   {
+    "kind": "crystal",
+    "at": [
+     60,
+     -30
+    ]
+   }
+  ]
+ },
+ "trees": {
+  "edge_spacing": 34,
+  "deep_spacing": 70,
+  "edge_depth": 3,
+  "kinds": {
+   "tree_dead": 40,
+   "tree_c": 30,
+   "hedge_a": 30
+  }
+ },
+ "edge_props": {
+  "reeds": 20,
+  "rock_a": 10,
+  "crystal": 8
+ },
+ "packs": {
+  "count": 34,
+  "spacing": 11,
+  "safe_radius": 16,
+  "elites": 4,
+  "table": [
+   {
+    "from": 0.0,
+    "kinds": {
+     "undertow": 0.6,
+     "gloam": 0.4
+    },
+    "size": [
+     3,
+     5
+    ]
+   },
+   {
+    "from": 0.35,
+    "kinds": {
+     "undertow": 0.5,
+     "drowned": 0.3,
+     "hound": 0.2
+    },
+    "size": [
+     3,
+     6
+    ]
+   },
+   {
+    "from": 0.65,
+    "kinds": {
+     "undertow": 0.4,
+     "drowned": 0.4,
+     "moth": 0.2
+    },
+    "size": [
+     4,
+     7
+    ]
+   }
+  ]
+ },
+ "relight": {
+  "waves": 2,
+  "wave_size": 7,
+  "duration": 15.0,
+  "kinds": {
+   "undertow": 0.6,
+   "drowned": 0.4
+  }
+ },
+ "ambient": {
+  "darkness": [
+   0.14,
+   0.17,
+   0.21
+  ],
+  "motes_color": "glint"
+ },
+ "ground": {
+  "c_moss_dk": "glass_dp",
+  "c_moss": "moss_dk",
+  "c_moss_lt": "moss_lt",
+  "c_glint": "glint"
+ },
+ "water_flow": -1.0,
+ "events": {
+  "caption": "The Upward River. It rises off its bed in drops and climbs into the dark."
+ }
+}

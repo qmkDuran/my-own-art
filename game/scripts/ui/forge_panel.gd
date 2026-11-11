@@ -6,7 +6,7 @@ extends GamePanel
 
 const ROW: float = 13.0
 const X: float = 14.0
-const BTN := Vector2(122, 22)
+const BTN_H: float = 22.0
 const CRAFTS: Array[String] = ["kindle", "temper", "quench", "anneal"]
 const MATS: Array[String] = ["ash", "kindle", "temper", "quench", "anneal"]
 const LIST_Y: float = 70.0
@@ -28,11 +28,12 @@ func affix_rect(i: int) -> Rect2:
 
 
 func craft_rect(i: int) -> Rect2:
-	return Rect2(X + (i % 2) * (BTN.x + 8.0), size.y - 112.0 + (i / 2) * (BTN.y + 6.0), BTN.x, BTN.y)
+	var w: float = (size.x - X * 2.0 - 8.0) / 2.0
+	return Rect2(X + (i % 2) * (w + 8.0), size.y - 100.0 + (i / 2) * (BTN_H + 6.0), w, BTN_H)
 
 
 func lockers_rect() -> Rect2:
-	return Rect2(size.x - X - 90.0, size.y - 112.0, 90.0, BTN.y)
+	return Rect2(size.x - X - 80.0, CONTENT_Y + 6.0, 80.0, BTN_H - 4.0)
 
 
 func _content() -> void:
@@ -47,7 +48,7 @@ func _content() -> void:
 		_craft_button(i)
 	button(lockers_rect(), "Lockers")
 	if _last != "":
-		UiDraw.text(self, Vector2(X, size.y - 50.0), _last, UiDraw.GOLD, UiDraw.SMALL)
+		UiDraw.text(self, Vector2(X, size.y - 108.0), _last, UiDraw.GOLD, UiDraw.SMALL)
 	_wallet()
 
 
@@ -65,15 +66,17 @@ func _affixes() -> void:
 func _craft_button(i: int) -> void:
 	var c: String = CRAFTS[i]
 	var hr: Vector2i = Forge.heat_range(item, c, affix) if not item.is_empty() else Vector2i.ZERO
-	var label: String = "%s (%d)  %d-%d" % [GameData.crafting["materials"][c]["name"].split(" ")[0], g.player.inv.material(c), hr.x, hr.y]
+	var label: String = "%s x%d  heat %d-%d" % [GameData.crafting["materials"][c]["name"].split(" ")[0], g.player.inv.material(c), hr.x, hr.y]
 	button(craft_rect(i), label, Forge.block(item, c, affix, g.player.inv.materials) == "")
 
 
+## Materials in hand, two short lines (names without "Ember").
 func _wallet() -> void:
 	var parts: PackedStringArray = []
 	for m: String in MATS:
-		parts.append("%s %d" % [GameData.crafting["materials"][m]["name"], g.player.inv.material(m)])
-	UiDraw.text(self, Vector2(0, size.y - 10.0), "   ".join(parts), UiDraw.DIM, UiDraw.SMALL, HORIZONTAL_ALIGNMENT_CENTER, size.x)
+		parts.append("%s %d" % [String(GameData.crafting["materials"][m]["name"]).split(" ")[0], g.player.inv.material(m)])
+	UiDraw.text(self, Vector2(0, size.y - 22.0), "   ".join(parts.slice(0, 3)), UiDraw.DIM, UiDraw.SMALL, HORIZONTAL_ALIGNMENT_CENTER, size.x)
+	UiDraw.text(self, Vector2(0, size.y - 10.0), "   ".join(parts.slice(3)), UiDraw.DIM, UiDraw.SMALL, HORIZONTAL_ALIGNMENT_CENTER, size.x)
 
 
 func _click(at: Vector2, _button: int) -> void:

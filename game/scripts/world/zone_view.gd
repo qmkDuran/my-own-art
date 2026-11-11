@@ -54,6 +54,7 @@ func _ground() -> void:
 	mat.set_shader_parameter("path_scale", float(PATH_TEXEL))
 	mat.set_shader_parameter("pond", Vector4(z.pond.x, z.pond.y, maxf(1.0, z.pond.z - z.cell * 0.5), maxf(1.0, z.pond.w - z.cell * 0.5)))
 	mat.set_shader_parameter("circle", z.circle)
+	mat.set_shader_parameter("water_flow", float(GameData.biome.get("water_flow", 1.0)))
 	mat.set_shader_parameter("stone_wear", float(GameData.biome.get("stone_wear", 1.0)))
 	mat.set_shader_parameter("stone_style", int(STONE_STYLES.find(String(GameData.biome.get("stone_style", "flags")))))
 	for n: String in ["void", "ink", "moss_dk", "moss", "moss_lt", "earth_dk", "earth", "earth_lt", "stone_dk", "stone",

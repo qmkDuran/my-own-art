@@ -42,7 +42,8 @@
    "music": "explore",
    "links": [
     "glasswood",
-    "moth_hollow"
+    "moth_hollow",
+    "riverbank"
    ]
   },
   "moth_hollow": {
@@ -54,6 +55,19 @@
     15
    ],
    "music": "cave",
+   "links": [
+    "ember_road"
+   ]
+  },
+  "riverbank": {
+   "name": "The Upward River",
+   "biome": "riverbank",
+   "seed": 4000,
+   "level": [
+    14,
+    19
+   ],
+   "music": "explore",
    "links": [
     "ember_road"
    ]

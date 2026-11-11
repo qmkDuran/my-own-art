@@ -3,7 +3,7 @@ extends Node
 ## set things up, wait for effects to land, save out/<name>_<w>x<h>.png. --only=name runs one shot.
 
 const SETTLE: float = 0.9
-const PASS2: Array[String] = ["tallow", "road", "hollow", "matron", "quests", "filter", "stash", "eclipse", "noon", "keystones",
+const PASS2: Array[String] = ["river", "forge", "tallow", "road", "hollow", "matron", "quests", "filter", "stash", "eclipse", "noon", "keystones",
 	"eclipse_tree"]
 
 var g: Game
@@ -36,7 +36,7 @@ func _run() -> void:
 		return
 	g = Game.current
 	var shots: Array[String] = ["light", "dark", "skills", "passives", "inventory", "character", "boss", "overview",
-		"tallow", "road", "hollow", "matron", "quests", "filter", "stash", "eclipse", "noon", "keystones", "eclipse_tree"]
+		"river", "forge", "tallow", "road", "hollow", "matron", "quests", "filter", "stash", "eclipse", "noon", "keystones", "eclipse_tree"]
 	for s: String in shots:
 		if (_only() == "" and not PASS2.has(s)) or _only() == s:
 			await call("_shot_" + s)
@@ -299,3 +299,37 @@ func _shot_eclipse_tree() -> void:
 	await _wait(SETTLE)
 	await _save("eclipse_tree")
 	g.ui.open(g.ui.skills)
+
+
+## The Upward River: Undertows and Drowned Lanterns by the hamlet, the river climbing behind them.
+func _shot_river() -> void:
+	var h := _bot()
+	h.level_up(16)
+	h.gear_up(16)
+	var at: Vector2 = g.layout.center_of(g.layout.clearing_of_role("pool")["center"])
+	h.clear_near(100000.0)
+	h.place_player(at + Vector2(-60, 40))
+	h.pack_near(["undertow", "undertow", "drowned", "undertow", "drowned"], Vector2(140, 0))
+	g.player.light.value = 70.0
+	await _wait(1.4)
+	h.cast("lull", g.player.global_position)
+	await _wait(0.15)
+	await _save("upward_river")
+
+
+## The Ember Forge: a rare staff on the anvil, an affix chosen, materials in hand.
+func _shot_forge() -> void:
+	var h := _bot()
+	h.level_up(10)
+	h.gear_up(10)
+	for m: String in ["ash", "kindle", "temper", "quench", "anneal"]:
+		g.player.inv.add_material(m, 6)
+	g.ui.open(g.ui.forge)
+	g.ui.forge.put(g.player.inv.equipped["staff"])
+	g.ui.forge.affix = 1
+	g.ui.forge._do("temper")
+	await _wait(0.3)
+	h.hover(g.ui.forge.position + g.ui.forge.craft_rect(0).get_center())
+	await _wait(SETTLE)
+	await _save("ember_forge")
+	g.ui.open(g.ui.forge)

@@ -14,6 +14,7 @@ uniform vec4 pond;
 uniform vec3 circle;
 uniform float stream_half = 1.0;
 uniform float stone_wear = 1.0;
+uniform float water_flow = 1.0;          // 1 flows down the screen, -1 up (the Upward River)
 uniform int stone_style = 0;            // 0 flagstones, 1 cobbles (the city), 2 silk (a moth nest)
 uniform vec4 c_void : source_color;
 uniform vec4 c_ink : source_color;
@@ -119,9 +120,9 @@ vec4 bank(vec2 px) {
 
 vec4 water(vec2 px, float edge) {
 	if (edge > 0.0) { return bank(px); }
-	float n = fbm(vec2(px.x * 0.04, px.y * 0.02 - TIME * 0.15));
+	float n = fbm(vec2(px.x * 0.04, px.y * 0.02 - TIME * 0.15 * water_flow));
 	vec4 col = dith(c_glass_dp, c_glass_dk, n * 1.3 - 0.15, px);
-	float band = sin(px.x * 0.07 + px.y * 0.16 + TIME * 0.6 + n * 6.0);
+	float band = sin(px.x * 0.07 + px.y * 0.16 + TIME * 0.6 * water_flow + n * 6.0);
 	if (band > 0.93) { col = c_glass; }
 	float h = hash(floor(px / 2.0) + floor(TIME * 0.5));
 	if (h > 0.997) { col = c_glint; }

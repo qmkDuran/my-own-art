@@ -176,7 +176,44 @@ def hedge(seed: int) -> Spr:
     return _finish(s, "rust", {"ember_dk"})
 
 
+def boat() -> Spr:
+    """A ferry punt tied up at the bank, its lantern pole bent: the river took it halfway into the sky once."""
+    s = Spr(80, 36)
+    s.poly([(4, 18), (76, 18), (70, 30), (10, 30)], "earth")
+    s.poly([(4, 18), (76, 18), (74, 21), (6, 21)], "earth_lt")
+    for x in range(14, 70, 12):
+        s.line([(x, 21), (x, 29)], "earth_dk")
+    s.line([(64, 18), (70, 2), (76, 4)], "stone_lt")
+    s.rect(72, 4, 76, 10, "ink")
+    s.rect(73, 5, 75, 9, "glass_lt", glow=True)
+    return _finish(s, "earth_lt", {"earth"})
+
+
+def dock() -> Spr:
+    s = Spr(64, 40)
+    for x in range(4, 60, 8):
+        s.rect(x, 10, x + 7, 30, "earth" if (x // 8) % 2 else "earth_lt")
+        s.line([(x + 7, 10), (x + 7, 30)], "earth_dk")
+    for x in (6, 56):
+        s.rect(x, 4, x + 3, 38, "earth_dk")
+    return _finish(s, "earth_lt", {"earth"})
+
+
+def rising_drops(seed: int) -> Spr:
+    """Water falling up from a pool: a column of drops, the river's strangeness in one picture."""
+    rnd = random.Random(seed)
+    s = Spr(28, 72)
+    for _ in range(26):
+        x, y = rnd.uniform(6, 22), rnd.uniform(4, 64)
+        s.ellipse(x, y, 1, rnd.choice([1, 2]), rnd.choice(["glass_lt", "glint", "glass"]), glow=rnd.random() < 0.4)
+    s.ellipse(14, 66, 10, 3, "glass")
+    return s
+
+
 MANIFEST: dict[str, dict] = {
+    "boat": {"draw": boat, "foot": [0, 0]},
+    "dock": {"draw": dock, "foot": [0, 0]},
+    "rising_drops": {"draw": lambda: rising_drops(81), "foot": [0, 0], "light": "glass_lt"},
     "hedge_a": {"draw": lambda: hedge(61), "foot": [30, 10]},
     "hedge_b": {"draw": lambda: hedge(62), "foot": [30, 10]},
     "road_gate": {"draw": road_gate, "foot": [0, 0]},

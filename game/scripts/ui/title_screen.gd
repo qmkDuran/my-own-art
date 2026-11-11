@@ -28,7 +28,7 @@ func _ready() -> void:
 	GameData.ensure()
 	InputSetup.ensure()
 	var args: PackedStringArray = OS.get_cmdline_user_args()
-	var straight_in: bool = args.has("--demo") or args.has("--demo2") or args.has("--smoke") or args.has("--play") or (args.has("--shots") and not args.has("--only=title"))
+	var straight_in: bool = args.has("--demo") or args.has("--demo2") or args.has("--demo3") or args.has("--smoke") or args.has("--play") or (args.has("--shots") and not args.has("--only=title"))
 	if straight_in:
 		get_tree().change_scene_to_file.call_deferred(GAME_SCENE)
 		return

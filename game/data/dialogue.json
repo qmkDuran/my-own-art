@@ -364,5 +364,58 @@
    "Mara",
    "Tuesdays I still make two cups."
   ]
+ },
+ "odile": {
+  "name": "Odile Vane",
+  "topics": [
+   {
+    "when": {
+     "quest_step": [
+      "upward_river",
+      3
+     ]
+    },
+    "lines": [
+     [
+      "Odile",
+      "Lamps lit. The river's quieter. Not quiet. Quieter."
+     ],
+     [
+      "Odile",
+      "Upstream is the Belfry. Every night at the same hour, it rings. Nobody's there to ring it."
+     ],
+     [
+      "Odile",
+      "I'll take you when the water lets me. Rest first. You look like a man who's been drunk by a lantern."
+     ]
+    ]
+   },
+   {
+    "when": {
+     "quest_step": [
+      "upward_river",
+      1
+     ]
+    },
+    "lines": [
+     [
+      "Odile",
+      "A Lamplighter. On my river. Ottilie's finally desperate."
+     ],
+     [
+      "Odile",
+      "The water started climbing the night your Great Lantern blinked. Coincidence, I'm sure."
+     ],
+     [
+      "Odile",
+      "My lamps went out with it. Light them and I'll ferry you anywhere the river still goes."
+     ]
+    ]
+   }
+  ],
+  "idle": [
+   "Odile",
+   "Mind the edges. The river remembers falling down, sometimes. Mostly it doesn't."
+  ]
  }
 }

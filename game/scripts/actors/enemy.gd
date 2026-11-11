@@ -133,7 +133,7 @@ func damage_taken_mult() -> float:
 
 
 func light_drain() -> float:
-	var d: float = 0.0
+	var d: float = float(data.get("light_drain", 0.0))
 	for id: String in mods:
 		d += float(GameData.enemies["mods"][id].get("light_drain", 0.0))
 	return d

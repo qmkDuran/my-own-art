@@ -315,5 +315,57 @@ def matron(pose: str, i: int) -> Spr:
     return s
 
 
+# ------------------------------------------------------------------ Undertow: water that walks, falling upward
+def undertow(pose: str, i: int) -> Spr:
+    """A man-shaped column of river water, streaming upward off its shoulders in drops that never come down."""
+    s = Spr(64, 64)
+    bob = pick({"idle": (0, 1, 0, -1), "move": (0, 1, 0, 1), "attack": (1, -2, 3)}, pose, i)
+    lean = pick({"idle": 0, "move": (1, 2, 1, 0), "attack": (-2, 2, 6)}, pose, i)
+    cx, top = 32 + lean, 16 + bob
+    s.poly([(cx - 12, 60), (cx - 9, top + 18), (cx - 6, top + 6), (cx + 6, top + 6), (cx + 9, top + 18), (cx + 12, 60)], "glass_dk")
+    s.poly([(cx - 12, 60), (cx - 9, top + 18), (cx - 6, top + 6), (cx - 3, top + 6), (cx - 5, 60)], "glass_dp")
+    for k in range(5):                                      # streaks running up the body
+        x = cx - 7 + k * 3.5
+        off = (i * 3 + k * 5) % 12
+        s.line([(x, 58 - off), (x + 0.5, top + 14 - off * 0.5)], "glass" if k % 2 else "glass_lt")
+    s.ellipse(cx, top + 2, 6, 7, "glass")
+    s.ellipse(cx + 1, top, 3, 4, "glass_lt")
+    for k in range(4):                                      # drops leaving the head, upward
+        y = top - 6 - ((i * 4 + k * 5) % 14)
+        s.ellipse(cx - 6 + k * 4, y, 1, 2, "glint", glow=k % 2 == 0)
+    arm = top + 20 if pose != "attack" else (top + 10, top - 2, top + 26)[i]
+    for side in (-1, 1):
+        s.line([(cx + side * 8, top + 12), (cx + side * 14, arm)], "glass_dk", width=3)
+    s.rect(cx - 3, top + 1, cx - 2, top + 2, "sun", glow=True)
+    s.rect(cx + 2, top + 1, cx + 3, top + 2, "sun", glow=True)
+    s.outline()
+    s.recolor_edge(0, -1, "glint", only={"glass_dk", "glass"})
+    return s
+
+
+# ------------------------------------------------------------------ Drowned Lantern: a lamp still burning underwater
+def drowned_lantern(pose: str, i: int) -> Spr:
+    s = Spr(48, 56)
+    bob = pick({"idle": (0, -1, -2, -1), "move": (0, -2, -3, -2), "attack": (0, -3, 1)}, pose, i)
+    cx, cy = 24, 26 + bob
+    s.line([(cx, cy - 16), (cx, cy - 10)], "stone_lt")
+    s.ellipse(cx, cy - 18, 3, 3, "stone_lt")
+    s.poly([(cx - 9, cy - 10), (cx, cy - 15), (cx + 9, cy - 10)], "ink")
+    s.rect(cx - 8, cy - 10, cx + 8, cy + 10, "ink")
+    glass = "glint" if pose == "attack" and i > 0 else "glass_lt"
+    s.rect(cx - 6, cy - 8, cx + 6, cy + 8, "glass", glow=True)
+    s.rect(cx - 4, cy - 6, cx + 4, cy + 6, glass, glow=True)
+    s.rect(cx - 1, cy - 3, cx + 1, cy + 3, "sun", glow=True)
+    s.line([(cx, cy - 10), (cx, cy + 10)], "ink")
+    s.rect(cx - 7, cy + 10, cx + 7, cy + 12, "stone_dk")
+    for k in range(5):                                      # weed and water hanging off it, drifting up
+        x = cx - 8 + k * 4
+        s.line([(x, cy + 12), (x + (k % 2) * 2 - 1, cy + 20 + (k * 3 + i) % 6)], "moss_lt" if k % 2 else "glass_dk")
+    s.outline()
+    s.recolor_edge(0, -1, "glint", only={"ink"})
+    return s
+
+
 KINDS = {"gloam": (gloam, 48, 48), "hound": (hound, 64, 48), "moth": (moth, 64, 56), "glazier": (glazier, 128, 128), "husk": (husk, 64, 64),
-         "crawler": (crawler, 48, 40), "matron": (matron, 176, 160)}
+         "crawler": (crawler, 48, 40), "matron": (matron, 176, 160),
+         "undertow": (undertow, 64, 64), "drowned": (drowned_lantern, 48, 56)}

@@ -84,6 +84,9 @@ func get_delta() -> float:
 func melee(reach: float) -> bool:
 	if to_player().length() <= reach + player().radius + e.radius:
 		Combat.hit_player(e, e.damage, String(e.data["type"]), e.global_position)
+		var slow: Array = e.data.get("slow_on_hit", [])
+		if not slow.is_empty():
+			player().slow(float(slow[0]), float(slow[1]))
 		return true
 	return false
 

@@ -158,6 +158,24 @@
    "name": "Mara Brennick",
    "role": "The woodcutter's daughter"
   },
+  "npc_odile": {
+   "frame": [
+    64,
+    64
+   ],
+   "anchor": [
+    32,
+    61
+   ],
+   "poses": [
+    [
+     "idle",
+     4
+    ]
+   ],
+   "name": "Odile Vane",
+   "role": "Ferrywoman of the Upward River"
+  },
   "npc_teague": {
    "frame": [
     64,
@@ -388,6 +406,54 @@
    "anchor": [
     88,
     156
+   ],
+   "poses": [
+    [
+     "idle",
+     4
+    ],
+    [
+     "move",
+     4
+    ],
+    [
+     "attack",
+     3
+    ]
+   ]
+  },
+  "undertow": {
+   "frame": [
+    64,
+    64
+   ],
+   "anchor": [
+    32,
+    60
+   ],
+   "poses": [
+    [
+     "idle",
+     4
+    ],
+    [
+     "move",
+     4
+    ],
+    [
+     "attack",
+     3
+    ]
+   ]
+  },
+  "drowned": {
+   "frame": [
+    48,
+    56
+   ],
+   "anchor": [
+    24,
+    52
    ],
    "poses": [
     [

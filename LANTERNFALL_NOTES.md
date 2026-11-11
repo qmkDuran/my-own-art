@@ -230,7 +230,8 @@ the bottleneck, so each act reuses the systems and adds biome rules, set-pieces 
 | story | `Campaign` (flags, quests, said, kills), `Dialogue`, `Objectives` (tracker lines, objective target, routing) |
 | core (pass 2) | `Session` (character, campaign, zone states, stash, travel) |
 | world (pass 2) | `CityGen`, `ZoneEvents`, `ZoneExit`, `HungerZone`, `ActorCheck` |
-| demo | `DemoReel` (staged scenes of a video, `--demo` / `--demo2`), `DemoBot` (plays like a player) |
+| demo | `DemoReel` (staged scenes of a video, `--demo` / `--demo2` / `--demo3` final reel), `DemoBot` (plays like a player) |
+| items (pass 4) | `Forge` (craft rules), `MaterialDrop`; ui `ForgePanel` |
 | `game.gd`, `game_input.gd` | session wiring and story beats; mouse/keyboard to commands |
 `Game.current` is the one documented service locator. Content is data: `game/data/*.json` (settings, light,
 player, stats, skills, passives, items, enemies, glasswood biome, story; props.json + sprites.json are generated).
@@ -266,6 +267,19 @@ Glazier + Nim, death/respawn, save/load). Review screenshots: `--shots` (needs x
 - Godot: no global non-uniform shader vars; `const` can't hold class refs; typed arrays need typed sources.
 
 ## 14. Progress log
+- **Pass 2b/3/4 + Act 2 start**: review fixes (two-frame tinted hit flash, no flash on burns; damage numbers merged
+  per target within 0.15 s and stacked; bosses carry their own dim light, are never darkened, and the camera frames
+  you and the boss together; the Matron hovers beside you; torn web floor; a check that tall props never hide
+  anyone's feet unless faded; brighter Ember Road / Moth Hollow; Tallow dressed with benches, banners, planters, a
+  well, barrels and five passers-by, plus an arrival shot of the Great Lantern and a camera lean toward it).
+  Six more skills (Kindle, Hook, Glass Ward, Cinder Rain, Wick Trap, Lull) with trees; five specialisation slots
+  (Specialise / Forget in the skill panel; only specialised skills level). The Ember Forge (data/crafting.json):
+  materials (Ash, Kindle, Temper, Quench, Anneal) drop and fly to you; every item rolls Heat; Kindle adds an affix
+  (normal -> magic -> rare), Temper raises a tier, Quench removes, Anneal rerolls, each spending Heat; uniques and
+  sets can't be forged. Refunds at the ledger cost Ash. Uniques: Bellwright's Clapper, The Seventh Heartbeat,
+  Hearthstone Band, the Matron's Silk (drops from her). Act 2 begins: the Upward River (river flows upward,
+  hamlet, dock, rising pools, Odile the ferrywoman, Undertows that slow, Drowned Lanterns that drink Light),
+  reached by the Ember Road's north gate after Act 1; quest "The Upward River". 94-check smoke test.
 - **Pass 3 (started)**: Eclipse (shutter the lantern: everything Shrouded, +60% vs Shrouded, speed, leech, a
   closing burst; tree: Long Night, Night Hunger, Predator, Unshutter, Umbra, Pitch Dark, New Moon) learned at level 6;
   Noon (daylight for a breath: every enemy on screen burns and reels, your Light blazes at full; tree: High Noon,

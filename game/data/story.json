@@ -53,11 +53,21 @@
     "It is remembering, Ottilie. The Dusk is remembering.",
     "\u2014 T."
    ]
+  },
+  "river_note": {
+   "title": "A note on the river shrine",
+   "lines": [
+    "The water goes up because something up there is thirsty.",
+    "Not the sky. The sky is just the way.",
+    "\u2014 T."
+   ]
   }
  },
  "signs": {
   "road": "The Ember Road  -  Tallow west, the hills east",
-  "east": "East: the Ember Road  -  (scratched under it: the lamps are out)"
+  "east": "East: the Ember Road  -  (scratched under it: the lamps are out)",
+  "north": "North: the River Road  -  (the river is not where it used to be)",
+  "river": "The Upward River  -  Ferry at the hamlet"
  },
  "lamps": {
   "gate": "Gate Waylamp",
@@ -73,7 +83,8 @@
   "road3": "Road Lamp",
   "road4": "Road Lamp",
   "road5": "Road Lamp",
-  "hollow": "Hollow Lamp"
+  "hollow": "Hollow Lamp",
+  "river": "River Lamp"
  },
  "chests": {
   "hut": "Woodcutter's Chest",
@@ -81,6 +92,7 @@
   "camp": "Expedition Crate",
   "secret": "Lamplighter's Cache",
   "farm": "Farmhouse Chest",
-  "hollow": "Teague's Pack"
+  "hollow": "Teague's Pack",
+  "hamlet": "Ferry Strongbox"
  }
 }

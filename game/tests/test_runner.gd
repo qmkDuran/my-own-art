@@ -16,7 +16,7 @@ func _ready() -> void:
 			GameData.ensure()
 			Session.reset()
 			Session.zone_id = a.substr(7)
-	if args.has("--demo") or args.has("--demo2"):
+	if args.has("--demo") or args.has("--demo2") or args.has("--demo3"):
 		var reel := DemoReel.new()
 		reel.process_mode = Node.PROCESS_MODE_ALWAYS
 		add_child(reel)

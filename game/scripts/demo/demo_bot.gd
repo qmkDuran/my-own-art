@@ -11,6 +11,7 @@ const LOOT_RANGE: float = 200.0
 const DODGE: float = 140.0
 const READ_LINE: float = 1.4
 const TOSS_LIGHT: float = 50.0
+const BIG_CROWD: int = 4
 
 var g: Game
 var _think: float = 0.0
@@ -87,8 +88,10 @@ func _try_skill(foes: Array[Enemy], e: Enemy, d: float) -> bool:
 	var s: SkillSystem = g.player.skills
 	var flare_r: float = (s.skill("flare") as Flare).radius()
 	var close: int = foes.filter(func(f: Enemy) -> bool: return f.global_position.distance_to(g.player.global_position) < flare_r).size()
-	var key: String = ""
-	if close >= 3 and s.block("flare") == "":
+	var key: String = _big_skill(foes, e)
+	if key != "":
+		pass
+	elif close >= 3 and s.block("flare") == "":
 		key = "rmb"
 	elif d > 130.0 and d < 300.0 and foes.size() >= 3 and g.player.light.value > TOSS_LIGHT and s.block("lantern_toss") == "" \
 			and not (s.skill("lantern_toss") as LanternToss).away():
@@ -100,6 +103,18 @@ func _try_skill(foes: Array[Enemy], e: Enemy, d: float) -> bool:
 	g.input.lmb_held = false
 	g.input.cursor_override = e.global_position
 	return g.input.use_slot(key)
+
+
+## The E and R keys hold the big skills: use them when a crowd or a boss is in front of us.
+func _big_skill(foes: Array[Enemy], e: Enemy) -> String:
+	var worthy: bool = foes.size() >= BIG_CROWD or e.rank == "boss" or e.rank == "rare"
+	if not worthy:
+		return ""
+	for key: String in ["r", "e"]:
+		var id: String = String(g.player.prog.slots.get(key, ""))
+		if id != "" and g.player.skills.block(id) == "":
+			return key
+	return ""
 
 
 ## Nothing to fight: pick up good loot nearby, talk to Nim once the Glazier is down.

@@ -47,7 +47,7 @@ func setup(game: Game) -> void:
 	stash = _panel(StashPanel.new(), "Fenn's Lockers", Vector2(280, 250), "left")
 	respec = _panel(RespecPanel.new(), "The Order's Ledger", Vector2(320, 400), "center")
 	bestiary = _panel(BestiaryPanel.new(), "Bestiary", Vector2(400, 400), "left")
-	forge = _panel(ForgePanel.new(), "The Ember Forge", Vector2(300, 330), "left")
+	forge = _panel(ForgePanel.new(), "The Ember Forge", Vector2(340, 330), "left")
 	tooltip = TooltipLayer.new()
 	add_child(tooltip)
 	_fade = ColorRect.new()

@@ -4,7 +4,8 @@ extends RefCounted
 ## runner (--layout) runs it over many seeds. Each problem is a sentence a person can act on.
 
 const T := ZoneLayout.T
-const CHEST_REASONS: Array[String] = ["hut", "tower", "cart", "bedroll", "campfire", "cairn", "farmhouse", "haystack"]
+const CHEST_REASONS: Array[String] = ["hut", "tower", "cart", "bedroll", "campfire", "cairn", "farmhouse", "haystack", "house_a",
+	"house_b", "house_c", "dock", "barrels"]
 const CHEST_REASON_DIST: float = 110.0
 const START_CLEAR: float = 420.0
 
