@@ -257,19 +257,21 @@ deaths are an upper bound for a human. Tuning done in this pass: enemy damage pe
 enemies x1.2-1.5 damage, Lamplighter +3% damage per level (was 4), Glazier 1100 -> 2000 life and 16 -> 10 damage,
 Matron 1900 -> 4200 life, Bellwright 2800 -> 4000 life and 19 -> 11 damage, Falls Heron 15 -> 14.
 
-With Wickbolt (pure caster), after the lighting pass and the avoidance fix:
+After playtest 2 (Last Epoch pacing: chase speed x0.85, melee wind-ups at least 0.36 s, wake range 330 px
+(Glasswood 250, Ember Road 280), at most 3 melee enemies winding up at once while the rest circle), with the
+new hit-stop and impacts:
 
 | Zone (level) | Pack clear (avg) | Life lost per pack | Deaths in 8 packs | Boss | Boss time | Boss deaths |
 |---|---|---|---|---|---|---|
-| Glasswood (4) | 3.1 s | 3% | 0 | Glazier (lvl 7) | 30 s | 1 |
-| Ember Road (8) | 9.1 s (2 timeouts) | 13% | 0 | - | - | - |
-| Moth Hollow (12) | 5.7 s (1 timeout) | 4% | 0 | Moth Matron (lvl 15) | 40 s | 0 |
-| Upward River (16) | 3.8 s | 12% | 0 | - | - | - |
-| Rising Falls (17) | 3.7 s | 8% | 0 | - | - | - |
-| Saltmarsh (19) | 3.4 s | 6% | 0 | - | - | - |
-| Drowned Belfry (20) | 6.0 s | 9% | 0 | Bellwright (lvl 22) | 35 s | 1 |
-| Hollin's Ford (23) | 3.3 s | 5% | 0 | - | - | - |
-| Town of One Tuesday (26) | 7.3 s | 12% | 0 | the Mayor (lvl 28) | 46 s | 2 |
+| Glasswood (4) | 3.6 s | 0% | 0 | Glazier (lvl 7) | 29 s | 0 |
+| Ember Road (8) | 4.2 s | 14% | 0 | - | - | - |
+| Moth Hollow (12) | 5.9 s | 12% | 1 | Moth Matron (lvl 15) | 42 s | 0 |
+| Upward River (16) | 3.9 s | 10% | 0 | - | - | - |
+| Rising Falls (17) | 5.8 s | 16% | 0 | - | - | - |
+| Saltmarsh (19) | 4.2 s | 4% | 0 | - | - | - |
+| Drowned Belfry (20) | 10.3 s (1 timeout) | 8% | 1 | Bellwright (lvl 22) | 40 s | 1 |
+| Hollin's Ford (23) | 3.2 s | 2% | 0 | - | - | - |
+| Town of One Tuesday (26) | 8.7 s | 13% | 2 | the Mayor (lvl 28) | 62 s | 3 |
 
 A bug found on the way: the RVO avoidance answer could stop melee enemies dead (packs stood 280 px off, untouched);
 avoidance now only steers a charge, never stops it. The Ember Road / Moth Hollow timeouts are packs across water

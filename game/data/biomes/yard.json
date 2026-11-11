@@ -188,5 +188,6 @@
  "events": {
   "caption": "The practice yard. Straw targets, a painted sun on each. Nobody has trained here in forty years."
  },
- "tutorial": true
+ "tutorial": true,
+ "wake_range": 200.0
 }

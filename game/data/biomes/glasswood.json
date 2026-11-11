@@ -567,5 +567,6 @@
   "tower",
   "camp",
   "secret"
- ]
+ ],
+ "wake_range": 250.0
 }

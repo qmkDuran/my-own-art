@@ -375,5 +375,6 @@
  },
  "events": {
   "caption": "The Ember Road. The lamps that kept it are dark, and something walks the fields."
- }
+ },
+ "wake_range": 280.0
 }

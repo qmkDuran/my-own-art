@@ -4,6 +4,8 @@ extends RefCounted
 ## (gloam), LeaperBrain (hound), RangedBrain (moth), GlazierBrain (mini-boss). Shared: chasing with the grid when
 ## the straight way is blocked, melee checks, shard shots.
 
+const CIRCLE_SPEED: float = 0.45
+const HOLD_BACK: float = 90.0
 const PATH_REFRESH: float = 0.6
 const ROW_IDLE: int = 0
 const ROW_MOVE: int = 1
@@ -54,6 +56,24 @@ func think(delta: float) -> Vector2:
 
 func _think(_delta: float) -> Vector2:
 	return Vector2.ZERO
+
+
+## At most `max_engaged` melee enemies wind up at once (Last Epoch pacing): the rest hold back and circle.
+func may_engage() -> bool:
+	var busy: int = 0
+	for n: Node in e.get_tree().get_nodes_in_group("enemies"):
+		var o := n as Enemy
+		if o != e and o.brain != null and (o.brain.state == "windup" or o.brain.state == "strike"):
+			busy += 1
+	return busy < int(GameData.enemies["max_engaged"])
+
+
+## Hold back at a distance, drifting sideways around the Lamplighter.
+func circle_around(dist: float, spd: float) -> Vector2:
+	var away: Vector2 = -to_player()
+	var side: Vector2 = away.orthogonal().normalized() * (1.0 if e.get_instance_id() % 2 == 0 else -1.0)
+	var want: Vector2 = side * 0.6 + away.normalized() * clampf((dist - away.length()) / dist, -1.0, 1.0)
+	return want.normalized() * spd * CIRCLE_SPEED
 
 
 func anim_row(want: Vector2) -> int:

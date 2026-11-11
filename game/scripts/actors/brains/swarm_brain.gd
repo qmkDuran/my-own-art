@@ -19,6 +19,8 @@ func _think(_delta: float) -> Vector2:
 				state = "chase"
 				cd = float(d["cooldown"])
 			return (aim - e.global_position).normalized() * float(d["lunge"]) / LUNGE_TIME
+	if to_player().length() < HOLD_BACK and not may_engage():
+		return circle_around(HOLD_BACK, e.speed)
 	if to_player().length() < float(d["range"]) + 18.0 and cd <= 0.0:
 		state = "windup"
 		t = float(d["windup"]) / e.attack_speed()

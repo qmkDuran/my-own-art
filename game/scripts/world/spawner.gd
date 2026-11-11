@@ -108,7 +108,7 @@ func _process(delta: float) -> void:
 		var d: float = e.global_position.distance_to(player.global_position)
 		var far: bool = d > float(E["sleep_range"]) and e != boss
 		e.process_mode = Node.PROCESS_MODE_DISABLED if far else Node.PROCESS_MODE_INHERIT
-		if d < float(E["wake_range"]):
+		if d < float(GameData.biome.get("wake_range", E["wake_range"])):
 			e.wake()
 
 
