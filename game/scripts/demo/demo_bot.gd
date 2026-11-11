@@ -38,6 +38,8 @@ func _decide() -> void:
 			_read_t = 0.0
 			g.hud.messages.advance()
 		return
+	if g.ui.blocking() and not g.ui.pause.visible:          # a waylamp's travel map: a player would close it
+		g.ui.close_all()
 	if p.dead or g.ui.blocking():
 		g.input.lmb_held = false
 		return

@@ -88,7 +88,7 @@ func set_paused(on: bool) -> void:
 func open(p: GamePanel) -> void:
 	var was: bool = p.visible
 	if center_panels().has(p):
-		_close_all()
+		close_all()
 	elif p == inventory:
 		for o: GamePanel in center_panels():
 			o.visible = false
@@ -103,7 +103,8 @@ func open(p: GamePanel) -> void:
 	hud.tracker_hidden = left_panels().any(func(o: GamePanel) -> bool: return o.visible) or center_panels().any(func(o: GamePanel) -> bool: return o.visible)
 
 
-func _close_all() -> void:
+## Close every open panel (a player pressing Esc; the demo bot after it touches a waylamp).
+func close_all() -> void:
 	for p: GamePanel in panels():
 		p.visible = false
 
@@ -115,7 +116,7 @@ func handle_global(event: InputEvent) -> bool:
 		return true
 	if event.is_action_pressed("menu"):
 		if panels().any(func(p: GamePanel) -> bool: return p.visible and p != pause):
-			_close_all()
+			close_all()
 			minimap.visible = true
 			hud.tracker_hidden = false
 		else:

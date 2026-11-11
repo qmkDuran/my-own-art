@@ -16,6 +16,8 @@ uniform float stream_half = 1.0;
 uniform float stone_wear = 1.0;
 uniform float water_flow = 1.0;          // 1 flows down the screen, -1 up (the Upward River)
 uniform int stone_style = 0;            // 0 flagstones, 1 cobbles (the city), 2 silk (a moth nest)
+const float HIGHLIGHT_KNEE = 0.55;
+const float HIGHLIGHT_ROLLOFF = 1.2;
 uniform vec3 scenery_tint = vec3(1.0);   // the zone's colour and lift (the world ambient itself is neutral)
 uniform vec4 c_void : source_color;
 uniform vec4 c_ink : source_color;
@@ -220,5 +222,7 @@ void fragment() {
 		else if (terr_w(px + vec2(7.0, 0.0), w) == THICKET || terr_w(px + vec2(-7.0, 0.0), w) == THICKET
 				|| terr_w(px + vec2(0.0, 7.0), w) == THICKET) { col = dith(col, c_void, 0.22, px); }
 	}
-	COLOR = vec4(col.rgb * scenery_tint, col.a);     // the zone's terrain lifted out of the dark (Last Epoch mood)
+	vec3 lifted = col.rgb * scenery_tint;
+	lifted /= 1.0 + HIGHLIGHT_ROLLOFF * max(lifted - HIGHLIGHT_KNEE, vec3(0.0));   // pale stone keeps its texture
+	COLOR = vec4(lifted, col.a);     // the zone's terrain lifted out of the dark (Last Epoch mood)
 }
