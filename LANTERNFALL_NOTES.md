@@ -279,7 +279,11 @@ Glazier + Nim, death/respawn, save/load). Review screenshots: `--shots` (needs x
   sets can't be forged. Refunds at the ledger cost Ash. Uniques: Bellwright's Clapper, The Seventh Heartbeat,
   Hearthstone Band, the Matron's Silk (drops from her). Act 2 begins: the Upward River (river flows upward,
   hamlet, dock, rising pools, Odile the ferrywoman, Undertows that slow, Drowned Lanterns that drink Light),
-  reached by the Ember Road's north gate after Act 1; quest "The Upward River". 94-check smoke test.
+  reached by the Ember Road's north gate after Act 1; quest "The Upward River". Then the Drowned Belfry (a flooded
+  square of stone islands and causeways, pillars and rising water, a fallen belfry) reached by Odile's ferry, and
+  its boss the Bellwright (a bell-headed giant: toll rings with gaps you stand in or Wickstep through, falling bells,
+  Undertows from the water, the Lull Bell smothers your lantern; two rings per toll below half life). Lio's reveal:
+  the bell was cast by the order "to be rung only at noon" — we put the sun to sleep. 95-check smoke test.
 - **Pass 3 (started)**: Eclipse (shutter the lantern: everything Shrouded, +60% vs Shrouded, speed, leech, a
   closing burst; tree: Long Night, Night Hunger, Predator, Unshutter, Umbra, Pitch Dark, New Moon) learned at level 6;
   Noon (daylight for a breath: every enemy on screen burns and reels, your Light blazes at full; tree: High Noon,
