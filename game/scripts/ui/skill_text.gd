@@ -32,5 +32,28 @@ static func node_rows(ci: CanvasItem, p: Player, id: String, node: Dictionary) -
 	var block: String = p.prog.spec_block(id, String(node["id"]))
 	if block != "" and block != "Maxed":
 		out.append([block, UiDraw.DOWN])
+	out.append_array(_next_point(p, id, String(node["id"])) if r < int(node["max"]) else [])
 	out.append(["Click: add a point   Right-click: refund", UiDraw.DIM])
 	return out
+
+
+## What one more point here does to the skill's own numbers: its info lines that change, worked out by adding the
+## point for a moment (no signal) and taking it back.
+static func _next_point(p: Player, id: String, node: String) -> Array:
+	var s: Skill = p.skills.skill(id)
+	if s == null or not p.prog.skills.has(id):
+		return []
+	var before: Array = s.info()
+	var nodes: Dictionary = p.prog.skills[id]["nodes"]
+	var had: int = int(nodes.get(node, 0))
+	nodes[node] = had + 1
+	var after: Array = s.info()
+	if had == 0:
+		nodes.erase(node)
+	else:
+		nodes[node] = had
+	var out: Array = []
+	for row: Variant in after:
+		if not before.has(row):
+			out.append([String(row[0]) if row is Array else String(row), UiDraw.UP])
+	return [] if out.is_empty() else [["One more point:", UiDraw.DIM]] + out

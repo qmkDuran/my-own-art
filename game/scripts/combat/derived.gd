@@ -32,9 +32,15 @@ static func with_item(p: Player, slot: String, item: Dictionary) -> Stats:
 
 ## Stats as they would be with `delta` more of one stat.
 static func with_stat(p: Player, key: String, delta: float) -> Stats:
+	return with_stats(p, {key: delta})
+
+
+## Stats as they would be with every stat in `deltas` raised by its amount (one more passive point, say).
+static func with_stats(p: Player, deltas: Dictionary) -> Stats:
 	var st := Stats.new()
 	st.rebuild(p.prog, p.inv)
-	st.total[key] = float(st.total.get(key, 0.0)) + delta
+	for k: String in deltas:
+		st.total[k] = float(st.total.get(k, 0.0)) + float(deltas[k])
 	return st
 
 

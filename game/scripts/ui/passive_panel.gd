@@ -109,6 +109,13 @@ func _click(at: Vector2, button_index: int) -> void:
 			return
 
 
+## One more point here, in your real numbers.
+func _point_effect(n: Dictionary) -> Array:
+	var pl: Player = g.player
+	var more: Array = Derived.changes(Derived.of(pl.stats, pl), Derived.of(Derived.with_stats(pl, n["stats"]), pl))
+	return [] if more.is_empty() else [["One more point:", UiDraw.DIM]] + more
+
+
 func _hover(at: Vector2) -> void:
 	var p: Progression = g.player.prog
 	for n: Dictionary in GameData.passives["trees"][tab]["nodes"]:
@@ -116,6 +123,7 @@ func _hover(at: Vector2) -> void:
 			var rows: Array = [String(n["name"]), ["Points %d / %d   (needs %d in this tree)" % [int(p.passives.get(n["id"], 0)), int(n["max"]), int(n["req"])], UiDraw.GOLD]]
 			for k: String in n["stats"]:
 				rows.append([GameData.stat_line(k, float(n["stats"][k])) + " per point", UiDraw.TEXT])
+			rows.append_array(_point_effect(n))
 			if n.get("keystone", false):
 				rows.append(["KEYSTONE", UiDraw.GOLD])
 				for line: String in UiDraw.wrap(self, String(n["text"]), KEYSTONE_WRAP):
