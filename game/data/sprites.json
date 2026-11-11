@@ -391,7 +391,12 @@
      ],
      "fps": 13.0,
      "loop": true,
-     "events": {},
+     "events": {
+      "step": [
+       0,
+       4
+      ]
+     },
      "anchors": [
       [
        [

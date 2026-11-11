@@ -20,6 +20,18 @@ Three families, 38 colours: **Dusk** darks (void→bone, blue-violet), **Lantern
 sprite pixel must be in the palette (`tools/check_art.py`). UI uses palette names via `Pal.c()`; rarity colours
 (blue magic, gold rare, green set, orange unique) are the only UI-only colours.
 
+## Mood (Last Epoch-like: moody but readable)
+- The whole screen is visible ground in rich colour. Each zone has its own ambient tint (`ambient.darkness`, HDR
+  values above 1 allowed) and `scenery_gain` lifting terrain, trees and props: Glasswood cold cyan, Ember Road dull
+  red, Moth Hollow violet, the river teal, Tuesday sepia grey, Tallow warm.
+- The lantern's pool is the warm, saturated place; outside it the grade (`shaders/grade.gdshader`) cools and greys
+  the picture a little, adds a drifting haze and a vignette. Darkness is an accent, never a void.
+- Bright things bloom (2D HDR glow, threshold high); the UI is on higher canvas layers and never blooms.
+- Trees and tall props cast real shadows from the lantern (small LightOccluder2D footprints).
+- Enemies are always readable: outside the light they cool (`SHROUD_TINT`), they never go black.
+- Targets, checked by `tools/check_brightness.py SHOTS`: play-area average 22–45% (aim 25–30%), near-black under
+  25%; Eclipse at least 10%. A Brightness control (Esc menu) scales the ambient.
+
 ## Sprites
 - 1 px dark outline (void) on everything; **cool rim light on the left** (dusk3/violet), **warm lantern rim on the
   right** (ember/rust) for people; top rims on props (mist/glint). Light direction is consistent: the moon-less

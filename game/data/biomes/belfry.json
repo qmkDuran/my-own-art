@@ -254,11 +254,12 @@
  },
  "ambient": {
   "darkness": [
-   0.13,
-   0.16,
-   0.21
+   0.68,
+   0.8,
+   0.99
   ],
-  "motes_color": "glint"
+  "motes_color": "glint",
+  "scenery_gain": 1.5
  },
  "ground": {
   "c_ink": "glass_dp",

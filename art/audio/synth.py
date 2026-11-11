@@ -83,6 +83,7 @@ def write(name: str, x: np.ndarray, peak: float = 0.85) -> None:
 def effects() -> None:
     write("hit", mix(low(noise(0.09), 900) * env(0.09, 0.001, 0.03), 0.6 * sweep(180, 60, 0.09) * env(0.09, 0.001, 0.05),
                      0.25 * bell(1900, 0.12, 6)), 0.7)
+    write("step", mix(0.6 * sweep(120, 70, 0.08) * env(0.08, 0.002, 0.03), low(noise(0.08), 700) * env(0.08, 0.001, 0.02)), 0.35)
     write("bolt", mix(0.7 * sweep(1400, 520, 0.14) * env(0.14, 0.002, 0.06), band(noise(0.14), 1800, 5200) * env(0.14, 0.001, 0.04),
                       0.25 * bell(2200, 0.14, 7)), 0.6)
     write("crack", mix(high(noise(0.16), 2500) * env(0.16, 0.001, 0.02, 6), 0.5 * band(noise(0.16), 400, 1800) * env(0.16, 0.002, 0.05),

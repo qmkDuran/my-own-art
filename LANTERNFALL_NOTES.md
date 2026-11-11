@@ -293,6 +293,14 @@ death (the lantern rolls free and gutters), rise (it relights first). Review: `t
 packs 5.2 s / Glazier 36 s, 1 death; Moth Hollow packs 3.2 s / Matron 34 s, 0 deaths (before: 5.6/42/1 and 5.8/28/0).
 Old saves: Sunlash becomes Wickbolt (its tree points come back), Hook becomes Tether.
 
+## 8e. Lighting pass (moody, readable)
+Measured on the final/ shots (play area): before, average 2–17% with 49–96% near-black; after, 20–40% (most 25–35%)
+with 7–20% near-black, Eclipse 10.8%. `Atmosphere` (world/atmosphere.gd) owns the zone ambient (tint x Brightness),
+the grade layer and the WorldEnvironment glow; `ZoneView.gain()` lifts terrain/trees/props per zone; enemies use
+navigation avoidance (RVO, NavigationAgent2D per enemy, the Lamplighter is an obstacle) plus the old separation;
+the lantern light casts shadows from tree/prop occluders. Noon, the Tuesday strike flash and the Mayor's STOP now
+shift relative to the zone's own ambient.
+
 ## 9. Architecture (`game/scripts/`)
 | Folder | What |
 |---|---|

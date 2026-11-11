@@ -18,7 +18,9 @@ const BURN_TIME: float = 2.0
 const BURN_TICK: float = 0.5
 const BAR_W: float = 28.0
 const MOVE_ANIM_SPEED: float = 8.0
-const SHROUD_TINT := Color(0.35, 0.33, 0.5)
+const SHROUD_TINT := Color(0.72, 0.7, 0.86)            ## outside the light: cooler, never a silhouette
+const AVOID_NEIGHBOURS: float = 90.0     ## RVO: how far an enemy looks for others to steer around
+const AVOID_HORIZON: float = 0.5
 const BOSS_SHROUD_TINT := Color(0.85, 0.82, 0.95)       ## a boss is always readable
 const BOSS_LIGHT_RANGE: float = 150.0
 const BOSS_LIGHT_ENERGY: float = 0.75
@@ -44,6 +46,8 @@ var brain: EnemyBrain
 var sprite: Sprite2D
 var _flash_t: float = 0.0
 var _knock: Vector2 = Vector2.ZERO
+var _avoid: NavigationAgent2D
+var _safe: Vector2 = Vector2.ZERO
 var _burn_dps: float = 0.0
 var _burn_t: float = 0.0
 var _burn_tick: float = 0.0
@@ -96,6 +100,7 @@ func _ready() -> void:
 	cs.shape = c
 	add_child(cs)
 	_make_sprite()
+	_make_avoidance()
 	brain = EnemyBrain.make(self)
 	if rank != "boss":
 		var tag := EnemyTag.new()
@@ -229,6 +234,18 @@ func _death_burst(db: Dictionary) -> void:
 			Combat.hit_player(null, dmg, "blunt", at))
 
 
+## Navigation avoidance (RVO): packs flow around each other and around the Lamplighter instead of stacking up.
+func _make_avoidance() -> void:
+	_avoid = NavigationAgent2D.new()
+	_avoid.avoidance_enabled = true
+	_avoid.radius = radius * PERSONAL_SPACE
+	_avoid.neighbor_distance = AVOID_NEIGHBOURS
+	_avoid.time_horizon_agents = AVOID_HORIZON
+	_avoid.max_speed = speed * 3.0
+	_avoid.velocity_computed.connect(func(v: Vector2) -> void: _safe = v)
+	add_child(_avoid)
+
+
 # ------------------------------------------------------------------ frame
 func _physics_process(delta: float) -> void:
 	if dead:
@@ -237,7 +254,8 @@ func _physics_process(delta: float) -> void:
 	var want: Vector2 = Vector2.ZERO
 	if stun_t <= 0.0:
 		want = brain.think(delta)
-	velocity = want + _knock + _separation() * speed * SEPARATION
+	_avoid.velocity = want                                  # RVO steers the wish around the pack and the Lamplighter
+	velocity = (_safe if want != Vector2.ZERO else Vector2.ZERO) + _knock + _separation() * speed * SEPARATION
 	_knock = _knock.lerp(Vector2.ZERO, minf(1.0, KNOCK_DECAY * delta))
 	move_and_slide()
 	_animate(delta, want)

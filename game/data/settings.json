@@ -3,5 +3,6 @@
  "damage_numbers": true,
  "auto_pickup": "none",
  "music_volume_db": -10.0,
- "sfx_volume_db": 0.0
+ "sfx_volume_db": 0.0,
+ "brightness": 1.0
 }

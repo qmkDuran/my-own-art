@@ -13,6 +13,8 @@ const LIGHT_OFFSET := Vector2(0, -6)
 const LIGHT_SWAY: float = 0.6         ## how much of the lantern's swing the light pool follows
 const DEATH_TIME: float = 1.0
 const RISE_TIME: float = 0.9
+const AVOID_MARGIN: float = 1.6
+const STEP_DB: float = -24.0
 const HOLD_LAMP_RANGE: float = 90.0
 const RUN_BASE_SPEED: float = 150.0   ## the run cycle's natural speed; faster movement plays it faster
 const HURT_TIME: float = 0.18
@@ -87,7 +89,14 @@ func _make_body() -> void:
 	cs.shape = c
 	add_child(cs)
 	add_child(PropSprite.shadow(30.0))
+	var obstacle := NavigationObstacle2D.new()                # enemies' avoidance steers around him
+	obstacle.radius = radius * AVOID_MARGIN
+	obstacle.avoidance_enabled = true
+	add_child(obstacle)
 	anim.setup(self)
+	anim.event.connect(func(name: String) -> void:
+		if name == "step":
+			Audio.sfx("step", STEP_DB, randf_range(0.9, 1.1)))
 	sprite = anim.body
 	var mat := ShaderMaterial.new()
 	mat.shader = preload("res://shaders/hit_flash.gdshader")

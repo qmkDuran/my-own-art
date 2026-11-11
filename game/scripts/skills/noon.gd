@@ -7,7 +7,7 @@ extends Skill
 const SECOND_SUN_TIME: float = 6.0
 const SECOND_SUN_RADIUS: float = 120.0
 const SECOND_SUN_PCT: float = 30.0
-const DAYLIGHT := Color(0.95, 0.88, 0.72)
+const DAYLIGHT := Color(1.7, 1.6, 1.35)       ## a breath of day: well above any zone's ambient (HDR 2D)
 const DAY_HOLD: float = 0.35
 const DAY_FADE: float = 1.2
 

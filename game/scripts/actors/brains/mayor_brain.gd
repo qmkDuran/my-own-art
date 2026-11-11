@@ -5,6 +5,7 @@ extends EnemyBrain
 ## lost since — unless you hit him hard enough meanwhile), APPOINTMENTS (Repeaters arrive for their four o'clock),
 ## STOP (time stops for you: a heavy slow). Below half life his hands come in fours.
 
+const STOP_DIM: float = 0.7              ## STOP: the world dims while time holds still
 const PATTERN: Array[String] = ["hands", "appointments", "hands", "rewind", "stop", "hands"]
 const HOLD: float = 200.0
 const HISTORY: float = 4.0
@@ -76,7 +77,7 @@ func _fire(d: Dictionary) -> void:
 			_appointments(int(d["call"]))
 		"stop":
 			player().slow(0.75, float(d["stop_time"]))
-			Game.current.shift_darkness(Color(0.6, 0.6, 0.7), 0.3, 1.0)
+			Game.current.shift_darkness(Game.current.darkness * STOP_DIM, 0.3, 1.0)
 			Game.current.hud.caption("Time stops for you. Not for him.")
 
 

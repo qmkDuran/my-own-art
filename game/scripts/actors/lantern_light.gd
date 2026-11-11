@@ -9,6 +9,7 @@ signal state_changed(state: String)
 const COLOR := Color(1.0, 0.8, 0.52)
 const ENERGY: float = 1.2
 const HALO_ENERGY: float = 0.28
+const SHADOW_ALPHA: float = 0.75
 const HALO_SCALE: float = 1.7
 const TEX_RADIUS: float = 128.0
 const FLICKER: float = 0.05
@@ -46,6 +47,9 @@ func _ready() -> void:
 
 func _make_light(tex: Texture2D, energy: float) -> PointLight2D:
 	var l := PointLight2D.new()
+	l.shadow_enabled = true                                  # trunks, pillars and walls throw moving shadows
+	l.shadow_filter = Light2D.SHADOW_FILTER_PCF5
+	l.shadow_color = Color(0, 0, 0, SHADOW_ALPHA)
 	l.texture = tex
 	l.color = COLOR
 	l.energy = energy

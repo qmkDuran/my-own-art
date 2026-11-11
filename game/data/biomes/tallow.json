@@ -20,11 +20,12 @@
  ],
  "ambient": {
   "darkness": [
-   0.17,
-   0.14,
-   0.15
+   1.05,
+   0.92,
+   0.82
   ],
-  "motes_color": "amber"
+  "motes_color": "amber",
+  "scenery_gain": 1.2
  },
  "relight": {},
  "buildings": [

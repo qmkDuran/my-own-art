@@ -12,7 +12,7 @@ from rig import Pose
 
 ANIMS: dict[str, dict] = {
     "idle": {"frames": 8, "fps": 6.0, "loop": True},
-    "walk": {"frames": 8, "fps": 13.0, "loop": True},
+    "walk": {"frames": 8, "fps": 13.0, "loop": True, "events": {"step": [0, 4]}},
     "bolt1": {"frames": 4, "weights": [0.6, 1.0, 1.6, 1.0], "events": {"hit": 1}},
     "bolt2": {"frames": 4, "weights": [0.6, 1.0, 1.6, 1.0], "events": {"hit": 1}},
     "cast": {"frames": 6, "weights": [0.8, 0.8, 2.0, 1.0, 1.0, 1.0], "events": {"hit": 2}},

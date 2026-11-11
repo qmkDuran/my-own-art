@@ -8,7 +8,7 @@ extends Node
 
 const LOOP: float = 80.0
 const START_MINUTES: float = 15.0 * 60.0     ## the loop runs from three in the afternoon to four
-const FLASH := Color(0.95, 0.92, 0.85)
+const FLASH := Color(1.6, 1.55, 1.45)
 const BROKEN_AT: Array = ["one_tuesday", 4]  ## quest step after which the loop is broken (the Mayor is down)
 const FIRST_HOUR: int = 4                    ## the hour every clock in town strikes
 

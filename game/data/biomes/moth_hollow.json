@@ -290,11 +290,12 @@
  },
  "ambient": {
   "darkness": [
-   0.16,
-   0.14,
-   0.21
+   0.95,
+   0.8,
+   1.15
   ],
-  "motes_color": "amber"
+  "motes_color": "amber",
+  "scenery_gain": 2.6
  },
  "ground": {
   "c_moss_dk": "ink",

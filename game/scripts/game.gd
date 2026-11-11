@@ -49,6 +49,9 @@ func _ready() -> void:
 	Overlay.create(self)
 	_build_world()
 	_build_ui()
+	var mood := Atmosphere.new()
+	add_child(mood)
+	mood.setup(self)
 	_restore()
 	events = ZoneEvents.new()
 	add_child(events)
@@ -83,8 +86,7 @@ func _build_world() -> void:
 	fx_layer.z_index = Fx.FX_Z
 	add_child(fx_layer)
 	dark = CanvasModulate.new()
-	var a: Array = GameData.biome["ambient"]["darkness"]
-	darkness = Color(float(a[0]), float(a[1]), float(a[2]))
+	darkness = Atmosphere.ambient(GameData.biome)
 	dark.color = darkness
 	add_child(dark)
 	player = Player.new()
@@ -235,6 +237,7 @@ func _on_quest_done(id: String) -> void:
 
 ## The world's darkness goes to `to` and comes back (Noon's daylight, Eclipse's deeper dark).
 func shift_darkness(to: Color, hold: float, back: float) -> void:
+	darkness = Atmosphere.ambient(GameData.biome)                # the Brightness setting may have changed
 	var tw := create_tween()
 	tw.tween_property(dark, "color", to, 0.12)
 	tw.tween_interval(hold)

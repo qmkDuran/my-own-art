@@ -265,11 +265,12 @@
  },
  "ambient": {
   "darkness": [
-   0.19,
-   0.19,
-   0.21
+   0.85,
+   0.95,
+   0.85
   ],
-  "motes_color": "gold"
+  "motes_color": "gold",
+  "scenery_gain": 1.75
  },
  "ground": {
   "c_moss_dk": "moss_dk",

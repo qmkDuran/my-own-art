@@ -292,11 +292,12 @@
  },
  "ambient": {
   "darkness": [
-   0.26,
-   0.24,
-   0.26
+   1.02,
+   0.95,
+   0.85
   ],
-  "motes_color": "bone"
+  "motes_color": "bone",
+  "scenery_gain": 1.4
  },
  "ground": {
   "c_moss_dk": "stone_dk",

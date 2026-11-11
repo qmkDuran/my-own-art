@@ -6,6 +6,8 @@ extends Node2D
 
 const GROUND_Z: int = -20
 const BRIDGE_Z: int = -19
+const TRUNK := Vector2(7, 4)             ## a tree's shadow-casting base (half sizes)
+const OCCLUDER_POINTS: int = 6
 const BUILT_W: float = 200.0           ## props wider than this are building parts: no shadow, never mirrored
 const CRYSTAL_LIGHT_RANGE: float = 80.0
 const CRYSTAL_LIGHT_ENERGY: float = 0.55
@@ -52,6 +54,7 @@ func _ground() -> void:
 	mat.set_shader_parameter("map_tex", s.texture)
 	mat.set_shader_parameter("map_size", Vector2(z.cols, z.rows))
 	mat.set_shader_parameter("cell", float(z.cell))
+	mat.set_shader_parameter("scenery_gain", gain())
 	mat.set_shader_parameter("stream_tex", _stream_tex())
 	mat.set_shader_parameter("path_tex", _path_tex())
 	mat.set_shader_parameter("path_scale", float(PATH_TEXEL))
@@ -139,6 +142,7 @@ func _props(world: Node2D) -> void:
 			continue
 		var s := PropSprite.make(p["kind"])
 		s.light_mask = SCENERY_MASK
+		s.self_modulate = Color(gain(), gain(), gain())
 		s.position = p["pos"]
 		var foot_w: float = (p["foot"] as Rect2).size.x
 		var built: bool = bool(GameData.props[p["kind"]]["flat"]) or foot_w > BUILT_W   # floors and walls
@@ -151,6 +155,8 @@ func _props(world: Node2D) -> void:
 		if float(GameData.props[p["kind"]]["size"][1]) >= TALL_PROP:
 			fade.add(s)
 			s.add_to_group("tall_props")
+			if not bool(GameData.props[p["kind"]]["flat"]):
+				s.add_child(_occluder((p["foot"] as Rect2).size * Vector2(0.45, 0.6)))
 		if String(GameData.props[p["kind"]]["light"]) != "":
 			_glow_light(s, Pal.c(GameData.props[p["kind"]]["light"]))
 
@@ -169,6 +175,7 @@ func _trees(world: Node2D) -> void:
 	for t: Dictionary in z.trees:
 		var s := PropSprite.make(t["kind"])
 		s.light_mask = SCENERY_MASK
+		s.self_modulate = Color(gain(), gain(), gain())
 		s.position = t["pos"]
 		s.flip_h = int(t["pos"].x + t["pos"].y) % 2 == 0
 		var g: Sprite2D = s.get_node_or_null("Glow") as Sprite2D
@@ -177,6 +184,25 @@ func _trees(world: Node2D) -> void:
 		world.add_child(s)
 		fade.add(s)
 		s.add_to_group("tall_props")
+		s.add_child(_occluder(TRUNK))
+
+
+## How far this zone lifts its terrain and trees out of the dark (biome ambient "scenery_gain"; HDR above 1).
+static func gain() -> float:
+	return float(GameData.biome["ambient"].get("scenery_gain", 1.0))
+
+
+## A small footprint that blocks the lantern's light, so trunks, pillars and houses throw real moving shadows.
+static func _occluder(half: Vector2) -> LightOccluder2D:
+	var poly := OccluderPolygon2D.new()
+	var pts := PackedVector2Array()
+	for k: int in OCCLUDER_POINTS:
+		var a: float = TAU * k / OCCLUDER_POINTS
+		pts.append(Vector2(cos(a) * half.x, sin(a) * half.y - half.y))
+	poly.polygon = pts
+	var o := LightOccluder2D.new()
+	o.occluder = poly
+	return o
 
 
 ## One static body: blocked terrain merged into rectangles (row runs stacked downward) plus every footprint.

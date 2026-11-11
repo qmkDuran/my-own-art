@@ -6,6 +6,8 @@ extends RefCounted
 ## walk, channel) run at their fps; one-shots are stretched to the time they are given (attack and cast speed).
 ## Every frame also says where the lantern hangs and how bright it is, so the light can swing with it.
 
+signal event(name: String)              ## a frame event other than "hit" (e.g. "step" on a footfall)
+
 var body: Sprite2D
 var lantern: Sprite2D
 var anim: String = "idle"
@@ -70,9 +72,12 @@ func tick(delta: float) -> void:
 	var pos: float = _t / unit
 	if bool(sp["loop"]):
 		pos = fposmod(pos, _total(w))
+	var was: int = _frame
 	_frame = _frame_at(w, pos)
 	if sp["events"].has("hit") and _frame >= int(sp["events"]["hit"]):
 		_fire()
+	if _frame != was:
+		_frame_events(sp)
 	var f: int = (int(sp["row"]) + dir) * int(_m["cols"]) + _frame
 	for s: Sprite2D in [body, lantern]:
 		PropSprite.set_frame(s, f)
@@ -91,6 +96,12 @@ func pane() -> float:
 
 func _anchor() -> Array:
 	return _spec()["anchors"][dir][_frame]
+
+
+func _frame_events(sp: Dictionary) -> void:
+	for name: String in sp["events"]:
+		if name != "hit" and (sp["events"][name] as Array).has(_frame):
+			event.emit(name)
 
 
 func _fire() -> void:

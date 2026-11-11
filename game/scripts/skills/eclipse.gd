@@ -6,6 +6,7 @@ extends Skill
 ## Pitch Dark (Flare and Lantern Toss cost nothing), New Moon (faster recovery; kills extend it).
 
 const KILL_EXTEND: float = 1.0
+const ECLIPSE_DIM: float = 0.4         ## the world darkens by this much under Eclipse: deep, never black
 const MAX_EXTEND: float = 4.0
 const UMBRA_RADIUS: float = 60.0
 
@@ -41,7 +42,7 @@ func use(_target: Vector2) -> void:
 	_t = duration()
 	_extended = 0.0
 	p.light.smother(_t)
-	Game.current.shift_darkness(Game.current.darkness.darkened(0.6), _t - 0.3, 0.4)
+	Game.current.shift_darkness(Game.current.darkness.darkened(ECLIPSE_DIM), _t - 0.3, 0.4)
 	Fx.halo(fx(), p.global_position, 160.0, Pal.c("violet", 0.7), 0.5)
 	Audio.sfx("boss_wind", -6.0, 1.6)
 	EclipseAura.attach(p, self)
