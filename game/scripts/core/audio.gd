@@ -40,7 +40,7 @@ func music(track: String) -> void:
 	var s: AudioStream = _stream("music_" + track)
 	if s is AudioStreamWAV:
 		(s as AudioStreamWAV).loop_mode = AudioStreamWAV.LOOP_FORWARD
-		(s as AudioStreamWAV).loop_end = (s as AudioStreamWAV).data.size() / 2
+		(s as AudioStreamWAV).loop_end = int(s.get_length() * (s as AudioStreamWAV).mix_rate)
 	_music.stream = s
 	_music.volume_db = MUSIC_DB
 	if s != null:
