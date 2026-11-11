@@ -4,9 +4,9 @@ extends GamePanel
 ## that tree; click to add a point, right-click to refund. A mastery is chosen once at its level; the other two
 ## open after 20 points in the Lamplighter tree.
 
-const TAB := Vector2(132, 22)
-const NODE := Vector2(96, 36)
-const STEP := Vector2(112, 62)
+const TAB := Vector2(146, 22)
+const NODE := Vector2(110, 36)
+const STEP := Vector2(120, 62)
 const GRID_Y: float = 92.0
 const GLYPH: float = 16.0
 const TREES: Array[String] = ["lamplighter", "beacon", "mothwright", "duskwalker"]
@@ -52,6 +52,10 @@ func _content() -> void:
 		_mastery_footer(tree)
 
 
+func _fit(s: String, w: float) -> String:
+	return s if UiDraw.text_width(self, s, UiDraw.SMALL) <= w else s.split(" ")[-1]
+
+
 ## Points needed for a row of the tree (-1: empty row).
 func _row_req(tree: Dictionary, row: int) -> int:
 	for n: Dictionary in tree["nodes"]:
@@ -69,7 +73,7 @@ func _node(n: Dictionary) -> void:
 	var gi: int = (GameData.sprites["icons"]["glyphs"] as Array).find(String(n["glyph"]))
 	draw_texture_rect_region(_glyphs, Rect2(r.position + Vector2(5, 10), Vector2(GLYPH, GLYPH)), Rect2(gi * GLYPH, 0, GLYPH, GLYPH),
 		Color.WHITE if open else Color(0.4, 0.4, 0.5))
-	UiDraw.text(self, r.position + Vector2(25, 15), String(n["name"]), UiDraw.TEXT if open else UiDraw.LOCKED, UiDraw.SMALL)
+	UiDraw.text(self, r.position + Vector2(25, 15), _fit(String(n["name"]), r.size.x - 29.0), UiDraw.TEXT if open else UiDraw.LOCKED, UiDraw.SMALL)
 	UiDraw.text(self, r.position + Vector2(25, 28), "%d/%d" % [rk, int(n["max"])], UiDraw.GOLD if rk > 0 else UiDraw.DIM, UiDraw.SMALL)
 
 

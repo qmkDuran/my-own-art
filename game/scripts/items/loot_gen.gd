@@ -69,6 +69,13 @@ static func _from_base(base: Dictionary, ilvl: int, rarity: String) -> Dictionar
 	return it
 
 
+## A plain item of a given base (starting gear, tests).
+static func make_from_base(base: Dictionary, ilvl: int, rarity: String) -> Dictionary:
+	var it: Dictionary = _from_base(base, ilvl, rarity)
+	it["name"] = String(base["name"])
+	return it
+
+
 static func _icon_row(slot: String) -> int:
 	return (GameData.sprites["icons"]["item_rows"] as Array).find(slot)
 

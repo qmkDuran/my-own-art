@@ -30,6 +30,10 @@ func _think(_delta: float) -> Vector2:
 			if t <= 0.0:
 				state = "chase"
 			return Vector2.ZERO
+	return _hunt(d)
+
+
+func _hunt(d: Dictionary) -> Vector2:
 	var dist: float = to_player().length()
 	if cd <= 0.0 and dist > float(d["leap_min"]) and dist < float(d["leap_max"]) \
 			and Game.current.nav.line_free(e.global_position, player().global_position):

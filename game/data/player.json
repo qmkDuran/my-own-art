@@ -10,5 +10,6 @@
  "skill_xp_base": 45.0, "skill_xp_exponent": 1.35, "skill_level_cap": 20,
  "mastery_level": 8,
  "skill_slot_levels": [1, 1, 3, 5, 10],
- "respawn_life_fraction": 1.0
+ "respawn_life_fraction": 1.0,
+ "starting_gear": ["hook_staff", "long_coat", "hand_lantern"]
 }

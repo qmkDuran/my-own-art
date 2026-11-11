@@ -26,7 +26,9 @@ func _ready() -> void:
 	if args.has("--demo") or args.has("--smoke") or args.has("--shots") or args.has("--play"):
 		get_tree().change_scene_to_file.call_deferred(GAME_SCENE)
 		return
-	_items = (["continue"] if SaveGame.exists() else []) + ["new", "quit"]
+	if SaveGame.exists():
+		_items.append("continue")
+	_items.append_array(["new", "quit"])
 	_cards = GameData.story["intro"]
 	var holder := Node2D.new()
 	add_child(holder)

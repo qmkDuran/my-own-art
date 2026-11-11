@@ -7,6 +7,12 @@ uniform sampler2D map_tex : filter_nearest;
 uniform vec2 map_size;
 uniform float cell = 32.0;
 uniform float warp = 10.0;
+uniform sampler2D stream_tex : filter_linear;
+uniform sampler2D path_tex : filter_linear;
+uniform float path_scale = 8.0;
+uniform vec4 pond;
+uniform vec3 circle;
+uniform float stream_half = 1.0;
 uniform vec4 c_void : source_color;
 uniform vec4 c_ink : source_color;
 uniform vec4 c_moss_dk : source_color;
@@ -76,28 +82,48 @@ vec4 moss(vec2 px) {
 	return col;
 }
 
-vec4 path(vec2 px, vec2 w) {
+vec4 path(vec2 px, float m) {
 	vec4 col = dith(c_earth_dk, c_earth, fbm(px * 0.08) * 1.2 - 0.1, px);
 	float h = hash(floor(px / 2.0));
 	if (h > 0.985) { col = h > 0.993 ? c_earth_lt : c_stone; }
-	int n = 0;
-	n += terr_w(px + vec2(0.0, 5.0), w) == PATH ? 0 : 1;
-	n += terr_w(px + vec2(0.0, -5.0), w) == PATH ? 0 : 1;
-	n += terr_w(px + vec2(5.0, 0.0), w) == PATH ? 0 : 1;
-	n += terr_w(px + vec2(-5.0, 0.0), w) == PATH ? 0 : 1;
-	if (n > 0) { col = dith(col, c_moss_dk, 0.35, px); }
+	if (m < 0.62) { col = dith(col, c_moss_dk, 0.4, px); }
 	return col;
 }
 
-vec4 water(vec2 px, vec2 w) {
+float path_mask(vec2 px, vec2 w) {
+	vec2 size = map_size * cell;
+	return texture(path_tex, (px + w * 0.6) / size).r;
+}
+
+// Signed distance (px) to the edge of the visible water: negative inside. The stream follows its curve, the pond
+// its ellipse; both sit inside their blocked cells, the rest of those cells is reedy bank.
+float water_edge(vec2 px, bool is_stream) {
+	if (is_stream) {
+		float row = px.y / cell - 0.5;
+		float c = texture(stream_tex, vec2((row + 0.5) / map_size.y, 0.5)).r;
+		return abs(px.x - (c + 0.5) * cell) - stream_half * cell;
+	}
+	vec2 q = (px - pond.xy) / pond.zw;
+	return (length(q) - 1.0) * min(pond.z, pond.w);
+}
+
+vec4 bank(vec2 px) {
+	vec4 col = dith(c_ink, c_moss_dk, fbm(px * 0.09) * 1.3 - 0.2, px);
+	vec2 rc = floor(px / vec2(3.0, 9.0));
+	if (hash(rc) > 0.72 && fract(px.y / 9.0) > 0.25) { col = hash(rc + 3.0) > 0.5 ? c_glass_dk : c_glass_dp; }
+	return col;
+}
+
+vec4 water(vec2 px, float edge) {
+	if (edge > 0.0) { return bank(px); }
 	float n = fbm(vec2(px.x * 0.04, px.y * 0.02 - TIME * 0.15));
 	vec4 col = dith(c_glass_dp, c_glass_dk, n * 1.3 - 0.15, px);
 	float band = sin(px.x * 0.07 + px.y * 0.16 + TIME * 0.6 + n * 6.0);
 	if (band > 0.93) { col = c_glass; }
 	float h = hash(floor(px / 2.0) + floor(TIME * 0.5));
 	if (h > 0.997) { col = c_glint; }
-	if (terr_w(px + vec2(0.0, -4.0), w) != WATER && terr_w(px + vec2(0.0, -4.0), w) != BRIDGE) { col = c_glass_lt; }
-	else if (terr_w(px + vec2(3.0, 0.0), w) != WATER || terr_w(px + vec2(-3.0, 0.0), w) != WATER) { col = c_glass; }
+	if (edge > -2.0) { col = c_glass_lt; }
+	else if (edge > -4.0) { col = c_glass; }
 	return col;
 }
 
@@ -114,12 +140,18 @@ void fragment() {
 	vec2 px = floor(UV * map_size * cell);
 	vec2 w = (vec2(vnoise(px * 0.06), vnoise(px * 0.06 + 31.7)) - 0.5) * warp;
 	int t = terr_w(px, w);
+	ivec2 cc = clamp(ivec2(floor(px / cell)), ivec2(0), ivec2(map_size) - 1);
+	int raw = int(texelFetch(map_tex, cc, 0).r * 255.0 + 0.5);
+	bool is_stream = texelFetch(map_tex, cc, 0).g > 0.5;
 	vec4 col = c_ink;
-	if (t == THICKET) { col = thicket(px); }
-	else if (t == MOSS) { col = moss(px); }
-	else if (t == PATH) { col = path(px, w); }
-	else if (t == WATER || t == BRIDGE) { col = water(px, w); }
-	else if (t == STONE) { col = stone(px); }
+	if (raw == WATER || raw == BRIDGE) {
+		col = water(px, raw == BRIDGE ? -cell : water_edge(px, is_stream));
+	} else if (t == THICKET) { col = thicket(px); }
+	else if (t == STONE && length(px - circle.xy) < circle.z) { col = stone(px); }
+	else {
+		float m = path_mask(px, w);
+		col = (m > 0.5 && (t == MOSS || t == PATH || t == STONE)) ? path(px, m) : moss(px);
+	}
 	if (open_ground(t)) {
 		// the forest's canopy shades the ground to its south; any forest edge darkens a little
 		if (terr_w(px + vec2(0.0, -16.0), w) == THICKET) { col = dith(col, c_void, 0.45, px); }

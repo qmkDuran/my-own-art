@@ -25,6 +25,7 @@ const ORB_SEGMENTS: int = 40
 var g: Game
 var messages: HudMessages
 var boss: Enemy
+var tracker_hidden: bool = false
 var _skills_tex: Texture2D
 var _t: float = 0.0
 
@@ -99,7 +100,8 @@ func _draw() -> void:
 	for i: int in SLOT_KEYS.size():
 		_slot(L["slots"][i], i)
 	_xp(L["xp"])
-	_tracker()
+	if not tracker_hidden:
+		_tracker()
 	_top_bar(L["bar"])
 
 

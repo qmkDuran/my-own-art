@@ -13,7 +13,7 @@ func _ready() -> void:
 	var bad: int = 0
 	var t0: int = Time.get_ticks_msec()
 	for s: int in SEEDS:
-		var z: ZoneLayout = ZoneGen.new().generate(GameData.biome, 1000 + s)
+		var z: ZoneLayout = ZoneGen.generate(GameData.biome, 1000 + s)
 		var probs: PackedStringArray = LayoutCheck.problems(z)
 		if not probs.is_empty():
 			bad += 1

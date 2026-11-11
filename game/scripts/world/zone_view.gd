@@ -9,6 +9,8 @@ const BRIDGE_Z: int = -19
 const CRYSTAL_LIGHT_RANGE: float = 80.0
 const CRYSTAL_LIGHT_ENERGY: float = 0.55
 const WALL_W: int = 96
+const PATH_TEXEL: int = 8
+const PATH_HALF: float = 40.0
 const GATE_W: int = 128
 ## Kinds Game turns into Interactables (they draw themselves).
 const INTERACTIVE: Array[String] = ["chest", "waylamp", "note", "cairn", "statue_fisher", "cocoon", "signpost", "npc"]
@@ -31,7 +33,7 @@ func _ground() -> void:
 	var img := Image.create(z.cols, z.rows, false, Image.FORMAT_RGBA8)
 	for y: int in z.rows:
 		for x: int in z.cols:
-			img.set_pixel(x, y, Color8(z.t(Vector2i(x, y)), 0, 0, 255))
+			img.set_pixel(x, y, Color8(z.t(Vector2i(x, y)), z.stream[z.idx(Vector2i(x, y))] * 255, 0, 255))
 	var s := Sprite2D.new()
 	s.texture = ImageTexture.create_from_image(img)
 	s.centered = false
@@ -42,11 +44,38 @@ func _ground() -> void:
 	mat.set_shader_parameter("map_tex", s.texture)
 	mat.set_shader_parameter("map_size", Vector2(z.cols, z.rows))
 	mat.set_shader_parameter("cell", float(z.cell))
+	mat.set_shader_parameter("stream_tex", _stream_tex())
+	mat.set_shader_parameter("path_tex", _path_tex())
+	mat.set_shader_parameter("path_scale", float(PATH_TEXEL))
+	mat.set_shader_parameter("pond", Vector4(z.pond.x, z.pond.y, maxf(1.0, z.pond.z - z.cell * 0.5), maxf(1.0, z.pond.w - z.cell * 0.5)))
+	mat.set_shader_parameter("circle", z.circle)
 	for n: String in ["void", "ink", "moss_dk", "moss", "moss_lt", "earth_dk", "earth", "earth_lt", "stone_dk", "stone",
 			"stone_lt", "glass_dp", "glass_dk", "glass", "glass_lt", "glint"]:
 		mat.set_shader_parameter("c_" + n, Pal.c(n))
 	s.material = mat
 	add_child(s)
+
+
+## The stream's centre per row (in cells) as a one-pixel-high float texture the shader interpolates.
+func _stream_tex() -> ImageTexture:
+	var img := Image.create(z.rows, 1, false, Image.FORMAT_RF)
+	for y: int in z.rows:
+		img.set_pixel(y, 0, Color(z.stream_center[y], 0, 0))
+	return ImageTexture.create_from_image(img)
+
+
+## Dirt paths drawn from their smoothed centre lines into a coarse mask (bilinear-sampled: smooth edges).
+func _path_tex() -> ImageTexture:
+	var k: int = z.cell / PATH_TEXEL
+	var img := Image.create(z.cols * k, z.rows * k, false, Image.FORMAT_L8)
+	var r: int = ceili(PATH_HALF / PATH_TEXEL)
+	for line: PackedVector2Array in z.path_lines:
+		for i: int in line.size() - 1:
+			var steps: int = maxi(1, ceili(line[i].distance_to(line[i + 1]) / PATH_TEXEL))
+			for s: int in steps + 1:
+				var c: Vector2 = line[i].lerp(line[i + 1], float(s) / steps) / PATH_TEXEL
+				img.fill_rect(Rect2i(Vector2i(c) - Vector2i(r, r) / 2, Vector2i(r, r)), Color.WHITE)
+	return ImageTexture.create_from_image(img)
 
 
 ## Plank tiles over every bridge cell: rails on the north and south edges, deck between.

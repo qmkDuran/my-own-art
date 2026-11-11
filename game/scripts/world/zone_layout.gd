@@ -20,6 +20,10 @@ var blocked: PackedByteArray          ## 1 where nothing can stand: non-walkable
 var clearings: Array[Dictionary] = [] ## {role, center: Vector2i, r: Vector2, secret: bool}
 var links: Array[Vector2i] = []
 var bridges: Array[Rect2i] = []
+var path_lines: Array[PackedVector2Array] = []  ## smoothed centre lines of the dirt paths (px), for drawing
+var stream_center: PackedFloat32Array           ## stream centre per row, in cells (continuous)
+var pond := Vector4.ZERO                         ## centre x, y and radii (px) of the pond, for drawing
+var circle := Vector3.ZERO                       ## centre x, y and radius (px) of the stone floor
 var props: Array[Dictionary] = []     ## {kind, pos: Vector2, foot: Rect2, frame: int, role, ...}
 var trees: Array[Dictionary] = []     ## {kind, pos: Vector2}
 var spawns: Array[Dictionary] = []    ## {kind, pos: Vector2, rank, mods: Array, pack: int}

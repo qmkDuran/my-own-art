@@ -52,6 +52,25 @@ func _ready() -> void:
 	collision_mask = 1 | 2
 	motion_mode = CharacterBody2D.MOTION_MODE_FLOATING
 	radius = float(GameData.player["radius"])
+	_make_body()
+	light = LanternLight.new()
+	light.stats = stats
+	light.position = LIGHT_OFFSET
+	add_child(light)
+	skills = SkillSystem.new()
+	skills.player = self
+	add_child(skills)
+	prog.changed.connect(refresh_stats)
+	inv.changed.connect(refresh_stats)
+	_starting_gear()
+	refresh_stats()
+	life = stats.max_life()
+	oil = stats.max_oil()
+	tonics = max_tonics()
+	respawn_at = global_position
+
+
+func _make_body() -> void:
 	var cs := CollisionShape2D.new()
 	var c := CircleShape2D.new()
 	c.radius = radius
@@ -69,20 +88,14 @@ func _ready() -> void:
 	sprite.material = mat
 	add_child(sprite)
 	PropSprite.add_glow(sprite, "res://art/actors/lamplighter_glow.png")
-	light = LanternLight.new()
-	light.stats = stats
-	light.position = LIGHT_OFFSET
-	add_child(light)
-	skills = SkillSystem.new()
-	skills.player = self
-	add_child(skills)
-	prog.changed.connect(refresh_stats)
-	inv.changed.connect(refresh_stats)
-	refresh_stats()
-	life = stats.max_life()
-	oil = stats.max_oil()
-	tonics = max_tonics()
-	respawn_at = global_position
+
+
+## The order's issue: a plain hook staff, a long coat and a hand lantern (worn from the start).
+func _starting_gear() -> void:
+	for id: String in GameData.player["starting_gear"]:
+		var base: Dictionary = LootGen.base_by_id(id)
+		var it: Dictionary = LootGen.make_from_base(base, 1, "normal")
+		inv.equipped[inv.target_slot(it)] = it
 
 
 func refresh_stats() -> void:
@@ -236,7 +249,7 @@ func _timers(delta: float) -> void:
 	_dash_cd = maxf(0.0, _dash_cd - delta)
 	_invuln = maxf(0.0, _invuln - delta)
 	_flash_t = maxf(0.0, _flash_t - delta)
-	(sprite.material as ShaderMaterial).set_shader_parameter("flash", 0.8 if _flash_t > 0.0 else 0.0)
+	(sprite.material as ShaderMaterial).set_shader_parameter("flash", 0.55 if _flash_t > 0.0 else 0.0)
 	sprite.modulate.a = 0.5 if _invuln > 0.0 and int(_invuln * 10.0) % 2 == 0 else 1.0
 	if dead:
 		return

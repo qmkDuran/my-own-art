@@ -30,7 +30,7 @@ func setup(game: Game) -> void:
 	inventory = _panel(InventoryPanel.new(), "Inventory", Vector2(300, 392), "right")
 	character = _panel(CharacterPanel.new(), "Character", Vector2(300, 436), "left")
 	skills = _panel(SkillPanel.new(), "Skills", Vector2(560, 400), "left")
-	passives = _panel(PassivePanel.new(), "Passives", Vector2(620, 400), "center")
+	passives = _panel(PassivePanel.new(), "Passives", Vector2(660, 400), "center")
 	pause = _panel(PausePanel.new(), "Paused", Vector2(300, 190), "center")
 	tooltip = TooltipLayer.new()
 	add_child(tooltip)
@@ -67,7 +67,7 @@ func open(p: GamePanel) -> void:
 	p.visible = was
 	p.toggle()
 	minimap.visible = not (inventory.visible or passives.visible)
-	hud.visible = true
+	hud.tracker_hidden = character.visible or skills.visible or passives.visible
 
 
 func _close_all() -> void:
@@ -84,6 +84,7 @@ func handle_global(event: InputEvent) -> bool:
 		if panels().any(func(p: GamePanel) -> bool: return p.visible and p != pause):
 			_close_all()
 			minimap.visible = true
+			hud.tracker_hidden = false
 		else:
 			set_paused(not pause.visible)
 		return true
