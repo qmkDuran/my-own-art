@@ -5,6 +5,7 @@ extends RefCounted
 
 const SPARK: String = "res://art/fx/spark.png"
 const FX_Z: int = 20
+const GROUND_LIGHT_MASK: int = 2                     ## light layer the ground, trees and props also listen on
 
 static var _glow_mat: CanvasItemMaterial
 static var _add_mat: CanvasItemMaterial
@@ -83,6 +84,7 @@ static func flash(parent: Node, at: Vector2, radius: float, col: Color, energy: 
 	l.color = col
 	l.energy = energy
 	l.position = at
+	l.range_item_cull_mask = GROUND_LIGHT_MASK          # flashes light the ground and props, never bodies (no washout)
 	parent.add_child(l)
 	var tw := l.create_tween()
 	tw.tween_property(l, "energy", 0.0, time).set_ease(Tween.EASE_OUT)

@@ -9,6 +9,7 @@ const DECAY: float = 2.2
 const FREQ: float = 30.0
 const BOSS_LEAN: float = 0.45
 const MAX_LEAN: float = 180.0
+const FRAME_FADE: float = 0.4
 
 static var instance: CameraRig
 
@@ -42,10 +43,11 @@ func _lean() -> Vector2:
 	if is_instance_valid(focus) and not (focus as Enemy).dead:
 		var mid: Vector2 = focus.global_position + Vector2(0, -(focus as Enemy).body_height() * 0.6)
 		return ((mid - me) * BOSS_LEAN).limit_length(MAX_LEAN)
-	for f: Array in frames:
+	for f: Array in frames:                  # a landmark: frame it and you together (the midpoint, fading out at range)
 		var d: float = me.distance_to(f[0])
-		if d < float(f[1]):
-			return ((f[0] as Vector2) - me) * float(f[2]) * (1.0 - d / float(f[1]))
+		var near: float = clampf((float(f[1]) - d) / (float(f[1]) * FRAME_FADE), 0.0, 1.0)
+		if near > 0.0:
+			return ((f[0] as Vector2) - me) * 0.5 * float(f[2]) * near
 	return Vector2.ZERO
 
 

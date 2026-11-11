@@ -12,6 +12,7 @@ const WALL_W: int = 96
 const PATH_TEXEL: int = 8
 const PATH_HALF: float = 40.0
 const TALL_PROP: float = 48.0
+const SCENERY_MASK: int = 1 | Fx.GROUND_LIGHT_MASK
 const STONE_STYLES: Array[String] = ["flags", "cobbles", "silk"]
 const GATE_W: int = 128
 ## Kinds Game turns into Interactables (they draw themselves).
@@ -44,6 +45,7 @@ func _ground() -> void:
 	s.centered = false
 	s.scale = Vector2(z.cell, z.cell)
 	s.z_index = GROUND_Z
+	s.light_mask = SCENERY_MASK
 	var mat := ShaderMaterial.new()
 	mat.shader = load("res://shaders/ground.gdshader")
 	mat.set_shader_parameter("map_tex", s.texture)
@@ -135,6 +137,7 @@ func _props(world: Node2D) -> void:
 		if INTERACTIVE.has(p["kind"]) or not GameData.props.has(p["kind"]):
 			continue
 		var s := PropSprite.make(p["kind"])
+		s.light_mask = SCENERY_MASK
 		s.position = p["pos"]
 		s.flip_h = int(p["pos"].x) % 3 == 0 and not ["hut", "tower"].has(p["kind"])
 		if (p["foot"] as Rect2).size.x > 0.0:
@@ -160,6 +163,7 @@ func _glow_light(s: Node2D, col: Color) -> void:
 func _trees(world: Node2D) -> void:
 	for t: Dictionary in z.trees:
 		var s := PropSprite.make(t["kind"])
+		s.light_mask = SCENERY_MASK
 		s.position = t["pos"]
 		s.flip_h = int(t["pos"].x + t["pos"].y) % 2 == 0
 		var g: Sprite2D = s.get_node_or_null("Glow") as Sprite2D

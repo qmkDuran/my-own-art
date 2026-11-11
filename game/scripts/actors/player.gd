@@ -289,10 +289,10 @@ func _timers(delta: float) -> void:
 	_dash_t = maxf(0.0, _dash_t - delta)
 	_dash_cd = maxf(0.0, _dash_cd - delta)
 	_invuln = maxf(0.0, _invuln - delta)
-	_flash_t = maxf(0.0, _flash_t - delta)
+	_flash_t = maxf(0.0, _flash_t - delta / maxf(Engine.time_scale, 0.01))   # real time: hit-stop must not stretch it
 	_slow_t = maxf(0.0, _slow_t - delta)
 	_heartbeat_t = maxf(0.0, _heartbeat_t - delta)
-	(sprite.material as ShaderMaterial).set_shader_parameter("flash", 0.35 if _flash_t > 0.0 else 0.0)
+	(sprite.material as ShaderMaterial).set_shader_parameter("flash", 0.18 if _flash_t > 0.0 else 0.0)
 	sprite.modulate.a = 0.5 if _invuln > 0.0 and int(_invuln * 10.0) % 2 == 0 else 1.0
 	if dead:
 		return

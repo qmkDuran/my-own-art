@@ -129,6 +129,7 @@ func _shot_character() -> void:
 
 func _shot_boss() -> void:
 	var h := _bot()
+	h.story_at("seven_heartbeats", 1)
 	h.clear_near(5000.0)
 	h.place_player(g.layout.circle_center() + Vector2(0, 80))
 	g.player.light.value = 70.0
@@ -153,7 +154,7 @@ func _shot_tallow() -> void:
 	while c.step_index("seven_heartbeats") < 4 and not c.is_done("seven_heartbeats"):
 		c._advance("seven_heartbeats")
 	var ott: Npc = _npc("ottilie")
-	_bot().place_player(ott.global_position + Vector2(60, 150))
+	_bot().place_player(ott.global_position + Vector2(70, 70))
 	await _wait(2.5)
 	g.player.face(ott.global_position)
 	await _wait(0.6)
@@ -173,6 +174,7 @@ func _npc(id: String) -> Npc:
 ## The Ember Road: relighting a road lamp while Husks come for it.
 func _shot_road() -> void:
 	var h := _bot()
+	h.story_at("ember_road", 1)
 	h.level_up(9)
 	var lamp: Waylamp = g.lamps[0]
 	h.place_player(lamp.stand_point() + Vector2(40, 30))
@@ -189,6 +191,7 @@ func _shot_road() -> void:
 ## Moth Hollow: a hunger nest drinking the light, crawlers and moths in the dark.
 func _shot_hollow() -> void:
 	var h := _bot()
+	h.story_at("moth_hollow", 0)
 	h.level_up(12)
 	var nest: Vector2 = g.layout.center_of(g.layout.clearing_of_role("hunger")["center"])
 	h.place_player(nest + Vector2(-40, 60))
@@ -203,6 +206,7 @@ func _shot_hollow() -> void:
 ## The Moth Matron: her gust cone filling toward you.
 func _shot_matron() -> void:
 	var h := _bot()
+	h.story_at("moth_hollow", 1)
 	h.level_up(14)
 	h.clear_near(100000.0)
 	h.place_player(g.layout.circle_center() + Vector2(0, 50))
@@ -248,6 +252,7 @@ func _shot_stash() -> void:
 
 func _shot_eclipse() -> void:
 	var h := _bot()
+	h.story_at("ember_road", 1)
 	h.level_up(12)
 	h.gear_up(12)
 	h.clear_near(900.0)
@@ -262,6 +267,7 @@ func _shot_eclipse() -> void:
 
 func _shot_noon() -> void:
 	var h := _bot()
+	h.story_at("ember_road", 1)
 	h.level_up(12)
 	h.gear_up(12)
 	h.clear_near(900.0)
@@ -304,6 +310,7 @@ func _shot_eclipse_tree() -> void:
 ## The Upward River: Undertows and Drowned Lanterns by the hamlet, the river climbing behind them.
 func _shot_river() -> void:
 	var h := _bot()
+	h.story_at("upward_river", 2)
 	h.level_up(16)
 	h.gear_up(16)
 	var at: Vector2 = g.layout.center_of(g.layout.clearing_of_role("pool")["center"])
@@ -338,6 +345,7 @@ func _shot_forge() -> void:
 ## The Bellwright: a toll rolling out across the flooded square, a gap to stand in.
 func _shot_bellwright() -> void:
 	var h := _bot()
+	h.story_at("drowned_belfry", 2)
 	h.level_up(20)
 	h.gear_up(20)
 	h.clear_near(100000.0)

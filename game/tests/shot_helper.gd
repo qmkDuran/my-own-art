@@ -95,6 +95,22 @@ func gear_up(lv: int) -> void:
 	g.player.inv.changed.emit()
 
 
+## Puts the campaign where a staged scene sits in the story: every quest before `quest` done, `quest` at `step`.
+func story_at(quest: String, step: int) -> void:
+	var c: Campaign = Session.campaign
+	var order: Array[String] = ["seven_heartbeats", "ember_road", "moth_hollow", "upward_river", "drowned_belfry"]
+	for id: String in order:
+		if id == quest:
+			break
+		c.start(id)
+		while not c.is_done(id):
+			c._advance(id)
+	c.start(quest)
+	while c.step_index(quest) < step and not c.is_done(quest):
+		c._advance(quest)
+	c.rewards.clear()
+
+
 ## Moves the mouse (screen-space UI coordinates) so hover tooltips appear.
 func hover(ui_pos: Vector2) -> void:
 	var screen: Vector2 = g.get_viewport().get_final_transform() * ui_pos

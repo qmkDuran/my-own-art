@@ -236,7 +236,7 @@ func _status(delta: float) -> void:
 	_exposed_t -= delta
 	if _exposed_t <= 0.0:
 		exposed_pct = 0.0
-	_flash_t = maxf(0.0, _flash_t - delta)
+	_flash_t = maxf(0.0, _flash_t - delta / maxf(Engine.time_scale, 0.01))   # real time: hit-stop must not stretch it
 	(sprite.material as ShaderMaterial).set_shader_parameter("flash", HIT_FLASH_AMOUNT if _flash_t > 0.0 else 0.0)
 	_shroud_t -= delta
 	if _shroud_t <= 0.0:
