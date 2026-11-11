@@ -1,6 +1,6 @@
 {
  "_doc": "Enemy kinds. life/damage at level 1; each level adds life_per_level / damage_per_level (fractions). ai: swarm (close and bite), leaper (wind up, leap), ranged (keep distance, shoot shards), boss (the Glazier's pattern). radius = body for collision and overlap checks.",
- "life_per_level": 0.22,
+ "life_per_level": 0.18,
  "damage_per_level": 0.12,
  "xp_per_level": 0.18,
  "wake_range": 380.0,
@@ -150,8 +150,8 @@
    "fps": 6.0,
    "death_burst": {
     "radius": 56.0,
-    "delay": 0.7,
-    "damage": 1.2
+    "delay": 0.9,
+    "damage": 0.7
    },
    "lore": "Straw in a dead man's coat. The seams glow because something is still burning inside. Stand back when it falls."
   },

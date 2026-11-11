@@ -111,7 +111,7 @@ func light_radius_mult() -> float:
 
 ## Increased damage (additive pool) for a skill of the given kind.
 func increased(kind: String) -> float:
-	var inc: float = v("damage_pct") + v("sunfire_pct")
+	var inc: float = v("damage_pct") + v("sunfire_pct") + float(GameData.player["damage_per_level_pct"]) * (level - 1)
 	inc += v("spell_pct") if kind == "spell" else v("melee_pct")
 	return 1.0 + inc / 100.0
 

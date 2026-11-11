@@ -16,6 +16,10 @@ func _ready() -> void:
 			GameData.ensure()
 			Session.reset()
 			Session.zone_id = a.substr(7)
+	if args.has("--demo") or args.has("--demo2"):
+		var reel := DemoReel.new()
+		reel.process_mode = Node.PROCESS_MODE_ALWAYS
+		add_child(reel)
 	for flag: String in MODES:
 		if args.has(flag):
 			var node: Node = (load(MODES[flag]) as GDScript).new()

@@ -19,6 +19,7 @@ const HURT_SHAKE: float = 0.3
 const DASH_GHOSTS: int = 4
 const INVULN_AFTER_RISE: float = 2.0
 const PUSH_DECAY: float = 6.0
+const BURST_WINDOW: float = 0.5
 
 var stats := Stats.new()
 var prog := Progression.new()
@@ -48,6 +49,7 @@ var _tonic_heal: float = 0.0
 var _slow: float = 0.0
 var _slow_t: float = 0.0
 var _push: Vector2 = Vector2.ZERO
+var _last_burst: float = -100.0
 
 
 func _ready() -> void:
@@ -223,6 +225,15 @@ func _rise() -> void:
 	_invuln = INVULN_AFTER_RISE
 	died_and_rose.emit()
 	life_changed.emit()
+
+
+## Bursts landing at the same moment hurt once: true (and the window starts) if this one may land.
+func burst_ready() -> bool:
+	var now: float = Time.get_ticks_msec() / 1000.0
+	if now - _last_burst < BURST_WINDOW:
+		return false
+	_last_burst = now
+	return true
 
 
 ## Silk and the like: move slower for a while (the strongest slow wins).

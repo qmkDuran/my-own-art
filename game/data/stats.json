@@ -1,35 +1,131 @@
 {
  "_doc": "Every stat a node, affix or item can grant. fmt: flat '+{v}', pct '+{v}%'. Names are what tooltips show.",
- "life": {"name": "Maximum Life", "fmt": "flat"},
- "life_pct": {"name": "Increased Maximum Life", "fmt": "pct"},
- "life_regen": {"name": "Life Regeneration per second", "fmt": "flat"},
- "life_on_kill": {"name": "Life gained on Kill", "fmt": "flat"},
- "oil": {"name": "Maximum Oil", "fmt": "flat"},
- "oil_regen_pct": {"name": "Increased Oil Regeneration", "fmt": "pct"},
- "oil_on_kill": {"name": "Oil gained on Kill", "fmt": "flat"},
- "armour": {"name": "Armour", "fmt": "flat"},
- "armour_pct": {"name": "Increased Armour", "fmt": "pct"},
- "dusk_res": {"name": "Dusk Resistance", "fmt": "pct"},
- "move_pct": {"name": "Increased Movement Speed", "fmt": "pct"},
- "attack_speed_pct": {"name": "Increased Attack Speed", "fmt": "pct"},
- "cast_speed_pct": {"name": "Increased Cast Speed", "fmt": "pct"},
- "damage_pct": {"name": "Increased Damage", "fmt": "pct"},
- "sunfire_pct": {"name": "Increased Sunfire Damage", "fmt": "pct"},
- "spell_pct": {"name": "Increased Spell Damage", "fmt": "pct"},
- "melee_pct": {"name": "Increased Melee Damage", "fmt": "pct"},
- "added_sunfire": {"name": "Added Sunfire Damage", "fmt": "flat"},
- "crit_chance": {"name": "Critical Strike Chance", "fmt": "pct"},
- "crit_multi": {"name": "Critical Strike Multiplier", "fmt": "pct"},
- "light_radius_pct": {"name": "Increased Light Radius", "fmt": "pct"},
- "light_on_kill": {"name": "Light gained on Kill", "fmt": "flat"},
- "light_loss_reduction": {"name": "Less Light lost when Hit", "fmt": "pct"},
- "damage_vs_shrouded_pct": {"name": "Increased Damage against Shrouded enemies", "fmt": "pct"},
- "blazing_pct": {"name": "Increased Damage while Blazing", "fmt": "pct"},
- "cooldown_pct": {"name": "Increased Cooldown Recovery Speed", "fmt": "pct"},
- "area_pct": {"name": "Increased Area", "fmt": "pct"},
- "moth_count": {"name": "Moths released by Moth Swarm", "fmt": "flat"},
- "dash_cd_pct": {"name": "Increased Dash Recovery Speed", "fmt": "pct"},
- "tonic_charges": {"name": "Tonic Charges", "fmt": "flat"},
- "burn_chance": {"name": "Chance to Ignite on Hit", "fmt": "pct"},
- "staff_damage_pct": {"name": "Increased Staff Damage", "fmt": "pct"}
+ "life": {
+  "name": "Maximum Life",
+  "fmt": "flat"
+ },
+ "life_pct": {
+  "name": "Increased Maximum Life",
+  "fmt": "pct"
+ },
+ "life_regen": {
+  "name": "Life Regeneration per second",
+  "fmt": "flat"
+ },
+ "life_on_kill": {
+  "name": "Life gained on Kill",
+  "fmt": "flat"
+ },
+ "oil": {
+  "name": "Maximum Oil",
+  "fmt": "flat"
+ },
+ "oil_regen_pct": {
+  "name": "Increased Oil Regeneration",
+  "fmt": "pct"
+ },
+ "oil_on_kill": {
+  "name": "Oil gained on Kill",
+  "fmt": "flat"
+ },
+ "armour": {
+  "name": "Armour",
+  "fmt": "flat"
+ },
+ "armour_pct": {
+  "name": "Increased Armour",
+  "fmt": "pct"
+ },
+ "dusk_res": {
+  "name": "Dusk Resistance",
+  "fmt": "pct"
+ },
+ "move_pct": {
+  "name": "Increased Movement Speed",
+  "fmt": "pct"
+ },
+ "attack_speed_pct": {
+  "name": "Increased Attack Speed",
+  "fmt": "pct"
+ },
+ "cast_speed_pct": {
+  "name": "Increased Cast Speed",
+  "fmt": "pct"
+ },
+ "damage_pct": {
+  "name": "Increased Damage",
+  "fmt": "pct"
+ },
+ "sunfire_pct": {
+  "name": "Increased Sunfire Damage",
+  "fmt": "pct"
+ },
+ "spell_pct": {
+  "name": "Increased Spell Damage",
+  "fmt": "pct"
+ },
+ "melee_pct": {
+  "name": "Increased Melee Damage",
+  "fmt": "pct"
+ },
+ "added_sunfire": {
+  "name": "Added Sunfire Damage",
+  "fmt": "flat"
+ },
+ "crit_chance": {
+  "name": "Critical Strike Chance",
+  "fmt": "pct"
+ },
+ "crit_multi": {
+  "name": "Critical Strike Multiplier",
+  "fmt": "pct"
+ },
+ "light_radius_pct": {
+  "name": "Increased Light Radius",
+  "fmt": "pct"
+ },
+ "light_on_kill": {
+  "name": "Light gained on Kill",
+  "fmt": "flat"
+ },
+ "light_loss_reduction": {
+  "name": "Less Light lost when Hit",
+  "fmt": "pct"
+ },
+ "damage_vs_shrouded_pct": {
+  "name": "Increased Damage against Shrouded enemies",
+  "fmt": "pct"
+ },
+ "blazing_pct": {
+  "name": "Increased Damage while Blazing",
+  "fmt": "pct"
+ },
+ "cooldown_pct": {
+  "name": "Increased Cooldown Recovery Speed",
+  "fmt": "pct"
+ },
+ "area_pct": {
+  "name": "Increased Area",
+  "fmt": "pct"
+ },
+ "moth_count": {
+  "name": "Moths released by Moth Swarm",
+  "fmt": "flat"
+ },
+ "dash_cd_pct": {
+  "name": "Increased Dash Recovery Speed",
+  "fmt": "pct"
+ },
+ "tonic_charges": {
+  "name": "Tonic Charges",
+  "fmt": "flat"
+ },
+ "burn_chance": {
+  "name": "Chance to Ignite on Hit",
+  "fmt": "pct"
+ },
+ "staff_damage_pct": {
+  "name": "Increased Staff Damage",
+  "fmt": "pct"
+ }
 }

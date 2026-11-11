@@ -179,7 +179,8 @@ func _die() -> void:
 	tw.chain().tween_callback(queue_free)
 
 
-## Husks burst when they fall: a circle warns, then the embers inside it burn.
+## Husks burst when they fall: a circle warns, then the embers inside it burn (bursts landing together count
+## once, so clearing a crowd of them is not a death sentence).
 func _death_burst(db: Dictionary) -> void:
 	var at: Vector2 = global_position
 	var r: float = float(db["radius"])
@@ -190,7 +191,7 @@ func _death_burst(db: Dictionary) -> void:
 		Fx.flash(fx, at, r * 2.0, Pal.c("flame"), 1.4, 0.3)
 		Audio.sfx("flare", -10.0, 1.4)
 		var p: Player = Game.current.player
-		if p.global_position.distance_to(at) < r + p.radius:
+		if p.global_position.distance_to(at) < r + p.radius and p.burst_ready():
 			Combat.hit_player(null, dmg, "blunt", at))
 
 

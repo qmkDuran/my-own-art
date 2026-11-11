@@ -1,98 +1,30 @@
 class_name DemoBot
 extends Node
-## --demo: plays the slice for the recorded video, through the same input paths a player uses (a virtual cursor,
-## clicks, skill keys). Three scenes joined by fades: the ambush at the gate (level 1), an elite pack deep in the
-## forest (level 5, a few tree points spent), the Glazier (level 8, Beacon mastery). Quits when done.
+## Plays like a player for the recorded videos, through the same input paths (a virtual cursor, clicks, skill
+## keys): lashes the nearest enemy, uses Flare in a crowd, Moth Swarm at range, Lantern Toss at a pack when the
+## light is high, steps out of warning circles, drinks tonics, picks up good loot, reads dialogue at a calm pace.
+## Follows whichever zone is being played (it lives under the test runner, so zone changes don't end it).
 
 const THINK: float = 0.12
 const SIGHT: float = 420.0
 const LOOT_RANGE: float = 200.0
-const SCENES: Array[Dictionary] = [{"at": 0.0, "id": "gate"}, {"at": 15.0, "id": "elite"}, {"at": 29.0, "id": "boss"}, {"at": 46.0, "id": "end"}]
-const BOSS_LIFE: float = 0.13
 const DODGE: float = 140.0
-const DEMO_SEED: int = 7
 const READ_LINE: float = 1.4
 const TOSS_LIGHT: float = 50.0
-const PACK_RADIUS: float = 150.0
-const CLEAR_RADIUS: float = 800.0
-const SPECS: Dictionary = {"sunlash": ["quick_wrist", "quick_wrist", "sear", "sear", "kindling"], "flare": ["wide", "refuel", "wide"],
-	"lantern_toss": ["long_burn", "heavy_iron", "beacon"], "moth_swarm": ["brood", "brood", "swift"]}
-const PASSIVES: Array[String] = ["wick", "wick", "wick", "trimmed", "trimmed", "steady_hand", "kindler"]
 
 var g: Game
-var _t: float = 0.0
 var _think: float = 0.0
-var _scene: int = 0
 var _read_t: float = 0.0
 
 
-func _ready() -> void:
-	g = get_parent() as Game
-	seed(DEMO_SEED)
-
-
 func _physics_process(delta: float) -> void:
-	_t += delta
-	if _scene < SCENES.size() and _t >= float(SCENES[_scene]["at"]):
-		_enter(String(SCENES[_scene]["id"]))
-		_scene += 1
+	g = Game.current
+	if g == null:
+		return
 	_think -= delta
 	if _think <= 0.0:
 		_think = THINK
 		_decide()
-
-
-func _enter(id: String) -> void:
-	var h := ShotHelper.new(g)
-	match id:
-		"elite":
-			g.ui.fade_through(func() -> void: _elite(h))
-		"boss":
-			g.ui.fade_through(func() -> void: _boss(h))
-		"end":
-			get_tree().quit()
-
-
-func _elite(h: ShotHelper) -> void:
-	h.level_up(7)
-	for s: String in SPECS:
-		h.spec(s, SPECS[s])
-	h.place_player(_elite_spot())
-	g.player.light.value = 45.0
-	g.hud.caption("Deep in the Glasswood: an elite pack. Outside your light, they hit harder.")
-
-
-## Beside one elite pack, with other packs around it sent away (a staged scene: one fight at a time).
-func _elite_spot() -> Vector2:
-	for n: Node in get_tree().get_nodes_in_group("enemies"):
-		var e := n as Enemy
-		if e.rank == "rare":
-			_isolate(e)
-			var c: Vector2i = g.nav.nearest_free(g.layout.cell_of(e.global_position + Vector2(-230, 40)))
-			return g.layout.center_of(c)
-	return g.player.global_position
-
-
-func _isolate(leader: Enemy) -> void:
-	for n: Node in get_tree().get_nodes_in_group("enemies"):
-		var o := n as Enemy
-		var d: float = o.global_position.distance_to(leader.global_position)
-		if d > PACK_RADIUS and d < CLEAR_RADIUS:
-			o.queue_free()
-
-
-func _boss(h: ShotHelper) -> void:
-	h.level_up(10)
-	g.player.prog.choose_mastery("beacon")
-	for id: String in PASSIVES:
-		g.player.prog.add_passive(id)
-	h.clear_near(100000.0)
-	h.place_player(g.layout.circle_center() + Vector2(0, 80))
-	g.player.light.value = 70.0
-	g.player.refill_tonics()
-	g.player.life = g.player.stats.max_life()
-	g.start_boss()
-	g.spawner.boss.life = g.spawner.boss.max_life * BOSS_LIFE
 
 
 ## One decision: drink, dash, a big skill if it fits the moment, else lash the nearest enemy; loot when calm.

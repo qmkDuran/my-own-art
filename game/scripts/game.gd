@@ -54,8 +54,6 @@ func _ready() -> void:
 	Session.campaign.quest_done.connect(_on_quest_done)
 	Session.campaign.changed.connect(mark_dirty)
 	Audio.play_music(String(GameData.zone(zone_id)["music"]))
-	if OS.get_cmdline_user_args().has("--demo"):
-		add_child(DemoBot.new())
 
 
 func _exit_tree() -> void:

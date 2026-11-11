@@ -79,6 +79,18 @@ func _staff(lv: int) -> Dictionary:
 	return it
 
 
+## What a player would be wearing by this level: a rare staff, coat and relic of the right level.
+func gear_up(lv: int) -> void:
+	for slot: String in ["staff", "body", "relic"]:
+		var bases: Array = GameData.items["bases"].filter(func(b: Dictionary) -> bool: return b["slot"] == slot and int(b["level"]) <= lv)
+		var base: Dictionary = bases[bases.size() - 1]
+		var it: Dictionary = LootGen.make_from_base(base, lv, "rare")
+		LootGen.add_affixes(it, 4, lv)
+		it["name"] = LootGen.item_name(it, base)
+		g.player.inv.equipped[slot] = it
+	g.player.inv.changed.emit()
+
+
 ## Moves the mouse (screen-space UI coordinates) so hover tooltips appear.
 func hover(ui_pos: Vector2) -> void:
 	var screen: Vector2 = g.get_viewport().get_final_transform() * ui_pos
