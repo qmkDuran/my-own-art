@@ -151,14 +151,22 @@ func _pursue_use() -> void:
 		g.player.walk_to(_use.stand_point())
 
 
+## The ground item under the cursor: a name plate wins (it is what you aim at), else the item itself (generous).
+func _item_at(c: Vector2) -> GroundItem:
+	var near: GroundItem = null
+	for n: Node in get_tree().get_nodes_in_group("ground_items"):
+		var gi := n as GroundItem
+		if LabelStack.shown and gi.label_rect().has_point(c):
+			return gi
+		if near == null and gi.pick_rect().has_point(c):
+			near = gi
+	return near
+
+
 ## What is under the cursor: item names first (they float above), then enemies, then usable things.
 func _hover() -> void:
 	var c: Vector2 = cursor()
-	hovered_item = null
-	for n: Node in get_tree().get_nodes_in_group("ground_items"):  # its name plate, or the item itself (generous)
-		var gi := n as GroundItem
-		if (LabelStack.shown and gi.label_rect().has_point(c)) or gi.pick_rect().has_point(c):
-			hovered_item = gi
+	hovered_item = _item_at(c)
 	hovered_enemy = null
 	var best: float = INF
 	for n: Node in get_tree().get_nodes_in_group("enemies"):

@@ -122,31 +122,12 @@ def effects() -> None:
 
 
 # ------------------------------------------------------------------ music
-D_MINOR = [146.83, 174.61, 196.0, 220.0, 261.63, 293.66, 349.23, 392.0, 440.0, 523.25, 587.33]
-
-
 def drone(dur: float, root: float) -> np.ndarray:
     t = t_(dur)
     x = sum(a * np.sin(2 * np.pi * f * t + rng.uniform(0, 6)) for f, a in ((root, 0.5), (root * 1.003, 0.4), (root * 1.5, 0.3),
                                                                             (root * 2.0, 0.15)))
     swell = 0.6 + 0.4 * np.sin(2 * np.pi * t / dur * 4)
     return x * swell
-
-
-def explore(dur: float = 64.0) -> np.ndarray:
-    """Exploring: a low drone, wind in the glass, slow chimes from the D minor pentatonic, a far heartbeat."""
-    out = 0.35 * drone(dur, 73.42) + 0.12 * low(noise(dur), 400) * (0.6 + 0.4 * np.sin(2 * np.pi * t_(dur) / 16))
-    pent = [146.83, 174.61, 220.0, 261.63, 293.66, 349.23, 440.0, 523.25]
-    for k in range(int(dur / 1.6)):
-        if rng.random() < 0.7:
-            start = int(SR * (k * 1.6 + rng.uniform(0, 0.4)))
-            b = 0.18 * bell(rng.choice(pent) * 2, 3.0, 1.2)
-            out[start:start + len(b)] += b[:max(0, len(out) - start)]
-    for k in range(int(dur / 4)):
-        start = int(SR * k * 4)
-        thump = 0.25 * sweep(70, 40, 0.3) * env(0.3, 0.005, 0.12)
-        out[start:start + len(thump)] += thump[:max(0, len(out) - start)]
-    return out
 
 
 def boss(dur: float = 48.0) -> np.ndarray:
@@ -173,8 +154,8 @@ def boss(dur: float = 48.0) -> np.ndarray:
     return out
 
 
-def music(name: str, x: np.ndarray) -> None:
-    x = x / (np.max(np.abs(x)) + 1e-9) * 0.8
+def music(name: str, x: np.ndarray, peak: float = 0.8) -> None:
+    x = x / (np.max(np.abs(x)) + 1e-9) * peak
     xf = int(SR * 2)
     x[:xf] = x[:xf] * np.linspace(0, 1, xf) + x[-xf:] * np.linspace(1, 0, xf)
     x = x[:-xf]
@@ -188,8 +169,7 @@ def music(name: str, x: np.ndarray) -> None:
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     effects()
-    music("explore", explore())
-    music("boss", boss())
+    music("boss", boss())                 # exploration music: dread.py
     print("audio written to", OUT)
 
 

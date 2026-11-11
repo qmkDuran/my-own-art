@@ -351,7 +351,11 @@ player, stats, skills, passives, items, enemies, glasswood biome, story; props.j
   emissive), `people.py` (parametric 64 px figures), `enemies.py`, `props.py`, `icons.py`, `reference_sheet.py`.
 - The ground is a shader (`game/shaders/ground.gdshader`) over a one-texel-per-cell terrain map plus a smooth
   path mask, stream curve, pond ellipse and stone circle; palette colours with 4x4 ordered dithering.
-- `python3 -I art/audio/synth.py` — every SFX (`.wav`) and the two music loops (`explore.ogg`, `boss.ogg`).
+- `python3 -I art/audio/synth.py` — the synthesised SFX (`.wav`) and the boss loop (`boss.ogg`).
+- `cd art/audio && python3 dread.py` — the exploration loops (`explore.ogg`, `cave.ogg` for Moth Hollow): dark and
+  uneasy (Playtest 2): a D1 drone with a tritone ghost, a minor-second cluster that swells, far echoing bells on a
+  scale with the tritone, reversed swells, sagging creaks, a metal scrape, an irregular heartbeat, all in a long
+  reverb; peak 0.4 so it sits under the boss loop. Then `layer.py` for the CC0-layered combat sounds.
 
 ## 11. Checks (run every pass: `bash tools/run_all.sh`)
 `check_art.py` (palette, size classes, feet don't slide, palette mirror) · `check_code.py` (typed signatures,
