@@ -36,19 +36,19 @@ def build_people(meta: dict) -> None:
     _save(img, glow, "actors/lamplighter.png")
     meta["lamplighter"] = {"frame": [64, 64], "anchor": [32, 61], "poses": list(people.POSES.items())}
     for key, spec in people.NPCS.items():
-        img, glow = sheet([[people.draw(spec, "idle", i) for i in range(4)]], 64, 64)
+        img, glow = sheet([[people.draw(spec, "idle", i) for i in range(people.POSES["idle"])]], 64, 64)
         _save(img, glow, f"actors/npc_{key}.png")
-        meta[f"npc_{key}"] = {"frame": [64, 64], "anchor": [32, 61], "poses": [["idle", 4]], "name": spec["name"],
+        meta[f"npc_{key}"] = {"frame": [64, 64], "anchor": [32, 61], "poses": [["idle", people.POSES["idle"]]], "name": spec["name"],
                               "role": spec["role"]}
 
 
 def build_townsfolk(meta: dict) -> None:
     """Passers-by in Tallow: idle and walk rows (they stroll between places)."""
     for key, spec in people.TOWNSFOLK.items():
-        rows = [[people.draw(spec, "idle", i) for i in range(4)], [people.draw(spec, "walk", i) for i in range(6)]]
+        rows = [[people.draw(spec, pose, i) for i in range(people.POSES[pose])] for pose in ("idle", "walk")]
         img, glow = sheet(rows, 64, 64)
         _save(img, glow, f"actors/folk_{key}.png")
-        meta[f"folk_{key}"] = {"frame": [64, 64], "anchor": [32, 61], "poses": [["idle", 4], ["walk", 6]]}
+        meta[f"folk_{key}"] = {"frame": [64, 64], "anchor": [32, 61], "poses": [["idle", people.POSES["idle"]], ["walk", people.POSES["walk"]]]}
 
 
 def build_enemies(meta: dict) -> None:

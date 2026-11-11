@@ -28,7 +28,7 @@ func _ready() -> void:
 	GameData.ensure()
 	InputSetup.ensure()
 	var args: PackedStringArray = OS.get_cmdline_user_args()
-	var straight_in: bool = args.has("--demo") or args.has("--demo2") or args.has("--demo3") or args.has("--smoke") or args.has("--play") or (args.has("--shots") and not args.has("--only=title"))
+	var straight_in: bool = args.has("--demo") or args.has("--demo2") or args.has("--demo3") or args.has("--balance") or args.has("--smoke") or args.has("--play") or (args.has("--shots") and not args.has("--only=title"))
 	if straight_in:
 		get_tree().change_scene_to_file.call_deferred(GAME_SCENE)
 		return
@@ -123,7 +123,7 @@ func _draw_figure(c: Vector2) -> void:
 	var glow: Texture2D = PropSprite.tex("res://art/actors/lamplighter_glow.png")
 	var at: Vector2 = (c - LANTERN_IN_SPRITE * FIGURE_SCALE).round()
 	var dst := Rect2(at, Vector2(FRAME, FRAME) * FIGURE_SCALE)
-	var src := Rect2(int(_t * 5.0) % 4 * FRAME, 0, FRAME, FRAME)
+	var src := Rect2(int(_t * 6.0) % 8 * FRAME, 0, FRAME, FRAME)
 	draw_texture_rect_region(tex, dst, src, Color(0.45, 0.42, 0.55))
 	draw_texture_rect_region(glow, dst, src)
 

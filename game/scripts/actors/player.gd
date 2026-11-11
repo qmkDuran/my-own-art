@@ -8,8 +8,9 @@ signal life_changed
 signal died_and_rose
 
 const POSES: Dictionary = {"idle": 0, "walk": 1, "strike": 2, "cast": 3, "hurt": 4}
-const FRAMES: Dictionary = {"idle": 4, "walk": 6, "strike": 4, "cast": 3, "hurt": 1}
-const FPS: Dictionary = {"idle": 5.0, "walk": 10.0, "strike": 14.0, "cast": 10.0, "hurt": 8.0}
+const FRAMES: Dictionary = {"idle": 8, "walk": 8, "strike": 4, "cast": 3, "hurt": 1}
+const FPS: Dictionary = {"idle": 6.0, "walk": 12.0, "strike": 14.0, "cast": 10.0, "hurt": 8.0}
+const SHEET_COLS: int = 8
 const ARRIVE: float = 6.0
 const LIGHT_OFFSET := Vector2(10, -6)
 const LANTERN_OFFSET := Vector2(20, -50)
@@ -89,7 +90,7 @@ func _make_body() -> void:
 	add_child(PropSprite.shadow(30.0))
 	sprite = Sprite2D.new()
 	sprite.texture = PropSprite.tex("res://art/actors/lamplighter.png")
-	sprite.hframes = 6
+	sprite.hframes = SHEET_COLS
 	sprite.vframes = 5
 	sprite.offset = Vector2(0, -32 + 3)
 	var mat := ShaderMaterial.new()
@@ -320,7 +321,7 @@ func _animate(delta: float) -> void:
 	_pose_t += delta * float(FPS[_pose])
 	var n: int = int(FRAMES[_pose])
 	var f: int = mini(int(_pose_t), n - 1) if _pose_lock > 0.0 else int(_pose_t) % n
-	PropSprite.set_frame(sprite, int(POSES[_pose]) * 6 + f)
+	PropSprite.set_frame(sprite, int(POSES[_pose]) * SHEET_COLS + f)
 
 
 func _set_pose(p: String) -> void:

@@ -217,6 +217,29 @@ the bottleneck, so each act reuses the systems and adds biome rules, set-pieces 
 - **Panels**: quest log (J), loot filter (L), Nim's maps, Fenn's lockers (with the inventory), the order's ledger
   (refund passives or a skill tree), Lio's bestiary (kills + lore).
 
+## 8c. Balance (bot-measured; `-- --balance --zone=<id>`, headless, fixed 60 fps)
+The DemoBot plays like a player at the zone's intended level (middle of its range; rare staff, coat and relic of
+that level; passives and a few tree points spent): it walks up to the 8 nearest packs in order, fights each, then
+fights the boss at the top of the range. It dodges warning circles and toll rings only when Wickstep is ready, so
+deaths are an upper bound for a human. Tuning done in this pass: enemy damage per level 0.12 -> 0.17, early
+enemies x1.2-1.5 damage, Lamplighter +3% damage per level (was 4), Glazier 1100 -> 2000 life and 16 -> 10 damage,
+Matron 1900 -> 4200 life, Bellwright 2800 -> 4000 life and 19 -> 11 damage, Falls Heron 15 -> 14.
+
+| Zone (level) | Pack clear (avg) | Life lost per pack | Deaths in 8 packs | Boss | Boss time | Boss deaths |
+|---|---|---|---|---|---|---|
+| Glasswood (4) | 5.6 s | 2% | 0 | Glazier (lvl 7) | 42 s | 1 |
+| Ember Road (8) | 3.8 s | 9% | 0 | - | - | - |
+| Moth Hollow (12) | 5.8 s | 1% | 0 | Moth Matron (lvl 15) | 28 s | 0 |
+| Upward River (16) | 6.6 s | 11% | 0 | - | - | - |
+| Rising Falls (17) | 7.9 s | 21% | 1 | - | - | - |
+| Saltmarsh (19) | 2.8 s | 4% | 0 | - | - | - |
+| Drowned Belfry (20) | 6.6 s | 16% | 0 | Bellwright (lvl 22) | 66 s | 2 |
+Reading: Act 1 packs are easy at the intended level with rare gear (fast and punchy, as intended for the
+opening; a player with plainer gear will feel more pressure); Act 2 packs bite (Falls Herons diving in pairs).
+The Matron is now the easiest boss for her place — she should get tougher once the bot learns her gust (next
+pass). One pack per zone times out because it sits where the bot cannot path to it (ranged moths over water,
+or a pack inside a lure) — not a balance issue, but to look at.
+
 ## 9. Architecture (`game/scripts/`)
 | Folder | What |
 |---|---|
@@ -290,7 +313,8 @@ Glazier + Nim, death/respawn, save/load). Review screenshots: `--shots` (needs x
   Review fixes: Fx.flash lights touch only the ground/props (light mask 2) — they had blown dark sprites out to
   cream; life bars only on hovered and elite enemies; the camera frames the Great Lantern with you; staged scenes
   place the campaign silently (Campaign.place). New layout rule: every set-piece group must really be placed
-  (it caught three silently missing groups).
+  (it caught three silently missing groups). People and townsfolk now have 8-frame idles (breath, a blink, the
+  coat swaying) and 8-frame walks (counter-swinging arms, step bob, alternating feet); the Lamplighter too.
 - **Pass 3 (started)**: Eclipse (shutter the lantern: everything Shrouded, +60% vs Shrouded, speed, leech, a
   closing burst; tree: Long Night, Night Hunger, Predator, Unshutter, Umbra, Pitch Dark, New Moon) learned at level 6;
   Noon (daylight for a breath: every enemy on screen burns and reels, your Light blazes at full; tree: High Noon,

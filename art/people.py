@@ -9,7 +9,9 @@ FEET = 61
 CX = 32
 
 # poses: name -> number of frames
-POSES = {"idle": 4, "walk": 6, "strike": 4, "cast": 3, "hurt": 1}
+POSES = {"idle": 8, "walk": 8, "strike": 4, "cast": 3, "hurt": 1}
+BLINK = 6                                   # the idle frame where eyes close
+ARM_SWING = (-2, -1, 0, 1, 2, 1, 0, -1)     # walk: the left hand's swing (the right one swings opposite)
 
 
 class Fig:
@@ -22,13 +24,13 @@ class Fig:
         self.bob = 0
         self.sway = 0
         self.step = 0      # -1 left foot forward, +1 right
-        if pose == "idle":
-            self.bob = (0, 0, 1, 1)[i]
-            self.sway = (0, 1, 0, -1)[i]
-        elif pose == "walk":
-            self.bob = (0, 1, 1, 0, 1, 1)[i]
-            self.sway = (-1, 0, 1, 1, 0, -1)[i]
-            self.step = (-1, -1, 0, 1, 1, 0)[i]
+        if pose == "idle":                  # slow breath: rise and settle, the coat swaying a pixel either way
+            self.bob = (0, 0, 1, 1, 1, 1, 0, 0)[i]
+            self.sway = (0, 0, 1, 1, 0, 0, -1, -1)[i]
+        elif pose == "walk":                # two steps: down on each contact, the hem swinging with the stride
+            self.bob = (1, 0, 0, 0, 1, 0, 0, 0)[i]
+            self.sway = (-1, -1, 0, 1, 1, 1, 0, -1)[i]
+            self.step = (-1, -1, -1, 0, 1, 1, 1, 0)[i]
         elif pose == "hurt":
             self.bob = 1
 
@@ -96,9 +98,12 @@ def _hands(f: Fig) -> tuple[tuple[float, float], tuple[float, float]]:
     sw = 10 * f.wk
     left = (CX - sw - 2, f.y(39))
     right = (CX + sw + 2, f.y(38))
-    if f.pose == "walk":
-        left = (left[0], left[1] + (-1, 0, 1, 1, 0, -1)[f.i])
-        right = (right[0], right[1] + (1, 0, -1, -1, 0, 1)[f.i])
+    if f.pose == "walk":                    # arms counter-swing (forward = a little up and in)
+        a = ARM_SWING[f.i]
+        left = (left[0] + a * 0.5, left[1] - abs(a) * 0.5 + a)
+        right = (right[0] - a * 0.5, right[1] - abs(a) * 0.5 - a)
+    elif f.pose == "idle":
+        left = (left[0], left[1] + (0, 0, 0, 1, 1, 0, 0, 0)[f.i])
     elif f.pose == "strike" and f.spec.get("held_r") == "pole":
         right = ((CX + sw + 3, f.y(36)), (CX + sw + 5, f.y(33)), (CX + sw + 4, f.y(36)), (CX + sw + 2, f.y(38)))[f.i]
         left = ((CX - sw - 3, f.y(30)), (CX - sw - 9, f.y(27)), (CX - sw - 6, f.y(33)), (CX - sw - 3, f.y(37)))[f.i]
@@ -135,7 +140,7 @@ def _held(s: Spr, f: Fig, item: str, hand: tuple[float, float]) -> None:
     elif item == "small_lantern":
         _lantern(s, x, y + 1, big=False)
     elif item == "pole":                     # the lantern staff: a hooked staff, the lantern hanging from its crook
-        tilt = {"strike": (2, 7, 4, 1), "cast": (0, 1, 1)}.get(f.pose, (0,) * 6)[f.i]
+        tilt = {"strike": (2, 7, 4, 1), "cast": (0, 1, 1)}.get(f.pose, (0,) * 8)[f.i]
         top = (x + 1 + tilt, max(3.0, y - 30))
         s.line([(x, y + 12), top], "earth_dk", width=2)
         s.line([(x + 1, y + 12), (top[0] + 1, top[1])], "earth")
@@ -187,6 +192,8 @@ def _head(s: Spr, f: Fig) -> None:
     s.rect(CX - 4, hy + 1, CX - 3, hy + 4, sp.get("skin_dk", "skin_dk"))
     eyes = sp.get("eyes", "ink")
     glow = sp.get("eyes_glow", False)
+    if f.pose == "idle" and f.i == BLINK and not glow:
+        eyes = sp.get("skin_dk", "skin_dk")
     s.px(CX - 2, hy, eyes, glow=glow)
     s.px(CX + 2, hy, eyes, glow=glow)
     if sp.get("beard"):                       # stubble, and the jaw caught by the lantern on his right
@@ -285,7 +292,7 @@ def _scarf(s: Spr, f: Fig) -> None:
     y = f.y(21)
     s.rect(CX - 6, y, CX + 6, y + 3, a)
     s.line([(CX - 5, y + 3), (CX + 5, y + 3)], b)
-    tail = f.sway + (1 if f.pose == "walk" and f.i in (1, 2) else 0)
+    tail = f.sway + (1 if f.pose == "walk" and f.i in (1, 2, 5, 6) else 0)
     s.poly([(CX - 6, y + 2), (CX - 3, y + 2), (CX - 5 + tail, y + 15), (CX - 8 + tail, y + 14)], a)
     s.line([(CX - 6, y + 3), (CX - 7 + tail, y + 14)], b)
 
