@@ -71,7 +71,14 @@ the forest's canopy shades open ground to its south.
 - Panels: ink fill, thin brass frame, amber corner rivets, a title bar; tooltips are the same in a deeper ink.
 - Layout from the viewport size, never fixed coordinates; checked at 8 sizes of 16:9 and 16:10 (`--ui`).
 - Tooltips carry real numbers (damage ranges after increases, radius in px, cooldown after recovery, affix tiers,
-  differences against worn items).
+  differences against worn items). Never a bare percentage on its own: say what it does to a number you feel
+  ("stops 6.0 of a 20 hit", "a 20 Dusk hit deals 14.0", "Movement 182 px/s (+4)").
+- Trees (`TreeArt`): a deep framed ground with a vignette and slow embers, dim lines that turn to glowing amber with
+  a travelling spark once both ends have points, frames by kind (minor square, notable cut corners, keystone double
+  gold with diamond tabs), a pulsing glow under the hovered node, sparks when a point goes in.
+- HUD buttons sit half see-through until hovered; overlays over the game (Tab map) use bright edges and a faint
+  wash, never a solid fill, so the fight stays readable under them.
+- Camera moments (the new game's pan) get letterbox bars that slide in and out over the HUD.
 
 ## Words
 One or two short sentences per line; a speaker on every line; lore optional; no walls of text.
