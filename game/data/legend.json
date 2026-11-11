@@ -1,0 +1,21 @@
+{
+ ".": {"ground": "grass", "walk": true},
+ ",": {"ground": "path", "walk": true},
+ "~": {"ground": "water", "walk": false},
+ "\"": {"ground": "grass", "tall": true, "walk": true},
+ "#": {"ground": "grass", "tree": "tree", "walk": false},
+ "P": {"ground": "grass", "tree": "pine", "walk": false},
+ "f": {"ground": "grass", "fence": true, "walk": false},
+ "*": {"ground": "grass", "decor": "flowers", "walk": true},
+ "=": {"ground": "water", "decor": "bridge", "walk": true},
+ "I": {"ground": "water", "decor": "bridge_v", "walk": true},
+ "b": {"ground": "grass", "decor": "bush", "walk": false},
+ "o": {"ground": "grass", "decor": "rock", "walk": false},
+ "s": {"ground": "grass", "decor": "stump", "walk": false},
+ "m": {"ground": "grass", "decor": "mushrooms", "walk": true},
+ "r": {"ground": "grass", "decor": "shore_rocks", "walk": false},
+ "_": {"ground": "floor", "walk": true},
+ "W": {"ground": "wall", "walk": false},
+ "w": {"ground": "wall_window", "walk": false},
+ " ": {"ground": "void", "walk": false}
+}

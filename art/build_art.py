@@ -110,8 +110,8 @@ def build_ui() -> None:
         save(icons.mood(k), f"ui/mood_{k}.png")
     for k in ("sunberry", "smoky_nut", "sweet_kelp", "mending_salve", "spring_tonic"):
         save(icons.item(k), f"ui/item_{k}.png")
-    save(icons.heart(True), "ui/heart_full.png")
-    save(icons.heart(False), "ui/heart_empty.png")
+    for kind in ("full", "half", "empty"):
+        save(icons.heart(kind), f"ui/heart_{kind}.png")
     save(icons.cursor(), "ui/cursor.png")
     save(scenes.title(), "scenes/title.png")
     save(scenes.battle("meadow"), "scenes/battle_meadow.png")

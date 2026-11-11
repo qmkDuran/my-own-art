@@ -1,0 +1,7 @@
+{
+ "sunberry": {"name": "Sunberry", "kind": "treat", "price": 20, "text": "A sweet berry. Bloom and Gale wildkin adore it."},
+ "smoky_nut": {"name": "Smoky Nut", "kind": "treat", "price": 20, "text": "A roasted nut. Cinder and Stone wildkin love the taste."},
+ "sweet_kelp": {"name": "Sweet Kelp", "kind": "treat", "price": 20, "text": "Crunchy river kelp. A Tide favourite."},
+ "mending_salve": {"name": "Mending Salve", "kind": "heal", "amount": 25, "price": 30, "text": "Heals 25 HP of one creature."},
+ "spring_tonic": {"name": "Spring Tonic", "kind": "heal", "amount": 60, "price": 70, "text": "Wellspring water. Heals 60 HP."}
+}

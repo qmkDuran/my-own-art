@@ -1,0 +1,224 @@
+{
+ "id": "wellspring_grove",
+ "name": "Wellspring Grove",
+ "music": "grove",
+ "battle_stage": "grove",
+ "rows": [
+  "PPPPPPPPPPPPPPPPPPPPPPPP",
+  "PPPPPPPPPPPPPPPPPPPPPPPP",
+  "PPPPPP............PPPPPP",
+  "PPPPPP.**......**.PPPPPP",
+  "PPPPPP............PPPPPP",
+  "PPPPPP............PPPPPP",
+  "PPPPPPPP........PPPPPPPP",
+  "PPPPPPPP........PPPPPPPP",
+  "PPPP......,,,,......PPPP",
+  "PPPP......,,,,......PPPP",
+  "PP........,,,,.\"\"\"\"\"\".PP",
+  "PP.\"\"\"\"\"\".,,,,.\"\"\"\"\"\".PP",
+  "PP.\"\"\"\"\"\".,,,,.\"\"\"\"\"\".PP",
+  "PP.\"\"\"\"\"\".,,,,.\"\"\"\"\"\".PP",
+  "PP.\"\"\"\"\"\".,,,,.\"\"\"\"\"\".PP",
+  "PP.\"\"\"\"\"\".,,,,.\"\"\"\"\"\".PP",
+  "PP.\"\"\"\"\"\".,,,,.\"\"\"\"\"\".PP",
+  "PPs.......,,,,.......oPP",
+  "PP..\"\"\"\"..,,,,..\"\"\"\"..PP",
+  "PP..\"\"\"\"..,,,,..\"\"\"\"..PP",
+  "PPPPPPPPPP,,,,PPPPPPPPPP",
+  "PPPPPPPPPP,,,,PPPPPPPPPP"
+ ],
+ "objects": [
+  {
+   "kind": "prop",
+   "prop": "wellspring",
+   "cell": [
+    10,
+    3
+   ],
+   "size": [
+    3,
+    2
+   ],
+   "talk": "wellspring",
+   "event": "wellspring"
+  },
+  {
+   "kind": "prop",
+   "prop": "bramble",
+   "cell": [
+    10,
+    8
+   ],
+   "until_stage": 2,
+   "talk": "brambles"
+  },
+  {
+   "kind": "prop",
+   "prop": "bramble",
+   "cell": [
+    11,
+    8
+   ],
+   "until_stage": 2,
+   "talk": "brambles"
+  },
+  {
+   "kind": "prop",
+   "prop": "bramble",
+   "cell": [
+    12,
+    8
+   ],
+   "until_stage": 2,
+   "talk": "brambles"
+  },
+  {
+   "kind": "prop",
+   "prop": "bramble",
+   "cell": [
+    13,
+    8
+   ],
+   "until_stage": 2,
+   "talk": "brambles"
+  },
+  {
+   "kind": "prop",
+   "prop": "bramble",
+   "cell": [
+    9,
+    8
+   ],
+   "until_stage": 2,
+   "talk": "brambles"
+  },
+  {
+   "kind": "prop",
+   "prop": "bramble",
+   "cell": [
+    14,
+    8
+   ],
+   "until_stage": 2,
+   "talk": "brambles"
+  },
+  {
+   "kind": "npc",
+   "id": "keeper",
+   "person": "keeper",
+   "cell": [
+    9,
+    10
+   ],
+   "facing": "right",
+   "talk": "keeper_grove"
+  }
+ ],
+ "warps": [
+  {
+   "cell": [
+    10,
+    21
+   ],
+   "to": {
+    "map": "bramble_lane",
+    "cell": [
+     10,
+     1
+    ],
+    "facing": "down"
+   }
+  },
+  {
+   "cell": [
+    11,
+    21
+   ],
+   "to": {
+    "map": "bramble_lane",
+    "cell": [
+     11,
+     1
+    ],
+    "facing": "down"
+   }
+  },
+  {
+   "cell": [
+    12,
+    21
+   ],
+   "to": {
+    "map": "bramble_lane",
+    "cell": [
+     12,
+     1
+    ],
+    "facing": "down"
+   }
+  },
+  {
+   "cell": [
+    13,
+    21
+   ],
+   "to": {
+    "map": "bramble_lane",
+    "cell": [
+     13,
+     1
+    ],
+    "facing": "down"
+   }
+  }
+ ],
+ "encounters": {
+  "rate": 0.15,
+  "table": [
+   {
+    "species": "drizzlesnail",
+    "min": 5,
+    "max": 7,
+    "weight": 3
+   },
+   {
+    "species": "thistlehog",
+    "min": 5,
+    "max": 6,
+    "weight": 2
+   },
+   {
+    "species": "kindlemoth",
+    "min": 5,
+    "max": 7,
+    "weight": 2
+   },
+   {
+    "species": "puffwren",
+    "min": 5,
+    "max": 6,
+    "weight": 2
+   }
+  ]
+ },
+ "heal_regions": [
+  {
+   "rect": [
+    0,
+    9,
+    24,
+    13
+   ],
+   "stage": 2
+  },
+  {
+   "rect": [
+    0,
+    0,
+    24,
+    9
+   ],
+   "stage": 3
+  }
+ ]
+}

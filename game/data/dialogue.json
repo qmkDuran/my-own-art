@@ -1,0 +1,52 @@
+{
+ "intro": {"lines": [
+  "The Wending Vale was green once. Rivers sang, meadows hummed, and wildkin walked beside the people of the valley.",
+  "Then came the Hush. Year by year the colour drained away. Streams slowed to mud. Flowers stayed shut.",
+  "The wildkin grew wary and hid. And people... stopped listening to them.",
+  "The old stories say the Vale's heart, the Wellspring, only runs while people and wildkin trust each other.",
+  "In the village of Fernhollow, a young tender named Rowan is about to find out if the stories are true."]},
+ "keeper_choice": {"lines": [
+  "Ah, Rowan. I'm Tamsin, Keeper of the grove. These three wandered down from the hills, lost and hungry.",
+  "Nobody can own a wildkin. But one of them might choose to walk with you, if you choose it too."]},
+ "keeper_after_choice": {"lines": [
+  "It's chosen you back. Look at that! Be kind to each other.",
+  "When you're ready, come up Bramble Lane to the grove. Your Gran will want to see you first."]},
+ "keeper_town": {"lines": ["Go and see your Gran, Rowan. The cottage with the red roof."]},
+ "keeper_grove": {"lines": [
+  "This is the Wellspring Grove. Feel how quiet it is? The brambles have shut the way to the spring.",
+  "Every wildkin that trusts you wakes the land a little. Befriend three, and I think the brambles will give way."],
+  "when": [
+   {"flag": "wellspring_woken", "lines": ["Listen to it sing! You did this, Rowan. You and your friends.", "The Vale is long, and the Hush runs deep. But today the grove remembers."]},
+   {"flag": "stage_2", "lines": ["The brambles have pulled back! Go on, the Wellspring is just ahead. Lay your hand on the water."]}]},
+ "gran": {"lines": [
+  "There you are! And who's this little one? Oh, it's lovely. Keeper Tamsin brought it?",
+  "Listen, love. The grove up the Lane has gone grey as ash, and the stream with it.",
+  "Make friends out there. Not fights, friends. Here, take some treats and salves, and a few coins.",
+  "The Mender down the street will patch you both up for free. Off you go, and come home for supper!"],
+  "when": [
+   {"flag": "wellspring_woken", "lines": ["I heard it from the window, Rowan. The spring, singing! I haven't heard that in ten years.", "Supper's on the stove. Bring all your friends."]},
+   {"flag": "met_gran", "lines": ["Mind the tall grass, love. That's where the shy ones hide.", "If you've had a long day, a rest at the Mender's does wonders."]}]},
+ "mender": {"lines": ["Welcome to the Mender's hut. Let me see your friends. There, there...", "All better! Come back any time."]},
+ "grocer": {"lines": ["Pell's Pantry! Treats for every kind of wildkin, and salves for scraped knees."]},
+ "grocer_bye": {"lines": ["Come again!"]},
+ "door_locked": {"lines": ["The door is locked. A note says: \"Gone to the market at Lowmere. Back in spring.\""]},
+ "mailbox": {"lines": ["Gran's mailbox. There's a seed catalogue in it, ten years out of date."]},
+ "sign_fernhollow": {"lines": ["FERNHOLLOW\nNorth: Bramble Lane and the Wellspring Grove."]},
+ "sign_mender": {"lines": ["MENDER'S HUT (left)    PELL'S PANTRY (right)"]},
+ "sign_lane": {"lines": ["BRAMBLE LANE\nWild wildkin in the tall grass. Be gentle."]},
+ "sign_grove": {"lines": ["WELLSPRING GROVE\nKeep to the path. Leave only footprints."]},
+ "elder": {"lines": ["When I was a boy, the river by the Lane ran so fast you could hear it from here.", "Now it's dust. Ah, but you've a wildkin with you. Maybe things are turning."],
+  "when": [{"flag": "stage_1", "lines": ["Did you hear that? Water! Up the Lane! I thought I'd never hear it again."]}]},
+ "kid": {"lines": ["I'm gonna befriend a Puffwren someday. You just have to be really, really gentle."],
+  "when": [{"flag": "stage_2", "lines": ["The flowers in the grove opened! My mum cried. Happy crying."]}]},
+ "juni_town": {"lines": ["Rowan! You got a wildkin too? I'm heading up the Lane. Bet I can show you a thing or two!"]},
+ "fisher": {"lines": ["I fish this stream every morning. Habit. There's been nothing in it but cracked mud for years."],
+  "when": [{"flag": "stage_1", "lines": ["It's running! Look at it run! I'm going to need a bigger basket."]}]},
+ "brambles": {"lines": ["A wall of grey, thorny brambles. They don't budge."]},
+ "wellspring": {"lines": ["The old stone basin is dry and cracked. You feel a faint warmth deep under the stone."],
+  "when": [
+   {"flag": "wellspring_woken", "lines": ["The Wellspring bubbles and sings. Your friends lean in to drink."]},
+   {"flag": "stage_2", "lines": ["You lay your hand on the stone. Your friends gather close...", "Something stirs deep below. Water rises, clear and cold, and begins to sing!"]}]},
+ "whiteout": {"lines": ["Your friends are worn out... You hurry back to the Mender's hut.", "The Mender tends to everyone. Rest well. Some coins were lost on the way."]},
+ "end_of_slice": {"lines": ["The grove is alive again. Thank you for playing this first slice of the Vale!", "Keep exploring, befriend the rest, and fill your journal."]}
+}

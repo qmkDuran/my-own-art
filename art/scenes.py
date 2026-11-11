@@ -10,8 +10,8 @@ from palette import WITHER
 from pix import INDEX, Canvas
 
 W, H = 320, 180
-FOE_PAD = (100, 88, 46, 11)
-ALLY_PAD = (236, 164, 62, 14)
+FOE_PAD = (100, 80, 44, 10)
+ALLY_PAD = (236, 148, 62, 13)
 
 
 def _bands(c: Canvas, rows: list[tuple[int, str]]) -> None:

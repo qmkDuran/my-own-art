@@ -1,0 +1,7 @@
+{
+ "stages": [
+  {"stage": 1, "befriended": 1, "message": "Far up the Lane, something gurgles. The stream is running again, and colour seeps back into the meadow."},
+  {"stage": 2, "befriended": 3, "message": "A warm wind rolls through the Vale. Flowers open in the grove, and the brambles before the Wellspring shrink back."},
+  {"stage": 3, "flag": "wellspring_woken", "message": "The Wellspring sings! Green rushes through the whole grove."}
+ ]
+}

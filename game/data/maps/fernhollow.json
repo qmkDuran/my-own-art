@@ -1,0 +1,238 @@
+{
+ "id": "fernhollow",
+ "name": "Fernhollow",
+ "music": "town",
+ "battle_stage": "meadow",
+ "rows": [
+  "############,,,,############",
+  "############,,,,############",
+  "##......ffff,,,,..........##",
+  "##......f**f,,,,.o......b.##",
+  "##......f**f,,,,..........##",
+  "##......ffff,,,,..........##",
+  "##,,,,,,,,,,,,,,,,,,,,,,,,##",
+  "##,,,,,,,,,,,,,,,,,,,,,,,,##",
+  "##..........,,,,..........##",
+  "##.....**...,,,,...**.....##",
+  "##..........,,,,........b.##",
+  "##..........,,,,.o.....b..##",
+  "##..........,,,,..........##",
+  "##..........,,,,..........##",
+  "##,,,,,,,,,,,,,,,,,,,,,,,,##",
+  "##,,,,,,,,,,,,,,,,,,,,,,,,##",
+  "##........................##",
+  "##.**...........r~~~~~..b.##",
+  "##.**....b.......~~~~~r...##",
+  "##........................##",
+  "############################",
+  "############################"
+ ],
+ "objects": [
+  {
+   "kind": "house",
+   "style": "home",
+   "cell": [
+    3,
+    3
+   ],
+   "door": 1,
+   "to": {
+    "map": "home",
+    "cell": [
+     4,
+     6
+    ],
+    "facing": "up"
+   }
+  },
+  {
+   "kind": "house",
+   "style": "neighbor",
+   "cell": [
+    18,
+    3
+   ],
+   "door": 1,
+   "talk": "door_locked"
+  },
+  {
+   "kind": "house",
+   "style": "healer",
+   "cell": [
+    3,
+    11
+   ],
+   "door": 1,
+   "to": {
+    "map": "mender",
+    "cell": [
+     4,
+     6
+    ],
+    "facing": "up"
+   }
+  },
+  {
+   "kind": "house",
+   "style": "shop",
+   "cell": [
+    18,
+    11
+   ],
+   "door": 2,
+   "to": {
+    "map": "pantry",
+    "cell": [
+     4,
+     6
+    ],
+    "facing": "up"
+   }
+  },
+  {
+   "kind": "prop",
+   "prop": "mailbox",
+   "cell": [
+    7,
+    4
+   ],
+   "talk": "mailbox"
+  },
+  {
+   "kind": "sign",
+   "cell": [
+    16,
+    3
+   ],
+   "talk": "sign_fernhollow"
+  },
+  {
+   "kind": "sign",
+   "cell": [
+    11,
+    12
+   ],
+   "talk": "sign_mender"
+  },
+  {
+   "kind": "npc",
+   "id": "keeper_town",
+   "person": "keeper",
+   "cell": [
+    13,
+    4
+   ],
+   "facing": "down",
+   "talk": "keeper_town",
+   "hide_flag": "met_gran"
+  },
+  {
+   "kind": "npc",
+   "id": "kid",
+   "person": "kid",
+   "cell": [
+    19,
+    16
+   ],
+   "facing": "down",
+   "talk": "kid",
+   "wander": true
+  },
+  {
+   "kind": "npc",
+   "id": "elder",
+   "person": "elder",
+   "cell": [
+    9,
+    10
+   ],
+   "facing": "right",
+   "talk": "elder"
+  },
+  {
+   "kind": "npc",
+   "id": "juni_town",
+   "person": "juni",
+   "cell": [
+    22,
+    8
+   ],
+   "facing": "left",
+   "talk": "juni_town",
+   "hide_flag": "beat_juni"
+  }
+ ],
+ "warps": [
+  {
+   "cell": [
+    12,
+    0
+   ],
+   "to": {
+    "map": "bramble_lane",
+    "cell": [
+     10,
+     42
+    ],
+    "facing": "up"
+   }
+  },
+  {
+   "cell": [
+    13,
+    0
+   ],
+   "to": {
+    "map": "bramble_lane",
+    "cell": [
+     11,
+     42
+    ],
+    "facing": "up"
+   }
+  },
+  {
+   "cell": [
+    14,
+    0
+   ],
+   "to": {
+    "map": "bramble_lane",
+    "cell": [
+     12,
+     42
+    ],
+    "facing": "up"
+   }
+  },
+  {
+   "cell": [
+    15,
+    0
+   ],
+   "to": {
+    "map": "bramble_lane",
+    "cell": [
+     13,
+     42
+    ],
+    "facing": "up"
+   }
+  }
+ ],
+ "heal_regions": [
+  {
+   "rect": [
+    8,
+    2,
+    4,
+    4
+   ],
+   "stage": 1
+  }
+ ],
+ "start": [
+  13,
+  8
+ ]
+}

@@ -1,0 +1,15 @@
+{
+ "order": ["bloom", "cinder", "tide", "gale", "stone"],
+ "names": {"bloom": "Bloom", "cinder": "Cinder", "tide": "Tide", "gale": "Gale", "stone": "Stone"},
+ "colours": {"bloom": "leaf2", "cinder": "ember2", "tide": "water2", "gale": "teal1", "stone": "stone1"},
+ "strong": {
+  "bloom": ["tide", "stone"],
+  "cinder": ["bloom", "gale"],
+  "tide": ["cinder", "stone"],
+  "gale": ["bloom", "tide"],
+  "stone": ["cinder", "gale"]
+ },
+ "strong_mult": 1.5,
+ "weak_mult": 0.67,
+ "kinship_mult": 1.2
+}

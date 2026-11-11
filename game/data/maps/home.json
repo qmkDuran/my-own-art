@@ -1,0 +1,124 @@
+{
+ "id": "home",
+ "name": "Gran's Cottage",
+ "music": "town",
+ "indoor": true,
+ "rows": [
+  "WWwWWWWwWW",
+  "WWwWWWWwWW",
+  "__________",
+  "__________",
+  "__________",
+  "__________",
+  "__________",
+  "__________"
+ ],
+ "objects": [
+  {
+   "kind": "prop",
+   "prop": "bed",
+   "cell": [
+    8,
+    2
+   ],
+   "size": [
+    1,
+    2
+   ]
+  },
+  {
+   "kind": "prop",
+   "prop": "shelf",
+   "cell": [
+    0,
+    1
+   ],
+   "size": [
+    2,
+    1
+   ]
+  },
+  {
+   "kind": "prop",
+   "prop": "stove",
+   "cell": [
+    3,
+    1
+   ],
+   "size": [
+    1,
+    1
+   ]
+  },
+  {
+   "kind": "prop",
+   "prop": "table",
+   "cell": [
+    4,
+    4
+   ],
+   "size": [
+    2,
+    1
+   ]
+  },
+  {
+   "kind": "prop",
+   "prop": "rug",
+   "cell": [
+    4,
+    5
+   ],
+   "walk": true,
+   "size": [
+    2,
+    1
+   ]
+  },
+  {
+   "kind": "prop",
+   "prop": "plant",
+   "cell": [
+    0,
+    7
+   ]
+  },
+  {
+   "kind": "npc",
+   "id": "gran",
+   "person": "gran",
+   "cell": [
+    6,
+    3
+   ],
+   "facing": "down",
+   "talk": "gran",
+   "event": "gran"
+  },
+  {
+   "kind": "prop",
+   "prop": "mat",
+   "cell": [
+    4,
+    7
+   ],
+   "walk": true
+  }
+ ],
+ "warps": [
+  {
+   "cell": [
+    4,
+    7
+   ],
+   "to": {
+    "map": "fernhollow",
+    "cell": [
+     4,
+     6
+    ],
+    "facing": "down"
+   }
+  }
+ ]
+}

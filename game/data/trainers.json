@@ -1,0 +1,10 @@
+{
+ "juni": {"name": "Juni", "title": "Tender", "team": [["puffwren", 4], ["cobblemole", 5]], "reward": 120,
+  "intro": ["Juni: Rowan! Told you I'd beat you up here. Let's see what your new friend can do!"],
+  "defeat": ["Juni: Wow. Okay. You two really click, huh?"],
+  "after": ["Juni: Next time I'm winning. Hey, the stream's dry, but you can hear something under the bridge..."]},
+ "lio": {"name": "Lio", "title": "Forager", "team": [["thistlehog", 5], ["kindlemoth", 6]], "reward": 150,
+  "intro": ["Lio: Foraging's been poor since the Hush. Let's see if you've got the heart for the grove!"],
+  "defeat": ["Lio: Ha! You've got heart, all right. The grove's just north of here."],
+  "after": ["Lio: Thistlehogs love Sunberries. Sleepy wildkin like a soft word more than a snack."]}
+}
