@@ -14,6 +14,7 @@ uniform vec4 pond;
 uniform vec3 circle;
 uniform float stream_half = 1.0;
 uniform float stone_wear = 1.0;
+uniform int stone_style = 0;            // 0 flagstones, 1 cobbles (the city), 2 silk (a moth nest)
 uniform vec4 c_void : source_color;
 uniform vec4 c_ink : source_color;
 uniform vec4 c_moss_dk : source_color;
@@ -146,6 +147,36 @@ vec4 stone(vec2 px, float edge) {
 	return col;
 }
 
+// Round cobbles: the nearest of a jittered grid of points; dark gaps where two cobbles meet.
+vec4 cobbles(vec2 px) {
+	vec2 g = px / 9.0;
+	vec2 base = floor(g);
+	float d1 = 9.0;
+	float d2 = 9.0;
+	vec2 id = base;
+	for (int y = -1; y <= 1; y++) {
+		for (int x = -1; x <= 1; x++) {
+			vec2 c = base + vec2(float(x), float(y));
+			float d = length(g - c - vec2(hash(c), hash(c + 5.0)));
+			if (d < d1) { d2 = d1; d1 = d; id = c; } else if (d < d2) { d2 = d; }
+		}
+	}
+	if (d2 - d1 < 0.12) { return c_stone_dk; }
+	vec4 col = dith(c_stone, c_stone_lt, hash(id) * 0.7 + 0.1 - d1 * 0.4, px);
+	if (fbm(px * 0.05) > 0.7) { col = dith(col, c_moss, 0.4, px); }
+	return col;
+}
+
+// A moth nest's floor: concentric silk and radial strands around the arena's centre.
+vec4 silk(vec2 px) {
+	vec2 d = px - circle.xy;
+	float r = length(d);
+	float a = atan(d.y, d.x);
+	vec4 col = dith(c_stone_dk, c_stone, fbm(px * 0.07) * 1.2 - 0.3, px);
+	if (fract(r / 18.0 + fbm(px * 0.04) * 0.4) < 0.07 || fract(a / 6.2832 * 24.0) < 0.05) { col = c_stone_lt; }
+	return col;
+}
+
 // The top of a rampart seen from above: big dark blocks, a lit inner edge where it meets the street.
 vec4 rampart(vec2 px, vec2 w) {
 	vec2 q = px / vec2(24.0, 16.0);
@@ -170,7 +201,10 @@ void fragment() {
 	} else if (raw == WATER || raw == BRIDGE) {
 		col = water(px, raw == BRIDGE ? -cell : water_edge(px, is_stream));
 	} else if (t == THICKET) { col = thicket(px); }
-	else if (t == STONE && length(px - circle.xy) < circle.z) { col = stone(px, length(px - circle.xy) / circle.z); }
+	else if (t == STONE && length(px - circle.xy) < circle.z) {
+		float e = length(px - circle.xy) / circle.z;
+		col = stone_style == 1 ? cobbles(px) : (stone_style == 2 ? silk(px) : stone(px, e));
+	}
 	else {
 		float m = path_mask(px, w);
 		col = (m > 0.5 && (t == MOSS || t == PATH || t == STONE)) ? path(px, m) : moss(px);

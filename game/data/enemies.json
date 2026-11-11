@@ -181,7 +181,7 @@
   "matron": {
    "name": "The Moth Matron",
    "sprite": "matron",
-   "life": 3200.0,
+   "life": 1900.0,
    "damage": 17.0,
    "speed": 72.0,
    "radius": 34.0,

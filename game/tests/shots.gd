@@ -3,6 +3,7 @@ extends Node
 ## set things up, wait for effects to land, save out/<name>_<w>x<h>.png. --only=name runs one shot.
 
 const SETTLE: float = 0.9
+const PASS2: Array[String] = ["tallow", "road", "hollow", "matron", "quests", "filter", "stash"]
 
 var g: Game
 var _out: String
@@ -33,9 +34,10 @@ func _run() -> void:
 		get_tree().quit()
 		return
 	g = Game.current
-	var shots: Array[String] = ["light", "dark", "skills", "passives", "inventory", "character", "boss", "overview"]
+	var shots: Array[String] = ["light", "dark", "skills", "passives", "inventory", "character", "boss", "overview",
+		"tallow", "road", "hollow", "matron", "quests", "filter", "stash"]
 	for s: String in shots:
-		if _only() == "" or _only() == s:
+		if (_only() == "" and not PASS2.has(s)) or _only() == s:
 			await call("_shot_" + s)
 	get_tree().quit()
 
@@ -142,3 +144,101 @@ func _shot_overview() -> void:
 	h.overview()
 	await _wait(SETTLE)
 	await _save("zone_overview")
+
+
+## Tallow: Mother Ottilie by the Great Lantern, mid-conversation.
+func _shot_tallow() -> void:
+	var c: Campaign = Session.campaign
+	while c.step_index("seven_heartbeats") < 4 and not c.is_done("seven_heartbeats"):
+		c._advance("seven_heartbeats")
+	var ott: Npc = _npc("ottilie")
+	_bot().place_player(ott.global_position + Vector2(60, 50))
+	g.player.face(ott.global_position)
+	await _wait(0.6)
+	ott.use(g)
+	g.hud.messages.advance()
+	await _wait(SETTLE)
+	await _save("tallow_ottilie")
+
+
+func _npc(id: String) -> Npc:
+	for n: Node in get_tree().get_nodes_in_group("interactables"):
+		if n is Npc and (n as Npc).npc_id == id:
+			return n
+	return null
+
+
+## The Ember Road: relighting a road lamp while Husks come for it.
+func _shot_road() -> void:
+	var h := _bot()
+	h.level_up(9)
+	var lamp: Waylamp = g.lamps[0]
+	h.place_player(lamp.stand_point() + Vector2(40, 30))
+	g.player.light.value = 70.0
+	await _wait(0.4)
+	lamp.use(g)
+	lamp.progress = 0.45
+	await _wait(2.4)
+	h.cast("flare", g.player.global_position + Vector2(80, 0))
+	await _wait(0.12)
+	await _save("ember_road_relight")
+
+
+## Moth Hollow: a hunger nest drinking the light, crawlers and moths in the dark.
+func _shot_hollow() -> void:
+	var h := _bot()
+	h.level_up(12)
+	var nest: Vector2 = g.layout.center_of(g.layout.clearing_of_role("hunger")["center"])
+	h.place_player(nest + Vector2(-40, 60))
+	h.pack_near(["crawler", "crawler", "moth", "gloam"], Vector2(120, -40))
+	g.player.light.value = 40.0
+	await _wait(1.6)
+	h.cast("moth_swarm", g.player.global_position + Vector2(120, -40))
+	await _wait(0.3)
+	await _save("moth_hollow_nest")
+
+
+## The Moth Matron: her gust cone filling toward you.
+func _shot_matron() -> void:
+	var h := _bot()
+	h.level_up(14)
+	h.clear_near(100000.0)
+	h.place_player(g.layout.circle_center() + Vector2(0, 50))
+	g.player.light.value = 70.0
+	await _wait(0.4)
+	g.start_boss()
+	await _wait(3.2)
+	h.cast("sunlash", g.spawner.boss.global_position)
+	await _wait(0.06)
+	await _save("matron_fight")
+
+
+func _shot_quests() -> void:
+	Session.campaign.start("tea_on_tuesdays")
+	Session.campaign.start("teagues_trail")
+	g.ui.open(g.ui.quests)
+	await _wait(SETTLE)
+	await _save("quest_log")
+	g.ui.open(g.ui.quests)
+
+
+func _shot_filter() -> void:
+	LootFilter.toggle_rarity("normal")
+	LootFilter.toggle_slot("ring")
+	g.ui.open(g.ui.filter)
+	await _wait(SETTLE)
+	await _save("loot_filter")
+	g.ui.open(g.ui.filter)
+
+
+func _shot_stash() -> void:
+	var h := _bot()
+	h.fill_bag()
+	for i: int in 5:
+		g.ui.stash.store(LootGen.make(6, LootGen.roll_rarity("rare")))
+	g.ui.open(g.ui.stash)
+	await _wait(0.3)
+	h.hover(g.ui.stash.position + g.ui.stash.cell_rect(2).get_center())
+	await _wait(SETTLE)
+	await _save("stash_tooltip")
+	g.ui.open(g.ui.stash)

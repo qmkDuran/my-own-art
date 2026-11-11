@@ -11,16 +11,21 @@ const CRYSTAL_LIGHT_ENERGY: float = 0.55
 const WALL_W: int = 96
 const PATH_TEXEL: int = 8
 const PATH_HALF: float = 40.0
+const TALL_PROP: float = 48.0
+const STONE_STYLES: Array[String] = ["flags", "cobbles", "silk"]
 const GATE_W: int = 128
 ## Kinds Game turns into Interactables (they draw themselves).
 const INTERACTIVE: Array[String] = ["chest", "waylamp", "note", "cairn", "statue_fisher", "cocoon", "signpost", "npc"]
 
 var z: ZoneLayout
 var body: StaticBody2D
+var fade: TreeFade
 
 
 func build(layout: ZoneLayout, world: Node2D) -> void:
 	z = layout
+	fade = TreeFade.new()
+	add_child(fade)
 	_ground()
 	_bridges()
 	_wall(world)
@@ -50,6 +55,7 @@ func _ground() -> void:
 	mat.set_shader_parameter("pond", Vector4(z.pond.x, z.pond.y, maxf(1.0, z.pond.z - z.cell * 0.5), maxf(1.0, z.pond.w - z.cell * 0.5)))
 	mat.set_shader_parameter("circle", z.circle)
 	mat.set_shader_parameter("stone_wear", float(GameData.biome.get("stone_wear", 1.0)))
+	mat.set_shader_parameter("stone_style", int(STONE_STYLES.find(String(GameData.biome.get("stone_style", "flags")))))
 	for n: String in ["void", "ink", "moss_dk", "moss", "moss_lt", "earth_dk", "earth", "earth_lt", "stone_dk", "stone",
 			"stone_lt", "glass_dp", "glass_dk", "glass", "glass_lt", "glint"]:
 		mat.set_shader_parameter("c_" + n, Pal.c(n))
@@ -133,6 +139,8 @@ func _props(world: Node2D) -> void:
 		if (p["foot"] as Rect2).size.x > 0.0:
 			s.add_child(PropSprite.shadow((p["foot"] as Rect2).size.x * 1.2))
 		world.add_child(s)
+		if float(GameData.props[p["kind"]]["size"][1]) >= TALL_PROP:
+			fade.add(s)
 		if String(GameData.props[p["kind"]]["light"]) != "":
 			_glow_light(s, Pal.c(GameData.props[p["kind"]]["light"]))
 
@@ -148,8 +156,6 @@ func _glow_light(s: Node2D, col: Color) -> void:
 
 
 func _trees(world: Node2D) -> void:
-	var fade := TreeFade.new()
-	add_child(fade)
 	for t: Dictionary in z.trees:
 		var s := PropSprite.make(t["kind"])
 		s.position = t["pos"]

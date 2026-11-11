@@ -310,5 +310,6 @@
  "events": {
   "caption": "Tallow, under the Great Lantern. Home, for now."
  },
- "stone_wear": 0.25
+ "stone_wear": 0.25,
+ "stone_style": "cobbles"
 }

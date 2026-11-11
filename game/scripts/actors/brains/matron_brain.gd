@@ -6,7 +6,7 @@ extends EnemyBrain
 ## seconds your light is an ember). Below half life she is faster and her brood larger.
 
 const PATTERN: Array[String] = ["gust", "dust", "brood", "gust", "smother", "dust"]
-const HOLD: float = 170.0
+const HOLD: float = 130.0
 const DRIFT: float = 0.6
 const PHASE2_AT: float = 0.5
 const PHASE2_PACE: float = 0.7

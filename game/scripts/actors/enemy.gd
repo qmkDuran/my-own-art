@@ -7,7 +7,8 @@ extends CharacterBody2D
 
 signal died(e: Enemy)
 
-const HIT_FLASH: float = 0.09
+const HIT_FLASH: float = 0.07
+const HIT_FLASH_AMOUNT: float = 0.6
 const DEATH_TIME: float = 0.28
 const KNOCK_DECAY: float = 9.0
 const SEPARATION: float = 0.6
@@ -213,7 +214,7 @@ func _status(delta: float) -> void:
 	if _exposed_t <= 0.0:
 		exposed_pct = 0.0
 	_flash_t = maxf(0.0, _flash_t - delta)
-	(sprite.material as ShaderMaterial).set_shader_parameter("flash", 1.0 if _flash_t > 0.0 else 0.0)
+	(sprite.material as ShaderMaterial).set_shader_parameter("flash", HIT_FLASH_AMOUNT if _flash_t > 0.0 else 0.0)
 	_shroud_t -= delta
 	if _shroud_t <= 0.0:
 		_shroud_t = SHROUD_CHECK
