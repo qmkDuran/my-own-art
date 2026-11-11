@@ -199,3 +199,16 @@ func _shot_p2_town() -> void:
 	g.camera.frames = []
 	await _wait(9.0)
 	await _save("p2_town")
+
+
+func _shot_p2_spells() -> void:
+	var pack: Array[Enemy] = await _staged_pack(["gloam", "hound", "gloam", "moth"])
+	_bot().level_up(12)
+	_bot().cast("flare", pack[0].global_position)
+	await _wait(0.03)
+	await _save("p2_flare")
+	await _wait(1.5)
+	print("SHOT noon cast ", _bot().cast("noon", g.player.global_position), " learned ", g.player.prog.skills.has("noon"))
+	for i: int in 3:
+		await _wait(0.15)
+		await _save("p2_noon_%d" % i)

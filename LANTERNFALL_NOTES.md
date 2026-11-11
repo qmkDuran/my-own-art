@@ -413,6 +413,17 @@ Glazier + Nim, death/respawn, save/load). Review screenshots: `--shots` (needs x
 - Music: `dread.py` (explore, cave), `town.py` (Tallow: wind, the Lantern's roar, the forge hammer, a murmur,
   carts, a far bell). Tallow walkers have rounds with stops (stalls, the well, the drill, the forge).
 
+## 12a-3. Combat weight at 1x (judge every effect at normal zoom, never in close-ups)
+- Wickbolt: bolt at 3x with an outer glow, a white core, embers and a tapering streak (Line2D in world space).
+- Impact (`Impact.hit`): white core, big halo, a shockwave ring on the ground (`Fx.ring`), a floor light pulse that
+  holds then drops, 10-20 sparks plus embers, scorch; 2-4 frames of hit-stop, 3-5 on kills; shake plus a camera
+  punch toward the target on big hits, crits and kills (`CameraRig.punch`).
+- Enemies: two frames of full white, then a hot orange glow fading over 0.14 s; every hit shoves 8-16 px (by share
+  of life, softened by mass); damage over time never shoves.
+- Deaths: white body, pose, then a pop (core, ring, ash/glass burst, a 0.3 s light flare over the area) and debris
+  that arcs out, bounces and lies with the ash heap. Flare and Noon flash the whole screen (`Fx.screen_flash`).
+- Kill bass (kill_thump) at -3 dB (0 for elites), impact layer louder on bigger hits.
+
 ## 12b. Deliverables rule (from the user)
 **No more video recording.** Deliver still screenshots only: zone shots (`tools/shoot.sh`), 4x close-ups, and sprite
 sheets for animation (`tools/anim_sheet.py`). Do not run `--write-movie`, the best-of reel or the animation reel.
