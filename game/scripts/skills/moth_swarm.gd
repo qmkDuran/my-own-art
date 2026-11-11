@@ -8,12 +8,21 @@ const GUARD_COUNT: int = 2
 const GUARD_TIME: float = 6.0
 const MATRIARCH_EVERY: int = 4
 const GREAT_MULT: float = 3.0
+const MOTH_HEART_MULT: int = 2
+const MOTH_HEART_MORE: float = 0.6
 
 var _casts: int = 0
 
 
 func count() -> int:
-	return int(data["count"]) + int(val("count")) + int(p.stats.v("moth_count"))
+	var n: int = int(data["count"]) + int(val("count")) + int(p.stats.v("moth_count"))
+	return n * MOTH_HEART_MULT if p.stats.has_special("moth_heart") else n
+
+
+## Brood of Embers: one moth rises from a body and seeks.
+func loose_from(at: Vector2) -> void:
+	var m: Moth = _release(Vector2.UP, false)
+	m.position = at
 
 
 func speed() -> float:
@@ -55,7 +64,7 @@ func _release(dir: Vector2, great: bool) -> Moth:
 
 
 func moth_hit(e: Enemy, at: Vector2, great: bool) -> void:
-	var more: float = (1.0 + val("damage_pct") / 100.0) * (GREAT_MULT if great else 1.0)
+	var more: float = (1.0 + val("damage_pct") / 100.0) * (GREAT_MULT if great else 1.0) * (MOTH_HEART_MORE if p.stats.has_special("moth_heart") else 1.0)
 	Combat.hit_enemy(e, roll(), opts({"dir": e.global_position - at, "more": more, "knockback": 8.0}))
 	Fx.halo(fx(), at, 18.0, Pal.c("flame", 0.8), 0.2)
 	p.light.add(val("light_per_hit") + (0.5 if p.stats.has_special("moth_light") else 0.0))

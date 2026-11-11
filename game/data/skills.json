@@ -1,79 +1,740 @@
 {
  "_doc": "Skills. Each levels on its own (xp from kills while slotted) and gets 1 specialisation point per level. Nodes: req = points already spent in this skill's tree, parent = needs >= 1 point there first, vals are per point. Attacks scale from the staff's damage, spells from their own base damage (+per_level_pct per skill level).",
  "sunlash": {
-  "name": "Sunlash", "icon": 0, "kind": "attack", "tags": ["Melee", "Sunfire", "Attack"],
+  "name": "Sunlash",
+  "icon": 0,
+  "kind": "attack",
+  "tags": [
+   "Melee",
+   "Sunfire",
+   "Attack"
+  ],
   "desc": "Crack a whip of light from the lantern. Every third lash is a heavy crack.",
-  "damage_pct": 100.0, "cost": 0.0, "cooldown": 0.0, "time": 0.40, "range": 80.0, "arc_deg": 120.0,
-  "crack_mult": 1.6, "crack_range": 104.0, "crack_arc_deg": 60.0, "light_per_hit": 0.0,
+  "damage_pct": 100.0,
+  "cost": 0.0,
+  "cooldown": 0.0,
+  "time": 0.4,
+  "range": 80.0,
+  "arc_deg": 120.0,
+  "crack_mult": 1.6,
+  "crack_range": 104.0,
+  "crack_arc_deg": 60.0,
+  "light_per_hit": 0.0,
   "nodes": [
-   {"id": "quick_wrist", "name": "Quick Wrist", "max": 4, "req": 0, "pos": [0, 0], "text": "+8% Sunlash attack speed per point", "vals": {"speed_pct": 8.0}},
-   {"id": "long_cord", "name": "Long Cord", "max": 3, "req": 0, "pos": [2, 0], "text": "+12% lash reach per point", "vals": {"range_pct": 12.0}},
-   {"id": "sear", "name": "Sear", "max": 4, "req": 2, "pos": [0, 1], "text": "+15% chance per point to ignite (60% of the hit as burning over 2 s)", "vals": {"burn_chance": 15.0}},
-   {"id": "kindling", "name": "Kindling", "max": 3, "req": 2, "pos": [2, 1], "text": "Each enemy hit feeds the lantern +0.5 Light per point", "vals": {"light_per_hit": 0.5}},
-   {"id": "backhand", "name": "Backhand", "max": 1, "req": 5, "pos": [1, 2], "text": "Lashes also strike behind you", "vals": {}},
-   {"id": "cruel_dark", "name": "Cruel in the Dark", "max": 3, "req": 5, "pos": [3, 2], "text": "+20% damage per point to Shrouded enemies", "vals": {"vs_shrouded_pct": 20.0}},
-   {"id": "sunwave", "name": "Sunwave", "max": 1, "req": 8, "pos": [1, 3], "text": "The third crack sends a crescent of light forward (70% damage, pierces)", "vals": {"wave_pct": 70.0}},
-   {"id": "twin_wave", "name": "Twin Crescents", "max": 2, "req": 8, "pos": [2, 3], "parent": "sunwave", "text": "Sunwave: +1 crescent per point, fanned out", "vals": {"extra_waves": 1.0}}
+   {
+    "id": "quick_wrist",
+    "name": "Quick Wrist",
+    "max": 4,
+    "req": 0,
+    "pos": [
+     0,
+     0
+    ],
+    "text": "+8% Sunlash attack speed per point",
+    "vals": {
+     "speed_pct": 8.0
+    }
+   },
+   {
+    "id": "long_cord",
+    "name": "Long Cord",
+    "max": 3,
+    "req": 0,
+    "pos": [
+     2,
+     0
+    ],
+    "text": "+12% lash reach per point",
+    "vals": {
+     "range_pct": 12.0
+    }
+   },
+   {
+    "id": "sear",
+    "name": "Sear",
+    "max": 4,
+    "req": 2,
+    "pos": [
+     0,
+     1
+    ],
+    "text": "+15% chance per point to ignite (60% of the hit as burning over 2 s)",
+    "vals": {
+     "burn_chance": 15.0
+    }
+   },
+   {
+    "id": "kindling",
+    "name": "Kindling",
+    "max": 3,
+    "req": 2,
+    "pos": [
+     2,
+     1
+    ],
+    "text": "Each enemy hit feeds the lantern +0.5 Light per point",
+    "vals": {
+     "light_per_hit": 0.5
+    }
+   },
+   {
+    "id": "backhand",
+    "name": "Backhand",
+    "max": 1,
+    "req": 5,
+    "pos": [
+     1,
+     2
+    ],
+    "text": "Lashes also strike behind you",
+    "vals": {}
+   },
+   {
+    "id": "cruel_dark",
+    "name": "Cruel in the Dark",
+    "max": 3,
+    "req": 5,
+    "pos": [
+     3,
+     2
+    ],
+    "text": "+20% damage per point to Shrouded enemies",
+    "vals": {
+     "vs_shrouded_pct": 20.0
+    }
+   },
+   {
+    "id": "sunwave",
+    "name": "Sunwave",
+    "max": 1,
+    "req": 8,
+    "pos": [
+     1,
+     3
+    ],
+    "text": "The third crack sends a crescent of light forward (70% damage, pierces)",
+    "vals": {
+     "wave_pct": 70.0
+    }
+   },
+   {
+    "id": "twin_wave",
+    "name": "Twin Crescents",
+    "max": 2,
+    "req": 8,
+    "pos": [
+     2,
+     3
+    ],
+    "parent": "sunwave",
+    "text": "Sunwave: +1 crescent per point, fanned out",
+    "vals": {
+     "extra_waves": 1.0
+    }
+   }
   ]
  },
  "flare": {
-  "name": "Flare", "icon": 1, "kind": "spell", "tags": ["Spell", "Sunfire", "Area"],
+  "name": "Flare",
+  "icon": 1,
+  "kind": "spell",
+  "tags": [
+   "Spell",
+   "Sunfire",
+   "Area"
+  ],
   "desc": "Open the lantern's shutters: a burst of sunfire around you. Its size follows your Light.",
-  "base": [14.0, 22.0], "per_level_pct": 6.0, "cost": 14.0, "cooldown": 2.0, "time": 0.30,
-  "radius_of_light": 0.6, "radius_min": 70.0, "knockback": 60.0,
+  "base": [
+   14.0,
+   22.0
+  ],
+  "per_level_pct": 6.0,
+  "cost": 14.0,
+  "cooldown": 2.0,
+  "time": 0.3,
+  "radius_of_light": 0.6,
+  "radius_min": 70.0,
+  "knockback": 60.0,
   "nodes": [
-   {"id": "wide", "name": "Wide Shutters", "max": 3, "req": 0, "pos": [0, 0], "text": "+12% area per point", "vals": {"area_pct": 12.0}},
-   {"id": "refuel", "name": "Refuel", "max": 3, "req": 0, "pos": [2, 0], "text": "+2 Oil per enemy hit per point", "vals": {"oil_per_hit": 2.0}},
-   {"id": "blinding", "name": "Blinding", "max": 3, "req": 2, "pos": [1, 1], "text": "Stuns enemies hit for 0.25 s per point", "vals": {"stun": 0.25}},
-   {"id": "spend", "name": "Spend the Flame", "max": 1, "req": 3, "pos": [3, 1], "text": "Burns 15 Light for +80% damage (only above 30 Light)", "vals": {"light_cost": 15.0, "more_pct": 80.0}},
-   {"id": "afterglow", "name": "Afterglow", "max": 2, "req": 5, "pos": [0, 2], "text": "Leaves a burning ring for 1.5 s per point (25% damage per second)", "vals": {"ring_time": 1.5}},
-   {"id": "noonday", "name": "Noonday", "max": 2, "req": 5, "pos": [3, 2], "parent": "spend", "text": "+30% damage per point while Blazing", "vals": {"blazing_pct": 30.0}},
-   {"id": "lancet", "name": "Lancet", "max": 1, "req": 8, "pos": [1, 3], "text": "Flare becomes a long cone toward the cursor: double reach, +40% damage", "vals": {"more_pct": 40.0}}
+   {
+    "id": "wide",
+    "name": "Wide Shutters",
+    "max": 3,
+    "req": 0,
+    "pos": [
+     0,
+     0
+    ],
+    "text": "+12% area per point",
+    "vals": {
+     "area_pct": 12.0
+    }
+   },
+   {
+    "id": "refuel",
+    "name": "Refuel",
+    "max": 3,
+    "req": 0,
+    "pos": [
+     2,
+     0
+    ],
+    "text": "+2 Oil per enemy hit per point",
+    "vals": {
+     "oil_per_hit": 2.0
+    }
+   },
+   {
+    "id": "blinding",
+    "name": "Blinding",
+    "max": 3,
+    "req": 2,
+    "pos": [
+     1,
+     1
+    ],
+    "text": "Stuns enemies hit for 0.25 s per point",
+    "vals": {
+     "stun": 0.25
+    }
+   },
+   {
+    "id": "spend",
+    "name": "Spend the Flame",
+    "max": 1,
+    "req": 3,
+    "pos": [
+     3,
+     1
+    ],
+    "text": "Burns 15 Light for +80% damage (only above 30 Light)",
+    "vals": {
+     "light_cost": 15.0,
+     "more_pct": 80.0
+    }
+   },
+   {
+    "id": "afterglow",
+    "name": "Afterglow",
+    "max": 2,
+    "req": 5,
+    "pos": [
+     0,
+     2
+    ],
+    "text": "Leaves a burning ring for 1.5 s per point (25% damage per second)",
+    "vals": {
+     "ring_time": 1.5
+    }
+   },
+   {
+    "id": "noonday",
+    "name": "Noonday",
+    "max": 2,
+    "req": 5,
+    "pos": [
+     3,
+     2
+    ],
+    "parent": "spend",
+    "text": "+30% damage per point while Blazing",
+    "vals": {
+     "blazing_pct": 30.0
+    }
+   },
+   {
+    "id": "lancet",
+    "name": "Lancet",
+    "max": 1,
+    "req": 8,
+    "pos": [
+     1,
+     3
+    ],
+    "text": "Flare becomes a long cone toward the cursor: double reach, +40% damage",
+    "vals": {
+     "more_pct": 40.0
+    }
+   }
   ]
  },
  "lantern_toss": {
-  "name": "Lantern Toss", "icon": 2, "kind": "attack", "tags": ["Throwing", "Sunfire", "Light"],
+  "name": "Lantern Toss",
+  "icon": 2,
+  "kind": "attack",
+  "tags": [
+   "Throwing",
+   "Sunfire",
+   "Light"
+  ],
   "desc": "Throw the lantern. It burns where it lands and lights that ground, while you fight in the dark. Cast again to call it back.",
-  "damage_pct": 140.0, "burn_pct": 35.0, "burn_every": 0.5, "duration": 4.0, "cost": 18.0, "cooldown": 7.0, "time": 0.25,
-  "range": 320.0, "light_radius": 150.0, "flight_speed": 520.0, "return_pct": 60.0,
+  "damage_pct": 140.0,
+  "burn_pct": 35.0,
+  "burn_every": 0.5,
+  "duration": 4.0,
+  "cost": 18.0,
+  "cooldown": 7.0,
+  "time": 0.25,
+  "range": 320.0,
+  "light_radius": 150.0,
+  "flight_speed": 520.0,
+  "return_pct": 60.0,
   "nodes": [
-   {"id": "heavy_iron", "name": "Heavy Iron", "max": 3, "req": 0, "pos": [0, 0], "text": "+25% impact damage and a harder knockback per point", "vals": {"impact_pct": 25.0}},
-   {"id": "long_burn", "name": "Long Burn", "max": 3, "req": 0, "pos": [2, 0], "text": "+1.5 s on the ground per point", "vals": {"duration": 1.5}},
-   {"id": "beacon", "name": "Beacon", "max": 3, "req": 2, "pos": [1, 1], "text": "Enemies in the thrown lantern's light take +10% damage per point", "vals": {"exposed_pct": 10.0}},
-   {"id": "dark_adept", "name": "Dark Adept", "max": 1, "req": 3, "pos": [3, 1], "text": "While the lantern is away: +30% damage and +15% movement speed", "vals": {"more_pct": 30.0, "move_pct": 15.0}},
-   {"id": "homecoming", "name": "Homecoming", "max": 2, "req": 5, "pos": [0, 2], "text": "The return flight deals +50% damage per point", "vals": {"return_pct": 50.0}},
-   {"id": "tether", "name": "Tether", "max": 1, "req": 5, "pos": [2, 2], "text": "The return flight drags enemies it hits toward you", "vals": {}},
-   {"id": "ember_trail", "name": "Ember Trail", "max": 1, "req": 8, "pos": [1, 3], "text": "Both flights leave burning embers on the ground for 2 s", "vals": {}}
+   {
+    "id": "heavy_iron",
+    "name": "Heavy Iron",
+    "max": 3,
+    "req": 0,
+    "pos": [
+     0,
+     0
+    ],
+    "text": "+25% impact damage and a harder knockback per point",
+    "vals": {
+     "impact_pct": 25.0
+    }
+   },
+   {
+    "id": "long_burn",
+    "name": "Long Burn",
+    "max": 3,
+    "req": 0,
+    "pos": [
+     2,
+     0
+    ],
+    "text": "+1.5 s on the ground per point",
+    "vals": {
+     "duration": 1.5
+    }
+   },
+   {
+    "id": "beacon",
+    "name": "Beacon",
+    "max": 3,
+    "req": 2,
+    "pos": [
+     1,
+     1
+    ],
+    "text": "Enemies in the thrown lantern's light take +10% damage per point",
+    "vals": {
+     "exposed_pct": 10.0
+    }
+   },
+   {
+    "id": "dark_adept",
+    "name": "Dark Adept",
+    "max": 1,
+    "req": 3,
+    "pos": [
+     3,
+     1
+    ],
+    "text": "While the lantern is away: +30% damage and +15% movement speed",
+    "vals": {
+     "more_pct": 30.0,
+     "move_pct": 15.0
+    }
+   },
+   {
+    "id": "homecoming",
+    "name": "Homecoming",
+    "max": 2,
+    "req": 5,
+    "pos": [
+     0,
+     2
+    ],
+    "text": "The return flight deals +50% damage per point",
+    "vals": {
+     "return_pct": 50.0
+    }
+   },
+   {
+    "id": "tether",
+    "name": "Tether",
+    "max": 1,
+    "req": 5,
+    "pos": [
+     2,
+     2
+    ],
+    "text": "The return flight drags enemies it hits toward you",
+    "vals": {}
+   },
+   {
+    "id": "ember_trail",
+    "name": "Ember Trail",
+    "max": 1,
+    "req": 8,
+    "pos": [
+     1,
+     3
+    ],
+    "text": "Both flights leave burning embers on the ground for 2 s",
+    "vals": {}
+   }
   ]
  },
  "moth_swarm": {
-  "name": "Moth Swarm", "icon": 3, "kind": "spell", "tags": ["Spell", "Sunfire", "Minion-like"],
+  "name": "Moth Swarm",
+  "icon": 3,
+  "kind": "spell",
+  "tags": [
+   "Spell",
+   "Sunfire",
+   "Minion-like"
+  ],
   "desc": "Loose ember moths from the lantern. They flutter toward the cursor, then seek the nearest enemy.",
-  "base": [6.0, 10.0], "per_level_pct": 6.0, "cost": 12.0, "cooldown": 0.8, "time": 0.25, "count": 4,
-  "speed": 250.0, "seek_range": 280.0, "lifetime": 2.6,
+  "base": [
+   6.0,
+   10.0
+  ],
+  "per_level_pct": 6.0,
+  "cost": 12.0,
+  "cooldown": 0.8,
+  "time": 0.25,
+  "count": 4,
+  "speed": 250.0,
+  "seek_range": 280.0,
+  "lifetime": 2.6,
   "nodes": [
-   {"id": "brood", "name": "Brood", "max": 4, "req": 0, "pos": [0, 0], "text": "+1 moth per point", "vals": {"count": 1.0}},
-   {"id": "swift", "name": "Swift Wings", "max": 3, "req": 0, "pos": [2, 0], "text": "+15% moth speed and +8% damage per point", "vals": {"speed_pct": 15.0, "damage_pct": 8.0}},
-   {"id": "light_feeders", "name": "Light-Feeders", "max": 2, "req": 2, "pos": [1, 1], "text": "Each moth hit feeds the lantern +0.6 Light per point", "vals": {"light_per_hit": 0.6}},
-   {"id": "fire_moths", "name": "Cinder Moths", "max": 2, "req": 3, "pos": [3, 1], "text": "Moths burst on impact: 40% damage per point in a small area", "vals": {"burst_pct": 40.0}},
-   {"id": "linger", "name": "Linger", "max": 1, "req": 5, "pos": [0, 2], "text": "Moths survive their first hit and seek another enemy", "vals": {}},
-   {"id": "guardians", "name": "Guardians", "max": 1, "req": 5, "pos": [2, 2], "text": "2 moths circle you for 6 s and burn enemy projectiles they touch", "vals": {}},
-   {"id": "matriarch", "name": "Matriarch", "max": 1, "req": 8, "pos": [1, 3], "text": "Every 4th cast also looses a great moth: triple damage, pierces", "vals": {}}
+   {
+    "id": "brood",
+    "name": "Brood",
+    "max": 4,
+    "req": 0,
+    "pos": [
+     0,
+     0
+    ],
+    "text": "+1 moth per point",
+    "vals": {
+     "count": 1.0
+    }
+   },
+   {
+    "id": "swift",
+    "name": "Swift Wings",
+    "max": 3,
+    "req": 0,
+    "pos": [
+     2,
+     0
+    ],
+    "text": "+15% moth speed and +8% damage per point",
+    "vals": {
+     "speed_pct": 15.0,
+     "damage_pct": 8.0
+    }
+   },
+   {
+    "id": "light_feeders",
+    "name": "Light-Feeders",
+    "max": 2,
+    "req": 2,
+    "pos": [
+     1,
+     1
+    ],
+    "text": "Each moth hit feeds the lantern +0.6 Light per point",
+    "vals": {
+     "light_per_hit": 0.6
+    }
+   },
+   {
+    "id": "fire_moths",
+    "name": "Cinder Moths",
+    "max": 2,
+    "req": 3,
+    "pos": [
+     3,
+     1
+    ],
+    "text": "Moths burst on impact: 40% damage per point in a small area",
+    "vals": {
+     "burst_pct": 40.0
+    }
+   },
+   {
+    "id": "linger",
+    "name": "Linger",
+    "max": 1,
+    "req": 5,
+    "pos": [
+     0,
+     2
+    ],
+    "text": "Moths survive their first hit and seek another enemy",
+    "vals": {}
+   },
+   {
+    "id": "guardians",
+    "name": "Guardians",
+    "max": 1,
+    "req": 5,
+    "pos": [
+     2,
+     2
+    ],
+    "text": "2 moths circle you for 6 s and burn enemy projectiles they touch",
+    "vals": {}
+   },
+   {
+    "id": "matriarch",
+    "name": "Matriarch",
+    "max": 1,
+    "req": 8,
+    "pos": [
+     1,
+     3
+    ],
+    "text": "Every 4th cast also looses a great moth: triple damage, pierces",
+    "vals": {}
+   }
   ]
  },
  "dash": {
-  "name": "Wickstep", "icon": 4, "kind": "movement", "tags": ["Movement"],
+  "name": "Wickstep",
+  "icon": 4,
+  "kind": "movement",
+  "tags": [
+   "Movement"
+  ],
   "desc": "Step through the dark faster than it can close: a short dash, untouchable while it lasts.",
-  "cost": 0.0, "cooldown": 2.4, "time": 0.0, "nodes": []
+  "cost": 0.0,
+  "cooldown": 2.4,
+  "time": 0.0,
+  "nodes": []
  },
  "eclipse": {
-  "name": "Eclipse", "icon": 5, "kind": "spell", "tags": ["Spell", "Dusk"], "locked": "Duskwalker mastery (later pass)",
-  "desc": "Shutter the lantern completely: for a few seconds every enemy is Shrouded and you strike like the dark itself.",
-  "cost": 0.0, "cooldown": 20.0, "time": 0.2, "nodes": []
+  "name": "Eclipse",
+  "icon": 5,
+  "kind": "spell",
+  "tags": [
+   "Spell",
+   "Dusk",
+   "Buff"
+  ],
+  "desc": "Shutter the lantern. For a few breaths every enemy is Shrouded, and you strike like the dark itself. When the shutter opens, the light bursts out.",
+  "base": [
+   18.0,
+   28.0
+  ],
+  "per_level_pct": 6.0,
+  "cost": 20.0,
+  "cooldown": 16.0,
+  "time": 0.3,
+  "duration": 5.0,
+  "vs_shrouded_pct": 60.0,
+  "move_pct": 20.0,
+  "leech_pct": 2.0,
+  "burst_radius": 110.0,
+  "burst_pct": 80.0,
+  "nodes": [
+   {
+    "id": "long_night",
+    "name": "Long Night",
+    "max": 3,
+    "req": 0,
+    "pos": [
+     0,
+     0
+    ],
+    "text": "+1 s of Eclipse per point",
+    "vals": {
+     "duration": 1.0
+    }
+   },
+   {
+    "id": "hunger",
+    "name": "Night Hunger",
+    "max": 3,
+    "req": 0,
+    "pos": [
+     2,
+     0
+    ],
+    "text": "+1% of damage dealt returned as life per point",
+    "vals": {
+     "leech_pct": 1.0
+    }
+   },
+   {
+    "id": "predator",
+    "name": "Predator",
+    "max": 2,
+    "req": 2,
+    "pos": [
+     1,
+     1
+    ],
+    "text": "+10% movement speed during Eclipse per point",
+    "vals": {
+     "move_pct": 10.0
+    }
+   },
+   {
+    "id": "unshutter",
+    "name": "Unshutter",
+    "max": 2,
+    "req": 3,
+    "pos": [
+     3,
+     1
+    ],
+    "text": "The closing burst deals +60% damage and reaches 20% further per point",
+    "vals": {
+     "burst_more": 60.0,
+     "burst_reach": 20.0
+    }
+   },
+   {
+    "id": "umbra",
+    "name": "Umbra",
+    "max": 1,
+    "req": 5,
+    "pos": [
+     0,
+     2
+    ],
+    "text": "Enemies that die during Eclipse burst into shadow, hurting those around them (50% damage)",
+    "vals": {
+     "umbra_pct": 50.0
+    }
+   },
+   {
+    "id": "pitch",
+    "name": "Pitch Dark",
+    "max": 1,
+    "req": 5,
+    "pos": [
+     2,
+     2
+    ],
+    "text": "During Eclipse, Flare and Lantern Toss cost no Oil",
+    "vals": {}
+   },
+   {
+    "id": "new_moon",
+    "name": "New Moon",
+    "max": 1,
+    "req": 8,
+    "pos": [
+     1,
+     3
+    ],
+    "text": "Eclipse's cooldown recovers 30% faster, and kills during it add 1 s (up to 4 s)",
+    "vals": {
+     "cdr_pct": 30.0
+    }
+   }
+  ]
  },
  "noon": {
-  "name": "Noon", "icon": 6, "kind": "spell", "tags": ["Spell", "Sunfire", "Ultimate"], "locked": "Beacon mastery (later pass)",
-  "desc": "For one breath, daylight. Everything on screen burns.",
-  "cost": 0.0, "cooldown": 60.0, "time": 0.6, "nodes": []
+  "name": "Noon",
+  "icon": 6,
+  "kind": "spell",
+  "tags": [
+   "Spell",
+   "Sunfire",
+   "Ultimate"
+  ],
+  "desc": "For one breath, daylight. Every enemy you can see burns and reels, and your lantern blazes at full for a while.",
+  "base": [
+   60.0,
+   90.0
+  ],
+  "per_level_pct": 8.0,
+  "cost": 40.0,
+  "cooldown": 50.0,
+  "time": 0.6,
+  "stun": 1.0,
+  "blaze": 6.0,
+  "nodes": [
+   {
+    "id": "high_noon",
+    "name": "High Noon",
+    "max": 3,
+    "req": 0,
+    "pos": [
+     0,
+     0
+    ],
+    "text": "+40% damage per point",
+    "vals": {
+     "more_pct": 40.0
+    }
+   },
+   {
+    "id": "long_day",
+    "name": "Long Day",
+    "max": 2,
+    "req": 0,
+    "pos": [
+     2,
+     0
+    ],
+    "text": "Your lantern stays at full Light 3 s longer per point",
+    "vals": {
+     "blaze": 3.0
+    }
+   },
+   {
+    "id": "sunburn",
+    "name": "Sunburn",
+    "max": 2,
+    "req": 2,
+    "pos": [
+     1,
+     1
+    ],
+    "text": "Enemies hit burn for 50% of the hit per point over 2 s",
+    "vals": {
+     "burn_pct": 50.0
+    }
+   },
+   {
+    "id": "zenith",
+    "name": "Zenith",
+    "max": 1,
+    "req": 3,
+    "pos": [
+     3,
+     1
+    ],
+    "text": "Noon recovers 25% faster",
+    "vals": {
+     "cdr_pct": 25.0
+    }
+   },
+   {
+    "id": "noon_bell",
+    "name": "Noon Bell",
+    "max": 1,
+    "req": 5,
+    "pos": [
+     0,
+     2
+    ],
+    "text": "Noon also restores 30% of your life",
+    "vals": {
+     "heal_pct": 30.0
+    }
+   },
+   {
+    "id": "second_sun",
+    "name": "Second Sun",
+    "max": 1,
+    "req": 8,
+    "pos": [
+     1,
+     3
+    ],
+    "text": "Noon leaves a small sun where you stood for 6 s: it lights the ground and burns what stands in it",
+    "vals": {}
+   }
+  ]
  }
 }

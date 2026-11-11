@@ -54,6 +54,7 @@ func _run() -> void:
 	_save_load()
 	_filter_and_stash()
 	await _act1_foes(h)
+	await _pass3(ShotHelper.new(g))
 	await _campaign()
 	print("SMOKE %s (%d checks, %d failed)" % ["PASS" if _fails.is_empty() else "FAIL", _count, _fails.size()])
 	get_tree().quit(0 if _fails.is_empty() else 1)
@@ -333,3 +334,38 @@ func _campaign() -> void:
 		pass
 	expect(c.is_done("seven_heartbeats") and c.step_index("ember_road") == 0, "Ottilie sends you down the Ember Road")
 	expect(ActorCheck.problems(g).is_empty(), "nobody stands inside a building in Tallow %s" % ActorCheck.problems(g))
+
+
+## Eclipse, Noon and the keystones.
+func _pass3(h: ShotHelper) -> void:
+	h.clear_near(100000.0)
+	h.level_up(12)
+	expect(p.prog.skills.has("eclipse") and p.prog.skills.has("noon"), "Eclipse (level 6) and Noon (level 10) are learned")
+	var foes: Array[Enemy] = h.pack_near(["gloam", "hound"], Vector2(50, 0))
+	for f: Enemy in foes:
+		f.max_life = 99999.0
+		f.life = 99999.0
+	await frames(3)
+	expect(h.cast("eclipse", p.global_position), "Eclipse can be used")
+	await frames(20)
+	expect(foes.all(func(f: Enemy) -> bool: return f.shrouded), "during Eclipse every enemy is Shrouded, even in your light")
+	expect(p.light.light_radius() < 120.0, "Eclipse shutters the lantern")
+	expect(h.cast("noon", p.global_position), "Noon can be used")
+	await frames(10)
+	expect(foes.all(func(f: Enemy) -> bool: return f.life < 99999.0), "Noon burns every enemy on screen")
+	for f: Enemy in foes:
+		f.queue_free()
+	p.prog.passives["ks_lighthouse"] = 1
+	p.refresh_stats()
+	var lv: float = p.light.value
+	p.light.on_hit(0.5, 0.0)
+	expect(is_equal_approx(p.light.value, lv), "Lighthouse Keeper: hits never dim the lantern")
+	p.prog.passives.erase("ks_lighthouse")
+	p.prog.passives["ks_wick_bone"] = 1
+	p.refresh_stats()
+	p.oil = p.stats.max_oil()
+	var oil0: float = p.oil
+	p.take_hit(20.0, p.global_position, 0.0)
+	expect(p.oil < oil0, "Wick and Bone: part of a hit is paid in Oil")
+	p.prog.passives.erase("ks_wick_bone")
+	p.refresh_stats()

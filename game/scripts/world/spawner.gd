@@ -122,6 +122,7 @@ func _on_died(e: Enemy) -> void:
 		player.tonics += 1
 	_drop_loot(e)
 	Session.campaign.killed(e.kind)
+	player.skills.on_kill(e)
 	killed.emit(e)
 	if e == boss:
 		boss_died.emit(e)

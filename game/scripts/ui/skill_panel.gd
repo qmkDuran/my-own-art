@@ -66,8 +66,6 @@ func _list_row(i: int, id: String) -> void:
 
 
 func _sub(id: String, learned: bool) -> String:
-	if GameData.skill(id).has("locked"):
-		return "later pass"
 	if not learned:
 		return "learn at level %d" % int(Progression.LEARN.get(id, 0))
 	if id == "dash":
@@ -88,8 +86,6 @@ func _tree_header() -> void:
 		draw_rect(Rect2(xr.position, Vector2(xr.size.x * float(sd["xp"]) / p.skill_xp_to_next(int(sd["level"])), xr.size.y)), Pal.c("violet_lt"))
 		UiDraw.text(self, Vector2(x, CONTENT_Y + 40.0), "Points to spend: %d   (one per skill level; the skill levels while on your hotbar)" % p.spec_points(selected),
 			UiDraw.TEXT, UiDraw.SMALL)
-	elif d.has("locked"):
-		UiDraw.text(self, Vector2(x, CONTENT_Y + 40.0), String(d["locked"]), UiDraw.LOCKED, UiDraw.SMALL)
 
 
 func _node(n: Dictionary) -> void:

@@ -23,8 +23,10 @@ static func hit_enemy(e: Enemy, base: float, opts: Dictionary = {}) -> void:
 	var dmg: float = base * st.increased(String(opts.get("kind", "attack"))) * float(opts.get("more", 1.0))
 	if g.player.light.state() == "blazing":
 		dmg *= 1.0 + (float(L["blazing_damage_pct"]) + st.v("blazing_pct") + float(opts.get("blazing_pct", 0.0))) / 100.0
+	var ecl: Eclipse = g.player.skills.skill("eclipse") as Eclipse
 	if e.shrouded:
-		dmg *= float(L["shrouded_damage_taken_mult"]) * (1.0 + (st.v("damage_vs_shrouded_pct") + float(opts.get("vs_shrouded_pct", 0.0))) / 100.0)
+		dmg *= float(L["shrouded_damage_taken_mult"]) * (1.0 + (st.v("damage_vs_shrouded_pct") + float(opts.get("vs_shrouded_pct", 0.0))
+			+ ecl.vs_shrouded_pct()) / 100.0)
 	dmg *= e.damage_taken_mult()
 	var crit: bool = not dot and randf() * 100.0 < st.crit_chance()
 	if crit:
@@ -32,6 +34,7 @@ static func hit_enemy(e: Enemy, base: float, opts: Dictionary = {}) -> void:
 	dmg = maxf(1.0, roundf(dmg))
 	var dir: Vector2 = opts.get("dir", Vector2.ZERO)
 	e.take_damage(dmg, crit, dir, opts)
+	g.player.gain_life(dmg * ecl.leech())
 	FloatText.spawn(e.global_position, str(int(dmg)), Pal.c("gold") if crit else (Pal.c("amber") if not dot else Pal.c("flame")), crit)
 	if dot:
 		return

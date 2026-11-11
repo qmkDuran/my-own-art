@@ -219,7 +219,7 @@ func _status(delta: float) -> void:
 	_shroud_t -= delta
 	if _shroud_t <= 0.0:
 		_shroud_t = SHROUD_CHECK
-		shrouded = not LightField.lit(get_tree(), global_position)
+		shrouded = not LightField.lit(get_tree(), global_position) or (Game.current.player.skills.skill("eclipse") as Eclipse).active()
 	_shown_shroud = move_toward(_shown_shroud, 1.0 if shrouded else 0.0, delta * 4.0)
 	sprite.self_modulate = Color(1, 1, 1).lerp(Color(0.35, 0.33, 0.5), _shown_shroud)
 	if _burn_t > 0.0:

@@ -17,6 +17,8 @@ var layout: ZoneLayout
 var nav: Nav
 var world: Node2D
 var fx_layer: Node2D
+var dark: CanvasModulate                 ## the zone's darkness (Noon and Eclipse change it for a moment)
+var darkness: Color
 var player: Player
 var spawner: Spawner
 var camera: CameraRig
@@ -75,9 +77,10 @@ func _build_world() -> void:
 	fx_layer = Node2D.new()
 	fx_layer.z_index = Fx.FX_Z
 	add_child(fx_layer)
-	var dark := CanvasModulate.new()
+	dark = CanvasModulate.new()
 	var a: Array = GameData.biome["ambient"]["darkness"]
-	dark.color = Color(float(a[0]), float(a[1]), float(a[2]))
+	darkness = Color(float(a[0]), float(a[1]), float(a[2]))
+	dark.color = darkness
 	add_child(dark)
 	player = Player.new()
 	player.position = layout.start
@@ -201,6 +204,14 @@ func _on_quest_done(id: String) -> void:
 	Audio.sfx("level_up", -6.0, 1.2)
 	if id == "moth_hollow":
 		hud.messages.show_end_card()
+
+
+## The world's darkness goes to `to` and comes back (Noon's daylight, Eclipse's deeper dark).
+func shift_darkness(to: Color, hold: float, back: float) -> void:
+	var tw := create_tween()
+	tw.tween_property(dark, "color", to, 0.12)
+	tw.tween_interval(hold)
+	tw.tween_property(dark, "color", darkness, back)
 
 
 func lit_lamps() -> int:

@@ -16,11 +16,13 @@ const RADIUS_LERP: float = 6.0
 const RING_DASHES: int = 48
 const RING_Z: int = -15
 const HIT_FLASH_TIME: float = 0.35
+const LIGHTHOUSE_CAP: float = 60.0
 
 var value: float
 var stats: Stats
 var thrown: bool = false
 var _smother_t: float = 0.0
+var _blaze_t: float = 0.0
 var shown_radius: float = 0.0
 var _light: PointLight2D
 var _halo: PointLight2D
@@ -79,22 +81,33 @@ func smother(seconds: float) -> void:
 	_smother_t = maxf(_smother_t, seconds)
 
 
+## Noon: the lantern blazes at full for a while (no hit dims it, it does not settle).
+func blaze(seconds: float) -> void:
+	_blaze_t = maxf(_blaze_t, seconds)
+	value = float(GameData.light["max"])
+
+
 func smothered() -> bool:
 	return _smother_t > 0.0
 
 
 func add(amount: float) -> void:
 	var L: Dictionary = GameData.light
-	value = clampf(value + amount, float(L["min"]), float(L["max"]))
+	if _blaze_t > 0.0:
+		return
+	var top: float = LIGHTHOUSE_CAP if stats != null and stats.has_special("lighthouse") else float(L["max"])
+	value = clampf(value + amount, float(L["min"]), top)
 
 
 ## A hit for `fraction` of max life dims the lantern (less with Steady Flame and the like).
 func on_hit(fraction: float, extra: float) -> void:
+	_hit_flash = HIT_FLASH_TIME
+	if stats.has_special("lighthouse"):
+		return
 	var L: Dictionary = GameData.light
 	var loss: float = (float(L["hit_loss_flat"]) + float(L["hit_loss_per_life_fraction"]) * fraction) \
 		* (1.0 - minf(0.9, stats.v("light_loss_reduction") / 100.0)) + extra
 	add(-loss)
-	_hit_flash = HIT_FLASH_TIME
 
 
 func on_kill(rank: String) -> void:
@@ -106,6 +119,7 @@ func on_kill(rank: String) -> void:
 func _process(delta: float) -> void:
 	_t += delta
 	_smother_t = maxf(0.0, _smother_t - delta)
+	_blaze_t = maxf(0.0, _blaze_t - delta)
 	_drift(delta)
 	shown_radius = lerpf(shown_radius, target_radius(), minf(1.0, delta * RADIUS_LERP))
 	var flick: float = 1.0 + sin(_t * 13.0) * FLICKER * 0.5 + sin(_t * 7.3) * FLICKER * 0.5
@@ -121,6 +135,8 @@ func _process(delta: float) -> void:
 
 
 func _drift(delta: float) -> void:
+	if _blaze_t > 0.0:
+		return
 	var L: Dictionary = GameData.light
 	if value < float(L["calm_low"]):
 		add(float(L["drift_up_per_s"]) * delta)

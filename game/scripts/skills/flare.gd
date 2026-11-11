@@ -7,6 +7,8 @@ const SPEND_ABOVE: float = 30.0
 const LANCET_ARC: float = 0.9
 const LANCET_REACH: float = 2.0
 const AFTERGLOW_PCT: float = 25.0
+const UNDIMMED_LIGHT: float = 15.0
+const UNDIMMED_MORE: float = 1.5
 
 
 func radius() -> float:
@@ -20,6 +22,9 @@ func use(target: Vector2) -> void:
 	if rank("spend") > 0 and p.light.value > SPEND_ABOVE:
 		p.light.add(-val("light_cost"))
 		more *= 1.0 + spec_more("spend") / 100.0
+	if p.stats.has_special("undimmed"):
+		p.light.add(-UNDIMMED_LIGHT)
+		more *= UNDIMMED_MORE
 	var lancet: bool = rank("lancet") > 0
 	if lancet:
 		more *= 1.0 + spec_more("lancet") / 100.0

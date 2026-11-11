@@ -31,6 +31,7 @@ func rebuild(prog: Progression, inv: Inventory) -> void:
 			specials.append(String(it["special"]))
 	for k: String in inv.set_bonus_stats():
 		_add(k, float(inv.set_bonus_stats()[k]))
+	specials.append_array(prog.passive_rules())
 
 
 func _add(k: String, v: float) -> void:

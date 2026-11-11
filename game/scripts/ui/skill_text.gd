@@ -9,8 +9,6 @@ const WRAP: float = 250.0
 static func rows(ci: CanvasItem, p: Player, id: String) -> Array:
 	var d: Dictionary = GameData.skill(id)
 	var out: Array = [String(d["name"]), [", ".join(PackedStringArray(d["tags"])), TAG]]
-	if d.has("locked"):
-		out.append(["Locked: " + String(d["locked"]), UiDraw.LOCKED])
 	for line: String in UiDraw.wrap(ci, String(d["desc"]), WRAP):
 		out.append([line, UiDraw.DIM])
 	var s: Skill = p.skills.skill(id)
@@ -20,7 +18,7 @@ static func rows(ci: CanvasItem, p: Player, id: String) -> Array:
 			out.append(["Distance %d px, cooldown %.1f s, untouchable while dashing" % [roundi(float(GameData.player["dash"]["distance"])), cd.y], UiDraw.TEXT])
 		return out
 	out.append(["Level %d   (%d specialisation points free)" % [p.prog.skill_level(id), p.prog.spec_points(id)], UiDraw.GOLD])
-	var cost: String = "no cost" if s.cost() <= 0.0 else "%d Oil" % roundi(s.cost())
+	var cost: String = "no cost" if p.skills.cost_of(id) <= 0.0 else "%d Oil" % roundi(p.skills.cost_of(id))
 	out.append(["%s   cooldown %.1f s   %s %.2f s" % [cost, s.cooldown(), "cast" if s.is_spell() else "attack", s.cast_time()], UiDraw.TEXT])
 	out.append_array(s.info())
 	return out

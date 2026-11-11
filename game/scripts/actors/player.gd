@@ -20,6 +20,7 @@ const DASH_GHOSTS: int = 4
 const INVULN_AFTER_RISE: float = 2.0
 const PUSH_DECAY: float = 6.0
 const BURST_WINDOW: float = 0.5
+const WICK_BONE_SHARE: float = 0.25
 
 var stats := Stats.new()
 var prog := Progression.new()
@@ -193,6 +194,10 @@ func refill_tonics() -> void:
 
 # ------------------------------------------------------------------ being hit
 func take_hit(dmg: float, from: Vector2, drain: float) -> void:
+	if stats.has_special("wick_bone") and oil > 0.0:          # Wick and Bone: a quarter is paid in Oil
+		var paid: float = minf(oil, dmg * WICK_BONE_SHARE)
+		oil -= paid
+		dmg -= paid
 	life = maxf(0.0, life - dmg)
 	light.on_hit(dmg / stats.max_life(), drain)
 	_flash_t = HIT_FLASH

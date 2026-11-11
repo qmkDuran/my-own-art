@@ -8,7 +8,7 @@ signal leveled(level: int)
 signal skill_leveled(skill: String, level: int)
 signal learned(skill: String)
 
-const LEARN: Dictionary = {"sunlash": 1, "flare": 1, "lantern_toss": 2, "moth_swarm": 3}
+const LEARN: Dictionary = {"sunlash": 1, "flare": 1, "lantern_toss": 2, "moth_swarm": 3, "eclipse": 6, "noon": 10}
 
 var level: int = 1
 var xp: float = 0.0
@@ -48,7 +48,7 @@ func _learn_up_to(l: int) -> void:
 
 
 func _auto_slot(s: String) -> void:
-	var prefer: Dictionary = {"sunlash": "lmb", "flare": "rmb", "lantern_toss": "q", "moth_swarm": "w"}
+	var prefer: Dictionary = {"sunlash": "lmb", "flare": "rmb", "lantern_toss": "q", "moth_swarm": "w", "eclipse": "e", "noon": "r"}
 	var want: String = String(prefer.get(s, ""))
 	if want != "" and slots[want] == "":
 		slots[want] = s
@@ -264,6 +264,16 @@ func choose_mastery(tree: String) -> bool:
 	mastery = tree
 	changed.emit()
 	return true
+
+
+## Rules changed by allocated keystones (read by the code that the rule touches).
+func passive_rules() -> Array[String]:
+	var out: Array[String] = []
+	for id: String in passives:
+		var n: Dictionary = passive_node(id)
+		if int(passives[id]) > 0 and n.get("keystone", false):
+			out.append(String(n["rule"]))
+	return out
 
 
 ## Stats granted by passives and the mastery bonus.

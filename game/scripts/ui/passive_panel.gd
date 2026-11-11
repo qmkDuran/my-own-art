@@ -6,11 +6,12 @@ extends GamePanel
 
 const TAB := Vector2(146, 22)
 const NODE := Vector2(110, 36)
-const STEP := Vector2(120, 62)
+const STEP := Vector2(120, 54)
 const GRID_Y: float = 92.0
 const GLYPH: float = 16.0
 const TREES: Array[String] = ["lamplighter", "beacon", "mothwright", "duskwalker"]
-const ROWS: int = 4
+const ROWS: int = 5
+const KEYSTONE_WRAP: float = 260.0
 
 var tab: String = "lamplighter"
 var _glyphs: Texture2D
@@ -70,6 +71,8 @@ func _node(n: Dictionary) -> void:
 	var rk: int = int(p.passives.get(n["id"], 0))
 	var open: bool = rk > 0 or p.passive_block(String(n["id"])) == ""
 	UiDraw.box(self, r, Color(0.2, 0.12, 0.05) if rk > 0 else Color(0.05, 0.045, 0.07), UiDraw.FRAME_LIT if rk > 0 else (UiDraw.FRAME if open else UiDraw.LOCKED))
+	if n.get("keystone", false):                     # keystones: a second, gold frame
+		draw_rect(r.grow(-3.0), UiDraw.GOLD if open else UiDraw.LOCKED, false, 1.0)
 	var gi: int = (GameData.sprites["icons"]["glyphs"] as Array).find(String(n["glyph"]))
 	draw_texture_rect_region(_glyphs, Rect2(r.position + Vector2(5, 10), Vector2(GLYPH, GLYPH)), Rect2(gi * GLYPH, 0, GLYPH, GLYPH),
 		Color.WHITE if open else Color(0.4, 0.4, 0.5))
@@ -113,6 +116,10 @@ func _hover(at: Vector2) -> void:
 			var rows: Array = [String(n["name"]), ["Points %d / %d   (needs %d in this tree)" % [int(p.passives.get(n["id"], 0)), int(n["max"]), int(n["req"])], UiDraw.GOLD]]
 			for k: String in n["stats"]:
 				rows.append([GameData.stat_line(k, float(n["stats"][k])) + " per point", UiDraw.TEXT])
+			if n.get("keystone", false):
+				rows.append(["KEYSTONE", UiDraw.GOLD])
+				for line: String in UiDraw.wrap(self, String(n["text"]), KEYSTONE_WRAP):
+					rows.append([line, UiDraw.TEXT])
 			var block: String = p.passive_block(String(n["id"]))
 			if block != "" and block != "Maxed":
 				rows.append([block, UiDraw.DOWN])
