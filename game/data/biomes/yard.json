@@ -170,13 +170,13 @@
  "relight": {},
  "ambient": {
   "darkness": [
-   0.86,
-   0.78,
-   0.7
+   1.05,
+   0.96,
+   0.86
   ],
   "motes_color": "amber",
-  "scenery_gain": 1.25,
-  "prop_gain": 1.1
+  "scenery_gain": 1.7,
+  "prop_gain": 1.3
  },
  "ground": {
   "c_moss_dk": "moss_dk",

@@ -203,7 +203,10 @@ func _xp(r: Rect2) -> void:
 
 func _tracker() -> void:
 	var lines: Array = Objectives.lines(g)
-	var r := Rect2(TRACKER.position, Vector2(TRACKER.size.x, 16.0 + UiDraw.LINE * lines.size()))
+	var w: float = TRACKER.size.x
+	for l: Array in lines:                                  # the box always holds its longest line
+		w = maxf(w, UiDraw.text_width(self, String(l[0])) + UiDraw.PAD * 2.0 + 4.0)
+	var r := Rect2(TRACKER.position, Vector2(w, 16.0 + UiDraw.LINE * lines.size()))
 	UiDraw.box(self, r, Color(0.05, 0.045, 0.08, 0.75))
 	for i: int in lines.size():
 		UiDraw.text(self, r.position + Vector2(UiDraw.PAD, 14.0 + UiDraw.LINE * i), String(lines[i][0]), lines[i][1])
