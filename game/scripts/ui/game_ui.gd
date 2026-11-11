@@ -140,6 +140,9 @@ func handle_global(event: InputEvent) -> bool:
 	if event.is_action_pressed("map"):
 		minimap.toggle_large()
 		return true
+	if event.is_action_pressed("overlay"):
+		minimap.toggle_overlay()
+		return true
 	if event.is_action_pressed("labels"):
 		LabelStack.shown = not LabelStack.shown
 		return true

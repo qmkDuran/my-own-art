@@ -1,14 +1,15 @@
 class_name PausePanel
 extends GamePanel
-## Esc menu: resume, the feel settings (screen shake, damage numbers, brightness: click the left half to lower it,
-## the right half to raise it), and save & return to the title.
+## Esc menu: resume, the feel settings (screen shake, damage numbers, brightness and map-overlay opacity: click the
+## left half to lower them, the right half to raise them; HUD buttons shown or hidden), and save & return to the title.
 
 const BTN := Vector2(236, 22)
 const GAP: float = 6.0
 const PAD: float = 14.0
 const FOOTER: float = 26.0
-const ITEMS: Array[String] = ["resume", "help", "guide", "shake", "numbers", "brightness", "graphics", "quit"]
+const ITEMS: Array[String] = ["resume", "help", "guide", "shake", "numbers", "brightness", "map_fade", "buttons", "graphics", "quit"]
 const BRIGHT_STEP: float = 0.1
+const MAP_STEP: float = 0.1
 
 
 ## The panel is sized to hold every item and the footer line, so nothing ever spills out of it.
@@ -38,6 +39,8 @@ func _label(id: String) -> String:
 		"numbers": return "Damage numbers: %s" % ("on" if FloatText.enabled else "off")
 		"graphics": return "Graphics: %s (next zone)" % String(GameData.setting("graphics", "medium")).capitalize()
 		"brightness": return "<   Brightness %d%%   >" % roundi(Atmosphere.brightness() * 100.0)
+		"map_fade": return "<   Map overlay (Tab) %d%%   >" % roundi(Minimap.overlay_alpha() * 100.0)
+		"buttons": return "HUD buttons: %s" % ("shown" if HudButtons.shown() else "hidden")
 	return "Save and quit to title"
 
 
@@ -53,8 +56,11 @@ func _click(at: Vector2, _button: int) -> void:
 	for i: int in ITEMS.size():
 		if item_rect(i).has_point(at):
 			Audio.sfx("ui_click", -8.0)
+			var up: bool = at.x > item_rect(i).get_center().x
 			if ITEMS[i] == "brightness":
-				_brighten(BRIGHT_STEP if at.x > item_rect(i).get_center().x else -BRIGHT_STEP)
+				_brighten(BRIGHT_STEP if up else -BRIGHT_STEP)
+			elif ITEMS[i] == "map_fade":
+				Minimap.nudge_overlay(MAP_STEP if up else -MAP_STEP)
 			else:
 				_do(ITEMS[i])
 
@@ -66,6 +72,8 @@ func _do(id: String) -> void:
 		"help":
 			g.ui.set_paused(false)
 			g.ui.open(g.ui.help)
+		"buttons":
+			GameData.settings["hud_buttons"] = not HudButtons.shown()
 		"guide":
 			GameData.settings["guide"] = not bool(GameData.setting("guide", false))
 		"shake":

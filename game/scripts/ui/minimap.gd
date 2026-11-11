@@ -2,7 +2,9 @@ class_name Minimap
 extends Control
 ## A local map, top-right: the explored ground around you at two pixels per cell (fog of war beyond), you as an
 ## arrow, enemies near you, waylamps (lit or not), unopened chests, people, and the objective (pinned to the edge
-## when it lies beyond the map). Never covered by panels on the right.
+## when it lies beyond the map). Never covered by panels on the right. M swaps it for the whole-zone map; Tab lays a
+## see-through map over the game itself, centred on you, that never takes the mouse (shift+scroll or the Esc menu
+## sets how solid it is).
 
 const W: float = 150.0
 const H: float = 96.0
@@ -15,6 +17,12 @@ const FOG := Color(0.05, 0.05, 0.08, 0.85)
 const ARROW: float = 4.0
 const ZOOM: float = 2.0
 const LARGE_MARGIN: float = 40.0
+const OVERLAY_ZOOM: float = 5.0
+const OVERLAY_ALPHA: float = 0.45     ## default opacity of the Tab overlay
+const OVERLAY_MIN: float = 0.15
+const OVERLAY_MAX: float = 0.9
+const OVERLAY_SCROLL: float = 0.05
+const CLEAR := Color(0, 0, 0, 0)
 
 var g: Game
 var _base: Image
@@ -25,9 +33,20 @@ var _last_cell := Vector2i(-99, -99)
 
 
 static var large: bool = false        ## M: the map at its large size, centred
+static var overlay: bool = false      ## Tab: the see-through map laid over the game
+
+
+static func overlay_alpha() -> float:
+	return float(GameData.setting("map_overlay", OVERLAY_ALPHA))
+
+
+static func nudge_overlay(step: float) -> void:
+	GameData.settings["map_overlay"] = clampf(overlay_alpha() + step, OVERLAY_MIN, OVERLAY_MAX)
 
 
 static func rect_for(vs: Vector2) -> Rect2:
+	if overlay and not large:                             # the overlay: the whole screen above the orbs
+		return Rect2(Vector2.ZERO, vs - Vector2(0, Hud.ORB))
 	if large:                                             # the zone map: most of the screen
 		return Rect2(Vector2(LARGE_MARGIN, LARGE_MARGIN), vs - Vector2(LARGE_MARGIN * 2.0, LARGE_MARGIN * 2.0 + Hud.ORB))
 	return Rect2(vs.x - EDGE - W, TOP, W, H)
@@ -35,6 +54,8 @@ static func rect_for(vs: Vector2) -> Rect2:
 
 ## Pixels per cell: the minimap's fixed zoom, or, as the zone map, whatever fits the whole zone.
 func _zoom() -> float:
+	if overlay and not large:
+		return OVERLAY_ZOOM
 	if not large:
 		return ZOOM
 	return minf(size.x / g.layout.cols, size.y / g.layout.rows)
@@ -43,6 +64,22 @@ func _zoom() -> float:
 func toggle_large() -> void:
 	large = not large
 	Audio.sfx("ui_open", -8.0)
+
+
+func toggle_overlay() -> void:
+	overlay = not overlay
+	large = false
+	Audio.sfx("ui_click", -10.0)
+
+
+## Shift+scroll while the overlay is up makes it more or less solid (the mouse is otherwise left to the game).
+func _input(event: InputEvent) -> void:
+	var mb := event as InputEventMouseButton
+	if not overlay or large or mb == null or not mb.pressed or not mb.shift_pressed:
+		return
+	if mb.button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN]:
+		nudge_overlay(OVERLAY_SCROLL if mb.button_index == MOUSE_BUTTON_WHEEL_UP else -OVERLAY_SCROLL)
+		get_viewport().set_input_as_handled()
 
 
 func setup(game: Game) -> void:
@@ -55,7 +92,7 @@ func setup(game: Game) -> void:
 			var name: String = COLORS[z.t(Vector2i(x, y))]
 			_base.set_pixel(x, y, Pal.c(name, 0.9) if name != "" else Color(Pal.c("moss_dk"), 0.55))
 	_shown = Image.create(z.cols, z.rows, false, Image.FORMAT_RGBA8)
-	_shown.fill(FOG)
+	_shown.fill(CLEAR)
 	_seen = PackedByteArray()
 	_seen.resize(z.cols * z.rows)
 	_tex = ImageTexture.create_from_image(_shown)
@@ -105,11 +142,17 @@ func _p(world: Vector2) -> Vector2:
 
 func _draw() -> void:
 	var r := Rect2(Vector2.ZERO, size)
-	UiDraw.box(self, r.grow(2.0), Color(0.02, 0.02, 0.04, 0.9))
-	draw_rect(r, FOG)
+	var see_through: bool = overlay and not large
+	if not see_through:
+		UiDraw.box(self, r.grow(2.0), Color(0.02, 0.02, 0.04, 0.9))
+		draw_rect(r, FOG)
 	var src: Rect2 = Rect2(_origin(), size / _zoom()).intersection(Rect2(Vector2.ZERO, Vector2(g.layout.cols, g.layout.rows)))
 	if src.size.x > 0.0 and src.size.y > 0.0:
-		draw_texture_rect_region(_tex, Rect2((src.position - _origin()) * _zoom(), src.size * _zoom()), src)
+		draw_texture_rect_region(_tex, Rect2((src.position - _origin()) * _zoom(), src.size * _zoom()), src,
+			Color(1, 1, 1, overlay_alpha()) if see_through else Color.WHITE)
+	if see_through:
+		_overlay_marks()
+		return
 	UiDraw.text(self, Vector2(0, -6), String(GameData.biome["name"]), UiDraw.GOLD, UiDraw.SMALL, HORIZONTAL_ALIGNMENT_RIGHT, size.x)
 	for n: Node in get_tree().get_nodes_in_group("interactables"):
 		_marker(n as Interactable)
@@ -124,6 +167,14 @@ func _draw() -> void:
 	draw_rect(Rect2(_p(g.camera.get_screen_center_position() - view / 2.0), view / float(g.layout.cell) * _zoom()), Color(1, 1, 1, 0.25), false, 1.0)
 	_objective()
 	_arrow(_p(me), g.player.aim)
+
+
+## Over the game the map keeps only what helps you steer: exits, waylamps, chests, people, the objective and you.
+func _overlay_marks() -> void:
+	for n: Node in get_tree().get_nodes_in_group("interactables"):
+		_marker(n as Interactable)
+	_objective()
+	_arrow(_p(g.player.global_position), g.player.aim)
 
 
 ## You: a small white arrow pointing where you face.

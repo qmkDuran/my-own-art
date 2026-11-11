@@ -11,7 +11,7 @@ const KEYS: Array = [
 	["Right click", "Flare (RMB slot)"], ["Q W E R", "your other skills"], ["Space", "Wickstep (dash)"],
 	["1", "drink a tonic"], ["F", "talk, read, continue"], ["Alt", "show item names"],
 	["I", "inventory"], ["C", "character"], ["K", "skill trees"], ["P", "passives (from level 2)"],
-	["J", "quests"], ["L", "loot filter"], ["M / Tab", "zone map"], ["H", "this help"], ["Esc", "close, or the menu"],
+	["J", "quests"], ["L", "loot filter"], ["M", "zone map"], ["Tab", "map over the game"], ["H", "this help"], ["Esc", "close, or the menu"],
 ]
 const SYSTEMS: Array = [
 	["Light", "Your lantern's Light is your radius. Enemies outside it are Shrouded: they take less and hit harder. Hits dim it; kills feed it."],
