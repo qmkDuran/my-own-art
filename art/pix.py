@@ -125,3 +125,19 @@ def sheet(frames: list[list[Spr]], fw: int, fh: int) -> tuple[Image.Image, Image
 def arc_points(cx: float, cy: float, r: float, a0: float, a1: float, n: int) -> list[Point]:
     return [(cx + math.cos(a0 + (a1 - a0) * i / (n - 1)) * r, cy + math.sin(a0 + (a1 - a0) * i / (n - 1)) * r)
             for i in range(n)]
+
+
+def clock_dial(s: Spr, cx: float, cy: float, r: float, hand: float = 0.6) -> None:
+    """A shaded clock face stopped at four: brass bezel, cool face with a shadowed lower-right, ticks and hands.
+    Shared by every clock in Act 3 (street clocks, the Clockfaces' heads, the Mayor) so they read as one family."""
+    s.ellipse(cx, cy, r + 1, r + 1, "ink")
+    s.ellipse(cx, cy, r, r, "rust")
+    s.ellipse(cx - 0.5, cy - 0.5, r - 0.5, r - 0.5, "amber")
+    s.ellipse(cx, cy, r - 1.5, r - 1.5, "mist")                    # shadowed face
+    s.ellipse(cx - 0.6, cy - 0.6, r - 2.2, r - 2.2, "pale")        # lit face
+    s.ellipse(cx - r * 0.35, cy - r * 0.4, r * 0.25, r * 0.2, "bone")
+    for a in range(12):
+        tick = "dusk2" if a % 3 == 0 else "stone_lt"
+        s.px(cx + math.cos(a * math.pi / 6) * (r - 3), cy + math.sin(a * math.pi / 6) * (r - 3), tick)
+    s.line([(cx, cy), (cx, cy - (r - 3) * 0.85)], "ink", width=2 if r >= 10 else 1)
+    s.line([(cx, cy), (cx + (r - 3) * hand, cy + (r - 3) * hand * 0.55)], "ink", width=2 if r >= 10 else 1)

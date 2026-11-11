@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import math
 
-from pix import Spr
+from pix import Spr, clock_dial
 
 POSES = {"idle": 4, "move": 4, "attack": 3}
 
@@ -494,42 +494,79 @@ def mayor(pose: str, i: int) -> Spr:
     bob = pick({"idle": (0, 1, 1, 0), "move": (0, 2, 0, 2), "attack": (1, -3, 3)}, pose, i)
     step = pick({"idle": 0, "move": (-1, 0, 1, 0), "attack": 0}, pose, i)
     cx, top = 64, 40 + bob
+    _mayor_legs(s, cx, step)
+    _mayor_coat(s, cx, top)
+    arm = (cx + 30, top + 66) if pose != "attack" else ((cx + 34, top + 50), (cx + 36, top + 20), (cx + 30, top + 80))[i]
+    _mayor_arms(s, cx, top, arm)
+    _mayor_head(s, cx, top)
+    s.outline()
+    s.recolor_edge(-1, 0, "violet", only={"night", "ink", "dusk1"})
+    s.recolor_edge(1, 0, "gold", only={"night", "dusk2", "dusk1"})
+    return s
+
+
+def _mayor_legs(s: Spr, cx: int, step: float) -> None:
+    """Pinstriped trousers tapering into polished boots; the stepping boot lifts."""
     for side in (-1, 1):
         lift = 3 if step == side else 0
-        s.rect(cx + side * 10 - 4, 130, cx + side * 10 + 4, 154 - lift, "ink")
-        s.rect(cx + side * 10 - 6, 152 - lift, cx + side * 10 + 6, 156 - lift, "void")
-    s.poly([(cx - 22, top + 30), (cx + 22, top + 30), (cx + 30, 136), (cx - 30, 136)], "night")
-    s.poly([(cx - 22, top + 30), (cx - 8, top + 30), (cx - 14, 136), (cx - 30, 136)], "ink")
-    s.poly([(cx + 12, top + 32), (cx + 22, top + 30), (cx + 30, 136), (cx + 22, 136)], "dusk2")
-    s.poly([(cx - 20, top + 34), (cx - 14, top + 34), (cx + 18, top + 80), (cx + 12, top + 82)], "blood")    # the mayoral sash
-    s.ellipse(cx + 4, top + 58, 4, 4, "gold")
+        x = cx + side * 10
+        s.poly([(x - 5, 128), (x + 5, 128), (x + 4, 152 - lift), (x - 4, 152 - lift)], "ink")
+        s.line([(x + side, 130), (x + side, 150 - lift)], "dusk1")
+        s.poly([(x - 6, 151 - lift), (x + 5, 151 - lift), (x + 7 * side if side > 0 else x + 5, 156 - lift),
+                (x - 7 if side < 0 else x - 6, 156 - lift)], "void")
+        s.line([(x - 3, 152 - lift), (x + 2, 152 - lift)], "stone_dk")
+
+
+def _mayor_coat(s: Spr, cx: int, top: int) -> None:
+    """Frock coat: fitted at the waist, tails flaring and split, a rust waistcoat, lapels, sash and medal."""
+    hem = 138
+    s.poly([(cx - 22, top + 30), (cx + 22, top + 30), (cx + 17, top + 64), (cx + 32, hem), (cx - 32, hem), (cx - 17, top + 64)], "night")
+    s.poly([(cx - 22, top + 30), (cx - 10, top + 30), (cx - 12, top + 64), (cx - 18, hem), (cx - 32, hem), (cx - 17, top + 64)], "ink")
+    s.poly([(cx + 14, top + 32), (cx + 22, top + 30), (cx + 17, top + 64), (cx + 32, hem), (cx + 24, hem), (cx + 13, top + 64)], "dusk2")
+    s.poly([(cx - 3, top + 66), (cx + 3, top + 66), (cx + 6, hem), (cx - 6, hem)], "void")            # the split between the tails
+    for fx in (-22, -9, 10, 21):
+        s.line([(cx + fx * 0.6, top + 70), (cx + fx, hem - 2)], "dusk1")                          # folds
+    s.poly([(cx - 9, top + 30), (cx + 9, top + 30), (cx + 7, top + 66), (cx - 7, top + 66)], "ember_dk")  # waistcoat
+    s.line([(cx + 3, top + 32), (cx + 3, top + 64)], "rust")
     for k in range(4):
-        s.px(cx, top + 40 + k * 10, "gold")
-    arm = (cx + 30, top + 66) if pose != "attack" else ((cx + 34, top + 50), (cx + 36, top + 20), (cx + 30, top + 80))[i]
-    s.line([(cx + 20, top + 34), arm], "night", width=7)
-    s.line([(cx - 20, top + 34), (cx - 26, top + 74)], "ink", width=7)
-    s.ellipse(arm[0], arm[1] + 8, 10, 10, "gold")                                # the great pocket watch
-    s.ellipse(arm[0], arm[1] + 8, 8, 8, "bone", glow=True)
-    s.line([(arm[0], arm[1] + 8), (arm[0], arm[1] + 2)], "ink")
-    s.line([(arm[0], arm[1] + 8), (arm[0] + 4, arm[1] + 10)], "ink")
+        s.px(cx, top + 38 + k * 8, "gold")
+    s.poly([(cx - 10, top + 30), (cx - 4, top + 30), (cx - 8, top + 52)], "dusk1")                  # lapels
+    s.poly([(cx + 4, top + 30), (cx + 10, top + 30), (cx + 8, top + 52)], "dusk3")
+    s.poly([(cx - 20, top + 34), (cx - 14, top + 34), (cx + 18, top + 80), (cx + 12, top + 82)], "blood")    # the mayoral sash
+    s.line([(cx - 14, top + 34), (cx + 18, top + 80)], "rose")
+    s.line([(cx - 20, top + 35), (cx + 12, top + 82)], "ember_dk")
+    s.ellipse(cx + 4, top + 58, 4, 4, "amber")
+    s.ellipse(cx + 3, top + 57, 2.5, 2.5, "gold")
+    s.poly([(cx + 2, top + 62), (cx + 6, top + 62), (cx + 7, top + 68), (cx + 4, top + 66), (cx + 1, top + 68)], "blood")  # ribbon
+
+
+def _mayor_arms(s: Spr, cx: int, top: int, arm: tuple[int, int]) -> None:
+    """Sleeves with white cuffs and dark gloves; the right hand holds out the great pocket watch on its chain."""
+    s.line([(cx + 20, top + 34), arm], "dusk1", width=8)
+    s.line([(cx + 22, top + 36), (arm[0] + 2, arm[1])], "dusk2", width=3)
+    s.line([(cx - 20, top + 34), (cx - 26, top + 74)], "ink", width=8)
+    s.rect(cx - 30, top + 72, cx - 22, top + 75, "pale")
+    s.ellipse(cx - 26, top + 79, 4, 4, "stone_dk")
+    s.rect(arm[0] - 4, arm[1] - 2, arm[0] + 4, arm[1] + 1, "pale")
     s.line([(arm[0] - 6, arm[1]), (cx + 20, top + 40)], "gold")                 # chain
+    clock_dial(s, arm[0], arm[1] + 8, 9)                                         # the great pocket watch
+    s.px(arm[0], arm[1] + 8, "rose", glow=True)
+
+
+def _mayor_head(s: Spr, cx: int, top: int) -> None:
+    """High starched collar, a clock face for a head, and a tall hat with a blood-red band."""
     s.poly([(cx - 12, top + 22), (cx + 12, top + 22), (cx + 20, top + 32), (cx - 20, top + 32)], "bone")  # high collar
+    s.poly([(cx - 20, top + 32), (cx - 12, top + 22), (cx - 9, top + 22), (cx - 14, top + 32)], "pale")
     s.poly([(cx - 6, top + 22), (cx + 6, top + 22), (cx, top + 32)], "night")
-    s.ellipse(cx, top + 10, 15, 15, "ink")                                      # clock-face head
-    s.ellipse(cx, top + 10, 13, 13, "bone")
-    import math as _m
-    for a in range(12):
-        s.px(cx + _m.cos(a * 0.5236) * 11, top + 10 + _m.sin(a * 0.5236) * 11, "stone_dk")
-    s.line([(cx, top + 10), (cx, top + 1)], "ink", width=2)
-    s.line([(cx, top + 10), (cx + 6, top + 14)], "ink", width=2)
+    s.poly([(cx - 3, top + 24), (cx + 3, top + 24), (cx, top + 30)], "blood")   # cravat
+    clock_dial(s, cx, top + 10, 14)                                             # clock-face head
     s.ellipse(cx, top + 10, 2, 2, "rose", glow=True)
-    s.rect(cx - 12, top - 20, cx + 12, top - 4, "void")                         # top hat
-    s.rect(cx - 18, top - 5, cx + 18, top - 2, "void")
-    s.rect(cx - 12, top - 9, cx + 12, top - 7, "blood")
-    s.outline()
-    s.recolor_edge(-1, 0, "violet", only={"night", "ink"})
-    s.recolor_edge(1, 0, "gold", only={"night", "dusk2"})
-    return s
+    s.poly([(cx - 11, top - 22), (cx + 11, top - 22), (cx + 12, top - 4), (cx - 12, top - 4)], "void")  # top hat
+    s.line([(cx - 9, top - 20), (cx - 10, top - 6)], "stone_dk")
+    s.line([(cx + 8, top - 20), (cx + 9, top - 6)], "night")
+    s.ellipse(cx, top - 4, 19, 2.5, "void")
+    s.rect(cx - 12, top - 10, cx + 12, top - 7, "blood")
+    s.line([(cx - 11, top - 10), (cx + 11, top - 10)], "rose")
 
 
 KINDS = {"gloam": (gloam, 48, 48), "hound": (hound, 64, 48), "moth": (moth, 64, 56), "glazier": (glazier, 128, 128), "husk": (husk, 64, 64),

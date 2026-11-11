@@ -5,7 +5,7 @@ from __future__ import annotations
 import math
 import random
 
-from pix import Spr, dither_fill
+from pix import Spr, clock_dial, dither_fill
 from props import _finish, _prism
 
 
@@ -254,10 +254,7 @@ def clock_post() -> Spr:
     s = Spr(28, 80)
     s.rect(12, 26, 15, 78, "stone_dk")
     s.rect(7, 74, 20, 78, "stone")
-    s.ellipse(14, 16, 11, 11, "ink")
-    s.ellipse(14, 16, 9, 9, "bone")
-    s.line([(14, 16), (14, 9)], "ink")
-    s.line([(14, 16), (19, 19)], "ink")
+    clock_dial(s, 14, 16, 10)
     s.rect(4, 4, 24, 6, "stone_dk")
     return _finish(s, "pale", {"stone_dk"})
 

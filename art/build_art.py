@@ -26,8 +26,12 @@ def _save(img: Image.Image, glow: Image.Image | None, rel: str) -> None:
     path = GAME / "art" / rel
     path.parent.mkdir(parents=True, exist_ok=True)
     img.save(path)
+    glow_path = path.with_name(path.stem + "_glow.png")
     if glow is not None and glow.getbbox() is not None:
-        glow.save(path.with_name(path.stem + "_glow.png"))
+        glow.save(glow_path)
+    else:
+        glow_path.unlink(missing_ok=True)                    # a sprite that stopped glowing must not keep its old layer
+        Path(str(glow_path) + ".import").unlink(missing_ok=True)
 
 
 def build_people(meta: dict) -> None:

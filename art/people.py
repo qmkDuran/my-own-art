@@ -3,7 +3,7 @@ lighting (cool rim on the left, warm lantern rim on the right) and outline, but 
 coats, held props and accent colours. A spec is a dict (see SPECS); frames are drawn per pose."""
 from __future__ import annotations
 
-from pix import Spr
+from pix import Spr, clock_dial
 
 FEET = 61
 CX = 32
@@ -178,7 +178,8 @@ def _held(s: Spr, f: Fig, item: str, hand: tuple[float, float]) -> None:
     elif item == "watch":
         s.line([(x - 6, y - 8), (x, y)], "gold")
         s.ellipse(x, y + 2, 3, 3, "gold")
-        s.ellipse(x, y + 2, 2, 2, "bone", glow=True)
+        s.ellipse(x, y + 2, 2, 2, "pale")
+        s.px(x, y + 2, "rose", glow=True)
     elif item == "oar":
         s.line([(x - 2, y + 14), (x + 2, y - 30)], "earth_lt", width=2)
         s.poly([(x - 4, y + 12), (x + 1, y + 12), (x, y + 22), (x - 5, y + 22)], "earth")
@@ -256,13 +257,7 @@ def _head(s: Spr, f: Fig) -> None:
             s.ellipse(CX + dx, hy + dy, 2.5, 2.5, hat[1])
         s.px(CX - 1, hy - 7, hat[2])
     elif style == "clock":                  # a clock face where the head should be, stopped at four
-        s.ellipse(CX, hy - 1, 7, 7, "ink")
-        s.ellipse(CX, hy - 1, 6, 6, "bone")
-        for a in range(12):
-            import math as _m
-            s.px(CX + _m.cos(a * 0.5236) * 5, hy - 1 + _m.sin(a * 0.5236) * 5, "stone")
-        s.line([(CX, hy - 1), (CX, hy - 5)], "ink")
-        s.line([(CX, hy - 1), (CX + 3, hy + 1)], "ink")
+        clock_dial(s, CX, hy - 1, 7)
         s.px(CX, hy - 1, "rose", glow=True)
     elif style == "shadow":
         s.ellipse(CX, hy - 1, 6, 7, "void")

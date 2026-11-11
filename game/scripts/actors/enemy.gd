@@ -11,7 +11,8 @@ const HIT_FLASH: float = 0.035          ## about two frames
 const HIT_FLASH_AMOUNT: float = 0.45
 const DEATH_TIME: float = 0.28
 const KNOCK_DECAY: float = 9.0
-const SEPARATION: float = 0.6
+const SEPARATION: float = 0.9
+const PERSONAL_SPACE: float = 1.3       # bodies keep this much more than touching apart, so a crowd never reads as one blob
 const SHROUD_CHECK: float = 0.15
 const BURN_TIME: float = 2.0
 const BURN_TICK: float = 0.5
@@ -272,7 +273,7 @@ func _separation() -> Vector2:
 		if o == self or not o.awake:
 			continue
 		var d: Vector2 = global_position - o.global_position
-		var min_d: float = radius + o.radius
+		var min_d: float = (radius + o.radius) * PERSONAL_SPACE
 		if d.length() < min_d and d.length() > 0.01:
 			push += d.normalized() * (1.0 - d.length() / min_d)
 	return push

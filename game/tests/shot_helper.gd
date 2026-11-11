@@ -34,7 +34,7 @@ func pack_near(kinds: Array, offset: Vector2) -> Array[Enemy]:
 	for i: int in kinds.size():
 		var at: Vector2 = base + Vector2(cos(i * 1.7), sin(i * 1.7)) * (24.0 + i * 12.0)
 		at = g.layout.free_spot_near(at, float(GameData.enemy(String(kinds[i]))["radius"]))
-		var e: Enemy = g.spawner.spawn(String(kinds[i]), at, "normal", [], 3)
+		var e: Enemy = g.spawner.spawn(String(kinds[i]), at, "normal", [], g.spawner.level_at(0.5))
 		e.wake()
 		out.append(e)
 	return out

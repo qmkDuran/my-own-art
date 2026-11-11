@@ -240,7 +240,7 @@ func _top_bar(r: Rect2) -> void:
 	draw_rect(Rect2(r.position, Vector2(r.size.x * maxf(0.0, e.life / e.max_life), r.size.y)), Pal.c("blood"))
 	draw_rect(r, UiDraw.FRAME, false, 1.0)
 	UiDraw.text(self, r.position + Vector2(0, -4), "%s   (level %d)" % [e.display_name(), e.level], col, UiDraw.BODY, HORIZONTAL_ALIGNMENT_CENTER, r.size.x)
-	UiDraw.text(self, r.position + Vector2(0, 9), "%d / %d" % [ceili(e.life), roundi(e.max_life)], UiDraw.TEXT, UiDraw.SMALL, HORIZONTAL_ALIGNMENT_CENTER, r.size.x)
+	UiDraw.text(self, r.position + Vector2(0, 9), "%d / %d" % [ceili(e.life), ceili(e.max_life)], UiDraw.TEXT, UiDraw.SMALL, HORIZONTAL_ALIGNMENT_CENTER, r.size.x)
 	if e.shrouded:
 		UiDraw.text(self, r.position + Vector2(0, r.size.y + 10), "Shrouded: takes less, hits harder", Pal.c("violet_lt"), UiDraw.SMALL, HORIZONTAL_ALIGNMENT_CENTER, r.size.x)
 
