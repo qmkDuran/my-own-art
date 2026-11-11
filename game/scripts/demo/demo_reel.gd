@@ -6,15 +6,18 @@ extends Node
 ## Quits at the end.
 
 const DEMO_SEED: int = 7
-const TRAVEL: Dictionary = {"road": "ember_road", "hollow": "moth_hollow", "river": "riverbank", "glass": "glasswood"}
+const TRAVEL: Dictionary = {"road": "ember_road", "hollow": "moth_hollow", "river": "riverbank", "glass": "glasswood",
+	"belfry": "belfry"}
 const ARRIVE_PAN: float = 2.5
 const REELS: Dictionary = {
 	"act1": [[0.0, "gate"], [15.0, "elite"], [29.0, "boss"], [46.0, "end"]],
 	"act2": [[0.0, "hub"], [10.5, "road"], [25.0, "hollow"], [45.0, "end"]],
-	"final": [[0.0, "arrive"], [9.0, "road"], [21.0, "river"], [33.0, "hollow"], [50.0, "glass"], [61.0, "end"]],
+	"final": [[0.0, "arrive"], [8.0, "road"], [19.0, "river"], [30.0, "hollow"], [45.0, "belfry"], [62.0, "end"]],
 }
 const BOSS_LIFE: float = 0.13
-const MATRON_LIFE: float = 0.22
+const MATRON_LIFE: float = 0.4
+const BELLWRIGHT_LIFE: float = 0.3
+const RIVER_TOUGH: float = 2.5
 const PACK_RADIUS: float = 150.0
 const CLEAR_RADIUS: float = 800.0
 const ROAD_PROGRESS: float = 0.5
@@ -55,7 +58,7 @@ func _enter(id: String, g: Game) -> void:
 			get_tree().quit()
 		"gate", "hub":
 			_setup(id, g)
-		"road", "hollow", "river", "glass":
+		"road", "hollow", "river", "glass", "belfry":
 			_left = g
 			_pending = id
 			var to: String = String(TRAVEL[id])
@@ -77,6 +80,7 @@ func _setup(id: String, g: Game) -> void:
 		"hollow": _hollow(g, h)
 		"river": _river(g, h)
 		"glass": _glass(g, h)
+		"belfry": _belfry(g, h)
 
 
 func _build(g: Game, h: ShotHelper, level: int) -> void:
@@ -166,7 +170,10 @@ func _river(g: Game, h: ShotHelper) -> void:
 	h.clear_near(100000.0)
 	var at: Vector2 = g.layout.center_of(g.layout.clearing_of_role("pool")["center"])
 	h.place_player(at + Vector2(-80, 40))
-	h.pack_near(["undertow", "undertow", "drowned", "undertow", "drowned", "undertow"], Vector2(150, 0))
+	var pack: Array[Enemy] = h.pack_near(["undertow", "undertow", "drowned", "undertow", "drowned", "undertow", "undertow", "drowned"], Vector2(150, 0))
+	for e: Enemy in pack:
+		e.max_life *= RIVER_TOUGH
+		e.life = e.max_life
 	g.player.light.value = 70.0
 	g.player.prog.set_slot("e", "lull")
 	g.player.prog.set_slot("r", "cinder_rain")
@@ -177,3 +184,10 @@ func _glass(g: Game, h: ShotHelper) -> void:
 	_boss(g, h, 12, "beacon", BOSS_LIFE)
 	g.player.prog.set_slot("e", "kindle")
 	g.player.prog.set_slot("r", "glass_ward")
+
+
+## The Drowned Belfry: the Bellwright tolls; Glass Ward and Lull ready on E and R.
+func _belfry(g: Game, h: ShotHelper) -> void:
+	_boss(g, h, 20, "beacon", BELLWRIGHT_LIFE)
+	g.player.prog.set_slot("e", "glass_ward")
+	g.player.prog.set_slot("r", "eclipse")

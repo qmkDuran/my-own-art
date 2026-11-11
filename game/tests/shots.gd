@@ -3,7 +3,7 @@ extends Node
 ## set things up, wait for effects to land, save out/<name>_<w>x<h>.png. --only=name runs one shot.
 
 const SETTLE: float = 0.9
-const PASS2: Array[String] = ["river", "forge", "tallow", "road", "hollow", "matron", "quests", "filter", "stash", "eclipse", "noon", "keystones",
+const PASS2: Array[String] = ["bellwright", "river", "forge", "tallow", "road", "hollow", "matron", "quests", "filter", "stash", "eclipse", "noon", "keystones",
 	"eclipse_tree"]
 
 var g: Game
@@ -36,7 +36,7 @@ func _run() -> void:
 		return
 	g = Game.current
 	var shots: Array[String] = ["light", "dark", "skills", "passives", "inventory", "character", "boss", "overview",
-		"river", "forge", "tallow", "road", "hollow", "matron", "quests", "filter", "stash", "eclipse", "noon", "keystones", "eclipse_tree"]
+		"bellwright", "river", "forge", "tallow", "road", "hollow", "matron", "quests", "filter", "stash", "eclipse", "noon", "keystones", "eclipse_tree"]
 	for s: String in shots:
 		if (_only() == "" and not PASS2.has(s)) or _only() == s:
 			await call("_shot_" + s)
@@ -333,3 +333,19 @@ func _shot_forge() -> void:
 	await _wait(SETTLE)
 	await _save("ember_forge")
 	g.ui.open(g.ui.forge)
+
+
+## The Bellwright: a toll rolling out across the flooded square, a gap to stand in.
+func _shot_bellwright() -> void:
+	var h := _bot()
+	h.level_up(20)
+	h.gear_up(20)
+	h.clear_near(100000.0)
+	h.place_player(g.layout.circle_center() + Vector2(0, 90))
+	g.player.light.value = 70.0
+	await _wait(0.4)
+	g.start_boss()
+	var b: Enemy = g.spawner.boss
+	(b.brain as BellwrightBrain)._i = 0
+	await _wait(1.9)
+	await _save("bellwright_toll")

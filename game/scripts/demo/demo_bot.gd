@@ -12,6 +12,7 @@ const DODGE: float = 140.0
 const READ_LINE: float = 1.4
 const TOSS_LIGHT: float = 50.0
 const BIG_CROWD: int = 4
+const RING_WARN: float = 40.0
 
 var g: Game
 var _think: float = 0.0
@@ -58,8 +59,12 @@ func _decide() -> void:
 		g.input.press()
 
 
-## Step out of a warning circle (away from its centre) if Wickstep is ready.
+## Step out of a warning circle (away from its centre), or Wickstep through a toll ring, if the dash is ready.
 func _dodge() -> bool:
+	for w: Node in g.fx_layer.get_children():
+		if w is RingWave and _ring_close(w as RingWave) and g.player.dash_cooldown().x <= 0.0:
+			g.input.lmb_held = false
+			return g.player.dash((w as RingWave).global_position)      # through the ring, untouchable
 	for n: Node in get_tree().get_nodes_in_group("telegraphs"):
 		var t := n as Telegraph
 		if t.covers(g.player.global_position) and g.player.dash_cooldown().x <= 0.0:
@@ -71,6 +76,11 @@ func _dodge() -> bool:
 			g.input.lmb_held = false
 			return g.player.dash(g.player.global_position + away * DODGE)
 	return false
+
+
+func _ring_close(w: RingWave) -> bool:
+	var d: float = g.player.global_position.distance_to(w.global_position) - w.r
+	return d > 0.0 and d < RING_WARN
 
 
 func _foes() -> Array[Enemy]:

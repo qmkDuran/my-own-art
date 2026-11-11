@@ -366,6 +366,65 @@ def drowned_lantern(pose: str, i: int) -> Spr:
     return s
 
 
+# ------------------------------------------------------------------ the Bellwright (Act 2 boss)
+def bellwright(pose: str, i: int) -> Spr:
+    """The Bellwright: a stooped giant in a drowned verdigris coat whose head is a bronze bell; the clapper hangs
+    where a face should be, and two lights burn inside the bell's mouth. It holds the bell-rope in both hands. The
+    sun's fear of the bell that rang it to sleep."""
+    s = Spr(160, 176)
+    bob = pick({"idle": (0, 1, 2, 1), "move": (0, 2, 0, 2), "attack": (2, -4, 6)}, pose, i)
+    step = pick({"idle": 0, "move": (-1, 0, 1, 0), "attack": 0}, pose, i)
+    cx, top = 80, 36 + bob
+    for side in (-1, 1):                                                       # legs under the coat
+        lift = 3 if step == side else 0
+        s.rect(cx + side * 14 - 5, 150, cx + side * 14 + 5, 170 - lift, "ink")
+        s.rect(cx + side * 14 - 7, 168 - lift, cx + side * 14 + 7, 172 - lift, "stone_dk")
+    coat = [(cx - 24, top + 30), (cx + 24, top + 30), (cx + 40, 160), (cx - 40, 160)]
+    s.poly(coat, "glass_dk")
+    s.poly([(cx - 24, top + 30), (cx - 10, top + 30), (cx - 20, 160), (cx - 40, 160)], "glass_dp")
+    s.poly([(cx + 14, top + 34), (cx + 24, top + 30), (cx + 40, 160), (cx + 28, 160)], "glass")
+    for k in range(6):                                                        # barnacles and weed on the hem
+        x = cx - 34 + k * 13
+        s.ellipse(x, 154 - (k % 2) * 4, 3, 2, "pale")
+        s.line([(x + 2, 158), (x + 1, 166)], "moss_lt")
+    s.line([(cx, top + 34), (cx, 158)], "glass_dp")
+    rope_y = (top + 70, top + 30, top + 96)[i] if pose == "attack" else top + 74 + bob
+    s.line([(cx + 30, 0), (cx + 30, rope_y + 30)], "earth_lt", width=2)   # the bell-rope, from the dark above
+    for side in (-1, 1):
+        sh = (cx + side * 24, top + 36)
+        hand = (cx + 30 + side * 4, rope_y)
+        s.line([sh, ((sh[0] + hand[0]) / 2 + side * 8, (sh[1] + hand[1]) / 2), hand], "glass_dp", width=9)
+        s.line([sh, ((sh[0] + hand[0]) / 2 + side * 8, (sh[1] + hand[1]) / 2), hand], "glass_dk", width=6)
+        s.ellipse(hand[0], hand[1], 4, 4, "stone")
+    bell = [(cx - 30, top + 34), (cx - 24, top + 26), (cx - 19, top + 6), (cx - 14, top - 4), (cx - 6, top - 9), (cx + 6, top - 9),
+            (cx + 14, top - 4), (cx + 19, top + 6), (cx + 24, top + 26), (cx + 30, top + 34)]           # a flared bronze bell
+    s.poly(bell, "rust")
+    s.poly(bell[:5] + [(cx - 4, top - 9), (cx - 10, top + 34)], "ember_dk")
+    s.poly([(cx + 8, top - 7), (cx + 14, top - 4), (cx + 19, top + 6), (cx + 23, top + 24), (cx + 16, top + 24), (cx + 12, top + 4)], "ember")
+    s.line([(cx + 10, top - 4), (cx + 17, top + 22)], "amber")
+    s.rect(cx - 31, top + 32, cx + 31, top + 36, "gold")
+    s.line([(cx - 20, top + 16), (cx + 20, top + 16)], "ember_dk")
+    s.line([(cx - 22, top + 19), (cx + 22, top + 19)], "amber")
+    s.ellipse(cx, top + 35, 26, 4, "void")                                    # the mouth of the bell
+    s.ellipse(cx - 7, top + 33, 2, 1, "amber", glow=True)
+    s.ellipse(cx + 7, top + 33, 2, 1, "amber", glow=True)
+    swing = (0, -3, 4)[i] if pose == "attack" else (0, 1, 0, -1)[i] if pose == "idle" else 0
+    s.line([(cx, top + 34), (cx + swing, top + 48)], "stone_dk", width=2)    # the clapper
+    s.ellipse(cx + swing, top + 50, 4, 4, "stone")
+    s.rect(cx - 5, top - 15, cx + 5, top - 9, "ember_dk")
+    s.ellipse(cx, top - 16, 6, 3, "rust")
+    for k in range(4):                                                        # verdigris running down the bronze
+        x = cx - 13 + k * 8
+        s.line([(x, top + 2), (x - 1, top + 12 + (k % 2) * 6)], "glass")
+    if pose == "attack" and i == 2:
+        s.ellipse(cx, top + 34, 18, 3, "sun", glow=True)
+    s.outline()
+    s.recolor_edge(0, -1, "glint", only={"glass_dk", "glass"})
+    s.recolor_edge(1, 0, "gold", only={"rust", "ember"})
+    return s
+
+
 KINDS = {"gloam": (gloam, 48, 48), "hound": (hound, 64, 48), "moth": (moth, 64, 56), "glazier": (glazier, 128, 128), "husk": (husk, 64, 64),
          "crawler": (crawler, 48, 40), "matron": (matron, 176, 160),
-         "undertow": (undertow, 64, 64), "drowned": (drowned_lantern, 48, 56)}
+         "undertow": (undertow, 64, 64), "drowned": (drowned_lantern, 48, 56),
+         "bellwright": (bellwright, 160, 176)}

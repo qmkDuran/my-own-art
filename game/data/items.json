@@ -98,7 +98,8 @@
    "unique"
   ],
   "boss_unique": {
-   "matron": "matron_silk"
+   "matron": "matron_silk",
+   "bellwright": "clapper"
   }
  },
  "bases": [

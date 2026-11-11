@@ -447,6 +447,62 @@
   "flat": false,
   "glow": true
  },
+ "pillar_a": {
+  "size": [
+   30,
+   72
+  ],
+  "frames": 1,
+  "foot": [
+   16,
+   8
+  ],
+  "light": "",
+  "flat": false,
+  "glow": false
+ },
+ "pillar_b": {
+  "size": [
+   30,
+   72
+  ],
+  "frames": 1,
+  "foot": [
+   16,
+   8
+  ],
+  "light": "",
+  "flat": false,
+  "glow": false
+ },
+ "bell_frame": {
+  "size": [
+   44,
+   76
+  ],
+  "frames": 1,
+  "foot": [
+   36,
+   10
+  ],
+  "light": "",
+  "flat": false,
+  "glow": false
+ },
+ "lectern_note": {
+  "size": [
+   24,
+   40
+  ],
+  "frames": 1,
+  "foot": [
+   16,
+   8
+  ],
+  "light": "",
+  "flat": false,
+  "glow": false
+ },
  "boat": {
   "size": [
    80,

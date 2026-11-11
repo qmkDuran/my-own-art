@@ -142,8 +142,11 @@ func fade_through(action: Callable) -> void:
 
 
 ## A person's service after a talk: travel (Nim's maps), stash (Fenn's lockers), respec (Ottilie's ledger),
-## bestiary (Lio's shelf).
+## bestiary (Lio's shelf), forge (Fenn's anvil), ferry (Odile's boat to the Belfry).
 func open_service(service: String) -> void:
+	if service == "ferry":                              # Odile's ferry: straight to the Belfry
+		fade_through(func() -> void: Session.travel(g, "belfry"))
+		return
 	var map: Dictionary = {"travel": travel, "stash": stash, "respec": respec, "bestiary": bestiary, "forge": forge}
 	if map.has(service):
 		open(map[service])

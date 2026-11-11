@@ -32,8 +32,11 @@ func _physics_process(delta: float) -> void:
 		var e := n as Enemy
 		if e.global_position.distance_to(g.player.global_position) < 200.0:
 			near[e.kind + "/" + e.rank] = int(near.get(e.kind + "/" + e.rank, 0)) + 1
-	print("TRACE %.1f %s life %d light %d tonics %d near %s" % [Engine.get_physics_frames() / 60.0, g.zone_id, g.player.life,
-		g.player.light.value, g.player.tonics, near])
+	var boss: String = ""
+	if is_instance_valid(g.spawner.boss) and not g.spawner.boss.dead:
+		boss = "boss %d at %d px %s" % [g.spawner.boss.life, g.spawner.boss.global_position.distance_to(g.player.global_position), g.spawner.boss.brain.state]
+	print("TRACE %.1f %s life %d light %d tonics %d near %s %s" % [Engine.get_physics_frames() / 60.0, g.zone_id, g.player.life,
+		g.player.light.value, g.player.tonics, near, boss])
 
 
 func _report(g: Game) -> void:

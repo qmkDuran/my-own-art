@@ -277,7 +277,7 @@
     }
    },
    {
-    "text": "Return to Odile (Act 2 continues in the next build)",
+    "text": "Return to Odile",
     "goal": [
      "talk",
      "odile"
@@ -291,6 +291,60 @@
   "reward": {
    "xp": 1200,
    "unique": "clapper"
+  },
+  "next": "drowned_belfry"
+ },
+ "drowned_belfry": {
+  "title": "The Drowned Belfry",
+  "main": true,
+  "steps": [
+   {
+    "text": "Take Odile's ferry to the Belfry",
+    "goal": [
+     "enter_zone",
+     "belfry"
+    ],
+    "target": {
+     "zone": "riverbank",
+     "at": "npc:odile"
+    }
+   },
+   {
+    "text": "Find what is ringing the bell",
+    "goal": [
+     "boss_seen",
+     "bellwright"
+    ],
+    "target": {
+     "zone": "belfry",
+     "at": "circle"
+    }
+   },
+   {
+    "text": "Silence the Bellwright",
+    "goal": [
+     "boss_down",
+     "bellwright"
+    ],
+    "target": {
+     "zone": "belfry",
+     "at": "circle"
+    }
+   },
+   {
+    "text": "Tell Lio about the bell",
+    "goal": [
+     "talk",
+     "lio"
+    ],
+    "target": {
+     "zone": "tallow",
+     "at": "npc:lio"
+    }
+   }
+  ],
+  "reward": {
+   "xp": 2000
   }
  }
 }

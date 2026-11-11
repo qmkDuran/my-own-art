@@ -242,6 +242,30 @@
    "hover": 16.0,
    "light_drain": 4.0,
    "lore": "A lamp that sank still lit. It wants your light more than you do; every bolt it lands drinks some."
+  },
+  "bellwright": {
+   "name": "The Bellwright",
+   "sprite": "bellwright",
+   "life": 2800.0,
+   "damage": 13.0,
+   "speed": 48.0,
+   "radius": 34.0,
+   "ai": "bellwright",
+   "type": "blunt",
+   "xp": 1100.0,
+   "range": 80.0,
+   "windup": 0.9,
+   "cooldown": 1.3,
+   "fps": 6.0,
+   "ring_speed": 150.0,
+   "ring_reach": 420.0,
+   "ring_mult": 1.1,
+   "drops": 4,
+   "drop_radius": 46.0,
+   "drop_mult": 1.1,
+   "call": 3,
+   "lull_time": 3.5,
+   "lore": "The sun's fear of the bell that rang it to sleep. Its rope goes up into the dark, and something up there pulls back."
   }
  }
 }

@@ -61,6 +61,14 @@
     "Not the sky. The sky is just the way.",
     "\u2014 T."
    ]
+  },
+  "lull_bell": {
+   "title": "An inscription on the bell's lectern",
+   "lines": [
+    "CAST FOR THE ORDER OF THE LAMP. YEAR ONE.",
+    "TO BE RUNG ONLY AT NOON.",
+    "(Below, scratched by a newer hand: 'It worked. Forgive us. It worked.')"
+   ]
   }
  },
  "signs": {
@@ -84,7 +92,8 @@
   "road4": "Road Lamp",
   "road5": "Road Lamp",
   "hollow": "Hollow Lamp",
-  "river": "River Lamp"
+  "river": "River Lamp",
+  "belfry": "Belfry Lamp"
  },
  "chests": {
   "hut": "Woodcutter's Chest",
@@ -93,6 +102,7 @@
   "secret": "Lamplighter's Cache",
   "farm": "Farmhouse Chest",
   "hollow": "Teague's Pack",
-  "hamlet": "Ferry Strongbox"
+  "hamlet": "Ferry Strongbox",
+  "belfry": "Sexton's Box"
  }
 }

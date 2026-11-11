@@ -210,7 +210,50 @@ def rising_drops(seed: int) -> Spr:
     return s
 
 
+def pillar(seed: int) -> Spr:
+    """A broken column standing out of the flood, weed to the waterline."""
+    rnd = random.Random(seed)
+    s = Spr(30, 72)
+    h = rnd.randint(40, 66)
+    s.rect(7, 72 - h, 22, 70, "stone")
+    s.rect(7, 72 - h, 10, 70, "stone_dk")
+    s.rect(18, 72 - h, 20, 70, "stone_lt")
+    s.poly([(6, 72 - h), (23, 72 - h), (20, 72 - h - 6), (11, 72 - h - 3)], "stone_lt")
+    s.rect(5, 58, 24, 70, "moss_dk")
+    s.line([(5, 58), (24, 58)], "moss_lt")
+    return _finish(s, "pale", {"stone_lt", "stone"})
+
+
+def bell_frame() -> Spr:
+    """A belfry frame fallen out of its tower: two posts, a beam, a cracked bell still hanging."""
+    s = Spr(44, 76)
+    for x in (4, 36):
+        s.rect(x, 10, x + 4, 74, "earth_dk")
+    s.rect(2, 8, 42, 13, "earth")
+    s.line([(22, 13), (22, 20)], "stone_dk")
+    s.poly([(12, 44), (14, 26), (22, 20), (30, 26), (32, 44)], "earth")
+    s.poly([(12, 44), (14, 26), (18, 22), (17, 44)], "earth_dk")
+    s.rect(10, 43, 34, 46, "earth_lt")
+    s.line([(24, 24), (20, 40)], "ink")                          # the crack
+    s.ellipse(22, 46, 3, 2, "stone")
+    return _finish(s, "gold", {"earth"})
+
+
+def lectern_note() -> Spr:
+    s = Spr(24, 40)
+    s.rect(10, 16, 13, 38, "stone_dk")
+    s.rect(4, 36, 19, 39, "stone_dk")
+    s.poly([(1, 16), (23, 16), (21, 8), (3, 8)], "stone")
+    s.poly([(4, 15), (20, 15), (18, 9), (6, 9)], "bone")
+    s.line([(7, 12), (17, 11)], "rust")
+    return _finish(s, "pale", {"stone"})
+
+
 MANIFEST: dict[str, dict] = {
+    "pillar_a": {"draw": lambda: pillar(91), "foot": [16, 8]},
+    "pillar_b": {"draw": lambda: pillar(92), "foot": [16, 8]},
+    "bell_frame": {"draw": bell_frame, "foot": [36, 10]},
+    "lectern_note": {"draw": lectern_note, "foot": [16, 8]},
     "boat": {"draw": boat, "foot": [0, 0]},
     "dock": {"draw": dock, "foot": [0, 0]},
     "rising_drops": {"draw": lambda: rising_drops(81), "foot": [0, 0], "light": "glass_lt"},

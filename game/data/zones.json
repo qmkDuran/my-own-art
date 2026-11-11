@@ -69,7 +69,21 @@
    ],
    "music": "explore",
    "links": [
-    "ember_road"
+    "ember_road",
+    "belfry"
+   ]
+  },
+  "belfry": {
+   "name": "The Drowned Belfry",
+   "biome": "belfry",
+   "seed": 5000,
+   "level": [
+    18,
+    22
+   ],
+   "music": "explore",
+   "links": [
+    "riverbank"
    ]
   }
  }

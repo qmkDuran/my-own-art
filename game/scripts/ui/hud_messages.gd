@@ -5,6 +5,7 @@ extends Control
 ## modal: they take the next click.
 
 const NOTICE_TIME: float = 2.6
+const MAX_NOTICES: int = 4
 const CAPTION_TIME: float = 5.0
 const NOTICE_Y: float = 96.0
 const BOX_W: float = 470.0
@@ -30,8 +31,17 @@ func setup(h: Hud) -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 
+## A notice; the same words again while one is showing count up ("+1 Ash x3") instead of stacking.
 func notice(s: String) -> void:
-	_notices.append([s, NOTICE_TIME])
+	for n: Array in _notices:
+		if String(n[2]) == s:
+			n[3] = int(n[3]) + 1
+			n[0] = "%s  x%d" % [s, int(n[3])]
+			n[1] = NOTICE_TIME
+			return
+	_notices.append([s, NOTICE_TIME, s, 1])
+	if _notices.size() > MAX_NOTICES:
+		_notices.pop_front()
 
 
 func caption(s: String) -> void:

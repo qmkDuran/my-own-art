@@ -1,0 +1,283 @@
+{
+ "_doc": "The Drowned Belfry (Act 2): a town square under a flood that falls upward. Deep water is the thicket; stone islands are the clearings, joined by causeways; the belfry fell into the square and the Bellwright still rings it. The Lull Bell.",
+ "name": "The Drowned Belfry",
+ "cols": 120,
+ "rows": 90,
+ "cell": 32,
+ "border": 2,
+ "path": {
+  "half_width": 1.0,
+  "verge": 1.6,
+  "jitter": 0.22
+ },
+ "clearing_spacing": 18,
+ "clearings": [
+  {
+   "role": "start",
+   "r": [
+    7,
+    6
+   ],
+   "at_frac": [
+    0.1,
+    0.8
+   ]
+  },
+  {
+   "role": "circle",
+   "r": [
+    11,
+    9
+   ],
+   "at_frac": [
+    0.78,
+    0.25
+   ]
+  },
+  {
+   "role": "ruin",
+   "r": [
+    8,
+    6
+   ],
+   "count": 3
+  },
+  {
+   "role": "lamp",
+   "r": [
+    6,
+    5
+   ],
+   "count": 2
+  },
+  {
+   "role": "shrine",
+   "r": [
+    6,
+    5
+   ]
+  },
+  {
+   "role": "island",
+   "r": [
+    7,
+    6
+   ],
+   "count": 3
+  }
+ ],
+ "extra_links": 2,
+ "required": [
+  "start",
+  "circle",
+  "ruin",
+  "lamp",
+  "shrine"
+ ],
+ "setpieces": {
+  "start": [
+   {
+    "kind": "exit",
+    "to": "riverbank",
+    "sprite": "dock",
+    "at": [
+     -50,
+     -10
+    ]
+   },
+   {
+    "kind": "boat",
+    "at": [
+     30,
+     -40
+    ]
+   }
+  ],
+  "ruin": [
+   {
+    "kind": "pillar_a",
+    "at": [
+     -50,
+     -30
+    ]
+   },
+   {
+    "kind": "pillar_b",
+    "at": [
+     50,
+     -20
+    ]
+   },
+   {
+    "kind": "chest",
+    "at": [
+     0,
+     20
+    ],
+    "chest": "belfry"
+   },
+   {
+    "kind": "barrels",
+    "at": [
+     60,
+     40
+    ]
+   }
+  ],
+  "lamp": [
+   {
+    "kind": "waylamp",
+    "at": [
+     0,
+     -10
+    ],
+    "lamp": "belfry",
+    "lit": false
+   },
+   {
+    "kind": "pillar_b",
+    "at": [
+     60,
+     20
+    ]
+   }
+  ],
+  "shrine": [
+   {
+    "kind": "lectern_note",
+    "at": [
+     0,
+     -10
+    ],
+    "note": "lull_bell"
+   },
+   {
+    "kind": "bell_frame",
+    "at": [
+     60,
+     -20
+    ]
+   }
+  ],
+  "island": [
+   {
+    "kind": "pillar_a",
+    "at": [
+     0,
+     -20
+    ]
+   },
+   {
+    "kind": "rising_drops",
+    "at": [
+     40,
+     -10
+    ]
+   }
+  ],
+  "circle": [
+   {
+    "kind": "stone_ring",
+    "r": 170,
+    "count": 8,
+    "stones": [
+     "pillar_a",
+     "bell_frame",
+     "pillar_b",
+     "bell_frame"
+    ]
+   },
+   {
+    "kind": "boss",
+    "enemy": "bellwright",
+    "at": [
+     0,
+     -60
+    ]
+   }
+  ]
+ },
+ "trees": {
+  "edge_spacing": 40,
+  "deep_spacing": 90,
+  "edge_depth": 2,
+  "kinds": {
+   "pillar_a": 30,
+   "pillar_b": 30,
+   "rising_drops": 25,
+   "reeds": 15
+  }
+ },
+ "edge_props": {
+  "reeds": 16,
+  "rock_a": 10
+ },
+ "packs": {
+  "count": 26,
+  "spacing": 11,
+  "safe_radius": 16,
+  "elites": 3,
+  "table": [
+   {
+    "from": 0.0,
+    "kinds": {
+     "undertow": 0.6,
+     "drowned": 0.4
+    },
+    "size": [
+     3,
+     5
+    ]
+   },
+   {
+    "from": 0.5,
+    "kinds": {
+     "undertow": 0.5,
+     "drowned": 0.4,
+     "moth": 0.1
+    },
+    "size": [
+     4,
+     6
+    ]
+   }
+  ]
+ },
+ "relight": {
+  "waves": 2,
+  "wave_size": 7,
+  "duration": 15.0,
+  "kinds": {
+   "undertow": 0.6,
+   "drowned": 0.4
+  }
+ },
+ "ambient": {
+  "darkness": [
+   0.13,
+   0.16,
+   0.21
+  ],
+  "motes_color": "glint"
+ },
+ "ground": {
+  "c_ink": "glass_dp",
+  "c_moss_dk": "glass_dk",
+  "c_moss": "stone_dk",
+  "c_moss_lt": "stone",
+  "c_earth_dk": "stone_dk",
+  "c_earth": "stone",
+  "c_earth_lt": "stone_lt",
+  "c_glint": "glint"
+ },
+ "water_flow": -1.0,
+ "events": {
+  "caption": "The Drowned Belfry. Somewhere above the water, a bell is still ringing.",
+  "boss": {
+   "kind": "bellwright",
+   "trigger": 340,
+   "music": "boss",
+   "caption": "The Bellwright. It rings for no one. It has been ringing for three hundred years."
+  }
+ }
+}

@@ -67,6 +67,14 @@ func act1_foes(h: ShotHelper) -> void:
 	await t.get_tree().create_timer(6.0).timeout
 	expect(is_instance_valid(m) and not m.dead, "the Moth Matron fights for six seconds without errors")
 	m.queue_free()
+	var bw: Enemy = g.spawner.spawn("bellwright", p.global_position + Vector2(0, -160), "boss", [], 20)
+	bw.wake()
+	var rings: int = 0
+	for k: int in 40:
+		await t.get_tree().create_timer(0.1).timeout
+		rings = maxi(rings, g.fx_layer.get_children().filter(func(n: Node) -> bool: return n is RingWave).size())
+	expect(rings > 0, "the Bellwright tolls: rings roll out (%d)" % rings)
+	bw.queue_free()
 
 
 func pass3(h: ShotHelper) -> void:

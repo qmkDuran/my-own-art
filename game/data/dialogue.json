@@ -270,6 +270,31 @@
    {
     "when": {
      "quest_step": [
+      "drowned_belfry",
+      3
+     ]
+    },
+    "lines": [
+     [
+      "Lio",
+      "A bell. Cast by the order. Year one. 'To be rung only at noon.'"
+     ],
+     [
+      "Lio",
+      "Noon. There hasn't been a noon in three hundred years. Unless... the bell is why."
+     ],
+     [
+      "Lio",
+      "Lamplighter, I think we didn't lose the sun. I think we put it to bed."
+     ]
+    ],
+    "do": {
+     "flag": "act2_reveal"
+    }
+   },
+   {
+    "when": {
+     "quest_step": [
       "teagues_trail",
       3
      ]
@@ -371,6 +396,27 @@
    {
     "when": {
      "quest_step": [
+      "drowned_belfry",
+      0
+     ]
+    },
+    "lines": [
+     [
+      "Odile",
+      "The water's let up. Get in. Don't trail your fingers."
+     ],
+     [
+      "Odile",
+      "When it rings, cover the lantern. I've seen what that sound does to a flame."
+     ]
+    ],
+    "do": {
+     "service": "ferry"
+    }
+   },
+   {
+    "when": {
+     "quest_step": [
       "upward_river",
       3
      ]
@@ -386,7 +432,7 @@
      ],
      [
       "Odile",
-      "I'll take you when the water lets me. Rest first. You look like a man who's been drunk by a lantern."
+      "Get some rest, then come back. I'll take you up to the Belfry when the water lets me."
      ]
     ]
    },
