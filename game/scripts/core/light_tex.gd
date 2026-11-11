@@ -51,3 +51,14 @@ static func shadow() -> GradientTexture2D:
 	g.set_color(1, Color(0, 0, 0, 0))
 	g.add_point(0.6, Color(0, 0, 0, 0.4))
 	return _radial("shadow", g, int(SHADOW_SIZE))
+
+
+## A thin bright ring with soft edges (a shockwave); radius = half the texture size.
+static func ring(size: int = 128) -> GradientTexture2D:
+	var g := Gradient.new()
+	g.set_color(0, Color(1, 1, 1, 0))
+	g.set_color(1, Color(1, 1, 1, 0))
+	g.add_point(0.72, Color(1, 1, 1, 0))
+	g.add_point(0.88, Color(1, 1, 1, 1))
+	g.add_point(0.96, Color(1, 1, 1, 0.3))
+	return _radial("ring%d" % size, g, size)

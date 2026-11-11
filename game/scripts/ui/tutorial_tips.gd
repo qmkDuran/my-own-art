@@ -58,6 +58,10 @@ static func active() -> bool:
 func _process(delta: float) -> void:
 	if not active():
 		return
+	if g.ui.skills.visible and SpecSlotsView.needs_card():   # the specialisation card speaks first; tips wait
+		visible = false
+		return
+	visible = _open != ""
 	_t -= delta
 	if _t <= 0.0 and not get_tree().paused:
 		_t = CHECK_EVERY

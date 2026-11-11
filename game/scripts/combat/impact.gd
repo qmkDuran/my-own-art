@@ -1,31 +1,45 @@
 class_name Impact
 extends RefCounted
-## The weight of a hit, scaled by how big it was (`k`: the hit's share of the target's life, 0..1): an expanding
-## flash and a light pulse on the ground, sparks along the blow, an ember burst, a scorch on the floor that fades,
-## a 2-4 frame hit-stop, and a camera kick on big hits.
+## The weight of a hit, scaled by how big it was (`k`: the hit's share of the target's life, 0..1), sized to read
+## at 1x: a white core for two frames, a halo, a shockwave ring on the ground, a strong light pulse on the floor,
+## 10-20 sparks along the blow and embers, a scorch that fades, a 2-4 frame hit-stop (3-5 on a kill), and on big
+## hits, crits and kills a shake plus a punch of the view toward the target.
 
 const FRAME: float = 1.0 / 60.0
 const STOP_FRAMES := Vector2(2.0, 4.0)
+const KILL_STOP_FRAMES := Vector2(3.0, 5.0)
 const KICK_AT: float = 0.18             ## hits worth this share of a life or more kick the camera
 const KICK: float = 0.18
+const PUNCH := Vector2(3.0, 7.0)        ## px the view lurches toward the target on big hits and kills
+const BURST_R := Vector2(30.0, 38.0)    ## the impact's radius (60-76 px across), small hit to big
+const CORE_TIME: float = 0.06           ## a few frames of white at the point of contact
+const RING_TIME: float = 0.24
+const GROUND_LIGHT := Vector2(120.0, 180.0)
+const SPARKS := Vector2(10.0, 20.0)
 const SCORCH_TIME: float = 2.4
-const SCORCH_MIN: float = 9.0
-const SCORCH_MAX: float = 22.0
+const SCORCH_MIN: float = 14.0
+const SCORCH_MAX: float = 26.0
 
 
-static func hit(at: Vector2, dir: Vector2, k: float, col: Color, crit: bool) -> void:
+static func hit(at: Vector2, dir: Vector2, k: float, col: Color, crit: bool, kill: bool = false) -> void:
 	var g: Game = Game.current
 	k = clampf(k, 0.0, 1.0)
-	var size: float = 0.8 + k * 1.6 + (0.4 if crit else 0.0)
-	Fx.halo(g.fx_layer, at, 26.0 * size, Color(col, 0.85), 0.18)
-	Fx.flash(g.fx_layer, at, 50.0 * size, col, 0.9 + k, 0.16)
-	Fx.hit_sparks(g.fx_layer, at, dir, crit)
-	Fx.burst(g.fx_layer, at, int(4 + 10 * k), Vector2(30, 110 * size), 0.45, [Pal.c("gold"), Pal.c("flame"), Pal.c("ember", 0.0)],
-		Vector2.UP, 160.0, Vector2(1, 2))
-	scorch(at + Vector2(0, 14), lerpf(SCORCH_MIN, SCORCH_MAX, k))
-	HitStop.trigger(g.get_tree(), FRAME * lerpf(STOP_FRAMES.x, STOP_FRAMES.y, k) * (1.5 if crit else 1.0))
-	if k >= KICK_AT or crit:
+	var big: float = maxf(k * 3.0, 1.0 if kill or crit else 0.0)
+	var r: float = lerpf(BURST_R.x, BURST_R.y, minf(big, 1.0))
+	Fx.core(g.fx_layer, at, r * 0.9, CORE_TIME)
+	Fx.halo(g.fx_layer, at, r * 2.2, Color(col, 1.0), 0.26)
+	Fx.ring(g.fx_layer, at + Vector2(0, 10), r * 0.4, r * 2.2, Color(Pal.c("sun"), 1.0), RING_TIME)
+	Fx.flash(g.fx_layer, at + Vector2(0, 10), lerpf(GROUND_LIGHT.x, GROUND_LIGHT.y, minf(big, 1.0)), col, 3.0 + k * 2.0, 0.32)
+	var n: int = int(lerpf(SPARKS.x, SPARKS.y, minf(big, 1.0)))
+	Fx.burst(g.fx_layer, at, n, Vector2(120, 280), 0.36, [Pal.c("sun"), Pal.c("gold"), Pal.c("flame", 0.0)], dir, 70.0, Vector2(1.5, 2.5))
+	Fx.burst(g.fx_layer, at, n / 2 + 4, Vector2(50, 150), 0.6, [Pal.c("gold"), Pal.c("flame"), Pal.c("ember", 0.0)],
+		Vector2.UP, 180.0, Vector2(1, 2))
+	scorch(at + Vector2(0, 14), lerpf(SCORCH_MIN, SCORCH_MAX, minf(big, 1.0)))
+	var stop: Vector2 = KILL_STOP_FRAMES if kill else STOP_FRAMES
+	HitStop.trigger(g.get_tree(), FRAME * lerpf(stop.x, stop.y, minf(big, 1.0)) * (1.25 if crit else 1.0))
+	if k >= KICK_AT or crit or kill:
 		CameraRig.shake(KICK * (0.6 + k))
+		CameraRig.punch(dir * lerpf(PUNCH.x, PUNCH.y, minf(big, 1.0)))
 
 
 ## A dark mark on the floor where the light struck; it fades away.

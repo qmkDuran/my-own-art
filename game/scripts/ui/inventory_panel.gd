@@ -121,5 +121,5 @@ func _hover(at: Vector2) -> void:
 				tip(rows, GameData.rarity_color(it["rarity"]))
 			else:
 				g.ui.tooltip.show_pair(rows, ItemText.rows(worn, {}, g.player.prog.level), get_global_mouse_position(),
-					GameData.rarity_color(it["rarity"]), GameData.rarity_color(worn["rarity"]))
+					GameData.rarity_color(it["rarity"]), GameData.rarity_color(worn["rarity"]), get_global_rect())
 			return

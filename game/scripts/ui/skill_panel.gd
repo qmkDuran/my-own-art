@@ -6,7 +6,8 @@ extends GamePanel
 
 const LIST_W: float = 150.0
 const ROW_H: float = 27.0
-const NODE := Vector2(76, 34)
+const NODE := Vector2(80, 40)
+const NAME_LINE: float = 9.0
 const STEP := Vector2(86, 64)
 const TREE_Y: float = 92.0
 const ICON: float = 24.0
@@ -139,15 +140,12 @@ func _node(n: Dictionary, t: float) -> void:
 	var gi: int = (GameData.sprites["icons"]["glyphs"] as Array).find(TreeArt.glyph_for(n["vals"]))
 	draw_texture_rect_region(_glyphs, Rect2(r.position + Vector2(4, 4), Vector2(GLYPH, GLYPH)), Rect2(gi * GLYPH, 0, GLYPH, GLYPH),
 		Color.WHITE if open else Color(0.4, 0.4, 0.5))
-	UiDraw.text(self, r.position + Vector2(GLYPH + 6.0, 14), _fit(String(n["name"]), r.size.x - GLYPH - 9.0), UiDraw.TEXT if open else UiDraw.LOCKED,
-		UiDraw.SMALL)
-	UiDraw.text(self, r.position + Vector2(0, 29), "%d/%d" % [rk, int(n["max"])], UiDraw.GOLD if rk > 0 else UiDraw.DIM, UiDraw.SMALL,
+	var lines: PackedStringArray = UiDraw.wrap(self, String(n["name"]), r.size.x - GLYPH - 9.0, UiDraw.SMALL)
+	for i: int in mini(lines.size(), 2):                          # the full name, on two lines if it needs them
+		UiDraw.text(self, r.position + Vector2(GLYPH + 6.0, 11.0 + NAME_LINE * i), lines[i], UiDraw.TEXT if open else UiDraw.LOCKED,
+			UiDraw.SMALL)
+	UiDraw.text(self, r.position + Vector2(0, 35), "%d/%d" % [rk, int(n["max"])], UiDraw.GOLD if rk > 0 else UiDraw.DIM, UiDraw.SMALL,
 		HORIZONTAL_ALIGNMENT_CENTER, r.size.x)
-
-
-## The node's name if it fits the box, else its first word (the tooltip has the full name).
-func _fit(s: String, w: float) -> String:
-	return s if UiDraw.text_width(self, s, UiDraw.SMALL) <= w else s.split(" ")[0]
 
 
 func _click(at: Vector2, button_index: int) -> void:
@@ -197,5 +195,6 @@ func _hover(at: Vector2) -> void:
 	for n: Dictionary in GameData.skill(selected)["nodes"]:
 		if node_rect(n).has_point(at):
 			_over = String(n["id"])
-			tip(SkillText.node_rows(self, g.player, selected, n))
+			var beside := Vector2(get_global_rect().end.x - 8.0, global_position.y + node_rect(n).position.y - 10.0)
+			g.ui.tooltip.show_rows(SkillText.node_rows(self, g.player, selected, n), beside)   # off the tree, by the panel
 			return

@@ -17,13 +17,15 @@ const FOG := Color(0.05, 0.05, 0.08, 0.85)
 const ARROW: float = 4.0
 const ZOOM: float = 2.0
 const LARGE_MARGIN: float = 40.0
-const OVERLAY_ZOOM: float = 5.0
+const OVERLAY_ZOOM: float = 3.0      ## the overlay is a small map laid over the view, not a 1:1 trace
 const OVERLAY_ALPHA: float = 0.6      ## default opacity of the Tab overlay
 const OVERLAY_MIN: float = 0.15
 const OVERLAY_MAX: float = 0.9
 const OVERLAY_SCROLL: float = 0.05
 const CLEAR := Color(0, 0, 0, 0)
 const OVERLAY_FILL: float = 0.3      ## the overlay's ground wash, under its bright edges
+const OVERLAY_EDGE := Color(0.72, 0.86, 1.0)   ## edges: a cool pale blue, readable on warm and cold ground
+const OVERLAY_ARROW: float = 9.0
 
 var g: Game
 var _base: Image
@@ -115,10 +117,11 @@ func _outline(z: ZoneLayout) -> Image:
 			if name == "":
 				continue
 			var edge: bool = false
-			for d: Vector2i in [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]:
+			for d: Vector2i in [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN, Vector2i(1, 1), Vector2i(-1, 1),
+					Vector2i(1, -1), Vector2i(-1, -1)]:
 				var q := Vector2i(x, y) + d
 				edge = edge or not z.inside(q) or COLORS[z.t(q)] == ""
-			img.set_pixel(x, y, Pal.c("pale") if edge else Pal.c(name, OVERLAY_FILL))
+			img.set_pixel(x, y, OVERLAY_EDGE if edge else Pal.c(name, OVERLAY_FILL))
 	return img
 
 
@@ -202,13 +205,15 @@ func _overlay_marks() -> void:
 	for n: Node in get_tree().get_nodes_in_group("interactables"):
 		_marker(n as Interactable)
 	_objective()
-	_arrow(_p(g.player.global_position), g.player.aim)
+	var me: Vector2 = _p(g.player.global_position)
+	draw_circle(me, OVERLAY_ARROW + 3.0, Color(Pal.c("gold"), 0.35))
+	_arrow(me, g.player.aim, OVERLAY_ARROW)
 
 
 ## You: a small white arrow pointing where you face.
-func _arrow(at: Vector2, dir: Vector2) -> void:
+func _arrow(at: Vector2, dir: Vector2, size: float = ARROW) -> void:
 	var d: Vector2 = dir if dir != Vector2.ZERO else Vector2.DOWN
-	var pts := PackedVector2Array([at + d * ARROW, at + d.rotated(2.5) * ARROW * 0.8, at + d.rotated(-2.5) * ARROW * 0.8])
+	var pts := PackedVector2Array([at + d * size, at + d.rotated(2.5) * size * 0.8, at + d.rotated(-2.5) * size * 0.8])
 	draw_colored_polygon(pts, Color.WHITE)
 	draw_polyline(PackedVector2Array([pts[0], pts[1], pts[2], pts[0]]), UiDraw.INK, 1.0)
 

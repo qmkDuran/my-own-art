@@ -9,6 +9,7 @@ const LANCET_REACH: float = 2.0
 const AFTERGLOW_PCT: float = 25.0
 const UNDIMMED_LIGHT: float = 15.0
 const UNDIMMED_MORE: float = 1.5
+const SCREEN_FLASH: float = 0.35       ## how white the whole screen goes for an instant
 
 
 func radius() -> float:
@@ -35,6 +36,7 @@ func use(target: Vector2) -> void:
 	Fx.halo(fx(), at, reach * 0.6, Pal.c("amber", 0.7), 0.3)
 	Audio.sfx("flare", -4.0)
 	CameraRig.shake(0.18)
+	Fx.screen_flash(Pal.c("sun"), SCREEN_FLASH, 0.18)
 	var hits: Array[Enemy] = enemies_in_arc(p.global_position, dir, reach, rad_to_deg(LANCET_ARC) if lancet else 360.0)
 	for e: Enemy in hits:
 		Combat.hit_enemy(e, roll(), opts({"dir": e.global_position - p.global_position, "more": more,

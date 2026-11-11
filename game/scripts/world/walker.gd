@@ -1,7 +1,7 @@
 class_name Walker
 extends Node2D
 ## A passer-by in Tallow: strolls between a few places on the cobbles, pauses, strolls on. Not interactive; only
-## there so the city feels lived in. Walks straight lines between waypoints chosen on open ground; a waypoint
+## there so the city feels lived in. Walks between waypoints by the zone's pathfinder (never through props); a waypoint
 ## with a third number is a stop on their round (a stall, the well, the drill) where they linger that many seconds.
 
 const SPEED: float = 34.0
@@ -17,6 +17,7 @@ var _i: int = 0
 var _wait: float = 0.0
 var _t: float = 0.0
 var _sprite: Sprite2D
+var _path: PackedVector2Array = PackedVector2Array()   ## the current leg, from the zone's pathfinder
 
 
 static func make(parent: Node, folk: String, points: Array[Vector2], stays: Array[float]) -> Walker:
@@ -48,10 +49,16 @@ func _process(delta: float) -> void:
 		_wait -= delta
 		_sprite.frame = int(_t) % FRAMES
 		return
-	var to: Vector2 = route[(_i + 1) % route.size()]
+	if _path.is_empty():                                   # a new leg: find the way round stalls, benches and houses
+		_path = Game.current.nav.path(position, route[(_i + 1) % route.size()])
+		if _path.is_empty():
+			_path = PackedVector2Array([route[(_i + 1) % route.size()]])
+	var to: Vector2 = _path[0]
 	position = position.move_toward(to, SPEED * delta)
 	_sprite.flip_h = to.x < position.x
 	_sprite.frame = FRAMES + int(_t) % FRAMES
 	if position.distance_to(to) < ARRIVE:
-		_i = (_i + 1) % route.size()
-		_wait = lingers[_i] if lingers[_i] > 0.0 else randf_range(PAUSE.x, PAUSE.y)
+		_path.remove_at(0)
+		if _path.is_empty():
+			_i = (_i + 1) % route.size()
+			_wait = lingers[_i] if lingers[_i] > 0.0 else randf_range(PAUSE.x, PAUSE.y)

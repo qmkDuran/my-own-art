@@ -3,7 +3,7 @@ extends "res://tests/shots_opening.gd"
 ## tooltip, the gear comparison, the Tab map overlay, the skill and passive trees, the specialisation card, the
 ## new game's fade and pan, and the practice ground inside Tallow.
 
-const IMPACT_TIMES: Array[float] = [0.14, 0.2, 0.26, 0.32]
+const IMPACT_TIMES: Array[float] = [0.0, 0.06, 0.1]
 const DEATH_TIMES: Array[float] = [0.0, 0.15, 0.4, 1.4]
 const PAN_TIMES: Array[float] = [0.7, 2.6, 4.4, 6.4]
 
@@ -25,12 +25,30 @@ func _staged_pack(kinds: Array) -> Array[Enemy]:
 
 func _shot_p2_impact() -> void:
 	var pack: Array[Enemy] = await _staged_pack(["hound"])
+	pack[0].max_life *= 3.0
+	pack[0].life = pack[0].max_life
+	_bot().cast("wickbolt", pack[0].global_position + Vector2(0, -10))
+	await _wait(0.12)
+	await _save("p2_impact_0")                           # the bolt in flight
+	await _until_hit(pack[0])
 	for i: int in IMPACT_TIMES.size():
-		pack[0].life = pack[0].max_life
-		_bot().cast("wickbolt", pack[0].global_position + Vector2(0, -10))
 		await _wait(IMPACT_TIMES[i])
-		await _save("p2_impact_%d" % i)
-		await _wait(1.0)
+		await _save("p2_impact_%d" % (i + 1))
+	await _wait(1.0)
+	Dev.one_hit = true
+	_bot().cast("wickbolt", pack[0].global_position + Vector2(0, -10))
+	await _until_hit(pack[0])
+	await _save("p2_kill_0")
+	await _wait(0.12)
+	await _save("p2_kill_1")
+	Dev.one_hit = false
+
+
+## Waits (real time) until the enemy has been hit, so the shot lands on the moment of impact.
+func _until_hit(e: Enemy) -> void:
+	var before: float = e.life
+	while is_instance_valid(e) and e.life >= before and not e.dead:
+		await get_tree().process_frame
 
 
 func _shot_p2_death() -> void:
@@ -100,7 +118,10 @@ func _shot_p2_compare() -> void:
 
 
 func _shot_p2_overlay() -> void:
-	_bot().place_player(g.layout.start + Vector2(0, -400))
+	_bot().clear_near(100000.0)
+	_bot().place_player(g.layout.start)
+	g.player.walk_to(g.layout.start + Vector2(260, 120))
+	await _wait(2.0)
 	g.ui.minimap.reveal_all()
 	Minimap.overlay = true
 	await _wait(1.0)

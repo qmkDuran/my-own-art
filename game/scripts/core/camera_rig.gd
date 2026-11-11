@@ -10,10 +10,12 @@ const FREQ: float = 30.0
 const BOSS_LEAN: float = 0.45
 const MAX_LEAN: float = 180.0
 const FRAME_FADE: float = 0.4
+const PUNCH_RETURN: float = 14.0
 
 static var instance: CameraRig
 
 var trauma: float = 0.0
+var _punch: Vector2 = Vector2.ZERO     ## a lurch toward a big hit; springs back
 var target: Node2D
 var frames: Array = []                 ## [point, radius, weight]: landmarks the view leans toward when near
 var focus: Node2D                      ## a boss: the view frames you and it together
@@ -59,6 +61,12 @@ static func shake(amount: float) -> void:
 		instance.trauma = minf(1.0, instance.trauma + amount * float(GameData.setting("screen_shake", 1.0)))
 
 
+## The view lurches by `by` (toward the target of a big hit) and springs back.
+static func punch(by: Vector2) -> void:
+	if instance != null:
+		instance._punch += by * float(GameData.setting("screen_shake", 1.0))
+
+
 ## Arrival shot: start on a landmark, hold, then glide to the Lamplighter.
 func intro(at: Vector2, seconds: float) -> void:
 	_intro_at = at
@@ -102,4 +110,5 @@ func _physics_process(delta: float) -> void:
 	_t += delta
 	trauma = maxf(0.0, trauma - DECAY * delta)
 	var k: float = trauma * trauma * MAX_OFFSET
-	offset = Vector2(_noise.get_noise_2d(_t * FREQ, 0.0), _noise.get_noise_2d(0.0, _t * FREQ)) * k * 2.0
+	_punch = _punch.lerp(Vector2.ZERO, minf(1.0, PUNCH_RETURN * delta / maxf(Engine.time_scale, 0.01)))
+	offset = Vector2(_noise.get_noise_2d(_t * FREQ, 0.0), _noise.get_noise_2d(0.0, _t * FREQ)) * k * 2.0 + _punch

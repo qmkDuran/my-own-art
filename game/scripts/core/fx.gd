@@ -9,6 +9,8 @@ const GROUND_LIGHT_MASK: int = 2
 const FLOOR_MASK: int = 32        ## only the ground: the lantern's shadow-casting light touches just this
 const STANDING_MASK: int = 64     ## everything standing up (props, trees, people): lit by the lantern without shadows                     ## light layer the ground, trees and props also listen on
 
+const RING_SQUASH: float = 0.6      ## shockwaves lie on the ground, seen at an angle
+
 static var _glow_mat: CanvasItemMaterial
 static var _add_mat: CanvasItemMaterial
 static var _unshaded_mat: CanvasItemMaterial
@@ -89,7 +91,7 @@ static func flash(parent: Node, at: Vector2, radius: float, col: Color, energy: 
 	l.range_item_cull_mask = GROUND_LIGHT_MASK          # flashes light the ground and props, never bodies (no washout)
 	parent.add_child(l)
 	var tw := l.create_tween()
-	tw.tween_property(l, "energy", 0.0, time).set_ease(Tween.EASE_OUT)
+	tw.tween_property(l, "energy", 0.0, time).set_ease(Tween.EASE_IN)      # holds bright, then drops: reads as a pulse
 	tw.tween_callback(l.queue_free)
 
 
@@ -108,6 +110,52 @@ static func halo(parent: Node, at: Vector2, radius: float, col: Color, time: flo
 	tw.tween_property(s, "scale", Vector2.ONE * radius / 64.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
 	tw.tween_property(s, "modulate:a", 0.0, time)
 	tw.chain().tween_callback(s.queue_free)
+
+
+## A shockwave: a bright ring that races out from r0 to r1 and fades.
+static func ring(parent: Node, at: Vector2, r0: float, r1: float, col: Color, time: float) -> void:
+	var s := Sprite2D.new()
+	s.texture = LightTex.ring()
+	s.material = glow_material()
+	s.modulate = col
+	s.position = at
+	s.z_index = FX_Z
+	s.scale = Vector2(1.0, RING_SQUASH) * r0 / 64.0
+	parent.add_child(s)
+	var tw := s.create_tween().set_parallel()
+	tw.tween_property(s, "scale", Vector2(1.0, RING_SQUASH) * r1 / 64.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
+	tw.tween_property(s, "modulate:a", 0.0, time).set_ease(Tween.EASE_IN)
+	tw.chain().tween_callback(s.queue_free)
+
+
+## A white-hot core that sits for a couple of frames and is gone (the instant of contact).
+static func core(parent: Node, at: Vector2, radius: float, time: float) -> void:
+	var s := Sprite2D.new()
+	s.texture = LightTex.soft(64)
+	s.material = glow_material()
+	s.modulate = Color(1.6, 1.6, 1.5)
+	s.position = at
+	s.z_index = FX_Z + 1
+	s.scale = Vector2.ONE * radius / 32.0
+	parent.add_child(s)
+	s.get_tree().create_timer(time, true, false, true).timeout.connect(s.queue_free)
+
+
+## A full-screen flash for the biggest spells (Flare, Noon): the whole view goes bright for an instant.
+static func screen_flash(col: Color, alpha: float, time: float) -> void:
+	var g: Game = Game.current
+	if g == null or g.ui == null:
+		return
+	var r := ColorRect.new()
+	r.color = Color(col, alpha)
+	r.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	r.set_anchors_preset(Control.PRESET_FULL_RECT)
+	r.material = glow_material()
+	g.ui.add_child(r)
+	g.ui.move_child(r, 0)
+	var tw := r.create_tween()
+	tw.tween_property(r, "color:a", 0.0, time).set_ease(Tween.EASE_OUT)
+	tw.tween_callback(r.queue_free)
 
 
 ## Death of a Dusk creature: it comes apart into dark smoke, glass and a few embers of the light that killed it.

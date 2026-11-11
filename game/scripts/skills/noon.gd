@@ -10,6 +10,7 @@ const SECOND_SUN_PCT: float = 30.0
 const DAYLIGHT := Color(1.7, 1.6, 1.35)       ## a breath of day: well above any zone's ambient (HDR 2D)
 const DAY_HOLD: float = 0.35
 const DAY_FADE: float = 1.2
+const SCREEN_FLASH: float = 0.6        ## Noon whites out the view for a moment
 
 
 func cooldown() -> float:
@@ -23,6 +24,7 @@ func use(_target: Vector2) -> void:
 	Audio.sfx("lamp_lit", 0.0, 1.3)
 	Audio.sfx("slam", -4.0, 1.4)
 	CameraRig.shake(0.6)
+	Fx.screen_flash(Color(1.0, 0.97, 0.85), SCREEN_FLASH, 0.4)
 	HitStop.trigger(p.get_tree(), 0.08)
 	var more: float = 1.0 + val("more_pct") / 100.0
 	for e: Enemy in on_screen():

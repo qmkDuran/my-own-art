@@ -7,8 +7,13 @@ extends CharacterBody2D
 
 signal died(e: Enemy)
 
-const HIT_FLASH: float = 0.035          ## about two frames
-const HIT_FLASH_AMOUNT: float = 0.45
+const HIT_FLASH: float = 0.035          ## two frames of full white
+const HOT_TIME: float = 0.14            ## then a hot glow fading out
+const HOT_AMOUNT: float = 0.45
+const WHITE := Color(1.0, 1.0, 1.0)
+const HOT := Color(1.0, 0.55, 0.2)
+const KNOCK_PX := Vector2(8.0, 16.0)    ## how far a hit shoves a body of normal mass, small hit to big
+const KNOCK_OPT_PX: float = 0.25        ## a skill's own "knockback" adds this many px per point
 const KNOCK_DECAY: float = 9.0
 const SEPARATION: float = 0.9
 const PERSONAL_SPACE: float = 1.3       # bodies keep this much more than touching apart, so a crowd never reads as one blob
@@ -47,6 +52,7 @@ var _exposed_t: float = 0.0
 var brain: EnemyBrain
 var sprite: Sprite2D
 var _flash_t: float = 0.0
+var _hot_t: float = 0.0
 var _knock: Vector2 = Vector2.ZERO
 var _avoid: NavigationAgent2D
 var _safe: Vector2 = Vector2.ZERO
@@ -171,11 +177,15 @@ func take_damage(dmg: float, crit: bool, dir: Vector2, opts: Dictionary) -> void
 	var share: float = dmg / maxf(max_life, 1.0)
 	life -= dmg
 	if not bool(opts.get("dot", false)):                   # burns and ground fires don't flash or stagger
-		_flash_t = HIT_FLASH * (1.0 + 2.0 * minf(share * 4.0, 1.0))
+		_flash_t = HIT_FLASH
+		_hot_t = HIT_FLASH + HOT_TIME
 		_stagger(share)
 	wake()
 	var mass: float = radius / 12.0 * (3.0 if rank == "boss" else (1.5 if rank != "normal" else 1.0))
-	_knock += dir.normalized() * float(opts.get("knockback", 30.0 if crit else 12.0)) * 6.0 * (0.6 + 2.0 * minf(share, 0.5)) / mass
+	if not bool(opts.get("dot", false)):
+		var shove: float = lerpf(KNOCK_PX.x, KNOCK_PX.y, minf(share * 3.0 + (0.4 if crit else 0.0), 1.0)) \
+			+ float(opts.get("knockback", 0.0)) * KNOCK_OPT_PX
+		_knock += dir.normalized() * shove * KNOCK_DECAY / sqrt(mass)   # the shove slides out over ~1/KNOCK_DECAY s
 	stun_t = maxf(stun_t, float(opts.get("stun", 0.0)) * (0.3 if rank == "boss" else 1.0))
 	if life <= 0.0:
 		_die()
@@ -227,7 +237,7 @@ func _die() -> void:
 	collision_layer = 0
 	remove_from_group("enemies")
 	Audio.sfx(_death_sound(), -4.0, randf_range(0.9, 1.1))
-	Audio.sfx("kill_thump", -8.0 if rank == "normal" else -3.0, randf_range(0.85, 1.0))
+	Audio.sfx("kill_thump", -3.0 if rank == "normal" else 0.0, randf_range(0.85, 1.0))         # the bass under every kill
 	CameraRig.shake(Combat.KILL_SHAKE * (1.0 if rank == "normal" else 2.0))
 	if mods.has("shard_burst"):
 		brain.shard_ring(int(GameData.enemies["mods"]["shard_burst"]["death_shards"]))
@@ -292,8 +302,12 @@ func _status(delta: float) -> void:
 	_exposed_t -= delta
 	if _exposed_t <= 0.0:
 		exposed_pct = 0.0
-	_flash_t = maxf(0.0, _flash_t - delta / maxf(Engine.time_scale, 0.01))   # real time: hit-stop must not stretch it
-	(sprite.material as ShaderMaterial).set_shader_parameter("flash", HIT_FLASH_AMOUNT if _flash_t > 0.0 else 0.0)
+	var real: float = delta / maxf(Engine.time_scale, 0.01)        # real time: hit-stop must not stretch it
+	_flash_t = maxf(0.0, _flash_t - real)
+	_hot_t = maxf(0.0, _hot_t - real)
+	var mat := sprite.material as ShaderMaterial
+	mat.set_shader_parameter("flash_color", WHITE if _flash_t > 0.0 else HOT)
+	mat.set_shader_parameter("flash", 1.0 if _flash_t > 0.0 else HOT_AMOUNT * _hot_t / HOT_TIME)
 	_shroud_t -= delta
 	if _shroud_t <= 0.0:
 		_shroud_t = SHROUD_CHECK

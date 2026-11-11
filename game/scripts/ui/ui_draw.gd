@@ -97,6 +97,14 @@ static func tooltip(ci: CanvasItem, at: Vector2, rows: Array, title_col: Color =
 	var r := Rect2(at + Vector2(14, 10), sz)
 	if r.end.x > vs.x - 4.0:
 		r.position.x = at.x - sz.x - 10.0
+	return tooltip_at(ci, r.position, rows, title_col)
+
+
+## A tooltip with its top-left corner at `pos` (kept on screen).
+static func tooltip_at(ci: CanvasItem, pos: Vector2, rows: Array, title_col: Color = TEXT) -> Rect2:
+	var vs: Vector2 = ci.get_viewport_rect().size
+	var sz: Vector2 = tooltip_size(ci, rows)
+	var r := Rect2(pos, sz)
 	r.position.x = clampf(r.position.x, 4.0, vs.x - sz.x - 4.0)
 	r.position.y = clampf(r.position.y, 4.0, vs.y - sz.y - 4.0)
 	box(ci, r, PANEL_DEEP)

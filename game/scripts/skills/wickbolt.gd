@@ -14,7 +14,7 @@ const TRAIL_RADIUS: float = 16.0
 const TRAIL_TIME: float = 2.0
 const AIM_HEIGHT: float = 14.0         ## bolts fly at a body's middle, not its feet
 const DROP_TIME: float = 0.1
-const BOLT_SCALE: float = 1.5
+const BOLT_SCALE: float = 3.0
 const TEX: String = "res://art/fx/bolt.png"
 
 var _count: int = 0
@@ -78,6 +78,8 @@ func _bolt(from: Vector2, dir: Vector2, mult: float, third: bool, can_fork: bool
 func _drop_from_lantern(pr: Projectile, lift: float) -> void:
 	for c: Node in pr.get_children():
 		var n := c as Node2D
+		if n is Line2D:                                          # the streak lives in world space
+			continue
 		n.position = Vector2(0, lift).rotated(-pr.rotation)          # "up" on screen, in the shot's turned frame
 		pr.create_tween().tween_property(n, "position", Vector2.ZERO, DROP_TIME)
 

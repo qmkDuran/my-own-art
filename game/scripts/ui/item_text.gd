@@ -20,6 +20,24 @@ static func effect_rows(p: Player, it: Dictionary) -> Array:
 	return [["If you wear it:", UiDraw.DIM]] + then
 
 
+## Implicit and affix lines with the same stat merged into one line (summed; the highest tier shown), so no stat is
+## ever listed twice.
+static func _stat_rows(it: Dictionary) -> Array:
+	var total: Dictionary = {}                     # stat -> [value, highest tier (0: implicit only)]
+	for k: String in it.get("implicit", {}):
+		total[k] = [float(it["implicit"][k]), 0]
+	for a: Dictionary in it.get("affixes", []):
+		var k: String = String(a["stat"])
+		var had: Array = total.get(k, [0.0, 0])
+		total[k] = [float(had[0]) + float(a["value"]), maxi(int(had[1]), int(a["tier"]))]
+	var out: Array = []
+	for k: String in total:
+		var line: String = GameData.stat_line(k, float(total[k][0]))
+		var tier: int = int(total[k][1])
+		out.append([line, IMPLICIT] if tier == 0 else ["%s   T%d" % [line, tier], AFFIX])
+	return out
+
+
 static func rows(it: Dictionary, worn: Dictionary = {}, level: int = 99) -> Array:
 	var out: Array = [String(it["name"])]
 	var rarity: String = String(GameData.items["rarity_names"][it["rarity"]])
@@ -28,10 +46,7 @@ static func rows(it: Dictionary, worn: Dictionary = {}, level: int = 99) -> Arra
 	out.append(["Item level %d   Requires level %d" % [int(it["ilvl"]), int(it.get("req", 1))], req_col])
 	if it.has("dmg"):
 		out.append(["Staff damage %d-%d" % [int(it["dmg"][0]), int(it["dmg"][1])], UiDraw.TEXT])
-	for k: String in it.get("implicit", {}):
-		out.append([GameData.stat_line(k, float(it["implicit"][k])), IMPLICIT])
-	for a: Dictionary in it.get("affixes", []):
-		out.append(["%s   T%d" % [GameData.stat_line(String(a["stat"]), float(a["value"])), int(a["tier"])], AFFIX])
+	out.append_array(_stat_rows(it))
 	for k: String in it.get("fixed", {}):
 		out.append([GameData.stat_line(k, float(it["fixed"][k])), UNIQUE if it["rarity"] == "unique" else SET])
 	if String(it.get("special_text", "")) != "":

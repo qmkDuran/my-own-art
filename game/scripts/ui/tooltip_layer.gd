@@ -11,6 +11,7 @@ var _title_col: Color = UiDraw.TEXT
 var _fresh: bool = false
 var _worn: Array = []                 ## the item you wear, shown beside the hovered one
 var _worn_col: Color = UiDraw.TEXT
+var _avoid: Rect2 = Rect2()            ## a panel the pair must not cover (the open inventory)
 
 
 func _ready() -> void:
@@ -36,15 +37,24 @@ func _process(_delta: float) -> void:
 func _draw() -> void:
 	if _rows.is_empty():
 		return
-	var r: Rect2 = UiDraw.tooltip(self, _at, _rows, _title_col)
-	if not _worn.is_empty():
-		var w: Vector2 = UiDraw.tooltip_size(self, _worn)
-		var x: float = r.position.x - w.x - GAP if r.position.x - w.x - GAP > 4.0 else r.end.x + GAP
-		UiDraw.tooltip(self, Vector2(x - 14.0, r.position.y - 10.0), _worn, _worn_col)
+	if _worn.is_empty():
+		UiDraw.tooltip(self, _at, _rows, _title_col)
+		return
+	var a: Vector2 = UiDraw.tooltip_size(self, _rows)
+	var w: Vector2 = UiDraw.tooltip_size(self, _worn)
+	var width: float = a.x + GAP + w.x
+	var x: float = _avoid.position.x - GAP - width                  # beside the panel, never over it
+	if x < 4.0:
+		x = _avoid.end.x + GAP
+	var y: float = _at.y - minf(a.y, w.y) * 0.3
+	UiDraw.tooltip_at(self, Vector2(x, y), _worn, _worn_col)       # worn on the far side, the new one next to the panel
+	UiDraw.tooltip_at(self, Vector2(x + w.x + GAP, y), _rows, _title_col)
 
 
-## A new item and the one it would replace, side by side (the worn one on the far side, labelled).
-func show_pair(rows: Array, worn: Array, at: Vector2, title_col: Color, worn_col: Color) -> void:
+## A new item and the one it would replace, side by side (the worn one on the far side, labelled), placed beside
+## `avoid` (the inventory panel) so they never cover it.
+func show_pair(rows: Array, worn: Array, at: Vector2, title_col: Color, worn_col: Color, avoid: Rect2) -> void:
 	show_rows(rows, at, title_col)
+	_avoid = avoid
 	_worn = [["Equipped", UiDraw.DIM]] + worn
 	_worn_col = worn_col

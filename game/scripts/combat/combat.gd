@@ -42,9 +42,10 @@ static func hit_enemy(e: Enemy, base: float, opts: Dictionary = {}) -> void:
 		return
 	var share: float = dmg / maxf(e.max_life, 1.0)
 	var col: Color = Pal.c("gold") if String(opts.get("kind", "attack")) == "attack" else Pal.c("amber")
-	Impact.hit(e.global_position + Vector2(0, -e.body_height() * 0.5), dir, share * (1.5 if bool(opts.get("heavy", false)) else 1.0), col, crit)
-	Audio.sfx("impact", -7.0 + 5.0 * minf(share * 3.0, 1.0), randf_range(0.9, 1.1))
-	Audio.sfx("hurt_" + _family(e), -12.0, randf_range(0.9, 1.15))
+	var k: float = share * (1.5 if bool(opts.get("heavy", false)) else 1.0)
+	Impact.hit(e.global_position + Vector2(0, -e.body_height() * 0.5), dir, k, col, crit, e.dead)
+	Audio.sfx("impact", -4.0 + 4.0 * minf(share * 3.0, 1.0), randf_range(0.9, 1.1))
+	Audio.sfx("hurt_" + _family(e), -9.0, randf_range(0.9, 1.15))
 	if randf() * 100.0 < float(opts.get("burn_chance", 0.0)) + st.v("burn_chance") + kin.burn_chance():
 		e.ignite(dmg * 0.6)
 

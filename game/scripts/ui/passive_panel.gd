@@ -28,12 +28,22 @@ func tab_rect(i: int) -> Rect2:
 
 
 func node_rect(n: Dictionary) -> Rect2:
-	return Rect2(Vector2(52.0, GRID_Y) + Vector2(float(n["pos"][0]), float(n["pos"][1])) * STEP, NODE)
+	return Rect2(Vector2(52.0, _grid_y()) + Vector2(float(n["pos"][0]), float(n["pos"][1])) * STEP, NODE)
+
+
+## The nodes' top row: centred in the framed ground (which reaches the panel's foot unless a mastery footer is there).
+func _grid_y() -> float:
+	return GRID_Y + (tree_rect().size.y - _grid_h()) / 2.0
+
+
+func _grid_h() -> float:
+	return (ROWS - 1) * STEP.y + NODE.y + 14.0
 
 
 ## The framed ground the nodes stand on.
 func tree_rect() -> Rect2:
-	return Rect2(6.0, GRID_Y - 10.0, size.x - 12.0, (ROWS - 1) * STEP.y + NODE.y + 14.0)
+	var mastery: bool = GameData.passives["trees"][tab].get("mastery", false)
+	return Rect2(6.0, GRID_Y - 10.0, size.x - 12.0, _grid_h() if mastery else size.y - GRID_Y - 2.0)
 
 
 func choose_rect() -> Rect2:
@@ -58,7 +68,7 @@ func _content() -> void:
 	for row: int in ROWS:
 		var req: int = _row_req(tree, row)
 		if req >= 0:
-			UiDraw.text(self, Vector2(10, GRID_Y + row * STEP.y + 22.0), "%d pts" % req, UiDraw.DIM, UiDraw.SMALL)
+			UiDraw.text(self, Vector2(10, _grid_y() + row * STEP.y + 22.0), "%d pts" % req, UiDraw.DIM, UiDraw.SMALL)
 	for n: Dictionary in tree["nodes"]:
 		_node(n, t)
 	_art.draw_sparks(self, get_process_delta_time())
