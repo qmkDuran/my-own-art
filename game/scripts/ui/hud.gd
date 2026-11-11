@@ -20,7 +20,6 @@ const KEY_LABELS: Array[String] = ["LMB", "RMB", "Q", "W", "E", "R", "SPC", "1"]
 const TRACKER := Rect2(8, 8, 214, 56)
 const BAR_W: float = 300.0
 const BAR_H: float = 12.0
-const ORB_SEGMENTS: int = 40
 
 var g: Game
 var messages: HudMessages
@@ -28,6 +27,8 @@ var boss: Enemy
 var tracker_hidden: bool = false
 var _skills_tex: Texture2D
 var _t: float = 0.0
+var _life := HudOrb.new()
+var _oil := HudOrb.new()
 
 
 func setup(game: Game) -> void:
@@ -35,6 +36,10 @@ func setup(game: Game) -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_skills_tex = PropSprite.tex("res://art/ui/skills.png")
+	_life.setup(Pal.c("ember_dk"), Pal.c("blood"), Pal.c("rose"))
+	_oil.setup(Pal.c("rust"), Pal.c("ember"), Pal.c("gold"))
+	add_child(_life)
+	add_child(_oil)
 	messages = HudMessages.new()
 	add_child(messages)
 	messages.setup(self)
@@ -87,15 +92,20 @@ func slot_rect(i: int) -> Rect2:
 
 func _process(delta: float) -> void:
 	_t += delta
+	var L: Dictionary = layout(get_viewport_rect().size)
+	var p: Player = g.player
+	_life.place(L["life"])
+	_oil.place(L["oil"])
+	_life.label = "%d/%d" % [ceili(p.life), roundi(p.stats.max_life())]
+	_oil.label = "%d/%d" % [floori(p.oil), roundi(p.stats.max_oil())]
+	_life.set_value(p.life / p.stats.max_life(), delta)
+	_oil.set_value(p.oil / p.stats.max_oil(), delta)
 	queue_redraw()
 	_hover_tips()
 
 
 func _draw() -> void:
 	var L: Dictionary = layout(get_viewport_rect().size)
-	var p: Player = g.player
-	_orb(L["life"], p.life / p.stats.max_life(), Pal.c("blood"), Pal.c("rose"), "%d/%d" % [ceili(p.life), roundi(p.stats.max_life())])
-	_orb(L["oil"], p.oil / p.stats.max_oil(), Pal.c("ember"), Pal.c("amber"), "%d/%d" % [floori(p.oil), roundi(p.stats.max_oil())])
 	_gauge(L["gauge"], L["gauge_label"])
 	for i: int in SLOT_KEYS.size():
 		_slot(L["slots"][i], i)
@@ -109,41 +119,6 @@ func _draw() -> void:
 
 
 # ------------------------------------------------------------------ pieces
-func _orb(r: Rect2, frac: float, deep: Color, bright: Color, label: String) -> void:
-	var c: Vector2 = r.get_center()
-	var rad: float = r.size.x * 0.5
-	draw_circle(c, rad + 2.0, UiDraw.INK)
-	draw_circle(c, rad, Color(0.05, 0.04, 0.07))
-	_orb_fill(c, rad - 1.0, clampf(frac, 0.0, 1.0), deep)
-	draw_circle(c + Vector2(0, rad * 0.25), rad * 0.45 * clampf(frac * 1.4, 0.0, 1.0), Color(bright, 0.45))
-	draw_arc(c, rad - 3.0, PI * 1.15, PI * 1.55, 10, Color(1, 1, 1, 0.35), 2.0)
-	draw_arc(c, rad, 0.0, TAU, 48, UiDraw.FRAME, 2.0)
-	draw_arc(c, rad + 1.0, PI * 1.2, PI * 1.8, 16, UiDraw.FRAME_LIT, 1.0)
-	UiDraw.text(self, Vector2(r.position.x, c.y + 4.0), label, UiDraw.TEXT, UiDraw.SMALL, HORIZONTAL_ALIGNMENT_CENTER, r.size.x)
-
-
-## The liquid: the part of the circle below a gently waving surface line.
-func _orb_fill(c: Vector2, rad: float, frac: float, col: Color) -> void:
-	if frac <= 0.01:
-		return
-	if frac >= 0.99:
-		draw_circle(c, rad, col)
-		return
-	var level: float = c.y + rad - 2.0 * rad * frac
-	var half: float = sqrt(maxf(0.0, rad * rad - pow(level - c.y, 2.0)))
-	var a0: float = atan2(level - c.y, half)
-	var a1: float = PI - a0
-	var pts := PackedVector2Array()
-	for i: int in ORB_SEGMENTS + 1:
-		var a: float = lerpf(a0, a1, float(i) / ORB_SEGMENTS)
-		pts.append(c + Vector2(cos(a), sin(a)) * rad)
-	for i: int in range(ORB_SEGMENTS - 1, 0, -1):
-		var u: float = float(i) / ORB_SEGMENTS
-		var x: float = lerpf(c.x + half, c.x - half, u)
-		pts.append(Vector2(x, level + sin(_t * 3.0 + x * 0.2) * sin(u * PI) * 0.8 * minf(1.0, half / 8.0)))
-	draw_colored_polygon(pts, col)
-
-
 func _gauge(r: Rect2, label_r: Rect2) -> void:
 	var lt: LanternLight = g.player.light
 	var L: Dictionary = GameData.light

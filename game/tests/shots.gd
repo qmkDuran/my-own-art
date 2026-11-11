@@ -3,7 +3,7 @@ extends Node
 ## set things up, wait for effects to land, save out/<name>_<w>x<h>.png. --only=name runs one shot.
 
 const SETTLE: float = 0.9
-const PASS2: Array[String] = ["school", "wren", "hollins", "town", "mayor", "falls", "marsh", "bellwright", "river", "forge", "tallow", "road", "hollow", "matron", "quests", "filter", "stash", "eclipse", "noon", "keystones",
+const PASS2: Array[String] = ["orbs", "school", "wren", "hollins", "town", "mayor", "falls", "marsh", "bellwright", "river", "forge", "tallow", "road", "hollow", "matron", "quests", "filter", "stash", "eclipse", "noon", "keystones",
 	"eclipse_tree"]
 
 var g: Game
@@ -36,7 +36,7 @@ func _run() -> void:
 		return
 	g = Game.current
 	var shots: Array[String] = ["light", "dark", "skills", "passives", "inventory", "character", "boss", "overview",
-		"school", "wren", "hollins", "town", "mayor", "falls", "marsh", "bellwright", "river", "forge", "tallow", "road", "hollow", "matron", "quests", "filter", "stash", "eclipse", "noon", "keystones", "eclipse_tree"]
+		"orbs", "school", "wren", "hollins", "town", "mayor", "falls", "marsh", "bellwright", "river", "forge", "tallow", "road", "hollow", "matron", "quests", "filter", "stash", "eclipse", "noon", "keystones", "eclipse_tree"]
 	for s: String in shots:
 		if (_only() == "" and not PASS2.has(s)) or _only() == s:
 			await call("_shot_" + s)

@@ -176,3 +176,14 @@ func _reenter() -> void:
 		await get_tree().process_frame
 	g = Game.current
 	await _wait(1.0)
+
+
+## The HUD orbs just after a hit: the liquid easing down, the ghost of the loss above it, Oil part spent.
+func _shot_orbs() -> void:
+	var h := _bot()
+	h.clear_near(100000.0)
+	g.player.oil = g.player.stats.max_oil() * 0.55
+	await _wait(1.0)
+	g.player.take_hit(g.player.stats.max_life() * 0.3, g.player.global_position + Vector2(40, 0), 0.0)
+	await _wait(0.25)
+	await _save("hud_orbs")
