@@ -1,0 +1,52 @@
+{
+ "_doc": "Rules of the trainer prototype (feel numbers live here, not in code). trainer: the person you play. items: keys 4 and 5. control: hybrid control (hold Shift). partner: how your creature follows and picks fights. wild: how wild creatures behave and scale. befriend: hold F near a weakened wild creature. bond: meter 0-100 per creature. camp: the rest point. materials and upgrades: the grind loop. spawn: wild packs. guide: the tracker's steps in order.",
+ "zone": "tamer_glade",
+ "team_max": 3,
+ "starter_level": 3,
+ "trainer": {"life": 100, "speed": 165, "radius": 7, "dodge": {"distance": 120, "time": 0.26, "cooldown": 0.8, "iframes": 0.34},
+  "hurt_iframes": 0.5, "regen_out_of_fight": 4.0, "respawn_delay": 2.0},
+ "items": {
+  "berry": {"name": "Honeyberry", "key": "4", "count": 4, "heal": 0.5, "text": "Heals your creature by half"},
+  "salts": {"name": "Smelling Salts", "key": "5", "count": 2, "revive": 0.4, "text": "Wakes a knocked-out creature"}
+ },
+ "control": {"camera_ease": 7.0, "speed_mult": 1.15, "dodge": {"distance": 100, "time": 0.2, "cooldown": 0.6, "iframes": 0.26},
+  "outline": "gold", "leash": 420},
+ "partner": {"follow": 44, "follow_side": 26, "catch_up": 1.35, "assist_range": 260, "guard_range": 150, "leash": 340,
+  "basic_range_slack": 0.85, "teleport_after": 700, "swap_entry": "entry"},
+ "wild": {"wake_range": 210, "chase_leash": 520, "wander": 60, "think": 0.25, "basic_range_slack": 0.85, "move_chance": 0.35,
+  "life_mult": 0.75, "power_mult": 0.55, "level_life": 0.12, "level_power": 0.08, "trainer_aggro": 0.35, "regen": 6.0},
+ "level": {"life": 0.08, "power": 0.06},
+ "entry": {"damage": 12, "radius": 70, "stun": 0.4},
+ "befriend": {"hold": 1.0, "range": 76, "join_text": "%s joined your team!", "full_text": "Your team is full (3)."},
+ "bond": {"max": 100, "unlock": 60, "per_hit": 0.6, "per_win": 7, "per_befriend": 10, "feed": 15, "pet": 8, "camp_rest": 4},
+ "knockout": {"recover": 20.0, "trainer_vulnerable_mult": 1.0},
+ "camp": {"radius": 130, "sit_radius": 46},
+ "materials": {
+  "ember_tuft": {"name": "Ember Tuft", "color": "flame"}, "glass_scale": {"name": "Glass Scale", "color": "glint"},
+  "bloom_leaf": {"name": "Bloom Leaf", "color": "leaf_lt"}, "wind_tuft": {"name": "Wind Tuft", "color": "bone"},
+  "night_whisker": {"name": "Night Whisker", "color": "violet_lt"}, "rot_fang": {"name": "Rot Fang", "color": "bile"}
+ },
+ "drops": {"count": [1, 2], "chance": 0.9},
+ "upgrades": {
+  "life": {"name": "Life", "per_level": 0.12, "material": "rot_fang", "cost": [2, 3, 4, 5, 6]},
+  "power": {"name": "Power", "per_level": 0.1, "material": "wind_tuft", "cost": [2, 3, 4, 5, 6]},
+  "speed": {"name": "Speed", "per_level": 0.06, "material": "night_whisker", "cost": [2, 3, 4, 5, 6]}
+ },
+ "spawn": {"packs": 18, "spacing": 10, "safe_radius": 14, "camp_clear": 9, "size": [2, 3],
+  "table": [{"from": 0.0, "kinds": {"maned_wolf": 0.6, "aye_aye": 0.4}, "level": 1},
+   {"from": 0.35, "kinds": {"maned_wolf": 0.35, "aye_aye": 0.3, "tas_devil": 0.35}, "level": 2},
+   {"from": 0.65, "kinds": {"maned_wolf": 0.3, "aye_aye": 0.3, "tas_devil": 0.4}, "level": 4}],
+  "guarantee_shiny": "maned_wolf"},
+ "meet": {"spots": [[-90, -10], [0, -46], [90, -10]], "react_range": 90, "caption": "Three young creatures are waiting in the meadow. Walk up to each, then click the one you want."},
+ "guide": [
+  {"id": "pick", "text": "Meet the three creatures and click one to choose it"},
+  {"id": "fight", "text": "Click a wild creature: your partner fights it. Use Q W E R at the cursor"},
+  {"id": "control", "text": "Hold Shift to steer your partner yourself; Space dodges"},
+  {"id": "befriend", "text": "Weaken a wild creature, then hold F near it to befriend it"},
+  {"id": "swap", "text": "Press 1, 2 or 3 to swap creatures (the new one strikes as it enters)"},
+  {"id": "camp", "text": "Rest at the camp (the fire, up the path): heal, pet and feed"},
+  {"id": "upgrade", "text": "At camp, spend materials to raise a stat"},
+  {"id": "bond", "text": "Fight together to fill the bond meter and unlock a bond move (T)"},
+  {"id": "free", "text": "Explore: befriend all three wild kinds and find the shiny maned wolf"}
+ ]
+}

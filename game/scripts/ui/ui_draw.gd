@@ -23,6 +23,7 @@ const LOCKED := Color("55507a")
 
 static var _small: Font
 static var _title: Font
+static var _body: Font
 
 
 static func font_for(ci: CanvasItem, size: int) -> Font:
@@ -34,7 +35,11 @@ static func font_for(ci: CanvasItem, size: int) -> Font:
 		if _title == null:
 			_title = load("res://fonts/title.tres") as Font
 		return _title
-	return ci.get_theme_default_font()
+	if ci is Control:
+		return (ci as Control).get_theme_default_font()
+	if _body == null:                         # world-space drawing (tags over creatures) has no theme
+		_body = load("res://fonts/body.tres") as Font
+	return _body
 
 
 static func text(ci: CanvasItem, pos: Vector2, s: String, col: Color = TEXT, size: int = BODY,

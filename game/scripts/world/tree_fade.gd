@@ -2,7 +2,8 @@ class_name TreeFade
 extends Node
 ## In a 3/4 view the trees south of a path stand in front of whoever walks it. Trees whose canopy covers the
 ## Lamplighter, a nearby fight or the story caption fade to see-through, then back. Trees are bucketed by area so only a few are
-## checked each time.
+## checked each time. Whoever is watched joins the group "fade_focus" (the Lamplighter, the trainer and partner); foes
+## near the first of them count too.
 
 const BUCKET: float = 128.0
 const EVERY: float = 0.08
@@ -14,6 +15,8 @@ const ENEMY_RANGE: float = 260.0
 const TALL: float = 120.0
 const BODY_POINTS: Array[float] = [3.0, 14.0, 28.0, 44.0]
 const BODY_HALF_W: float = 7.0
+const FOCUS: String = "fade_focus"
+const FOES: Array[String] = ["enemies", "wild"]
 
 var _buckets: Dictionary = {}          ## Vector2i -> Array[Sprite2D]
 var _faded: Dictionary = {}            ## Sprite2D -> target alpha
@@ -29,7 +32,7 @@ func add(tree: Sprite2D) -> void:
 
 func _process(delta: float) -> void:
 	_t -= delta
-	if _t <= 0.0 and Game.current != null:
+	if _t <= 0.0 and get_tree().get_first_node_in_group(FOCUS) != null:
 		_t = EVERY
 		_mark()
 	for s: Sprite2D in _faded.keys():
@@ -39,11 +42,13 @@ func _process(delta: float) -> void:
 
 
 func _mark() -> void:
-	var bodies: Array[Vector2] = [Game.current.player.global_position]
-	for n: Node in get_tree().get_nodes_in_group("enemies"):
-		var e := n as Enemy
-		if e.global_position.distance_to(bodies[0]) < ENEMY_RANGE:
-			bodies.append(e.global_position)
+	var bodies: Array[Vector2] = []
+	for n: Node in get_tree().get_nodes_in_group(FOCUS):
+		bodies.append((n as Node2D).global_position)
+	for group: String in FOES:
+		for n: Node in get_tree().get_nodes_in_group(group):
+			if (n as Node2D).global_position.distance_to(bodies[0]) < ENEMY_RANGE:
+				bodies.append((n as Node2D).global_position)
 	for s: Sprite2D in _faded.keys():
 		_faded[s] = 1.0
 	for b: Vector2 in bodies:
@@ -55,6 +60,8 @@ func _mark() -> void:
 
 ## Trees standing behind the story caption fade so the words and the ground read clearly.
 func _behind_text() -> void:
+	if Game.current == null:
+		return
 	var r: Rect2 = Game.current.hud.messages.caption_rect()
 	if r.size == Vector2.ZERO:
 		return

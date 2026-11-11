@@ -157,6 +157,17 @@
    "links": [
     "tuesday"
    ]
+  },
+  "tamer_glade": {
+   "name": "The Glass Meadow",
+   "biome": "tamer_glade",
+   "seed": 4242,
+   "level": [
+    1,
+    6
+   ],
+   "music": "explore",
+   "links": []
   }
  }
 }

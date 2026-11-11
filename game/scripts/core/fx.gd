@@ -11,6 +11,8 @@ const STANDING_MASK: int = 64     ## everything standing up (props, trees, peopl
 
 const RING_SQUASH: float = 0.6      ## shockwaves lie on the ground, seen at an angle
 
+static var layer: Node2D            ## the effects layer of the scene being played (Game or the tamer prototype)
+static var screen: Node             ## the UI root full-screen flashes go into (set by the same scene)
 static var _glow_mat: CanvasItemMaterial
 static var _add_mat: CanvasItemMaterial
 static var _unshaded_mat: CanvasItemMaterial
@@ -143,16 +145,15 @@ static func core(parent: Node, at: Vector2, radius: float, time: float) -> void:
 
 ## A full-screen flash for the biggest spells (Flare, Noon): the whole view goes bright for an instant.
 static func screen_flash(col: Color, alpha: float, time: float) -> void:
-	var g: Game = Game.current
-	if g == null or g.ui == null:
+	if not is_instance_valid(screen):
 		return
 	var r := ColorRect.new()
 	r.color = Color(col, alpha)
 	r.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	r.set_anchors_preset(Control.PRESET_FULL_RECT)
 	r.material = glow_material()
-	g.ui.add_child(r)
-	g.ui.move_child(r, 0)
+	screen.add_child(r)
+	screen.move_child(r, 0)
 	var tw := r.create_tween()
 	tw.tween_property(r, "color:a", 0.0, time).set_ease(Tween.EASE_OUT)
 	tw.tween_callback(r.queue_free)

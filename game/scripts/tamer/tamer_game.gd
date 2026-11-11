@@ -1,0 +1,146 @@
+class_name TamerGame
+extends Node2D
+## The trainer prototype: one generated meadow (Lanternfall's zone generator and view), the trainer, your team on
+## the field, wild packs, the camp, and the opening meeting with the three starters. This node wires the pieces and
+## routes a few events between them (a win grows bond, a fall sends you to camp). `TamerGame.current` is the one
+## way the prototype's systems reach the field (the same documented service-locator pattern as Game.current).
+
+static var current: TamerGame
+
+const MOTES: int = 50
+const MOTES_EXTENTS := Vector2(520, 300)
+const VIEW_RADIUS: float = 560.0
+const CAMP_STAND := Vector2(0, 40)
+const ROOF_ROOM: float = 60.0
+
+var layout: ZoneLayout
+var nav: Nav
+var world: Node2D
+var fx_layer: Node2D
+var trainer: Trainer
+var camera: CameraRig
+var team: Team
+var guide := TamerGuide.new()
+var field: TeamField
+var control: HybridControl
+var hud: TamerHud
+var input: TamerInput
+var spawner: TamerSpawner
+var camp: Camp
+var befriend: Befriending
+var meeting: StarterMeeting
+
+
+func _ready() -> void:
+	current = self
+	TamerData.ensure()
+	TamerKeys.ensure()
+	GameData.use_zone(String(TamerData.rule("zone")))
+	FloatText.enabled = true
+	layout = ZoneGen.make(GameData.biome, int(GameData.zone(GameData.zone_id)["seed"]))
+	nav = Nav.new(layout)
+	Overlay.create(self)
+	_build_world()
+	team = Team.new()
+	_build_systems()
+	_wire()
+	meeting = StarterMeeting.new()
+	add_child(meeting)
+	meeting.setup(self)
+	meeting.picked.connect(func(_r: CreatureRecord) -> void: guide.done("pick"))
+
+
+func _exit_tree() -> void:
+	if current == self:
+		current = null
+
+
+func _build_world() -> void:
+	var view := ZoneView.new()
+	add_child(view)
+	world = Node2D.new()
+	world.y_sort_enabled = true
+	add_child(world)
+	view.build(layout, world)
+	fx_layer = Node2D.new()
+	fx_layer.z_index = Fx.FX_Z
+	add_child(fx_layer)
+	Fx.layer = fx_layer
+	var ambient := CanvasModulate.new()
+	ambient.color = Atmosphere.ambient(GameData.biome)
+	add_child(ambient)
+	trainer = Trainer.new()
+	trainer.position = layout.start + Vector2(0, 60)
+	world.add_child(trainer)
+	camp = Camp.new()
+	world.add_child(camp)
+	camp.setup(self, camp_point())
+
+
+func _build_systems() -> void:
+	field = TeamField.new()
+	add_child(field)
+	field.setup(self)
+	hud = TamerHud.new()
+	add_child(hud)
+	hud.setup(self)
+	Fx.screen = hud
+	control = HybridControl.new()
+	add_child(control)
+	control.setup(self)
+	camera = CameraRig.new()
+	add_child(camera)
+	camera.setup(control.focus, layout.size_px(), -ROOF_ROOM)
+	Fx.motes(camera, MOTES_EXTENTS, MOTES, Pal.c("glint", 0.8))
+	spawner = TamerSpawner.new()
+	add_child(spawner)
+	spawner.setup(self)
+	spawner.spawn_all()
+	befriend = Befriending.new()
+	fx_layer.add_child(befriend)
+	befriend.setup(self)
+	input = TamerInput.new()
+	add_child(input)
+	input.setup(self)
+
+
+func _wire() -> void:
+	spawner.defeated.connect(_on_defeated)
+	befriend.befriended.connect(func(_r: CreatureRecord) -> void: guide.done("befriend"))
+	camp.rested.connect(func() -> void:
+		guide.done("camp")
+		if not team.members.is_empty():
+			hud.camp_panel.open())
+	control.toggled.connect(func(on: bool) -> void:
+		if on:
+			guide.done("control"))
+	trainer.fell.connect(_on_fell)
+
+
+## A wild creature fainted: your creature out grows closer, and the fight step is done.
+func _on_defeated(_c: Creature) -> void:
+	guide.done("fight")
+	if field.partner != null:
+		field.partner.rec.add_bond(float(TamerData.rule("bond.per_win")))
+
+
+func _on_fell() -> void:
+	hud.notice("You fell! You wake at camp.")
+	control.release()
+	get_tree().create_timer(float(TamerData.rule("trainer.respawn_delay"))).timeout.connect(func() -> void:
+		trainer.rise_at(layout.free_spot_near(camp_point() + CAMP_STAND, trainer.hit_radius()))
+		camera.reset_smoothing())
+
+
+func camp_point() -> Vector2:
+	var fires: Array[Dictionary] = layout.props_of("campfire")
+	return fires[0]["pos"] if not fires.is_empty() else layout.start
+
+
+func view_radius() -> float:
+	return VIEW_RADIUS
+
+
+func partner() -> Creature:
+	return field.partner
+

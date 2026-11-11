@@ -1,0 +1,33 @@
+{
+ "_doc": "Creatures of the prototype. stats: life, power (damage scale), speed (px/s), radius (body). basic: the auto-attack the partner uses on its own; kit: the four moves on Q W E R; bond_move: unlocked by bond (key T). befriend_at: share of life at or below which the trainer can win it over. material: what it drops. shiny_chance: per spawn (the vision's 1 in 200; the maned wolf is high in the prototype so it can be seen). meet: the starter meeting (its reaction and line). Elements and roles come from VISION.md.",
+ "species": {
+  "honey_badger": {"name": "Honey Badger", "element": "ember", "role": "Brave fighter", "nature": "brave",
+   "stats": {"life": 130, "power": 1.15, "speed": 150, "radius": 11}, "anim_fps": 8,
+   "basic": "badger_bite", "kit": ["claw_rush", "ember_pounce", "cinder_roar", "fury_spin"], "bond_move": "honey_rage",
+   "befriend_at": 0.4, "material": "ember_tuft", "shiny_chance": 0.005,
+   "meet": {"react": "puff", "line": "The honey badger stamps and puffs up at you. It is not afraid of anything."}},
+  "cuttlefish": {"name": "Cuttlefish", "element": "glass", "role": "Quick trickster", "nature": "playful",
+   "stats": {"life": 95, "power": 1.0, "speed": 175, "radius": 10}, "anim_fps": 7, "hover": 6,
+   "basic": "glint_shot", "kit": ["prism_shot", "shard_fan", "mirror_blink", "dazzle"], "bond_move": "kaleidoscope",
+   "befriend_at": 0.4, "material": "glass_scale", "shiny_chance": 0.005,
+   "meet": {"react": "flicker", "line": "The cuttlefish ripples through every colour, then winks at you."}},
+  "pangolin": {"name": "Pangolin", "element": "bloom", "role": "Sturdy protector", "nature": "shy",
+   "stats": {"life": 170, "power": 0.9, "speed": 135, "radius": 12}, "anim_fps": 6,
+   "basic": "pangolin_swipe", "kit": ["tail_swipe", "roll_charge", "thorn_guard", "seed_burst"], "bond_move": "bloom_wall",
+   "befriend_at": 0.4, "material": "bloom_leaf", "shiny_chance": 0.005,
+   "meet": {"react": "curl", "line": "The pangolin curls into a ball, then peeks out to see if you are still there."}},
+  "maned_wolf": {"name": "Maned Wolf", "element": "gale", "role": "Swift striker", "nature": "proud",
+   "stats": {"life": 110, "power": 1.05, "speed": 170, "radius": 11}, "anim_fps": 9,
+   "basic": "wolf_nip", "kit": ["gust_bite", "wind_dash", "howl", "gale_shot"], "bond_move": "tempest",
+   "befriend_at": 0.45, "material": "wind_tuft", "shiny_chance": 0.12},
+  "aye_aye": {"name": "Aye-aye", "element": "echo", "role": "Eerie caster", "nature": "shy",
+   "stats": {"life": 90, "power": 1.0, "speed": 140, "radius": 10}, "anim_fps": 7,
+   "basic": "tap_shot", "kit": ["echo_tap", "echo_pulse", "ghost_finger", "screech"], "bond_move": "resonance",
+   "befriend_at": 0.45, "material": "night_whisker", "shiny_chance": 0.005},
+  "tas_devil": {"name": "Tasmanian Devil", "element": "rot", "role": "Ferocious brawler", "nature": "proud",
+   "stats": {"life": 140, "power": 1.1, "speed": 145, "radius": 11}, "anim_fps": 8,
+   "basic": "devil_crunch", "kit": ["crunch", "rot_spit", "frenzy", "stench"], "bond_move": "rot_storm",
+   "befriend_at": 0.35, "material": "rot_fang", "shiny_chance": 0.005}
+ },
+ "starters": ["honey_badger", "cuttlefish", "pangolin"]
+}

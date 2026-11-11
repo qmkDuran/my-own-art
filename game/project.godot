@@ -3,9 +3,9 @@ config_version=5
 
 [application]
 
-config/name="LANTERNFALL"
-config/description="An action RPG of light and the Dusk. You are the Ninth Lamplighter."
-run/main_scene="res://scenes/title.tscn"
+config/name="Tamer prototype"
+config/description="A creature-trainer action RPG feel prototype, built on the Lanternfall foundation."
+run/main_scene="res://scenes/tamer.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 
 [autoload]

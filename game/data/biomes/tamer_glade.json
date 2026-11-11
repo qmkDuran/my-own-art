@@ -1,0 +1,272 @@
+{
+ "_doc": "Biome rules for the trainer prototype's meadow: a Glasswood clearing country without the city wall. The starters wait in the start clearing; the camp clearing is the rest point. No packs from the generator (count 0): wild creatures are placed by TamerSpawner from data/tamer/tamer.json.",
+ "name": "The Glass Meadow",
+ "cols": 104,
+ "rows": 70,
+ "cell": 32,
+ "border": 2,
+ "stream": {
+  "x_frac": 0.6,
+  "width": 3,
+  "amp": [
+   4,
+   7
+  ],
+  "freq": [
+   0.04,
+   0.07
+  ]
+ },
+ "path": {
+  "half_width": 0.9,
+  "verge": 2.6,
+  "jitter": 0.22
+ },
+ "clearing_spacing": 16,
+ "clearings": [
+  {
+   "role": "start",
+   "r": [
+    10,
+    8
+   ],
+   "at_frac": [
+    0.14,
+    0.5
+   ]
+  },
+  {
+   "role": "camp",
+   "r": [
+    8,
+    6
+   ],
+   "at_frac": [
+    0.42,
+    0.3
+   ]
+  },
+  {
+   "role": "pond",
+   "r": [
+    9,
+    7
+   ]
+  },
+  {
+   "role": "grove",
+   "r": [
+    8,
+    7
+   ]
+  },
+  {
+   "role": "grove",
+   "r": [
+    7,
+    6
+   ]
+  },
+  {
+   "role": "glade",
+   "r": [
+    9,
+    7
+   ]
+  },
+  {
+   "role": "glade",
+   "r": [
+    8,
+    6
+   ]
+  },
+  {
+   "role": "glade",
+   "r": [
+    9,
+    7
+   ]
+  },
+  {
+   "role": "glade",
+   "r": [
+    8,
+    7
+   ]
+  }
+ ],
+ "extra_links": 3,
+ "required": [
+  "start",
+  "camp",
+  "pond",
+  "grove",
+  "glade"
+ ],
+ "setpieces": {
+  "start": [
+   {
+    "kind": "signpost",
+    "at": [
+     -120,
+     -70
+    ],
+    "sign": "road"
+   },
+   {
+    "kind": "rock_b",
+    "at": [
+     150,
+     70
+    ]
+   }
+  ],
+  "camp": [
+   {
+    "kind": "campfire",
+    "at": [
+     0,
+     0
+    ]
+   },
+   {
+    "kind": "bedroll",
+    "at": [
+     -56,
+     -34
+    ]
+   },
+   {
+    "kind": "bedroll",
+    "at": [
+     52,
+     -38
+    ]
+   },
+   {
+    "kind": "cart",
+    "at": [
+     -90,
+     50
+    ]
+   },
+   {
+    "kind": "woodpile",
+    "at": [
+     96,
+     40
+    ]
+   }
+  ],
+  "pond": [
+   {
+    "kind": "pond",
+    "at": [
+     0,
+     -100
+    ],
+    "r": [
+     5,
+     2.2
+    ]
+   },
+   {
+    "kind": "reeds",
+    "at": [
+     -70,
+     -8
+    ]
+   },
+   {
+    "kind": "reeds",
+    "at": [
+     86,
+     -10
+    ]
+   }
+  ],
+  "grove": [
+   {
+    "kind": "crystal_big",
+    "at": [
+     -40,
+     -20
+    ]
+   },
+   {
+    "kind": "crystal",
+    "at": [
+     36,
+     -34
+    ]
+   },
+   {
+    "kind": "statue_deer",
+    "at": [
+     30,
+     30
+    ]
+   }
+  ],
+  "glade": [
+   {
+    "kind": "rock_b",
+    "at": [
+     -50,
+     -30
+    ]
+   },
+   {
+    "kind": "crystal",
+    "at": [
+     50,
+     20
+    ]
+   }
+  ]
+ },
+ "trees": {
+  "edge_spacing": 38,
+  "deep_spacing": 70,
+  "edge_depth": 3,
+  "kinds": {
+   "tree_a": 34,
+   "tree_b": 22,
+   "tree_c": 32,
+   "tree_dead": 12
+  }
+ },
+ "edge_props": {
+  "crystal": 16,
+  "rock_a": 12,
+  "crystal_big": 4
+ },
+ "packs": {
+  "count": 0,
+  "spacing": 11,
+  "safe_radius": 16,
+  "elites": 0,
+  "table": [
+   {
+    "from": 0.0,
+    "kinds": {},
+    "size": [
+     0,
+     0
+    ]
+   }
+  ]
+ },
+ "ambient": {
+  "darkness": [
+   0.95,
+   1.02,
+   1.05
+  ],
+  "motes": 50,
+  "scenery_gain": 1.55,
+  "prop_gain": 1.35
+ },
+ "wake_range": 240.0
+}

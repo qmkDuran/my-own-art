@@ -1,12 +1,14 @@
 extends Node
 ## Dispatches the automated checks from the command line (after `--`): --layout (zone rules over many seeds),
 ## --ui (HUD and panels at every 16:9 / 16:10 size), --smoke (headless play of the core loop), --shots (review
-## screenshots, needs a display), --demo (the bot plays; used for the video). Dormant otherwise.
+## screenshots, needs a display), --demo (the bot plays; used for the video), --tamer-smoke and --tamer-shots (the
+## trainer prototype). Dormant otherwise.
 
 const MODES: Dictionary = {
 	"--layout": "res://tests/layout_test.gd", "--ui": "res://tests/ui_check.gd", "--smoke": "res://tests/smoke_test.gd",
 	"--shots": "res://tests/shots_playtest.gd", "--probe": "res://tests/demo_probe.gd",
 	"--balance": "res://tests/balance.gd", "--replay": "res://tests/replay.gd", "--animreel": "res://tests/anim_reel.gd", "--perf": "res://tests/perf.gd", "--devtest": "res://tests/dev_test.gd",
+	"--tamer-smoke": "res://tests/tamer_smoke.gd", "--tamer-shots": "res://tests/tamer_shots.gd",
 }
 
 

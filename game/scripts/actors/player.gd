@@ -65,6 +65,7 @@ var _heartbeat_t: float = 0.0
 
 func _ready() -> void:
 	add_to_group("player")
+	add_to_group(TreeFade.FOCUS)
 	collision_layer = 4
 	collision_mask = 1 | 2
 	motion_mode = CharacterBody2D.MOTION_MODE_FLOATING

@@ -21,22 +21,24 @@ const SCORCH_MIN: float = 14.0
 const SCORCH_MAX: float = 26.0
 
 
-static func hit(at: Vector2, dir: Vector2, k: float, col: Color, crit: bool, kill: bool = false) -> void:
-	var g: Game = Game.current
+## `sparks` recolours the sparks and embers (light, mid, fading dark), e.g. by a creature's element; gold by default.
+static func hit(at: Vector2, dir: Vector2, k: float, col: Color, crit: bool, kill: bool = false, sparks: Array[Color] = []) -> void:
+	var fx: Node2D = Fx.layer
 	k = clampf(k, 0.0, 1.0)
 	var big: float = maxf(k * 3.0, 1.0 if kill or crit else 0.0)
 	var r: float = lerpf(BURST_R.x, BURST_R.y, minf(big, 1.0))
-	Fx.core(g.fx_layer, at, r * 0.9, CORE_TIME)
-	Fx.halo(g.fx_layer, at, r * 2.2, Color(col, 1.0), 0.26)
-	Fx.ring(g.fx_layer, at + Vector2(0, 10), r * 0.4, r * 2.2, Color(Pal.c("sun"), 1.0), RING_TIME)
-	Fx.flash(g.fx_layer, at + Vector2(0, 10), lerpf(GROUND_LIGHT.x, GROUND_LIGHT.y, minf(big, 1.0)), col, 3.0 + k * 2.0, 0.32)
+	Fx.core(fx, at, r * 0.9, CORE_TIME)
+	Fx.halo(fx, at, r * 2.2, Color(col, 1.0), 0.26)
+	Fx.ring(fx, at + Vector2(0, 10), r * 0.4, r * 2.2, Color(Pal.c("sun"), 1.0), RING_TIME)
+	Fx.flash(fx, at + Vector2(0, 10), lerpf(GROUND_LIGHT.x, GROUND_LIGHT.y, minf(big, 1.0)), col, 3.0 + k * 2.0, 0.32)
 	var n: int = int(lerpf(SPARKS.x, SPARKS.y, minf(big, 1.0)))
-	Fx.burst(g.fx_layer, at, n, Vector2(120, 280), 0.36, [Pal.c("sun"), Pal.c("gold"), Pal.c("flame", 0.0)], dir, 70.0, Vector2(1.5, 2.5))
-	Fx.burst(g.fx_layer, at, n / 2 + 4, Vector2(50, 150), 0.6, [Pal.c("gold"), Pal.c("flame"), Pal.c("ember", 0.0)],
+	var cols: Array[Color] = sparks if sparks.size() == 3 else [Pal.c("sun"), Pal.c("gold"), Pal.c("flame", 0.0)]
+	Fx.burst(fx, at, n, Vector2(120, 280), 0.36, cols, dir, 70.0, Vector2(1.5, 2.5))
+	Fx.burst(fx, at, n / 2 + 4, Vector2(50, 150), 0.6, [cols[1], Color(cols[2], 1.0), Color(cols[2], 0.0)],
 		Vector2.UP, 180.0, Vector2(1, 2))
 	scorch(at + Vector2(0, 14), lerpf(SCORCH_MIN, SCORCH_MAX, minf(big, 1.0)))
 	var stop: Vector2 = KILL_STOP_FRAMES if kill else STOP_FRAMES
-	HitStop.trigger(g.get_tree(), FRAME * lerpf(stop.x, stop.y, minf(big, 1.0)) * (1.25 if crit else 1.0))
+	HitStop.trigger(fx.get_tree(), FRAME * lerpf(stop.x, stop.y, minf(big, 1.0)) * (1.25 if crit else 1.0))
 	if k >= KICK_AT or crit or kill:
 		CameraRig.shake(KICK * (0.6 + k))
 		CameraRig.punch(dir * lerpf(PUNCH.x, PUNCH.y, minf(big, 1.0)))
@@ -51,7 +53,7 @@ static func scorch(at: Vector2, r: float) -> void:
 	s.modulate = Color(0.12, 0.06, 0.04, 0.8)
 	s.z_index = -14
 	s.z_as_relative = false
-	Game.current.fx_layer.add_child(s)
+	Fx.layer.add_child(s)
 	var tw := s.create_tween()
 	tw.tween_interval(SCORCH_TIME * 0.5)
 	tw.tween_property(s, "modulate:a", 0.0, SCORCH_TIME * 0.5)

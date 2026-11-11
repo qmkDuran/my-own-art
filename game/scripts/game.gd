@@ -102,6 +102,7 @@ func _build_world() -> void:
 	fx_layer = Node2D.new()
 	fx_layer.z_index = Fx.FX_Z
 	add_child(fx_layer)
+	Fx.layer = fx_layer
 	dark = CanvasModulate.new()
 	darkness = Atmosphere.ambient(GameData.biome)
 	dark.color = darkness
@@ -126,6 +127,7 @@ func _build_ui() -> void:
 	add_child(ui)
 	ui.setup(self)
 	hud = ui.hud
+	Fx.screen = ui
 	input = GameInput.new()
 	add_child(input)
 	input.setup(self)
