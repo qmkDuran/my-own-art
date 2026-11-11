@@ -3,7 +3,8 @@ extends Node
 ## --demo / --demo2: the staged scenes of a recorded video, joined by fades, with a DemoBot playing each one.
 ## Reel 1 (pass 1): the gate ambush, an elite pack, the Glazier. Reel 2 (pass 2): Ottilie in Tallow, relighting a
 ## road lamp on the Ember Road, the Moth Matron. Reel 3 (--demo3, the best-of): Tallow, the road, the river, the
-## Matron, the Bellwright, the Mayor of Tuesday. Scenes that change zone wait for the new zone before setting up.
+## Matron, the Bellwright, the Mayor of Tuesday. Staged like the bosses' life: the bot never drops below
+## LIFE_FLOOR of its life (it dodges worse than a person; a showcase should not end on the death screen). Scenes that change zone wait for the new zone before setting up.
 ## Quits at the end.
 
 const DEMO_SEED: int = 7
@@ -22,6 +23,7 @@ const BOSS_LIFE: float = 0.13
 const MATRON_LIFE: float = 0.4
 const BELLWRIGHT_LIFE: float = 0.3
 const MAYOR_LIFE: float = 0.2
+const LIFE_FLOOR: float = 0.5
 const RIVER_TOUGH: float = 1.8
 const PACK_RADIUS: float = 150.0
 const CLEAR_RADIUS: float = 800.0
@@ -49,6 +51,8 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	_t += delta
 	var g: Game = Game.current
+	if g != null and g.player.life < g.player.stats.max_life() * LIFE_FLOOR:
+		g.player.life = g.player.stats.max_life() * LIFE_FLOOR
 	if _pending != "" and g != null and g != _left:
 		_setup(_pending, g)
 		_pending = ""
