@@ -46,10 +46,9 @@ def write(dest: Path) -> None:
     meta = json.loads((ROOT / "game" / "data" / "sprites.json").read_text())["actors"]
     props = json.loads((ROOT / "game" / "data" / "props.json").read_text())
     width = 2200
-    lamp = Image.open(ART / "actors/lamplighter.png").convert("RGBA")
-    poses = [(f"{p} {i}", lamp.crop((i * 64, r * 64, i * 64 + 64, r * 64 + 64)))
-             for r, (p, n) in enumerate(meta["lamplighter"]["poses"]) for i in range(min(n, 3))]
-    rows = [_row("The Lamplighter (64 px, front-facing; idle/walk/strike/cast/hurt)", poses, width)]
+    poses = [(f"{a} {d}", lamplighter_frame(meta, a, d, 1)) for a in ("idle", "walk", "slash1", "slash3", "cast", "dash")
+             for d in ("s", "e", "n")]
+    rows = [_row("The Lamplighter (8 facings, rig-drawn; a few of his animations)", poses, width)]
     npcs = [(m["name"].split(" ")[-1], _first_frame(f"actors/{k}.png", 64, 64)) for k, m in meta.items() if k.startswith("npc_")]
     npcs += [(k[5:], _first_frame(f"actors/{k}.png", 64, 64)) for k in meta if k.startswith("folk_")]
     rows.append(_row("People of Tallow and the Dusk", npcs, width))
@@ -76,6 +75,18 @@ def write(dest: Path) -> None:
     _lineup(dest, meta)
 
 
+def lamplighter_frame(meta: dict, anim: str, d: str, i: int) -> Image.Image:
+    """One frame of the Lamplighter, body and lantern layers together, cut to 64x64 around his feet."""
+    m = meta["lamplighter"]
+    fw = m["frame"][0]
+    r = m["anims"][anim]["row"] + m["dirs"].index(d)
+    box = (i * fw, r * fw, (i + 1) * fw, (r + 1) * fw)
+    img = Image.open(ART / "actors/lamplighter.png").convert("RGBA").crop(box)
+    img.alpha_composite(Image.open(ART / "actors/lamplighter_lantern.png").convert("RGBA").crop(box))
+    cx, feet = m["anchor"]
+    return img.crop((cx - 32, feet - 61, cx + 32, feet + 3))
+
+
 def _lineup(dest: Path, meta: dict) -> None:
     """The NPC lineup at 4x with names and roles: the cast as the player meets them."""
     keys = ["lamplighter"] + [k for k in meta if k.startswith("npc_")]
@@ -83,7 +94,8 @@ def _lineup(dest: Path, meta: dict) -> None:
     img = Image.new("RGBA", (cell * len(keys) + 20, cell + 110), PAL["night"] + (255,))
     d = ImageDraw.Draw(img)
     for i, k in enumerate(keys):
-        fr = _first_frame(f"actors/{k}.png", 64, 64).resize((cell, cell), Image.NEAREST)
+        fr = (lamplighter_frame(meta, "idle", "s", 0) if k == "lamplighter" else _first_frame(f"actors/{k}.png", 64, 64))
+        fr = fr.resize((cell, cell), Image.NEAREST)
         img.alpha_composite(fr, (10 + i * cell, 10))
         name = meta[k].get("name", "The Lamplighter")
         role = meta[k].get("role", "the Ninth of the order")

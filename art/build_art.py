@@ -10,6 +10,7 @@ from pathlib import Path
 from PIL import Image
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))   # -I drops the script's folder from the path
+import build_lamplighter  # noqa: E402
 import enemies  # noqa: E402
 import icons  # noqa: E402
 import people  # noqa: E402
@@ -36,10 +37,7 @@ def _save(img: Image.Image, glow: Image.Image | None, rel: str) -> None:
 
 
 def build_people(meta: dict) -> None:
-    rows = [[people.draw(people.LAMPLIGHTER, pose, i) for i in range(n)] for pose, n in people.POSES.items()]
-    img, glow = sheet(rows, 64, 64)
-    _save(img, glow, "actors/lamplighter.png")
-    meta["lamplighter"] = {"frame": [64, 64], "anchor": [32, 61], "poses": list(people.POSES.items())}
+    build_lamplighter.build(_save, meta)
     for key, spec in people.NPCS.items():
         img, glow = sheet([[people.draw(spec, "idle", i) for i in range(people.POSES["idle"])]], 64, 64)
         _save(img, glow, f"actors/npc_{key}.png")

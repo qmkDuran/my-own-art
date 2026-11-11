@@ -70,10 +70,11 @@ func try_use(id: String, target: Vector2) -> bool:
 		(s as LanternToss).recall()
 		return true
 	player.face(target)
-	player.act(s.pose(), s.cast_time())
 	player.oil -= cost_of(id)
 	cooldowns[id] = s.cooldown()
-	s.use(target)
+	player.act(s.pose(), s.cast_time(), func() -> void:     # lands on the animation's strike / release frame
+		if not player.dead:
+			s.use(target))
 	used.emit(id)
 	return true
 

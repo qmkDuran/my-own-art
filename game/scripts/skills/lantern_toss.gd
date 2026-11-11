@@ -15,6 +15,10 @@ func duration() -> float:
 	return float(data["duration"]) + val("duration")
 
 
+func pose() -> String:
+	return "toss"
+
+
 func use(target: Vector2) -> void:
 	var d: Vector2 = target - p.global_position
 	var to: Vector2 = p.global_position + d.limit_length(float(data["range"]))

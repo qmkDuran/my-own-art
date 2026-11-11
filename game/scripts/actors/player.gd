@@ -2,18 +2,19 @@ class_name Player
 extends CharacterBody2D
 ## The Lamplighter: walks where you click (grid path, pulled tight), stands to attack or cast toward the cursor,
 ## dashes (Wickstep), drinks tonics, carries the lantern's Light. Holds his build (Progression), bag (Inventory)
-## and the numbers derived from both (Stats). Front-facing sprite; attacks aim in any direction via effects.
+## and the numbers derived from both (Stats). Drawn in eight facings by PlayerAnimator: he faces where he walks,
+## and turns to the cursor to attack; attacks land on their strike frame.
 
 signal life_changed
 signal died_and_rose
 
-const POSES: Dictionary = {"idle": 0, "walk": 1, "strike": 2, "cast": 3, "hurt": 4}
-const FRAMES: Dictionary = {"idle": 8, "walk": 8, "strike": 4, "cast": 3, "hurt": 1}
-const FPS: Dictionary = {"idle": 6.0, "walk": 12.0, "strike": 14.0, "cast": 10.0, "hurt": 8.0}
-const SHEET_COLS: int = 8
 const ARRIVE: float = 6.0
-const LIGHT_OFFSET := Vector2(10, -6)
-const LANTERN_OFFSET := Vector2(20, -50)
+const LIGHT_OFFSET := Vector2(0, -6)
+const LIGHT_SWAY: float = 0.6         ## how much of the lantern's swing the light pool follows
+const DEATH_TIME: float = 1.0
+const RISE_TIME: float = 0.9
+const HOLD_LAMP_RANGE: float = 90.0
+const RUN_BASE_SPEED: float = 150.0   ## the run cycle's natural speed; faster movement plays it faster
 const HURT_TIME: float = 0.18
 const HIT_FLASH: float = 0.035
 const HURT_SHAKE: float = 0.3
@@ -31,6 +32,7 @@ var inv := Inventory.new()
 var light: LanternLight
 var skills: SkillSystem
 var sprite: Sprite2D
+var anim := PlayerAnimator.new()
 var radius: float
 var life: float
 var oil: float
@@ -40,8 +42,6 @@ var aim: Vector2 = Vector2.DOWN
 var busy_t: float = 0.0               ## attacking / casting: no walking
 var respawn_at: Vector2
 var _path := PackedVector2Array()
-var _pose: String = "idle"
-var _pose_t: float = 0.0
 var _pose_lock: float = 0.0
 var _flash_t: float = 0.0
 var _dash_t: float = 0.0
@@ -66,7 +66,6 @@ func _ready() -> void:
 	_make_body()
 	light = LanternLight.new()
 	light.stats = stats
-	light.position = LIGHT_OFFSET
 	add_child(light)
 	skills = SkillSystem.new()
 	skills.player = self
@@ -88,17 +87,12 @@ func _make_body() -> void:
 	cs.shape = c
 	add_child(cs)
 	add_child(PropSprite.shadow(30.0))
-	sprite = Sprite2D.new()
-	sprite.texture = PropSprite.tex("res://art/actors/lamplighter.png")
-	sprite.hframes = SHEET_COLS
-	sprite.vframes = 5
-	sprite.offset = Vector2(0, -32 + 3)
+	anim.setup(self)
+	sprite = anim.body
 	var mat := ShaderMaterial.new()
 	mat.shader = preload("res://shaders/hit_flash.gdshader")
 	mat.set_shader_parameter("flash_color", Pal.c("rose"))
 	sprite.material = mat
-	add_child(sprite)
-	PropSprite.add_glow(sprite, "res://art/actors/lamplighter_glow.png")
 
 
 ## The order's issue: a plain hook staff, a long coat and a hand lantern (worn from the start).
@@ -126,7 +120,12 @@ func untouchable() -> bool:
 
 ## Where the lantern hangs (effects start here).
 func lantern_pos() -> Vector2:
-	return global_position + Vector2(LANTERN_OFFSET.x * (-1.0 if sprite.flip_h else 1.0), LANTERN_OFFSET.y)
+	return global_position + anim.lantern_offset()
+
+
+## Where the whip hand is (the light-whip starts here).
+func hand_pos() -> Vector2:
+	return global_position + anim.hand_offset()
 
 
 # ------------------------------------------------------------------ commands
@@ -148,14 +147,15 @@ func face(p: Vector2) -> void:
 	var d: Vector2 = p - global_position
 	if d.length() > 1.0:
 		aim = d.normalized()
-		sprite.flip_h = aim.x < -0.2
+		anim.face(aim)
 
 
-## Hold still for an attack or cast: the pose plays, walking stops.
-func act(pose: String, seconds: float) -> void:
+## Hold still for an attack or cast: the animation plays over `seconds`, walking stops; `on_hit` runs on its
+## strike (or release) frame.
+func act(pose: String, seconds: float, on_hit: Callable = Callable()) -> void:
 	busy_t = seconds
 	_pose_lock = seconds
-	_set_pose(pose)
+	anim.play(pose, seconds, on_hit)
 	stop()
 
 
@@ -167,6 +167,9 @@ func dash(toward: Vector2) -> bool:
 	if _dash_dir == Vector2.ZERO:
 		_dash_dir = aim
 	_dash_t = float(D["time"])
+	anim.face(_dash_dir)
+	anim.play("dash", _dash_t)
+	_pose_lock = _dash_t
 	_dash_cd = float(D["cooldown"]) / (1.0 + stats.v("dash_cd_pct") / 100.0)
 	stop()
 	Audio.sfx("dash", -6.0)
@@ -211,7 +214,7 @@ func take_hit(dmg: float, from: Vector2, drain: float) -> void:
 	light.on_hit(dmg / stats.max_life(), drain)
 	_flash_t = HIT_FLASH
 	if _pose_lock <= 0.0:
-		_set_pose("hurt")
+		anim.play("hurt", HURT_TIME)
 		_pose_lock = HURT_TIME
 	CameraRig.shake(HURT_SHAKE * clampf(dmg / stats.max_life() * 6.0, 0.3, 1.0))
 	Audio.sfx("hurt", -6.0, randf_range(0.95, 1.05))
@@ -225,6 +228,7 @@ func take_hit(dmg: float, from: Vector2, drain: float) -> void:
 func _fall() -> void:
 	dead = true
 	stop()
+	anim.play("death", DEATH_TIME)
 	Game.current.hud.notice("The light gutters... you wake by the last lit waylamp")
 	get_tree().create_timer(1.6, false).timeout.connect(_rise)
 
@@ -237,6 +241,8 @@ func _rise() -> void:
 	light.value = float(GameData.light["start"])
 	refill_tonics()
 	_invuln = INVULN_AFTER_RISE
+	anim.play("rise", RISE_TIME)
+	_pose_lock = RISE_TIME
 	died_and_rose.emit()
 	life_changed.emit()
 
@@ -310,24 +316,26 @@ func _follow_path() -> Vector2:
 	if _path.is_empty():
 		return Vector2.ZERO
 	var dir: Vector2 = (_path[0] - global_position).normalized()
-	if absf(dir.x) > 0.2:
-		sprite.flip_h = dir.x < 0.0
+	anim.face(dir)
 	return dir * stats.move_speed() * skills.move_mult() * (1.0 - (_slow if _slow_t > 0.0 else 0.0))
 
 
 func _animate(delta: float) -> void:
-	if _pose_lock <= 0.0:
-		_set_pose("walk" if velocity.length() > 5.0 else "idle")
-	_pose_t += delta * float(FPS[_pose])
-	var n: int = int(FRAMES[_pose])
-	var f: int = mini(int(_pose_t), n - 1) if _pose_lock > 0.0 else int(_pose_t) % n
-	PropSprite.set_frame(sprite, int(POSES[_pose]) * SHEET_COLS + f)
+	if _pose_lock <= 0.0 and not dead:
+		var moving: bool = velocity.length() > 5.0
+		anim.speed = velocity.length() / RUN_BASE_SPEED if moving else 1.0
+		anim.loop("walk" if moving else ("channel" if _holding_lamp() else "idle"))
+	anim.tick(delta)
+	anim.lantern.visible = not (skills.skill("lantern_toss") as LanternToss).away()
+	light.sway(LIGHT_OFFSET + Vector2(anim.lantern_offset().x * LIGHT_SWAY, 0.0), anim.pane() if anim.lantern.visible else 1.0)
 
 
-func _set_pose(p: String) -> void:
-	if p != _pose:
-		_pose = p
-		_pose_t = 0.0
+## Standing at a waylamp while it catches: he holds the staff up to it (the channel loop).
+func _holding_lamp() -> bool:
+	for l: Waylamp in Game.current.lamps:
+		if l.relighting and not l.lit and l.global_position.distance_to(global_position) < HOLD_LAMP_RANGE:
+			return true
+	return false
 
 
 func _dash_ghosts() -> void:
@@ -338,7 +346,6 @@ func _dash_ghosts() -> void:
 			g.hframes = sprite.hframes
 			g.vframes = sprite.vframes
 			g.frame = sprite.frame
-			g.flip_h = sprite.flip_h
 			g.offset = sprite.offset
 			g.global_position = global_position
 			g.modulate = Pal.c("amber", 0.5)

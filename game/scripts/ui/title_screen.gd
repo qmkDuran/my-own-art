@@ -10,8 +10,6 @@ const CARD_TIME: float = 3.4
 const EMBERS: int = 50
 const GAME_SCENE: String = "res://scenes/game.tscn"
 const FIGURE_SCALE: float = 2.0
-const LANTERN_IN_SPRITE := Vector2(52, 10)
-const FRAME: float = 64.0
 const LIGHT_Y: float = 0.25
 const LOGO_DROP: float = 155.0
 
@@ -119,13 +117,16 @@ func _draw() -> void:
 
 ## The Lamplighter, holding up the only light (his lantern sits where the glow is).
 func _draw_figure(c: Vector2) -> void:
-	var tex: Texture2D = PropSprite.tex("res://art/actors/lamplighter.png")
-	var glow: Texture2D = PropSprite.tex("res://art/actors/lamplighter_glow.png")
-	var at: Vector2 = (c - LANTERN_IN_SPRITE * FIGURE_SCALE).round()
-	var dst := Rect2(at, Vector2(FRAME, FRAME) * FIGURE_SCALE)
-	var src := Rect2(int(_t * 6.0) % 8 * FRAME, 0, FRAME, FRAME)
-	draw_texture_rect_region(tex, dst, src, Color(0.45, 0.42, 0.55))
-	draw_texture_rect_region(glow, dst, src)
+	var m: Dictionary = GameData.sprites["actors"]["lamplighter"]
+	var frame: float = float(m["frame"][0])
+	var k: int = int(_t * float(m["anims"]["idle"]["fps"])) % int(m["anims"]["idle"]["frames"])
+	var a: Array = m["anims"]["idle"]["anchors"][0][k]              # facing us; the lantern sits where the glow is
+	var in_sprite := Vector2(float(m["anchor"][0]) + float(a[0]), float(m["anchor"][1]) + float(a[1]))
+	var dst := Rect2((c - in_sprite * FIGURE_SCALE).round(), Vector2(frame, frame) * FIGURE_SCALE)
+	var src := Rect2(k * frame, 0, frame, frame)
+	for layer: String in ["lamplighter", "lamplighter_lantern"]:
+		draw_texture_rect_region(PropSprite.tex("res://art/actors/%s.png" % layer), dst, src, Color(0.45, 0.42, 0.55))
+		draw_texture_rect_region(PropSprite.tex("res://art/actors/%s_glow.png" % layer), dst, src)
 
 
 func _draw_logo(c: Vector2) -> void:

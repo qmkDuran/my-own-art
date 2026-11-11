@@ -21,11 +21,18 @@ func reach(crack: bool) -> float:
 	return float(data["crack_range" if crack else "range"]) * (1.0 + val("range_pct") / 100.0)
 
 
+## lash, backlash, crack: the next beat of the combo (or the first, if it has gone cold).
+func pose() -> String:
+	return "slash%d" % (_next_beat() + 1)
+
+
+func _next_beat() -> int:
+	return 0 if Time.get_ticks_msec() / 1000.0 - _last > COMBO_RESET else _beat
+
+
 func use(target: Vector2) -> void:
-	var now: float = Time.get_ticks_msec() / 1000.0
-	if now - _last > COMBO_RESET:
-		_beat = 0
-	_last = now
+	_beat = _next_beat()
+	_last = Time.get_ticks_msec() / 1000.0
 	var crack: bool = _beat == 2
 	_beat = (_beat + 1) % 3
 	var dir: Vector2 = (target - p.global_position).normalized()
@@ -41,7 +48,7 @@ func use(target: Vector2) -> void:
 func _strike(dir: Vector2, crack: bool, flip: bool) -> void:
 	var arc: float = float(data["crack_arc_deg" if crack else "arc_deg"])
 	var center: Vector2 = p.global_position + Vector2(0, -18)
-	WhipFx.lash(fx(), center, p.lantern_pos(), dir, reach(crack), arc, flip, crack)
+	WhipFx.lash(fx(), center, p.hand_pos(), dir, reach(crack), arc, flip, crack)
 	Audio.sfx("crack" if crack else "lash", -5.0 if crack else -8.0, randf_range(0.95, 1.1))
 	if crack:
 		Fx.flash(fx(), center + dir * reach(crack), 90.0, Pal.c("gold"), 1.1, 0.18)

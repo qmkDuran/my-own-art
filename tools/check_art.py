@@ -17,12 +17,13 @@ from palette import PAL  # noqa: E402
 
 ART = ROOT / "game" / "art"
 # visible body height (px) per size class
-CLASSES = {"lamplighter": (52, 62), "npc": (36, 64), "gloam": (24, 44), "hound": (24, 44), "moth": (30, 52), "glazier": (100, 126), "husk": (44, 62),
+CLASSES = {"lamplighter": (56, 72), "npc": (36, 64), "gloam": (24, 44), "hound": (24, 44), "moth": (30, 52), "glazier": (100, 126), "husk": (44, 62),
            "crawler": (16, 36), "matron": (110, 158),
            "undertow": (40, 62), "drowned": (24, 52),
            "bellwright": (140, 176), "heron": (40, 72), "lurker": (24, 52),
            "mayor": (110, 160), "repeater": (36, 64), "clockface": (36, 64)}
 FEET_TOLERANCE = 3
+STRIDE_TOLERANCE = 6      # rig-drawn walks: a planted foot moving back along the ground also moves up the 3/4 view
 
 
 def palette_problems() -> list[str]:
@@ -46,10 +47,27 @@ def _frames(name: str, meta: dict) -> list[Image.Image]:
     fw, fh = meta["frame"]
     out = []
     for row, (pose, n) in enumerate(meta["poses"]):
-        if pose not in GROUNDED:
+        if pose.split("_")[0] not in GROUNDED:
             continue
         for i in range(n):
             out.append(img.crop((i * fw, row * fh, (i + 1) * fw, (row + 1) * fh)))
+    return out
+
+
+def rig_feet_problems(name: str, meta: dict) -> list[str]:
+    """Per animation and facing: idle feet stay put; a walk's planted foot may move only as far as its stride."""
+    img = Image.open(ART / "actors" / f"{name}.png").convert("RGBA")
+    fw = meta["frame"][0]
+    out = []
+    for anim, limit in (("idle", 1), ("walk", STRIDE_TOLERANCE)):
+        a = meta["anims"][anim]
+        for k, d in enumerate(meta["dirs"]):
+            r = a["row"] + k
+            feet = [img.crop((i * fw, r * fw, (i + 1) * fw, (r + 1) * fw)).getbbox()[3] for i in range(a["frames"])]
+            if max(feet) - min(feet) > limit:
+                out.append(f"{name} {anim} {d}: feet move {max(feet) - min(feet)} px (allowed {limit})")
+            if abs(feet[0] - meta["anchor"][1]) > FEET_TOLERANCE and anim == "idle":
+                out.append(f"{name} {anim} {d}: feet at {feet[0]}, anchor says {meta['anchor'][1]}")
     return out
 
 
@@ -57,6 +75,9 @@ def actor_problems() -> list[str]:
     meta = json.loads((ROOT / "game" / "data" / "sprites.json").read_text())["actors"]
     out = []
     for name, m in meta.items():
+        if "dirs" in m:
+            out += rig_feet_problems(name, m)
+            m = {**m, "poses": [p for p in m["poses"] if p[0].startswith("idle_")]}
         cls = "npc" if name.startswith(("npc_", "folk_")) else name
         lo, hi = CLASSES[cls]
         feet = []

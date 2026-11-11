@@ -29,6 +29,7 @@ var _halo: PointLight2D
 var _state: String = "calm"
 var _hit_flash: float = 0.0
 var _t: float = 0.0
+var _pane: float = 1.0
 
 
 func _ready() -> void:
@@ -61,6 +62,14 @@ func target_radius() -> float:
 
 func light_pos() -> Vector2:
 	return global_position
+
+
+## The pool follows the lantern as it swings (offset from the Lamplighter's feet); `pane` dims it as the lantern
+## gutters (his death) and brings it back as it relights. The Light ring and the gameplay radius stay put.
+func sway(at: Vector2, pane: float) -> void:
+	_light.position = at
+	_halo.position = at
+	_pane = pane
 
 
 func light_radius() -> float:
@@ -124,7 +133,7 @@ func _process(delta: float) -> void:
 	shown_radius = lerpf(shown_radius, target_radius(), minf(1.0, delta * RADIUS_LERP))
 	var flick: float = 1.0 + sin(_t * 13.0) * FLICKER * 0.5 + sin(_t * 7.3) * FLICKER * 0.5
 	_light.texture_scale = shown_radius / TEX_RADIUS
-	_light.energy = ENERGY * flick
+	_light.energy = ENERGY * flick * _pane
 	_halo.texture_scale = shown_radius * HALO_SCALE / TEX_RADIUS
 	_hit_flash = maxf(0.0, _hit_flash - delta)
 	var s: String = state()
