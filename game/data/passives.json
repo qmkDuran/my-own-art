@@ -1,0 +1,61 @@
+{
+ "_doc": "Passive trees: the Lamplighter base tree plus three masteries (choose one at mastery_level; the other two open after 20 points in the base tree). A node needs req points already spent in its own tree. stats are per point. One passive point per level.",
+ "unlock_other_masteries": 20,
+ "trees": {
+  "lamplighter": {
+   "name": "Lamplighter", "desc": "The order's old craft: carry the light, keep it lit, walk home.",
+   "nodes": [
+    {"id": "wick", "name": "Long Wick", "max": 8, "req": 0, "pos": [0, 0], "glyph": "life", "stats": {"life": 6.0}},
+    {"id": "deep_oil", "name": "Deep Reservoir", "max": 6, "req": 0, "pos": [1, 0], "glyph": "oil", "stats": {"oil": 5.0}},
+    {"id": "steady_hand", "name": "Steady Hand", "max": 5, "req": 0, "pos": [2, 0], "glyph": "speed", "stats": {"attack_speed_pct": 3.0, "cast_speed_pct": 3.0}},
+    {"id": "trimmed", "name": "Trimmed Wick", "max": 5, "req": 0, "pos": [3, 0], "glyph": "light", "stats": {"light_radius_pct": 4.0}},
+    {"id": "iron_coat", "name": "Iron-Lined Coat", "max": 5, "req": 0, "pos": [4, 0], "glyph": "armour", "stats": {"armour": 12.0}},
+    {"id": "kindler", "name": "Kindler", "max": 6, "req": 5, "pos": [0, 1], "glyph": "fire", "stats": {"sunfire_pct": 6.0}},
+    {"id": "road_legs", "name": "Road Legs", "max": 4, "req": 5, "pos": [2, 1], "glyph": "speed", "stats": {"move_pct": 3.0}},
+    {"id": "hunger", "name": "Lantern Hunger", "max": 4, "req": 5, "pos": [3, 1], "glyph": "light", "stats": {"light_on_kill": 0.5}},
+    {"id": "ash_skin", "name": "Ash-Skinned", "max": 5, "req": 5, "pos": [4, 1], "glyph": "armour", "stats": {"dusk_res": 5.0}},
+    {"id": "night_eyes", "name": "Night Eyes", "max": 5, "req": 10, "pos": [1, 2], "glyph": "dark", "stats": {"damage_vs_shrouded_pct": 8.0}},
+    {"id": "steady_flame", "name": "Steady Flame", "max": 4, "req": 10, "pos": [3, 2], "glyph": "light", "stats": {"light_loss_reduction": 10.0}},
+    {"id": "keen", "name": "Keen Flame", "max": 4, "req": 15, "pos": [0, 3], "glyph": "crit", "stats": {"crit_chance": 2.0}},
+    {"id": "brightness", "name": "Brightness", "max": 3, "req": 15, "pos": [2, 3], "glyph": "light", "stats": {"blazing_pct": 10.0}},
+    {"id": "second_wind", "name": "Second Wind", "max": 4, "req": 15, "pos": [4, 3], "glyph": "life", "stats": {"life_on_kill": 2.0}}
+   ]
+  },
+  "beacon": {
+   "name": "Beacon", "mastery": true, "desc": "Hold the light up and make the dark come to you. Big radius, steady flame, Flare and (later) Noon.",
+   "bonus": {"light_radius_pct": 25.0, "blazing_pct": 10.0}, "bonus_text": "+25% Light radius, +10% damage while Blazing",
+   "nodes": [
+    {"id": "halo", "name": "Wide Halo", "max": 5, "req": 0, "pos": [0, 0], "glyph": "light", "stats": {"light_radius_pct": 6.0}},
+    {"id": "lighthouse", "name": "Lighthouse", "max": 4, "req": 0, "pos": [2, 0], "glyph": "light", "stats": {"light_loss_reduction": 12.0}},
+    {"id": "sun_tongue", "name": "Sun Tongue", "max": 5, "req": 0, "pos": [4, 0], "glyph": "fire", "stats": {"sunfire_pct": 8.0}},
+    {"id": "radiant_skin", "name": "Radiant Skin", "max": 5, "req": 5, "pos": [1, 1], "glyph": "armour", "stats": {"armour_pct": 8.0}},
+    {"id": "flare_heart", "name": "Flare Heart", "max": 5, "req": 5, "pos": [3, 1], "glyph": "fire", "stats": {"area_pct": 6.0}},
+    {"id": "noonward", "name": "Noonward", "max": 3, "req": 10, "pos": [2, 2], "glyph": "light", "stats": {"blazing_pct": 12.0}}
+   ]
+  },
+  "mothwright": {
+   "name": "Mothwright", "mastery": true, "desc": "Breed fire in the lantern and let it fly. More moths, burning, spells.",
+   "bonus": {"moth_count": 2.0, "burn_chance": 10.0}, "bonus_text": "+2 moths per Moth Swarm, +10% chance to Ignite",
+   "nodes": [
+    {"id": "brood_mother", "name": "Brood Mother", "max": 2, "req": 0, "pos": [0, 0], "glyph": "moth", "stats": {"moth_count": 1.0}},
+    {"id": "spell_craft", "name": "Wick-Craft", "max": 5, "req": 0, "pos": [2, 0], "glyph": "fire", "stats": {"spell_pct": 8.0}},
+    {"id": "ember_lungs", "name": "Ember Lungs", "max": 5, "req": 0, "pos": [4, 0], "glyph": "fire", "stats": {"burn_chance": 6.0}},
+    {"id": "quickening", "name": "Quickening", "max": 5, "req": 5, "pos": [1, 1], "glyph": "speed", "stats": {"cast_speed_pct": 5.0}},
+    {"id": "oil_hive", "name": "Oil Hive", "max": 4, "req": 5, "pos": [3, 1], "glyph": "oil", "stats": {"oil_regen_pct": 10.0}},
+    {"id": "ash_wings", "name": "Ash Wings", "max": 3, "req": 10, "pos": [2, 2], "glyph": "moth", "stats": {"cooldown_pct": 6.0}}
+   ]
+  },
+  "duskwalker": {
+   "name": "Duskwalker", "mastery": true, "desc": "Learn the dark's own manners. Strike from outside the light, step through it, live on what you kill.",
+   "bonus": {"damage_vs_shrouded_pct": 25.0, "dash_cd_pct": 20.0}, "bonus_text": "+25% damage against Shrouded enemies, +20% Dash recovery",
+   "nodes": [
+    {"id": "shadow_step", "name": "Shadow Step", "max": 4, "req": 0, "pos": [0, 0], "glyph": "speed", "stats": {"dash_cd_pct": 10.0}},
+    {"id": "nightblade", "name": "Nightblade", "max": 5, "req": 0, "pos": [2, 0], "glyph": "dark", "stats": {"damage_vs_shrouded_pct": 10.0}},
+    {"id": "cold_heart", "name": "Cold Heart", "max": 5, "req": 0, "pos": [4, 0], "glyph": "crit", "stats": {"crit_multi": 12.0}},
+    {"id": "unlit", "name": "Unlit", "max": 5, "req": 5, "pos": [1, 1], "glyph": "armour", "stats": {"dusk_res": 6.0}},
+    {"id": "predator", "name": "Predator", "max": 4, "req": 5, "pos": [3, 1], "glyph": "speed", "stats": {"move_pct": 4.0}},
+    {"id": "dark_feed", "name": "Dark Feeding", "max": 4, "req": 10, "pos": [2, 2], "glyph": "life", "stats": {"life_on_kill": 3.0}}
+   ]
+  }
+ }
+}

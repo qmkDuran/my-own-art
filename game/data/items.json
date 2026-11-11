@@ -1,0 +1,88 @@
+{
+ "_doc": "Itemisation. Bases have an implicit; magic items roll 1-2 affixes, rares 3-4 (max 2 prefixes + 2 suffixes); every affix has 5 tiers gated by item level. Sets and uniques have fixed stats; uniques carry build-defining specials the skill code reads.",
+ "equip_slots": ["staff", "relic", "head", "body", "hands", "feet", "belt", "neck", "ring1", "ring2"],
+ "slot_names": {"staff": "Lantern Staff", "relic": "Relic", "head": "Head", "body": "Body", "hands": "Hands", "feet": "Feet",
+  "belt": "Belt", "neck": "Neck", "ring1": "Ring", "ring2": "Ring"},
+ "rarity_colors": {"normal": "e8e4d8", "magic": "7fb2ff", "rare": "ffd77a", "set": "7fdc6a", "unique": "f07a24"},
+ "rarity_names": {"normal": "Normal", "magic": "Magic", "rare": "Rare", "set": "Set", "unique": "Unique"},
+ "drop": {
+  "chance": {"normal": 0.16, "magic": 0.5, "rare": 1.0, "boss": 1.0, "chest": 1.0},
+  "count": {"normal": 1, "magic": 1, "rare": 2, "boss": 4, "chest": 2},
+  "rarity_weights": {"normal": [62, 30, 7, 0.6, 0.6], "magic": [45, 40, 13, 1, 1], "rare": [25, 45, 26, 2, 2],
+   "boss": [0, 30, 55, 7, 8], "chest": [20, 50, 26, 2, 2]},
+  "rarity_order": ["normal", "magic", "rare", "set", "unique"]
+ },
+ "bases": [
+  {"id": "hook_staff", "name": "Hook Staff", "slot": "staff", "icon": 0, "level": 1, "dmg": [6, 11], "implicit": {}},
+  {"id": "wickpole", "name": "Wickpole", "slot": "staff", "icon": 1, "level": 4, "dmg": [9, 15], "implicit": {"light_radius_pct": [6, 10]}},
+  {"id": "signal_staff", "name": "Signal Staff", "slot": "staff", "icon": 2, "level": 8, "dmg": [12, 20], "implicit": {"cast_speed_pct": [5, 8]}},
+  {"id": "iron_crook", "name": "Iron Crook", "slot": "staff", "icon": 3, "level": 12, "dmg": [16, 27], "implicit": {"crit_chance": [1, 2]}},
+  {"id": "hand_lantern", "name": "Hand Lantern", "slot": "relic", "icon": 0, "level": 1, "implicit": {"light_radius_pct": [8, 12]}},
+  {"id": "oil_flask", "name": "Oil Flask", "slot": "relic", "icon": 1, "level": 1, "implicit": {"oil": [10, 16]}},
+  {"id": "wick_charm", "name": "Wick Charm", "slot": "relic", "icon": 2, "level": 3, "implicit": {"sunfire_pct": [6, 10]}},
+  {"id": "reflector", "name": "Brass Reflector", "slot": "relic", "icon": 3, "level": 6, "implicit": {"area_pct": [5, 8]}},
+  {"id": "brim_hat", "name": "Brim Hat", "slot": "head", "icon": 0, "level": 1, "implicit": {"armour": [8, 14]}},
+  {"id": "hood", "name": "Oilskin Hood", "slot": "head", "icon": 1, "level": 1, "implicit": {"dusk_res": [5, 8]}},
+  {"id": "smoke_mask", "name": "Smoke Mask", "slot": "head", "icon": 2, "level": 6, "implicit": {"armour": [14, 22]}},
+  {"id": "long_coat", "name": "Long Coat", "slot": "body", "icon": 0, "level": 1, "implicit": {"armour": [18, 28]}},
+  {"id": "oilskin", "name": "Oilskin Coat", "slot": "body", "icon": 1, "level": 3, "implicit": {"armour": [12, 18], "dusk_res": [6, 10]}},
+  {"id": "ash_mantle", "name": "Ash Mantle", "slot": "body", "icon": 2, "level": 8, "implicit": {"armour": [30, 44]}},
+  {"id": "wick_gloves", "name": "Wick Gloves", "slot": "hands", "icon": 0, "level": 1, "implicit": {"armour": [5, 9]}},
+  {"id": "gauntlets", "name": "Lamp-Iron Gauntlets", "slot": "hands", "icon": 1, "level": 6, "implicit": {"armour": [10, 16]}},
+  {"id": "road_boots", "name": "Road Boots", "slot": "feet", "icon": 0, "level": 1, "implicit": {"move_pct": [4, 6]}},
+  {"id": "treads", "name": "Glass Treads", "slot": "feet", "icon": 1, "level": 6, "implicit": {"armour": [8, 12], "move_pct": [2, 4]}},
+  {"id": "satchel_belt", "name": "Satchel Belt", "slot": "belt", "icon": 0, "level": 1, "implicit": {"oil": [6, 10]}},
+  {"id": "cord", "name": "Waxed Cord", "slot": "belt", "icon": 1, "level": 1, "implicit": {"life": [8, 14]}},
+  {"id": "locket", "name": "Locket", "slot": "neck", "icon": 0, "level": 1, "implicit": {"life": [8, 14]}},
+  {"id": "ember_pendant", "name": "Ember Pendant", "slot": "neck", "icon": 1, "level": 4, "implicit": {"sunfire_pct": [5, 9]}},
+  {"id": "band", "name": "Iron Band", "slot": "ring", "icon": 0, "level": 1, "implicit": {"dusk_res": [4, 7]}},
+  {"id": "signet", "name": "Glass Signet", "slot": "ring", "icon": 1, "level": 3, "implicit": {"crit_chance": [1, 2]}}
+ ],
+ "affixes": [
+  {"id": "p_life", "type": "prefix", "name": "Hale", "stat": "life", "slots": ["head", "body", "belt", "neck", "ring", "hands", "feet", "relic"], "tiers": [[6, 10, 1], [11, 18, 6], [19, 28, 12], [29, 40, 20], [41, 55, 30]]},
+  {"id": "p_armour", "type": "prefix", "name": "Riveted", "stat": "armour", "slots": ["head", "body", "hands", "feet", "belt"], "tiers": [[8, 14, 1], [15, 24, 6], [25, 38, 12], [39, 56, 20], [57, 80, 30]]},
+  {"id": "p_sunfire", "type": "prefix", "name": "Kindled", "stat": "sunfire_pct", "slots": ["staff", "relic", "neck", "ring"], "tiers": [[8, 12, 1], [13, 20, 6], [21, 30, 12], [31, 42, 20], [43, 58, 30]]},
+  {"id": "p_added", "type": "prefix", "name": "Searing", "stat": "added_sunfire", "slots": ["staff", "relic", "ring", "hands"], "tiers": [[1, 3, 1], [3, 6, 6], [6, 10, 12], [10, 15, 20], [15, 22, 30]]},
+  {"id": "p_oil", "type": "prefix", "name": "Brimming", "stat": "oil", "slots": ["relic", "neck", "belt", "head", "ring"], "tiers": [[6, 10, 1], [10, 16, 6], [16, 24, 12], [24, 34, 20], [34, 46, 30]]},
+  {"id": "p_staff", "type": "prefix", "name": "Honed", "stat": "staff_damage_pct", "slots": ["staff"], "tiers": [[15, 25, 1], [26, 40, 6], [41, 60, 12], [61, 85, 20], [86, 120, 30]]},
+  {"id": "p_spell", "type": "prefix", "name": "Whispering", "stat": "spell_pct", "slots": ["staff", "relic", "neck"], "tiers": [[8, 12, 1], [13, 20, 6], [21, 30, 12], [31, 42, 20], [43, 58, 30]]},
+  {"id": "p_light", "type": "prefix", "name": "Bright", "stat": "light_radius_pct", "slots": ["staff", "relic", "head", "neck"], "tiers": [[4, 7, 1], [8, 11, 6], [12, 16, 12], [17, 22, 20], [23, 30, 30]]},
+  {"id": "s_speed", "type": "suffix", "name": "of Haste", "stat": "attack_speed_pct", "slots": ["staff", "hands", "ring"], "tiers": [[4, 7, 1], [8, 11, 6], [12, 16, 12], [17, 21, 20], [22, 27, 30]]},
+  {"id": "s_cast", "type": "suffix", "name": "of Murmurs", "stat": "cast_speed_pct", "slots": ["staff", "relic", "neck", "hands"], "tiers": [[4, 7, 1], [8, 11, 6], [12, 16, 12], [17, 21, 20], [22, 27, 30]]},
+  {"id": "s_move", "type": "suffix", "name": "of the Road", "stat": "move_pct", "slots": ["feet"], "tiers": [[4, 6, 1], [7, 10, 6], [11, 14, 12], [15, 19, 20], [20, 25, 30]]},
+  {"id": "s_res", "type": "suffix", "name": "of Ash", "stat": "dusk_res", "slots": ["head", "body", "hands", "feet", "belt", "ring", "neck"], "tiers": [[5, 8, 1], [9, 13, 6], [14, 19, 12], [20, 26, 20], [27, 34, 30]]},
+  {"id": "s_crit", "type": "suffix", "name": "of Glints", "stat": "crit_chance", "slots": ["staff", "ring", "neck", "relic", "hands"], "tiers": [[1, 2, 1], [2, 3, 6], [3, 4, 12], [4, 5, 20], [5, 7, 30]]},
+  {"id": "s_regen", "type": "suffix", "name": "of Mending", "stat": "life_regen", "slots": ["body", "belt", "ring", "neck"], "tiers": [[0.5, 1, 1], [1, 2, 6], [2, 3, 12], [3, 4.5, 20], [4.5, 6, 30]]},
+  {"id": "s_hunger", "type": "suffix", "name": "of Hunger", "stat": "light_on_kill", "slots": ["relic", "staff", "neck", "head"], "tiers": [[0.5, 1, 1], [1, 1.5, 6], [1.5, 2, 12], [2, 3, 20], [3, 4, 30]]},
+  {"id": "s_shroud", "type": "suffix", "name": "of Night Eyes", "stat": "damage_vs_shrouded_pct", "slots": ["staff", "hands", "ring", "relic"], "tiers": [[8, 12, 1], [13, 18, 6], [19, 26, 12], [27, 35, 20], [36, 46, 30]]},
+  {"id": "s_feast", "type": "suffix", "name": "of Feasting", "stat": "life_on_kill", "slots": ["staff", "hands", "ring", "belt"], "tiers": [[1, 2, 1], [2, 4, 6], [4, 6, 12], [6, 9, 20], [9, 12, 30]]},
+  {"id": "s_patience", "type": "suffix", "name": "of Patience", "stat": "cooldown_pct", "slots": ["relic", "head", "neck"], "tiers": [[4, 6, 1], [6, 9, 6], [9, 12, 12], [12, 15, 20], [15, 19, 30]]}
+ ],
+ "rare_words": {
+  "first": ["Ash", "Wick", "Gutter", "Ember", "Glass", "Tallow", "Soot", "Cinder", "Lamp", "Noon", "Moth", "Hollow"],
+  "second": {"staff": ["Crook", "Pole", "Reach", "Beacon"], "relic": ["Keep", "Spark", "Mercy", "Ward"],
+   "head": ["Brim", "Cowl", "Watch", "Shade"], "body": ["Coat", "Mantle", "Shroud", "Hide"], "hands": ["Grip", "Clutch", "Touch"],
+   "feet": ["Stride", "Tread", "Road"], "belt": ["Cinch", "Coil", "Strap"], "neck": ["Charm", "Heart", "Knot"], "ring": ["Loop", "Turn", "Band"]}
+ },
+ "uniques": [
+  {"id": "long_night", "name": "The Long Night", "base": "wickpole", "level": 4, "special": "long_night",
+   "stats": {"staff_damage_pct": [60, 80], "damage_vs_shrouded_pct": [40, 40], "light_radius_pct": [-20, -20]},
+   "special_text": "Sunlash strikes against Shrouded enemies always Ignite", "lore": "Teague cut the shutters off. 'Let the dark see who's coming.'"},
+  {"id": "moth_mother", "name": "Moth-Mother's Wick", "base": "wick_charm", "level": 3, "special": "moth_light",
+   "stats": {"moth_count": [3, 3], "sunfire_pct": [15, 25]}, "special_text": "Moth hits feed the lantern +0.5 Light",
+   "lore": "Something nests in it. It purrs when you are sad."},
+  {"id": "glasswalker", "name": "Glasswalker Treads", "base": "treads", "level": 6, "special": "glass_dash",
+   "stats": {"move_pct": [12, 16], "dash_cd_pct": [15, 25]}, "special_text": "Wickstep leaves a trail of glass that cuts enemies (40% staff damage)",
+   "lore": "The soles never wear. They just get sharper."},
+  {"id": "ottilies_spare", "name": "Ottilie's Spare", "base": "hand_lantern", "level": 1, "special": "",
+   "stats": {"light_radius_pct": [25, 35], "light_loss_reduction": [30, 30], "oil": [-10, -10]}, "special_text": "",
+   "lore": "She keeps one under the counter. 'For emergencies. And for you.'"}
+ ],
+ "sets": {
+  "ninth_watch": {"name": "Ninth Watch", "pieces": [
+    {"id": "ninth_brim", "name": "Ninth Watch Brim", "base": "brim_hat", "stats": {"life": [14, 20], "armour": [10, 16]}},
+    {"id": "ninth_coat", "name": "Ninth Watch Coat", "base": "long_coat", "stats": {"life": [18, 26], "dusk_res": [10, 14]}}],
+   "bonus": {"2": {"light_radius_pct": 20.0, "life_on_kill": 4.0}}, "bonus_text": "2 pieces: +20% Light radius, +4 Life gained on Kill",
+   "lore": "Stitched for the Ninth Lamplighter before there was one."}
+ }
+}

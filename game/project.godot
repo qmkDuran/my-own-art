@@ -1,0 +1,42 @@
+; Engine configuration file.
+config_version=5
+
+[application]
+
+config/name="LANTERNFALL"
+config/description="An action RPG of light and the Dusk. You are the Ninth Lamplighter."
+run/main_scene="res://scenes/title.tscn"
+config/features=PackedStringArray("4.7", "GL Compatibility")
+
+[autoload]
+
+Audio="*res://scripts/core/audio.gd"
+TestRunner="*res://tests/test_runner.gd"
+
+[display]
+
+window/size/viewport_width=960
+window/size/viewport_height=540
+window/size/window_width_override=1920
+window/size/window_height_override=1080
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+window/stretch/scale_mode="integer"
+
+[gui]
+
+theme/custom="res://fonts/ui_theme.tres"
+theme/default_font_antialiasing=0
+theme/default_font_hinting=0
+
+[physics]
+
+2d/default_gravity=0.0
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+textures/canvas_textures/default_texture_filter=0
+2d/snap/snap_2d_transforms_to_pixel=true
+environment/defaults/default_clear_color=Color(0.043, 0.039, 0.07, 1)

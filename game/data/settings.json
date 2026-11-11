@@ -1,0 +1,7 @@
+{
+ "screen_shake": 1.0,
+ "damage_numbers": true,
+ "auto_pickup": "none",
+ "music_volume_db": -10.0,
+ "sfx_volume_db": 0.0
+}

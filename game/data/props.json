@@ -1,0 +1,408 @@
+{
+ "tree_a": {
+  "size": [
+   64,
+   96
+  ],
+  "frames": 1,
+  "foot": [
+   10,
+   8
+  ],
+  "light": "",
+  "flat": false,
+  "glow": true
+ },
+ "tree_b": {
+  "size": [
+   80,
+   116
+  ],
+  "frames": 1,
+  "foot": [
+   12,
+   8
+  ],
+  "light": "",
+  "flat": false,
+  "glow": true
+ },
+ "tree_c": {
+  "size": [
+   56,
+   80
+  ],
+  "frames": 1,
+  "foot": [
+   10,
+   8
+  ],
+  "light": "",
+  "flat": false,
+  "glow": true
+ },
+ "tree_dead": {
+  "size": [
+   72,
+   104
+  ],
+  "frames": 1,
+  "foot": [
+   10,
+   8
+  ],
+  "light": "",
+  "flat": false,
+  "glow": false
+ },
+ "crystal": {
+  "size": [
+   32,
+   32
+  ],
+  "frames": 1,
+  "foot": [
+   16,
+   8
+  ],
+  "light": "glass_lt",
+  "flat": false,
+  "glow": true
+ },
+ "crystal_big": {
+  "size": [
+   48,
+   52
+  ],
+  "frames": 1,
+  "foot": [
+   26,
+   10
+  ],
+  "light": "glass_lt",
+  "flat": false,
+  "glow": true
+ },
+ "rock_a": {
+  "size": [
+   28,
+   20
+  ],
+  "frames": 1,
+  "foot": [
+   24,
+   10
+  ],
+  "light": "",
+  "flat": false,
+  "glow": false
+ },
+ "rock_b": {
+  "size": [
+   36,
+   26
+  ],
+  "frames": 1,
+  "foot": [
+   32,
+   12
+  ],
+  "light": "",
+  "flat": false,
+  "glow": false
+ },
+ "hut": {
+  "size": [
+   112,
+   96
+  ],
+  "frames": 1,
+  "foot": [
+   84,
+   30
+  ],
+  "light": "",
+  "flat": false,
+  "glow": true
+ },
+ "woodpile": {
+  "size": [
+   36,
+   24
+  ],
+  "frames": 1,
+  "foot": [
+   32,
+   10
+  ],
+  "light": "",
+  "flat": false,
+  "glow": false
+ },
+ "stump": {
+  "size": [
+   28,
+   26
+  ],
+  "frames": 1,
+  "foot": [
+   16,
+   8
+  ],
+  "light": "",
+  "flat": false,
+  "glow": false
+ },
+ "chest": {
+  "size": [
+   30,
+   26
+  ],
+  "frames": 2,
+  "foot": [
+   24,
+   10
+  ],
+  "light": "",
+  "flat": false,
+  "glow": true
+ },
+ "waylamp": {
+  "size": [
+   28,
+   76
+  ],
+  "frames": 2,
+  "foot": [
+   12,
+   8
+  ],
+  "light": "",
+  "flat": false,
+  "glow": true
+ },
+ "menhir_a": {
+  "size": [
+   28,
+   52
+  ],
+  "frames": 1,
+  "foot": [
+   18,
+   8
+  ],
+  "light": "",
+  "flat": false,
+  "glow": true
+ },
+ "menhir_b": {
+  "size": [
+   28,
+   52
+  ],
+  "frames": 1,
+  "foot": [
+   18,
+   8
+  ],
+  "light": "",
+  "flat": false,
+  "glow": true
+ },
+ "tower": {
+  "size": [
+   96,
+   128
+  ],
+  "frames": 1,
+  "foot": [
+   60,
+   30
+  ],
+  "light": "",
+  "flat": false,
+  "glow": false
+ },
+ "statue_fisher": {
+  "size": [
+   48,
+   48
+  ],
+  "frames": 1,
+  "foot": [
+   20,
+   10
+  ],
+  "light": "",
+  "flat": false,
+  "glow": true
+ },
+ "statue_deer": {
+  "size": [
+   52,
+   48
+  ],
+  "frames": 1,
+  "foot": [
+   30,
+   10
+  ],
+  "light": "",
+  "flat": false,
+  "glow": true
+ },
+ "cart": {
+  "size": [
+   68,
+   44
+  ],
+  "frames": 1,
+  "foot": [
+   56,
+   14
+  ],
+  "light": "",
+  "flat": false,
+  "glow": false
+ },
+ "cairn": {
+  "size": [
+   36,
+   44
+  ],
+  "frames": 1,
+  "foot": [
+   26,
+   10
+  ],
+  "light": "",
+  "flat": false,
+  "glow": false
+ },
+ "campfire": {
+  "size": [
+   30,
+   18
+  ],
+  "frames": 1,
+  "foot": [
+   24,
+   10
+  ],
+  "light": "",
+  "flat": false,
+  "glow": false
+ },
+ "bedroll": {
+  "size": [
+   30,
+   14
+  ],
+  "frames": 1,
+  "foot": [
+   0,
+   0
+  ],
+  "light": "",
+  "flat": false,
+  "glow": false
+ },
+ "signpost": {
+  "size": [
+   36,
+   44
+  ],
+  "frames": 1,
+  "foot": [
+   8,
+   6
+  ],
+  "light": "",
+  "flat": false,
+  "glow": false
+ },
+ "reeds": {
+  "size": [
+   20,
+   22
+  ],
+  "frames": 1,
+  "foot": [
+   0,
+   0
+  ],
+  "light": "",
+  "flat": false,
+  "glow": false
+ },
+ "bridge_north": {
+  "size": [
+   32,
+   32
+  ],
+  "frames": 1,
+  "foot": [
+   0,
+   0
+  ],
+  "light": "",
+  "flat": true,
+  "glow": false
+ },
+ "bridge_deck": {
+  "size": [
+   32,
+   32
+  ],
+  "frames": 1,
+  "foot": [
+   0,
+   0
+  ],
+  "light": "",
+  "flat": true,
+  "glow": false
+ },
+ "bridge_south": {
+  "size": [
+   32,
+   32
+  ],
+  "frames": 1,
+  "foot": [
+   0,
+   0
+  ],
+  "light": "",
+  "flat": true,
+  "glow": false
+ },
+ "wall": {
+  "size": [
+   96,
+   112
+  ],
+  "frames": 1,
+  "foot": [
+   0,
+   0
+  ],
+  "light": "",
+  "flat": false,
+  "glow": false
+ },
+ "gate": {
+  "size": [
+   128,
+   112
+  ],
+  "frames": 1,
+  "foot": [
+   0,
+   0
+  ],
+  "light": "",
+  "flat": false,
+  "glow": true
+ }
+}

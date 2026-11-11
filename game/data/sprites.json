@@ -1,0 +1,305 @@
+{
+ "actors": {
+  "lamplighter": {
+   "frame": [
+    64,
+    64
+   ],
+   "anchor": [
+    32,
+    61
+   ],
+   "poses": [
+    [
+     "idle",
+     4
+    ],
+    [
+     "walk",
+     6
+    ],
+    [
+     "strike",
+     4
+    ],
+    [
+     "cast",
+     3
+    ],
+    [
+     "hurt",
+     1
+    ]
+   ]
+  },
+  "npc_ottilie": {
+   "frame": [
+    64,
+    64
+   ],
+   "anchor": [
+    32,
+    61
+   ],
+   "poses": [
+    [
+     "idle",
+     4
+    ]
+   ],
+   "name": "Mother Ottilie Brask",
+   "role": "Keeper of the Great Lantern"
+  },
+  "npc_ysolde": {
+   "frame": [
+    64,
+    64
+   ],
+   "anchor": [
+    32,
+    61
+   ],
+   "poses": [
+    [
+     "idle",
+     4
+    ]
+   ],
+   "name": "Captain Ysolde Marr",
+   "role": "Commander of the Wall"
+  },
+  "npc_nim": {
+   "frame": [
+    64,
+    64
+   ],
+   "anchor": [
+    32,
+    61
+   ],
+   "poses": [
+    [
+     "idle",
+     4
+    ]
+   ],
+   "name": "Nim Saltry",
+   "role": "Wall-runner, 11"
+  },
+  "npc_fenn": {
+   "frame": [
+    64,
+    64
+   ],
+   "anchor": [
+    32,
+    61
+   ],
+   "poses": [
+    [
+     "idle",
+     4
+    ]
+   ],
+   "name": "Auntie Fenn Caddock",
+   "role": "Smith of the Ember Forge"
+  },
+  "npc_lio": {
+   "frame": [
+    64,
+    64
+   ],
+   "anchor": [
+    32,
+    61
+   ],
+   "poses": [
+    [
+     "idle",
+     4
+    ]
+   ],
+   "name": "Lio Quill",
+   "role": "Archivist of Rewritten Things"
+  },
+  "npc_hask": {
+   "frame": [
+    64,
+    64
+   ],
+   "anchor": [
+    32,
+    61
+   ],
+   "poses": [
+    [
+     "idle",
+     4
+    ]
+   ],
+   "name": "Hask",
+   "role": "A man the Dusk half rewrote"
+  },
+  "npc_teague": {
+   "frame": [
+    64,
+    64
+   ],
+   "anchor": [
+    32,
+    61
+   ],
+   "poses": [
+    [
+     "idle",
+     4
+    ]
+   ],
+   "name": "Teague Morrow",
+   "role": "The Eighth Lamplighter (missing)"
+  },
+  "gloam": {
+   "frame": [
+    48,
+    48
+   ],
+   "anchor": [
+    24,
+    44
+   ],
+   "poses": [
+    [
+     "idle",
+     4
+    ],
+    [
+     "move",
+     4
+    ],
+    [
+     "attack",
+     3
+    ]
+   ]
+  },
+  "hound": {
+   "frame": [
+    64,
+    48
+   ],
+   "anchor": [
+    32,
+    44
+   ],
+   "poses": [
+    [
+     "idle",
+     4
+    ],
+    [
+     "move",
+     4
+    ],
+    [
+     "attack",
+     3
+    ]
+   ]
+  },
+  "moth": {
+   "frame": [
+    64,
+    56
+   ],
+   "anchor": [
+    32,
+    52
+   ],
+   "poses": [
+    [
+     "idle",
+     4
+    ],
+    [
+     "move",
+     4
+    ],
+    [
+     "attack",
+     3
+    ]
+   ]
+  },
+  "glazier": {
+   "frame": [
+    128,
+    128
+   ],
+   "anchor": [
+    64,
+    124
+   ],
+   "poses": [
+    [
+     "idle",
+     4
+    ],
+    [
+     "move",
+     4
+    ],
+    [
+     "attack",
+     3
+    ]
+   ]
+  }
+ },
+ "icons": {
+  "item_rows": [
+   "staff",
+   "relic",
+   "head",
+   "body",
+   "hands",
+   "feet",
+   "belt",
+   "neck",
+   "ring"
+  ],
+  "item_kinds": {
+   "staff": 4,
+   "relic": 4,
+   "head": 3,
+   "body": 3,
+   "hands": 2,
+   "feet": 2,
+   "belt": 2,
+   "neck": 2,
+   "ring": 2
+  },
+  "variants": 6,
+  "skills": [
+   "sunlash",
+   "flare",
+   "lantern_toss",
+   "moth_swarm",
+   "dash",
+   "eclipse",
+   "noon",
+   "tonic"
+  ],
+  "glyphs": [
+   "life",
+   "oil",
+   "light",
+   "damage",
+   "fire",
+   "speed",
+   "armour",
+   "crit",
+   "moth",
+   "dark"
+  ]
+ }
+}
