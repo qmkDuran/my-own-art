@@ -276,7 +276,16 @@ func _separation() -> Vector2:
 		var min_d: float = (radius + o.radius) * PERSONAL_SPACE
 		if d.length() < min_d and d.length() > 0.01:
 			push += d.normalized() * (1.0 - d.length() / min_d)
-	return push
+	return push + _space_from(Game.current.player.global_position, Game.current.player.radius)
+
+
+## Keep off the Lamplighter's body too: melee reach is longer than this, so bites still land.
+func _space_from(at: Vector2, other_radius: float) -> Vector2:
+	var d: Vector2 = global_position - at
+	var min_d: float = (radius + other_radius) * PERSONAL_SPACE
+	if d.length() >= min_d or d.length() <= 0.01:
+		return Vector2.ZERO
+	return d.normalized() * (1.0 - d.length() / min_d)
 
 
 func _animate(delta: float, want: Vector2) -> void:

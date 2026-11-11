@@ -175,16 +175,20 @@ func _npc(id: String) -> Npc:
 func _shot_road() -> void:
 	var h := _bot()
 	h.story_at("ember_road", 1)
-	h.level_up(9)
+	h.level_up(10)
+	h.gear_up(10)
+	h.clear_near(100000.0)                                  # only the lamp's own wave comes for it
 	var lamp: Waylamp = g.lamps[0]
 	h.place_player(lamp.stand_point() + Vector2(40, 30))
 	g.player.light.value = 70.0
 	await _wait(0.4)
 	lamp.use(g)
 	lamp.progress = 0.45
-	await _wait(2.4)
+	await _wait(1.5)
 	h.cast("flare", g.player.global_position + Vector2(80, 0))
 	await _wait(0.12)
+	if g.player.life <= 0.0 or g.player.global_position.distance_to(lamp.global_position) > 200.0:
+		push_error("road shot: the Lamplighter fell before the shot")    # never ship a shot of the death screen
 	await _save("ember_road_relight")
 
 
