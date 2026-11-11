@@ -115,8 +115,11 @@ func _pick_in(rect: Rect2, items: PackedStringArray, cols: int, col_w: int, ok: 
 	if on_move.is_valid():
 		list.index_changed.connect(on_move)
 		on_move.call(0)
+	var covers_log: bool = rect.intersects(BattleLayout.LOG_RECT)
+	battle.messages.visible = not covers_log
 	var i: int = await list.pick()
 	panel.queue_free()
+	battle.messages.visible = true
 	return i
 
 

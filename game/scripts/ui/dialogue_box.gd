@@ -49,7 +49,7 @@ func _layout() -> void:
 	_panel.size = Vector2(view.x - MARGIN * 2, BOX_H)
 	_text.size = Vector2(_panel.size.x - 16, BOX_H - 6)
 	_more.position = Vector2(_panel.size.x - 6, BOX_H - 9)
-	_name_tag.position = _panel.position + Vector2(6, -NAME_TAG_H + 1)
+	_name_tag.position = _panel.position + Vector2(6, -NAME_TAG_H)
 
 
 ## Shows each line in turn, waiting for the player after each.

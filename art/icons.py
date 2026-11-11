@@ -69,7 +69,7 @@ def heart(kind: str) -> Canvas:
     """A Trust heart: full, half (left half filled) or empty."""
     c = Canvas(9, 8)
     shape = c.circle(2.5, 2.8, 2.4) | c.circle(6.5, 2.8, 2.4) | c.poly([(0.2, 3.5), (8.8, 3.5), (4.5, 8)])
-    c.fill(shape, "dusk")
+    c.fill(shape, "fog")
     if kind == "full":
         c.part(shape, "rose", 2, contour=False, gloss=True)
     elif kind == "half":

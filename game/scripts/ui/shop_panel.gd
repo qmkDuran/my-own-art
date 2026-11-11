@@ -20,9 +20,9 @@ func run() -> void:
 	content.add_child(list)
 	list.setup(names, 1, LIST_W)
 	_coins = add_label("", Vector2(INFO_X, 0), "ember1")
-	_info = add_label("", Vector2(INFO_X, 16), "ink")
-	_info.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_info.size = Vector2(content.size.x - INFO_X, 70)
+	_info = UiKit.wrapped("", content.size.x - INFO_X)
+	_info.position = Vector2(INFO_X, 16)
+	content.add_child(_info)
 	list.index_changed.connect(_describe)
 	_describe(0)
 	while true:

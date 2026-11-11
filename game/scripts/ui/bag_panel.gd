@@ -35,9 +35,9 @@ func _pick_item() -> int:
 	list.max_rows = int(content.size.y / MenuList.ROW_H)
 	list.setup(names, 1, LIST_W)
 	_icon = add_icon("res://art/ui/item_%s.png" % _ids[0], Vector2(INFO_X, 0))
-	_info = add_label("", Vector2(INFO_X, 20), "ink")
-	_info.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_info.size = Vector2(content.size.x - INFO_X, 60)
+	_info = UiKit.wrapped("", content.size.x - INFO_X)
+	_info.position = Vector2(INFO_X, 20)
+	content.add_child(_info)
 	list.index_changed.connect(_describe)
 	_describe(0)
 	return await list.pick()

@@ -43,7 +43,7 @@ func _show_starters() -> void:
 	var view: Vector2 = get_viewport_rect().size
 	for i: int in STARTERS.size():
 		var x: float = view.x / 2 + (i - 1) * SPACING - 40
-		add_child(UiKit.panel(Rect2(x - 2, ROW_Y + 50, 84, 34), "cream", "ink"))
+		add_child(UiKit.panel(Rect2(x + 4, ROW_Y + 70, 72, 14), "cream", "ink"))
 		var t := TextureRect.new()
 		t.texture = UiKit.creature_tex(STARTERS[i], "front")
 		t.position = Vector2(x, ROW_Y)
@@ -92,8 +92,6 @@ func _highlight() -> void:
 	var heading := UiKit.label("%s  -  %s" % [c["name"], Db.element_name(String(c["element"]))], "ink")
 	heading.position = Vector2(6, 1)
 	_info.add_child(heading)
-	var note := UiKit.label(String(c["journal"]), "ink2")
+	var note := UiKit.wrapped(String(c["journal"]), view.x - 20, "ink2")
 	note.position = Vector2(6, 14)
-	note.size = Vector2(view.x - 20, 30)
-	note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_info.add_child(note)

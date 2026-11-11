@@ -129,18 +129,33 @@ def _rounded(c: Canvas, x0: int, y0: int, x1: int, y1: int, r: int):
     return m
 
 
+TUFT = [
+    "  l    l",
+    " lm  l m",
+    " mm lmmm",
+    "lmbmmmbm",
+    "mbmmbmmb",
+    "bmdbmbdb",
+    "bddbdbdd",
+    "dddddddd",
+]
+TUFT_COLOURS = {"d": "leaf1", "b": "leaf2", "m": "leaf3", "l": "leaf4"}
+TUFT_SPOTS = [(4, -6), (12, -6), (0, 1), (8, 1), (4, 8), (12, 8)]
+
+
 def tall_grass(front_only: bool) -> Canvas:
-    """Tall grass: a cluster of blades; the front cut is drawn over a walker's legs."""
+    """Tall grass: hand-placed tufts that tile into dense patches; the front cut (lower tufts) is drawn over a
+    walker's legs."""
     c = Canvas(T, T)
-    blades = [(1, 6), (4, 3), (7, 5), (10, 2), (13, 5), (2, 10), (6, 9), (9, 10), (12, 9), (15, 11)]
-    for i, (x, top) in enumerate(blades):
-        if front_only and top < 8:
+    if not front_only:
+        c.fill(c.rect(0, 0, T, T), "leaf2")
+    for ox, oy in TUFT_SPOTS:
+        if front_only and oy < 8:
             continue
-        col, hi = ("leaf1", "leaf3") if i % 2 else ("leaf2", "leaf4")
-        c.fill(c.poly([(x - 2, 16), (x, top), (x + 2, 16)]), col)
-        c.dot(x, top + 1, hi)
-        c.dot(x, top + 2, hi)
-    c.fill(c.rect(0, 15, 16, 16), "leaf1")
+        for y, row in enumerate(TUFT):
+            for x, ch in enumerate(row):
+                if ch != " " and 0 <= oy + y < T:
+                    c.dot((ox + x) % T, oy + y, TUFT_COLOURS[ch])
     return c
 
 

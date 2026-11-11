@@ -15,8 +15,9 @@ func setup(rect: Rect2) -> BattleLog:
 	add_theme_stylebox_override("panel", UiKit.panel_style())
 	_text = UiKit.label("")
 	_text.position = Vector2(6, 2)
-	_text.size = rect.size - Vector2(12, 4)
 	_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_text.custom_minimum_size = Vector2(rect.size.x - 12, 0)
+	_text.size = rect.size - Vector2(12, 4)
 	add_child(_text)
 	return self
 

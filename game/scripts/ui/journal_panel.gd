@@ -51,9 +51,9 @@ func _show_page(i: int) -> void:
 	_text(Db.element_name(String(Db.species[id]["element"])), Vector2(94, 12), "ink2", true)
 	_text("FRIEND" if status == "befriended" else "SEEN", Vector2(94, 24), "rose1" if status == "befriended" else "dusk", true)
 	var note: String = String(Db.species[id]["journal"]) if status == "befriended" else "Seen in the wild. Befriend one to learn more."
-	var l: Label = _text(note, Vector2(0, 92), "ink")
-	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	l.size = Vector2(content.size.x - PAGE_X, 40)
+	var l := UiKit.wrapped(note, content.size.x - PAGE_X)
+	l.position = Vector2(0, 92)
+	_page.add_child(l)
 
 
 func _text(t: String, at: Vector2, colour: String, small: bool = false) -> Label:

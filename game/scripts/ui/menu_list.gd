@@ -21,10 +21,12 @@ var _top: int = 0
 var _labels: Array[Label] = []
 var _pointer: TextureRect
 var _active: bool = false
+var _colour: String = "ink"
 
 
 func setup(items: PackedStringArray, cols: int = 1, col_w: int = 80, colour: String = "ink") -> MenuList:
 	options = items
+	_colour = colour
 	columns = cols
 	column_w = col_w
 	enabled.clear()
@@ -77,7 +79,7 @@ func _scroll() -> void:
 
 func set_enabled(i: int, on: bool) -> void:
 	enabled[i] = on
-	_labels[i].modulate = Color(1, 1, 1, 1.0 if on else 0.45)
+	_labels[i].add_theme_color_override("font_color", UiKit.c(_colour if on else "mist"))
 
 
 func pick() -> int:

@@ -4,7 +4,7 @@ extends ScreenPanel
 ## Left/right flips through the team; cancel closes.
 
 const PORTRAIT: Vector2 = Vector2(0, 0)
-const STATS_X: int = 152
+const STATS_X: int = 168
 const STAT_KEYS: Array[String] = ["atk", "def", "spd"]
 const STAT_NAMES: Dictionary = {"atk": "Attack", "def": "Defense", "spd": "Speed"}
 
@@ -66,11 +66,11 @@ func _bond_block(c: Creature) -> void:
 
 func _stats_block(c: Creature) -> void:
 	add_label("HP", Vector2(STATS_X, 0), "ink2", true)
-	add_label("%d/%d" % [c.hp, c.max_hp()], Vector2(STATS_X + 60, -2))
+	add_label("%d/%d" % [c.hp, c.max_hp()], Vector2(STATS_X + 56, -2))
 	for k: int in STAT_KEYS.size():
 		var key: String = STAT_KEYS[k]
 		add_label(STAT_NAMES[key], Vector2(STATS_X, 12 + k * 11), "ink2", true)
-		add_label(str(c.stat(key)), Vector2(STATS_X + 60, 10 + k * 11))
+		add_label(str(c.stat(key)), Vector2(STATS_X + 56, 10 + k * 11))
 
 
 func _moves_block(c: Creature) -> void:
@@ -81,4 +81,4 @@ func _moves_block(c: Creature) -> void:
 		add_icon("res://art/ui/elem_%s.png" % m["element"], Vector2(STATS_X, y + 2))
 		add_label(String(m["name"]), Vector2(STATS_X + 13, y - 1))
 		var power: String = str(int(m["power"])) if m["kind"] == "attack" else "-"
-		add_label(power, Vector2(STATS_X + 110, y + 1), "dusk", true)
+		add_label(power, Vector2(STATS_X + 106, y + 1), "dusk", true)

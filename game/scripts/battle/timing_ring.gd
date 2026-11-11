@@ -110,6 +110,7 @@ func _draw() -> void:
 	draw_arc(Vector2.ZERO, TARGET_R + GOOD_BAND, 0, TAU, 48, UiKit.c("mist"), 1.0, false)
 	draw_arc(Vector2.ZERO, TARGET_R, 0, TAU, 40, UiKit.c("cream"), RING_W, false)
 	draw_arc(Vector2.ZERO, TARGET_R, 0, TAU, 40, UiKit.c("ink"), 1.0, false)
+	draw_arc(Vector2.ZERO, current_radius(), 0, TAU, 48, UiKit.c("ink"), RING_W + 2, false)
 	draw_arc(Vector2.ZERO, current_radius(), 0, TAU, 48, UiKit.c(accent), RING_W, false)
 	var hint: String = String(HINTS[mode])
 	var w: float = UiKit.text_width(hint, true)

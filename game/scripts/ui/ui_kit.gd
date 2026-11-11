@@ -56,6 +56,9 @@ static func build_theme() -> Theme:
 	t.default_font = body_font()
 	t.default_font_size = BODY_SIZE
 	t.set_color("font_color", "Label", c("ink"))
+	for type: String in ["Label", "Button", "RichTextLabel", "LineEdit"]:
+		t.set_font_size("font_size", type, BODY_SIZE)
+		t.set_font("font", type, body_font())
 	t.set_stylebox("panel", "PanelContainer", panel_style())
 	t.set_stylebox("panel", "Panel", panel_style())
 	return t
@@ -65,6 +68,8 @@ static func label(text: String, colour: String = "ink", small: bool = false) -> 
 	var l := Label.new()
 	l.text = text
 	l.add_theme_color_override("font_color", c(colour))
+	l.add_theme_font_override("font", body_font())
+	l.add_theme_font_size_override("font_size", BODY_SIZE)
 	if small:
 		l.add_theme_font_override("font", small_font())
 		l.add_theme_font_size_override("font_size", SMALL_SIZE)
@@ -95,3 +100,12 @@ static func is_click(ev: InputEvent) -> bool:
 static func text_width(text: String, small: bool = false) -> float:
 	var font: FontFile = small_font() if small else body_font()
 	return font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, SMALL_SIZE if small else BODY_SIZE).x
+
+
+## A label that wraps inside a fixed width.
+static func wrapped(text: String, width: float, colour: String = "ink", small: bool = false) -> Label:
+	var l := label(text, colour, small)
+	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	l.custom_minimum_size = Vector2(width, 0)
+	l.size = Vector2(width, 0)
+	return l

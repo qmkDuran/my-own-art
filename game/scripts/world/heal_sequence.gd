@@ -65,9 +65,7 @@ func sparkle_on(w: Walker) -> void:
 
 ## A "!" bubble over someone's head.
 func exclaim(w: Walker) -> void:
-	var bubble := Label.new()
-	bubble.text = "!"
-	bubble.add_theme_color_override("font_color", UiKit.c("ember1"))
+	var bubble := UiKit.label("!", "ember1")
 	bubble.add_theme_color_override("font_outline_color", UiKit.c("cream"))
 	bubble.add_theme_constant_override("outline_size", 2)
 	bubble.position = Vector2(-2, -46)
