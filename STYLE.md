@@ -32,6 +32,13 @@ sprite pixel must be in the palette (`tools/check_art.py`). UI uses palette name
 - Front-facing people (mirrored to face the cursor side); attacks aim in any direction through effects (the whip
   sweeps an arc toward the cursor, Lancet fans a cone, projectiles fly at the cursor).
 
+## Biomes (each recolours the same ground shader through `ground`)
+- **Glasswood**: moss and dark glass, teal glints, glass stream. **Ember Road**: ash-dark fields with pale stubble,
+  burnt bramble hedgerows with live embers, a black canal with ember glints. **Moth Hollow**: near-black cave rock,
+  dusty floors, black pools, violet hunger nests, a silk-web nest floor. **Tallow**: round cobbles, warm windows,
+  the Great Lantern's huge warm light, rampart tops seen from above.
+- Tall things (trees, stalagmites, buildings) turn see-through when they stand in front of someone or of the caption.
+
 ## Ground
 Shader-drawn from the terrain grid with palette colours and 4x4 ordered dithering; borders warped by noise (≤ 5 px
 from the collision line); water, paths and the stone ring drawn from their true geometry (never staircase steps);

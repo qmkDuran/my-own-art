@@ -4,8 +4,8 @@ A fast action RPG in Godot 4.7.2 (typed GDScript). One class, the Lamplighter. E
 made by code (Python+PIL sprites, Godot shaders/particles, numpy/scipy audio). Fonts: Pixelify Sans and
 Silkscreen (OFL, licences in `game/fonts/`). Read STYLE.md (look) and CODE_STYLE.md (code) with this file.
 
-Status: **pass 1 — test slice** (title, intro, one big Act 1 zone, 4 skills with trees, light mechanic, loot,
-passives, Glazier mini-boss, save). See "Progress" at the end.
+Status: **pass 2 — Act 1 playable**: Tallow (hub, people, services), the Glasswood, the Ember Road, Moth Hollow
+and the Moth Matron; quests and dialogue as data; zone travel; loot filter; save format 2. See "Progress".
 
 ## 1. Premise and story bible
 
@@ -193,6 +193,30 @@ One "pass" = one long working session. The slice took one pass.
 Realistic total: 10–12 passes for the ~10 h campaign + a first endgame; content quantity (enemy kinds, art) is
 the bottleneck, so each act reuses the systems and adds biome rules, set-pieces and 4–6 enemies.
 
+## 8b. Pass 2: how the campaign runs
+- **Zones** (`data/zones.json`): id, biome file, seed, enemy levels, music, `links` (for routing). A new game starts in
+  the Glasswood at Tallow's gate. `Session` (static) carries the character, the `Campaign` and every visited zone's
+  state between zone scenes; `Session.travel()` captures and reloads the game scene in the next zone.
+- **Exits**: set-pieces of kind `exit` (`to`: zone) — a road gate, a cave mouth, Tallow's gate. You arrive in front of
+  the exit that leads back where you came from; map travel (Nim's maps, any lit waylamp) arrives by a lit waylamp.
+- **Quests** (`data/quests.json`): ordered steps, each done by an event (`enter_zone`, `talk`, `boss_seen`,
+  `boss_down`, `lamp_lit` with a count, `read`, `flag`); a target per step drives the tracker and the minimap's
+  objective diamond (in another zone it points to the exit on the way). Rewards: xp, a unique, a set.
+- **Dialogue** (`data/dialogue.json`): per person, topics in order with conditions (`quest_step`, `quest_past`,
+  `quest_done`, `flag`, `not_flag`), `once`, effects (`start_quest`, `flag`, `service`). Services: travel (Nim),
+  stash (Fenn), respec (Ottilie), bestiary (Lio).
+- **Zone story** (`ZoneEvents`, biome `events`): arrival caption, first-visit ambush, the boss (rises when near, its
+  music, what its death frees), game-wide tips.
+- **Generators**: forest-like zones share `ZoneGen` steps with per-biome data (optional wall and stream, clearing
+  counts, ground recolours via `ground`, ring stones, stone style flags/cobbles/silk, wear). Tallow is laid by hand
+  (`CityGen`, biome `city`) but goes through the same layout data and checks.
+- **New mechanics**: Husk death bursts (telegraphed; simultaneous bursts count once), Silk Crawler shots slow you,
+  hunger nests drain Light, the Moth Matron (gust cone that shoves, dust clouds that drain Light, brood of moths,
+  smother: your light shrinks to an ember for 4 s). The Lamplighter gains +4% damage per level (data).
+- **Loot filter** (L): show/hide each rarity, hide plain pieces by slot, emphasise rare+; hidden drops never land.
+- **Panels**: quest log (J), loot filter (L), Nim's maps, Fenn's lockers (with the inventory), the order's ledger
+  (refund passives or a skill tree), Lio's bestiary (kills + lore).
+
 ## 9. Architecture (`game/scripts/`)
 | Folder | What |
 |---|---|
@@ -203,8 +227,10 @@ the bottleneck, so each act reuses the systems and adds biome rules, set-pieces 
 | skills | `Skill` base, `SkillSystem`, `Sunlash`, `Flare`, `LanternToss`, `MothSwarm`, `GlassTrail`, `fx/` (whip, burst, thrown lantern, moth, burning ground) |
 | items | `LootGen`, `Inventory`, `GroundItem`, `LootDrop`, `LabelStack` |
 | ui | `GameUi`, `Hud`, `HudMessages`, `Minimap`, `GamePanel` + `InventoryPanel`, `CharacterPanel`, `SkillPanel`, `PassivePanel`, `PausePanel`, `TooltipLayer`, `ItemText`, `SkillText`, `LightText`, `EnemyTag`, `TitleScreen`, `UiDraw`, `Overlay` |
-| story | `Objectives` |
-| demo | `DemoBot` (plays the video) |
+| story | `Campaign` (flags, quests, said, kills), `Dialogue`, `Objectives` (tracker lines, objective target, routing) |
+| core (pass 2) | `Session` (character, campaign, zone states, stash, travel) |
+| world (pass 2) | `CityGen`, `ZoneEvents`, `ZoneExit`, `HungerZone`, `ActorCheck` |
+| demo | `DemoReel` (staged scenes of a video, `--demo` / `--demo2`), `DemoBot` (plays like a player) |
 | `game.gd`, `game_input.gd` | session wiring and story beats; mouse/keyboard to commands |
 `Game.current` is the one documented service locator. Content is data: `game/data/*.json` (settings, light,
 player, stats, skills, passives, items, enemies, glasswood biome, story; props.json + sprites.json are generated).
@@ -240,6 +266,13 @@ Glazier + Nim, death/respawn, save/load). Review screenshots: `--shots` (needs x
 - Godot: no global non-uniform shader vars; `const` can't hold class refs; typed arrays need typed sources.
 
 ## 14. Progress log
+- **Pass 2**: review fixes (no Flare spokes, one-word light state, caption plates, trees/tall props fade over bodies
+  and captions, free-spot search for every arrival and teleport, actor-vs-prop overlap checks, local minimap with
+  arrow and objective, worn/varied stone, lit jaw, spectacles, tree-like glass trees); multi-zone campaign (Session,
+  Campaign, quests, dialogue, exits, travel, save 2); Tallow hub with Ottilie, Fenn, Lio, Mara, Nim and four
+  services; the Ember Road (burnt farmland, hedgerows, five road lamps, Husks); Moth Hollow (caves, hunger nests,
+  Silk Crawlers) and the Moth Matron; loot filter; quest log; 64-check smoke test; layout checks for all four zones;
+  demo reel 2. Known weak spots: see the report; Tallow is small and a little sparse; NPCs still 4-frame idles.
 - **Pass 1**: design (this file); test slice: title + intro cards, the Glasswood (generated, checked), the
   Lamplighter + 7 NPC designs, gloam/hound/moth + elites (modifiers) + the Glazier, 4 skills with trees, Wickstep,
   tonics, Light, loot (5 rarities, tiers, uniques, set), inventory, character sheet, skill and passive panels,

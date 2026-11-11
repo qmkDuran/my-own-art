@@ -166,7 +166,7 @@ func _hover() -> void:
 			hovered_enemy = e
 	var prev: Interactable = hovered_use
 	hovered_use = null
-	if hovered_enemy == null and hovered_item == null:
+	if hovered_enemy == null and hovered_item == null and not g.ui.blocking():
 		for n: Node in get_tree().get_nodes_in_group("interactables"):
 			if (n as Interactable).pick_rect().has_point(c) and (n as Interactable).title != "":
 				hovered_use = n
