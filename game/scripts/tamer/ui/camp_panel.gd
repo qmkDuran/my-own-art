@@ -92,7 +92,7 @@ func _draw() -> void:
 	UiDraw.title_bar(self, r, "Camp")
 	for i: int in g.team.members.size():
 		_row(g.team.members[i], Vector2(PAD, HEAD + PAD + i * ROW))
-	UiDraw.text(self, Vector2(PAD, size.y - 10.0), "Wild kinds drop the materials: devils (Life), wolves (Power), aye-ayes (Speed).",
+	UiDraw.text(self, Vector2(PAD, size.y - 10.0), "Devils drop Life, wolves Power, aye-ayes Speed.",
 		UiDraw.DIM, UiDraw.SMALL)
 
 

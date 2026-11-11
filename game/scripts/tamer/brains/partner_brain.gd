@@ -38,7 +38,7 @@ func _pick(tr: Trainer, P: Dictionary) -> Combatant:
 		if cr != null and cr.dazed:
 			continue
 		var d_tr: float = f.global_position.distance_to(tr.global_position)
-		var engaged: bool = cr != null and (cr.brain as WildBrain).after_team()
+		var engaged: bool = cr != null and cr.brain is WildBrain and (cr.brain as WildBrain).after_team()
 		if d_tr < float(P["guard_range"]) or (engaged and d_tr < float(P["assist_range"])):
 			if d_tr < best_d:
 				best_d = d_tr

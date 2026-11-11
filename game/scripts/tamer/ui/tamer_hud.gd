@@ -12,6 +12,7 @@ const ITEM: float = 26.0
 const TRACKER_W: float = 300.0
 const NOTICE_TIME: float = 4.0
 const NOTICE_MAX: int = 3
+const NOTICE_AT: float = 0.24           ## share of the screen height where notices start (clear of the tracker)
 const CAPTION_TIME: float = 6.0
 const LINE: float = 13.0
 const BADGE := Vector2(150, 18)
@@ -80,9 +81,9 @@ func _draw_canvas() -> void:
 	_badge(Vector2(MARGIN, vp.y - MARGIN - ORB - BADGE.y - 6.0))
 	for i: int in _notices.size():
 		var a: float = clampf(float(_notices[i][1]), 0.0, 1.0)
-		UiDraw.text(_canvas, Vector2(0, MARGIN + 40.0 + i * LINE), String(_notices[i][0]), Color(UiDraw.TEXT, a), UiDraw.BODY,
+		UiDraw.text(_canvas, Vector2(0, vp.y * NOTICE_AT + i * LINE), String(_notices[i][0]), Color(UiDraw.TEXT, a), UiDraw.BODY,
 			HORIZONTAL_ALIGNMENT_CENTER, vp.x)
-	if _caption_t > 0.0:
+	if _caption_t > 0.0 and _caption != "":
 		_caption_box(vp)
 
 

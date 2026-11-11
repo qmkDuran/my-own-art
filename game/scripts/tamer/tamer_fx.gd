@@ -8,7 +8,7 @@ const SLASH_TIME: float = 0.16
 const SLASH_WIDTH: float = 7.0
 const WORD_RISE: float = 26.0
 const WORD_TIME: float = 0.9
-const WORD_HEAD: float = 34.0
+const WORD_HEAD: float = 64.0
 const BLAST_TIME: float = 0.3
 const WARD_ALPHA: float = 0.5
 

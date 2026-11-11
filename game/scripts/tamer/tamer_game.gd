@@ -12,6 +12,7 @@ const MOTES_EXTENTS := Vector2(520, 300)
 const VIEW_RADIUS: float = 560.0
 const CAMP_STAND := Vector2(0, 40)
 const ROOF_ROOM: float = 60.0
+const FLASH_GAIN: float = 0.35          ## the meadow is daylit: hit lights only need to warm the ground
 
 var layout: ZoneLayout
 var nav: Nav
@@ -66,6 +67,7 @@ func _build_world() -> void:
 	fx_layer.z_index = Fx.FX_Z
 	add_child(fx_layer)
 	Fx.layer = fx_layer
+	Fx.flash_gain = FLASH_GAIN
 	var ambient := CanvasModulate.new()
 	ambient.color = Atmosphere.ambient(GameData.biome)
 	add_child(ambient)

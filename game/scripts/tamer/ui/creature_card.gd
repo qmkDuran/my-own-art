@@ -10,7 +10,7 @@ const SLOT_GAP: float = 6.0
 const BAR_H: float = 6.0
 const BOND_H: float = 3.0
 const GAP: float = 6.0
-const SIZE := Vector2(300, 64)
+const SIZE := Vector2(300, 74)
 
 var g: TamerGame
 

@@ -34,8 +34,8 @@ func _flames() -> void:
 	cols[cols.size() - 1].a = 0.0
 	var p := CPUParticles2D.new()
 	p.texture = PropSprite.tex(Fx.SPARK)
-	p.amount = 26
-	p.lifetime = 0.8
+	p.amount = 40
+	p.lifetime = 0.9
 	p.position = Vector2(0, -6)
 	p.emission_shape = CPUParticles2D.EMISSION_SHAPE_SPHERE
 	p.emission_sphere_radius = 5.0
@@ -44,8 +44,8 @@ func _flames() -> void:
 	p.gravity = Vector2(0, -30)
 	p.initial_velocity_min = 14.0
 	p.initial_velocity_max = 34.0
-	p.scale_amount_min = 1.5
-	p.scale_amount_max = 3.0
+	p.scale_amount_min = 2.5
+	p.scale_amount_max = 4.5
 	p.color_ramp = Fx.ramp(cols)
 	p.material = Fx.glow_material()
 	p.z_index = Fx.FX_Z
@@ -78,7 +78,7 @@ func _process(delta: float) -> void:
 func _safe() -> bool:
 	for n: Node in get_tree().get_nodes_in_group(Combatant.SIDE_WILD):
 		var c := n as Creature
-		if (c.brain as WildBrain).awake and c.global_position.distance_to(global_position) < SAFE_RADIUS:
+		if c.brain is WildBrain and (c.brain as WildBrain).awake and c.global_position.distance_to(global_position) < SAFE_RADIUS:
 			return false
 	return true
 
@@ -104,8 +104,8 @@ func sit_spots(n: int) -> Array[Vector2]:
 	var out: Array[Vector2] = []
 	var r: float = float(TamerData.rule("camp.sit_radius"))
 	for k: int in n:
-		var a: float = PI * 0.15 + PI * 0.7 * (float(k) / maxf(n - 1, 1)) if n > 1 else PI * 0.5
-		out.append(global_position + Vector2(cos(a) * r * 1.3, sin(a) * r * 0.8 + 6.0))
+		var a: float = PI + PI * (float(k) / (n - 1)) if n > 1 else -PI * 0.5     # left, behind, right: you sit at the front
+		out.append(global_position + Vector2(cos(a) * r * 1.4, sin(a) * r * 1.25 + 4.0))
 	return out
 
 

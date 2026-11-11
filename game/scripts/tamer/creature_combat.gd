@@ -52,6 +52,6 @@ static func _matchup_word(target: Combatant, matchup: int) -> void:
 		return
 	_last_word[id] = now
 	if matchup == TamerData.SUPER:
-		TamerFx.word(target.global_position, "Super effective!", Pal.c("gold"), UiDraw.TITLE)
+		TamerFx.word(target.global_position, "Super effective!", Pal.c("gold"))
 	else:
 		TamerFx.word(target.global_position, "Resisted", Pal.c("pale"))

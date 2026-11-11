@@ -12,6 +12,7 @@ const STANDING_MASK: int = 64     ## everything standing up (props, trees, peopl
 const RING_SQUASH: float = 0.6      ## shockwaves lie on the ground, seen at an angle
 
 static var layer: Node2D            ## the effects layer of the scene being played (Game or the tamer prototype)
+static var flash_gain: float = 1.0  ## scales flash lights: a daylit scene (the tamer meadow) needs far less than the Dusk
 static var screen: Node             ## the UI root full-screen flashes go into (set by the same scene)
 static var _glow_mat: CanvasItemMaterial
 static var _add_mat: CanvasItemMaterial
@@ -88,7 +89,7 @@ static func flash(parent: Node, at: Vector2, radius: float, col: Color, energy: 
 	l.texture = LightTex.soft(256)
 	l.texture_scale = radius / 128.0
 	l.color = col
-	l.energy = energy
+	l.energy = energy * flash_gain
 	l.position = at
 	l.range_item_cull_mask = GROUND_LIGHT_MASK          # flashes light the ground and props, never bodies (no washout)
 	parent.add_child(l)

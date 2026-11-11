@@ -103,6 +103,7 @@ func _build_world() -> void:
 	fx_layer.z_index = Fx.FX_Z
 	add_child(fx_layer)
 	Fx.layer = fx_layer
+	Fx.flash_gain = 1.0
 	dark = CanvasModulate.new()
 	darkness = Atmosphere.ambient(GameData.biome)
 	dark.color = darkness

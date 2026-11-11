@@ -120,7 +120,9 @@ func spawn(kind: String, at: Vector2, level: int, pack: int = -1, shiny: int = -
 	brain.home = at
 	brain.pack = pack
 	c.brain = brain
-	c.struck.connect(func(cr: Creature, by: Combatant) -> void: (cr.brain as WildBrain).wake(by))
+	c.struck.connect(func(cr: Creature, by: Combatant) -> void:
+		if cr.brain is WildBrain:
+			(cr.brain as WildBrain).wake(by))
 	c.fainted.connect(_on_fainted)
 	g.world.add_child(c)
 	CreatureTag.attach(c)

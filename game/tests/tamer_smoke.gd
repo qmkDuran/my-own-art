@@ -44,6 +44,7 @@ func _run() -> void:
 	await _bond()
 	await _camp()
 	await _fall()
+	await _pack_fight()
 	print("TAMER %s (%d checks, %d failed)" % ["PASS" if _fails.is_empty() else "FAIL", _count, _fails.size()])
 	get_tree().quit(0 if _fails.is_empty() else 1)
 
@@ -210,3 +211,27 @@ func _fall() -> void:
 	expect(not g.trainer.alive(), "the trainer can fall")
 	await seconds(float(TamerData.rule("trainer.respawn_delay")) + 0.5)
 	expect(g.trainer.alive() and g.trainer.global_position.distance_to(g.camp_point()) < 140.0, "the trainer wakes at camp")
+
+
+## Feel check: a starter at its level beats a near pack of two on auto-attack alone in reasonable time, and it is a
+## real fight (it loses some life). Printed for tuning.
+func _pack_fight() -> void:
+	g.trainer.global_position = g.layout.free_spot_near(g.layout.start + Vector2(0, 40), 8.0)
+	g.team.rest()
+	g.field.swap(0)
+	await seconds(1.0)
+	_clear_wild(1400.0)
+	var pack: Array[Creature] = [_wild("maned_wolf", Vector2(150, 0)), _wild("aye_aye", Vector2(170, 40))]
+	for c: Creature in pack:
+		(c.brain as WildBrain).wake(g.trainer)
+	var p: Creature = g.field.partner
+	var t: float = 0.0
+	while t < 40.0 and pack.any(func(c: Creature) -> bool: return is_instance_valid(c) and c.alive()):
+		for c: Creature in pack:
+			if is_instance_valid(c) and c.dazed:
+				c.faint()
+		await frames(6)
+		t += 0.1
+	var lost: float = 1.0 - (p.rec.life_frac() if is_instance_valid(p) else 0.0)
+	print("TAMER pack fight: %.1f s, partner lost %d%% life, trainer life %d" % [t, roundi(lost * 100.0), g.trainer.life])
+	expect(t < 40.0, "the starter wins a near pack of two on its own (%.1f s)" % t)

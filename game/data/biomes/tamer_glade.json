@@ -260,13 +260,13 @@
  },
  "ambient": {
   "darkness": [
-   0.95,
-   1.02,
-   1.05
+   1.1,
+   1.16,
+   1.18
   ],
   "motes": 50,
-  "scenery_gain": 1.55,
-  "prop_gain": 1.35
+  "scenery_gain": 1.8,
+  "prop_gain": 1.45
  },
  "wake_range": 240.0
 }

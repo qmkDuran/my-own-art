@@ -13,9 +13,9 @@ const ACT_TIME: float = 0.2
 const MOVING: float = 12.0              ## px/s: faster than this plays the gait
 const BOB_SQUASH: float = 0.06
 const RING_PULSE: float = 5.0
-const SPARKLE_EVERY: float = 0.7
+const SPARKLE_EVERY: float = 0.35
 const STAR_COUNT: int = 3
-const STAR_ORBIT := Vector2(11.0, 4.0)
+const STAR_ORBIT := Vector2(13.0, 4.0)
 
 var sprite: Sprite2D
 var ring: Sprite2D                      ## under the one you steer
@@ -52,7 +52,7 @@ func setup(rec: CreatureRecord) -> CreatureSprite:
 	sprite.material = mat
 	add_child(sprite)
 	PropSprite.add_glow(sprite, "res://art/creatures/%s%s_glow.png" % [rec.species_id, "_shiny" if rec.shiny else ""])
-	_height = frame.y * 0.55
+	_height = float(meta["anchor"][1]) - CreaturePortrait.crop(rec.species_id, rec.shiny).position.y
 	stars = Node2D.new()
 	stars.visible = false
 	stars.draw.connect(_draw_stars)
@@ -125,6 +125,11 @@ func animate(delta: float, vel: Vector2, facing: float) -> void:
 		stars.queue_redraw()
 
 
+func _process(_delta: float) -> void:
+	if stars.visible:
+		stars.queue_redraw()
+
+
 ## A shiny glints now and then with little stars of light.
 func _sparkle(delta: float) -> void:
 	if not _shiny:
@@ -133,17 +138,19 @@ func _sparkle(delta: float) -> void:
 	if _sparkle_t <= 0.0:
 		_sparkle_t = SPARKLE_EVERY * randf_range(0.6, 1.4)
 		var at: Vector2 = Vector2(randf_range(-14.0, 14.0), -randf_range(4.0, _height + hover))
-		Fx.burst(self, at, 5, Vector2(10, 40), 0.5, [Pal.c("sun"), Pal.c("gold"), Pal.c("amber", 0.0)], Vector2.UP, 180.0, Vector2(1.0, 1.6))
+		Fx.burst(self, at, 7, Vector2(10, 40), 0.6, [Pal.c("sun"), Pal.c("gold"), Pal.c("amber", 0.0)], Vector2.UP, 180.0, Vector2(1.5, 2.5))
 
 
 func _draw_stars() -> void:
-	var top: float = -body_height() - 6.0
+	var top: float = -body_height() + 3.0                    # they circle the head
 	for k: int in STAR_COUNT:
 		var a: float = _t * 0.6 + TAU * k / STAR_COUNT
-		var p := Vector2(cos(a) * STAR_ORBIT.x, top + sin(a) * STAR_ORBIT.y)
-		stars.draw_rect(Rect2(p - Vector2(2, 0.5), Vector2(4, 1)), Pal.c("gold"))
-		stars.draw_rect(Rect2(p - Vector2(0.5, 2), Vector2(1, 4)), Pal.c("gold"))
-		stars.draw_rect(Rect2(p - Vector2(0.5, 0.5), Vector2(1, 1)), Pal.c("sun"))
+		var p := (Vector2(cos(a) * STAR_ORBIT.x, top + sin(a) * STAR_ORBIT.y)).round()
+		stars.draw_rect(Rect2(p - Vector2(3, 1), Vector2(7, 3)), Pal.c("void"))
+		stars.draw_rect(Rect2(p - Vector2(1, 3), Vector2(3, 7)), Pal.c("void"))
+		stars.draw_rect(Rect2(p - Vector2(2, 0), Vector2(5, 1)), Pal.c("gold"))
+		stars.draw_rect(Rect2(p - Vector2(0, 2), Vector2(1, 5)), Pal.c("gold"))
+		stars.draw_rect(Rect2(p, Vector2(1, 1)), Pal.c("sun"))
 
 
 ## Faints: flashes white and fades, rising a little (a knock-out is never gory).
