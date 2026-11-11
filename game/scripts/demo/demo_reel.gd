@@ -30,7 +30,7 @@ const CLEAR_RADIUS: float = 800.0
 const ROAD_PROGRESS: float = 0.5
 const HOVER_SETTLE: float = 0.3
 const ROAD_LEVEL: int = 14
-const SPECS: Dictionary = {"sunlash": ["quick_wrist", "quick_wrist", "sear", "sear", "kindling"], "flare": ["wide", "refuel", "wide"],
+const SPECS: Dictionary = {"wickbolt": ["quick_wick", "quick_wick", "sear", "sear", "kindling"], "flare": ["wide", "refuel", "wide"],
 	"lantern_toss": ["long_burn", "heavy_iron", "beacon"], "moth_swarm": ["brood", "brood", "swift"]}
 const PASSIVES: Array[String] = ["wick", "wick", "wick", "trimmed", "trimmed", "steady_hand", "kindler"]
 

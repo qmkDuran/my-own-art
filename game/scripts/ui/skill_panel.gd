@@ -11,10 +11,10 @@ const STEP := Vector2(86, 64)
 const TREE_Y: float = 92.0
 const ICON: float = 24.0
 const LIST_ICON: float = 23.0
-const ORDER: Array[String] = ["sunlash", "flare", "lantern_toss", "moth_swarm", "eclipse", "noon", "kindle", "hook", "glass_ward",
+const ORDER: Array[String] = ["wickbolt", "flare", "lantern_toss", "moth_swarm", "eclipse", "noon", "kindle", "tether", "glass_ward",
 	"cinder_rain", "wick_trap", "lull", "dash"]
 
-var selected: String = "sunlash"
+var selected: String = "wickbolt"
 var _skills_tex: Texture2D
 var _glyphs: Texture2D
 

@@ -1,7 +1,7 @@
 class_name DemoBot
 extends Node
 ## Plays like a player for the recorded videos, through the same input paths (a virtual cursor, clicks, skill
-## keys): lashes the nearest enemy, uses Flare in a crowd, Moth Swarm at range, Lantern Toss at a pack when the
+## keys): bolts the nearest enemy, uses Flare in a crowd, Moth Swarm at range, Lantern Toss at a pack when the
 ## light is high, steps out of warning circles, drinks tonics, picks up good loot, reads dialogue at a calm pace.
 ## Follows whichever zone is being played (it lives under the test runner, so zone changes don't end it).
 
@@ -29,7 +29,7 @@ func _physics_process(delta: float) -> void:
 		_decide()
 
 
-## One decision: drink, dash, a big skill if it fits the moment, else lash the nearest enemy; loot when calm.
+## One decision: drink, dash, a big skill if it fits the moment, else bolt the nearest enemy; loot when calm.
 func _decide() -> void:
 	var p: Player = g.player
 	if g.hud.messages.modal() and not g.hud.messages.end_card:

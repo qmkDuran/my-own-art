@@ -123,11 +123,6 @@ func lantern_pos() -> Vector2:
 	return global_position + anim.lantern_offset()
 
 
-## Where the whip hand is (the light-whip starts here).
-func hand_pos() -> Vector2:
-	return global_position + anim.hand_offset()
-
-
 # ------------------------------------------------------------------ commands
 func walk_to(p: Vector2) -> void:
 	if dead:

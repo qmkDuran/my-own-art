@@ -147,9 +147,6 @@ def _held(s: Spr, f: Fig, item: str, hand: tuple[float, float]) -> None:
         s.line([top, (top[0] + 2, top[1] - 3), (top[0] + 6, top[1] - 3), (top[0] + 7, top[1])], "stone_lt")
         s.rect(x - 1, y - 2, x + 1, y + 2, "stone_dk")
         _lantern(s, top[0] + 7, top[1])
-    elif item == "whip":
-        s.line([(x, y), (x - 3, y - 4)], "earth_dk", width=2)
-        s.line([(x - 3, y - 4), (x - 9, y - 9), (x - 14, y - 6)], "earth_lt")
     elif item == "pipe":
         s.line([(x, y), (x + 3, y - 2)], "earth_dk")
         s.px(x + 4, y - 3, "ember", glow=True)
@@ -318,7 +315,7 @@ def _scarf(s: Spr, f: Fig) -> None:
 
 
 def _back(s: Spr, f: Fig) -> None:
-    """Things behind the body: capes, packs, a coiled whip seen at the hip."""
+    """Things behind the body: capes and packs."""
     sp = f.spec
     if sp.get("cape"):
         c = sp["cape"]
@@ -333,9 +330,6 @@ def draw(spec: dict, pose: str, i: int) -> Spr:
     _back(s, f)
     _legs(s, f)
     _coat(s, f)
-    if spec.get("coil"):
-        s.ellipse(f.x(-7), f.y(40), 3, 3, "earth_lt")
-        s.ellipse(f.x(-7), f.y(40), 1, 1, spec["coat"][0])
     _satchel(s, f)
     left, right = _hands(f)
     _arm(s, f, -1, left)
@@ -409,7 +403,7 @@ NPCS = {
               "skin": "skin", "belt": "earth_dk", "trim": "glint", "buttons": [27, 31], "scarf": ("glass_lt", "glass")},
     "teague": {"name": "Teague Morrow", "role": "The Eighth Lamplighter (missing)", "head": "hood",
                "hat": ("ink", "night", "mist"), "coat": ("ink", "night", "dusk2"), "cape": "dusk1", "held_r": "lantern",
-               "held_l": "whip", "skin": "pale", "eyes": "glint", "eyes_glow": True, "scarf": ("stone", "stone_dk"),
+               "skin": "pale", "eyes": "glint", "eyes_glow": True, "scarf": ("stone", "stone_dk"),
                "belt": "ink", "trim": "stone_lt", "buttons": [27], "rim_warm": "glass", "tatters": True},
     "wren": {"name": "Wren Aldous", "role": "Baker of the Tuesday Market", "head": "cap", "hat": ("stone_lt", "pale", "bone"), "hair": "rust",
              "coat": ("dusk1", "dusk2", "dusk3"), "apron": "bone", "hem": 55, "hem_w": 12, "held_r": "loaf", "skin": "skin_lt",

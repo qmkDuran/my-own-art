@@ -176,7 +176,7 @@ func burning() -> bool:
 	return _burn_t > 0.0
 
 
-## Hook: dragged toward a point (a strong shove that decays like knockback).
+## Tether: dragged toward a point (a strong shove that decays like knockback).
 func pull_toward(at: Vector2, strength: float) -> void:
 	_knock = (at - global_position).normalized() * minf(strength, global_position.distance_to(at) * KNOCK_DECAY)
 

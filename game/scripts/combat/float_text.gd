@@ -1,6 +1,6 @@
 class_name FloatText
 extends Label
-## Damage numbers: one number per target that sums the hits landing within MERGE seconds (so a whip, a burst and
+## Damage numbers: one number per target that sums the hits landing within MERGE seconds (so a bolt, a burst and
 ## a burn on the same enemy read as one growing number), then rises and fades; a target's next numbers stack
 ## above the last ones instead of on top. Crits are bigger and gold; hits on you are red.
 

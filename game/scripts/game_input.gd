@@ -9,6 +9,7 @@ const REPATH: float = 0.12
 const ENEMY_PICK: float = 18.0
 const FIGHT_RANGE: float = 260.0      ## an awake enemy this close: names of usable things stay hidden
 const HOLD_SLOT: String = "lmb"
+const ATTACK_REACH: float = 0.7      ## held attack on an enemy: walk until it is this share of the bolt's range away
 
 var g: Game
 var cursor_override: Vector2 = Vector2.INF
@@ -109,8 +110,8 @@ func _pursue_attack() -> void:
 	if not is_instance_valid(_attack) or _attack.dead:
 		_attack = null
 		return
-	var s: String = String(g.player.prog.slots.get(HOLD_SLOT, "sunlash"))
-	var reach: float = (g.player.skills.skill(s) as Sunlash).reach(false) * 0.85 if s == "sunlash" else 120.0
+	var s: String = String(g.player.prog.slots.get(HOLD_SLOT, "wickbolt"))
+	var reach: float = (g.player.skills.skill(s) as Wickbolt).reach() * ATTACK_REACH if s == "wickbolt" else 120.0
 	if g.player.global_position.distance_to(_attack.global_position) <= reach + _attack.radius:
 		g.player.stop()
 		g.player.skills.try_use(s, _attack.global_position + Vector2(0, -10))

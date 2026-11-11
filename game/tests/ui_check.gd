@@ -56,7 +56,7 @@ func _check_size(g: Game, vs: Vector2) -> void:
 
 func _check_names(g: Game) -> void:
 	var ci: CanvasItem = g.ui.skills
-	for id: String in ["sunlash", "flare", "lantern_toss", "moth_swarm"]:
+	for id: String in ["wickbolt", "flare", "lantern_toss", "moth_swarm"]:
 		for n: Dictionary in GameData.skill(id)["nodes"]:
 			var shown: String = String(n["name"]) if UiDraw.text_width(ci, String(n["name"]), UiDraw.SMALL) <= SkillPanel.NODE.x - 6.0 else String(n["name"]).split(" ")[0]
 			if UiDraw.text_width(ci, shown, UiDraw.SMALL) > SkillPanel.NODE.x - 4.0:

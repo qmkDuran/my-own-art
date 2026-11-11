@@ -1,6 +1,6 @@
 class_name Projectile
 extends Node2D
-## A moving shot. Enemy shards hit the Lamplighter; the Lamplighter's crescents hit enemies (pierce or not).
+## A moving shot. Enemy shards hit the Lamplighter; the Lamplighter's bolts hit enemies (pierce or not).
 ## Stops at forest and walls (it flies over water). Glows (additive) and lights its surroundings a little.
 
 const HIT_RADIUS: float = 12.0

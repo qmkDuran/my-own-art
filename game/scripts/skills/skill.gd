@@ -50,7 +50,7 @@ func cast_time() -> float:
 
 ## The animation he plays to use it (sprites.json "lamplighter" anims); the skill lands on its "hit" frame.
 func pose() -> String:
-	return "cast" if is_spell() else "slash3"
+	return "cast" if is_spell() else "bolt1"
 
 
 ## Damage before increases: a spell's own base (grows per skill level) or the staff's damage, times pct.

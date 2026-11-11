@@ -78,7 +78,7 @@ func tick(delta: float) -> void:
 		PropSprite.set_frame(s, f)
 
 
-## Where the lantern hangs now (from his feet), its brightness 0..1, and where the whip hand is.
+## Where the lantern hangs now (from his feet; the light and every bolt start there), and its brightness 0..1.
 func lantern_offset() -> Vector2:
 	var a: Array = _anchor()
 	return Vector2(float(a[0]), float(a[1]))
@@ -87,10 +87,6 @@ func lantern_offset() -> Vector2:
 func pane() -> float:
 	return float(_anchor()[2])
 
-
-func hand_offset() -> Vector2:
-	var a: Array = _anchor()
-	return Vector2(float(a[3]), float(a[4]))
 
 
 func _anchor() -> Array:

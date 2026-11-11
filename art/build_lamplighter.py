@@ -3,8 +3,7 @@
 Two layers so the game can take the lantern away (Lantern Toss) and hang its light where the lantern really is:
   actors/lamplighter.png (+ _glow)          the man and his staff
   actors/lamplighter_lantern.png (+ _glow)  only the lantern's visible pixels, already hidden where he covers it
-Rows are animation x facing (rig.DIRS order), up to 8 frames each. The anchors (lantern centre, its brightness, the
-whip hand) for every frame go to sprites.json with the animation data (lamplighter_anims.ANIMS)."""
+Rows are animation x facing (rig.DIRS order), up to 8 frames each. The anchors (lantern centre and its brightness) for every frame go to sprites.json with the animation data (lamplighter_anims.ANIMS)."""
 from __future__ import annotations
 
 import numpy as np
@@ -30,9 +29,8 @@ def _frame(anim: str, d: str, i: int) -> tuple[Image.Image, Image.Image, Image.I
     lglow = np.zeros_like(ga)
     lglow[gdiff] = ga[gdiff]
     lx, ly = anchors["lantern"]
-    hx, hy = anchors["hand"]
     on = 1.0 if (p.lantern_on_staff or p.extra.get("lantern_screen") is not None) else 0.0
-    anchor = [round(lx - rig.CX, 1), round(ly - rig.SOLE, 1), round(p.pane * on, 2), round(hx - rig.CX, 1), round(hy - rig.SOLE, 1)]
+    anchor = [round(lx - rig.CX, 1), round(ly - rig.SOLE, 1), round(p.pane * on, 2)]
     return body.img, body.glow, Image.fromarray(lantern), Image.fromarray(lglow), anchor
 
 

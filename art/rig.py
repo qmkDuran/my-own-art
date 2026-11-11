@@ -5,7 +5,7 @@ where the feet and hands go, how the hips sit, how the upper body leans and twis
 scarf, the lantern on its hook) lag behind. Legs and arms are solved with two-bone IK; volumes (coat, capelet, hat)
 are convex hulls of a few rings of points; everything is projected into the 3/4 top-down view (toward the camera is
 lower on screen) and painted far-to-near. One rig, eight true directions: no mirroring, so the staff is always in
-his left hand and the whip in his right."""
+his left hand."""
 from __future__ import annotations
 
 import math
@@ -20,7 +20,7 @@ CX = 48
 DEPTH_TILT = 0.32            # how far toward the camera moves a point down the screen (the 3/4 view)
 YAWS = {"s": 0, "se": 45, "e": 90, "ne": 135, "n": 180, "nw": 225, "w": 270, "sw": 315}
 DIRS = list(YAWS)
-ROLL_SHIFT = (30.0, 10.0)     # a body lying down is moved back toward the frame centre by this much
+ROLL_SHIFT = (30.0, 26.0)     # a body lying down is moved back toward the frame centre by this much
 
 THIGH, SHIN = 12.0, 12.0
 UPPER_ARM, FOREARM = 9.0, 9.0
@@ -41,7 +41,7 @@ class Pose:
     foot_l: Vec = (-4.0, 0.0, 0.0)
     foot_r: Vec = (4.0, 0.0, 0.0)
     hand_l: Vec = (-13.5, 27.0, 5.0)     # the staff hand
-    hand_r: Vec = (11.0, 25.0, 1.0)      # the whip hand
+    hand_r: Vec = (11.0, 25.0, 1.0)      # the free hand (it joins the staff for two-handed thrusts)
     staff_tilt: Vec = (-0.18, 1.0, 0.15)   # the staff's direction (x, y, f), normalised when drawn
     lantern_lag: Vec = (0.0, 0.0, 0.0)
     cape_lag: Vec = (0.0, 0.0, -2.0)

@@ -8,7 +8,8 @@ signal leveled(level: int)
 signal skill_leveled(skill: String, level: int)
 signal learned(skill: String)
 
-const LEARN: Dictionary = {"sunlash": 1, "flare": 1, "lantern_toss": 2, "moth_swarm": 3, "kindle": 4, "hook": 5, "eclipse": 6,
+const RENAMED: Dictionary = {"sunlash": "wickbolt", "hook": "tether"}
+const LEARN: Dictionary = {"wickbolt": 1, "flare": 1, "lantern_toss": 2, "moth_swarm": 3, "kindle": 4, "tether": 5, "eclipse": 6,
 	"glass_ward": 7, "cinder_rain": 9, "noon": 10, "wick_trap": 11, "lull": 12}
 
 var level: int = 1
@@ -51,7 +52,7 @@ func _learn_up_to(l: int) -> void:
 
 
 func _auto_slot(s: String) -> void:
-	var prefer: Dictionary = {"sunlash": "lmb", "flare": "rmb", "lantern_toss": "q", "moth_swarm": "w", "eclipse": "e", "noon": "r"}
+	var prefer: Dictionary = {"wickbolt": "lmb", "flare": "rmb", "lantern_toss": "q", "moth_swarm": "w", "eclipse": "e", "noon": "r"}
 	var want: String = String(prefer.get(s, ""))
 	if want != "" and slots[want] == "":
 		slots[want] = s
@@ -344,6 +345,27 @@ func from_dict(d: Dictionary) -> void:
 	skills = d.get("skills", {})
 	slots = d.get("slots", slots)
 	specialised = d.get("specialised", [])
+	_migrate()
 	for s: String in skills:
 		skills[s]["level"] = int(skills[s]["level"])
 	changed.emit()
+
+
+## Saves from before the Lamplighter became a pure caster: Sunlash is now Wickbolt (a new tree: its points come back
+## to be spent again) and Hook is now Tether (same tree, one node renamed).
+func _migrate() -> void:
+	for old: String in RENAMED:
+		var now: String = RENAMED[old]
+		if skills.has(old):
+			skills[now] = skills[old]
+			skills.erase(old)
+			if old == "sunlash":
+				skills[now]["nodes"] = {}
+		for k: String in slots:
+			if slots[k] == old:
+				slots[k] = now
+		if specialised.has(old):
+			specialised[specialised.find(old)] = now
+	if skills.has("tether") and skills["tether"]["nodes"].has("double_hook"):
+		skills["tether"]["nodes"]["double_tether"] = skills["tether"]["nodes"]["double_hook"]
+		skills["tether"]["nodes"].erase("double_hook")

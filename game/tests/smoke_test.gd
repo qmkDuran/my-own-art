@@ -93,14 +93,14 @@ func _damage_rules() -> void:
 	Combat.hit_enemy(e, 100.0, {"kind": "spell"})
 	var want: float = roundf(100.0 * p.stats.increased("spell") * float(GameData.light["shrouded_damage_taken_mult"]))
 	expect(is_equal_approx(life0 - e.life, want), "a Shrouded enemy takes less (%d of 100)" % roundi(life0 - e.life))
-	var r: Vector2 = p.skills.skill("sunlash").shown_range(100.0)
+	var r: Vector2 = p.skills.skill("wickbolt").shown_range(100.0)
 	var lo: float = INF
 	var hi: float = 0.0
 	for i: int in 200:
-		var base: float = p.skills.skill("sunlash").roll(100.0) * p.stats.increased("attack")
+		var base: float = p.skills.skill("wickbolt").roll(100.0) * p.stats.increased("attack")
 		lo = minf(lo, roundf(base))
 		hi = maxf(hi, roundf(base))
-	expect(lo >= r.x - 1.0 and hi <= r.y + 1.0, "Sunlash rolls stay in the tooltip range %d-%d" % [r.x, r.y])
+	expect(lo >= r.x - 1.0 and hi <= r.y + 1.0, "Wickbolt rolls stay in the tooltip range %d-%d" % [r.x, r.y])
 	p.stats.total.erase("crit_chance")
 	e.queue_free()
 	await frames(2)
@@ -125,7 +125,7 @@ func _light_rules() -> void:
 
 func _skills(h: ShotHelper) -> void:
 	h.level_up(4)
-	for id: String in ["sunlash", "flare", "lantern_toss", "moth_swarm"]:
+	for id: String in ["wickbolt", "flare", "lantern_toss", "moth_swarm"]:
 		var foes: Array[Enemy] = h.pack_near(["gloam"], Vector2(50, 10))
 		foes[0].max_life = 9999.0
 		foes[0].life = 9999.0
@@ -136,18 +136,22 @@ func _skills(h: ShotHelper) -> void:
 		(p.skills.skill("lantern_toss") as LanternToss).recall()
 		foes[0].queue_free()
 		await frames(40)
-	expect(p.prog.is_specialised("sunlash") and p.prog.spec_slots() >= 2, "Sunlash takes a specialisation slot")
-	h.spec("sunlash", ["quick_wrist", "long_cord", "long_cord", "sear", "kindling", "backhand"])
-	expect(p.prog.node_rank("sunlash", "backhand") == 1, "spending Sunlash points opens Backhand")
-	var behind: Array[Enemy] = h.pack_near(["gloam"], Vector2(-45, 0))
-	behind[0].life = 999.0
-	behind[0].max_life = 999.0
+	expect(p.prog.is_specialised("wickbolt") and p.prog.spec_slots() >= 2, "Wickbolt takes a specialisation slot")
+	h.spec("wickbolt", ["quick_wick", "long_flight", "long_flight", "sear", "kindling", "piercing"])
+	expect(p.prog.node_rank("wickbolt", "piercing") == 1, "spending Wickbolt points opens Piercing Wick")
+	var line: Array[Enemy] = h.pack_near(["gloam", "gloam"], Vector2(70, 0))
+	for k: int in 2:
+		line[k].global_position = p.global_position + Vector2(60 + k * 50, 0)
+		line[k].life = 999.0
+		line[k].max_life = 999.0
+		line[k].stun_t = 3.0
 	await frames(3)
-	h.cast("sunlash", p.global_position + Vector2(60, 0))
-	await frames(4)
-	expect(behind[0].life < 999.0, "Backhand also hits the enemy behind")
-	expect((p.skills.skill("sunlash") as Sunlash).reach(false) > float(GameData.skill("sunlash")["range"]), "Long Cord lengthens the lash")
-	behind[0].queue_free()
+	h.cast("wickbolt", line[1].global_position)
+	await frames(60)
+	expect(line[0].life < 999.0 and line[1].life < 999.0, "a piercing bolt hits both enemies in its line")
+	expect((p.skills.skill("wickbolt") as Wickbolt).reach() > float(GameData.skill("wickbolt")["range"]), "Long Flight lengthens the bolt's range")
+	for f: Enemy in line:
+		f.queue_free()
 
 
 func _progression() -> void:

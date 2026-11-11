@@ -18,8 +18,8 @@ var cooldowns: Dictionary = {}
 
 
 func _ready() -> void:
-	var kinds: Dictionary = {"sunlash": Sunlash, "flare": Flare, "lantern_toss": LanternToss, "moth_swarm": MothSwarm,
-		"eclipse": Eclipse, "noon": Noon, "kindle": Kindle, "hook": Hook, "glass_ward": GlassWard, "cinder_rain": CinderRain,
+	var kinds: Dictionary = {"wickbolt": Wickbolt, "flare": Flare, "lantern_toss": LanternToss, "moth_swarm": MothSwarm,
+		"eclipse": Eclipse, "noon": Noon, "kindle": Kindle, "tether": Tether, "glass_ward": GlassWard, "cinder_rain": CinderRain,
 		"wick_trap": WickTrap, "lull": Lull}
 	for id: String in kinds:
 		all[id] = (kinds[id] as GDScript).new().setup(id, player)

@@ -30,8 +30,9 @@ sprite pixel must be in the palette (`tools/check_art.py`). UI uses palette name
 - Feet stay on the same line through idle/walk/move frames (no sliding); attacks may leap.
 - Silhouettes first: every character has one unmistakable shape (the Lamplighter's brim + hooked lantern staff +
   capelet; Ysolde's pike and helm; Lio's pointed hood; Hask's smoke horns; Teague's hood, cape and cold lantern).
-- Front-facing people (mirrored to face the cursor side); attacks aim in any direction through effects (the whip
-  sweeps an arc toward the cursor, Lancet fans a cone, projectiles fly at the cursor).
+- NPCs are front-facing (mirrored to face the player). The Lamplighter is rig-drawn in eight true facings (no
+  mirroring: the staff stays in his left hand); everything he casts leaves from the lantern on his staff, at the
+  lantern's position in that very frame (sprites.json anchors).
 
 ## Biomes (each recolours the same ground shader through `ground`)
 - **Glasswood**: moss and dark glass, teal glints, glass stream. **Ember Road**: ash-dark fields with pale stubble,

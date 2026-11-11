@@ -91,7 +91,7 @@ def build_icons() -> dict:
     _save(img, None, "ui/glyphs.png")
     for name, frames in {"moth": [icons.fx_moth(0), icons.fx_moth(1)], "shard": [icons.fx_shard()],
                          "lantern": [icons.fx_lantern()], "spark": [icons.fx_spark()],
-                         "crescent": [icons.fx_crescent()]}.items():
+                         "bolt": [icons.fx_bolt()]}.items():
         img, _ = sheet([frames], frames[0].w, frames[0].h)
         _save(img, None, f"fx/{name}.png")
     return {"item_rows": list(icons.ITEM_DRAW.keys()), "item_kinds": {b: n for b, (_, n) in icons.ITEM_DRAW.items()},

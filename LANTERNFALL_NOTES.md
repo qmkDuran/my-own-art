@@ -102,8 +102,8 @@ mystery (Teague's cairn: "Ask her what the Great Lantern burns"), a secret (a de
   (examples in 5).
 
 ## 3. The class: the Lamplighter
-A caster with a **lantern staff** (the lantern hangs from a hooked staff) who conjures a **light whip** for close
-range. Resources: **Life**, **Oil** (skill cost), and **Light** (the lantern; see 3.3). Controls: LMB move/attack
+A **pure caster** with one weapon, the **lantern staff** (the lantern hangs from its hook): every spell comes out of
+that lantern. No whip, no melee. Resources: **Life**, **Oil** (skill cost), and **Light** (the lantern; see 3.3). Controls: LMB move/attack
 (hold), Shift stand-and-attack, RMB Q W E R skills, Space Wickstep, 1 tonic, I C K P panels, Alt labels, Esc menu.
 
 ### 3.1 Passives (Last Epoch-style)
@@ -116,12 +116,14 @@ Full trees later: ~30 base nodes, ~20 per mastery, with a few keystones that cha
 Keeper: your light no longer shrinks when hit, but never grows past 60*).
 
 ### 3.2 Skills (each levels to 20; 1 specialisation point per level; trees change behaviour)
-Built (trees partly): **Sunlash** (whip combo; Backhand, Sunwave crescents, ignite, Light on hit), **Flare** (burst
+Built (trees partly): **Wickbolt** (the basic attack: he points the staff and the lantern spits a fast bolt of light;
+every third bolt burns brighter; tree: Quick Wick, Long Flight, Sear, Kindling, Piercing Wick, Forked Flame, Cruel in
+the Dark, Third Light burst, Ember Trail), **Flare** (burst
 sized by your Light; Lancet cone, Spend the Flame, Afterglow, stuns), **Lantern Toss** (throw the lantern, fight in
 the dark, recall; Beacon exposure, Dark Adept, Tether, Ember Trail), **Moth Swarm** (seeking ember moths; Brood,
 Cinder bursts, Linger, Guardians catch shots, Matriarch), **Wickstep** (dash).
 Planned: **Eclipse** (shutter the lantern: everything Shrouded, you hit like the dark), **Noon** (ultimate: one
-breath of daylight), **Kindle** (burning aura), **Glass Ward** (barrier of shards), **Hook** (whip pull),
+breath of daylight), **Kindle** (burning aura), **Glass Ward** (barrier of shards), **Tether** (a line of light from the lantern yanks an enemy to you),
 **Cinder Rain**, **Wick Trap**, **Lull** (a bell-tone that stuns and slows). Five specialisation slots (levels 1,
 1, 3, 5, 10). Names are short; veto freely.
 
@@ -151,8 +153,8 @@ packs (~120 enemies), 3 waylamps, 4 chests, 1 secret, 3 lore objects, 2 people.
 Slots: Lantern Staff, Relic (hand lanterns, oil flasks, charms, reflectors), Head, Body, Hands, Feet, Belt, Neck,
 2 Rings. Rarities: **Normal, Magic (1–2 affixes), Rare (3–4; max 2 prefixes + 2 suffixes), Set, Unique**. Affixes
 have **5 tiers** gated by item level (higher tiers rarer). Tooltips show tier, ranges, and the difference against
-what you wear. Built uniques: **The Long Night** (staff: huge damage vs Shrouded, smaller radius, Sunlash always
-ignites in the dark), **Moth-Mother's Wick** (+3 moths, moth hits feed Light), **Glasswalker Treads** (Wickstep
+what you wear. Built uniques: **The Long Night** (staff: huge damage vs Shrouded, smaller radius, Wickbolts always
+ignite in the dark), **Moth-Mother's Wick** (+3 moths, moth hits feed Light), **Glasswalker Treads** (Wickstep
 leaves cutting glass), **Ottilie's Spare**; set **Ninth Watch** (2 pieces).
 **Crafting (planned, the Ember Forge):** *Embers* drop from kills: Kindle (add an affix), Temper (raise a tier),
 Quench (remove one), Anneal (reroll values). Each item has **Heat** (forging potential) that each craft spends
@@ -276,6 +278,21 @@ put back at its post by the Tuesday rewind) was never walked to. The runner now 
 were the sharpest spike (a geared level-10 Lamplighter lost half his life in under two seconds to a six-body wave,
 mostly Husks): waves are now 5 bodies, 40% Husks.
 
+## 8d. The Lamplighter animated (rig-drawn, eight facings)
+`art/rig.py` (a small 3D rig: two-bone IK legs and arms, convex-hull coat, capelet and hat, lagging cape, scarf and
+lantern, projected into the 3/4 view and painted far to near), `art/lamplighter_body.py` (what he looks like),
+`art/lamplighter_anims.py` (the poses and the ANIMS data: frames, weights, fps, loop, events),
+`art/build_lamplighter.py` (two layers: the man, and the lantern alone so Lantern Toss can take it away; every frame
+records where the lantern hangs and how bright it is). In game `PlayerAnimator` plays it: 8 facings (walk direction
+when moving, the cursor when acting), one-shots stretched to the cast time (so attack and cast speed speed them up),
+events on frames (`hit`: the bolt leaves on the thrust frame, a spell on its release frame), the light pool follows
+the swinging lantern and gutters with it when he dies. Animations: idle (breath, brim, lantern flicker), run (8),
+bolt1/bolt2 (alternating cast-forwards), cast (staff raise), channel (held at a waylamp), toss, dash (smear), hurt,
+death (the lantern rolls free and gutters), rise (it relights first). Review: `tools/anim_sheet.py OUT` (4x sheets),
+`-- --animreel` (a ~30 s showcase). Balance after Wickbolt replaced the whip (125% staff damage, 0.27 s): Glasswood
+packs 5.2 s / Glazier 36 s, 1 death; Moth Hollow packs 3.2 s / Matron 34 s, 0 deaths (before: 5.6/42/1 and 5.8/28/0).
+Old saves: Sunlash becomes Wickbolt (its tree points come back), Hook becomes Tether.
+
 ## 9. Architecture (`game/scripts/`)
 | Folder | What |
 |---|---|
@@ -283,7 +300,7 @@ mostly Husks): waves are now 5 bodies, 40% Husks.
 | world | `ZoneLayout` (data), `ZoneGen` + steps (`ZoneGeography`, `ZonePaths`, `ZonePlacement`, `ZoneForest`, `ZonePacks`, base `GenStep`), `LayoutCheck`, `ZoneView` (shader ground, props, trees, collision), `Nav` (A* grid), `Spawner`, `Telegraph`, `PropSprite`, `TreeFade` (trees in front of a fight turn see-through), interactables (`Interactable`, `Chest`, `Waylamp`, `LoreObject`, `Npc`, `Cocoon`) |
 | actors | `Player`, `LanternLight`, `LightField`, `Enemy`, `brains/` (`EnemyBrain`, `SwarmBrain`, `LeaperBrain`, `RangedBrain`, `GlazierBrain`) |
 | combat | `Stats`, `Progression`, `Combat` (damage both ways), `Projectile`, `FloatText`, `HitStop` |
-| skills | `Skill` base, `SkillSystem`, `Sunlash`, `Flare`, `LanternToss`, `MothSwarm`, `GlassTrail`, `fx/` (whip, burst, thrown lantern, moth, burning ground) |
+| skills | `Skill` base, `SkillSystem`, `Wickbolt`, `Flare`, `LanternToss`, `MothSwarm`, `Tether`, `GlassTrail`, `fx/` (tether line, burst, thrown lantern, moth, burning ground) |
 | items | `LootGen`, `Inventory`, `GroundItem`, `LootDrop`, `LabelStack` |
 | ui | `GameUi`, `Hud`, `HudMessages`, `Minimap`, `GamePanel` + `InventoryPanel`, `CharacterPanel`, `SkillPanel`, `PassivePanel`, `PausePanel`, `TooltipLayer`, `ItemText`, `SkillText`, `LightText`, `EnemyTag`, `TitleScreen`, `UiDraw`, `Overlay` |
 | story | `Campaign` (flags, quests, said, kills), `Dialogue`, `Objectives` (tracker lines, objective target, routing) |
@@ -331,7 +348,7 @@ Glazier + Nim, death/respawn, save/load). Review screenshots: `--shots` (needs x
   you and the boss together; the Matron hovers beside you; torn web floor; a check that tall props never hide
   anyone's feet unless faded; brighter Ember Road / Moth Hollow; Tallow dressed with benches, banners, planters, a
   well, barrels and five passers-by, plus an arrival shot of the Great Lantern and a camera lean toward it).
-  Six more skills (Kindle, Hook, Glass Ward, Cinder Rain, Wick Trap, Lull) with trees; five specialisation slots
+  Six more skills (Kindle, Hook (now Tether), Glass Ward, Cinder Rain, Wick Trap, Lull) with trees; five specialisation slots
   (Specialise / Forget in the skill panel; only specialised skills level). The Ember Forge (data/crafting.json):
   materials (Ash, Kindle, Temper, Quench, Anneal) drop and fly to you; every item rolls Heat; Kindle adds an affix
   (normal -> magic -> rare), Temper raises a tier, Quench removes, Anneal rerolls, each spending Heat; uniques and

@@ -154,7 +154,7 @@ func pass3(h: ShotHelper) -> void:
 func more_skills(h: ShotHelper) -> void:
 	h.level_up(12)
 	p.prog.skills["cinder_rain"]["nodes"]["guided"] = 1             # cinders seek the one target (random spots may miss)
-	for id: String in ["kindle", "hook", "glass_ward", "cinder_rain", "wick_trap", "lull"]:
+	for id: String in ["kindle", "tether", "glass_ward", "cinder_rain", "wick_trap", "lull"]:
 		var foe: Enemy = h.pack_near(["hound"], Vector2(60, 0))[0]
 		foe.max_life = 99999.0
 		foe.life = 99999.0
@@ -162,7 +162,7 @@ func more_skills(h: ShotHelper) -> void:
 		await frames(3)
 		expect(h.cast(id, foe.global_position), "%s can be used" % id)
 		if id == "kindle":
-			h.cast("sunlash", foe.global_position)
+			h.cast("wickbolt", foe.global_position)
 		await t.get_tree().create_timer(2.2).timeout
 		var hurt: bool = foe.life < 99999.0 or (id == "glass_ward" and (p.skills.skill("glass_ward") as GlassWard).up())
 		expect(hurt, "%s works (%s)" % [id, "the ward is up" if id == "glass_ward" else "the enemy was hurt"])

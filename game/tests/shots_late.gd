@@ -62,7 +62,7 @@ func _shot_falls() -> void:
 	h.pack_near(["heron", "heron", "undertow", "heron"], Vector2(130, -30))
 	g.player.light.value = 70.0
 	await _wait(1.6)
-	h.cast("sunlash", g.player.global_position + Vector2(80, -20))
+	h.cast("wickbolt", g.player.global_position + Vector2(80, -20))
 	await _wait(0.08)
 	await _save("rising_falls")
 

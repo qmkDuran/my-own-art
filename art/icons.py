@@ -135,11 +135,11 @@ def item_icon(base: str, kind: int, variant: int) -> Spr:
 # ------------------------------------------------------------------ skill icons (24 px, framed in the game)
 def _skill(name: str) -> Spr:
     s = Spr(24, 24)
-    if name == "sunlash":
-        pts = [(3, 20), (8, 10), (14, 6), (20, 7), (22, 11)]
-        s.line(pts, "amber", width=2, glow=True)
-        s.line(pts, "sun", glow=True)
-        s.ellipse(22, 11, 2, 2, "sun", glow=True)
+    if name == "wickbolt":                  # a bolt of light leaving the lantern, a short bright tail behind it
+        s.line([(3, 21), (14, 10)], "flame", width=2, glow=True)
+        s.line([(6, 18), (15, 9)], "amber", glow=True)
+        s.ellipse(17, 7, 4, 4, "gold", glow=True)
+        s.ellipse(17, 7, 2, 2, "sun", glow=True)
     elif name == "flare":
         for a in range(12):
             r = 10 if a % 2 else 7
@@ -172,9 +172,13 @@ def _skill(name: str) -> Spr:
         s.poly([(6, 20), (18, 20), (17, 11), (12, 3), (10, 10), (7, 9)], "flame", glow=True)
         s.poly([(9, 20), (15, 20), (12, 12)], "gold", glow=True)
         s.ellipse(12, 21, 8, 2, "ember")
-    elif name == "hook":
-        s.line([(3, 21), (10, 12), (17, 6)], "amber", width=2, glow=True)
-        s.line([(17, 6), (21, 5), (21, 10), (18, 12)], "stone_lt", width=2)
+    elif name == "tether":                  # a taut line of light from the lantern to a caught shape, pulled home
+        s.rect(2, 15, 6, 21, "ink")
+        s.rect(3, 16, 5, 20, "gold", glow=True)
+        s.line([(5, 15), (19, 7)], "amber", width=2, glow=True)
+        s.line([(5, 15), (19, 7)], "sun", glow=True)
+        s.ellipse(20, 6, 3, 3, "violet")
+        s.px(20, 6, "sun", glow=True)
     elif name == "glass_ward":
         for a in range(6):
             x, y = 12 + math.cos(a * 1.047) * 8, 12 + math.sin(a * 1.047) * 8
@@ -207,7 +211,7 @@ def _skill(name: str) -> Spr:
     return s
 
 
-SKILLS = ["sunlash", "flare", "lantern_toss", "moth_swarm", "dash", "eclipse", "noon", "tonic", "kindle", "hook", "glass_ward",
+SKILLS = ["wickbolt", "flare", "lantern_toss", "moth_swarm", "dash", "eclipse", "noon", "tonic", "kindle", "tether", "glass_ward",
           "cinder_rain", "wick_trap", "lull"]
 
 
@@ -295,10 +299,11 @@ def fx_spark() -> Spr:
     return s
 
 
-def fx_crescent() -> Spr:
-    """Sunwave: a crescent of light travelling to the right (+x), bulging forward."""
-    s = Spr(16, 32)
-    for r, c in ((14, "amber"), (12, "gold"), (11, "sun")):
-        pts = arc_points(0, 16, r, -1.2, 1.2, 12)
-        s.line(pts, c, width=2 if c != "sun" else 1, glow=True)
+def fx_bolt() -> Spr:
+    """Wickbolt: a teardrop of light travelling to the right (+x), its tail fading behind it."""
+    s = Spr(24, 12)
+    for x, c in ((3, "ember"), (7, "flame"), (11, "amber")):
+        s.line([(x, 6), (x + 5, 6)], c, width=2, glow=True)
+    s.ellipse(17, 6, 4, 4, "gold", glow=True)
+    s.ellipse(18, 6, 2, 2, "sun", glow=True)
     return s

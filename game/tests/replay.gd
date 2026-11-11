@@ -99,6 +99,10 @@ func _play_step() -> void:
 
 
 func _act(st: Dictionary) -> void:
+	if Game.current == null or not is_instance_valid(Game.current):
+		return
+	if Game.current != g:                                  # the game moved zones on its own (a story moment)
+		_attach()
 	_clear_modal()
 	if String(st["target"]["zone"]) != g.zone_id:
 		await _travel(String(st["target"]["zone"]))

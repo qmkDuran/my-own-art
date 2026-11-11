@@ -1,10 +1,11 @@
-class_name Hook
+class_name Tether
 extends Skill
-## The light-whip cast out in a line: the first enemy caught (two with Double Hook) is dragged to your feet and
-## stunned. Drag the Light feeds the lantern; Snap cracks a free Sunlash on the catch.
+## A tether of light shoots from the lantern: the first enemy it catches (two with Double Tether) is yanked to your
+## feet and stunned. Drag the Light feeds the lantern; Flare Up bursts light around the catch.
 
 const LINE_W: float = 16.0
 const PULL: float = 420.0
+const FLARE_UP_PCT: float = 70.0
 
 
 func reach() -> float:
@@ -13,18 +14,18 @@ func reach() -> float:
 
 func use(target: Vector2) -> void:
 	var dir: Vector2 = (target - p.global_position).normalized()
-	var from: Vector2 = p.global_position + Vector2(0, -18)
-	WhipFx.lash(fx(), from, p.lantern_pos(), dir, reach(), 4.0, false, true)
-	Audio.sfx("crack", -6.0, 0.8)
-	var caught: Array[Enemy] = _in_line(dir).slice(0, 2 if rank("double_hook") > 0 else 1)
+	Audio.sfx("bolt", -6.0, 0.7)
+	var caught: Array[Enemy] = _in_line(dir).slice(0, 2 if rank("double_tether") > 0 else 1)
+	var end: Vector2 = caught[0].global_position + Vector2(0, -14) if not caught.is_empty() else p.global_position + dir * reach()
+	TetherFx.cast(fx(), p, end)
 	for e: Enemy in caught:
-		Combat.hit_enemy(e, roll(float(data["damage_pct"])), opts({"dir": -dir, "more": 1.0 + val("damage_pct") / 100.0,
+		Combat.hit_enemy(e, roll(), opts({"dir": -dir, "more": 1.0 + val("damage_pct") / 100.0,
 			"stun": float(data["stun"]), "knockback": 0.0, "heavy": true}))
 		if is_instance_valid(e) and not e.dead and e.rank != "boss":
 			e.pull_toward(p.global_position, PULL)
 		p.light.add(val("light"))
-		if rank("snap") > 0:
-			(p.skills.skill("sunlash") as Sunlash).crack_at(e)
+		if rank("snap") > 0 and is_instance_valid(e):
+			(p.skills.skill("wickbolt") as Wickbolt).burst_at(e.global_position + Vector2(0, -14), FLARE_UP_PCT)
 
 
 func _in_line(dir: Vector2) -> Array[Enemy]:
@@ -40,5 +41,5 @@ func _in_line(dir: Vector2) -> Array[Enemy]:
 
 
 func info() -> Array:
-	var r: Vector2 = shown_range(float(data["damage_pct"]))
-	return [["Reach %d px, %d-%d, stuns %.1f s, drags to you" % [roundi(reach()), r.x, r.y, float(data["stun"])], UiDraw.TEXT]]
+	var r: Vector2 = shown_range()
+	return [["Reach %d px, %d-%d, stuns %.1f s, yanks to you" % [roundi(reach()), r.x, r.y, float(data["stun"])], UiDraw.TEXT]]

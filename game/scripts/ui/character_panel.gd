@@ -12,13 +12,13 @@ const TOP_Y: float = 44.0
 ## [label, value, colour] rows; [section] rows are headings.
 static func rows(p: Player) -> Array:
 	var st: Stats = p.stats
-	var sun: Skill = p.skills.skill("sunlash")
+	var sun: Skill = p.skills.skill("wickbolt")
 	var r: Vector2 = sun.shown_range(100.0)
 	var mast: String = String(GameData.passives["trees"][p.prog.mastery]["name"]) if p.prog.mastery != "" else "(choose at level %d)" % int(GameData.player["mastery_level"])
 	return [
 		["Lamplighter"], ["Level", "%d" % p.prog.level], ["Mastery", mast],
 		["Offence"], ["Staff damage", "%d-%d" % [roundi(st.staff_range().x), roundi(st.staff_range().y)]],
-		["Sunlash per hit", "%d-%d" % [r.x, r.y]], ["Attack speed", "%+d%%" % roundi(st.v("attack_speed_pct"))],
+		["Wickbolt per hit", "%d-%d" % [r.x, r.y]], ["Attack speed", "%+d%%" % roundi(st.v("attack_speed_pct"))],
 		["Cast speed", "%+d%%" % roundi(st.v("cast_speed_pct"))], ["Critical chance", "%.1f%%" % st.crit_chance()],
 		["Critical multiplier", "%d%%" % roundi(st.crit_multi())], ["Increased sunfire", "%+d%%" % roundi(st.v("sunfire_pct") + st.v("damage_pct"))],
 		["Increased spell damage", "%+d%%" % roundi(st.v("spell_pct"))], ["vs Shrouded enemies", "%+d%%" % roundi(st.v("damage_vs_shrouded_pct"))],

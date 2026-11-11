@@ -46,7 +46,7 @@ def write(dest: Path) -> None:
     meta = json.loads((ROOT / "game" / "data" / "sprites.json").read_text())["actors"]
     props = json.loads((ROOT / "game" / "data" / "props.json").read_text())
     width = 2200
-    poses = [(f"{a} {d}", lamplighter_frame(meta, a, d, 1)) for a in ("idle", "walk", "slash1", "slash3", "cast", "dash")
+    poses = [(f"{a} {d}", lamplighter_frame(meta, a, d, 1)) for a in ("idle", "walk", "bolt1", "bolt2", "cast", "dash")
              for d in ("s", "e", "n")]
     rows = [_row("The Lamplighter (8 facings, rig-drawn; a few of his animations)", poses, width)]
     npcs = [(m["name"].split(" ")[-1], _first_frame(f"actors/{k}.png", 64, 64)) for k, m in meta.items() if k.startswith("npc_")]

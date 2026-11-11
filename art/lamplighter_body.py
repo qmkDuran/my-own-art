@@ -1,6 +1,6 @@
 """Paints the Lamplighter from the rig (rig.py) for one pose and facing: legs, long coat, capelet, scarf, the brimmed
 hat with its ember band and the eyes that glow under it, the hook staff in his left hand with the lantern swinging
-from its crook, the whip's grip in his right. Same palette, outline and rim light as every other sprite."""
+from its crook (his one weapon: every spell comes out of that lantern). Same palette, outline and rim light as every other sprite."""
 from __future__ import annotations
 
 import math
@@ -18,7 +18,8 @@ HAT = ("ink", "night", "dusk3")
 BAND = "ember"
 FRONT = 0.25                    # facing the camera at least this much: the front details show
 BEHIND = -1000.0
-NEAR_HEAD = 6.0                 # a staff or lantern this far toward the camera is in front of his hat and face                # depth for things always under the coat (the legs' tops)
+NEAR_HEAD = 6.0
+GRIP = 9.0                      # two-handed swings: the right hand holds this far down the staff                 # a staff or lantern this far toward the camera is in front of his hat and face                # depth for things always under the coat (the legs' tops)
 
 
 def _pts(v: View, vs: list[Vec], upper: bool = True) -> list[tuple[float, float]]:
@@ -96,12 +97,10 @@ def _capelet(pa: Painter, v: View, p: Pose) -> None:
     pa.add(0.4, draw)
 
 
-def _arms(pa: Painter, v: View, p: Pose) -> dict[str, tuple[float, float]]:
-    out = {}
+def _arms(pa: Painter, v: View, p: Pose) -> None:
     for side, hand, tone in ((-1, p.hand_l, COAT[0]), (1, p.hand_r, COAT[1])):
         sh = v.upper((side * SHOULDER_W, SHOULDER_Y - 1, 0.0))
         elbow, end = ik(sh, hand, UPPER_ARM, FOREARM, (side * 0.7, -0.4, -0.8))
-        out["l" if side < 0 else "r"] = v.screen(end)
 
         def draw(s: Spr, sh: Vec = sh, elbow: Vec = elbow, end: Vec = end, tone: str = tone) -> None:
             limb(s, [v.screen(sh), v.screen(elbow), v.screen(end)], tone, 4)
@@ -110,7 +109,6 @@ def _arms(pa: Painter, v: View, p: Pose) -> dict[str, tuple[float, float]]:
             s.ellipse(wx, wy + 1, 1.2, 1.2, GLOVE)
         near = v.depth(end) > v.depth(v.upper((0.0, SHOULDER_Y, 0.0)))
         pa.add(1.0 + v.depth(end) * 0.01 if near else -0.6, draw)
-    return out
 
 
 def _head(pa: Painter, v: View, p: Pose) -> None:
@@ -156,22 +154,6 @@ def _scarf(pa: Painter, v: View, p: Pose) -> None:
         s.line([a, b], SCARF[1])
     pa.add(1.5, wrap)
     pa.add(v.depth(tail) * 0.05 + (0.45 if v.depth(tail) > 0 else -0.8), tail_draw)
-
-
-def _whip(pa: Painter, v: View, p: Pose) -> None:
-    hand = p.hand_r
-    tip = (hand[0] + 0.5, hand[1] + 1.0, hand[2] + 4.0)
-
-    lash = p.extra.get("lash")
-
-    def draw(s: Spr) -> None:
-        s.line([v.screen(hand), v.screen(tip)], "earth_lt", width=2)
-        if lash:                                              # a short curl of the light-whip at the strike
-            a, b = v.screen(lash[0]), v.screen(lash[1])
-            mid = ((a[0] + b[0]) / 2 + (b[1] - a[1]) * 0.25, (a[1] + b[1]) / 2 - (b[0] - a[0]) * 0.25)
-            s.line([a, mid, b], "amber", width=2, glow=True)
-            s.line([a, mid, b], "sun", glow=True)
-    pa.add(1.05 + v.depth(hand) * 0.01 if v.depth(hand) > 0 else -0.55, draw)
 
 
 def staff_points(v: View, p: Pose) -> tuple[Vec, Vec, Vec]:
@@ -230,6 +212,10 @@ def _lantern(pa: Painter, v: View, p: Pose) -> None:
         if p.lantern_on_staff:
             s.line([hook, (x, y - 5)], "stone_dk")
         outer, mid, core, glow = _pane(p.pane)
+        if p.extra.get("flare"):                              # the release: the lantern flares as the bolt leaves
+            for dx, dy in ((-5, 0), (5, 0), (0, -6), (0, 6), (-4, -4), (4, 4), (4, -4), (-4, 4)):
+                s.line([(x, y), (x + dx, y + dy)], "gold", glow=True)
+            s.ellipse(x, y, 3.5, 4.5, "sun", glow=True)
         s.rect(x - 2, y - 6, x + 2, y - 5, "ink")
         s.rect(x - 3, y - 4, x + 3, y + 4, "ink")
         s.rect(x - 2, y - 3, x + 2, y + 3, outer, glow=glow)
@@ -259,18 +245,22 @@ def _smear(s: Spr, v: View, dist: float) -> None:
 
 
 def paint(p: Pose, yaw: float, lantern: bool = True) -> tuple[Spr, dict]:
-    """One frame. Returns the sprite and its anchors (lantern centre, whip hand) in frame pixels."""
+    """One frame. Returns the sprite and its anchors (the lantern's centre) in frame pixels."""
     s = Spr(96, 96)
     v = View(yaw, p)
     pa = Painter()
+    if p.extra.get("two_hand"):                               # the other hand grips the staff lower down
+        bottom, top, _ = staff_points(v, p)
+        d = (top[0] - bottom[0], top[1] - bottom[1], top[2] - bottom[2])
+        n = math.sqrt(d[0] ** 2 + d[1] ** 2 + d[2] ** 2) or 1.0
+        p.hand_r = (p.hand_l[0] - d[0] / n * GRIP, p.hand_l[1] - d[1] / n * GRIP, p.hand_l[2] - d[2] / n * GRIP)
     _legs(pa, v, p)
     _coat(pa, v, p)
     _capelet(pa, v, p)
-    hands = _arms(pa, v, p)
+    _arms(pa, v, p)
     _scarf(pa, v, p)
     _head(pa, v, p)
     _staff(pa, v, p)
-    _whip(pa, v, p)
     if lantern:
         _lantern(pa, v, p)
     pa.paint(s)
@@ -279,4 +269,4 @@ def paint(p: Pose, yaw: float, lantern: bool = True) -> tuple[Spr, dict]:
     s.outline()
     s.recolor_edge(-1, 0, "dusk3", only={COAT[0], COAT[1], "ink", "night"})
     s.recolor_edge(1, 0, "ember", only={COAT[1], COAT[2], "night"})
-    return s, {"lantern": lantern_point(v, p), "hand": hands["r"]}
+    return s, {"lantern": lantern_point(v, p)}

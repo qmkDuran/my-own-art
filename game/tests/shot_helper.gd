@@ -8,7 +8,7 @@ const OVERVIEW_DARK := Color(0.55, 0.55, 0.62)
 
 const PASSIVE_ORDER: Array[String] = ["wick", "iron_coat", "kindler", "steady_hand", "trimmed", "deep_oil", "road_legs", "hunger",
 	"ash_skin", "night_eyes", "steady_flame", "keen", "brightness", "second_wind"]
-const SPECS: Dictionary = {"sunlash": ["quick_wrist", "quick_wrist", "long_cord", "sear", "sear", "kindling", "backhand", "cruel_dark"],
+const SPECS: Dictionary = {"wickbolt": ["quick_wick", "quick_wick", "long_flight", "sear", "sear", "kindling", "piercing", "cruel_dark"],
 	"flare": ["wide", "refuel", "wide", "blinding", "afterglow"], "moth_swarm": ["brood", "brood", "swift", "light_feeders", "fire_moths"]}
 
 var g: Game

@@ -10,7 +10,7 @@ const PCT: float = 40.0
 
 static func lay(parent: Node, from: Vector2, dir: Vector2, p: Player) -> void:
 	var dist: float = float(GameData.player["dash"]["distance"])
-	var s: Skill = p.skills.skill("sunlash")
+	var s: Skill = p.skills.skill("wickbolt")
 	var b: Vector2 = s.base_range(PCT)
 	for k: int in PIECES:
 		BurningGround.spawn(parent, from + dir * dist * k / PIECES, RADIUS, TIME, (b.x + b.y) * 0.5, s)

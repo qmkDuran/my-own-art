@@ -79,18 +79,18 @@ func _shot_dark() -> void:
 	await _wait(0.8)
 	h.cast("lantern_toss", g.player.global_position + Vector2(260, -40))
 	await _wait(1.1)
-	h.cast("sunlash", g.player.global_position + Vector2(-40, 120))
+	h.cast("wickbolt", g.player.global_position + Vector2(-40, 120))
 	await _wait(0.07)
 	await _save("gameplay_dark")
 
 
 func _shot_skills() -> void:
 	var h := _bot()
-	h.spec("sunlash", ["quick_wrist", "quick_wrist", "long_cord", "sear", "sear", "kindling", "backhand"])
-	g.ui.skills.selected = "sunlash"
+	h.spec("wickbolt", ["quick_wick", "quick_wick", "long_flight", "sear", "sear", "kindling", "piercing"])
+	g.ui.skills.selected = "wickbolt"
 	g.ui.open(g.ui.skills)
 	await _wait(0.3)
-	h.hover(g.ui.skills.position + g.ui.skills.node_rect(GameData.skill("sunlash")["nodes"][4]).get_center())
+	h.hover(g.ui.skills.position + g.ui.skills.node_rect(GameData.skill("wickbolt")["nodes"][4]).get_center())
 	await _wait(SETTLE)
 	await _save("skill_tree")
 	g.ui.open(g.ui.skills)
@@ -222,7 +222,7 @@ func _shot_matron() -> void:
 	await _wait(0.4)
 	g.start_boss()
 	await _wait(3.2)
-	h.cast("sunlash", g.spawner.boss.global_position)
+	h.cast("wickbolt", g.spawner.boss.global_position)
 	await _wait(0.06)
 	await _save("matron_fight")
 
@@ -268,7 +268,7 @@ func _shot_eclipse() -> void:
 	await _wait(0.8)
 	h.cast("eclipse", g.player.global_position)
 	await _wait(1.2)
-	h.cast("sunlash", g.player.global_position + Vector2(80, 10))
+	h.cast("wickbolt", g.player.global_position + Vector2(80, 10))
 	await _wait(0.06)
 	await _save("eclipse")
 

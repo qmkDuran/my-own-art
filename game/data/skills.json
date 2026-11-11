@@ -1,52 +1,51 @@
 {
  "_doc": "Skills. Each levels on its own (xp from kills while slotted) and gets 1 specialisation point per level. Nodes: req = points already spent in this skill's tree, parent = needs >= 1 point there first, vals are per point. Attacks scale from the staff's damage, spells from their own base damage (+per_level_pct per skill level).",
- "sunlash": {
-  "name": "Sunlash",
+ "wickbolt": {
+  "name": "Wickbolt",
   "icon": 0,
   "kind": "attack",
   "tags": [
-   "Melee",
+   "Projectile",
    "Sunfire",
    "Attack"
   ],
-  "desc": "Crack a whip of light from the lantern. Every third lash is a heavy crack.",
-  "damage_pct": 100.0,
+  "desc": "Point the staff: the lantern spits a bolt of light at the cursor. Fast enough to cast without pause; every third bolt burns brighter.",
+  "damage_pct": 125.0,
   "cost": 0.0,
   "cooldown": 0.0,
-  "time": 0.4,
-  "range": 80.0,
-  "arc_deg": 120.0,
-  "crack_mult": 1.6,
-  "crack_range": 104.0,
-  "crack_arc_deg": 60.0,
+  "time": 0.27,
+  "speed": 560.0,
+  "range": 340.0,
+  "radius": 12.0,
+  "third_mult": 1.4,
   "light_per_hit": 0.0,
   "nodes": [
    {
-    "id": "quick_wrist",
-    "name": "Quick Wrist",
+    "id": "quick_wick",
+    "name": "Quick Wick",
     "max": 4,
     "req": 0,
     "pos": [
      0,
      0
     ],
-    "text": "+8% Sunlash attack speed per point",
+    "text": "+8% Wickbolt cast speed per point",
     "vals": {
      "speed_pct": 8.0
     }
    },
    {
-    "id": "long_cord",
-    "name": "Long Cord",
+    "id": "long_flight",
+    "name": "Long Flight",
     "max": 3,
     "req": 0,
     "pos": [
      2,
      0
     ],
-    "text": "+12% lash reach per point",
+    "text": "+15% bolt range and speed per point",
     "vals": {
-     "range_pct": 12.0
+     "range_pct": 15.0
     }
    },
    {
@@ -78,16 +77,32 @@
     }
    },
    {
-    "id": "backhand",
-    "name": "Backhand",
+    "id": "piercing",
+    "name": "Piercing Wick",
+    "max": 2,
+    "req": 5,
+    "pos": [
+     0,
+     2
+    ],
+    "text": "Bolts pass through +1 enemy per point",
+    "vals": {
+     "pierce": 1.0
+    }
+   },
+   {
+    "id": "fork",
+    "name": "Forked Flame",
     "max": 1,
     "req": 5,
     "pos": [
-     1,
+     2,
      2
     ],
-    "text": "Lashes also strike behind you",
-    "vals": {}
+    "text": "A bolt that hits splits into two smaller bolts (60% damage)",
+    "vals": {
+     "fork_pct": 60.0
+    }
    },
    {
     "id": "cruel_dark",
@@ -104,32 +119,31 @@
     }
    },
    {
-    "id": "sunwave",
-    "name": "Sunwave",
+    "id": "third_light",
+    "name": "Third Light",
     "max": 1,
     "req": 8,
     "pos": [
      1,
      3
     ],
-    "text": "The third crack sends a crescent of light forward (70% damage, pierces)",
+    "text": "Every third bolt bursts where it lands (70% damage around it)",
     "vals": {
-     "wave_pct": 70.0
+     "burst_pct": 70.0
     }
    },
    {
-    "id": "twin_wave",
-    "name": "Twin Crescents",
+    "id": "ember_trail",
+    "name": "Ember Trail",
     "max": 2,
     "req": 8,
     "pos": [
-     2,
+     3,
      3
     ],
-    "parent": "sunwave",
-    "text": "Sunwave: +1 crescent per point, fanned out",
+    "text": "Bolts leave a trail of embers that burns (15% damage per second per point)",
     "vals": {
-     "extra_waves": 1.0
+     "trail_pct": 15.0
     }
    }
   ]
@@ -826,17 +840,16 @@
    }
   ]
  },
- "hook": {
-  "name": "Hook",
+ "tether": {
+  "name": "Tether",
   "icon": 9,
-  "kind": "attack",
+  "kind": "spell",
   "tags": [
-   "Melee",
-   "Attack",
+   "Spell",
+   "Sunfire",
    "Movement"
   ],
-  "desc": "Cast the light-whip out in a line. The first thing it catches is dragged to your feet and left reeling.",
-  "damage_pct": 120.0,
+  "desc": "A tether of light shoots from the lantern. The first thing it catches is yanked to your feet and left reeling.",
   "cost": 8.0,
   "cooldown": 3.0,
   "time": 0.3,
@@ -845,7 +858,7 @@
   "nodes": [
    {
     "id": "barbed",
-    "name": "Barbed",
+    "name": "Bright Line",
     "max": 3,
     "req": 0,
     "pos": [
@@ -886,8 +899,8 @@
     }
    },
    {
-    "id": "double_hook",
-    "name": "Double Hook",
+    "id": "double_tether",
+    "name": "Double Tether",
     "max": 1,
     "req": 4,
     "pos": [
@@ -899,17 +912,22 @@
    },
    {
     "id": "snap",
-    "name": "Snap",
+    "name": "Flare Up",
     "max": 1,
     "req": 6,
     "pos": [
      1,
      2
     ],
-    "text": "Caught enemies are struck again by a free Sunlash crack",
+    "text": "Caught enemies are struck by a free Third Light burst",
     "vals": {}
    }
-  ]
+  ],
+  "base": [
+   16.0,
+   26.0
+  ],
+  "per_level_pct": 6.0
  },
  "glass_ward": {
   "name": "Glass Ward",
