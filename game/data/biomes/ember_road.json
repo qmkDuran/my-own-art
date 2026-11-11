@@ -345,11 +345,11 @@
  },
  "relight": {
   "waves": 2,
-  "wave_size": 6,
+  "wave_size": 5,
   "duration": 14.0,
   "kinds": {
-   "husk": 0.5,
-   "gloam": 0.5
+   "husk": 0.4,
+   "gloam": 0.6
   }
  },
  "ambient": {

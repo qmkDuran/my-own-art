@@ -16,18 +16,18 @@ const STORY: Dictionary = {"elite": ["seven_heartbeats", 0], "boss": ["seven_hea
 const REELS: Dictionary = {
 	"act1": [[0.0, "gate"], [15.0, "elite"], [29.0, "boss"], [46.0, "end"]],
 	"act2": [[0.0, "hub"], [10.5, "road"], [25.0, "hollow"], [45.0, "end"]],
-	"final": [[0.0, "arrive"], [7.0, "road"], [17.0, "river"], [27.0, "hollow"], [40.0, "belfry"], [53.0, "mayor"], [67.0, "end"]],
+	"final": [[0.0, "arrive"], [7.0, "road"], [17.0, "river"], [27.0, "hollow"], [40.0, "belfry"], [53.0, "mayor"], [65.0, "end"]],
 }
 const BOSS_LIFE: float = 0.13
 const MATRON_LIFE: float = 0.4
 const BELLWRIGHT_LIFE: float = 0.3
-const MAYOR_LIFE: float = 0.08
-const RIVER_TOUGH: float = 1.0
+const MAYOR_LIFE: float = 0.2
+const RIVER_TOUGH: float = 1.8
 const PACK_RADIUS: float = 150.0
 const CLEAR_RADIUS: float = 800.0
 const ROAD_PROGRESS: float = 0.5
 const HOVER_SETTLE: float = 0.3
-const ROAD_LEVEL: int = 11
+const ROAD_LEVEL: int = 14
 const SPECS: Dictionary = {"sunlash": ["quick_wrist", "quick_wrist", "sear", "sear", "kindling"], "flare": ["wide", "refuel", "wide"],
 	"lantern_toss": ["long_burn", "heavy_iron", "beacon"], "moth_swarm": ["brood", "brood", "swift"]}
 const PASSIVES: Array[String] = ["wick", "wick", "wick", "trimmed", "trimmed", "steady_hand", "kindler"]

@@ -259,7 +259,9 @@ The Matron is now the easiest boss for her place — she should get tougher once
 pass). Act 3 packs cost about a fifth of a life bar each, the intended pressure for the last act so far. Earlier
 runs had a pack per zone "time out": traced to the bot, not the map — a straggler outside its sight (scattered, or
 put back at its post by the Tuesday rewind) was never walked to. The runner now walks over to stragglers, and
-`LayoutCheck` gained a rule that every spawn stands on ground the player can reach.
+`LayoutCheck` gained a rule that every spawn stands on ground the player can reach. Ember Road lamp waves
+were the sharpest spike (a geared level-10 Lamplighter lost half his life in under two seconds to a six-body wave,
+mostly Husks): waves are now 5 bodies, 40% Husks.
 
 ## 9. Architecture (`game/scripts/`)
 | Folder | What |
