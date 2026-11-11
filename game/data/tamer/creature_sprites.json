@@ -1,0 +1,174 @@
+{
+ "creatures": {
+  "honey_badger": {
+   "frame": [
+    56,
+    48
+   ],
+   "anchor": [
+    28,
+    44
+   ],
+   "poses": [
+    [
+     "idle",
+     4
+    ],
+    [
+     "move",
+     4
+    ],
+    [
+     "act",
+     2
+    ]
+   ],
+   "floats": false
+  },
+  "cuttlefish": {
+   "frame": [
+    56,
+    48
+   ],
+   "anchor": [
+    28,
+    44
+   ],
+   "poses": [
+    [
+     "idle",
+     4
+    ],
+    [
+     "move",
+     4
+    ],
+    [
+     "act",
+     2
+    ]
+   ],
+   "floats": true
+  },
+  "pangolin": {
+   "frame": [
+    56,
+    48
+   ],
+   "anchor": [
+    28,
+    44
+   ],
+   "poses": [
+    [
+     "idle",
+     4
+    ],
+    [
+     "move",
+     4
+    ],
+    [
+     "act",
+     2
+    ]
+   ],
+   "floats": false
+  },
+  "maned_wolf": {
+   "frame": [
+    56,
+    48
+   ],
+   "anchor": [
+    28,
+    44
+   ],
+   "poses": [
+    [
+     "idle",
+     4
+    ],
+    [
+     "move",
+     4
+    ],
+    [
+     "act",
+     2
+    ]
+   ],
+   "floats": false
+  },
+  "aye_aye": {
+   "frame": [
+    56,
+    48
+   ],
+   "anchor": [
+    28,
+    44
+   ],
+   "poses": [
+    [
+     "idle",
+     4
+    ],
+    [
+     "move",
+     4
+    ],
+    [
+     "act",
+     2
+    ]
+   ],
+   "floats": false
+  },
+  "tas_devil": {
+   "frame": [
+    56,
+    48
+   ],
+   "anchor": [
+    28,
+    44
+   ],
+   "poses": [
+    [
+     "idle",
+     4
+    ],
+    [
+     "move",
+     4
+    ],
+    [
+     "act",
+     2
+    ]
+   ],
+   "floats": false
+  }
+ },
+ "trainer": {
+  "frame": [
+   64,
+   64
+  ],
+  "anchor": [
+   32,
+   61
+  ],
+  "poses": [
+   [
+    "idle",
+    8
+   ],
+   [
+    "walk",
+    8
+   ]
+  ]
+ }
+}

@@ -23,6 +23,10 @@ PAL: dict[str, tuple[int, int, int]] = {
     # accents
     "blood": (184, 40, 58), "rose": (232, 80, 90), "violet": (106, 61, 154), "violet_lt": (160, 112, 216),
     "skin_dk": (122, 74, 58), "skin": (176, 116, 88), "skin_lt": (214, 160, 124),
+    # creature elements (the trainer prototype): leaf greens for Bloom, sea blues for Tide, bile for Rot
+    "leaf_dk": (36, 84, 52), "leaf": (72, 146, 70), "leaf_lt": (150, 212, 104),
+    "sea_dk": (30, 52, 112), "sea": (54, 102, 190), "sea_lt": (116, 176, 238),
+    "bile_dk": (92, 100, 38), "bile": (176, 186, 62),
 }
 
 OUTLINE = "void"

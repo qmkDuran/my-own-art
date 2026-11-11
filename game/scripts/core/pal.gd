@@ -15,6 +15,9 @@ const C: Dictionary = {
 	"stone_lt": Color8(117, 114, 126),
 	"blood": Color8(184, 40, 58), "rose": Color8(232, 80, 90), "violet": Color8(106, 61, 154), "violet_lt": Color8(160, 112, 216),
 	"skin_dk": Color8(122, 74, 58), "skin": Color8(176, 116, 88), "skin_lt": Color8(214, 160, 124),
+	"leaf_dk": Color8(36, 84, 52), "leaf": Color8(72, 146, 70), "leaf_lt": Color8(150, 212, 104),
+	"sea_dk": Color8(30, 52, 112), "sea": Color8(54, 102, 190), "sea_lt": Color8(116, 176, 238),
+	"bile_dk": Color8(92, 100, 38), "bile": Color8(176, 186, 62),
 }
 
 
