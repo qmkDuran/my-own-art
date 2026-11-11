@@ -146,7 +146,7 @@ func _props(world: Node2D) -> void:
 			continue
 		var s := PropSprite.make(p["kind"])
 		s.light_mask = SCENERY_MASK
-		s.self_modulate = scenery()
+		s.self_modulate = prop_tint()
 		s.position = p["pos"]
 		var foot_w: float = (p["foot"] as Rect2).size.x
 		var built: bool = bool(GameData.props[p["kind"]]["flat"]) or foot_w > BUILT_W   # floors and walls
@@ -179,7 +179,7 @@ func _trees(world: Node2D) -> void:
 	for t: Dictionary in z.trees:
 		var s := PropSprite.make(t["kind"])
 		s.light_mask = SCENERY_MASK
-		s.self_modulate = scenery()
+		s.self_modulate = prop_tint()
 		s.position = t["pos"]
 		s.flip_h = int(t["pos"].x + t["pos"].y) % 2 == 0
 		var g: Sprite2D = s.get_node_or_null("Glow") as Sprite2D
@@ -201,9 +201,15 @@ static func person_modulate() -> Color:
 	return Color.WHITE * PERSON_GAIN
 
 
-## Terrain, trees and props: the zone's own colour (Atmosphere.tint) times its lift.
+## Terrain: the zone's own colour (Atmosphere.tint) times its lift.
 static func scenery() -> Color:
 	return Atmosphere.tint(GameData.biome) * gain()
+
+
+## Trees and props: the zone's colour times their own lift ("prop_gain"; the terrain's by default). A dark cave
+## lifts its floor a lot and its stones and cocoons less, so they stay stone-dark instead of turning pale.
+static func prop_tint() -> Color:
+	return Atmosphere.tint(GameData.biome) * float(GameData.biome["ambient"].get("prop_gain", gain()))
 
 
 ## How far this zone lifts its terrain and trees out of the dark (biome ambient "scenery_gain"; HDR above 1).

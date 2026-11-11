@@ -4,6 +4,7 @@ mini-boss 128 px. Frames: idle / move / attack rows; deaths are particle bursts 
 from __future__ import annotations
 
 import math
+import random
 
 from pix import Spr, clock_dial
 
@@ -272,6 +273,20 @@ def crawler(pose: str, i: int) -> Spr:
 
 # ------------------------------------------------------------------ the Moth Matron (Act 1 boss)
 WING_BANDS = (("dusk3", 1.0), ("violet", 0.8), ("dusk3", 0.62), ("dusk2", 0.44), ("dusk1", 0.28))
+WING_POINTS = 28
+
+
+def _wing_shape(root: tuple, side: int, length: float, width: float, ang: float, scallops: int) -> list:
+    """An organic wing: a rounded teardrop from the root (polar curve), its outer edge scalloped."""
+    pts = []
+    for j in range(WING_POINTS + 1):
+        t = j / WING_POINTS                                   # 0..1 around the wing
+        a = ang + (t - 0.5) * math.pi * 0.95
+        r = length * math.sin(math.pi * t) ** 0.7
+        r *= 1.0 - 0.06 * (0.5 + 0.5 * math.cos(t * scallops * 2 * math.pi)) * (t > 0.15 and t < 0.85)
+        r *= 1.0 + (width - 1.0) * math.sin(math.pi * t)
+        pts.append((root[0] + side * math.cos(a) * r, root[1] - math.sin(a) * r))
+    return pts
 
 
 def _shrink(pts: list, root: tuple, t: float) -> list:
@@ -279,31 +294,46 @@ def _shrink(pts: list, root: tuple, t: float) -> list:
 
 
 def _matron_wing(s: Spr, cx: float, cy: float, side: int, k: float) -> None:
-    """One side of the Matron: forewing and hindwing shaded from a dusty pale edge in to a dark root (bands, not a
-    flat fill), veins fanning from the root, a soft tattered edge, and false eyes that glow."""
-    up = [(cx + side * 8, cy - 10), (cx + side * 70, cy - 10 - 52 * k), (cx + side * 86, cy - 18 - 22 * k),
-          (cx + side * 80, cy + 4), (cx + side * 10, cy + 6)]
-    low = [(cx + side * 8, cy + 4), (cx + side * 62, cy + 10), (cx + side * 70, cy + 22 + 26 * k),
-           (cx + side * 46, cy + 32 + 26 * k), (cx + side * 10, cy + 20)]
-    for wing, root in ((low, (cx + side * 8, cy + 10)), (up, (cx + side * 8, cy - 2))):
-        s.poly(wing, "mist")                                               # the dusty outer edge
+    """One side of the Matron: rounded forewing and hindwing, shaded from a dusty pale edge in to a dark root in soft
+    bands, veins fanning out, a scalloped edge, and false eyes that glow."""
+    fore_root, hind_root = (cx + side * 6, cy - 4), (cx + side * 6, cy + 8)
+    fore = _wing_shape(fore_root, side, 78, 1.1, 0.35 + 0.35 * (k - 0.8), 5)
+    hind = _wing_shape(hind_root, side, 54, 1.0, -0.55 - 0.15 * (k - 0.8), 4)
+    for wing, root in ((hind, hind_root), (fore, fore_root)):
+        s.poly(wing, "mist")
         for c, t in WING_BANDS:
-            s.poly(_shrink(wing, root, t * 0.94), c)
-        for tip in wing[1:4]:                                              # veins from the root to the edge
-            s.line([root, ((root[0] + tip[0]) / 2, (root[1] + tip[1]) / 2 + 2), (tip[0] * 0.92 + root[0] * 0.08, tip[1] * 0.92 + root[1] * 0.08)], "ink")
-        for j in range(6):                                                 # a soft, tattered edge
-            a, b = wing[1 + j % 3], wing[2 + j % 3]
-            t = (j + 1) / 7.0
-            ex, ey = a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t
-            s.poly([(ex, ey), (ex + side * 3, ey + 4), (ex - side * 2, ey + 3)], "dusk3")
-    for j, (ox, oy, r) in enumerate(((44, -26, 7), (62, -14, 5), (34, 12, 6), (52, 22, 4))):   # false eyes
-        ex, ey = cx + side * ox, cy + oy * k
-        ry = r * max(k, 0.6)
-        s.ellipse(ex, ey, r + 1, ry + 1, "pale")
-        s.ellipse(ex, ey, r, ry, "ink")
-        s.ellipse(ex, ey, r - 1.5, ry - 1.5, "amber" if j % 2 == 0 else "rose", glow=True)
-        s.ellipse(ex - 1, ey - 1, max(1.0, r - 4), max(1.0, ry - 4), "gold" if j % 2 == 0 else "blood", glow=True)
+            s.poly(_shrink(wing, root, t * 0.95), c)
+        for j in range(4, WING_POINTS - 3, 5):                 # veins from the root to the edge
+            tip = wing[j]
+            s.line([root, (root[0] * 0.15 + tip[0] * 0.85, root[1] * 0.15 + tip[1] * 0.85)], "dusk1")
+    for j, (ox, oy, r) in enumerate(((46, -30, 7), (64, -10, 5), (32, 22, 6), (46, 32, 4))):   # false eyes
+        ex, ey = cx + side * ox, cy + oy * (0.6 + 0.4 * k)
+        s.ellipse(ex, ey, r + 1, r + 1, "pale")
+        s.ellipse(ex, ey, r, r, "ink")
+        s.ellipse(ex, ey, r - 1.5, r - 1.5, "amber" if j % 2 == 0 else "rose", glow=True)
+        s.ellipse(ex - 1, ey - 1, max(1.0, r - 4), max(1.0, r - 4), "gold" if j % 2 == 0 else "blood", glow=True)
         s.px(ex, ey, "void")
+
+
+def _matron_body(s: Spr, cx: float, cy: float, rnd: random.Random) -> None:
+    """A fuzzy moth body: thorax and a segmented abdomen in dusty mauve, lit from above, dark underneath; only a
+    soft glow of stolen light shows through the belly."""
+    s.ellipse(cx, cy - 2, 12, 12, "dusk3")                    # thorax
+    s.ellipse(cx - 2, cy - 5, 8, 7, "mist")
+    for seg in range(6):                                      # abdomen segments, narrowing
+        y = cy + 10 + seg * 6
+        w = 10 - seg * 1.2
+        s.ellipse(cx, y, w, 4, "dusk2")
+        s.ellipse(cx - 1, y - 1, w - 2, 3, "dusk3")
+        s.line([(cx - w + 2, y - 1), (cx - 1, y - 2)], "mist")
+    s.ellipse(cx, cy + 22, 5, 9, "ember_dk")
+    s.ellipse(cx, cy + 22, 3, 6, "amber", glow=True)            # the soft belly glow
+    for _ in range(26):                                       # fuzz along the body's edge
+        a = rnd.uniform(0, math.tau)
+        rr = rnd.uniform(9, 13)
+        s.px(cx + math.cos(a) * rr, cy + 6 + math.sin(a) * rr * 2.0, rnd.choice(["mist", "dusk3", "pale"]))
+    s.ellipse(cx, cy - 16, 8, 7, "dusk3")                     # head
+    s.ellipse(cx - 2, cy - 18, 5, 4, "mist")
 
 
 def matron(pose: str, i: int) -> Spr:
@@ -314,21 +344,15 @@ def matron(pose: str, i: int) -> Spr:
     cx, cy = 88, 78 + pick({"idle": (0, 1, 2, 1), "move": (0, 2, 4, 2), "attack": (2, -2, -4)}, pose, i)
     for side in (-1, 1):
         _matron_wing(s, cx, cy, side, k)
-    s.ellipse(cx, cy + 14, 11, 26, "mist")                                      # body
-    s.ellipse(cx - 3, cy + 10, 6, 20, "pale")
-    for y in range(cy - 2, cy + 38, 5):
-        s.line([(cx - 9, y), (cx + 9, y)], "dusk3")
-    s.ellipse(cx, cy + 20, 6, 12, "gold", glow=True)                            # belly of stolen light
-    s.ellipse(cx, cy + 20, 3, 7, "sun", glow=True)
-    s.ellipse(cx, cy - 14, 9, 8, "bone")
+    _matron_body(s, cx, cy, random.Random(7))
     for side in (-1, 1):
-        s.line([(cx + side * 3, cy - 20), (cx + side * 14, cy - 40), (cx + side * 26, cy - 44)], "pale", width=2)
+        s.line([(cx + side * 3, cy - 20), (cx + side * 14, cy - 40), (cx + side * 26, cy - 44)], "mist", width=2)
         for j in range(4):
             fx = cx + side * (12 + j * 4)
-            s.line([(fx, cy - 38 - j), (fx + side * 3, cy - 44 - j)], "pale")
-        s.ellipse(cx + side * 4, cy - 14, 3, 3, "violet_lt", glow=True)
+            s.line([(fx, cy - 38 - j), (fx + side * 3, cy - 44 - j)], "mist")
+        s.ellipse(cx + side * 4, cy - 16, 3, 3, "violet_lt", glow=True)
     if pose == "attack":
-        s.ellipse(cx, cy + 20, 8 + i * 2, 14 + i * 2, "sun", glow=True)
+        s.ellipse(cx, cy + 22, 5 + i * 2, 9 + i * 2, "gold", glow=True)
     s.outline()
     s.recolor_edge(0, -1, "pale", only={"mist", "dusk3"})
     return s

@@ -209,7 +209,9 @@
     "count": 10,
     "stones": [
      "stalagmite_a",
-     "stalagmite_b"
+     "stalagmite_b",
+     "stalagmite_c",
+     "stalagmite_d"
     ]
    },
    {
@@ -227,8 +229,10 @@
   "deep_spacing": 96,
   "edge_depth": 2,
   "kinds": {
-   "stalagmite_a": 55,
-   "stalagmite_b": 45
+   "stalagmite_a": 30,
+   "stalagmite_b": 25,
+   "stalagmite_c": 25,
+   "stalagmite_d": 20
   }
  },
  "edge_props": {
@@ -290,12 +294,13 @@
  },
  "ambient": {
   "darkness": [
-   0.98,
-   0.9,
-   1.12
+   1.05,
+   0.97,
+   1.2
   ],
   "motes_color": "amber",
-  "scenery_gain": 1.92
+  "scenery_gain": 2.3,
+  "prop_gain": 1.25
  },
  "ground": {
   "c_moss_dk": "ink",

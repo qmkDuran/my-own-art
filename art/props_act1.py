@@ -122,54 +122,70 @@ def lamp_shrine() -> Spr:
 
 # ------------------------------------------------------------------ Moth Hollow
 def stalagmite(w: int, h: int, seed: int) -> Spr:
-    """A cave stalagmite: a lumpy cone, lit on its left from above (mid tones, not black), wet bands near the top."""
+    """A cave stalagmite in dark slate and violet, leaning a little, lumpy; only its tip catches the light."""
     rnd = random.Random(seed)
     s = Spr(w, h)
-    cx = w * 0.48 + rnd.uniform(-1, 1)
-    lumps = [(cx - w * 0.46, h - 2), (cx - w * 0.3, h * 0.62), (cx - w * 0.2, h * 0.38), (cx - 2, 3), (cx + 2, 4),
-             (cx + w * 0.18, h * 0.42), (cx + w * 0.3, h * 0.66), (cx + w * 0.46, h - 2)]
-    s.poly(lumps, "stone")
-    s.poly([(cx + 1, 5), (cx + w * 0.18, h * 0.42), (cx + w * 0.3, h * 0.66), (cx + w * 0.46, h - 2), (cx + 2, h - 2)], "stone_dk")
-    s.poly([(cx - 1, 6), (cx - w * 0.12, h * 0.4), (cx - w * 0.2, h * 0.7), (cx - w * 0.08, h * 0.72)], "stone_lt")
-    for k in range(3):                                         # wet growth bands, following the cone
-        y = h * (0.3 + 0.18 * k) + rnd.uniform(-2, 2)
-        half = w * (0.12 + 0.11 * k)
-        s.line([(cx - half, y), (cx + half * 0.2, y + 1)], "dusk3")
-    s.rect(cx - w * 0.46, h - 4, cx + w * 0.46, h - 2, "stone_dk")
-    return _finish(s, "mist", {"stone", "stone_lt"})
+    lean = rnd.uniform(-0.18, 0.18) * w
+    cx = w * 0.5
+    tip = (cx + lean, 3 + rnd.uniform(0, h * 0.15))
+    left = [(cx - w * 0.45, h - 2), (cx - w * 0.32 + lean * 0.3, h * 0.66), (cx - w * 0.18 + lean * 0.6, h * 0.4), tip]
+    right = [tip, (cx + w * 0.16 + lean * 0.6, h * 0.42), (cx + w * 0.3 + lean * 0.3, h * 0.68), (cx + w * 0.45, h - 2)]
+    s.poly(left + right, "dusk1")
+    s.poly([tip] + right[1:] + [(cx + lean * 0.2, h - 2)], "night")                 # the shadowed side
+    s.poly([(tip[0] - 1, tip[1] + 3), (cx - w * 0.1 + lean * 0.5, h * 0.45), (cx - w * 0.16 + lean * 0.3, h * 0.72),
+            (cx - w * 0.05 + lean * 0.3, h * 0.7)], "dusk2")                         # mid tone on the lit side
+    s.poly([tip, (tip[0] - 2, tip[1] + h * 0.14), (tip[0] + 1, tip[1] + h * 0.12)], "stone_lt")   # the wet tip
+    s.px(tip[0], tip[1] + 1, "pale")
+    for _ in range(4):                                                                # a few darker ridges
+        y = rnd.uniform(h * 0.35, h * 0.9)
+        x = cx + lean * (1 - y / h) + rnd.uniform(-w * 0.2, w * 0.1)
+        s.line([(x, y), (x + rnd.uniform(-2, 2), y + rnd.uniform(3, 7))], "ink")
+    return _finish(s, "dusk3", {"dusk1", "dusk2"})
 
 
 def cocoon_pod(seed: int) -> Spr:
     """A moth cocoon on the cave floor: wrapped silk with shadowed turns, something faintly lit inside."""
     rnd = random.Random(seed)
     s = Spr(30, 40)
-    s.ellipse(15, 23, 10, 15, "dusk2")
-    s.ellipse(13, 21, 7, 12, "dusk3")
-    s.ellipse(11, 17, 3, 6, "mist")
-    s.ellipse(19, 27, 5, 9, "dusk1")
+    s.ellipse(15, 23, 10, 15, "dusk1")
+    s.ellipse(13, 21, 7, 12, "dusk2")
+    s.ellipse(11, 17, 2, 5, "dusk3")
+    s.ellipse(19, 27, 5, 9, "night")
     for k in range(6):                                         # the wrapping: curved turns, darker toward the right
         y = 11 + k * 5 + rnd.uniform(-1, 1)
-        s.line([(7, y), (15, y + 2), (23, y)], "dusk1" if k % 2 else "dusk3")
-    s.ellipse(15, 25, 2.5, 4, "ember", glow=True)
-    s.px(15, 25, "gold", glow=True)
+        s.line([(7, y), (15, y + 2), (23, y)], "night" if k % 2 else "dusk2")
+    s.ellipse(15, 25, 2, 3, "ember_dk")
+    s.px(15, 25, "ember", glow=True)
     s.line([(15, 8), (14, 0)], "mist")
     s.rect(7, 36, 23, 38, "night")
-    return _finish(s, "pale", {"dusk3"})
+    return _finish(s, "dusk3", {"dusk2"})
 
 
 def silk_web() -> Spr:
-    """Silk strung between two stones: the Matron's road markers. Thin sagging threads, not stripes."""
+    """An irregular radial web strung between two stones: a few uneven spokes from an off-centre hub, sagging
+    spiral threads, torn in places. The Matron's road markers."""
+    rnd = random.Random(57)
     s = Spr(56, 40)
-    s.ellipse(6, 32, 5, 6, "stone")
-    s.ellipse(5, 31, 3, 4, "stone_lt")
-    s.ellipse(50, 30, 5, 7, "stone")
-    s.ellipse(49, 29, 3, 4, "stone_lt")
-    for k in range(4):                                         # threads sag between the stones
-        y0, y1 = 27 - k * 4, 25 - k * 3.5
-        s.line([(9, y0), (28, y0 + 3 + k * 0.5), (46, y1)], "mist" if k % 2 else "dusk3")
-    s.line([(20, 14), (22, 29)], "dusk3")
-    s.line([(34, 13), (35, 28)], "dusk3")
-    return _finish(s, "pale", {"stone"})
+    for x, y, rx, ry in ((6, 32, 5, 6), (50, 30, 5, 7)):
+        s.ellipse(x, y, rx, ry, "dusk1")
+        s.ellipse(x - 1, y - 1, rx - 2, ry - 3, "dusk2")
+    hub = (28 + rnd.uniform(-4, 4), 20 + rnd.uniform(-2, 2))
+    anchors = [(8, 27), (48, 24), (12, 8), (44, 9), (27, 4), (24, 33), (37, 31)]
+    for ax, ay in anchors:                                                          # spokes
+        s.line([hub, (ax + rnd.uniform(-1, 1), ay + rnd.uniform(-1, 1))], "dusk3")
+    for ring in (4.0, 7.5, 11.0):                                                   # spiral threads, broken
+        pts = []
+        for j in range(14):
+            if rnd.random() < 0.2:
+                if len(pts) > 1:
+                    s.line(pts, "mist" if ring < 8 else "dusk3")
+                pts = []
+                continue
+            a = j / 13 * math.tau
+            pts.append((hub[0] + math.cos(a) * ring * 1.4, hub[1] + math.sin(a) * ring + ring * 0.15))
+        if len(pts) > 1:
+            s.line(pts, "mist" if ring < 8 else "dusk3")
+    return _finish(s, "dusk3", {"dusk1"})
 
 
 def hedge(seed: int) -> Spr:
@@ -291,6 +307,8 @@ MANIFEST: dict[str, dict] = {
     "lamp_shrine": {"draw": lamp_shrine, "foot": [22, 8]},
     "stalagmite_a": {"draw": lambda: stalagmite(28, 52, 31), "foot": [18, 8]},
     "stalagmite_b": {"draw": lambda: stalagmite(40, 76, 32), "foot": [24, 10]},
+    "stalagmite_c": {"draw": lambda: stalagmite(22, 38, 35), "foot": [14, 6]},
+    "stalagmite_d": {"draw": lambda: stalagmite(34, 64, 38), "foot": [22, 9]},
     "cocoon_pod": {"draw": lambda: cocoon_pod(33), "foot": [16, 8], "light": "amber"},
     "silk_web": {"draw": silk_web, "foot": [0, 0]},
 }

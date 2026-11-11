@@ -713,6 +713,34 @@
   "flat": false,
   "glow": false
  },
+ "stalagmite_c": {
+  "size": [
+   22,
+   38
+  ],
+  "frames": 1,
+  "foot": [
+   14,
+   6
+  ],
+  "light": "",
+  "flat": false,
+  "glow": false
+ },
+ "stalagmite_d": {
+  "size": [
+   34,
+   64
+  ],
+  "frames": 1,
+  "foot": [
+   22,
+   9
+  ],
+  "light": "",
+  "flat": false,
+  "glow": false
+ },
  "cocoon_pod": {
   "size": [
    30,
