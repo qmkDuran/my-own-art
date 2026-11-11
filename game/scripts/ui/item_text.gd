@@ -10,6 +10,16 @@ const SET := Color("8fdc6a")
 const LORE := Color("8a86ad")
 
 
+## What wearing `it` instead would do to your real numbers (DPS, life, defences...), for a bag item's tooltip.
+static func effect_rows(p: Player, it: Dictionary) -> Array:
+	var slot: String = p.inv.target_slot(it)
+	var now: Dictionary = Derived.of(p.stats, p)
+	var then: Array = Derived.changes(now, Derived.of(Derived.with_item(p, slot, it), p))
+	if then.is_empty():
+		return []
+	return [["If you wear it:", UiDraw.DIM]] + then
+
+
 static func rows(it: Dictionary, worn: Dictionary = {}, level: int = 99) -> Array:
 	var out: Array = [String(it["name"])]
 	var rarity: String = String(GameData.items["rarity_names"][it["rarity"]])
@@ -42,7 +52,7 @@ static func _compare(it: Dictionary, worn: Dictionary) -> Array:
 	for k: String in b:
 		if not keys.has(k):
 			keys.append(k)
-	var out: Array = [["Instead of %s:" % worn["name"], UiDraw.DIM]]
+	var out: Array = [["Against what you wear:", UiDraw.DIM]]
 	if it.has("dmg") and worn.has("dmg"):
 		var d: float = (float(it["dmg"][0]) + float(it["dmg"][1]) - float(worn["dmg"][0]) - float(worn["dmg"][1])) * 0.5
 		if absf(d) > 0.01:

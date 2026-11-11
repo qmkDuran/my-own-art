@@ -4,6 +4,7 @@ extends Node2D
 ## colour. Taken by clicking the name — the Lamplighter walks there. Labels never overlap (LabelStack); Alt hides
 ## them.
 
+const PICK: float = 16.0
 const ICON: int = 24
 const LABEL_H: float = 13.0
 const LABEL_Y: float = -30.0
@@ -59,6 +60,11 @@ func _ready() -> void:
 
 func label_width() -> float:
 	return UiDraw.label_settings(UiDraw.BODY, Color.WHITE).font.get_string_size(String(item["name"]), HORIZONTAL_ALIGNMENT_LEFT, -1, UiDraw.BODY).x + 8.0
+
+
+## The item lying on the ground, with room around it, so a click near it takes it.
+func pick_rect() -> Rect2:
+	return Rect2(rest + Vector2(-PICK, -PICK - 8.0), Vector2(PICK * 2.0, PICK * 2.0))
 
 
 ## The clickable name plate, in world coordinates.

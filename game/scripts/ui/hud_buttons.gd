@@ -6,7 +6,7 @@ extends Control
 const BTN := Vector2(40, 18)
 const PAD: float = 3.0              ## text keeps this far from the border (the UI check measures it)
 const GAP: float = 2.0
-const ITEMS: Array = [["inventory", "Bag", "I"], ["skills", "Skills", "K"], ["passives", "Pass.", "P"], ["quests", "Quests", "J"],
+const ITEMS: Array = [["character", "Char", "C"], ["inventory", "Bag", "I"], ["skills", "Skills", "K"], ["passives", "Pass.", "P"], ["quests", "Quests", "J"],
 	["map", "Map", "M"]]
 
 var g: Game

@@ -67,6 +67,8 @@ func _item(r: Rect2, it: Dictionary) -> void:
 	draw_texture_rect_region(_icons, Rect2((r.get_center() - Vector2(ICON, ICON) * 0.5).round(), Vector2(ICON, ICON)), src)
 	if int(it.get("req", 1)) > g.player.prog.level:
 		draw_rect(r.grow(-2.0), Color(0.6, 0.1, 0.1, 0.35))
+	if bool(it.get("new", false)):                          # just picked up, not looked at yet
+		UiDraw.text(self, r.position + Vector2(2, 9), "NEW", UiDraw.GOLD, UiDraw.SMALL)
 
 
 func _click(at: Vector2, _button: int) -> void:
@@ -112,5 +114,12 @@ func _hover(at: Vector2) -> void:
 	for i: int in inv.bag.size():
 		if bag_rect(i).has_point(at) and not (inv.bag[i] as Dictionary).is_empty():
 			var it: Dictionary = inv.bag[i]
-			tip(ItemText.rows(it, inv.equipped[inv.target_slot(it)], g.player.prog.level), GameData.rarity_color(it["rarity"]))
+			it.erase("new")                                     # seen
+			var worn: Dictionary = inv.equipped[inv.target_slot(it)]
+			var rows: Array = ItemText.rows(it, worn, g.player.prog.level) + ItemText.effect_rows(g.player, it)
+			if worn.is_empty():
+				tip(rows, GameData.rarity_color(it["rarity"]))
+			else:
+				g.ui.tooltip.show_pair(rows, ItemText.rows(worn, {}, g.player.prog.level), get_global_mouse_position(),
+					GameData.rarity_color(it["rarity"]), GameData.rarity_color(worn["rarity"]))
 			return

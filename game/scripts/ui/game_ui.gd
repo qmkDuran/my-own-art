@@ -39,7 +39,7 @@ func setup(game: Game) -> void:
 	add_child(minimap)
 	minimap.setup(g)
 	inventory = _panel(InventoryPanel.new(), "Inventory", Vector2(300, 392), "right")
-	character = _panel(CharacterPanel.new(), "Character", Vector2(300, 436), "left")
+	character = _panel(CharacterPanel.new(), "Character", Vector2(320, 460), "left")
 	skills = _panel(SkillPanel.new(), "Skills", Vector2(560, 400), "left")
 	passives = _panel(PassivePanel.new(), "Passives", Vector2(660, 400), "center")
 	pause = _panel(PausePanel.new(), "Paused", PausePanel.panel_size_for(), "center")

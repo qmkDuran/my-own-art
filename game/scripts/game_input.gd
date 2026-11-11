@@ -9,6 +9,7 @@ const REPATH: float = 0.12
 const ENEMY_PICK: float = 18.0
 const FIGHT_RANGE: float = 260.0      ## an awake enemy this close: names of usable things stay hidden
 const HOLD_SLOT: String = "lmb"
+const TAKE_SLACK: float = 14.0       ## take an item from a little further than you can use things
 const ATTACK_REACH: float = 0.7      ## held attack on an enemy: walk until it is this share of the bolt's range away
 
 var g: Game
@@ -124,14 +125,16 @@ func _pursue_take() -> void:
 	if not is_instance_valid(_take):
 		_take = null
 		return
-	if g.player.global_position.distance_to(_take.global_position) < Interactable.REACH:
+	if g.player.global_position.distance_to(_take.global_position) < Interactable.REACH + TAKE_SLACK:
+		_take.item["new"] = true
 		if g.player.inv.add(_take.item):
 			Audio.sfx("pickup", -6.0)
 			_take.queue_free()
 		else:
 			g.hud.notice("Your bag is full")
 		_take = null
-	elif not g.player.walking():
+	elif not g.player.walking() or _repath <= 0.0:          # keep walking to it, even if a path ran out
+		_repath = REPATH
 		g.player.walk_to(_take.global_position)
 
 
@@ -152,10 +155,10 @@ func _pursue_use() -> void:
 func _hover() -> void:
 	var c: Vector2 = cursor()
 	hovered_item = null
-	if LabelStack.shown:
-		for n: Node in get_tree().get_nodes_in_group("ground_items"):
-			if (n as GroundItem).label_rect().has_point(c):
-				hovered_item = n
+	for n: Node in get_tree().get_nodes_in_group("ground_items"):  # its name plate, or the item itself (generous)
+		var gi := n as GroundItem
+		if (LabelStack.shown and gi.label_rect().has_point(c)) or gi.pick_rect().has_point(c):
+			hovered_item = gi
 	hovered_enemy = null
 	var best: float = INF
 	for n: Node in get_tree().get_nodes_in_group("enemies"):
