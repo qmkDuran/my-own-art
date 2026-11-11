@@ -246,11 +246,15 @@ Matron 1900 -> 4200 life, Bellwright 2800 -> 4000 life and 19 -> 11 damage, Fall
 | Rising Falls (17) | 7.9 s | 21% | 1 | - | - | - |
 | Saltmarsh (19) | 2.8 s | 4% | 0 | - | - | - |
 | Drowned Belfry (20) | 6.6 s | 16% | 0 | Bellwright (lvl 22) | 66 s | 2 |
+| Hollin's Ford (23) | 4.8 s | 19% | 0 | - | - | - |
+| Town of One Tuesday (26) | 4.6 s | 21% | 0 | the Mayor (lvl 28) | 40-68 s | 1-2 |
 Reading: Act 1 packs are easy at the intended level with rare gear (fast and punchy, as intended for the
 opening; a player with plainer gear will feel more pressure); Act 2 packs bite (Falls Herons diving in pairs).
 The Matron is now the easiest boss for her place — she should get tougher once the bot learns her gust (next
-pass). One pack per zone times out because it sits where the bot cannot path to it (ranged moths over water,
-or a pack inside a lure) — not a balance issue, but to look at.
+pass). Act 3 packs cost about a fifth of a life bar each, the intended pressure for the last act so far. Earlier
+runs had a pack per zone "time out": traced to the bot, not the map — a straggler outside its sight (scattered, or
+put back at its post by the Tuesday rewind) was never walked to. The runner now walks over to stragglers, and
+`LayoutCheck` gained a rule that every spawn stands on ground the player can reach.
 
 ## 9. Architecture (`game/scripts/`)
 | Folder | What |

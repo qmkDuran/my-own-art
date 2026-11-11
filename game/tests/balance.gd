@@ -6,6 +6,8 @@ extends Node
 
 const PACKS: int = 8
 const PACK_RADIUS: float = 400.0
+const STRAGGLER_RANGE: float = 480.0     # beyond the bot's sight: it walks over
+const APPROACH: float = 220.0            # arrives this far from the straggler
 const PACK_TIMEOUT: float = 30.0
 const BOSS_TIMEOUT: float = 150.0
 const PASSIVE_ORDER: Array[String] = ["wick", "iron_coat", "kindler", "steady_hand", "trimmed", "deep_oil", "road_legs", "hunger",
@@ -89,6 +91,7 @@ func _fight(at: Vector2, timeout: float, kind: String) -> Dictionary:
 	while t < timeout and _foes_near(at) > 0:
 		await _wait(0.25)
 		t += 0.25
+		_close_in(at, h)
 	var row := {"kind": kind, "time": t, "lost": maxf(0.0, life0 - g.player.life) / g.player.stats.max_life(),
 		"tonics": tonics0 - g.player.tonics, "deaths": _deaths - deaths0, "timeout": t >= timeout}
 	print("BALANCE fight %s %.1f s, life lost %d%%, tonics %d, deaths %d%s" % [kind, t, roundi(row["lost"] * 100.0), row["tonics"],
@@ -96,6 +99,19 @@ func _fight(at: Vector2, timeout: float, kind: String) -> Dictionary:
 	g.player.life = g.player.stats.max_life()
 	g.player.refill_tonics()
 	return row
+
+
+## A straggler the bot cannot see (scattered or rewound to its post) is walked up to, as a player would.
+func _close_in(at: Vector2, h: ShotHelper) -> void:
+	var near: Array = get_tree().get_nodes_in_group("enemies").filter(func(n: Node) -> bool:
+		return (n as Enemy).global_position.distance_to(at) < PACK_RADIUS)
+	if near.is_empty():
+		return
+	var me: Vector2 = g.player.global_position
+	near.sort_custom(func(a: Enemy, b: Enemy) -> bool: return a.global_position.distance_to(me) < b.global_position.distance_to(me))
+	var foe := near[0] as Enemy
+	if foe.global_position.distance_to(me) > STRAGGLER_RANGE:
+		h.place_player(foe.global_position + (me - foe.global_position).normalized() * APPROACH)
 
 
 func _foes_near(at: Vector2) -> int:
@@ -136,3 +152,4 @@ func _summary(rows: Array) -> String:
 		to += 1 if r["timeout"] else 0
 	var n: float = maxf(1.0, rows.size())
 	return "avg clear %.1f s, avg life lost %d%%, deaths %d, timeouts %d of %d" % [t / n, roundi(lost / n * 100.0), deaths, to, rows.size()]
+

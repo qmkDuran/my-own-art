@@ -162,7 +162,10 @@ static func _chests(z: ZoneLayout, out: PackedStringArray) -> void:
 
 ## Enemies stand on open ground, not inside props or each other, and not on top of the player's arrival.
 static func _spawns(z: ZoneLayout, out: PackedStringArray) -> void:
+	var seen: PackedByteArray = reach(z)
 	for i: int in z.spawns.size():
+		if seen[z.idx(z.cell_of(z.spawns[i]["pos"]))] == 0:
+			out.append("%s at %s stands where the player cannot reach" % [z.spawns[i]["kind"], z.spawns[i]["pos"]])
 		var s: Dictionary = z.spawns[i]
 		var p: Vector2 = s["pos"]
 		var r: float = float(GameData.enemy(s["kind"])["radius"])
