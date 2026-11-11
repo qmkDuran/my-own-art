@@ -266,6 +266,13 @@ Glazier + Nim, death/respawn, save/load). Review screenshots: `--shots` (needs x
 - Godot: no global non-uniform shader vars; `const` can't hold class refs; typed arrays need typed sources.
 
 ## 14. Progress log
+- **Pass 3 (started)**: Eclipse (shutter the lantern: everything Shrouded, +60% vs Shrouded, speed, leech, a
+  closing burst; tree: Long Night, Night Hunger, Predator, Unshutter, Umbra, Pitch Dark, New Moon) learned at level 6;
+  Noon (daylight for a breath: every enemy on screen burns and reels, your Light blazes at full; tree: High Noon,
+  Long Day, Sunburn, Zenith, Noon Bell, Second Sun) at level 10; six keystones (Unwavering, Wick and Bone,
+  Moth-Heart in the base tree at 20 points; Undimmed, Brood of Embers, Shroud Strider in the masteries at 12),
+  drawn with a gold double frame. 72-check smoke test. Next for pass 3: respec costs, the remaining skills
+  (Kindle, Glass Ward, Hook, Cinder Rain, Wick Trap, Lull), more keystones, five specialisation slots enforced.
 - **Pass 2**: review fixes (no Flare spokes, one-word light state, caption plates, trees/tall props fade over bodies
   and captions, free-spot search for every arrival and teleport, actor-vs-prop overlap checks, local minimap with
   arrow and objective, worn/varied stone, lit jaw, spectacles, tree-like glass trees); multi-zone campaign (Session,

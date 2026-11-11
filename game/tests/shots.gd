@@ -3,7 +3,8 @@ extends Node
 ## set things up, wait for effects to land, save out/<name>_<w>x<h>.png. --only=name runs one shot.
 
 const SETTLE: float = 0.9
-const PASS2: Array[String] = ["tallow", "road", "hollow", "matron", "quests", "filter", "stash"]
+const PASS2: Array[String] = ["tallow", "road", "hollow", "matron", "quests", "filter", "stash", "eclipse", "noon", "keystones",
+	"eclipse_tree"]
 
 var g: Game
 var _out: String
@@ -35,7 +36,7 @@ func _run() -> void:
 		return
 	g = Game.current
 	var shots: Array[String] = ["light", "dark", "skills", "passives", "inventory", "character", "boss", "overview",
-		"tallow", "road", "hollow", "matron", "quests", "filter", "stash"]
+		"tallow", "road", "hollow", "matron", "quests", "filter", "stash", "eclipse", "noon", "keystones", "eclipse_tree"]
 	for s: String in shots:
 		if (_only() == "" and not PASS2.has(s)) or _only() == s:
 			await call("_shot_" + s)
@@ -242,3 +243,58 @@ func _shot_stash() -> void:
 	await _wait(SETTLE)
 	await _save("stash_tooltip")
 	g.ui.open(g.ui.stash)
+
+
+func _shot_eclipse() -> void:
+	var h := _bot()
+	h.level_up(12)
+	h.gear_up(12)
+	h.clear_near(900.0)
+	h.pack_near(["gloam", "hound", "gloam", "husk", "gloam"], Vector2(90, 20))
+	await _wait(0.8)
+	h.cast("eclipse", g.player.global_position)
+	await _wait(1.2)
+	h.cast("sunlash", g.player.global_position + Vector2(80, 10))
+	await _wait(0.06)
+	await _save("eclipse")
+
+
+func _shot_noon() -> void:
+	var h := _bot()
+	h.level_up(12)
+	h.gear_up(12)
+	h.clear_near(900.0)
+	h.pack_near(["gloam", "hound", "gloam", "moth", "gloam", "hound"], Vector2(140, 40))
+	await _wait(0.8)
+	h.cast("noon", g.player.global_position)
+	await _wait(0.2)
+	await _save("noon")
+
+
+func _shot_keystones() -> void:
+	var h := _bot()
+	h.level_up(30)
+	g.player.prog.choose_mastery("duskwalker")
+	for id: String in ["wick", "wick", "wick", "wick", "wick", "deep_oil", "deep_oil", "steady_hand", "steady_hand", "trimmed",
+			"iron_coat", "kindler", "kindler", "road_legs", "hunger", "hunger", "night_eyes", "night_eyes", "steady_flame", "keen", "ks_lighthouse"]:
+		g.player.prog.add_passive(id)
+	g.ui.passives.tab = "lamplighter"
+	g.ui.open(g.ui.passives)
+	await _wait(0.3)
+	h.hover(g.ui.passives.position + g.ui.passives.node_rect(GameData.passives["trees"]["lamplighter"]["nodes"][14]).get_center())
+	await _wait(SETTLE)
+	await _save("passive_keystones")
+	g.ui.open(g.ui.passives)
+
+
+func _shot_eclipse_tree() -> void:
+	var h := _bot()
+	h.level_up(12)
+	h.spec("eclipse", ["long_night", "long_night", "hunger", "predator", "unshutter", "umbra"])
+	g.ui.skills.selected = "eclipse"
+	g.ui.open(g.ui.skills)
+	await _wait(0.3)
+	h.hover(g.ui.skills.position + g.ui.skills.node_rect(GameData.skill("eclipse")["nodes"][4]).get_center())
+	await _wait(SETTLE)
+	await _save("eclipse_tree")
+	g.ui.open(g.ui.skills)
