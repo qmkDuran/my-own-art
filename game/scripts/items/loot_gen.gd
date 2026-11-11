@@ -39,8 +39,8 @@ static func make(ilvl: int, rarity: String) -> Dictionary:
 	var base: Dictionary = _base(ilvl)
 	var it: Dictionary = _from_base(base, ilvl, rarity)
 	var n: int = {"normal": 0, "magic": rng.randi_range(1, 2), "rare": rng.randi_range(3, 4)}[rarity]
-	_add_affixes(it, n, ilvl)
-	it["name"] = _name(it, base)
+	add_affixes(it, n, ilvl)
+	it["name"] = item_name(it, base)
 	return it
 
 
@@ -87,7 +87,7 @@ static func _roll(range_pair: Array) -> float:
 	return roundf(v) if absf(b - a) >= 2.0 or absf(a - roundf(a)) < 0.01 else snappedf(v, 0.1)
 
 
-static func _add_affixes(it: Dictionary, n: int, ilvl: int) -> void:
+static func add_affixes(it: Dictionary, n: int, ilvl: int) -> void:
 	var counts: Dictionary = {"prefix": 0, "suffix": 0}
 	var pool: Array = GameData.items["affixes"].filter(func(a: Dictionary) -> bool: return (a["slots"] as Array).has(it["slot"]))
 	for i: int in n:
@@ -113,7 +113,7 @@ static func _tier(a: Dictionary, ilvl: int) -> int:
 	return tier
 
 
-static func _name(it: Dictionary, base: Dictionary) -> String:
+static func item_name(it: Dictionary, base: Dictionary) -> String:
 	var bname: String = String(base["name"])
 	if it["rarity"] == "magic":
 		var pre: String = ""

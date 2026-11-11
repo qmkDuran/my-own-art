@@ -239,6 +239,30 @@ def _head(s: Spr, f: Fig) -> None:
         s.px(CX + 2, hy - 1, "pale", glow=True)
 
 
+def _capelet(s: Spr, f: Fig) -> None:
+    """A short shoulder cape: widens the shoulders into a strong triangle silhouette."""
+    sp = f.spec
+    if not sp.get("capelet"):
+        return
+    dk, base, lt = sp["capelet"]
+    y0, y1 = f.y(21), f.y(31)
+    s.poly([(CX - 7, y0), (CX + 7, y0), (CX + 14 + f.sway * 0.5, y1), (CX - 14 + f.sway * 0.5, y1)], base)
+    s.poly([(CX - 7, y0), (CX - 3, y0), (CX - 9, y1), (CX - 14 + f.sway * 0.5, y1)], dk)
+    s.line([(CX + 8, y0 + 2), (CX + 13, y1 - 1)], lt)
+    s.line([(CX - 14 + f.sway * 0.5, y1), (CX + 14 + f.sway * 0.5, y1)], sp.get("hem_trim", dk))
+
+
+def _satchel(s: Spr, f: Fig) -> None:
+    if not f.spec.get("satchel"):
+        return
+    x, y = f.x(-9), f.y(38)
+    s.rect(x - 3, y, x + 3, y + 6, "earth")
+    s.rect(x - 3, y, x + 3, y + 1, "earth_lt")
+    s.rect(x - 1, y + 2, x + 1, y + 3, "amber")
+    s.rect(x + 4, y + 1, x + 6, y + 6, "glass_dk")                 # an oil flask clipped to it
+    s.px(x + 5, y + 2, "amber", glow=True)
+
+
 def _scarf(s: Spr, f: Fig) -> None:
     sp = f.spec
     if not sp.get("scarf"):
@@ -271,9 +295,11 @@ def draw(spec: dict, pose: str, i: int) -> Spr:
     if spec.get("coil"):
         s.ellipse(f.x(-7), f.y(40), 3, 3, "earth_lt")
         s.ellipse(f.x(-7), f.y(40), 1, 1, spec["coat"][0])
+    _satchel(s, f)
     left, right = _hands(f)
     _arm(s, f, -1, left)
     _arm(s, f, 1, right)
+    _capelet(s, f)
     _scarf(s, f)
     _head(s, f)
     if spec.get("held_l"):
@@ -292,6 +318,7 @@ LAMPLIGHTER = {
     "name": "The Lamplighter", "head": "brim", "hat": ("ink", "night", "dusk3"), "band": "ember",
     "coat": ("dusk1", "dusk2", "dusk3"), "trim": "amber", "buttons": [27, 31], "belt": "earth_dk",
     "scarf": ("ember", "rust"), "cuff": "rust", "hem_trim": "ember_dk", "held_r": "pole", "skin": "skin_dk",
+    "capelet": ("night", "dusk1", "dusk3"), "satchel": True,
     "beard": "ink",
     "glove": "earth_dk", "rim_warm": "ember",
 }

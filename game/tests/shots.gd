@@ -27,6 +27,11 @@ func _only() -> String:
 
 func _run() -> void:
 	await _wait(1.5)
+	if _only() == "title":
+		await _wait(1.5)
+		await _save("title")
+		get_tree().quit()
+		return
 	g = Game.current
 	var shots: Array[String] = ["light", "dark", "skills", "passives", "inventory", "character", "boss", "overview"]
 	for s: String in shots:

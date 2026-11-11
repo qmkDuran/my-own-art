@@ -13,6 +13,7 @@ const BEAM_RANGE: float = 40.0
 var item: Dictionary
 var label: Label
 var stack_lift: float = 0.0
+var rest: Vector2                      ## where it lands (labels stack from here, not from the bounce)
 
 
 static func spawn(parent: Node, at: Vector2, it: Dictionary) -> GroundItem:
@@ -50,6 +51,7 @@ func _ready() -> void:
 	label.position = Vector2(-label_width() / 2.0, LABEL_Y)
 	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	Overlay.follower(self).add_child(label)
+	rest = global_position
 	var drop := create_tween()
 	position.y -= 16
 	drop.tween_property(self, "position:y", position.y + 16, 0.35).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
@@ -61,9 +63,9 @@ func label_width() -> float:
 
 ## The clickable name plate, in world coordinates.
 func label_rect() -> Rect2:
-	return Rect2(global_position + Vector2(-label_width() / 2.0, LABEL_Y - stack_lift), Vector2(label_width(), LABEL_H))
+	return Rect2(rest + Vector2(-label_width() / 2.0, LABEL_Y - stack_lift), Vector2(label_width(), LABEL_H))
 
 
 func _process(_delta: float) -> void:
-	label.position.y = LABEL_Y - stack_lift
+	label.position.y = LABEL_Y - stack_lift + (rest.y - global_position.y)
 	label.visible = LabelStack.shown

@@ -54,6 +54,8 @@ func _ready() -> void:
 		hud.notice("Welcome back, Lamplighter")
 	player.prog.changed.connect(mark_dirty)
 	player.inv.changed.connect(mark_dirty)
+	if OS.get_cmdline_user_args().has("--demo"):
+		add_child(DemoBot.new())
 
 
 func _exit_tree() -> void:

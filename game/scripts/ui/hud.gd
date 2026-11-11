@@ -134,9 +134,10 @@ func _orb_fill(c: Vector2, rad: float, frac: float, col: Color) -> void:
 	for i: int in ORB_SEGMENTS + 1:
 		var a: float = lerpf(a0, a1, float(i) / ORB_SEGMENTS)
 		pts.append(c + Vector2(cos(a), sin(a)) * rad)
-	for i: int in range(1, ORB_SEGMENTS):
-		var x: float = lerpf(c.x - half, c.x + half, float(i) / ORB_SEGMENTS)
-		pts.append(Vector2(x, level + sin(_t * 3.0 + x * 0.2) * 1.0))
+	for i: int in range(ORB_SEGMENTS - 1, 0, -1):
+		var u: float = float(i) / ORB_SEGMENTS
+		var x: float = lerpf(c.x + half, c.x - half, u)
+		pts.append(Vector2(x, level + sin(_t * 3.0 + x * 0.2) * sin(u * PI) * 0.8 * minf(1.0, half / 8.0)))
 	draw_colored_polygon(pts, col)
 
 
@@ -204,17 +205,12 @@ func _unaffordable(key: String, id: String) -> bool:
 	return key != "dash" and g.player.skills.block(id) == "oil"
 
 
+## Cooldown shade: a dark curtain over the slot that lifts as the skill comes back.
 func _sweep(r: Rect2, frac: float) -> void:
-	var c: Vector2 = r.get_center()
-	var pts := PackedVector2Array([c])
-	var steps: int = 24
-	for k: int in steps + 1:
-		var a: float = -PI * 0.5 + TAU * frac * k / steps
-		pts.append(c + Vector2(cos(a), sin(a)) * r.size.x)
-	var clip := PackedVector2Array()
-	for q: Vector2 in pts:
-		clip.append(Vector2(clampf(q.x, r.position.x + 1, r.end.x - 1), clampf(q.y, r.position.y + 1, r.end.y - 1)))
-	draw_colored_polygon(clip, Color(0, 0, 0, 0.6))
+	var inner: Rect2 = r.grow(-1.0)
+	var h: float = roundf(inner.size.y * clampf(frac, 0.0, 1.0))
+	draw_rect(Rect2(inner.position + Vector2(0, inner.size.y - h), Vector2(inner.size.x, h)), Color(0, 0, 0, 0.62))
+	draw_line(Vector2(inner.position.x, inner.end.y - h), Vector2(inner.end.x, inner.end.y - h), Color(UiDraw.FRAME_LIT, 0.7))
 
 
 func _xp(r: Rect2) -> void:

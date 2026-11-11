@@ -5,6 +5,7 @@ extends CanvasLayer
 ## global keys (I C K P, Alt, Esc, F/click for dialogue).
 
 const LAYER: int = 10
+const FADE: float = 0.3
 
 var g: Game
 var hud: Hud
@@ -15,6 +16,7 @@ var skills: SkillPanel
 var passives: PassivePanel
 var pause: PausePanel
 var tooltip: TooltipLayer
+var _fade: ColorRect
 
 
 func setup(game: Game) -> void:
@@ -34,6 +36,11 @@ func setup(game: Game) -> void:
 	pause = _panel(PausePanel.new(), "Paused", Vector2(300, 190), "center")
 	tooltip = TooltipLayer.new()
 	add_child(tooltip)
+	_fade = ColorRect.new()
+	_fade.color = Color(0, 0, 0, 0)
+	_fade.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_fade.set_anchors_preset(Control.PRESET_FULL_RECT)
+	add_child(_fade)
 
 
 func _panel(p: GamePanel, title: String, sz: Vector2, side: String) -> GamePanel:
@@ -97,6 +104,14 @@ func handle_global(event: InputEvent) -> bool:
 		LabelStack.shown = not LabelStack.shown
 		return true
 	return false
+
+
+## Fade to black, do something (a jump in place or time), fade back.
+func fade_through(action: Callable) -> void:
+	var tw := create_tween()
+	tw.tween_property(_fade, "color:a", 1.0, FADE)
+	tw.tween_callback(action)
+	tw.tween_property(_fade, "color:a", 0.0, FADE)
 
 
 func dialogue_closed() -> void:

@@ -1,0 +1,145 @@
+class_name DemoBot
+extends Node
+## --demo: plays the slice for the recorded video, through the same input paths a player uses (a virtual cursor,
+## clicks, skill keys). Three scenes joined by fades: the ambush at the gate (level 1), an elite pack deep in the
+## forest (level 5, a few tree points spent), the Glazier (level 8, Beacon mastery). Quits when done.
+
+const THINK: float = 0.12
+const SIGHT: float = 420.0
+const LOOT_RANGE: float = 200.0
+const SCENES: Array[Dictionary] = [{"at": 0.0, "id": "gate"}, {"at": 15.0, "id": "elite"}, {"at": 29.0, "id": "boss"}, {"at": 46.0, "id": "end"}]
+const BOSS_LIFE: float = 0.32
+const SPECS: Dictionary = {"sunlash": ["quick_wrist", "quick_wrist", "sear", "sear", "kindling"], "flare": ["wide", "refuel", "wide"],
+	"lantern_toss": ["long_burn", "heavy_iron", "beacon"], "moth_swarm": ["brood", "brood", "swift"]}
+const PASSIVES: Array[String] = ["wick", "wick", "wick", "trimmed", "trimmed", "steady_hand", "kindler"]
+
+var g: Game
+var _t: float = 0.0
+var _think: float = 0.0
+var _scene: int = 0
+
+
+func _ready() -> void:
+	g = get_parent() as Game
+
+
+func _physics_process(delta: float) -> void:
+	_t += delta
+	if _scene < SCENES.size() and _t >= float(SCENES[_scene]["at"]):
+		_enter(String(SCENES[_scene]["id"]))
+		_scene += 1
+	_think -= delta
+	if _think <= 0.0:
+		_think = THINK
+		_decide()
+
+
+func _enter(id: String) -> void:
+	var h := ShotHelper.new(g)
+	match id:
+		"elite":
+			g.ui.fade_through(func() -> void: _elite(h))
+		"boss":
+			g.ui.fade_through(func() -> void: _boss(h))
+		"end":
+			get_tree().quit()
+
+
+func _elite(h: ShotHelper) -> void:
+	h.level_up(5)
+	for s: String in SPECS:
+		h.spec(s, SPECS[s])
+	var target: Vector2 = _elite_spot()
+	g.player.global_position = target
+	g.player.light.value = 45.0
+	g.camera.reset_smoothing()
+	g.hud.caption("Deep in the Glasswood: an elite pack. Outside your light, they hit harder.")
+
+
+func _elite_spot() -> Vector2:
+	for n: Node in get_tree().get_nodes_in_group("enemies"):
+		var e := n as Enemy
+		if e.rank == "rare":
+			var c: Vector2i = g.nav.nearest_free(g.layout.cell_of(e.global_position + Vector2(-230, 40)))
+			return g.layout.center_of(c)
+	return g.player.global_position
+
+
+func _boss(h: ShotHelper) -> void:
+	h.level_up(8)
+	g.player.prog.choose_mastery("beacon")
+	for id: String in PASSIVES:
+		g.player.prog.add_passive(id)
+	h.clear_near(100000.0)
+	g.player.global_position = g.layout.boss["pos"] + Vector2(-30, 190)
+	g.camera.reset_smoothing()
+	g.player.light.value = 70.0
+	g.start_boss()
+	g.spawner.boss.life = g.spawner.boss.max_life * BOSS_LIFE
+
+
+## One decision: drink, dash, a big skill if it fits the moment, else lash the nearest enemy; loot when calm.
+func _decide() -> void:
+	var p: Player = g.player
+	if p.dead or g.ui.blocking():
+		g.input.lmb_held = false
+		return
+	var foes: Array[Enemy] = _foes()
+	if foes.is_empty():
+		g.input.lmb_held = false
+		_calm()
+		return
+	var e: Enemy = foes[0]
+	var d: float = p.global_position.distance_to(e.global_position)
+	if p.life < p.stats.max_life() * 0.35:
+		p.drink_tonic()
+	if _try_skill(foes, e, d):
+		return
+	g.input.cursor_override = e.global_position + Vector2(0, -12)
+	if not g.input.lmb_held:
+		g.input.press()
+
+
+func _foes() -> Array[Enemy]:
+	var out: Array[Enemy] = []
+	for n: Node in get_tree().get_nodes_in_group("enemies"):
+		var e := n as Enemy
+		if not e.dead and e.global_position.distance_to(g.player.global_position) < SIGHT:
+			out.append(e)
+	out.sort_custom(func(a: Enemy, b: Enemy) -> bool:
+		return a.global_position.distance_squared_to(g.player.global_position) < b.global_position.distance_squared_to(g.player.global_position))
+	return out
+
+
+func _try_skill(foes: Array[Enemy], e: Enemy, d: float) -> bool:
+	var s: SkillSystem = g.player.skills
+	var flare_r: float = (s.skill("flare") as Flare).radius()
+	var close: int = foes.filter(func(f: Enemy) -> bool: return f.global_position.distance_to(g.player.global_position) < flare_r).size()
+	var key: String = ""
+	if close >= 3 and s.block("flare") == "":
+		key = "rmb"
+	elif d > 130.0 and d < 300.0 and foes.size() >= 3 and s.block("lantern_toss") == "" and not (s.skill("lantern_toss") as LanternToss).away():
+		key = "q"
+	elif d > 90.0 and d < 280.0 and s.block("moth_swarm") == "":
+		key = "w"
+	if key == "":
+		return false
+	g.input.lmb_held = false
+	g.input.cursor_override = e.global_position
+	return g.input.use_slot(key)
+
+
+## Nothing to fight: pick up good loot nearby, talk to Nim once the Glazier is down.
+func _calm() -> void:
+	for n: Node in get_tree().get_nodes_in_group("ground_items"):
+		var gi := n as GroundItem
+		if gi.global_position.distance_to(g.player.global_position) < LOOT_RANGE and gi.item["rarity"] != "normal":
+			g.input.cursor_override = gi.label_rect().get_center()
+			g.input.press()
+			g.input.lmb_held = false
+			return
+	if g.flags.has("nim_free") and not g.flags.has("slice_done"):
+		for n: Node in get_tree().get_nodes_in_group("interactables"):
+			if n is Npc and (n as Npc).npc_id == "nim":
+				(n as Npc).use(g)
+				return

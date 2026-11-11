@@ -9,6 +9,11 @@ const ITEM_W: float = 170.0
 const CARD_TIME: float = 3.4
 const EMBERS: int = 50
 const GAME_SCENE: String = "res://scenes/game.tscn"
+const FIGURE_SCALE: float = 2.0
+const LANTERN_IN_SPRITE := Vector2(52, 10)
+const FRAME: float = 64.0
+const LIGHT_Y: float = 0.25
+const LOGO_DROP: float = 155.0
 
 var _items: Array[String] = []
 var _cards: Array = []
@@ -23,7 +28,8 @@ func _ready() -> void:
 	GameData.ensure()
 	InputSetup.ensure()
 	var args: PackedStringArray = OS.get_cmdline_user_args()
-	if args.has("--demo") or args.has("--smoke") or args.has("--shots") or args.has("--play"):
+	var straight_in: bool = args.has("--demo") or args.has("--smoke") or args.has("--play") or (args.has("--shots") and not args.has("--only=title"))
+	if straight_in:
 		get_tree().change_scene_to_file.call_deferred(GAME_SCENE)
 		return
 	if SaveGame.exists():
@@ -93,11 +99,11 @@ func _next_card() -> void:
 func _draw() -> void:
 	var vs: Vector2 = get_viewport_rect().size
 	draw_rect(Rect2(Vector2.ZERO, vs), Pal.c("void"))
-	var c := Vector2(vs.x * 0.5, vs.y * 0.34)
+	var c := Vector2(vs.x * 0.5, vs.y * LIGHT_Y)
 	var pulse: float = 1.0 + sin(_t * 2.1) * 0.04 + sin(_t * 7.0) * 0.015
 	for k: int in 6:
 		draw_circle(c, (150.0 - k * 22.0) * pulse, Color(Pal.c("amber"), 0.035 + k * 0.02))
-	draw_circle(c, 10.0 * pulse, Pal.c("sun"))
+	_draw_figure(c)
 	if _card >= 0:
 		_draw_card(vs)
 		return
@@ -108,14 +114,25 @@ func _draw() -> void:
 		HORIZONTAL_ALIGNMENT_CENTER, vs.x)
 
 
+## The Lamplighter, holding up the only light (his lantern sits where the glow is).
+func _draw_figure(c: Vector2) -> void:
+	var tex: Texture2D = PropSprite.tex("res://art/actors/lamplighter.png")
+	var glow: Texture2D = PropSprite.tex("res://art/actors/lamplighter_glow.png")
+	var at: Vector2 = (c - LANTERN_IN_SPRITE * FIGURE_SCALE).round()
+	var dst := Rect2(at, Vector2(FRAME, FRAME) * FIGURE_SCALE)
+	var src := Rect2(int(_t * 5.0) % 4 * FRAME, 0, FRAME, FRAME)
+	draw_texture_rect_region(tex, dst, src, Color(0.45, 0.42, 0.55))
+	draw_texture_rect_region(glow, dst, src)
+
+
 func _draw_logo(c: Vector2) -> void:
 	var f: Font = UiDraw.font_for(self, UiDraw.TITLE)
 	var s: String = "LANTERNFALL"
 	var w: float = f.get_string_size(s, HORIZONTAL_ALIGNMENT_LEFT, -1, BIG).x
-	var pos := Vector2(roundf(c.x - w / 2.0), roundf(c.y + 70.0))
+	var pos := Vector2(roundf(c.x - w / 2.0), roundf(c.y + LOGO_DROP))
 	draw_string_outline(f, pos, s, HORIZONTAL_ALIGNMENT_LEFT, -1, BIG, 6, UiDraw.INK)
 	draw_string(f, pos, s, HORIZONTAL_ALIGNMENT_LEFT, -1, BIG, Pal.c("gold"))
-	UiDraw.text(self, Vector2(0, c.y + 90.0), "The sun went out three hundred years ago.", UiDraw.DIM, UiDraw.BODY,
+	UiDraw.text(self, Vector2(0, c.y + LOGO_DROP + 20.0), "The sun went out three hundred years ago.", UiDraw.DIM, UiDraw.BODY,
 		HORIZONTAL_ALIGNMENT_CENTER, get_viewport_rect().size.x)
 
 

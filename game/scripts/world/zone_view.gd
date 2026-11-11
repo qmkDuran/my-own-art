@@ -142,6 +142,8 @@ func _glow_light(s: Node2D, col: Color) -> void:
 
 
 func _trees(world: Node2D) -> void:
+	var fade := TreeFade.new()
+	add_child(fade)
 	for t: Dictionary in z.trees:
 		var s := PropSprite.make(t["kind"])
 		s.position = t["pos"]
@@ -150,6 +152,7 @@ func _trees(world: Node2D) -> void:
 		if g != null:
 			g.flip_h = s.flip_h
 		world.add_child(s)
+		fade.add(s)
 
 
 ## One static body: blocked terrain merged into rectangles (row runs stacked downward) plus every footprint.

@@ -63,18 +63,16 @@ func fill_bag() -> void:
 	g.player.inv.add(LootGen.make(lv, "set"))
 	g.player.inv.add(LootGen.make(lv, "normal"))
 	g.player.inv.add(LootGen.make_unique("moth_mother", lv))
-	var worn: Dictionary = LootGen.make(lv, "magic")
-	worn["slot"] = "staff"
-	g.player.inv.equipped["staff"] = LootGen.make(1, "normal") if not g.player.inv.equipped["staff"].is_empty() else _staff(lv)
+	g.player.inv.equipped["staff"] = _staff(lv)
 	g.player.inv.changed.emit()
 
 
+## A magic lantern staff to wear (so bag staves show a comparison).
 func _staff(lv: int) -> Dictionary:
-	for k: int in 40:
-		var it: Dictionary = LootGen.make(lv, "magic")
-		if it["slot"] == "staff":
-			return it
-	return {}
+	var it: Dictionary = LootGen.make_from_base(LootGen.base_by_id("wickpole"), lv, "magic")
+	LootGen.add_affixes(it, 2, lv)
+	it["name"] = LootGen.item_name(it, LootGen.base_by_id("wickpole"))
+	return it
 
 
 ## Moves the mouse (screen-space UI coordinates) so hover tooltips appear.
