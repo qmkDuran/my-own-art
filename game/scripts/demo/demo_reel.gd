@@ -21,7 +21,7 @@ const REELS: Dictionary = {
 const BOSS_LIFE: float = 0.13
 const MATRON_LIFE: float = 0.4
 const BELLWRIGHT_LIFE: float = 0.3
-const MAYOR_LIFE: float = 0.35
+const MAYOR_LIFE: float = 0.08
 const RIVER_TOUGH: float = 1.0
 const PACK_RADIUS: float = 150.0
 const CLEAR_RADIUS: float = 800.0
@@ -203,6 +203,6 @@ func _belfry(g: Game, h: ShotHelper) -> void:
 
 ## The Town of One Tuesday: the Mayor checks his watch; Noon and Cinder Rain ready on E and R.
 func _mayor(g: Game, h: ShotHelper) -> void:
-	_boss(g, h, 28, "beacon", MAYOR_LIFE)
+	_boss(g, h, 32, "beacon", MAYOR_LIFE)
 	g.player.prog.set_slot("e", "noon")
 	g.player.prog.set_slot("r", "cinder_rain")
