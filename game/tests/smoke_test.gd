@@ -294,7 +294,7 @@ func _campaign() -> void:
 	await frames(30)
 	g = Game.current
 	p = g.player
-	expect(g.zone_id == "tallow" and p.prog.level == level, "travel to Tallow keeps the character (level %d)" % level)
+	expect(g.zone_id == "tallow" and p.prog.level == level, "travel to Tallow keeps the character (level %d -> %d)" % [level, p.prog.level])
 	expect(c.step_index("seven_heartbeats") == 4, "arriving home moves the quest on")
 	var ott: Npc = get_tree().get_nodes_in_group("interactables").filter(func(n: Node) -> bool: return n is Npc and (n as Npc).npc_id == "ottilie")[0]
 	ott.use(g)

@@ -488,5 +488,59 @@
    "xp": 4000,
    "unique": "seventh_heartbeat"
   }
+ },
+ "fourth_loaf": {
+  "title": "The Fourth Loaf",
+  "main": false,
+  "reward": {
+   "unique": "wrens_mitts",
+   "xp": 1800
+  },
+  "steps": [
+   {
+    "goal": [
+     "clock_strike",
+     "tuesday"
+    ],
+    "target": {
+     "at": "npc:wren",
+     "zone": "tuesday"
+    },
+    "text": "Wait for the clocks to strike"
+   },
+   {
+    "goal": [
+     "talk",
+     "wren"
+    ],
+    "target": {
+     "at": "npc:wren",
+     "zone": "tuesday"
+    },
+    "text": "Warn Wren about her oven door"
+   },
+   {
+    "goal": [
+     "clock_strike",
+     "tuesday"
+    ],
+    "target": {
+     "at": "npc:wren",
+     "zone": "tuesday"
+    },
+    "text": "Let the clocks strike again"
+   },
+   {
+    "goal": [
+     "talk",
+     "wren"
+    ],
+    "target": {
+     "at": "npc:wren",
+     "zone": "tuesday"
+    },
+    "text": "See if Wren remembers"
+   }
+  ]
  }
 }

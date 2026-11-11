@@ -1372,6 +1372,29 @@
    "special_text": "Moth hits have a 15% chance to stun for 0.5 s",
    "lore": "Spun from the light she ate. It hums against the skin.",
    "boss": "matron"
+  },
+  {
+   "id": "wrens_mitts",
+   "base": "wick_gloves",
+   "name": "Wren's Oven Mitts",
+   "level": 20,
+   "lore": "Still warm. They remember being taken out of the oven at eight minutes to four.",
+   "special": "",
+   "special_text": "",
+   "stats": {
+    "life": [
+     25,
+     35
+    ],
+    "burn_chance": [
+     10,
+     15
+    ],
+    "dusk_res": [
+     10,
+     15
+    ]
+   }
   }
  ],
  "sets": {

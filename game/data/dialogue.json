@@ -209,7 +209,7 @@
     "lines": [
      [
       "Ottilie",
-      "Nim's home. Good. Sit. No \u2014 stand, you'll fall asleep."
+      "Nim's home. Good. Sit. No — stand, you'll fall asleep."
      ],
      [
       "Ottilie",
@@ -389,7 +389,7 @@
     "lines": [
      [
       "Lio",
-      "Careful \u2014 that jar is a Tuesday. Don't open it."
+      "Careful — that jar is a Tuesday. Don't open it."
      ],
      [
       "Lio",
@@ -513,6 +513,98 @@
   "idle": [
    "Odile",
    "Mind the edges. The river remembers falling down, sometimes. Mostly it doesn't."
+  ]
+ },
+ "wren": {
+  "name": "Wren Aldous",
+  "idle": [
+   "Wren",
+   "First loaf of the day. Every day now. You did that."
+  ],
+  "topics": [
+   {
+    "when": {
+     "quest_step": [
+      "fourth_loaf",
+      3
+     ]
+    },
+    "lines": [
+     [
+      "Wren",
+      "Fresh loaf? It's the— no. It's the first. It didn't burn."
+     ],
+     [
+      "Wren",
+      "There's a brick in my oven door and I don't remember putting it there. But I remember your face."
+     ],
+     [
+      "Wren",
+      "Nothing in this town stays warm past four. These did. Take them."
+     ]
+    ]
+   },
+   {
+    "when": {
+     "quest_step": [
+      "fourth_loaf",
+      1
+     ]
+    },
+    "lines": [
+     [
+      "Wren",
+      "Fresh loaf? It's the fourth one t— you've got a look on you."
+     ],
+     [
+      "Wren",
+      "The door. Eight minutes to four, it sticks. ...How would you know about my door?"
+     ],
+     [
+      "Wren",
+      "Fine. I'll wedge it with a brick. If I'm mad, at least the bread won't burn."
+     ]
+    ]
+   },
+   {
+    "when": {
+     "not_flag": "met_wren"
+    },
+    "once": true,
+    "do": {
+     "start_quest": "fourth_loaf",
+     "flag": "met_wren"
+    },
+    "lines": [
+     [
+      "Wren",
+      "Fresh loaf? It's the fourth one today. It's always the fourth."
+     ],
+     [
+      "Wren",
+      "The first three burned. The oven door sticks at eight minutes to four and I never catch it in time."
+     ],
+     [
+      "Wren",
+      "Odd. I feel like I've told you that before."
+     ],
+     [
+      "Wren",
+      "Never mind. Fourth loaf. Always the fourth."
+     ]
+    ]
+   },
+   {
+    "when": {
+     "quest_active": "fourth_loaf"
+    },
+    "lines": [
+     [
+      "Wren",
+      "Fresh loaf? Fourth one today. It's always the fourth."
+     ]
+    ]
+   }
   ]
  }
 }

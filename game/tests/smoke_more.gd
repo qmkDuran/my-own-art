@@ -68,6 +68,7 @@ func act1_foes(h: ShotHelper) -> void:
 	expect(is_instance_valid(m) and not m.dead, "the Moth Matron fights for six seconds without errors")
 	m.queue_free()
 	await later_bosses(h)
+	await fourth_loaf()
 
 
 func later_bosses(h: ShotHelper) -> void:
@@ -92,6 +93,33 @@ func later_bosses(h: ShotHelper) -> void:
 	await t.get_tree().create_timer(6.0).timeout
 	expect(is_instance_valid(mayor) and not mayor.dead, "the Mayor of Tuesday fights for six seconds without errors")
 	mayor.queue_free()
+
+
+## The Fourth Loaf: a side quest that only moves when the town's clocks strike; the loop breaks after the Mayor.
+func fourth_loaf() -> void:
+	var c: Campaign = Session.campaign
+	var loop := TuesdayLoop.new()
+	t.add_child(loop)
+	loop.setup(g)
+	c.start("fourth_loaf")
+	loop.t = TuesdayLoop.LOOP
+	await frames(2)
+	expect(c.step_index("fourth_loaf") == 1, "Wren's quest waits for the clocks, then asks you to warn her")
+	c.notify("talk", "wren")
+	loop.t = TuesdayLoop.LOOP
+	await frames(2)
+	c.notify("talk", "wren")
+	expect(c.is_done("fourth_loaf"), "after a second strike Wren remembers: The Fourth Loaf is done")
+	c.rewards.clear()                                   # later checks count on the character's level staying put
+	expect(loop.clock_text().begins_with("Tuesday"), "while the Mayor stands, it is always Tuesday")
+	var before: Dictionary = c.quests.get("one_tuesday", {}).duplicate()
+	c.place("one_tuesday", 5)
+	expect(loop.clock_text().begins_with("Wednesday"), "with the Mayor down the town reaches Wednesday")
+	if before.is_empty():                               # leave the main story where the rest of the test expects it
+		c.quests.erase("one_tuesday")
+	else:
+		c.quests["one_tuesday"] = before
+	loop.queue_free()
 
 
 func pass3(h: ShotHelper) -> void:

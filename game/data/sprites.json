@@ -194,6 +194,24 @@
    "name": "Teague Morrow",
    "role": "The Eighth Lamplighter (missing)"
   },
+  "npc_wren": {
+   "frame": [
+    64,
+    64
+   ],
+   "anchor": [
+    32,
+    61
+   ],
+   "poses": [
+    [
+     "idle",
+     8
+    ]
+   ],
+   "name": "Wren Aldous",
+   "role": "Baker of the Tuesday Market"
+  },
   "folk_porter": {
    "frame": [
     64,

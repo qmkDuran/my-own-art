@@ -180,6 +180,12 @@ def _held(s: Spr, f: Fig, item: str, hand: tuple[float, float]) -> None:
         s.ellipse(x, y + 2, 3, 3, "gold")
         s.ellipse(x, y + 2, 2, 2, "pale")
         s.px(x, y + 2, "rose", glow=True)
+    elif item == "loaf":                    # a round loaf on her palm, scored, a little too dark on top
+        s.ellipse(x, y + 1, 5, 3.5, "earth_lt")
+        s.ellipse(x, y, 4, 2.5, "rust")
+        s.line([(x - 2, y - 1), (x - 1, y + 1)], "earth_dk")
+        s.line([(x + 1, y - 1), (x + 2, y + 1)], "earth_dk")
+        s.px(x - 2, y - 2, "amber")
     elif item == "oar":
         s.line([(x - 2, y + 14), (x + 2, y - 30)], "earth_lt", width=2)
         s.poly([(x - 4, y + 12), (x + 1, y + 12), (x, y + 22), (x - 5, y + 22)], "earth")
@@ -399,4 +405,7 @@ NPCS = {
                "hat": ("ink", "night", "mist"), "coat": ("ink", "night", "dusk2"), "cape": "dusk1", "held_r": "lantern",
                "held_l": "whip", "skin": "pale", "eyes": "glint", "eyes_glow": True, "scarf": ("stone", "stone_dk"),
                "belt": "ink", "trim": "stone_lt", "buttons": [27], "rim_warm": "glass", "tatters": True},
+    "wren": {"name": "Wren Aldous", "role": "Baker of the Tuesday Market", "head": "cap", "hat": ("stone_lt", "pale", "bone"), "hair": "rust",
+             "coat": ("dusk1", "dusk2", "dusk3"), "apron": "bone", "hem": 55, "hem_w": 12, "held_r": "loaf", "skin": "skin_lt",
+             "glove": "skin", "width": 1.02, "split": False, "rim_warm": "amber"},
 }

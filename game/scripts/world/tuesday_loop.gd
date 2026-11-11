@@ -2,11 +2,15 @@ class_name TuesdayLoop
 extends Node
 ## The Town of One Tuesday: the clocks strike four every LOOP seconds and the day starts over. Everything alive
 ## goes back where it stood that morning, whole again; everything that died stays dead, and lamps you lit stay lit.
-## The HUD shows the hour (Hud reads `clock_text()`).
+## The HUD shows the hour (Hud reads `clock_text()`). Once the Mayor is down the loop is broken: the clocks go on
+## striking (five, six...) but nothing rewinds, and the HUD reads Wednesday. Every strike tells the campaign
+## ("clock_strike"), which is what Wren's side quest waits on.
 
 const LOOP: float = 80.0
 const START_MINUTES: float = 15.0 * 60.0     ## the loop runs from three in the afternoon to four
 const FLASH := Color(0.95, 0.92, 0.85)
+const BROKEN_AT: Array = ["one_tuesday", 4]  ## quest step after which the loop is broken (the Mayor is down)
+const FIRST_HOUR: int = 4                    ## the hour every clock in town strikes
 
 var t: float = 0.0
 var loops: int = 0
@@ -17,9 +21,13 @@ func setup(game: Game) -> void:
 	g = game
 
 
+func broken() -> bool:
+	return Session.campaign.past(String(BROKEN_AT[0]), int(BROKEN_AT[1]))
+
+
 func clock_text() -> String:
-	var m: float = START_MINUTES + 60.0 * t / LOOP
-	return "Tuesday  %d:%02d" % [int(m / 60.0) - 12, int(m) % 60]
+	var m: float = START_MINUTES + 60.0 * t / LOOP + (60.0 * loops if broken() else 0.0)
+	return "%s  %d:%02d" % ["Wednesday" if broken() else "Tuesday", (int(m / 60.0) - 13) % 12 + 1, int(m) % 60]
 
 
 func _process(delta: float) -> void:
@@ -32,6 +40,11 @@ func _process(delta: float) -> void:
 
 func _strike() -> void:
 	Audio.sfx("lamp_lit", -2.0, 0.6)
+	Session.campaign.notify("clock_strike", "tuesday")
+	if broken():
+		g.hud.caption("Four o'clock, and for once the day goes on." if loops == 1
+			else "The clocks strike %d. Nobody in town has heard that before." % (FIRST_HOUR + loops - 1))
+		return
 	g.shift_darkness(FLASH, 0.15, 0.9)
 	g.hud.caption("The clocks strike four. Everything hurt is whole again. Everything dead stays dead." if loops == 1
 		else "Four o'clock. Again.")

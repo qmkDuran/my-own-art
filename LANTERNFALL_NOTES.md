@@ -227,7 +227,12 @@ Nim is stuck at her desk; break the loop by killing **the Mayor of Tuesday** (cl
 pocket watch): HANDS (two clock-hand lanes, four below half life), REWIND (back to where he stood 4 s ago, regaining
 a capped share of lost life), APPOINTMENTS (Repeaters arrive), STOP (time stops for you: a heavy slow). Nim, after:
 "At four o'clock the sun went to sleep, and we were so glad." Reward: The Seventh Heartbeat.
-Next for Act 3: the Schoolhouse as its own interior zone, Pell-like townsfolk side quests, loop-aware puzzles.
+**The loop breaks** once the Mayor is down: the clocks keep striking (five, six...) but nothing rewinds, and the HUD
+reads *Wednesday*. **Side quest "The Fourth Loaf"** (loop-aware): Wren Aldous, the market baker, burns three loaves
+every Tuesday because her oven door sticks at 3:52. Meet her -> wait for a strike -> warn her (she wedges it with a
+brick) -> another strike -> she remembers your face, not why. Reward: Wren's Oven Mitts (unique gloves). Quest
+goals can now wait on `clock_strike`.
+Next for Act 3: the Schoolhouse as its own interior zone, more loop-aware townsfolk.
 
 ## 8c. Balance (bot-measured; `-- --balance --zone=<id>`, headless, fixed 60 fps)
 The DemoBot plays like a player at the zone's intended level (middle of its range; rare staff, coat and relic of
