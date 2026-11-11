@@ -30,12 +30,14 @@ func _weighted(table: Dictionary) -> String:
 			return k
 	return String(table.keys()[0])
 
+
 func _shuffle(a: Array) -> void:
 	for i: int in range(a.size() - 1, 0, -1):
 		var j: int = rng.randi_range(0, i)
 		var tmp: Variant = a[i]
 		a[i] = a[j]
 		a[j] = tmp
+
 
 static func _vec(a: Array) -> Vector2:
 	return Vector2(float(a[0]), float(a[1]))

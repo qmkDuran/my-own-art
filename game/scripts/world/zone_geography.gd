@@ -31,12 +31,14 @@ func _wall() -> void:
 		for x: int in range(int(b["border"]), z.wall_cols):
 			z.set_t(Vector2i(x, y), T.MOSS)
 
+
 func stream_x(row: float) -> float:
 	var s: Dictionary = b["stream"]
 	var amp: Array = s["amp"]
 	var fr: Array = s["freq"]
 	return z.cols * float(s["x_frac"]) + sin(row * float(fr[0]) + float(z.seed % 97)) * float(amp[1]) \
 		+ sin(row * float(fr[1]) + float(z.seed % 13)) * float(amp[0])
+
 
 func _stream() -> void:
 	var half: int = int(b["stream"]["width"]) / 2
@@ -50,6 +52,7 @@ func _stream() -> void:
 				z.set_t(c, T.WATER)
 				z.stream[z.idx(c)] = 1
 
+
 func _clearings() -> void:
 	for spec: Dictionary in b["clearings"]:
 		var r := Vector2(float(spec["r"][0]), float(spec["r"][1]))
@@ -59,6 +62,7 @@ func _clearings() -> void:
 		var c := {"role": String(spec["role"]), "center": at, "r": r, "secret": bool(spec.get("secret", false))}
 		z.clearings.append(c)
 		_carve_clearing(z.clearings.size() - 1)
+
 
 func _clearing_spot(spec: Dictionary, r: Vector2) -> Vector2i:
 	if spec.has("at"):
@@ -73,6 +77,7 @@ func _clearing_spot(spec: Dictionary, r: Vector2) -> Vector2i:
 			return c
 	return Vector2i(-1, -1)
 
+
 func _clearing_ok(c: Vector2i, r: Vector2) -> bool:
 	if c.x - r.x < z.wall_cols + 2 and c.y - r.y < z.wall_rows + 3:
 		return false
@@ -86,6 +91,7 @@ func _clearing_ok(c: Vector2i, r: Vector2) -> bool:
 			return false
 	return true
 
+
 func _carve_clearing(i: int) -> void:
 	var c: Dictionary = z.clearings[i]
 	var ctr: Vector2i = c["center"]
@@ -97,6 +103,7 @@ func _carve_clearing(i: int) -> void:
 			if d < 1.0 + noise.get_noise_2d(x * 3.0, y * 3.0) * 0.18 and z.t(cc) == T.THICKET:
 				z.set_t(cc, T.MOSS)
 				z.clearing_id[z.idx(cc)] = i
+
 
 func _ponds() -> void:
 	for i: int in z.clearings.size():
@@ -112,6 +119,7 @@ func _ponds() -> void:
 					var p: Vector2 = z.center_of(cc) - ctr
 					if Vector2(p.x / rr.x, p.y / rr.y).length() < 1.0 and z.clearing_id[z.idx(cc)] == i:
 						z.set_t(cc, T.WATER)
+
 
 func _border() -> void:
 	var e: int = int(b["border"])

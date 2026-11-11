@@ -5,6 +5,10 @@ extends GenStep
 ## each other.
 
 
+const ELITE_FROM: float = 0.3
+const ELITE_SPACING: float = 30.0
+
+
 func run() -> void:
 	_packs()
 
@@ -32,6 +36,7 @@ func _packs() -> void:
 	for i: int in centers.size():
 		_pack(i, centers[i], centers[i].distance_to(z.start) / far, elites.has(i))
 
+
 func _pack_cell_ok(c: Vector2i, pk: Dictionary) -> bool:
 	if not (z.t(c) == T.MOSS or z.t(c) == T.PATH) or not z.walkable(c):
 		return false
@@ -40,13 +45,22 @@ func _pack_cell_ok(c: Vector2i, pk: Dictionary) -> bool:
 	var ci: int = z.clearing_id[z.idx(c)]
 	return ci < 0 or not ["start", "circle", "secret"].has(z.clearings[ci]["role"])
 
+
+## Elite packs: past the first third of the zone, and far apart (two elite packs together overwhelm early on).
+
+
 func _elite_packs(centers: Array[Vector2], far: float, n: int) -> Array[int]:
 	var idx: Array[int] = []
 	for i: int in centers.size():
-		if centers[i].distance_to(z.start) / far > 0.3:
+		if centers[i].distance_to(z.start) / far > ELITE_FROM:
 			idx.append(i)
 	_shuffle(idx)
-	return idx.slice(0, n)
+	var out: Array[int] = []
+	for i: int in idx:
+		if out.size() < n and out.all(func(o: int) -> bool: return centers[o].distance_to(centers[i]) > ELITE_SPACING * z.cell):
+			out.append(i)
+	return out
+
 
 func _pack(i: int, center: Vector2, progress: float, elite: bool) -> void:
 	var row: Dictionary = b["packs"]["table"][0]
@@ -70,6 +84,7 @@ func _pack(i: int, center: Vector2, progress: float, elite: bool) -> void:
 		if pos != Vector2.INF:
 			members.append({"kind": kind, "pos": pos, "rank": rank, "mods": m, "pack": i, "level_progress": progress})
 	z.spawns.append_array(members)
+
 
 func _member_spot(center: Vector2, kind: String, members: Array[Dictionary]) -> Vector2:
 	var rad: float = float(GameData.enemy(kind)["radius"])

@@ -29,6 +29,7 @@ func _setpieces() -> void:
 				z.props.append_array(placed)
 				break
 
+
 func _try_group(ci: int, center: Vector2, spec: Array) -> Array[Dictionary]:
 	var out: Array[Dictionary] = []
 	for sp: Dictionary in spec:
@@ -46,8 +47,13 @@ func _try_group(ci: int, center: Vector2, spec: Array) -> Array[Dictionary]:
 		out.append(prop)
 	return out
 
+
 ## Ground under a prop must be open moss or stone of a clearing (never a path, bridge or water), clear of other
+
+
 ## props; shore props (reeds, the fisher) must also stand within two cells of water.
+
+
 func _fits(prop: Dictionary, others: Array[Dictionary]) -> bool:
 	var r: Rect2 = prop["foot"]
 	var probe: Rect2 = r if r.size.x > 0.0 else Rect2(r.position - Vector2(6, 4), Vector2(12, 4))
@@ -61,12 +67,14 @@ func _fits(prop: Dictionary, others: Array[Dictionary]) -> bool:
 		return _near_water(z.cell_of(prop["pos"]), 2)
 	return true
 
+
 func _near_water(c: Vector2i, d: int) -> bool:
 	for y: int in range(c.y - d, c.y + d + 1):
 		for x: int in range(c.x - d, c.x + d + 1):
 			if z.t(Vector2i(x, y)) == T.WATER:
 				return true
 	return false
+
 
 func _stone_circle(ci: int, center: Vector2, spec: Array) -> void:
 	var ring: Dictionary = spec[0]
@@ -93,6 +101,7 @@ func _stone_circle(ci: int, center: Vector2, spec: Array) -> void:
 			z.props.append({"kind": String(sp["kind"]), "pos": pos, "foot": ZoneLayout.footprint(String(sp["kind"]), pos),
 				"clearing": ci})
 
+
 func _rebuild_blocked() -> void:
 	for i: int in z.terrain.size():
 		z.blocked[i] = 0 if ZoneLayout.WALKABLE.has(int(z.terrain[i])) else 1
@@ -104,7 +113,10 @@ func _rebuild_blocked() -> void:
 			if z.inside(c):
 				z.blocked[z.idx(c)] = 1
 
+
 ## Glass creeping out of the forest: crystals and rocks where open ground meets the thicket, never by a path.
+
+
 func _edge_props() -> void:
 	var cand: Array[Vector2i] = []
 	for y: int in z.rows:
@@ -130,11 +142,13 @@ func _edge_props() -> void:
 				placed.append(pos)
 				want -= 1
 
+
 func _touches(c: Vector2i, v: int) -> bool:
 	for d: Vector2i in [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]:
 		if z.t(c + d) == v:
 			return true
 	return false
+
 
 func _near(c: Vector2i, v: int, d: int) -> bool:
 	for y: int in range(c.y - d, c.y + d + 1):
@@ -142,6 +156,7 @@ func _near(c: Vector2i, v: int, d: int) -> bool:
 			if z.t(Vector2i(x, y)) == v:
 				return true
 	return false
+
 
 func _near_route(c: Vector2i, d: int) -> bool:
 	for y: int in range(c.y - d, c.y + d + 1):

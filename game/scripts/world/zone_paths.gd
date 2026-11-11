@@ -36,6 +36,7 @@ func _links() -> void:
 		rest.erase(best.y)
 	_extra_links(open)
 
+
 func _extra_links(open: Array[int]) -> void:
 	var cand: Array[Vector2i] = []
 	for a: int in open:
@@ -46,8 +47,10 @@ func _extra_links(open: Array[int]) -> void:
 	for k: int in mini(int(b["extra_links"]), cand.size()):
 		z.links.append(cand[k])
 
+
 func _cdist(a: int, c: int) -> float:
 	return Vector2(z.clearings[a]["center"]).distance_to(Vector2(z.clearings[c]["center"]))
+
 
 func _astar(narrow: bool) -> AStarGrid2D:
 	var a := AStarGrid2D.new()
@@ -68,6 +71,7 @@ func _astar(narrow: bool) -> AStarGrid2D:
 				a.set_point_weight_scale(c, w + (noise.get_noise_2d(x * 1.7, y * 1.7) + 1.0) * MEANDER * 0.5)
 	return a
 
+
 func _paths() -> void:
 	var p: Dictionary = b["path"]
 	for l: Vector2i in z.links:
@@ -78,6 +82,7 @@ func _paths() -> void:
 		_record_lines(cells)
 	_secret_trail()
 
+
 func _carve_path(cells: Array[Vector2i], half: float, verge: float, dirt: bool) -> void:
 	for c: Vector2i in cells:
 		z.route[z.idx(c)] = 1
@@ -86,6 +91,7 @@ func _carve_path(cells: Array[Vector2i], half: float, verge: float, dirt: bool) 
 		_disc(c, verge, T.MOSS, [T.THICKET])
 		if dirt:
 			_disc(c, half, T.PATH, [T.THICKET, T.MOSS])
+
 
 func _disc(c: Vector2i, rad: float, v: int, over: Array) -> void:
 	var r: int = ceili(rad)
@@ -96,7 +102,10 @@ func _disc(c: Vector2i, rad: float, v: int, over: Array) -> void:
 					and z.clearing_id[z.idx(cc)] < 0:
 				z.set_t(cc, v)
 
+
 ## The drawn line of a path: the stretches outside clearings (one cell into each), corners rounded (Chaikin).
+
+
 func _record_lines(cells: Array[Vector2i]) -> void:
 	var run := PackedVector2Array()
 	for i: int in cells.size():
@@ -110,6 +119,7 @@ func _record_lines(cells: Array[Vector2i]) -> void:
 	if run.size() > 1:
 		z.path_lines.append(_chaikin(run))
 
+
 func _chaikin(pts: PackedVector2Array) -> PackedVector2Array:
 	var out: PackedVector2Array = pts
 	for it: int in CHAIKIN_PASSES:
@@ -121,7 +131,10 @@ func _chaikin(pts: PackedVector2Array) -> PackedVector2Array:
 		out = nxt
 	return out
 
+
 ## Where a path crosses the stream, a plank bridge three cells wide spans it from bank to bank.
+
+
 func _bridge(cells: Array[Vector2i]) -> void:
 	var group: Array[Vector2i] = []
 	for i: int in cells.size() + 1:
@@ -131,6 +144,7 @@ func _bridge(cells: Array[Vector2i]) -> void:
 		elif not group.is_empty():
 			_span(group)
 			group.clear()
+
 
 func _span(group: Array[Vector2i]) -> void:
 	var row: int = 0
@@ -159,7 +173,10 @@ func _span(group: Array[Vector2i]) -> void:
 				if z.t(cc) == T.THICKET or z.t(cc) == T.MOSS:
 					z.set_t(cc, T.PATH if y == row or k < 2 else T.MOSS)
 
+
 ## The secret clearing hangs off its nearest clearing by a narrow deer trail (moss, no dirt, no bridge).
+
+
 func _secret_trail() -> void:
 	for i: int in z.clearings.size():
 		if not z.clearings[i]["secret"]:

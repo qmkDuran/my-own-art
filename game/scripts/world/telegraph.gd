@@ -35,9 +35,19 @@ static func line(parent: Node, at: Vector2, to: Vector2, seconds: float) -> Tele
 
 
 func _ready() -> void:
+	add_to_group("telegraphs")
 	z_index = -14
 	z_as_relative = false
 	material = Fx.unshaded()
+
+
+## Is a point inside the warned area?
+func covers(p: Vector2) -> bool:
+	if lane == Vector2.ZERO:
+		return p.distance_to(global_position) < radius + 10.0
+	var q: Vector2 = Geometry2D.get_closest_point_to_segment(p, global_position, global_position + lane)
+	return p.distance_to(q) < LANE_W
+
 
 
 func _process(delta: float) -> void:
