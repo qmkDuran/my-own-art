@@ -90,6 +90,7 @@ func _build_world() -> void:
 	add_child(spawner)
 	spawner.setup(world, layout, player)
 	spawner.boss_died.connect(_on_boss_died)
+	player.died_and_rose.connect(camera.reset_smoothing)
 	_interactables()
 	add_child(LabelStack.new())
 

@@ -8,8 +8,9 @@ const THINK: float = 0.12
 const SIGHT: float = 420.0
 const LOOT_RANGE: float = 200.0
 const SCENES: Array[Dictionary] = [{"at": 0.0, "id": "gate"}, {"at": 15.0, "id": "elite"}, {"at": 29.0, "id": "boss"}, {"at": 46.0, "id": "end"}]
-const BOSS_LIFE: float = 0.16
+const BOSS_LIFE: float = 0.13
 const DODGE: float = 140.0
+const DEMO_SEED: int = 7
 const READ_LINE: float = 1.4
 const TOSS_LIGHT: float = 50.0
 const PACK_RADIUS: float = 150.0
@@ -27,6 +28,7 @@ var _read_t: float = 0.0
 
 func _ready() -> void:
 	g = get_parent() as Game
+	seed(DEMO_SEED)
 
 
 func _physics_process(delta: float) -> void:
@@ -90,6 +92,8 @@ func _boss(h: ShotHelper) -> void:
 	g.player.global_position = g.layout.boss["pos"] + Vector2(-30, 190)
 	g.camera.reset_smoothing()
 	g.player.light.value = 70.0
+	g.player.refill_tonics()
+	g.player.life = g.player.stats.max_life()
 	g.start_boss()
 	g.spawner.boss.life = g.spawner.boss.max_life * BOSS_LIFE
 

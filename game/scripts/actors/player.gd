@@ -187,7 +187,7 @@ func refill_tonics() -> void:
 
 # ------------------------------------------------------------------ being hit
 func take_hit(dmg: float, from: Vector2, drain: float) -> void:
-	life -= dmg
+	life = maxf(0.0, life - dmg)
 	light.on_hit(dmg / stats.max_life(), drain)
 	_flash_t = HIT_FLASH
 	if _pose_lock <= 0.0:
