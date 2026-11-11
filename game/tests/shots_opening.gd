@@ -83,3 +83,25 @@ func _shot_house() -> void:
 	g.player.light.value = 80.0
 	await _wait(2.6)
 	await _save("tallow_house_shadow")
+
+
+## Shadows: the Lamplighter just in front of, then just behind, the nearest tall prop; one still with both.
+func _shot_shadow() -> void:
+	var prop: Sprite2D = null
+	for n: Node in get_tree().get_nodes_in_group("tall_props"):
+		var s := n as Sprite2D
+		if g.layout.walkable(g.layout.cell_of(s.global_position + Vector2(0, 40))) and \
+				(prop == null or s.global_position.distance_to(g.player.global_position) < prop.global_position.distance_to(g.player.global_position)):
+			prop = s
+	if prop == null:
+		return
+	g.camera.frames = []
+	_bot().clear_near(100000.0)
+	_bot().place_player(prop.global_position + Vector2(-34, 36))
+	g.camera.intro(prop.global_position, 0.0)
+	g.player.light.value = 80.0
+	await _wait(2.4)
+	await _save("shadow_front_" + g.zone_id)
+	_bot().place_player(prop.global_position + Vector2(30, -14))
+	await _wait(1.2)
+	await _save("shadow_behind_" + g.zone_id)

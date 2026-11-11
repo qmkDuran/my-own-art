@@ -166,7 +166,47 @@ def stove() -> Spr:
     return _finish(s, "stone_lt", {"stone_dk"})
 
 
+def fence() -> Spr:
+    """A split-rail fence section for the practice yard: two posts, two rails."""
+    s = Spr(64, 26)
+    for x in (4, 58):
+        s.rect(x, 4, x + 3, 24, "earth_dk")
+        s.px(x + 1, 5, "earth_lt")
+    for y in (9, 16):
+        s.rect(4, y, 61, y + 2, "earth")
+        s.line([(4, y), (61, y)], "earth_lt")
+    return _finish(s, "earth_lt", {"earth"})
+
+
+def weapon_rack() -> Spr:
+    """A rack of practice staves, each with an empty hook where a lantern would hang."""
+    s = Spr(44, 48)
+    s.rect(3, 40, 41, 44, "earth_dk")
+    s.rect(4, 14, 40, 16, "earth")
+    for k in range(5):
+        x = 8 + k * 7
+        s.line([(x, 42), (x + 1, 6)], "earth_lt", width=2)
+        s.line([(x + 1, 6), (x + 3, 4), (x + 4, 7)], "stone_lt")
+    return _finish(s, "earth_lt", {"earth", "earth_dk"})
+
+
+def brazier() -> Spr:
+    """An iron brazier on three legs, coals glowing, a low flame: the yard's light."""
+    s = Spr(30, 40)
+    for x0, x1 in ((7, 4), (15, 15), (23, 26)):
+        s.line([(x0, 22), (x1, 38)], "stone_dk", width=2)
+    s.ellipse(15, 20, 12, 5, "stone_dk")
+    s.ellipse(15, 18, 10, 3, "ember_dk")
+    s.ellipse(15, 17, 7, 2, "ember", glow=True)
+    s.poly([(10, 17), (15, 3), (20, 17)], "flame", glow=True)
+    s.poly([(12, 17), (15, 8), (18, 17)], "gold", glow=True)
+    return _finish(s, "stone", {"stone_dk"})
+
+
 MANIFEST: dict[str, dict] = {
+    "fence": {"draw": fence, "foot": [60, 8]},
+    "weapon_rack": {"draw": weapon_rack, "foot": [40, 8]},
+    "brazier": {"draw": brazier, "foot": [22, 8], "light": "flame"},
     "class_floor": {"draw": floor, "foot": [0, 0], "flat": True},
     "class_wall_n": {"draw": wall_north, "foot": [ROOM_W + 32, 16]},
     "class_wall_side": {"draw": wall_side, "foot": [16, ROOM_H]},

@@ -1007,6 +1007,48 @@
   "flat": false,
   "glow": false
  },
+ "fence": {
+  "size": [
+   64,
+   26
+  ],
+  "frames": 1,
+  "foot": [
+   60,
+   8
+  ],
+  "light": "",
+  "flat": false,
+  "glow": false
+ },
+ "weapon_rack": {
+  "size": [
+   44,
+   48
+  ],
+  "frames": 1,
+  "foot": [
+   40,
+   8
+  ],
+  "light": "",
+  "flat": false,
+  "glow": false
+ },
+ "brazier": {
+  "size": [
+   30,
+   40
+  ],
+  "frames": 1,
+  "foot": [
+   22,
+   8
+  ],
+  "light": "flame",
+  "flat": false,
+  "glow": true
+ },
  "class_floor": {
   "size": [
    640,

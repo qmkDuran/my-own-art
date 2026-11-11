@@ -11,6 +11,13 @@ declare -A ZONE=([light]=glasswood [dark]=glasswood [skills]=glasswood [passives
   [keystones]=ember_road [eclipse_tree]=ember_road [hollow]=moth_hollow [matron]=moth_hollow [river]=riverbank
   [falls]=falls [marsh]=saltmarsh [bellwright]=belfry [hollins]=hollins [orbs]=glasswood [yard_move]=yard [yard_bolt]=yard [yard_flare]=yard [gate]=tallow [zonemap]=glasswood [tips]=glasswood [help]=glasswood [menu]=glasswood [house]=tallow [intro]=glasswood [school]=schoolhouse [wren]=tuesday [town]=tuesday [mayor]=tuesday)
 SHOTS=("$@")
+if [ "${SHOTS[0]:-}" = "shadows" ]; then                 # one shadow still per zone
+  for z in tallow glasswood ember_road moth_hollow riverbank falls saltmarsh belfry hollins tuesday schoolhouse yard; do
+    timeout 300 xvfb-run -a -s "-screen 0 1920x1080x24" "$GODOT" --rendering-driver opengl3 --resolution 1920x1080 \
+      --path game -- --shots --only=shadow --zone="$z" --out="$OUT" 2>&1 | grep -E "SCRIPT ERROR" -A2 | sed "s/^/$z: /"
+  done
+  exit 0
+fi
 [ ${#SHOTS[@]} -eq 0 ] && SHOTS=("${!ZONE[@]}")
 mkdir -p "$OUT"
 for s in "${SHOTS[@]}"; do

@@ -68,31 +68,73 @@
   ],
   "yard": [
    {
-    "kind": "bench",
+    "kind": "fence",
     "at": [
-     -180,
-     -110
+     -250,
+     -130
     ]
    },
    {
-    "kind": "barrels",
+    "kind": "fence",
     "at": [
-     200,
-     -110
+     -170,
+     -130
     ]
    },
    {
-    "kind": "planter",
+    "kind": "fence",
     "at": [
-     -220,
-     60
+     170,
+     -130
     ]
    },
    {
-    "kind": "planter",
+    "kind": "fence",
     "at": [
-     220,
-     60
+     250,
+     -130
+    ]
+   },
+   {
+    "kind": "weapon_rack",
+    "at": [
+     -230,
+     -60
+    ]
+   },
+   {
+    "kind": "weapon_rack",
+    "at": [
+     230,
+     -60
+    ]
+   },
+   {
+    "kind": "haystack",
+    "at": [
+     -240,
+     40
+    ]
+   },
+   {
+    "kind": "haystack",
+    "at": [
+     240,
+     40
+    ]
+   },
+   {
+    "kind": "brazier",
+    "at": [
+     -140.0,
+     40
+    ]
+   },
+   {
+    "kind": "brazier",
+    "at": [
+     140.0,
+     40
     ]
    }
   ]
@@ -128,13 +170,13 @@
  "relight": {},
  "ambient": {
   "darkness": [
-   0.68,
-   0.59,
-   0.53
+   0.86,
+   0.78,
+   0.7
   ],
   "motes_color": "amber",
-  "scenery_gain": 1.9,
-  "prop_gain": 1.4
+  "scenery_gain": 1.25,
+  "prop_gain": 1.1
  },
  "ground": {
   "c_moss_dk": "moss_dk",

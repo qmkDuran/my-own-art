@@ -3,9 +3,10 @@ extends Control
 ## Clickable shortcuts beside the life orb, each with its key: Inventory (I), Skills (K), Passives (P), Quests (J),
 ## Map (M). Skills and Passives pulse when there are points to spend.
 
-const BTN := Vector2(30, 18)
-const GAP: float = 3.0
-const ITEMS: Array = [["inventory", "Bag", "I"], ["skills", "Skills", "K"], ["passives", "Pass.", "P"], ["quests", "Quest", "J"],
+const BTN := Vector2(40, 18)
+const PAD: float = 3.0              ## text keeps this far from the border (the UI check measures it)
+const GAP: float = 2.0
+const ITEMS: Array = [["inventory", "Bag", "I"], ["skills", "Skills", "K"], ["passives", "Pass.", "P"], ["quests", "Quests", "J"],
 	["map", "Map", "M"]]
 
 var g: Game
@@ -18,6 +19,14 @@ static func rects(right_bottom: Vector2) -> Array[Rect2]:
 	for i: int in ITEMS.size():
 		out.append(Rect2(x0 + i * (BTN.x + GAP), right_bottom.y - BTN.y - 10.0, BTN.x, BTN.y + 10.0))
 	return out
+
+
+## Does every label fit inside its button with PAD to spare? (For the UI check.)
+static func labels_fit(ci: CanvasItem) -> bool:
+	for it: Array in ITEMS:
+		if UiDraw.text_width(ci, String(it[1]), UiDraw.SMALL) > BTN.x - PAD * 2.0:
+			return false
+	return true
 
 
 func setup(game: Game) -> void:

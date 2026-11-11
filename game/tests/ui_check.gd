@@ -22,6 +22,8 @@ func _run() -> void:
 		_check_size(g, vs)
 	_check_names(g)
 	_check_menu_labels(g)
+	if not HudButtons.labels_fit(g.ui.hud):
+		_fails.append("a HUD button label touches its border")
 	print("UI %s (%d sizes, %d problems)" % ["PASS" if _fails.is_empty() else "FAIL", SIZES.size(), _fails.size()])
 	for f: String in _fails:
 		print("UI problem: ", f)
