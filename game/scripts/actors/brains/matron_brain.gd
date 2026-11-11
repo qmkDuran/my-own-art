@@ -7,6 +7,7 @@ extends EnemyBrain
 
 const PATTERN: Array[String] = ["gust", "dust", "brood", "gust", "smother", "dust"]
 const HOLD: float = 130.0
+const MAX_ABOVE: float = 30.0
 const DRIFT: float = 0.6
 const PHASE2_AT: float = 0.5
 const PHASE2_PACE: float = 0.7
@@ -50,10 +51,14 @@ func _think(_delta: float) -> Vector2:
 
 
 ## Keep a hovering distance from the Lamplighter, drifting around him.
+## She keeps beside or below the Lamplighter, never high above him (so she stays on screen with him).
 func _hover_velocity() -> Vector2:
-	var v: Vector2 = to_player()
-	var want: Vector2 = v.normalized() * (v.length() - HOLD)
-	return (want.limit_length(e.speed) + v.normalized().orthogonal() * e.speed * DRIFT)
+	var me: Vector2 = player().global_position
+	var away: Vector2 = -to_player().normalized()
+	var spot: Vector2 = me + away * HOLD
+	spot.y = maxf(spot.y, me.y - MAX_ABOVE)
+	var v: Vector2 = spot - e.global_position
+	return v.limit_length(e.speed) + to_player().normalized().orthogonal() * e.speed * DRIFT * 0.5
 
 
 func _begin(action: String, d: Dictionary, pace: float) -> void:

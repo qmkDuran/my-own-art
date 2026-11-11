@@ -134,6 +134,22 @@ func _restore() -> void:
 	player.global_position = _arrival()
 	player.respawn_at = _respawn_point()
 	camera.reset_smoothing()
+	_framing()
+
+
+## Landmarks the camera leans toward, an arrival shot of the biggest one, and Tallow's passers-by.
+func _framing() -> void:
+	var view: Dictionary = GameData.biome.get("view", {})
+	for f: Array in view.get("frames", []):
+		camera.frames.append([Vector2(float(f[0]), float(f[1])), float(f[2]), float(f[3])])
+	if view.has("intro"):
+		var at: Array = view["intro"]
+		camera.intro(Vector2(float(at[0]), float(at[1])), float(at[2]))
+	for w: Dictionary in GameData.biome.get("walkers", []):
+		var pts: Array[Vector2] = []
+		for q: Array in w["route"]:
+			pts.append(Vector2(float(q[0]), float(q[1])))
+		Walker.make(world, String(w["folk"]), pts)
 
 
 func _arrival() -> Vector2:

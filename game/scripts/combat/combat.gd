@@ -35,7 +35,7 @@ static func hit_enemy(e: Enemy, base: float, opts: Dictionary = {}) -> void:
 	var dir: Vector2 = opts.get("dir", Vector2.ZERO)
 	e.take_damage(dmg, crit, dir, opts)
 	g.player.gain_life(dmg * ecl.leech())
-	FloatText.spawn(e.global_position, str(int(dmg)), Pal.c("gold") if crit else (Pal.c("amber") if not dot else Pal.c("flame")), crit)
+	FloatText.hit(e, dmg, crit, dot)
 	if dot:
 		return
 	Fx.hit_sparks(g.fx_layer, e.global_position + Vector2(0, -e.body_height() * 0.5), dir, crit)
@@ -64,4 +64,4 @@ static func hit_player(src: Enemy, base: float, type: String, at: Vector2) -> vo
 	dmg = maxf(1.0, roundf(dmg))
 	var drain: float = src.light_drain() if alive else 0.0
 	p.take_hit(dmg, at, drain)
-	FloatText.spawn(p.global_position, str(int(dmg)), Pal.c("rose"))
+	FloatText.hit(p, dmg, false, false, Pal.c("rose"))

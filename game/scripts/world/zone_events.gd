@@ -46,6 +46,7 @@ func start_boss() -> void:
 	var b: Enemy = g.spawner.spawn_boss()
 	b.wake()
 	g.hud.track_boss(b)
+	g.camera.focus = b
 	g.hud.caption(String(B["caption"]))
 	Audio.play_music(String(B.get("music", "boss")), 1.0)
 	Audio.sfx("boss_wind", -2.0, 0.6)

@@ -4,6 +4,8 @@ extends RefCounted
 ## prop footprint, and enemies against each other (a little overlap is normal in a melee, a deep one is not).
 
 const DEEP: float = 0.5
+const SEE_THROUGH_OK: float = 0.6
+const FEET_UP: float = 4.0
 
 
 static func problems(g: Game) -> PackedStringArray:
@@ -36,3 +38,20 @@ static func enemy_overlaps(g: Game) -> int:
 			if a.global_position.distance_to(b.global_position) < (a.radius + b.radius) * DEEP:
 				n += 1
 	return n
+
+
+## Tall things in front of a body (lower on screen) must not hide its feet unless they have faded see-through.
+static func hidden(g: Game) -> PackedStringArray:
+	var out := PackedStringArray()
+	var bodies: Array = [g.player]
+	bodies.append_array(g.get_tree().get_nodes_in_group("enemies"))
+	for n: Node in g.get_tree().get_nodes_in_group("tall_props"):
+		var s := n as Sprite2D
+		if s.modulate.a < SEE_THROUGH_OK:
+			continue
+		var sz: Vector2 = s.texture.get_size() / Vector2(s.hframes, s.vframes)
+		var r := Rect2(s.global_position + Vector2(-sz.x * 0.35, -sz.y), Vector2(sz.x * 0.7, sz.y))
+		for b: Node2D in bodies:
+			if s.global_position.y > b.global_position.y and r.has_point(b.global_position + Vector2(0, -FEET_UP)):
+				out.append("%s hides someone's feet at %s" % [s.texture.resource_path.get_file(), b.global_position])
+	return out

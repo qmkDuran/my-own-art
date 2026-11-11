@@ -7,8 +7,8 @@ extends CharacterBody2D
 
 signal died(e: Enemy)
 
-const HIT_FLASH: float = 0.07
-const HIT_FLASH_AMOUNT: float = 0.6
+const HIT_FLASH: float = 0.035          ## about two frames
+const HIT_FLASH_AMOUNT: float = 0.45
 const DEATH_TIME: float = 0.28
 const KNOCK_DECAY: float = 9.0
 const SEPARATION: float = 0.6
@@ -17,6 +17,10 @@ const BURN_TIME: float = 2.0
 const BURN_TICK: float = 0.5
 const BAR_W: float = 28.0
 const MOVE_ANIM_SPEED: float = 8.0
+const SHROUD_TINT := Color(0.35, 0.33, 0.5)
+const BOSS_SHROUD_TINT := Color(0.85, 0.82, 0.95)       ## a boss is always readable
+const BOSS_LIGHT_RANGE: float = 150.0
+const BOSS_LIGHT_ENERGY: float = 0.75
 
 var kind: String
 var data: Dictionary
@@ -102,6 +106,14 @@ func _make_sprite() -> void:
 	sprite.scale = Vector2.ONE * float(GameData.enemies["ranks"][rank]["scale"])
 	add_child(sprite)
 	PropSprite.add_glow(sprite, "res://art/actors/%s_glow.png" % data["sprite"])
+	if rank == "boss":                                      # its own dim light: the whole silhouette always reads
+		var l := PointLight2D.new()
+		l.texture = LightTex.soft(128)
+		l.texture_scale = BOSS_LIGHT_RANGE / 64.0
+		l.color = Pal.c("pale")
+		l.energy = BOSS_LIGHT_ENERGY
+		l.position = Vector2(0, -body_height() * 0.6)
+		add_child(l)
 
 
 func body_height() -> float:
@@ -134,7 +146,8 @@ func attack_speed() -> float:
 # ------------------------------------------------------------------ being hit
 func take_damage(dmg: float, crit: bool, dir: Vector2, opts: Dictionary) -> void:
 	life -= dmg
-	_flash_t = HIT_FLASH
+	if not bool(opts.get("dot", false)):                   # burns and ground fires don't flash
+		_flash_t = HIT_FLASH
 	wake()
 	_knock += dir.normalized() * float(opts.get("knockback", 30.0 if crit else 12.0)) * (0.3 if rank == "boss" else 1.0) * 6.0
 	stun_t = maxf(stun_t, float(opts.get("stun", 0.0)) * (0.3 if rank == "boss" else 1.0))
@@ -221,7 +234,7 @@ func _status(delta: float) -> void:
 		_shroud_t = SHROUD_CHECK
 		shrouded = not LightField.lit(get_tree(), global_position) or (Game.current.player.skills.skill("eclipse") as Eclipse).active()
 	_shown_shroud = move_toward(_shown_shroud, 1.0 if shrouded else 0.0, delta * 4.0)
-	sprite.self_modulate = Color(1, 1, 1).lerp(Color(0.35, 0.33, 0.5), _shown_shroud)
+	sprite.self_modulate = Color(1, 1, 1).lerp(SHROUD_TINT if rank != "boss" else BOSS_SHROUD_TINT, _shown_shroud)
 	if _burn_t > 0.0:
 		_burn_t -= delta
 		_burn_tick -= delta

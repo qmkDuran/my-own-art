@@ -629,6 +629,76 @@
   "flat": false,
   "glow": false
  },
+ "bench": {
+  "size": [
+   40,
+   22
+  ],
+  "frames": 1,
+  "foot": [
+   36,
+   8
+  ],
+  "light": "",
+  "flat": false,
+  "glow": false
+ },
+ "banner_a": {
+  "size": [
+   24,
+   72
+  ],
+  "frames": 1,
+  "foot": [
+   8,
+   6
+  ],
+  "light": "",
+  "flat": false,
+  "glow": false
+ },
+ "banner_b": {
+  "size": [
+   24,
+   72
+  ],
+  "frames": 1,
+  "foot": [
+   8,
+   6
+  ],
+  "light": "",
+  "flat": false,
+  "glow": false
+ },
+ "planter": {
+  "size": [
+   36,
+   30
+  ],
+  "frames": 1,
+  "foot": [
+   32,
+   10
+  ],
+  "light": "",
+  "flat": false,
+  "glow": true
+ },
+ "barrels": {
+  "size": [
+   36,
+   30
+  ],
+  "frames": 1,
+  "foot": [
+   30,
+   10
+  ],
+  "light": "",
+  "flat": false,
+  "glow": false
+ },
  "house_a": {
   "size": [
    112,

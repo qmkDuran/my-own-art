@@ -248,6 +248,8 @@ func _boss(h: ShotHelper) -> void:
 	await frames(30)
 	expect(is_instance_valid(g.spawner.boss), "the Glazier rises in the stone ring")
 	expect(ActorCheck.problems(g).is_empty(), "nobody stands inside a standing stone %s" % ActorCheck.problems(g))
+	await frames(40)
+	expect(ActorCheck.hidden(g).is_empty(), "no tall prop hides anyone's feet without fading %s" % ActorCheck.hidden(g))
 	g.spawner.boss.life = 1.0
 	Combat.hit_enemy(g.spawner.boss, 50.0)
 	await frames(30)

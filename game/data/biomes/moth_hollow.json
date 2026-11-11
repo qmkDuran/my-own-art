@@ -290,9 +290,9 @@
  },
  "ambient": {
   "darkness": [
-   0.05,
-   0.045,
-   0.08
+   0.16,
+   0.14,
+   0.21
   ],
   "motes_color": "amber"
  },
@@ -317,5 +317,8 @@
    "caption": "The Matron's nest. Every light the road lost is in her belly."
   }
  },
- "stone_style": "silk"
+ "stone_style": "silk",
+ "view": {
+  "frames": []
+ }
 }

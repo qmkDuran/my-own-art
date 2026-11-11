@@ -51,6 +51,7 @@ def write(dest: Path) -> None:
              for r, (p, n) in enumerate(meta["lamplighter"]["poses"]) for i in range(min(n, 3))]
     rows = [_row("The Lamplighter (64 px, front-facing; idle/walk/strike/cast/hurt)", poses, width)]
     npcs = [(m["name"].split(" ")[-1], _first_frame(f"actors/{k}.png", 64, 64)) for k, m in meta.items() if k.startswith("npc_")]
+    npcs += [(k[5:], _first_frame(f"actors/{k}.png", 64, 64)) for k in meta if k.startswith("folk_")]
     rows.append(_row("People of Tallow and the Dusk", npcs, width))
     foes = []
     for k in ("gloam", "hound", "moth", "glazier"):

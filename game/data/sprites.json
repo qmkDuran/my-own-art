@@ -176,6 +176,66 @@
    "name": "Teague Morrow",
    "role": "The Eighth Lamplighter (missing)"
   },
+  "folk_porter": {
+   "frame": [
+    64,
+    64
+   ],
+   "anchor": [
+    32,
+    61
+   ],
+   "poses": [
+    [
+     "idle",
+     4
+    ],
+    [
+     "walk",
+     6
+    ]
+   ]
+  },
+  "folk_lampwife": {
+   "frame": [
+    64,
+    64
+   ],
+   "anchor": [
+    32,
+    61
+   ],
+   "poses": [
+    [
+     "idle",
+     4
+    ],
+    [
+     "walk",
+     6
+    ]
+   ]
+  },
+  "folk_watchman": {
+   "frame": [
+    64,
+    64
+   ],
+   "anchor": [
+    32,
+    61
+   ],
+   "poses": [
+    [
+     "idle",
+     4
+    ],
+    [
+     "walk",
+     6
+    ]
+   ]
+  },
   "gloam": {
    "frame": [
     48,

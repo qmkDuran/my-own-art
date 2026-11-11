@@ -54,7 +54,7 @@ def actor_problems() -> list[str]:
     meta = json.loads((ROOT / "game" / "data" / "sprites.json").read_text())["actors"]
     out = []
     for name, m in meta.items():
-        cls = "npc" if name.startswith("npc_") else name
+        cls = "npc" if name.startswith(("npc_", "folk_")) else name
         lo, hi = CLASSES[cls]
         feet = []
         for k, fr in enumerate(_frames(name, m)):

@@ -153,7 +153,8 @@ func _shot_tallow() -> void:
 	while c.step_index("seven_heartbeats") < 4 and not c.is_done("seven_heartbeats"):
 		c._advance("seven_heartbeats")
 	var ott: Npc = _npc("ottilie")
-	_bot().place_player(ott.global_position + Vector2(60, 50))
+	_bot().place_player(ott.global_position + Vector2(60, 150))
+	await _wait(2.5)
 	g.player.face(ott.global_position)
 	await _wait(0.6)
 	ott.use(g)

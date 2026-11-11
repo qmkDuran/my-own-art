@@ -141,6 +141,7 @@ func _props(world: Node2D) -> void:
 		world.add_child(s)
 		if float(GameData.props[p["kind"]]["size"][1]) >= TALL_PROP:
 			fade.add(s)
+			s.add_to_group("tall_props")
 		if String(GameData.props[p["kind"]]["light"]) != "":
 			_glow_light(s, Pal.c(GameData.props[p["kind"]]["light"]))
 
@@ -165,6 +166,7 @@ func _trees(world: Node2D) -> void:
 			g.flip_h = s.flip_h
 		world.add_child(s)
 		fade.add(s)
+		s.add_to_group("tall_props")
 
 
 ## One static body: blocked terrain merged into rectangles (row runs stacked downward) plus every footprint.

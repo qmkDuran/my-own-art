@@ -334,6 +334,15 @@ LAMPLIGHTER = {
     "glove": "earth_dk", "rim_warm": "ember",
 }
 
+TOWNSFOLK = {
+    "porter": {"name": "", "role": "", "head": "cap", "hat": ("earth_dk", "earth", "earth_lt"), "hair": "stone_lt",
+               "coat": ("ember_dk", "rust", "ember"), "hem": 46, "hem_w": 10, "pack": "earth_lt", "skin": "skin", "belt": "ink"},
+    "lampwife": {"name": "", "role": "", "head": "hood", "hat": ("glass_dp", "glass_dk", "glass"), "coat": ("glass_dp", "glass_dk", "glass"),
+                 "hem": 57, "hem_w": 12, "held_r": "small_lantern", "skin": "skin_lt", "apron": "bone", "split": False},
+    "watchman": {"name": "", "role": "", "head": "helm", "hat": ("stone_dk", "stone", "stone_lt"), "coat": ("night", "dusk1", "dusk2"),
+                 "held_r": "pike", "hem": 47, "hem_w": 10, "skin": "skin_dk", "belt": "ink", "trim": "amber", "buttons": [27, 31]},
+}
+
 NPCS = {
     "ottilie": {"name": "Mother Ottilie Brask", "role": "Keeper of the Great Lantern", "head": "bun", "spectacles": True,
                 "hat": ("stone", "stone_lt", "bone"), "coat": ("earth_dk", "earth", "earth_lt"), "apron": "ember_dk",

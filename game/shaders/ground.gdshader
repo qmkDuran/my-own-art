@@ -173,7 +173,10 @@ vec4 silk(vec2 px) {
 	float r = length(d);
 	float a = atan(d.y, d.x);
 	vec4 col = dith(c_stone_dk, c_stone, fbm(px * 0.07) * 1.2 - 0.3, px);
-	if (fract(r / 18.0 + fbm(px * 0.04) * 0.4) < 0.07 || fract(a / 6.2832 * 24.0) < 0.05) { col = c_stone_lt; }
+	float ring = fract(r / 26.0 + fbm(px * 0.03) * 0.9);
+	float spoke = fract(a / 6.2832 * 13.0 + fbm(px * 0.02 + 3.0) * 0.6);
+	bool broken = fbm(px * 0.05 + 9.0) < 0.45;          // the web is torn in places
+	if (!broken && (ring < 0.03 || spoke < 0.02)) { col = dith(col, c_stone_lt, 0.35, px); }
 	return col;
 }
 

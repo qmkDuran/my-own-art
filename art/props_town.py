@@ -155,7 +155,60 @@ def ledger() -> Spr:
     return _finish(s, "earth_lt", {"rust"})
 
 
+def bench() -> Spr:
+    s = Spr(40, 22)
+    s.rect(3, 8, 37, 11, "earth")
+    s.line([(3, 8), (37, 8)], "earth_lt")
+    s.rect(3, 3, 37, 5, "earth_dk")
+    for x in (6, 33):
+        s.rect(x, 11, x + 2, 20, "stone_dk")
+    return _finish(s, "earth_lt", {"earth"})
+
+
+def banner(seed: int) -> Spr:
+    """A guild banner on an iron pole: the Lamplighters' sun-mark, the forge's hammer, the archive's jar."""
+    rnd = random.Random(seed)
+    s = Spr(24, 72)
+    s.rect(3, 4, 5, 70, "stone_dk")
+    s.ellipse(4, 3, 2, 2, "amber")
+    cloth = rnd.choice(["rust", "glass_dk", "violet", "ember_dk"])
+    s.poly([(6, 8), (22, 8), (22, 40), (14, 34), (6, 40)], cloth)
+    s.line([(6, 8), (22, 8)], "gold")
+    s.ellipse(14, 20, 4, 4, "gold")
+    s.ellipse(14, 20, 2, 2, cloth)
+    s.rect(1, 66, 8, 70, "stone")
+    return _finish(s, "pale", {cloth})
+
+
+def planter(seed: int) -> Spr:
+    """A stone trough of hardy lantern-fern, the only green that grows under the Great Lantern."""
+    rnd = random.Random(seed)
+    s = Spr(36, 30)
+    s.rect(3, 18, 33, 28, "stone")
+    s.line([(3, 18), (33, 18)], "stone_lt")
+    for _ in range(9):
+        x = rnd.uniform(6, 30)
+        s.line([(x, 18), (x + rnd.uniform(-4, 4), rnd.uniform(4, 12))], rnd.choice(["moss_lt", "moss", "glass_dk"]), width=2)
+    s.px(16, 8, "amber", glow=True)
+    return _finish(s, "pale", {"stone"})
+
+
+def barrels() -> Spr:
+    s = Spr(36, 30)
+    for x, y in ((10, 20), (24, 22), (17, 12)):
+        s.ellipse(x, y, 7, 8, "earth")
+        s.line([(x - 6, y - 3), (x + 6, y - 3)], "stone_dk")
+        s.line([(x - 6, y + 3), (x + 6, y + 3)], "stone_dk")
+        s.ellipse(x, y - 7, 5, 2, "earth_lt")
+    return _finish(s, "earth_lt", {"earth"})
+
+
 MANIFEST: dict[str, dict] = {
+    "bench": {"draw": bench, "foot": [36, 8]},
+    "banner_a": {"draw": lambda: banner(71), "foot": [8, 6]},
+    "banner_b": {"draw": lambda: banner(72), "foot": [8, 6]},
+    "planter": {"draw": lambda: planter(73), "foot": [32, 10]},
+    "barrels": {"draw": barrels, "foot": [30, 10]},
     "house_a": {"draw": lambda: house(41), "foot": [96, 30]},
     "house_b": {"draw": lambda: house(42, 96, 96), "foot": [80, 28]},
     "house_c": {"draw": lambda: house(43, 128, 112), "foot": [112, 32]},

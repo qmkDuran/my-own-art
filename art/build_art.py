@@ -42,6 +42,15 @@ def build_people(meta: dict) -> None:
                               "role": spec["role"]}
 
 
+def build_townsfolk(meta: dict) -> None:
+    """Passers-by in Tallow: idle and walk rows (they stroll between places)."""
+    for key, spec in people.TOWNSFOLK.items():
+        rows = [[people.draw(spec, "idle", i) for i in range(4)], [people.draw(spec, "walk", i) for i in range(6)]]
+        img, glow = sheet(rows, 64, 64)
+        _save(img, glow, f"actors/folk_{key}.png")
+        meta[f"folk_{key}"] = {"frame": [64, 64], "anchor": [32, 61], "poses": [["idle", 4], ["walk", 6]]}
+
+
 def build_enemies(meta: dict) -> None:
     for key, (fn, w, h) in enemies.KINDS.items():
         rows = [[fn(pose, i) for i in range(n)] for pose, n in enemies.POSES.items()]
@@ -89,6 +98,7 @@ def build_icons() -> dict:
 def main() -> None:
     meta: dict = {}
     build_people(meta)
+    build_townsfolk(meta)
     build_enemies(meta)
     prop_meta = build_props()
     icon_meta = build_icons()
