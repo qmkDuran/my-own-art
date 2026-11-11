@@ -10,6 +10,7 @@ const BAG_ROWS: int = 5
 
 var bag: Array = []                  ## BAG_COLS * BAG_ROWS entries; {} = empty
 var equipped: Dictionary = {}
+var materials: Dictionary = {}       ## forge materials by id (data/crafting.json)
 
 
 func _init() -> void:
@@ -98,14 +99,33 @@ func set_bonus_stats() -> Dictionary:
 	return out
 
 
+func add_material(id: String, n: int = 1) -> void:
+	materials[id] = int(materials.get(id, 0)) + n
+	changed.emit()
+
+
+func material(id: String) -> int:
+	return int(materials.get(id, 0))
+
+
+## Spends n of a material; false (nothing spent) if there are too few.
+func spend(id: String, n: int) -> bool:
+	if material(id) < n:
+		return false
+	materials[id] = material(id) - n
+	changed.emit()
+	return true
+
+
 func to_dict() -> Dictionary:
-	return {"bag": bag, "equipped": equipped}
+	return {"bag": bag, "equipped": equipped, "materials": materials}
 
 
 func from_dict(d: Dictionary) -> void:
 	var b: Array = d.get("bag", [])
 	for i: int in mini(b.size(), bag.size()):
 		bag[i] = b[i]
+	materials = d.get("materials", {})
 	var e: Dictionary = d.get("equipped", {})
 	for s: String in e:
 		if equipped.has(s):

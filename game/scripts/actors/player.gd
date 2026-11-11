@@ -21,6 +21,8 @@ const INVULN_AFTER_RISE: float = 2.0
 const PUSH_DECAY: float = 6.0
 const BURST_WINDOW: float = 0.5
 const WICK_BONE_SHARE: float = 0.25
+const HEARTBEAT_COOLDOWN: float = 60.0
+const HEARTBEAT_GRACE: float = 2.0
 
 var stats := Stats.new()
 var prog := Progression.new()
@@ -51,6 +53,7 @@ var _slow: float = 0.0
 var _slow_t: float = 0.0
 var _push: Vector2 = Vector2.ZERO
 var _last_burst: float = -100.0
+var _heartbeat_t: float = 0.0
 
 
 func _ready() -> void:
@@ -198,6 +201,11 @@ func take_hit(dmg: float, from: Vector2, drain: float) -> void:
 		var paid: float = minf(oil, dmg * WICK_BONE_SHARE)
 		oil -= paid
 		dmg -= paid
+	if dmg >= life and stats.has_special("seventh_heartbeat") and _heartbeat_t <= 0.0:   # The Seventh Heartbeat
+		_heartbeat_t = HEARTBEAT_COOLDOWN
+		dmg = life - 1.0
+		_invuln = HEARTBEAT_GRACE
+		Fx.halo(Game.current.fx_layer, global_position + Vector2(0, -24), 60.0, Pal.c("rose", 0.8), 0.5)
 	life = maxf(0.0, life - dmg)
 	light.on_hit(dmg / stats.max_life(), drain)
 	_flash_t = HIT_FLASH
@@ -283,6 +291,7 @@ func _timers(delta: float) -> void:
 	_invuln = maxf(0.0, _invuln - delta)
 	_flash_t = maxf(0.0, _flash_t - delta)
 	_slow_t = maxf(0.0, _slow_t - delta)
+	_heartbeat_t = maxf(0.0, _heartbeat_t - delta)
 	(sprite.material as ShaderMaterial).set_shader_parameter("flash", 0.35 if _flash_t > 0.0 else 0.0)
 	sprite.modulate.a = 0.5 if _invuln > 0.0 and int(_invuln * 10.0) % 2 == 0 else 1.0
 	if dead:

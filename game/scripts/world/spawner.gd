@@ -131,6 +131,11 @@ func _on_died(e: Enemy) -> void:
 func _drop_loot(e: Enemy) -> void:
 	var D: Dictionary = GameData.items["drop"]
 	var source: String = e.rank
+	MaterialDrop.roll(world, e.global_position, source)
+	if source == "boss" and D["boss_unique"].has(e.kind):
+		var spots: Array[Vector2] = LootDrop.free_spots(z, e.global_position, 1, player.global_position)
+		for sp: Vector2 in spots:
+			GroundItem.spawn(world, sp, LootGen.make_unique(String(D["boss_unique"][e.kind]), e.level))
 	if randf() > float(D["chance"][source]):
 		return
 	drop_items(e.global_position, int(D["count"][source]), source, e.level)

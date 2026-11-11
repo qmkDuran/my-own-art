@@ -14,8 +14,9 @@ func radius() -> float:
 
 func use(_target: Vector2) -> void:
 	_ring(1.0)
-	if rank("echo") > 0:
-		p.get_tree().create_timer(ECHO_DELAY, false).timeout.connect(_ring.bind(ECHO_SCALE))
+	var clapper: bool = p.stats.has_special("clapper")
+	if rank("echo") > 0 or clapper:
+		p.get_tree().create_timer(ECHO_DELAY, false).timeout.connect(_ring.bind(1.0 if clapper else ECHO_SCALE))
 
 
 func _ring(strength: float) -> void:

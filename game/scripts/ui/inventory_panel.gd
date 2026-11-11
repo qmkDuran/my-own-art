@@ -71,6 +71,9 @@ func _item(r: Rect2, it: Dictionary) -> void:
 
 func _click(at: Vector2, _button: int) -> void:
 	var inv: Inventory = g.player.inv
+	if g.ui.forge.visible:
+		_to_anvil(at)
+		return
 	for slot: String in DOLL:
 		if eq_rect(slot).has_point(at) and inv.unequip(slot):
 			Audio.sfx("pickup", -8.0)
@@ -86,6 +89,17 @@ func _click(at: Vector2, _button: int) -> void:
 			else:
 				g.hud.notice("Requires level %d" % int(inv.bag[i].get("req", 1)))
 			return
+
+
+## With the forge open, a click puts the item (in the bag or worn) on the anvil instead.
+func _to_anvil(at: Vector2) -> void:
+	var inv: Inventory = g.player.inv
+	for slot: String in DOLL:
+		if eq_rect(slot).has_point(at) and not (inv.equipped[slot] as Dictionary).is_empty():
+			g.ui.forge.put(inv.equipped[slot])
+	for i: int in inv.bag.size():
+		if bag_rect(i).has_point(at) and not (inv.bag[i] as Dictionary).is_empty():
+			g.ui.forge.put(inv.bag[i])
 
 
 func _hover(at: Vector2) -> void:

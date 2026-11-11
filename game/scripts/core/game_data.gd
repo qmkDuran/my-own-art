@@ -20,6 +20,7 @@ static var sprites: Dictionary = {}
 static var zones: Dictionary = {}
 static var quests: Dictionary = {}
 static var dialogue: Dictionary = {}
+static var crafting: Dictionary = {}
 static var zone_id: String = ""         ## the zone being played (biome holds its rules)
 
 
@@ -37,6 +38,7 @@ static func ensure() -> void:
 	zones = load_json("zones")
 	quests = load_json("quests")
 	dialogue = load_json("dialogue")
+	crafting = load_json("crafting")
 	use_zone(String(zones["start"]))
 	story = load_json("story")
 	props = load_json("props")

@@ -21,6 +21,7 @@ var travel: TravelPanel
 var stash: StashPanel
 var respec: RespecPanel
 var bestiary: BestiaryPanel
+var forge: ForgePanel
 var tooltip: TooltipLayer
 var _fade: ColorRect
 
@@ -44,8 +45,9 @@ func setup(game: Game) -> void:
 	filter = _panel(FilterPanel.new(), "Loot Filter", Vector2(300, 330), "center")
 	travel = _panel(TravelPanel.new(), "Nim's Maps", Vector2(320, 200), "center")
 	stash = _panel(StashPanel.new(), "Fenn's Lockers", Vector2(280, 250), "left")
-	respec = _panel(RespecPanel.new(), "The Order's Ledger", Vector2(320, 220), "center")
+	respec = _panel(RespecPanel.new(), "The Order's Ledger", Vector2(320, 400), "center")
 	bestiary = _panel(BestiaryPanel.new(), "Bestiary", Vector2(400, 400), "left")
+	forge = _panel(ForgePanel.new(), "The Ember Forge", Vector2(300, 330), "left")
 	tooltip = TooltipLayer.new()
 	add_child(tooltip)
 	_fade = ColorRect.new()
@@ -62,11 +64,11 @@ func _panel(p: GamePanel, title: String, sz: Vector2, side: String) -> GamePanel
 
 
 func panels() -> Array[GamePanel]:
-	return [inventory, character, skills, passives, pause, quests, filter, travel, stash, respec, bestiary]
+	return [inventory, character, skills, passives, pause, quests, filter, travel, stash, respec, bestiary, forge]
 
 
 func left_panels() -> Array[GamePanel]:
-	return [character, skills, passives, quests, stash, bestiary]
+	return [character, skills, passives, quests, stash, bestiary, forge]
 
 
 func center_panels() -> Array[GamePanel]:
@@ -95,7 +97,7 @@ func open(p: GamePanel) -> void:
 			o.visible = false
 	p.visible = was
 	p.toggle()
-	if p == stash and stash.visible:
+	if (p == stash or p == forge) and p.visible:
 		inventory.visible = true
 	minimap.visible = not (inventory.visible or panels().any(func(o: GamePanel) -> bool: return o.visible and center_panels().has(o)))
 	hud.tracker_hidden = left_panels().any(func(o: GamePanel) -> bool: return o.visible) or center_panels().any(func(o: GamePanel) -> bool: return o.visible)
@@ -142,6 +144,6 @@ func fade_through(action: Callable) -> void:
 ## A person's service after a talk: travel (Nim's maps), stash (Fenn's lockers), respec (Ottilie's ledger),
 ## bestiary (Lio's shelf).
 func open_service(service: String) -> void:
-	var map: Dictionary = {"travel": travel, "stash": stash, "respec": respec, "bestiary": bestiary}
+	var map: Dictionary = {"travel": travel, "stash": stash, "respec": respec, "bestiary": bestiary, "forge": forge}
 	if map.has(service):
 		open(map[service])

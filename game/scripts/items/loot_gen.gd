@@ -61,7 +61,7 @@ static func _from_base(base: Dictionary, ilvl: int, rarity: String) -> Dictionar
 	var it := {"uid": "%d_%d" % [Time.get_ticks_usec(), _uid], "base": base["id"], "slot": base["slot"], "rarity": rarity,
 		"ilvl": ilvl, "req": int(base["level"]), "icon": [_icon_row(String(base["slot"])),
 		int(base["icon"]) * int(GameData.sprites["icons"]["variants"]) + int(ICON_VARIANT_BY_RARITY[rarity])],
-		"implicit": {}, "affixes": []}
+		"implicit": {}, "affixes": [], "heat": _heat(rarity)}
 	for k: String in base["implicit"]:
 		it["implicit"][k] = _roll(base["implicit"][k])
 	if base.has("dmg"):
@@ -74,6 +74,12 @@ static func make_from_base(base: Dictionary, ilvl: int, rarity: String) -> Dicti
 	var it: Dictionary = _from_base(base, ilvl, rarity)
 	it["name"] = String(base["name"])
 	return it
+
+
+## Forging potential by rarity (uniques and sets cannot be forged: 0).
+static func _heat(rarity: String) -> int:
+	var h: Array = GameData.crafting["heat"].get(rarity, [0, 0])
+	return rng.randi_range(int(h[0]), int(h[1]))
 
 
 static func _icon_row(slot: String) -> int:
@@ -100,6 +106,22 @@ static func add_affixes(it: Dictionary, n: int, ilvl: int) -> void:
 		var t: Array = a["tiers"][tier - 1]
 		it["affixes"].append({"id": a["id"], "type": a["type"], "stat": a["stat"], "tier": tier, "value": _roll([t[0], t[1]])})
 		counts[a["type"]] = int(counts[a["type"]]) + 1
+
+
+## One new affix at tier 1 (the forge's Kindle). False if the item has no room or no affix fits.
+static func add_one(it: Dictionary) -> bool:
+	var before: int = (it["affixes"] as Array).size()
+	add_affixes(it, 1, 1)
+	return (it["affixes"] as Array).size() > before
+
+
+static func affix_def(id: String) -> Dictionary:
+	return _affix(id)
+
+
+static func reroll(a: Dictionary) -> void:
+	var t: Array = affix_tier_range(String(a["id"]), int(a["tier"]))
+	a["value"] = _roll([t[0], t[1]])
 
 
 static func _tier(a: Dictionary, ilvl: int) -> int:

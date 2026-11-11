@@ -4,6 +4,7 @@ extends Skill
 ## Skin burns whoever hits you, Wildfire spreads burns from burning deaths.
 
 const WILDFIRE_RADIUS: float = 60.0
+const HEARTH_MULT: float = 2.0
 
 var _t: float = 0.0
 
@@ -13,7 +14,7 @@ func active() -> bool:
 
 
 func duration() -> float:
-	return float(data["duration"]) + val("duration")
+	return (float(data["duration"]) + val("duration")) * (HEARTH_MULT if p.stats.has_special("hearth") else 1.0)
 
 
 func use(_target: Vector2) -> void:

@@ -10,6 +10,8 @@ const MATRIARCH_EVERY: int = 4
 const GREAT_MULT: float = 3.0
 const MOTH_HEART_MULT: int = 2
 const MOTH_HEART_MORE: float = 0.6
+const SILK_CHANCE: float = 0.15
+const SILK_STUN: float = 0.5
 
 var _casts: int = 0
 
@@ -65,7 +67,8 @@ func _release(dir: Vector2, great: bool) -> Moth:
 
 func moth_hit(e: Enemy, at: Vector2, great: bool) -> void:
 	var more: float = (1.0 + val("damage_pct") / 100.0) * (GREAT_MULT if great else 1.0) * (MOTH_HEART_MORE if p.stats.has_special("moth_heart") else 1.0)
-	Combat.hit_enemy(e, roll(), opts({"dir": e.global_position - at, "more": more, "knockback": 8.0}))
+	var stun: float = SILK_STUN if p.stats.has_special("matron_silk") and randf() < SILK_CHANCE else 0.0
+	Combat.hit_enemy(e, roll(), opts({"dir": e.global_position - at, "more": more, "knockback": 8.0, "stun": stun}))
 	Fx.halo(fx(), at, 18.0, Pal.c("flame", 0.8), 0.2)
 	p.light.add(val("light_per_hit") + (0.5 if p.stats.has_special("moth_light") else 0.0))
 	if rank("fire_moths") > 0:

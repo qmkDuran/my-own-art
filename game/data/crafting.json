@@ -1,0 +1,94 @@
+{
+ "_doc": "The Ember Forge. Materials drop from kills (chance), chests and bosses and are collected by walking over them. Every item rolls Heat (forging potential) by rarity; each craft spends a random amount of it (`heat` range) and nothing can be done once it runs out. Uniques and set pieces cannot be forged. Refunds at Ottilie's ledger cost Ash.",
+ "materials": {
+  "ash": {
+   "name": "Ash",
+   "color": "pale",
+   "text": "Common soot from the Dusk. Pays for refunds at the order's ledger."
+  },
+  "kindle": {
+   "name": "Kindle Ember",
+   "color": "flame",
+   "text": "Adds a new affix at tier 1 (up to two prefixes and two suffixes)."
+  },
+  "temper": {
+   "name": "Temper Ember",
+   "color": "gold",
+   "text": "Raises one affix a tier (up to tier 5) and rerolls it in the new tier."
+  },
+  "quench": {
+   "name": "Quench Ember",
+   "color": "glass_lt",
+   "text": "Removes one affix."
+  },
+  "anneal": {
+   "name": "Anneal Ember",
+   "color": "violet_lt",
+   "text": "Rerolls the values of every affix within its tier."
+  }
+ },
+ "drop": {
+  "kill_chance": 0.1,
+  "elite_extra": 1,
+  "chest": [
+   1,
+   2
+  ],
+  "boss": [
+   4,
+   6
+  ],
+  "weights": {
+   "ash": 50,
+   "kindle": 18,
+   "temper": 14,
+   "quench": 10,
+   "anneal": 8
+  }
+ },
+ "heat": {
+  "normal": [
+   24,
+   32
+  ],
+  "magic": [
+   20,
+   28
+  ],
+  "rare": [
+   16,
+   24
+  ]
+ },
+ "crafts": {
+  "kindle": {
+   "heat": [
+    3,
+    6
+   ]
+  },
+  "temper": {
+   "heat": [
+    2,
+    4
+   ],
+   "per_tier": 2
+  },
+  "quench": {
+   "heat": [
+    1,
+    3
+   ]
+  },
+  "anneal": {
+   "heat": [
+    2,
+    5
+   ]
+  }
+ },
+ "refund": {
+  "passive_ash_per_point": 1,
+  "skill_ash_per_points": 2
+ }
+}
