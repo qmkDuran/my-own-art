@@ -15,5 +15,5 @@ SHOTS=("$@")
 mkdir -p "$OUT"
 for s in "${SHOTS[@]}"; do
   timeout 300 xvfb-run -a -s "-screen 0 1920x1080x24" "$GODOT" --rendering-driver opengl3 --resolution 1920x1080 \
-    --path game -- --shots --only="$s" --zone="${ZONE[$s]}" --out="$OUT" 2>&1 | grep -E "SCRIPT ERROR" -A2 | sed "s/^/$s: /"
+    --path game -- --shots --only="$s" --zone="${ZONE[$s]}" --out="$OUT" 2>&1 | grep -E "SCRIPT ERROR|is dead in this shot|woke elsewhere" -A2 | sed "s/^/$s: /"
 done

@@ -301,7 +301,7 @@ Glazier + Nim, death/respawn, save/load). Review screenshots: `--shots` (needs x
 
 ## 12. How to run / record
 - Play: `godot --path game` (title) or `-- --play` (straight in), `-- --fresh` (no save).
-- Shots: `tools/shoot.sh OUT_DIR [shot ...]` (each shot staged in its own zone; wraps `xvfb-run ... -- --shots --only=NAME --zone=ZONE --out=DIR`).
+- Shots: `tools/shoot.sh OUT_DIR [shot ...]` (each shot staged in its own zone; a shot that would show the death screen reports an error; wraps `xvfb-run ... -- --shots --only=NAME --zone=ZONE --out=DIR`).
 - Video: `... --resolution 960x540 --fixed-fps 60 --write-movie frames/f.png --path game -- --demo`, then ffmpeg
   scale 2x with `-sws_flags neighbor` (pixel-identical to 1080p, 4x faster to render in software GL).
 

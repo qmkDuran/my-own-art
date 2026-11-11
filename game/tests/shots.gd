@@ -44,6 +44,8 @@ func _run() -> void:
 
 
 func _save(name: String) -> void:
+	if g != null and is_instance_valid(g.player) and g.player.life <= 0.0:
+		push_error("SHOT %s: the Lamplighter is dead in this shot" % name)   # never ship the death screen
 	await RenderingServer.frame_post_draw
 	var img: Image = get_viewport().get_texture().get_image()
 	var res: Vector2i = DisplayServer.window_get_size()
@@ -187,8 +189,8 @@ func _shot_road() -> void:
 	await _wait(1.5)
 	h.cast("flare", g.player.global_position + Vector2(80, 0))
 	await _wait(0.12)
-	if g.player.life <= 0.0 or g.player.global_position.distance_to(lamp.global_position) > 200.0:
-		push_error("road shot: the Lamplighter fell before the shot")    # never ship a shot of the death screen
+	if g.player.global_position.distance_to(lamp.global_position) > 200.0:
+		push_error("SHOT road: the Lamplighter woke elsewhere (fell before the shot)")
 	await _save("ember_road_relight")
 
 
@@ -197,6 +199,8 @@ func _shot_hollow() -> void:
 	var h := _bot()
 	h.story_at("moth_hollow", 0)
 	h.level_up(12)
+	h.gear_up(12)
+	h.clear_near(100000.0)                                  # only the staged pack, not the whole cave
 	var nest: Vector2 = g.layout.center_of(g.layout.clearing_of_role("hunger")["center"])
 	h.place_player(nest + Vector2(-40, 60))
 	h.pack_near(["crawler", "crawler", "moth", "gloam"], Vector2(120, -40))
