@@ -5,7 +5,7 @@ extends Node
 
 const MODES: Dictionary = {
 	"--smoke": "res://tests/smoke_test.gd", "--maps": "res://tests/map_check.gd", "--ui": "res://tests/ui_check.gd",
-	"--shots": "res://tests/shots.gd", "--play": "res://tests/play_test.gd",
+	"--shots": "res://tests/shots.gd", "--play": "res://tests/play_test.gd", "--balance": "res://tests/balance.gd",
 }
 
 

@@ -17,6 +17,7 @@ func _ready() -> void:
 	_check(_world() != null, "overworld reached")
 	await _menu_round_trip()
 	await _visit_gran()
+	await _click_walk()
 	print("PLAY %s%s" % ["PASS" if _fails.is_empty() else "FAIL: ", ", ".join(_fails)])
 	get_tree().quit(0 if _fails.is_empty() else 1)
 
@@ -84,3 +85,11 @@ func _visit_gran() -> void:
 	await _walk("move_up", 3)
 	await _mash_until(func() -> bool: return Game.flags.get("met_gran", false), 20.0)
 	_check(Game.flags.get("met_gran", false), "talked to Gran with the accept key")
+
+
+## Click a floor cell in the cottage: the player walks there by itself.
+func _click_walk() -> void:
+	var w: Overworld = _world()
+	var target := Vector2i(2, 6)
+	await w.clicks.go(target)
+	_check(w.player.cell == target, "click-to-walk reached the clicked cell (at %s)" % w.player.cell)

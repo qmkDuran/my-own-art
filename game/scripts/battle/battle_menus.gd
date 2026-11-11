@@ -9,6 +9,8 @@ const GENTLE: PackedStringArray = ["Calm", "Play", "Treat"]
 const GENTLE_IDS: PackedStringArray = ["calm", "play", "treat"]
 
 var queued: Array[Dictionary] = []
+## The balance bot sets this to pick each action itself: func(battle: BattleScene) -> Dictionary.
+var chooser: Callable = Callable()
 var battle: BattleScene
 var _cmd_panel: Panel
 var _sub_panel: Panel
@@ -23,9 +25,9 @@ func setup(b: BattleScene) -> BattleMenus:
 
 
 func choose_action() -> Dictionary:
-	if not queued.is_empty():
+	if not queued.is_empty() or chooser.is_valid():
 		await get_tree().process_frame
-		return queued.pop_front()
+		return queued.pop_front() if not queued.is_empty() else chooser.call(battle)
 	while true:
 		var cmd: int = await _pick_in(BattleLayout.CMD_RECT, COMMANDS, 2, BattleLayout.CMD_COL_W, _cmd_enabled(), false)
 		var action: Dictionary = await _sub_action(cmd)

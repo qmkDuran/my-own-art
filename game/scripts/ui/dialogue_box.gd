@@ -88,7 +88,7 @@ func _show_line(line: String) -> void:
 	var total: int = line.length()
 	var shown: float = 0.0
 	while _typing and _text.visible_characters < total:
-		shown += get_process_delta_time() * CHARS_PER_SEC
+		shown += get_process_delta_time() * CHARS_PER_SEC * Settings.text_mult()
 		_text.visible_characters = mini(total, int(shown))
 		await get_tree().process_frame
 	_typing = false

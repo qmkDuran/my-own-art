@@ -46,7 +46,7 @@ func _starters(view: Vector2) -> void:
 
 
 func _build_menu(view: Vector2) -> void:
-	var options: PackedStringArray = ["New Game", "Continue"] if SaveSystem.has_save() else ["New Game"]
+	var options: PackedStringArray = ["New Game", "Continue", "Settings"] if SaveSystem.has_save() else ["New Game", "Settings"]
 	var panel := UiKit.panel(Rect2((view.x - MENU_W) / 2, LOGO_Y + 42, MENU_W, options.size() * MenuList.ROW_H + 8))
 	add_child(panel)
 	_menu = MenuList.new()
@@ -58,5 +58,12 @@ func _build_menu(view: Vector2) -> void:
 
 
 func _wait_choice(options: PackedStringArray) -> void:
-	var i: int = await _menu.pick()
-	chosen.emit("new" if options[i] == "New Game" else "continue")
+	while true:
+		var i: int = await _menu.pick()
+		if options[i] != "Settings":
+			chosen.emit("new" if options[i] == "New Game" else "continue")
+			return
+		var panel := SettingsPanel.new()
+		add_child(panel)
+		await panel.run()
+		panel.queue_free()

@@ -18,6 +18,9 @@ const HINTS: Dictionary = {"attack": "STRIKE!", "defend": "BRACE!", "gentle": "G
 
 ## Tests and screenshot runs: a grade to give at once ("" = wait for the player), or hold the ring still.
 static var autopilot: String = ""
+## Autopilot value for a human-like mix of presses (the balance bot).
+const MIXED: String = "mixed"
+const MIX: Dictionary = {"perfect": 0.3, "good": 0.4, "miss": 0.3}
 static var hold_at: float = -1.0
 
 var mode: String = "attack"
@@ -46,10 +49,10 @@ func run(at: Vector2, kind: String) -> String:
 	_done = false
 	_grade_label.text = ""
 	show()
-	var grade: String = autopilot
+	var grade: String = autopilot if autopilot != MIXED else _mixed_grade()
 	if autopilot != "":
 		await get_tree().process_frame
-		_finish(autopilot)
+		_finish(grade)
 	else:
 		grade = await graded
 	await _show_grade(grade)
@@ -79,6 +82,15 @@ func _unhandled_input(ev: InputEvent) -> void:
 	if press:
 		get_viewport().set_input_as_handled()
 		_finish(grade_for(current_radius()))
+
+
+static func _mixed_grade() -> String:
+	var roll: float = Game.rng.randf()
+	for g: String in MIX:
+		roll -= float(MIX[g])
+		if roll <= 0.0:
+			return g
+	return "miss"
 
 
 static func grade_for(radius: float) -> String:

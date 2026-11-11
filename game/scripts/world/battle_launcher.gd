@@ -8,6 +8,8 @@ const WHITEOUT_CELL: Vector2i = Vector2i(4, 4)
 
 var world: Overworld
 var current: BattleScene
+## Battles started so far (click-to-walk stops when one interrupts it).
+var started: int = 0
 
 
 func _init(w: Overworld) -> void:
@@ -49,6 +51,7 @@ func trainer_battle(id: String) -> Dictionary:
 
 func _run(kind: String, trainer: String, foes: Array[Creature]) -> Dictionary:
 	var was_busy: bool = world.busy
+	started += 1
 	world.busy = true
 	Audio.music("battle")
 	Audio.sfx("encounter")

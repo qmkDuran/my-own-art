@@ -25,6 +25,7 @@ var busy: bool = false
 var interactions: WorldInteractions
 var battles: BattleLauncher
 var healing: HealSequence
+var clicks: ClickWalk
 var _wander_clock: float = 0.0
 ## Frames to ignore input after an event ends, so the press that closed it does not start another.
 var _cooldown: int = 0
@@ -43,6 +44,7 @@ func _ready() -> void:
 	interactions = WorldInteractions.new(self)
 	battles = BattleLauncher.new(self)
 	healing = HealSequence.new(self)
+	clicks = ClickWalk.new(self)
 	Game.heal_stage_changed.connect(healing.queue_heal)
 	load_map(Game.map_id, Game.cell, Game.facing)
 
@@ -98,6 +100,8 @@ func _process(delta: float) -> void:
 	if _cooldown > 0:
 		_cooldown -= 1
 		return
+	if clicks.walking:
+		return
 	if Input.is_action_just_pressed("accept"):
 		interactions.interact()
 	elif Input.is_action_just_pressed("menu"):
@@ -106,6 +110,15 @@ func _process(delta: float) -> void:
 		var dir: Vector2i = _held_direction()
 		if dir != Vector2i.ZERO:
 			try_step(dir)
+
+
+func _unhandled_input(ev: InputEvent) -> void:
+	if ev is InputEventKey and ev.is_pressed():
+		clicks.cancel()
+	if UiKit.is_click(ev) and not busy and not clicks.walking and _cooldown == 0:
+		var at: Vector2 = get_global_mouse_position()
+		clicks.go(Vector2i(floori(at.x / T), floori(at.y / T)))
+		get_viewport().set_input_as_handled()
 
 
 func _held_direction() -> Vector2i:

@@ -32,7 +32,7 @@ func say(line: String) -> void:
 	_text.visible_characters = 0
 	var shown: float = 0.0
 	while not _skip and _text.visible_characters < line.length():
-		shown += get_process_delta_time() * CHARS_PER_SEC
+		shown += get_process_delta_time() * CHARS_PER_SEC * Settings.text_mult()
 		_text.visible_characters = int(shown)
 		await get_tree().process_frame
 	_text.visible_ratio = 1.0

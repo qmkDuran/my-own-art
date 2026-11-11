@@ -2,7 +2,7 @@ class_name PauseMenu
 extends Control
 ## The field menu (Esc/Tab/M): Team, Journal, Bag, Save, Close, with your coins and how healed the Vale is.
 
-const ITEMS: PackedStringArray = ["Team", "Journal", "Bag", "Save", "Close"]
+const ITEMS: PackedStringArray = ["Team", "Journal", "Bag", "Save", "Settings", "Close"]
 const W: int = 92
 
 
@@ -34,7 +34,7 @@ func _open(item: String, world: Overworld) -> void:
 		Audio.sfx("save")
 		await world.dialog.say(PackedStringArray(["Your journey was saved."]))
 		return
-	var screen: ScreenPanel = {"Team": PartyPanel, "Journal": JournalPanel, "Bag": BagPanel}[item].new()
+	var screen: ScreenPanel = {"Team": PartyPanel, "Journal": JournalPanel, "Bag": BagPanel, "Settings": SettingsPanel}[item].new()
 	add_child(screen)
 	await screen.run()
 	screen.queue_free()

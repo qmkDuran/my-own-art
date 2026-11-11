@@ -21,9 +21,16 @@ func _ready() -> void:
 	add_child(_music)
 	for i: int in POOL:
 		var p := AudioStreamPlayer.new()
-		p.volume_db = SFX_DB
 		add_child(p)
 		_pool.append(p)
+	Settings.load_settings()
+	apply_volumes()
+
+
+func apply_volumes() -> void:
+	_music.volume_db = MUSIC_DB + Settings.volume_db(Settings.music)
+	for p: AudioStreamPlayer in _pool:
+		p.volume_db = SFX_DB + Settings.volume_db(Settings.sounds)
 
 
 func _stream(name: String) -> AudioStream:
@@ -42,7 +49,6 @@ func music(track: String) -> void:
 		(s as AudioStreamWAV).loop_mode = AudioStreamWAV.LOOP_FORWARD
 		(s as AudioStreamWAV).loop_end = int(s.get_length() * (s as AudioStreamWAV).mix_rate)
 	_music.stream = s
-	_music.volume_db = MUSIC_DB
 	if s != null:
 		_music.play()
 
