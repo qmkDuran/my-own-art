@@ -3,15 +3,18 @@ extends RefCounted
 ## Saving and loading the game to user://save.json (one slot).
 
 const PATH: String = "user://save.json"
+const TEST_PATH: String = "user://test_save.json"
+## Tests point this at TEST_PATH so they never touch a real save.
+static var path: String = PATH
 const VERSION: int = 1
 
 
 static func has_save() -> bool:
-	return FileAccess.file_exists(PATH)
+	return FileAccess.file_exists(path)
 
 
 static func save() -> void:
-	var f: FileAccess = FileAccess.open(PATH, FileAccess.WRITE)
+	var f: FileAccess = FileAccess.open(path, FileAccess.WRITE)
 	f.store_string(JSON.stringify(snapshot(), "\t"))
 
 
@@ -28,7 +31,7 @@ static func snapshot() -> Dictionary:
 static func load_game() -> bool:
 	if not has_save():
 		return false
-	var d: Variant = JSON.parse_string(FileAccess.get_file_as_string(PATH))
+	var d: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
 	if not d is Dictionary:
 		return false
 	restore(d as Dictionary)

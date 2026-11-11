@@ -5,7 +5,7 @@ extends Node
 
 const MODES: Dictionary = {
 	"--smoke": "res://tests/smoke_test.gd", "--maps": "res://tests/map_check.gd", "--ui": "res://tests/ui_check.gd",
-	"--shots": "res://tests/shots.gd",
+	"--shots": "res://tests/shots.gd", "--play": "res://tests/play_test.gd",
 }
 
 
@@ -24,6 +24,7 @@ func _ready() -> void:
 	var flag: String = _mode()
 	if flag == "":
 		return
+	SaveSystem.path = SaveSystem.TEST_PATH
 	var node: Node = (load(MODES[flag]) as GDScript).new()
 	node.process_mode = Node.PROCESS_MODE_ALWAYS
 	add_child.call_deferred(node)
