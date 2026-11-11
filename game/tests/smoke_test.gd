@@ -52,6 +52,11 @@ func _timing_maths() -> void:
 	var braced: int = BattleRules.damage(a, d, "ember_nip", BattleRules.timing_mult("miss", "perfect"), 1.0)
 	check(perfect > plain and braced < plain, "timing: perfect strike hits harder, a perfect brace takes less")
 	check(Db.element_mult("cinder", "bloom") > 1.0 and Db.element_mult("bloom", "cinder") < 1.0, "element chart")
+	StatusRules.apply(d, "singed")
+	check(StatusRules.chip(d) > 0 and d.status_turns == 3, "singed chips HP for three rounds")
+	for i: int in 3:
+		StatusRules.tick(d)
+	check(d.status == "", "conditions wear off")
 	check(TimingRing.grade_for(TimingRing.TARGET_R) == "perfect" and TimingRing.grade_for(0.0) == "miss", "ring grades")
 
 

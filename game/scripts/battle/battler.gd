@@ -8,6 +8,9 @@ var wild: bool = false
 var trust: int = 0
 var mood: String = "wary"
 var respected: bool = false
+## A battle-only condition ("singed", "drowsy", "rattled" or "") and how many rounds it has left.
+var status: String = ""
+var status_turns: int = 0
 
 
 static func of(c: Creature, is_wild: bool = false) -> Battler:

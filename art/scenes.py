@@ -113,7 +113,7 @@ def battle(stage: str) -> Canvas:
     """A battle stage: sky, a distant tree line, meadow and two grass pads."""
     c = Canvas(W, H)
     _bands(c, [(0, "water4"), (26, "sky")])
-    _clouds(c, [(70, 14), (250, 24)])
+    _clouds(c, [(190, 12), (306, 52), (24, 30)])
     _treeline(c, 44, "teal" if stage == "grove" else "leaf", 11)
     if stage == "grove":
         _treeline(c, 54, "leaf", 4)

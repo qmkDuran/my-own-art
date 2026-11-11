@@ -15,6 +15,7 @@ var restoration: Dictionary = {}
 var palette: Dictionary = {}
 var legend: Dictionary = {}
 var people: Dictionary = {}
+var statuses: Dictionary = {}
 var _maps: Dictionary = {}
 
 
@@ -29,6 +30,7 @@ func _ready() -> void:
 	palette = read_json("palette.json")
 	legend = read_json("legend.json")
 	people = read_json("people.json")
+	statuses = read_json("statuses.json")
 
 
 func read_json(rel: String) -> Dictionary:

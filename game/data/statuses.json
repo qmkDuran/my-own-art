@@ -1,0 +1,8 @@
+{
+ "singed": {"name": "Singed", "turns": 3, "colour": "ember2", "chip": 0.1,
+  "inflict": "%s is singed!", "tick": "%s smarts from its singe.", "end": "%s's singe cools off."},
+ "drowsy": {"name": "Drowsy", "turns": 2, "colour": "plum2", "skip": 0.5,
+  "inflict": "%s grows drowsy...", "tick": "%s is too drowsy to move!", "end": "%s shakes off its drowsiness."},
+ "rattled": {"name": "Rattled", "turns": 2, "colour": "stone1", "miss": 0.35,
+  "inflict": "%s is rattled!", "tick": "%s is too rattled to aim, and misses!", "end": "%s steadies itself."}
+}

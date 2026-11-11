@@ -21,6 +21,7 @@ var _hearts: Array[TextureRect] = []
 var _mood_icon: TextureRect
 var _mood: Label
 var _badge: TextureRect
+var _status: Label
 var _full: Texture2D = preload("res://art/ui/heart_full.png")
 var _half: Texture2D = preload("res://art/ui/heart_half.png")
 var _empty: Texture2D = preload("res://art/ui/heart_empty.png")
@@ -34,18 +35,19 @@ func setup(is_ally: bool) -> CreatureCard:
 	_name = _text(Vector2(17, 1), "ink")
 	_level = _text(Vector2(W - 30, 3), "dusk", true)
 	_text(Vector2(5, 15), "ember1", true).text = "HP"
-	hp_bar = Meter.new().setup(BAR_W, 5, "leaf3", true)
+	hp_bar = Meter.new().setup(BAR_W if not ally else BAR_W - 30, 5, "leaf3", true)
 	hp_bar.position = Vector2(22, 17)
 	add_child(hp_bar)
 	if ally:
 		_build_ally_rows()
 	else:
 		_build_trust_row()
+	_status = _text(Vector2(78, 25) if ally else Vector2(5, H_FOE - 1), "ink", true)
 	return self
 
 
 func _build_ally_rows() -> void:
-	_numbers = _text(Vector2(W - 44, 21), "ink2", true)
+	_numbers = _text(Vector2(W - 34, 14), "ink2", true)
 	_text(Vector2(5, 27), "water2", true).text = "XP"
 	xp_bar = Meter.new().setup(52, 4, "water3")
 	xp_bar.position = Vector2(22, 30)
@@ -85,6 +87,23 @@ func show_battler(b: Battler) -> void:
 	if ally:
 		xp_bar.set_fraction(float(c.xp) / Growth.xp_to_next(c.level))
 	_set_trust_row_visible(b.wild)
+	show_status()
+
+
+## The condition tag (Singed, Drowsy, Rattled); the foe card grows a row for it.
+func show_status() -> void:
+	var id: String = battler.status
+	_status.visible = id != ""
+	var base_h: float = H_FOE if battler.wild else H_ALLY - 12
+	if id == "":
+		if not ally:
+			size.y = base_h
+		return
+	_status.text = String(StatusRules.data(id)["name"]).to_upper()
+	_status.add_theme_color_override("font_color", UiKit.c(String(StatusRules.data(id)["colour"])))
+	if not ally:
+		_status.position.y = base_h - 3
+		size.y = base_h + 9
 
 
 func _set_trust_row_visible(on: bool) -> void:

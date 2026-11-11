@@ -1,28 +1,236 @@
 {
- "leafdart": {"name": "Leafdart", "element": "bloom", "kind": "attack", "power": 40, "text": "Flicks a sharp leaf."},
- "sap_mend": {"name": "Sap Mend", "element": "bloom", "kind": "heal", "amount": 0.3, "text": "Sweet sap closes small hurts (heals 30%)."},
- "barkskin": {"name": "Barkskin", "element": "bloom", "kind": "buff", "stat": "def", "text": "Bark hardens over the hide (Defense up)."},
- "petal_gust": {"name": "Petal Gust", "element": "bloom", "kind": "attack", "power": 60, "text": "A gust thick with petals."},
- "thornwhirl": {"name": "Thornwhirl", "element": "bloom", "kind": "attack", "power": 80, "text": "A spinning crown of thorns."},
- "ember_nip": {"name": "Ember Nip", "element": "cinder", "kind": "attack", "power": 40, "text": "A warm little bite."},
- "kindle": {"name": "Kindle", "element": "cinder", "kind": "buff", "stat": "atk", "text": "Stokes its inner fire (Attack up)."},
- "smoke_veil": {"name": "Smoke Veil", "element": "cinder", "kind": "debuff", "stat": "atk", "text": "Soft smoke dulls the foe (its Attack down)."},
- "flare_pounce": {"name": "Flare Pounce", "element": "cinder", "kind": "attack", "power": 60, "text": "Leaps wrapped in flame."},
- "hearthblaze": {"name": "Hearthblaze", "element": "cinder", "kind": "attack", "power": 85, "text": "The heat of a banked hearth, all at once."},
- "glow_dust": {"name": "Glow Dust", "element": "cinder", "kind": "attack", "power": 45, "text": "Shakes warm, glittering dust."},
- "splash_jab": {"name": "Splash Jab", "element": "tide", "kind": "attack", "power": 40, "text": "A quick slap of water."},
- "soft_rain": {"name": "Soft Rain", "element": "tide", "kind": "heal", "amount": 0.3, "text": "A small cloud of healing rain (heals 30%)."},
- "shell_up": {"name": "Shell Up", "element": "tide", "kind": "buff", "stat": "def", "text": "Tucks in tight (Defense up)."},
- "ripple_ring": {"name": "Ripple Ring", "element": "tide", "kind": "attack", "power": 55, "text": "Rings of water spread out."},
- "undertow": {"name": "Undertow", "element": "tide", "kind": "attack", "power": 70, "text": "A pull from below the surface."},
- "torrent_rush": {"name": "Torrent Rush", "element": "tide", "kind": "attack", "power": 85, "text": "Charges in a rushing stream."},
- "peck_breeze": {"name": "Peck Breeze", "element": "gale", "kind": "attack", "power": 40, "text": "A peck on a puff of wind."},
- "updraft": {"name": "Updraft", "element": "gale", "kind": "attack", "power": 60, "text": "Lifts the foe and drops it."},
- "fluff_up": {"name": "Fluff Up", "element": "gale", "kind": "buff", "stat": "def", "text": "Puffs up its feathers (Defense up)."},
- "whirl_feather": {"name": "Whirl Feather", "element": "gale", "kind": "attack", "power": 55, "text": "Feathers spin like a little storm."},
- "pebble_toss": {"name": "Pebble Toss", "element": "stone", "kind": "attack", "power": 40, "text": "Flings a smooth pebble."},
- "dig_in": {"name": "Dig In", "element": "stone", "kind": "buff", "stat": "def", "text": "Plants its feet (Defense up)."},
- "rockroll": {"name": "Rockroll", "element": "stone", "kind": "attack", "power": 60, "text": "Curls up and rolls in."},
- "quake_paw": {"name": "Quake Paw", "element": "stone", "kind": "attack", "power": 75, "text": "A stamp that shakes the ground."},
- "dust_kick": {"name": "Dust Kick", "element": "stone", "kind": "debuff", "stat": "def", "text": "Kicks up grit (foe Defense down)."}
+ "leafdart": {
+  "name": "Leafdart",
+  "element": "bloom",
+  "kind": "attack",
+  "power": 40,
+  "text": "Flicks a sharp leaf."
+ },
+ "sap_mend": {
+  "name": "Sap Mend",
+  "element": "bloom",
+  "kind": "heal",
+  "amount": 0.3,
+  "text": "Sweet sap closes small hurts (heals 30%)."
+ },
+ "barkskin": {
+  "name": "Barkskin",
+  "element": "bloom",
+  "kind": "buff",
+  "stat": "def",
+  "text": "Bark hardens over the hide (Defense up)."
+ },
+ "petal_gust": {
+  "name": "Petal Gust",
+  "element": "bloom",
+  "kind": "attack",
+  "power": 60,
+  "text": "A gust thick with petals.",
+  "status": {
+   "id": "drowsy",
+   "chance": 0.2
+  }
+ },
+ "thornwhirl": {
+  "name": "Thornwhirl",
+  "element": "bloom",
+  "kind": "attack",
+  "power": 80,
+  "text": "A spinning crown of thorns.",
+  "status": {
+   "id": "rattled",
+   "chance": 0.25
+  }
+ },
+ "ember_nip": {
+  "name": "Ember Nip",
+  "element": "cinder",
+  "kind": "attack",
+  "power": 40,
+  "text": "A warm little bite.",
+  "status": {
+   "id": "singed",
+   "chance": 0.15
+  }
+ },
+ "kindle": {
+  "name": "Kindle",
+  "element": "cinder",
+  "kind": "buff",
+  "stat": "atk",
+  "text": "Stokes its inner fire (Attack up)."
+ },
+ "smoke_veil": {
+  "name": "Smoke Veil",
+  "element": "cinder",
+  "kind": "debuff",
+  "stat": "atk",
+  "text": "Soft smoke dulls the foe (its Attack down)."
+ },
+ "flare_pounce": {
+  "name": "Flare Pounce",
+  "element": "cinder",
+  "kind": "attack",
+  "power": 60,
+  "text": "Leaps wrapped in flame.",
+  "status": {
+   "id": "singed",
+   "chance": 0.3
+  }
+ },
+ "hearthblaze": {
+  "name": "Hearthblaze",
+  "element": "cinder",
+  "kind": "attack",
+  "power": 85,
+  "text": "The heat of a banked hearth, all at once.",
+  "status": {
+   "id": "singed",
+   "chance": 0.3
+  }
+ },
+ "glow_dust": {
+  "name": "Glow Dust",
+  "element": "cinder",
+  "kind": "attack",
+  "power": 45,
+  "text": "Shakes warm, glittering dust.",
+  "status": {
+   "id": "drowsy",
+   "chance": 0.3
+  }
+ },
+ "splash_jab": {
+  "name": "Splash Jab",
+  "element": "tide",
+  "kind": "attack",
+  "power": 40,
+  "text": "A quick slap of water."
+ },
+ "soft_rain": {
+  "name": "Soft Rain",
+  "element": "tide",
+  "kind": "heal",
+  "amount": 0.3,
+  "text": "A small cloud of healing rain (heals 30%)."
+ },
+ "shell_up": {
+  "name": "Shell Up",
+  "element": "tide",
+  "kind": "buff",
+  "stat": "def",
+  "text": "Tucks in tight (Defense up)."
+ },
+ "ripple_ring": {
+  "name": "Ripple Ring",
+  "element": "tide",
+  "kind": "attack",
+  "power": 55,
+  "text": "Rings of water spread out.",
+  "status": {
+   "id": "drowsy",
+   "chance": 0.2
+  }
+ },
+ "undertow": {
+  "name": "Undertow",
+  "element": "tide",
+  "kind": "attack",
+  "power": 70,
+  "text": "A pull from below the surface.",
+  "status": {
+   "id": "rattled",
+   "chance": 0.3
+  }
+ },
+ "torrent_rush": {
+  "name": "Torrent Rush",
+  "element": "tide",
+  "kind": "attack",
+  "power": 85,
+  "text": "Charges in a rushing stream.",
+  "status": {
+   "id": "rattled",
+   "chance": 0.2
+  }
+ },
+ "peck_breeze": {
+  "name": "Peck Breeze",
+  "element": "gale",
+  "kind": "attack",
+  "power": 40,
+  "text": "A peck on a puff of wind."
+ },
+ "updraft": {
+  "name": "Updraft",
+  "element": "gale",
+  "kind": "attack",
+  "power": 60,
+  "text": "Lifts the foe and drops it.",
+  "status": {
+   "id": "rattled",
+   "chance": 0.3
+  }
+ },
+ "fluff_up": {
+  "name": "Fluff Up",
+  "element": "gale",
+  "kind": "buff",
+  "stat": "def",
+  "text": "Puffs up its feathers (Defense up)."
+ },
+ "whirl_feather": {
+  "name": "Whirl Feather",
+  "element": "gale",
+  "kind": "attack",
+  "power": 55,
+  "text": "Feathers spin like a little storm.",
+  "status": {
+   "id": "rattled",
+   "chance": 0.2
+  }
+ },
+ "pebble_toss": {
+  "name": "Pebble Toss",
+  "element": "stone",
+  "kind": "attack",
+  "power": 40,
+  "text": "Flings a smooth pebble."
+ },
+ "dig_in": {
+  "name": "Dig In",
+  "element": "stone",
+  "kind": "buff",
+  "stat": "def",
+  "text": "Plants its feet (Defense up)."
+ },
+ "rockroll": {
+  "name": "Rockroll",
+  "element": "stone",
+  "kind": "attack",
+  "power": 60,
+  "text": "Curls up and rolls in.",
+  "status": {
+   "id": "rattled",
+   "chance": 0.25
+  }
+ },
+ "quake_paw": {
+  "name": "Quake Paw",
+  "element": "stone",
+  "kind": "attack",
+  "power": 75,
+  "text": "A stamp that shakes the ground.",
+  "status": {
+   "id": "rattled",
+   "chance": 0.3
+  }
+ },
+ "dust_kick": {
+  "name": "Dust Kick",
+  "element": "stone",
+  "kind": "debuff",
+  "stat": "def",
+  "text": "Kicks up grit (foe Defense down)."
+ }
 }

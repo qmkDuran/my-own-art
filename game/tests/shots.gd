@@ -160,6 +160,28 @@ func _shot_battle_moves() -> void:
 	_press("accept")
 
 
+func _shot_battle_status() -> void:
+	var b: BattleScene = await _battle("wild", "kindlemoth", true)
+	StatusRules.apply(b.foe, "drowsy")
+	b.foe_card.show_status()
+	StatusRules.apply(b.ally, "singed")
+	b.ally_card.show_status()
+	b.foe.mood = "sleepy"
+	b.view.set_mood("sleepy")
+	b.foe.trust = 70
+	b.foe_card.update_trust()
+
+
+func _shot_battle_fx() -> void:
+	var b: BattleScene = await _battle("wild", "cobblemole", true)
+	b.view.set_mood("wary")
+	var fx := MoveFx.new().setup("bloom", b.view.body_point(true), b.view.body_point(false))
+	b.view.add_child(fx)
+	fx.set("_t", 0.55)
+	fx.set_process(false)
+	fx.queue_redraw()
+
+
 func _shot_trainer() -> void:
 	await _battle("trainer", "thistlehog", true)
 

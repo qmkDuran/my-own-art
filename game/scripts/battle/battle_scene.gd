@@ -110,6 +110,8 @@ func _show_foe() -> void:
 	if foe.wild:
 		foe_card.update_trust()
 	await view.send_in(false, foe.creature)
+	if foe.wild:
+		view.set_mood(foe.mood)
 
 
 func send_foe() -> void:

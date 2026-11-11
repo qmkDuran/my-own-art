@@ -9,10 +9,12 @@ const MOVE_TIME: float = 0.12
 const BLINKS: int = 3
 const FLOAT_RISE: float = 14.0
 const FLOAT_TIME: float = 0.7
+const EMOTE_TOP: float = 14.0
 const HEART_COLOURS: Array[String] = ["rose2", "rose3", "cream"]
 
 var foe_sprite: TextureRect
 var ally_sprite: TextureRect
+var emote: Emote
 
 
 func _ready() -> void:
@@ -20,6 +22,8 @@ func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	foe_sprite = _sprite()
 	ally_sprite = _sprite()
+	emote = Emote.new()
+	add_child(emote)
 
 
 func _sprite() -> TextureRect:
@@ -42,6 +46,9 @@ func _home(ally: bool) -> Vector2:
 func send_in(ally: bool, c: Creature) -> void:
 	var s: TextureRect = sprite(ally)
 	s.texture = UiKit.creature_tex(c.species_id, "back" if ally else "front")
+	if not ally:
+		emote.position = head_point(false)
+		emote.mood = ""
 	s.position = _home(ally) + Vector2(0, 6)
 	s.modulate.a = 0.0
 	s.visible = true
@@ -121,3 +128,29 @@ func sparkle(ally: bool, colours_heart: bool = false) -> void:
 
 func _t(seconds: float) -> float:
 	return 0.01 if Game.fast else seconds
+
+
+## The top of the creature's drawn body (mirrored like the sprite), for emotes above its head.
+func head_point(ally: bool) -> Vector2:
+	var s: TextureRect = sprite(ally)
+	var used: Rect2i = s.texture.get_image().get_used_rect()
+	var x: float = BattleLayout.SPRITE.x - used.get_center().x
+	return _home(ally) + Vector2(x, maxf(used.position.y - 4, EMOTE_TOP - _home(ally).y))
+
+
+func body_point(ally: bool) -> Vector2:
+	return BattleLayout.ring_point(ally)
+
+
+func set_mood(mood: String) -> void:
+	emote.mood = mood
+
+
+func react(kind: String) -> void:
+	emote.burst(kind)
+
+
+func play_fx(element: String, attacker_ally: bool) -> void:
+	var fx := MoveFx.new().setup(element, body_point(attacker_ally), body_point(not attacker_ally))
+	add_child(fx)
+	await fx.play()

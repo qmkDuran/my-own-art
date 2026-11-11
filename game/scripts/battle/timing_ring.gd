@@ -5,11 +5,11 @@ extends Node2D
 
 signal graded(grade: String)
 
-const START_R: float = 40.0
-const TARGET_R: float = 13.0
+const START_R: float = 64.0
+const TARGET_R: float = 31.0
 const DURATION: float = 0.85
-const PERFECT_BAND: float = 2.5
-const GOOD_BAND: float = 7.0
+const PERFECT_BAND: float = 3.0
+const GOOD_BAND: float = 8.0
 const LABEL_TIME: float = 0.45
 const RING_W: float = 2.0
 const TEXTS: Dictionary = {"perfect": "Perfect!", "good": "Good", "miss": ""}
@@ -30,7 +30,7 @@ func _ready() -> void:
 	_grade_label = UiKit.label("", "cream")
 	_grade_label.add_theme_color_override("font_outline_color", UiKit.c("ink"))
 	_grade_label.add_theme_constant_override("outline_size", 3)
-	_grade_label.position = Vector2(-20, -TARGET_R - 22)
+	_grade_label.position = Vector2(-20, -6)
 	_grade_label.custom_minimum_size = Vector2(40, 0)
 	_grade_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	add_child(_grade_label)
@@ -41,6 +41,7 @@ func _ready() -> void:
 func run(at: Vector2, kind: String) -> String:
 	position = at
 	mode = kind
+	_grade_label.position = Vector2(-20, TARGET_R + 1 if kind != "defend" else -TARGET_R - 15)
 	_t = 0.0
 	_done = false
 	_grade_label.text = ""
@@ -107,14 +108,15 @@ func _draw() -> void:
 	if _done:
 		return
 	var accent: String = String(ACCENTS[mode])
-	draw_arc(Vector2.ZERO, TARGET_R + GOOD_BAND, 0, TAU, 48, UiKit.c("mist"), 1.0, false)
-	draw_arc(Vector2.ZERO, TARGET_R, 0, TAU, 40, UiKit.c("cream"), RING_W, false)
-	draw_arc(Vector2.ZERO, TARGET_R, 0, TAU, 40, UiKit.c("ink"), 1.0, false)
-	draw_arc(Vector2.ZERO, current_radius(), 0, TAU, 48, UiKit.c("ink"), RING_W + 2, false)
-	draw_arc(Vector2.ZERO, current_radius(), 0, TAU, 48, UiKit.c(accent), RING_W, false)
+	draw_arc(Vector2.ZERO, TARGET_R + GOOD_BAND, 0, TAU, 64, UiKit.c("mist"), 1.0, false)
+	draw_arc(Vector2.ZERO, TARGET_R, 0, TAU, 64, UiKit.c("ink"), RING_W + 2, false)
+	draw_arc(Vector2.ZERO, TARGET_R, 0, TAU, 64, UiKit.c("cream"), RING_W, false)
+	draw_arc(Vector2.ZERO, current_radius(), 0, TAU, 72, UiKit.c("ink"), RING_W + 2, false)
+	draw_arc(Vector2.ZERO, current_radius(), 0, TAU, 72, UiKit.c(accent), RING_W, false)
 	var hint: String = String(HINTS[mode])
 	var w: float = UiKit.text_width(hint, true)
-	draw_string(UiKit.small_font(), Vector2(-w / 2, TARGET_R + 13), hint, HORIZONTAL_ALIGNMENT_LEFT, -1,
+	var y: float = TARGET_R + 12 if mode != "defend" else -TARGET_R - 5
+	draw_string(UiKit.small_font(), Vector2(-w / 2, y + 1), hint, HORIZONTAL_ALIGNMENT_LEFT, -1,
 		UiKit.SMALL_SIZE, UiKit.c("ink"))
-	draw_string(UiKit.small_font(), Vector2(-w / 2, TARGET_R + 12), hint, HORIZONTAL_ALIGNMENT_LEFT, -1,
+	draw_string(UiKit.small_font(), Vector2(-w / 2, y), hint, HORIZONTAL_ALIGNMENT_LEFT, -1,
 		UiKit.SMALL_SIZE, UiKit.c("cream"))

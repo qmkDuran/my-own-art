@@ -69,10 +69,40 @@ func foe_turn() -> void:
 func _end_of_round() -> void:
 	if over():
 		return
+	await _status_round(b.ally, true)
+	if not over():
+		await _status_round(b.foe, false)
+	if over():
+		return
 	if b.is_wild():
 		b.foe.mood = TrustRules.roll_mood(b.foe.creature.species_id, Game.rng)
 		b.foe_card.update_trust()
+		b.view.set_mood(b.foe.mood)
 	b.messages.show_now("What will %s do?" % b.ally.creature.display_name())
+
+
+## Singe damage and conditions wearing off, once per round.
+func _status_round(who: Battler, ally: bool) -> void:
+	if who.creature.is_fainted() or who.status == "":
+		return
+	var card: CreatureCard = b.ally_card if ally else b.foe_card
+	var name: String = who.creature.display_name()
+	var chip: int = StatusRules.chip(who)
+	if chip > 0:
+		who.creature.take(chip)
+		await b.view.hurt(ally)
+		await card.update_hp()
+		await b.messages.say(StatusRules.line("singed", "tick", name))
+		if who.creature.is_fainted():
+			if ally:
+				await _ally_down()
+			else:
+				await _foe_down()
+			return
+	var id: String = who.status
+	if StatusRules.tick(who):
+		card.show_status()
+		await b.messages.say(StatusRules.line(id, "end", name))
 
 
 func _run_away() -> void:
@@ -108,6 +138,7 @@ func _gentle(how: String, treat: String) -> void:
 	TrustRules.add(b.foe, gain)
 	b.foe_card.update_trust()
 	b.view.sparkle(false, true)
+	b.view.react("hearts" if gain >= TrustRules.MISMATCH_GAIN else "sweat")
 	Audio.sfx("trust")
 	await b.messages.say(_reaction(how, treat, gain))
 	if TrustRules.is_won(b.foe):
