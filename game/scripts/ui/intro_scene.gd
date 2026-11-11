@@ -17,7 +17,7 @@ var _index: int = 0
 
 
 func _ready() -> void:
-	set_anchors_preset(Control.PRESET_FULL_RECT)
+	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_bg = TextureRect.new()
 	_bg.position = ((get_viewport_rect().size - Vector2(320, 180)) / 2).floor()
 	add_child(_bg)

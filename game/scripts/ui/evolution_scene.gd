@@ -10,10 +10,10 @@ var _dialog: DialogueBox
 
 
 func run(c: Creature, into: String) -> void:
-	set_anchors_preset(Control.PRESET_FULL_RECT)
+	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	var bg := ColorRect.new()
 	bg.color = UiKit.c("ink2")
-	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
+	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(bg)
 	var centre: Vector2 = get_viewport_rect().size / 2
 	add_child(UiKit.panel(Rect2(centre + Vector2(-48, -76), Vector2(96, 90)), "plum0", "plum2"))

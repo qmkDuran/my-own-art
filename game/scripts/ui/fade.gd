@@ -10,7 +10,7 @@ static func out(layer: CanvasLayer, colour: String = "ink") -> void:
 	var r := ColorRect.new()
 	r.color = UiKit.c(colour)
 	r.color.a = 0.0
-	r.set_anchors_preset(Control.PRESET_FULL_RECT)
+	r.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	r.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	layer.add_child(r)
 	layer.set_meta(META, r)

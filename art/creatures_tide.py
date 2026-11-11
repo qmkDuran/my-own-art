@@ -38,10 +38,16 @@ def ripplet(c: Canvas, view: str, s: float = 1.0) -> None:
 def _ripplet_back(c: Canvas, s: float) -> None:
     c.part(c.taper([(30 * s, 72 * s), (16 * s, 72 * s), (8 * s, 64 * s)], 5 * s, 3 * s), "water", 2)
     c.part(c.ellipse(40 * s, 58 * s, 17 * s, 19 * s), "water", 3)
-    for x in (30, 60):
+    for x in (26, 56):
+        c.part(c.ellipse(x * s, 72 * s, 6 * s, 3.5 * s), "water", 2)
+    c.part(c.capsule(24 * s, 52 * s, 22 * s, 62 * s, 3.4 * s), "water", 2)
+    c.part(c.capsule(57 * s, 52 * s, 59 * s, 62 * s, 3.4 * s), "water", 3)
+    c.part(c.ellipse(57 * s, 37 * s, 6 * s, 4.5 * s), "ink", 5)
+    for x in (31, 57):
         c.part(c.circle(x * s, 22 * s, 4.5 * s), "water", 2)
-    c.part(c.ellipse(45 * s, 32 * s, 16 * s, 14 * s), "water", 3, gloss=True)
-    c.part(c.leaf(44 * s, 20 * s, 38 * s, 6 * s, 4.5 * s), "water", 4)
+        c.fill(c.circle(x * s, 22 * s, 2 * s), "deep1")
+    c.part(c.ellipse(44 * s, 32 * s, 15 * s, 13 * s), "water", 3, gloss=True)
+    c.part(c.leaf(43 * s, 21 * s, 37 * s, 7 * s, 4.5 * s), "water", 4)
 
 
 def rivermane(c: Canvas, view: str, s: float = 1.0) -> None:
@@ -57,9 +63,10 @@ def rivermane(c: Canvas, view: str, s: float = 1.0) -> None:
         c.part(c.ellipse(sx(36), 60 * s, 12 * s, 6 * s), "ink", 5, contour=False)
     c.part(c.capsule(sx(32), 52 * s, sx(28), 36 * s, 8 * s), "water", 2)
     c.part(c.ellipse(sx(28), 30 * s, 12 * s, 10 * s), "water", 2, gloss=not back)
-    for k in range(4):
-        c.part(c.leaf(sx(30 + k * 6), (22 + k * 8) * s, sx(44 + k * 6), (30 + k * 8) * s, 5 * s), "water", 3)
-        c.fill(c.leaf(sx(32 + k * 6), (22 + k * 8) * s, sx(42 + k * 6), (27 + k * 8) * s, 1.6 * s), "sky")
+    for k in range(5):
+        x0, y0 = 31 + k * 3.5, 22 + k * 6
+        c.part(c.leaf(sx(x0), y0 * s, sx(x0 + 10), (y0 - 5) * s, 3.6 * s), "water", 4)
+        c.fill(c.leaf(sx(x0 + 3), (y0 - 1.5) * s, sx(x0 + 9), (y0 - 4.5) * s, 1.1 * s), "sky")
     c.part(c.leaf(sx(30), 22 * s, sx(36), 6 * s, 4 * s), "water", 4)
     c.part(c.leaf(sx(26), 22 * s, sx(18), 9 * s, 3.4 * s), "water", 3)
     c.fill(c.circle(sx(37), 9 * s, 1.3 * s), "sky")

@@ -130,7 +130,10 @@ func _join() -> void:
 	Audio.sfx("befriend")
 	await b.view.hop(false)
 	await b.messages.say("%s trusts you completely. It wants to come with you!" % c.display_name())
+	var room: bool = Game.party.size() < GameState.MAX_PARTY
 	Game.befriend(c)
+	if not room:
+		await b.messages.say("Your team is full, so %s heads off to wait in Gran's garden." % c.display_name())
 	await _award_xp(Growth.befriend_reward(c))
 	b.result = {"outcome": "befriended", "creature": c}
 

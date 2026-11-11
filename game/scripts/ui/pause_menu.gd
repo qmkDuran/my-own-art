@@ -7,7 +7,7 @@ const W: int = 92
 
 
 func run(world: Overworld) -> void:
-	set_anchors_preset(Control.PRESET_FULL_RECT)
+	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	var view: Vector2 = get_viewport_rect().size
 	var panel := UiKit.panel(Rect2(view.x - W - 4, 4, W, ITEMS.size() * MenuList.ROW_H + 34))
 	add_child(panel)

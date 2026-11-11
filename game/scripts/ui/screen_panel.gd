@@ -13,11 +13,11 @@ var _title_tab: Panel
 
 
 func _ready() -> void:
-	set_anchors_preset(Control.PRESET_FULL_RECT)
+	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	var view: Vector2 = get_viewport_rect().size
 	var backing := ColorRect.new()
 	backing.color = UiKit.c("ink2")
-	backing.set_anchors_preset(Control.PRESET_FULL_RECT)
+	backing.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(backing)
 	frame = UiKit.panel(Rect2(MARGIN, MARGIN + TITLE_H, view.x - MARGIN * 2, view.y - MARGIN * 2 - TITLE_H))
 	add_child(frame)

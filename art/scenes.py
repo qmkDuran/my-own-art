@@ -84,17 +84,22 @@ def _river(c: Canvas) -> None:
     c.fill(edge, "sand2")
 
 
-SKY_WITHER = {"water3": "stone3", "water4": "fog", "sky": "stone4", "sun": "paper", "ember4": "fog"}
-HORIZON = 90
+SKY_WITHER = {"water4": "fog", "sky": "stone4", "sun": "paper", "ember4": "fog"}
+HIGH_SKY = {"water3": "stone3"}
+HORIZON = 80
 
 
 def _drain(c: Canvas, area: np.ndarray) -> None:
     """Withered twins inside area: a pale grey sky above the horizon, dry land below."""
     _, y = c.grid()
+    before = c.px.copy()
     for name, dry in SKY_WITHER.items():
-        c.px[area & (y < HORIZON) & (c.px == INDEX[name])] = INDEX[dry]
+        c.px[area & (before == INDEX[name])] = INDEX[dry]
+    for name, dry in HIGH_SKY.items():
+        c.px[area & (y < HORIZON) & (before == INDEX[name])] = INDEX[dry]
     for name, dry in WITHER.items():
-        c.px[area & (y >= HORIZON) & (c.px == INDEX[name])] = INDEX[dry]
+        if name not in SKY_WITHER:
+            c.px[area & (y >= HORIZON) & (before == INDEX[name])] = INDEX[dry]
 
 
 def _wither_left(c: Canvas) -> None:

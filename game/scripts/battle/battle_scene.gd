@@ -54,7 +54,7 @@ func run(foes: Array[Creature]) -> Dictionary:
 func _build() -> void:
 	var back := ColorRect.new()
 	back.color = UiKit.c("water4")
-	back.set_anchors_preset(Control.PRESET_FULL_RECT)
+	back.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(back)
 	stage_root = Control.new()
 	stage_root.size = BattleLayout.STAGE

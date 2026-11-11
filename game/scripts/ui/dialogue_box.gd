@@ -20,7 +20,7 @@ var _waiting: bool = false
 
 
 func _ready() -> void:
-	set_anchors_preset(Control.PRESET_FULL_RECT)
+	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_panel = UiKit.panel(Rect2(), "paper", "ink")
 	add_child(_panel)

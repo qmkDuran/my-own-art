@@ -7,6 +7,7 @@ signal map_loaded(id: String)
 
 const T: int = 16
 const WANDER_EVERY: float = 2.5
+const INPUT_COOLDOWN: int = 2
 
 var map: MapGrid
 var painter: TerrainPainter = TerrainPainter.new()
@@ -25,6 +26,8 @@ var interactions: WorldInteractions
 var battles: BattleLauncher
 var healing: HealSequence
 var _wander_clock: float = 0.0
+## Frames to ignore input after an event ends, so the press that closed it does not start another.
+var _cooldown: int = 0
 
 
 func _ready() -> void:
@@ -87,7 +90,13 @@ func _spawn_people(cell: Vector2i, facing: Vector2i) -> void:
 func _process(delta: float) -> void:
 	_update_camera()
 	_wander(delta)
-	if busy or player.moving:
+	if busy:
+		_cooldown = INPUT_COOLDOWN
+		return
+	if player.moving:
+		return
+	if _cooldown > 0:
+		_cooldown -= 1
 		return
 	if Input.is_action_just_pressed("accept"):
 		interactions.interact()

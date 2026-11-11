@@ -62,13 +62,20 @@ def _mossfawn_back(c: Canvas, s: float) -> None:
     c.part(c.ellipse(40 * s, 47 * s, 18 * s, 10 * s), "leaf", 3, gloss=True)
     for x in (28, 38, 48):
         c.part(c.leaf(x * s, 42 * s, (x + 4) * s, 34 * s, 3 * s), "leaf", 4, contour=False)
-    c.part(c.capsule(50 * s, 46 * s, 52 * s, 38 * s, 6 * s), "bark", 3)
-    c.part(c.leaf(46 * s, 26 * s, 32 * s, 17 * s, 5 * s), "bark", 2)
-    c.part(c.leaf(60 * s, 26 * s, 73 * s, 18 * s, 5 * s), "bark", 3)
-    c.part(c.ellipse(53 * s, 32 * s, 11 * s, 10 * s), "bark", 3, gloss=True)
+    _rear_head(c, s, 53, 32, 10)
     c.part(c.capsule(53 * s, 23 * s, 54 * s, 15 * s, 1.2 * s), "leaf", 2, contour=False)
     c.part(c.leaf(54 * s, 16 * s, 46 * s, 11 * s, 3 * s), "leaf", 3)
     c.part(c.leaf(54 * s, 16 * s, 62 * s, 10 * s, 3 * s), "leaf", 4)
+
+
+def _rear_head(c: Canvas, s: float, hx: float, hy: float, r: float) -> None:
+    """A deer head seen from behind and a little to the side: neck, ears, the snout tip peeking out."""
+    c.part(c.capsule((hx - 4) * s, (hy + 16) * s, (hx - 1) * s, (hy + 4) * s, 6 * s), "bark", 3)
+    c.part(c.ellipse((hx + r * 0.75) * s, (hy + 5) * s, 5.5 * s, 4 * s), "bark", 5)
+    c.part(c.leaf((hx - 5) * s, (hy - 5) * s, (hx - 19) * s, (hy - 12) * s, 4.5 * s), "bark", 2)
+    c.part(c.ellipse(hx * s, hy * s, r * s, (r - 1) * s), "bark", 3, gloss=True)
+    c.part(c.leaf((hx + 5) * s, (hy - 6) * s, (hx + 17) * s, (hy - 13) * s, 4.5 * s), "bark", 3)
+    c.fill(c.leaf((hx + 6) * s, (hy - 6) * s, (hx + 15) * s, (hy - 11.5) * s, 1.6 * s), "rose3")
 
 
 def grovehart(c: Canvas, view: str, s: float = 1.0) -> None:
@@ -116,16 +123,13 @@ def _grovehart_back(c: Canvas, s: float) -> None:
     for x, y, col in ((28, 45, "rose3"), (40, 42, "sun"), (52, 44, "rose3"), (46, 50, "cream")):
         c.fill(c.circle(x * s, y * s, 2 * s), col)
         c.dot(round(x * s), round(y * s), "ember3")
-    c.part(c.capsule(51 * s, 46 * s, 53 * s, 37 * s, 6.5 * s), "bark", 3)
     for side in (1, -1):
-        bx = 54 + side * 6
-        c.part(c.taper([(bx * s, 26 * s), ((bx + side * 5) * s, 17 * s), ((bx + side * 13) * s, 9 * s)], 2 * s, 1.1 * s), "bark", 2, contour=False)
-        c.part(c.leaf((bx + side * 13) * s, 9 * s, (bx + side * 20) * s, 12 * s, 2.6 * s), "leaf", 3)
-        c.part(c.taper([((bx + side * 4) * s, 19 * s), ((bx - side * 1) * s, 11 * s)], 1.3 * s, 1 * s), "bark", 2, contour=False)
-        c.part(c.leaf((bx - side * 1) * s, 11 * s, (bx - side * 5) * s, 6 * s, 2.3 * s), "leaf", 4)
-    c.part(c.leaf(46 * s, 30 * s, 33 * s, 22 * s, 5 * s), "bark", 2)
-    c.part(c.leaf(62 * s, 30 * s, 74 * s, 23 * s, 5 * s), "bark", 3)
-    c.part(c.ellipse(54 * s, 33 * s, 11 * s, 10 * s), "bark", 3, gloss=True)
+        bx = 54 + side * 5
+        c.part(c.taper([(bx * s, 27 * s), ((bx + side * 5) * s, 18 * s), ((bx + side * 13) * s, 10 * s)], 2 * s, 1.1 * s), "bark", 2, contour=False)
+        c.part(c.leaf((bx + side * 13) * s, 10 * s, (bx + side * 20) * s, 13 * s, 2.6 * s), "leaf", 3)
+        c.part(c.taper([((bx + side * 4) * s, 20 * s), ((bx - side * 1) * s, 12 * s)], 1.3 * s, 1 * s), "bark", 2, contour=False)
+        c.part(c.leaf((bx - side * 1) * s, 12 * s, (bx - side * 5) * s, 7 * s, 2.3 * s), "leaf", 4)
+    _rear_head(c, s, 54, 33, 10.5)
 
 
 def thistlehog(c: Canvas, view: str, s: float = 1.0) -> None:
