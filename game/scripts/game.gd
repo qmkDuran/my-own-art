@@ -29,6 +29,7 @@ var events: ZoneEvents
 var lamps: Array[Waylamp] = []
 var exits: Array[ZoneExit] = []
 var cocoon: Cocoon
+var loop: TuesdayLoop                    ## set in the Town of One Tuesday
 var flags: Dictionary = {}               ## this zone's own flags (boss, boss_down)
 var _dirty: bool = false
 var _save_t: float = 0.0
@@ -52,6 +53,10 @@ func _ready() -> void:
 	events = ZoneEvents.new()
 	add_child(events)
 	events.setup(self)
+	if GameData.biome.get("loop", false):
+		loop = TuesdayLoop.new()
+		add_child(loop)
+		loop.setup(self)
 	Session.campaign.notify("enter_zone", zone_id)
 	Session.campaign.quest_done.connect(_on_quest_done)
 	Session.campaign.changed.connect(mark_dirty)

@@ -175,6 +175,10 @@ def _held(s: Spr, f: Fig, item: str, hand: tuple[float, float]) -> None:
         s.line([(x + 4, y + 2), (x + 7, y)], "glass_lt")
         s.rect(x - 1, y - 1, x + 1, y, "glass")
         s.px(x - 1, y + 2, "glint")
+    elif item == "watch":
+        s.line([(x - 6, y - 8), (x, y)], "gold")
+        s.ellipse(x, y + 2, 3, 3, "gold")
+        s.ellipse(x, y + 2, 2, 2, "bone", glow=True)
     elif item == "oar":
         s.line([(x - 2, y + 14), (x + 2, y - 30)], "earth_lt", width=2)
         s.poly([(x - 4, y + 12), (x + 1, y + 12), (x, y + 22), (x - 5, y + 22)], "earth")
@@ -251,6 +255,15 @@ def _head(s: Spr, f: Fig) -> None:
         for dx, dy in ((-5, -3), (-3, -6), (0, -7), (3, -6), (5, -3), (-6, 1), (6, 1)):
             s.ellipse(CX + dx, hy + dy, 2.5, 2.5, hat[1])
         s.px(CX - 1, hy - 7, hat[2])
+    elif style == "clock":                  # a clock face where the head should be, stopped at four
+        s.ellipse(CX, hy - 1, 7, 7, "ink")
+        s.ellipse(CX, hy - 1, 6, 6, "bone")
+        for a in range(12):
+            import math as _m
+            s.px(CX + _m.cos(a * 0.5236) * 5, hy - 1 + _m.sin(a * 0.5236) * 5, "stone")
+        s.line([(CX, hy - 1), (CX, hy - 5)], "ink")
+        s.line([(CX, hy - 1), (CX + 3, hy + 1)], "ink")
+        s.px(CX, hy - 1, "rose", glow=True)
     elif style == "shadow":
         s.ellipse(CX, hy - 1, 6, 7, "void")
         s.poly([(CX - 6, hy - 3), (CX - 9, hy - 10), (CX - 3, hy - 6)], "void")
@@ -352,6 +365,12 @@ TOWNSFOLK = {
     "watchman": {"name": "", "role": "", "head": "helm", "hat": ("stone_dk", "stone", "stone_lt"), "coat": ("night", "dusk1", "dusk2"),
                  "held_r": "pike", "hem": 47, "hem_w": 10, "skin": "skin_dk", "belt": "ink", "trim": "amber", "buttons": [27, 31]},
 }
+
+REPEATER = {"name": "", "role": "", "head": "cap", "hat": ("stone_dk", "stone", "stone_lt"), "hair": "stone",
+            "coat": ("stone_dk", "stone", "stone_lt"), "hem": 48, "hem_w": 10, "skin": "pale", "eyes": "glint", "eyes_glow": True,
+            "belt": "ink", "rim_cool": "glass_lt", "rim_warm": "glint", "scarf": ("stone", "stone_dk")}
+CLOCKFACE = {"name": "", "role": "", "head": "clock", "coat": ("ink", "night", "dusk2"), "hem": 58, "hem_w": 9, "skin": "pale",
+             "held_r": "watch", "width": 0.85, "rim_cool": "violet", "rim_warm": "gold", "tatters": True, "cape": "void"}
 
 NPCS = {
     "ottilie": {"name": "Mother Ottilie Brask", "role": "Keeper of the Great Lantern", "head": "bun", "spectacles": True,

@@ -334,7 +334,8 @@
   ],
   "reward": {
    "xp": 2000
-  }
+  },
+  "next": "one_tuesday"
  },
  "rising_falls": {
   "title": "The Rising Falls",
@@ -411,5 +412,81 @@
    "xp": 1400
   },
   "next": "drowned_belfry"
+ },
+ "one_tuesday": {
+  "title": "One Tuesday",
+  "main": true,
+  "steps": [
+   {
+    "text": "Ask Captain Marr what happened",
+    "goal": [
+     "talk",
+     "ysolde"
+    ],
+    "target": {
+     "zone": "tallow",
+     "at": "npc:ysolde"
+    }
+   },
+   {
+    "text": "Take the east road to Hollin's Ford",
+    "goal": [
+     "enter_zone",
+     "hollins"
+    ],
+    "target": {
+     "zone": "hollins",
+     "at": "role:shrine"
+    }
+   },
+   {
+    "text": "Go into the town",
+    "goal": [
+     "enter_zone",
+     "tuesday"
+    ],
+    "target": {
+     "zone": "tuesday",
+     "at": "role:school"
+    }
+   },
+   {
+    "text": "Find Nim at the schoolhouse",
+    "goal": [
+     "talk",
+     "nim"
+    ],
+    "target": {
+     "zone": "tuesday",
+     "at": "role:school"
+    }
+   },
+   {
+    "text": "Stop the Mayor of Tuesday",
+    "goal": [
+     "boss_down",
+     "mayor"
+    ],
+    "target": {
+     "zone": "tuesday",
+     "at": "circle"
+    }
+   },
+   {
+    "text": "Talk to Nim",
+    "goal": [
+     "talk",
+     "nim"
+    ],
+    "target": {
+     "zone": "tuesday",
+     "at": "role:school"
+    }
+   }
+  ],
+  "reward": {
+   "xp": 4000,
+   "unique": "seventh_heartbeat"
+  }
  }
 }

@@ -24,6 +24,7 @@ const BOSS_LIGHT_ENERGY: float = 0.75
 
 var kind: String
 var data: Dictionary
+var home: Vector2
 var rank: String = "normal"
 var mods: Array = []
 var level: int = 1
@@ -51,6 +52,15 @@ var _row: int = 0
 var _shown_shroud: float = 1.0
 
 
+## The Tuesday loop: back where it stood that morning, whole again, asleep until you come near.
+func rewind() -> void:
+	life = max_life
+	global_position = home
+	awake = false
+	_knock = Vector2.ZERO
+	Fx.burst(Game.current.fx_layer, global_position, 8, Vector2(20, 60), 0.4, [Pal.c("bone"), Pal.c("pale", 0.0)])
+
+
 func setup(k: String, r: String, m: Array, lvl: int) -> void:
 	kind = k
 	data = GameData.enemy(k)
@@ -74,6 +84,7 @@ func _mod_mult(key: String) -> float:
 
 
 func _ready() -> void:
+	home = position
 	add_to_group("enemies")
 	collision_layer = 2
 	collision_mask = 1 | 4

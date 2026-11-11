@@ -217,6 +217,18 @@ the bottleneck, so each act reuses the systems and adds biome rules, set-pieces 
 - **Panels**: quest log (J), loot filter (L), Nim's maps, Fenn's lockers (with the inventory), the order's ledger
   (refund passives or a skill tree), Lio's bestiary (kills + lore).
 
+## 8b-3. Act 3 (started): the Town of One Tuesday
+After Lio's reveal (flag act2_reveal) Tallow's east gate opens. Quest "One Tuesday": Captain Marr says Nim walked
+east after a school bell -> Hollin's Ford (outskirts: hedged fields, farmhouses, every clock stopped at four;
+Repeaters and Clockfaces) -> the Town of One Tuesday: squares lined with lit houses, a market, the schoolhouse,
+Clocktower Square. **The loop** (TuesdayLoop, biome `loop: true`): every 80 s the clocks strike four — everything
+alive returns where it stood, whole again; everything dead stays dead; lamps stay lit (HUD clock "Tuesday 3:43").
+Nim is stuck at her desk; break the loop by killing **the Mayor of Tuesday** (clock-face head, top hat, a plate-sized
+pocket watch): HANDS (two clock-hand lanes, four below half life), REWIND (back to where he stood 4 s ago, regaining
+a capped share of lost life), APPOINTMENTS (Repeaters arrive), STOP (time stops for you: a heavy slow). Nim, after:
+"At four o'clock the sun went to sleep, and we were so glad." Reward: The Seventh Heartbeat.
+Next for Act 3: the Schoolhouse as its own interior zone, Pell-like townsfolk side quests, loop-aware puzzles.
+
 ## 8c. Balance (bot-measured; `-- --balance --zone=<id>`, headless, fixed 60 fps)
 The DemoBot plays like a player at the zone's intended level (middle of its range; rare staff, coat and relic of
 that level; passives and a few tree points spent): it walks up to the 8 nearest packs in order, fights each, then

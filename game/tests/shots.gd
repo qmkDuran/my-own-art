@@ -3,7 +3,7 @@ extends Node
 ## set things up, wait for effects to land, save out/<name>_<w>x<h>.png. --only=name runs one shot.
 
 const SETTLE: float = 0.9
-const PASS2: Array[String] = ["falls", "marsh", "bellwright", "river", "forge", "tallow", "road", "hollow", "matron", "quests", "filter", "stash", "eclipse", "noon", "keystones",
+const PASS2: Array[String] = ["town", "mayor", "falls", "marsh", "bellwright", "river", "forge", "tallow", "road", "hollow", "matron", "quests", "filter", "stash", "eclipse", "noon", "keystones",
 	"eclipse_tree"]
 
 var g: Game
@@ -36,7 +36,7 @@ func _run() -> void:
 		return
 	g = Game.current
 	var shots: Array[String] = ["light", "dark", "skills", "passives", "inventory", "character", "boss", "overview",
-		"falls", "marsh", "bellwright", "river", "forge", "tallow", "road", "hollow", "matron", "quests", "filter", "stash", "eclipse", "noon", "keystones", "eclipse_tree"]
+		"town", "mayor", "falls", "marsh", "bellwright", "river", "forge", "tallow", "road", "hollow", "matron", "quests", "filter", "stash", "eclipse", "noon", "keystones", "eclipse_tree"]
 	for s: String in shots:
 		if (_only() == "" and not PASS2.has(s)) or _only() == s:
 			await call("_shot_" + s)
@@ -308,87 +308,9 @@ func _shot_eclipse_tree() -> void:
 
 
 ## The Upward River: Undertows and Drowned Lanterns by the hamlet, the river climbing behind them.
-func _shot_river() -> void:
-	var h := _bot()
-	h.story_at("upward_river", 2)
-	h.level_up(16)
-	h.gear_up(16)
-	var at: Vector2 = g.layout.center_of(g.layout.clearing_of_role("pool")["center"])
-	h.clear_near(100000.0)
-	h.place_player(at + Vector2(-60, 40))
-	h.pack_near(["undertow", "undertow", "drowned", "undertow", "drowned"], Vector2(140, 0))
-	g.player.light.value = 70.0
-	await _wait(1.4)
-	h.cast("lull", g.player.global_position)
-	await _wait(0.15)
-	await _save("upward_river")
-
-
 ## The Ember Forge: a rare staff on the anvil, an affix chosen, materials in hand.
-func _shot_forge() -> void:
-	var h := _bot()
-	h.level_up(10)
-	h.gear_up(10)
-	for m: String in ["ash", "kindle", "temper", "quench", "anneal"]:
-		g.player.inv.add_material(m, 6)
-	g.ui.open(g.ui.forge)
-	g.ui.forge.put(g.player.inv.equipped["staff"])
-	g.ui.forge.affix = 1
-	g.ui.forge._do("temper")
-	await _wait(0.3)
-	h.hover(g.ui.forge.position + g.ui.forge.craft_rect(0).get_center())
-	await _wait(SETTLE)
-	await _save("ember_forge")
-	g.ui.open(g.ui.forge)
-
-
 ## The Bellwright: a toll rolling out across the flooded square, a gap to stand in.
-func _shot_bellwright() -> void:
-	var h := _bot()
-	h.story_at("drowned_belfry", 1)
-	h.level_up(20)
-	h.gear_up(20)
-	h.clear_near(100000.0)
-	h.place_player(g.layout.circle_center() + Vector2(0, 90))
-	g.player.light.value = 70.0
-	await _wait(0.4)
-	g.start_boss()
-	var b: Enemy = g.spawner.boss
-	(b.brain as BellwrightBrain)._i = 0
-	await _wait(1.9)
-	await _save("bellwright_toll")
-
-
 ## The Rising Falls: an updraft column, herons diving.
-func _shot_falls() -> void:
-	var h := _bot()
-	h.story_at("rising_falls", 1)
-	h.level_up(17)
-	h.gear_up(17)
-	h.clear_near(100000.0)
-	var at: Vector2 = g.layout.center_of(g.layout.clearing_of_role("terrace")["center"])
-	h.place_player(at + Vector2(-40, 70))
-	h.pack_near(["heron", "heron", "undertow", "heron"], Vector2(130, -30))
-	g.player.light.value = 70.0
-	await _wait(1.6)
-	h.cast("sunlash", g.player.global_position + Vector2(80, -20))
-	await _wait(0.08)
-	await _save("rising_falls")
-
-
 ## The Saltmarsh: a lure has just sprung; Bog Lurkers rise round the Lamplighter.
-func _shot_marsh() -> void:
-	var h := _bot()
-	h.story_at("saltmarsh", 0)
-	h.level_up(19)
-	h.gear_up(19)
-	h.clear_near(100000.0)
-	var at: Vector2 = g.layout.center_of(g.layout.clearing_of_role("marsh")["center"])
-	h.place_player(at + Vector2(0, 140))
-	g.player.light.value = 60.0
-	await _wait(0.6)
-	g.player.walk_to(at + Vector2(0, 60))
-	await _wait(1.8)
-	h.cast("flare", g.player.global_position)
-	await _wait(0.12)
-	await _save("saltmarsh_lure")
+## The Town of One Tuesday: Repeaters in a square, the hour on the HUD.
+## The Mayor: two clock hands filling toward you.

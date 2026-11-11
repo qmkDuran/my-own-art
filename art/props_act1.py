@@ -249,7 +249,21 @@ def lectern_note() -> Spr:
     return _finish(s, "pale", {"stone"})
 
 
+def clock_post() -> Spr:
+    """A street clock on an iron post, stopped at four. Every clock in Hollin's Ford says four."""
+    s = Spr(28, 80)
+    s.rect(12, 26, 15, 78, "stone_dk")
+    s.rect(7, 74, 20, 78, "stone")
+    s.ellipse(14, 16, 11, 11, "ink")
+    s.ellipse(14, 16, 9, 9, "bone")
+    s.line([(14, 16), (14, 9)], "ink")
+    s.line([(14, 16), (19, 19)], "ink")
+    s.rect(4, 4, 24, 6, "stone_dk")
+    return _finish(s, "pale", {"stone_dk"})
+
+
 MANIFEST: dict[str, dict] = {
+    "clock_post": {"draw": clock_post, "foot": [10, 6]},
     "pillar_a": {"draw": lambda: pillar(91), "foot": [16, 8]},
     "pillar_b": {"draw": lambda: pillar(92), "foot": [16, 8]},
     "bell_frame": {"draw": bell_frame, "foot": [36, 10]},

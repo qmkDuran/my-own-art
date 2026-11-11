@@ -5,6 +5,28 @@
   "topics": [
    {
     "when": {
+     "quest_step": [
+      "one_tuesday",
+      0
+     ]
+    },
+    "lines": [
+     [
+      "Ysolde",
+      "She's gone again. Nim. Climbed down the east wall at dawn and walked off toward Hollin's Ford."
+     ],
+     [
+      "Ysolde",
+      "Said she could hear a school bell. There's no school left out there. There's no Hollin's Ford left out there."
+     ],
+     [
+      "Ysolde",
+      "The east road's open. Bring her back. Then I'm nailing her boots to the floor."
+     ]
+    ]
+   },
+   {
+    "when": {
      "quest_done": "seven_heartbeats"
     },
     "once": true,
@@ -81,6 +103,53 @@
  "nim": {
   "name": "Nim Saltry",
   "topics": [
+   {
+    "when": {
+     "quest_step": [
+      "one_tuesday",
+      3
+     ]
+    },
+    "lines": [
+     [
+      "Nim",
+      "Shh. Lesson's starting. It always starts now."
+     ],
+     [
+      "Nim",
+      "I can't leave. When the clocks strike four I'm back at my desk. The Mayor keeps the time."
+     ],
+     [
+      "Nim",
+      "Break his watch, Lamplighter. He's in the square under the big clock. He thinks you're late."
+     ]
+    ]
+   },
+   {
+    "when": {
+     "quest_step": [
+      "one_tuesday",
+      5
+     ]
+    },
+    "lines": [
+     [
+      "Nim",
+      "...Wednesday? Is it Wednesday? It's Wednesday."
+     ],
+     [
+      "Nim",
+      "I was in that classroom so long I learned the same lesson four hundred times. It was about the sun."
+     ],
+     [
+      "Nim",
+      "The teacher said: 'At four o'clock the sun went to sleep, and we were so glad.' Everyone clapped. Every time."
+     ]
+    ],
+    "do": {
+     "flag": "act3_done"
+    }
+   },
    {
     "when": {
      "quest_done": "seven_heartbeats"

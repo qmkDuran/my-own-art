@@ -447,6 +447,20 @@
   "flat": false,
   "glow": true
  },
+ "clock_post": {
+  "size": [
+   28,
+   80
+  ],
+  "frames": 1,
+  "foot": [
+   10,
+   6
+  ],
+  "light": "",
+  "flat": false,
+  "glow": false
+ },
  "pillar_a": {
   "size": [
    30,

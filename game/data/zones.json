@@ -14,7 +14,8 @@
    "music": "town",
    "safe": true,
    "links": [
-    "glasswood"
+    "glasswood",
+    "hollins"
    ]
   },
   "glasswood": {
@@ -114,6 +115,33 @@
    "links": [
     "falls",
     "belfry"
+   ]
+  },
+  "hollins": {
+   "name": "Hollin's Ford",
+   "biome": "hollins",
+   "seed": 8000,
+   "level": [
+    21,
+    25
+   ],
+   "music": "explore",
+   "links": [
+    "tallow",
+    "tuesday"
+   ]
+  },
+  "tuesday": {
+   "name": "The Town of One Tuesday",
+   "biome": "tuesday",
+   "seed": 9000,
+   "level": [
+    24,
+    28
+   ],
+   "music": "explore",
+   "links": [
+    "hollins"
    ]
   }
  }

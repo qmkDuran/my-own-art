@@ -475,7 +475,75 @@ def bellwright(pose: str, i: int) -> Spr:
     return s
 
 
+# ------------------------------------------------------------------ Act 3: people of the loop
+def _person_enemy(spec: dict, scale: float):
+    """An enemy sheet (idle/move/attack rows) from the people builder: the loop's townsfolk are people, after all."""
+    import people
+    sp = dict(spec, scale=scale)
+
+    def draw(pose: str, i: int) -> Spr:
+        src = {"idle": ("idle", (0, 2, 4, 6)), "move": ("walk", (0, 2, 4, 6)), "attack": ("strike", (0, 1, 2))}[pose]
+        return people.draw(sp, src[0], src[1][i])
+    return draw
+
+
+def mayor(pose: str, i: int) -> Spr:
+    """The Mayor of Tuesday: a tall official in a frock coat and sash, a clock face for a head, a pocket watch the
+    size of a plate in one hand, the chain wound round his wrist. The sun's fear of the day that never ended."""
+    s = Spr(128, 160)
+    bob = pick({"idle": (0, 1, 1, 0), "move": (0, 2, 0, 2), "attack": (1, -3, 3)}, pose, i)
+    step = pick({"idle": 0, "move": (-1, 0, 1, 0), "attack": 0}, pose, i)
+    cx, top = 64, 40 + bob
+    for side in (-1, 1):
+        lift = 3 if step == side else 0
+        s.rect(cx + side * 10 - 4, 130, cx + side * 10 + 4, 154 - lift, "ink")
+        s.rect(cx + side * 10 - 6, 152 - lift, cx + side * 10 + 6, 156 - lift, "void")
+    s.poly([(cx - 22, top + 30), (cx + 22, top + 30), (cx + 30, 136), (cx - 30, 136)], "night")
+    s.poly([(cx - 22, top + 30), (cx - 8, top + 30), (cx - 14, 136), (cx - 30, 136)], "ink")
+    s.poly([(cx + 12, top + 32), (cx + 22, top + 30), (cx + 30, 136), (cx + 22, 136)], "dusk2")
+    s.poly([(cx - 20, top + 34), (cx - 14, top + 34), (cx + 18, top + 80), (cx + 12, top + 82)], "blood")    # the mayoral sash
+    s.ellipse(cx + 4, top + 58, 4, 4, "gold")
+    for k in range(4):
+        s.px(cx, top + 40 + k * 10, "gold")
+    arm = (cx + 30, top + 66) if pose != "attack" else ((cx + 34, top + 50), (cx + 36, top + 20), (cx + 30, top + 80))[i]
+    s.line([(cx + 20, top + 34), arm], "night", width=7)
+    s.line([(cx - 20, top + 34), (cx - 26, top + 74)], "ink", width=7)
+    s.ellipse(arm[0], arm[1] + 8, 10, 10, "gold")                                # the great pocket watch
+    s.ellipse(arm[0], arm[1] + 8, 8, 8, "bone", glow=True)
+    s.line([(arm[0], arm[1] + 8), (arm[0], arm[1] + 2)], "ink")
+    s.line([(arm[0], arm[1] + 8), (arm[0] + 4, arm[1] + 10)], "ink")
+    s.line([(arm[0] - 6, arm[1]), (cx + 20, top + 40)], "gold")                 # chain
+    s.poly([(cx - 12, top + 22), (cx + 12, top + 22), (cx + 20, top + 32), (cx - 20, top + 32)], "bone")  # high collar
+    s.poly([(cx - 6, top + 22), (cx + 6, top + 22), (cx, top + 32)], "night")
+    s.ellipse(cx, top + 10, 15, 15, "ink")                                      # clock-face head
+    s.ellipse(cx, top + 10, 13, 13, "bone")
+    import math as _m
+    for a in range(12):
+        s.px(cx + _m.cos(a * 0.5236) * 11, top + 10 + _m.sin(a * 0.5236) * 11, "stone_dk")
+    s.line([(cx, top + 10), (cx, top + 1)], "ink", width=2)
+    s.line([(cx, top + 10), (cx + 6, top + 14)], "ink", width=2)
+    s.ellipse(cx, top + 10, 2, 2, "rose", glow=True)
+    s.rect(cx - 12, top - 20, cx + 12, top - 4, "void")                         # top hat
+    s.rect(cx - 18, top - 5, cx + 18, top - 2, "void")
+    s.rect(cx - 12, top - 9, cx + 12, top - 7, "blood")
+    s.outline()
+    s.recolor_edge(-1, 0, "violet", only={"night", "ink"})
+    s.recolor_edge(1, 0, "gold", only={"night", "dusk2"})
+    return s
+
+
 KINDS = {"gloam": (gloam, 48, 48), "hound": (hound, 64, 48), "moth": (moth, 64, 56), "glazier": (glazier, 128, 128), "husk": (husk, 64, 64),
          "crawler": (crawler, 48, 40), "matron": (matron, 176, 160),
          "undertow": (undertow, 64, 64), "drowned": (drowned_lantern, 48, 56),
-         "bellwright": (bellwright, 160, 176), "heron": (heron, 64, 72), "lurker": (lurker, 48, 52)}
+         "bellwright": (bellwright, 160, 176), "heron": (heron, 64, 72), "lurker": (lurker, 48, 52),
+         "mayor": (mayor, 128, 160)}
+
+
+def _late_kinds() -> None:
+    """Kinds built from people (imported lazily: people imports pix too)."""
+    import people
+    KINDS["repeater"] = (_person_enemy(people.REPEATER, 1.0), 64, 64)
+    KINDS["clockface"] = (_person_enemy(people.CLOCKFACE, 1.0), 64, 64)
+
+
+_late_kinds()

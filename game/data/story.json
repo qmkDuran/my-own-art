@@ -85,6 +85,22 @@
     "WE CARRIED IT HERE SO NO ONE IN THE CITIES WOULD HEAR IT RING.",
     "(Scratched under it: 'They still hear it. In their sleep.')"
    ]
+  },
+  "ford_note": {
+   "title": "A shrine on the ford road",
+   "lines": [
+    "Hollin's Ford was the last town to see the sun.",
+    "It saw it go down at four o'clock on a Tuesday. It decided not to let go of that.",
+    "\u2014 T."
+   ]
+  },
+  "school_note": {
+   "title": "A child's slate by the schoolhouse door",
+   "lines": [
+    "WHAT HAPPENED ON TUESDAY",
+    "The sun was too hot for a year. The lamp people rang a bell. The sun went to sleep. We were so glad.",
+    "(The same words, in the same hand, scratched over each other until the slate is white.)"
+   ]
   }
  },
  "signs": {
@@ -92,7 +108,8 @@
   "east": "East: the Ember Road  -  (scratched under it: the lamps are out)",
   "north": "North: the River Road  -  (the river is not where it used to be)",
   "river": "The Upward River  -  Ferry at the hamlet",
-  "marsh": "North: the Saltmarsh  -  keep to the road"
+  "marsh": "North: the Saltmarsh  -  keep to the road",
+  "ford": "Hollin's Ford  -  Tallow west  -  (every clock: four)"
  },
  "lamps": {
   "gate": "Gate Waylamp",
@@ -112,7 +129,9 @@
   "river": "River Lamp",
   "belfry": "Belfry Lamp",
   "falls": "Falls Lamp",
-  "marsh": "Marsh Lamp"
+  "marsh": "Marsh Lamp",
+  "ford": "Ford Lamp",
+  "town": "Town Lamp"
  },
  "chests": {
   "hut": "Woodcutter's Chest",
@@ -123,6 +142,8 @@
   "hollow": "Teague's Pack",
   "hamlet": "Ferry Strongbox",
   "belfry": "Sexton's Box",
-  "falls": "Climber's Pack"
+  "falls": "Climber's Pack",
+  "ford": "Farm Strongbox",
+  "market": "Market Cashbox"
  }
 }

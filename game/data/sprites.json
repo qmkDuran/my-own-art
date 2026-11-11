@@ -541,6 +541,78 @@
      3
     ]
    ]
+  },
+  "mayor": {
+   "frame": [
+    128,
+    160
+   ],
+   "anchor": [
+    64,
+    156
+   ],
+   "poses": [
+    [
+     "idle",
+     4
+    ],
+    [
+     "move",
+     4
+    ],
+    [
+     "attack",
+     3
+    ]
+   ]
+  },
+  "repeater": {
+   "frame": [
+    64,
+    64
+   ],
+   "anchor": [
+    32,
+    60
+   ],
+   "poses": [
+    [
+     "idle",
+     4
+    ],
+    [
+     "move",
+     4
+    ],
+    [
+     "attack",
+     3
+    ]
+   ]
+  },
+  "clockface": {
+   "frame": [
+    64,
+    64
+   ],
+   "anchor": [
+    32,
+    60
+   ],
+   "poses": [
+    [
+     "idle",
+     4
+    ],
+    [
+     "move",
+     4
+    ],
+    [
+     "attack",
+     3
+    ]
+   ]
   }
  },
  "icons": {

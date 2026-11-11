@@ -67,6 +67,10 @@ func act1_foes(h: ShotHelper) -> void:
 	await t.get_tree().create_timer(6.0).timeout
 	expect(is_instance_valid(m) and not m.dead, "the Moth Matron fights for six seconds without errors")
 	m.queue_free()
+	await later_bosses(h)
+
+
+func later_bosses(h: ShotHelper) -> void:
 	var bw: Enemy = g.spawner.spawn("bellwright", p.global_position + Vector2(0, -160), "boss", [], 20)
 	bw.wake()
 	var rings: int = 0
@@ -75,6 +79,19 @@ func act1_foes(h: ShotHelper) -> void:
 		rings = maxi(rings, g.fx_layer.get_children().filter(func(n: Node) -> bool: return n is RingWave).size())
 	expect(rings > 0, "the Bellwright tolls: rings roll out (%d)" % rings)
 	bw.queue_free()
+	var rep: Enemy = h.pack_near(["repeater"], Vector2(80, 0))[0]
+	await frames(2)
+	var home: Vector2 = rep.home
+	rep.life = rep.max_life * 0.3
+	rep.global_position += Vector2(60, 0)
+	rep.rewind()
+	expect(is_equal_approx(rep.life, rep.max_life) and rep.global_position == home, "the Tuesday loop puts the living back, whole")
+	rep.queue_free()
+	var mayor: Enemy = g.spawner.spawn("mayor", p.global_position + Vector2(200, 0), "boss", [], 26)
+	mayor.wake()
+	await t.get_tree().create_timer(6.0).timeout
+	expect(is_instance_valid(mayor) and not mayor.dead, "the Mayor of Tuesday fights for six seconds without errors")
+	mayor.queue_free()
 
 
 func pass3(h: ShotHelper) -> void:

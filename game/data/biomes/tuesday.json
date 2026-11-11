@@ -1,0 +1,319 @@
+{
+ "_doc": "The Town of One Tuesday (Act 3): Hollin's Ford itself. Squares and streets are the clearings and paths; houses line the squares; gardens are the thicket. The day loops every few minutes (TuesdayLoop): the living reset, the dead stay dead. Nim is in the schoolhouse; the Mayor waits in Clocktower Square.",
+ "name": "The Town of One Tuesday",
+ "cols": 130,
+ "rows": 96,
+ "cell": 32,
+ "border": 2,
+ "loop": true,
+ "path": {
+  "half_width": 1.4,
+  "verge": 2.6,
+  "jitter": 0.22
+ },
+ "clearing_spacing": 16,
+ "clearings": [
+  {
+   "role": "start",
+   "r": [
+    8,
+    6
+   ],
+   "at_frac": [
+    0.07,
+    0.85
+   ]
+  },
+  {
+   "role": "circle",
+   "r": [
+    12,
+    10
+   ],
+   "at_frac": [
+    0.8,
+    0.22
+   ]
+  },
+  {
+   "role": "school",
+   "r": [
+    10,
+    8
+   ]
+  },
+  {
+   "role": "market",
+   "r": [
+    11,
+    9
+   ]
+  },
+  {
+   "role": "square",
+   "r": [
+    9,
+    7
+   ],
+   "count": 4
+  },
+  {
+   "role": "lamp",
+   "r": [
+    6,
+    5
+   ],
+   "count": 2
+  }
+ ],
+ "extra_links": 4,
+ "required": [
+  "start",
+  "circle",
+  "school",
+  "market",
+  "lamp"
+ ],
+ "setpieces": {
+  "start": [
+   {
+    "kind": "exit",
+    "to": "hollins",
+    "sprite": "road_gate",
+    "at": [
+     -60,
+     -10
+    ]
+   },
+   {
+    "kind": "clock_post",
+    "at": [
+     60,
+     10
+    ]
+   }
+  ],
+  "school": [
+   {
+    "kind": "house_c",
+    "at": [
+     0,
+     -40
+    ]
+   },
+   {
+    "kind": "npc",
+    "npc": "nim",
+    "at": [
+     0,
+     30
+    ],
+    "when": {
+     "quest_step": [
+      "one_tuesday",
+      3
+     ]
+    }
+   },
+   {
+    "kind": "bench",
+    "at": [
+     -90,
+     20
+    ]
+   },
+   {
+    "kind": "note",
+    "at": [
+     80,
+     10
+    ],
+    "note": "school_note"
+   }
+  ],
+  "market": [
+   {
+    "kind": "stall_a",
+    "at": [
+     -80,
+     -20
+    ]
+   },
+   {
+    "kind": "stall_b",
+    "at": [
+     0,
+     -30
+    ]
+   },
+   {
+    "kind": "stall_a",
+    "at": [
+     80,
+     -20
+    ]
+   },
+   {
+    "kind": "well",
+    "at": [
+     0,
+     50
+    ]
+   },
+   {
+    "kind": "chest",
+    "at": [
+     100,
+     40
+    ],
+    "chest": "market"
+   },
+   {
+    "kind": "barrels",
+    "at": [
+     -100,
+     40
+    ]
+   }
+  ],
+  "square": [
+   {
+    "kind": "clock_post",
+    "at": [
+     0,
+     0
+    ]
+   },
+   {
+    "kind": "bench",
+    "at": [
+     -60,
+     30
+    ]
+   },
+   {
+    "kind": "planter",
+    "at": [
+     60,
+     30
+    ]
+   }
+  ],
+  "lamp": [
+   {
+    "kind": "waylamp",
+    "at": [
+     0,
+     -10
+    ],
+    "lamp": "town",
+    "lit": false
+   }
+  ],
+  "circle": [
+   {
+    "kind": "stone_ring",
+    "r": 180,
+    "count": 8,
+    "stones": [
+     "clock_post",
+     "banner_a",
+     "clock_post",
+     "banner_b"
+    ]
+   },
+   {
+    "kind": "boss",
+    "enemy": "mayor",
+    "at": [
+     0,
+     -60
+    ]
+   }
+  ]
+ },
+ "trees": {
+  "edge_spacing": 44,
+  "deep_spacing": 80,
+  "edge_depth": 3,
+  "kinds": {
+   "tree_dead": 40,
+   "hedge_a": 30,
+   "hedge_b": 30
+  }
+ },
+ "edge_props": {
+  "house_a": 12,
+  "house_b": 12,
+  "house_c": 8,
+  "barrels": 6,
+  "crates": 6
+ },
+ "packs": {
+  "count": 28,
+  "spacing": 11,
+  "safe_radius": 16,
+  "elites": 3,
+  "table": [
+   {
+    "from": 0.0,
+    "kinds": {
+     "repeater": 0.7,
+     "clockface": 0.3
+    },
+    "size": [
+     3,
+     6
+    ]
+   },
+   {
+    "from": 0.5,
+    "kinds": {
+     "repeater": 0.5,
+     "clockface": 0.5
+    },
+    "size": [
+     4,
+     7
+    ]
+   }
+  ]
+ },
+ "relight": {
+  "waves": 2,
+  "wave_size": 7,
+  "duration": 15.0,
+  "kinds": {
+   "repeater": 0.7,
+   "clockface": 0.3
+  }
+ },
+ "ambient": {
+  "darkness": [
+   0.26,
+   0.24,
+   0.26
+  ],
+  "motes_color": "bone"
+ },
+ "ground": {
+  "c_moss_dk": "stone_dk",
+  "c_moss": "stone",
+  "c_moss_lt": "stone_lt",
+  "c_ink": "ink",
+  "c_earth_dk": "stone_dk",
+  "c_earth": "stone_dk",
+  "c_earth_lt": "stone"
+ },
+ "stone_style": "cobbles",
+ "stone_wear": 0.4,
+ "events": {
+  "caption": "The Town of One Tuesday. A woman sweeps the same step. A boy drops the same apple. Somewhere a school bell rings.",
+  "boss": {
+   "kind": "mayor",
+   "trigger": 360,
+   "music": "boss",
+   "caption": "Clocktower Square. The Mayor checks his watch. You are late. You have always been late."
+  }
+ }
+}

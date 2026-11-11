@@ -402,6 +402,26 @@
     1024,
     1300
    ]
+  },
+  {
+   "kind": "exit",
+   "to": "hollins",
+   "sprite": "road_gate",
+   "at": [
+    1900,
+    700
+   ],
+   "when": {
+    "flag": "act2_reveal"
+   }
+  },
+  {
+   "kind": "npc",
+   "npc": "ysolde",
+   "at": [
+    1080,
+    1200
+   ]
   }
  ],
  "required": [],

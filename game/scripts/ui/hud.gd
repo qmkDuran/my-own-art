@@ -102,6 +102,9 @@ func _draw() -> void:
 	_xp(L["xp"])
 	if not tracker_hidden:
 		_tracker()
+	if g.loop != null:
+		UiDraw.text(self, Vector2(0, (L["minimap"] as Rect2).end.y + 16.0), g.loop.clock_text(), Pal.c("bone"), UiDraw.BODY,
+			HORIZONTAL_ALIGNMENT_RIGHT, get_viewport_rect().size.x - Minimap.EDGE)
 	_top_bar(L["bar"])
 
 

@@ -28,6 +28,7 @@ static func make(enemy: Enemy) -> EnemyBrain:
 		"boss": b = GlazierBrain.new()
 		"matron": b = MatronBrain.new()
 		"bellwright": b = BellwrightBrain.new()
+		"mayor": b = MayorBrain.new()
 		_: b = SwarmBrain.new()
 	b.e = enemy
 	b.cd = randf_range(0.2, 0.8)

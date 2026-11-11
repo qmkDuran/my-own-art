@@ -5,7 +5,7 @@ extends RefCounted
 
 const T := ZoneLayout.T
 const CHEST_REASONS: Array[String] = ["hut", "tower", "cart", "bedroll", "campfire", "cairn", "farmhouse", "haystack", "house_a",
-	"house_b", "house_c", "dock", "barrels"]
+	"house_b", "house_c", "dock", "barrels", "stall_a", "stall_b", "well"]
 const CHEST_REASON_DIST: float = 110.0
 const START_CLEAR: float = 420.0
 
