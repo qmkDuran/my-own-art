@@ -91,3 +91,64 @@ World **heal stage** is derived from befriended species and story flags (data/re
 3. Wellspring woken (talk to it once stage 2 is reached) → the whole grove heals.
 Each map lists heal regions (rectangles with the stage that heals them); terrain and props inside use their
 withered twin until then. Healing plays a shimmer and a chime, and the change is visible at once.
+
+## 9. Architecture
+```
+art/                 Python generators (palette.py, pix.py toolkit, creatures_*.py, people.py, tiles.py,
+                     props.py, icons.py, scenes.py, build_art.py) and art/audio (synth.py, songs.py)
+game/data/           creatures, moves, elements, items, trainers, dialogue, people, legend (terrain letters),
+                     restoration stages, palette (generated), maps/*.json (ASCII grid + objects + warps +
+                     encounters + heal regions)
+game/scripts/core    Db (content), Game (state, autoload GameState), Audio, SaveSystem, Bag, Journal, InputSetup, main
+game/scripts/creatures  Creature, Stats, Growth (XP/levels/moves), Bond (bond + bond forms)
+game/scripts/battle  BattleScene (stage + loop), BattleRound (one round), MoveRunner, BattleMenus, MoveInfo,
+                     BattleView (sprites/motion), CreatureCard, BattleLog, TimingRing, FoeAi,
+                     pure rules: BattleRules, TrustRules, Battler; BattleLayout (positions)
+game/scripts/world   Overworld, MapGrid (pure), TerrainPainter (bakes ground, autotiles), PropLayer (y-sorted
+                     props, withered/healed swap), Walker, WorldInteractions, BattleLauncher, HealSequence, Sparkles
+game/scripts/story   Restoration (pure stage rules), StoryEvents (heal, shop, Gran, Wellspring)
+game/scripts/ui      UiKit (fonts, palette, panel styles), MenuList, DialogueBox, ScreenPanel + Party/Summary/
+                     Journal/Bag/Shop panels, PauseMenu, TitleScreen, IntroScene, EvolutionScene, Meter, Fade,
+                     MapBanner, PartyCard
+game/tests           test_runner (dispatch), smoke_test, play_test (real key presses), map_check, ui_check, shots
+tools/               run_all.sh, check_art.py, check_code.py, shoot.sh, creature_sheet.py
+```
+Flow: `main.gd` shows the title → `IntroScene` (story cards, companion choice) → `Overworld`. Battles are a
+`BattleScene` CanvasLayer over the overworld; `BattleLauncher` handles what follows (new friend, bond forms,
+whiteout, queued healing). `Game.heal_stage_changed` queues a heal; `HealSequence` re-bakes the ground and
+cross-fades it with sparkles, swaps prop art and removes brambles, then says what changed.
+
+Test hooks: `Game.fast` (no typing, tiny waits), `TimingRing.autopilot` / `hold_at`, `BattleMenus.queued`,
+`SaveSystem.path` (tests write `user://test_save.json`).
+
+## 10. Decisions made without asking
+- Base resolution 320x180 (16:9 handheld feel on modern screens), integer scaled; viewport stretch keeps text
+  pixel-exact too.
+- Battle layout deliberately mirrored from the classic handhelds: foe upper left, yours lower right, cards on
+  the opposite corners, commands bottom right.
+- Knocking a wild creature out makes it run off (no befriending); running from wild battles always works.
+- The starter does not count toward healing; only wildkin who chose to join do (`Game.wild_friends`).
+- Treats given from the bag outside battle raise Bond (more for a favourite) — Bond comes from care, not grinding.
+- Team limit 6; a seventh friend "waits in Gran's garden" (no storage UI yet).
+- No overworld followers yet: creatures have 24x24 icons in menus (see weak spots).
+
+## 11. Progress (first slice)
+Done: title, intro, companion choice, Fernhollow (Gran's cottage, Mender's hut, Pell's Pantry, a locked
+neighbour house, five villagers, signs, mailbox, garden), Bramble Lane (tall grass, stream and bridge, two
+trainers, a fisher), Wellspring Grove (brambles, Keeper, Wellspring), 11 species with front/back/icon art,
+25 moves, 5 items, battles with timing for every attack and block, Trust befriending with moods and treats,
+trainer battles, switching, items, XP/levels/move learning, fainting and whiteout to the Mender, bond forms for
+all three starters, team/summary/journal/bag/shop/field menu, save/continue, three visible heal stages, music
+and sound. Checks: `tools/run_all.sh` (art, code, maps, UI at 5 screen shapes, smoke, key-press playthrough).
+
+## 12. Weak spots (honest)
+- Back sprites are simpler than fronts (Ripplet and Emberkit from behind are mostly round shapes).
+- Tall grass and withered fields read a little like striped crops; the withered palette is flat by design but
+  could use more texture (cracks, dead stalks) so "before" looks sad rather than plain.
+- No overworld follower creature, no move animations beyond lunge/blink/sparkles, no battle intro transition
+  beyond a flash.
+- Pine borders are sparse; maps are small and rectangular; houses share one shape (only colours differ).
+- Moves are mostly attack/heal/buff/debuff; no status effects yet; foe AI is simple weights.
+- Music loops are short (about 30 s) and simple; no volume settings.
+- Mouse works in lists (hover/click) but not on the overworld (no click-to-walk).
+- Balance has only been checked by reasoning and the smoke test, not by long play.
