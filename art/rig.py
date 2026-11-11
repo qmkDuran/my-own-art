@@ -26,7 +26,7 @@ THIGH, SHIN = 12.0, 12.0
 UPPER_ARM, FOREARM = 9.0, 9.0
 HIP_W, SHOULDER_W = 4.0, 9.0
 HIP_Y, SHOULDER_Y, NECK_Y, HEAD_Y, BRIM_Y = 26.0, 41.0, 44.0, 48.0, 52.0
-STAFF_DOWN, STAFF_UP = 14.0, 32.0
+STAFF_DOWN, STAFF_UP = 14.0, 29.0
 
 Vec = tuple[float, float, float]
 
@@ -40,9 +40,9 @@ class Pose:
     twist: float = 0.0                   # yaw of the upper body against the hips (radians)
     foot_l: Vec = (-4.0, 0.0, 0.0)
     foot_r: Vec = (4.0, 0.0, 0.0)
-    hand_l: Vec = (-13.5, 27.0, 5.0)     # the staff hand
+    hand_l: Vec = (-15.0, 27.0, 3.5)     # the staff hand
     hand_r: Vec = (11.0, 25.0, 1.0)      # the free hand (it joins the staff for two-handed thrusts)
-    staff_tilt: Vec = (-0.18, 1.0, 0.15)   # the staff's direction (x, y, f), normalised when drawn
+    staff_tilt: Vec = (-0.22, 1.0, 0.1)   # the staff's direction (x, y, f), normalised when drawn
     lantern_lag: Vec = (0.0, 0.0, 0.0)
     cape_lag: Vec = (0.0, 0.0, -2.0)
     scarf_lag: Vec = (0.0, 0.0, -3.0)

@@ -32,7 +32,7 @@ STAFF_TILT: tuple[float, float, float] = (-0.06, 1.0, 0.12)
 def idle(i: int) -> Pose:
     u = TAU * i / 8
     br = math.sin(u)
-    return Pose(hip_drop=0.5 - 0.5 * br, lean=0.02 * br, hand_l=(-13.5, 27.0 + 0.5 * br, 5.0), staff_tilt=(-0.18, 1.0, 0.15),
+    return Pose(hip_drop=0.5 - 0.5 * br, lean=0.02 * br, hand_l=(-15.0, 27.0 + 0.5 * br, 3.5), staff_tilt=(-0.22, 1.0, 0.1),
                 hand_r=(11.0, 25.0 + 0.5 * br, 1.0), lantern_lag=(0.8 * math.sin(u + 1.0), 0.0, 0.5 * math.cos(u)),
                 cape_lag=(0.6 * math.sin(u), 0.0, -2.0), scarf_lag=(0.8 * math.sin(u + 0.5), 0.0, -3.0),
                 pane=(1.0, 0.92, 1.0, 0.86, 1.0, 0.95, 0.82, 1.0)[i], eyes=i != 6)
@@ -46,7 +46,7 @@ def walk(i: int) -> Pose:
     fr = (4.0, lift * max(0.0, math.sin(u)), -stride * math.cos(u))
     return Pose(foot_l=fl, foot_r=fr, hip_drop=2.0 * abs(math.cos(u)) - 0.5, lean=0.2, twist=0.12 * math.cos(u),
                 hand_r=(10.5, 25.0 + abs(math.cos(u)), 1.5 + 6.0 * math.cos(u)),
-                hand_l=(-13.5, 27.0, 5.0 - 2.5 * math.cos(u)), staff_tilt=(-0.18, 1.0, 0.15 + 0.12 * math.cos(u)),
+                hand_l=(-15.0, 27.0, 3.5 - 2.5 * math.cos(u)), staff_tilt=(-0.22, 1.0, 0.1 + 0.12 * math.cos(u)),
                 lantern_lag=(0.0, 0.6 * abs(math.sin(u)), -2.0 - 1.2 * math.sin(2 * u)),
                 cape_lag=(0.5 * math.sin(u), 0.0, -4.5 - 0.8 * math.cos(2 * u)), scarf_lag=(0.6 * math.sin(u), 1.5, -7.0))
 

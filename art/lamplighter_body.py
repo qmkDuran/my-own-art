@@ -19,7 +19,10 @@ BAND = "ember"
 FRONT = 0.25                    # facing the camera at least this much: the front details show
 BEHIND = -1000.0
 NEAR_HEAD = 6.0
-GRIP = 9.0                      # two-handed swings: the right hand holds this far down the staff                 # a staff or lantern this far toward the camera is in front of his hat and face                # depth for things always under the coat (the legs' tops)
+GRIP = 9.0
+BRIM_CURL = 2.2                 # how far the brim's sides turn up
+BRIM_DIP = 1.2                  # how far its front dips
+HEM_WAVE = 1.1                  # the coat's hem: uneven, heavier at the tails                      # two-handed swings: the right hand holds this far down the staff                 # a staff or lantern this far toward the camera is in front of his hat and face                # depth for things always under the coat (the legs' tops)
 
 
 def _pts(v: View, vs: list[Vec], upper: bool = True) -> list[tuple[float, float]]:
@@ -52,7 +55,8 @@ def _legs(pa: Painter, v: View, p: Pose) -> None:
 def _coat(pa: Painter, v: View, p: Pose) -> None:
     stride = (p.foot_l[2] + p.foot_r[2]) * 0.3
     waist = ring(HIP_Y + 3 - p.hip_drop, 7.5, 4.5)
-    hem = ring(12.0 - p.hip_drop * 0.6, 11.0, 6.5, df=stride + p.cape_lag[2] * 0.25, dx=p.cape_lag[0] * 0.3)
+    hem = ring(12.0 - p.hip_drop * 0.6, 11.0, 6.5, n=16, df=stride + p.cape_lag[2] * 0.25, dx=p.cape_lag[0] * 0.3)
+    hem = [(x, y - HEM_WAVE * math.cos(3 * math.atan2(f, x)) - (0.8 if f < 0 else 0.0), f) for x, y, f in hem]
     chest = ring(SHOULDER_Y - 2, 9.5, 5.0)
 
     def skirt(s: Spr) -> None:
@@ -60,6 +64,11 @@ def _coat(pa: Painter, v: View, p: Pose) -> None:
         s.poly(hull(pts), COAT[1])
         lo = min(pts, key=lambda q: q[0])[0]
         s.poly(hull([q for q in pts if q[0] < lo + 6] + [((lo + 6), max(q[1] for q in pts))]), COAT[0])
+        for fx in (-5.0, 4.0):                                 # long folds from the belt to the hem, on the near side
+            top = v.upper((fx * 0.6, HIP_Y - p.hip_drop, 5.0))
+            bot = (fx, 13.0 - p.hip_drop * 0.6, 7.0 + stride)
+            if v.depth(bot) > 0:
+                s.line([v.screen(top), v.screen(bot)], COAT[0])
         if v.toward_camera() > FRONT:                      # the coat parts below the belt
             a = v.screen(v.upper((0.0, HIP_Y - 1 - p.hip_drop, 4.5)))
             b = v.screen((1.6, 12.5 - p.hip_drop * 0.6, 6.5 + stride))
@@ -111,10 +120,19 @@ def _arms(pa: Painter, v: View, p: Pose) -> None:
         pa.add(1.0 + v.depth(end) * 0.01 if near else -0.6, draw)
 
 
+def _curled(brim: list[Vec]) -> list[Vec]:
+    """A worn brim: its sides turn up and its front dips over the eyes, so it is never a flat disc."""
+    out = []
+    for x, y, f in brim:
+        side = abs(x) / 11.5
+        out.append((x, y + BRIM_CURL * side ** 2 - BRIM_DIP * max(0.0, f) / 10.5, f))
+    return out
+
+
 def _head(pa: Painter, v: View, p: Pose) -> None:
     head = v.upper((0.0, HEAD_Y, 0.6))
     crown_lo, crown_hi = ring(BRIM_Y + 0.5, 6.0, 5.5), ring(BRIM_Y + 8.5, 5.0, 4.5, df=-0.6)
-    brim = ring(BRIM_Y, 11.5, 10.5, n=16, df=0.6)
+    brim = _curled(ring(BRIM_Y, 11.5, 10.5, n=24, df=0.6))
 
     def draw(s: Spr) -> None:
         x, y = v.screen(head)
@@ -124,11 +142,13 @@ def _head(pa: Painter, v: View, p: Pose) -> None:
             s.ellipse(fx, fy, 3.0, 3.6, "skin_dk")
             bx, by = v.screen(v.upper((0.0, HEAD_Y - 3.0, 3.6)))
             s.ellipse(bx, by, 3.0, 2.0, "ink")
-        brim_pts = _pts(v, brim)
-        s.poly(hull(brim_pts), HAT[2])
-        s.poly(hull([(q[0], q[1] - 1) for q in brim_pts]), HAT[1])
+        brim_pts = _pts(v, brim)                               # not a hull: the curled sides stay curled
+        s.poly(brim_pts, HAT[2])
+        s.poly([(q[0], q[1] - 1) for q in brim_pts], HAT[1])
         s.poly(hull(_pts(v, crown_lo) + _pts(v, ring(BRIM_Y + 3.2, 5.9, 5.4))), BAND)
         s.poly(hull(_pts(v, ring(BRIM_Y + 3.2, 5.6, 5.1)) + _pts(v, crown_hi)), HAT[0])
+        dent = [v.screen(v.upper((dx, BRIM_Y + 8.2, -0.4))) for dx in (-2.5, 0.0, 2.5)]
+        s.line(dent, HAT[1])                                    # the pinch along the crown
         if v.toward_camera() > -0.2:
             for ex in (-1.9, 1.9):
                 e = v.upper((ex, HEAD_Y + 1.0, 4.4))
