@@ -6,7 +6,7 @@ extends Node
 const MODES: Dictionary = {
 	"--layout": "res://tests/layout_test.gd", "--ui": "res://tests/ui_check.gd", "--smoke": "res://tests/smoke_test.gd",
 	"--shots": "res://tests/shots_late.gd", "--probe": "res://tests/demo_probe.gd",
-	"--balance": "res://tests/balance.gd", "--replay": "res://tests/replay.gd", "--animreel": "res://tests/anim_reel.gd", "--perf": "res://tests/perf.gd",
+	"--balance": "res://tests/balance.gd", "--replay": "res://tests/replay.gd", "--animreel": "res://tests/anim_reel.gd", "--perf": "res://tests/perf.gd", "--devtest": "res://tests/dev_test.gd",
 }
 
 

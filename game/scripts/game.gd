@@ -49,6 +49,10 @@ func _ready() -> void:
 	Overlay.create(self)
 	_build_world()
 	_build_ui()
+	if Dev.enabled():
+		var dev := DevTools.new()
+		add_child(dev)
+		dev.setup(self)
 	var mood := Atmosphere.new()
 	add_child(mood)
 	mood.setup(self)

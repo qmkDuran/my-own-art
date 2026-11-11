@@ -226,6 +226,8 @@ func refill_tonics() -> void:
 
 # ------------------------------------------------------------------ being hit
 func take_hit(dmg: float, from: Vector2, drain: float) -> void:
+	if Dev.god:
+		return
 	if stats.has_special("wick_bone") and oil > 0.0:          # Wick and Bone: a quarter is paid in Oil
 		var paid: float = minf(oil, dmg * WICK_BONE_SHARE)
 		oil -= paid

@@ -35,6 +35,9 @@ static func hit_enemy(e: Enemy, base: float, opts: Dictionary = {}) -> void:
 	if crit:
 		dmg *= st.crit_multi() / 100.0
 	dmg = maxf(1.0, roundf(dmg))
+	if Dev.one_hit:
+		dmg = e.life
+	CombatLog.add("%s %d%s -> %s" % [String(opts.get("skill", "hit")), dmg, " crit" if crit else "", e.kind])
 	var dir: Vector2 = opts.get("dir", Vector2.ZERO)
 	e.take_damage(dmg, crit, dir, opts)
 	g.player.gain_life(dmg * ecl.leech())
@@ -69,5 +72,6 @@ static func hit_player(src: Enemy, base: float, type: String, at: Vector2) -> vo
 	dmg = (p.skills.skill("glass_ward") as GlassWard).absorb(dmg)
 	if alive:
 		(p.skills.skill("kindle") as Kindle).struck_by(src)
+	CombatLog.add("%s %d %s -> Lamplighter (life %d)" % [src.kind if alive else "shot", dmg, type, p.life - dmg])
 	p.take_hit(dmg, at, drain)
 	FloatText.hit(p, dmg, false, false, Pal.c("rose"))

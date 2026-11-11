@@ -21,5 +21,9 @@ out=$(timeout 900 "$GODOT" --headless --fixed-fps 60 --path game -- --replay 2>&
 echo "$out" | grep -E "^REPLAY (PASS|FAIL)|STUCK|SCRIPT ERROR" | head -10
 echo "$out" | grep -qE "^REPLAY PASS" || status=1
 echo "$out" | grep -q "SCRIPT ERROR" && { echo "replay: script errors"; status=1; }
+# the playtest tools (F1 menu, F8 notes, session log) with --dev
+out=$(timeout 300 "$GODOT" --headless --path game -- --devtest --dev 2>&1)
+echo "$out" | grep -E "^DEV (PASS|FAIL)|DEV FAIL" | head -5
+echo "$out" | grep -qE "^DEV PASS" || status=1
 [ $status -eq 0 ] && echo "ALL CHECKS PASS" || echo "SOME CHECKS FAILED"
 exit $status

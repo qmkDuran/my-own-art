@@ -314,6 +314,15 @@ draw calls 319 -> 309, nodes 7957 -> 8148 (glow about 7 fps of that, shadows abo
 copy); Ember Road 27 -> 14 fps, 562 -> 563 draw calls, 10746 -> 10950 nodes. A real GPU will not notice; deferred:
 normal maps (art still changing) and GPU particles (no need yet).
 
+## 8f. Playtest tools (see PLAYTEST.md)
+`scripts/dev/`: `Dev` (on with --dev or in debug builds outside automated runs; never in release), `DevTools` (F1/F8
+input), `DevMenu` (travel, waylamp/boss jumps, level presets, god mode, one-hit, spawn, boss restart, time scale,
+hitboxes, light radii), `FeedbackBox` (F8 note + screenshot to playtest/notes/), `CombatLog` (last 30 s), `SessionLog`
+(playtest/sessions/*.json on leaving a zone), `DevOverlay`. Checked by `-- --devtest --dev` in run_all. Graphics
+setting (Esc menu, next zone): Low (no grade, bloom or shadows, ~32 fps in software), Medium default (grade, hard
+shadows from 24 casters, no HDR bloom, ~26 fps), High (bloom, soft shadows from 48, ~16 fps); before the lighting
+pass ~31.5 fps. Videos: `tools/encode_video.sh FRAMES OUT.mp4` decodes the movie writer's double sRGB exactly.
+
 ## 9. Architecture (`game/scripts/`)
 | Folder | What |
 |---|---|
