@@ -6,8 +6,8 @@ extends Node2D
 
 signal state_changed(state: String)
 
-const COLOR := Color(1.0, 0.8, 0.52)
-const ENERGY: float = 1.6
+const COLOR := Color(1.0, 0.9, 0.74)     ## warm but near white, so what it lights keeps its own colours
+const ENERGY: float = 0.75          ## the pool is ambient + this: bright and warm, never blown out on pale stone
 const HALO_ENERGY: float = 0.28
 const SHADOW_ALPHA: float = 0.75
 const HALO_SCALE: float = 1.7
@@ -47,8 +47,8 @@ func _ready() -> void:
 
 func _make_light(tex: Texture2D, energy: float) -> PointLight2D:
 	var l := PointLight2D.new()
-	l.shadow_enabled = true                                  # trunks, pillars and walls throw moving shadows
-	l.shadow_filter = Light2D.SHADOW_FILTER_PCF5
+	l.shadow_enabled = int(Atmosphere.quality()["shadows"]) > 0     # trunks, pillars and walls throw moving shadows
+	l.shadow_filter = Atmosphere.quality()["filter"]
 	l.shadow_color = Color(0, 0, 0, SHADOW_ALPHA)
 	l.texture = tex
 	l.color = COLOR

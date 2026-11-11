@@ -16,7 +16,7 @@ const RISE_TIME: float = 0.9
 const AVOID_MARGIN: float = 1.6
 const SELF_LIGHT_MASK: int = 8
 const SELF_LIGHT_RADIUS: float = 44.0
-const SELF_LIGHT_ENERGY: float = 0.9
+const SELF_LIGHT_ENERGY: float = 0.5
 const STEP_DB: float = -24.0
 const HOLD_LAMP_RANGE: float = 90.0
 const RUN_BASE_SPEED: float = 150.0   ## the run cycle's natural speed; faster movement plays it faster
@@ -102,7 +102,8 @@ func _make_body() -> void:
 		if name == "step":
 			Audio.sfx("step", STEP_DB, randf_range(0.9, 1.1)))
 	sprite = anim.body
-	sprite.self_modulate = Color.WHITE * ZoneView.actor_gain()
+	sprite.self_modulate = ZoneView.person_modulate()
+	anim.lantern.self_modulate = sprite.self_modulate
 	_make_warm_light()
 	var mat := ShaderMaterial.new()
 	mat.shader = preload("res://shaders/hit_flash.gdshader")
@@ -118,7 +119,7 @@ func _make_warm_light() -> void:
 	_warm = PointLight2D.new()
 	_warm.texture = LightTex.soft(64)
 	_warm.texture_scale = SELF_LIGHT_RADIUS / 32.0
-	_warm.color = Pal.c("amber")
+	_warm.color = Pal.c("gold")
 	_warm.energy = SELF_LIGHT_ENERGY
 	_warm.range_item_cull_mask = SELF_LIGHT_MASK
 	add_child(_warm)

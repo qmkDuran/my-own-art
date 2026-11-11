@@ -33,6 +33,7 @@ func _ready() -> void:
 	_sprite.hframes = FRAMES
 	_sprite.vframes = 2
 	_sprite.offset = Vector2(0, -29)
+	_sprite.self_modulate = ZoneView.person_modulate()
 	add_child(_sprite)
 	_wait = randf_range(PAUSE.x, PAUSE.y)
 

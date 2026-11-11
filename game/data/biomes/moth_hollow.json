@@ -290,9 +290,9 @@
  },
  "ambient": {
   "darkness": [
-   0.81,
-   0.68,
-   0.98
+   0.78,
+   0.72,
+   0.9
   ],
   "motes_color": "amber",
   "scenery_gain": 2.53

@@ -4,7 +4,7 @@ extends GamePanel
 ## the right half to raise it), and save & return to the title.
 
 const BTN := Vector2(200, 24)
-const ITEMS: Array[String] = ["resume", "shake", "numbers", "brightness", "quit"]
+const ITEMS: Array[String] = ["resume", "shake", "numbers", "brightness", "graphics", "quit"]
 const BRIGHT_STEP: float = 0.1
 
 
@@ -17,6 +17,7 @@ func _label(id: String) -> String:
 		"resume": return "Resume"
 		"shake": return "Screen shake: %s" % ("on" if float(GameData.setting("screen_shake", 1.0)) > 0.0 else "off")
 		"numbers": return "Damage numbers: %s" % ("on" if FloatText.enabled else "off")
+		"graphics": return "Graphics: %s (next zone)" % String(GameData.setting("graphics", "medium")).capitalize()
 		"brightness": return "<   Brightness %d%%   >" % roundi(Atmosphere.brightness() * 100.0)
 	return "Save and quit to title"
 
@@ -47,6 +48,9 @@ func _do(id: String) -> void:
 		"numbers":
 			FloatText.enabled = not FloatText.enabled
 			GameData.settings["damage_numbers"] = FloatText.enabled
+		"graphics":
+			var i: int = Atmosphere.QUALITY_ORDER.find(String(GameData.setting("graphics", "medium")))
+			GameData.settings["graphics"] = Atmosphere.QUALITY_ORDER[(i + 1) % Atmosphere.QUALITY_ORDER.size()]
 		"quit":
 			if SaveGame.enabled():
 				SaveGame.write(g)

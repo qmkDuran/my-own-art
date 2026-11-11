@@ -8,6 +8,7 @@ const GROUND_Z: int = -20
 const BRIDGE_Z: int = -19
 const TRUNK := Vector2(7, 4)             ## a tree's shadow-casting base (half sizes)
 const ACTOR_SHARE: float = 0.8
+const PERSON_GAIN: float = 1.15         ## people: lifted only a touch; more and the lantern light clips their colours
 const ACTOR_LIFT: float = 0.15          ## dark-clad figures (the Lamplighter's coat) need a little more than the ground
 const BUILT_W: float = 200.0           ## props wider than this are building parts: no shadow, never mirrored
 const CRYSTAL_LIGHT_RANGE: float = 80.0
@@ -57,7 +58,7 @@ func _ground() -> void:
 	mat.set_shader_parameter("map_tex", s.texture)
 	mat.set_shader_parameter("map_size", Vector2(z.cols, z.rows))
 	mat.set_shader_parameter("cell", float(z.cell))
-	mat.set_shader_parameter("scenery_gain", gain())
+	mat.set_shader_parameter("scenery_tint", Vector3(scenery().r, scenery().g, scenery().b))
 	mat.set_shader_parameter("stream_tex", _stream_tex())
 	mat.set_shader_parameter("path_tex", _path_tex())
 	mat.set_shader_parameter("path_scale", float(PATH_TEXEL))
@@ -145,7 +146,7 @@ func _props(world: Node2D) -> void:
 			continue
 		var s := PropSprite.make(p["kind"])
 		s.light_mask = SCENERY_MASK
-		s.self_modulate = Color(gain(), gain(), gain())
+		s.self_modulate = scenery()
 		s.position = p["pos"]
 		var foot_w: float = (p["foot"] as Rect2).size.x
 		var built: bool = bool(GameData.props[p["kind"]]["flat"]) or foot_w > BUILT_W   # floors and walls
@@ -178,7 +179,7 @@ func _trees(world: Node2D) -> void:
 	for t: Dictionary in z.trees:
 		var s := PropSprite.make(t["kind"])
 		s.light_mask = SCENERY_MASK
-		s.self_modulate = Color(gain(), gain(), gain())
+		s.self_modulate = scenery()
 		s.position = t["pos"]
 		s.flip_h = int(t["pos"].x + t["pos"].y) % 2 == 0
 		var g: Sprite2D = s.get_node_or_null("Glow") as Sprite2D
@@ -193,6 +194,16 @@ func _trees(world: Node2D) -> void:
 ## People and creatures are lifted too, a little less than the scenery, so they read against it in their own colours.
 static func actor_gain() -> float:
 	return 1.0 + (gain() - 1.0) * ACTOR_SHARE + ACTOR_LIFT
+
+
+## People (the Lamplighter, NPCs, townsfolk): only lifted, never tinted, so they keep their true palette in every zone.
+static func person_modulate() -> Color:
+	return Color.WHITE * PERSON_GAIN
+
+
+## Terrain, trees and props: the zone's own colour (Atmosphere.tint) times its lift.
+static func scenery() -> Color:
+	return Atmosphere.tint(GameData.biome) * gain()
 
 
 ## How far this zone lifts its terrain and trees out of the dark (biome ambient "scenery_gain"; HDR above 1).
