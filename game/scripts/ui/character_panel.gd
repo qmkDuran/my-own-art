@@ -11,11 +11,18 @@ const TOP_Y: float = 44.0
 
 
 ## [label, value, stat key (or ""), probe amount] rows; [section] rows are headings.
+static func _mastery(p: Player) -> String:
+	if p.prog.mastery != "":
+		return String(GameData.passives["trees"][p.prog.mastery]["name"])
+	var at: int = int(GameData.player["mastery_level"])
+	return "not chosen yet" if p.prog.level >= at else "at level %d" % at
+
+
 static func rows(p: Player) -> Array:
 	var st: Stats = p.stats
 	var dv: Dictionary = Derived.of(st, p)
 	var hit: Vector2 = dv["bolt"]
-	var mast: String = String(GameData.passives["trees"][p.prog.mastery]["name"]) if p.prog.mastery != "" else "(choose at level %d)" % int(GameData.player["mastery_level"])
+	var mast: String = _mastery(p)
 	return [
 		["Lamplighter"], ["Level", "%d" % p.prog.level, "", 0.0], ["Mastery", mast, "", 0.0],
 		["Offence"], ["Wickbolt hit", "%d-%d" % [roundi(hit.x), roundi(hit.y)], "", 0.0],
@@ -31,8 +38,9 @@ static func rows(p: Player) -> Array:
 		["Ignite chance", "%d%%" % roundi(st.v("burn_chance")), "burn_chance", 5.0],
 		["Defence"], ["Life", "%d" % roundi(st.max_life()), "life", 10.0],
 		["Life regeneration", "%.1f /s" % st.life_regen(), "life_regen", 1.0],
-		["Armour", "%d  (stops %.1f%% of a 20 hit)" % [roundi(st.armour()), float(dv["armour"])], "armour", 20.0],
-		["Dusk resistance", "%d%%" % roundi(st.dusk_res()), "dusk_res", 5.0],
+		["Armour", "%d  (stops %.1f of a 20 hit)" % [roundi(st.armour()), float(dv["armour"])], "armour", 20.0],
+		["Dusk resistance", "%d%%  (a 20 Dusk hit deals %.1f)" % [roundi(st.dusk_res()), Derived.PROBE_HIT * (1.0 - st.dusk_res() / 100.0)],
+			"dusk_res", 5.0],
 		["Movement speed", "%d px/s" % roundi(st.move_speed()), "move_pct", 5.0],
 		["Light and Oil"], ["Light", "%d  (radius %d px)" % [roundi(p.light.value), roundi(p.light.light_radius())], "", 0.0],
 		["Light radius", "%+d%%" % roundi(st.v("light_radius_pct")), "light_radius_pct", 10.0],

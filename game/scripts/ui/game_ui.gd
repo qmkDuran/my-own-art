@@ -6,6 +6,8 @@ extends CanvasLayer
 
 const LAYER: int = 10
 const FADE: float = 0.3
+const BARS: float = 0.12               ## letterbox bar height, as a share of the screen
+const BARS_TIME: float = 0.8
 
 var g: Game
 var hud: Hud
@@ -26,6 +28,7 @@ var help: HelpPanel
 var tips: TutorialTips
 var tooltip: TooltipLayer
 var _fade: ColorRect
+var _bars: Array[ColorRect] = []
 
 
 func setup(game: Game) -> void:
@@ -61,6 +64,30 @@ func setup(game: Game) -> void:
 	_fade.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_fade.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(_fade)
+	for top: bool in [true, false]:
+		var bar := ColorRect.new()
+		bar.color = Color.BLACK
+		bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		bar.set_anchors_preset(Control.PRESET_TOP_WIDE if top else Control.PRESET_BOTTOM_WIDE)
+		bar.visible = false
+		add_child(bar)
+		_bars.append(bar)
+
+
+## Black bars over the top and bottom of the screen (and the HUD) for a camera moment; they slide in and out.
+func letterbox(on: bool) -> void:
+	var h: float = get_viewport().get_visible_rect().size.y * BARS
+	var tw := create_tween().set_parallel()
+	for i: int in _bars.size():
+		var bar: ColorRect = _bars[i]
+		bar.visible = true
+		bar.size.y = h
+		var shown: float = 0.0 if i == 0 else -h
+		var hidden: float = -h if i == 0 else 0.0
+		bar.offset_top = hidden if on else shown
+		bar.offset_bottom = bar.offset_top + h
+		tw.tween_property(bar, "offset_top", shown if on else hidden, BARS_TIME)
+		tw.tween_property(bar, "offset_bottom", (shown if on else hidden) + h, BARS_TIME)
 
 
 func _panel(p: GamePanel, title: String, sz: Vector2, side: String) -> GamePanel:

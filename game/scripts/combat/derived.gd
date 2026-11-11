@@ -6,7 +6,7 @@ extends RefCounted
 
 const PROBE_HIT: float = 20.0
 const KEYS: Array = [["bolt", "Wickbolt hit"], ["dps", "Wickbolt damage per second"], ["life", "Life"],
-	["armour", "Armour stops (of a 20 hit)"], ["res", "Dusk resistance"], ["move", "Movement"], ["light", "Light radius"],
+	["armour", "Of a 20 hit, armour stops"], ["res", "Dusk resistance"], ["move", "Movement"], ["light", "Light radius"],
 	["oil", "Oil"]]
 
 
@@ -16,7 +16,7 @@ static func of(st: Stats, p: Player) -> Dictionary:
 	var cast: float = float(wb.data["time"]) / (st.attack_speed_mult() * (1.0 + wb.val("speed_pct") / 100.0))
 	var crit: float = 1.0 + clampf(st.crit_chance(), 0.0, 100.0) / 100.0 * (st.crit_multi() / 100.0 - 1.0)
 	return {"bolt": hit, "dps": (hit.x + hit.y) * 0.5 * crit / maxf(cast, 0.05), "life": st.max_life(),
-		"armour": st.armour_reduction(PROBE_HIT) * 100.0, "res": st.dusk_res(), "move": st.move_speed(),
+		"armour": st.armour_reduction(PROBE_HIT) * PROBE_HIT, "res": st.dusk_res(), "move": st.move_speed(),
 		"light": p.light.target_radius() * st.light_radius_mult() / maxf(p.stats.light_radius_mult(), 0.01), "oil": st.max_oil()}
 
 
@@ -63,7 +63,9 @@ static func changes(before: Dictionary, after: Dictionary) -> Array:
 
 static func _fmt(id: String, v: float) -> String:
 	match id:
-		"armour", "res":
+		"armour":
+			return "%.1f" % v
+		"res":
 			return "%.1f%%" % v
 		"move":
 			return "%d px/s" % roundi(v)

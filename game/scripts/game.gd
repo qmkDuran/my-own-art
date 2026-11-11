@@ -189,6 +189,10 @@ func _framing() -> void:
 func _establish(e: Dictionary) -> void:
 	camera.establish(Vector2(float(e["at"][0]), float(e["at"][1])), float(e["hold"]), float(e["pan"]))
 	ui.fade_in(float(e["fade"]))
+	ui.letterbox(true)
+	get_tree().create_timer(float(e["hold"]) + float(e["pan"]), false).timeout.connect(func() -> void:
+		if is_instance_valid(ui):
+			ui.letterbox(false))
 	get_tree().create_timer(float(e["hold"]), false).timeout.connect(func() -> void:
 		if is_instance_valid(hud):
 			hud.caption(String(e["caption"])))

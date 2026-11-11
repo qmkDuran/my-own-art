@@ -123,8 +123,8 @@ func _tree_header() -> void:
 		var sd: Dictionary = p.skills[selected]
 		draw_rect(xr.grow(1.0), UiDraw.INK)
 		draw_rect(Rect2(xr.position, Vector2(xr.size.x * float(sd["xp"]) / p.skill_xp_to_next(int(sd["level"])), xr.size.y)), Pal.c("violet_lt"))
-		UiDraw.text(self, Vector2(x, CONTENT_Y + 40.0), "Points to spend: %d   (one per skill level; specialised skills level up)" % p.spec_points(selected),
-			UiDraw.TEXT, UiDraw.SMALL)
+		var pts: int = p.spec_points(selected)
+		UiDraw.text(self, Vector2(x, CONTENT_Y + 42.0), "Points to spend: %d" % pts, UiDraw.GOLD if pts > 0 else UiDraw.DIM)
 
 
 func _rank(n: Dictionary) -> int:

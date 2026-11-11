@@ -8,6 +8,8 @@ extends RefCounted
 const FLING: float = 34.0
 const ASH_TIME: float = 4.0
 const ELITE_RING: int = 10
+const POSE: float = 0.3                 ## how long the death pose holds before it comes apart (x3 for bosses)
+const FADE: float = 0.45                ## the body thins out while the ash and shards fly
 
 
 static func play(e: Enemy, dir: Vector2) -> void:
@@ -19,12 +21,13 @@ static func play(e: Enemy, dir: Vector2) -> void:
 	var tw := e.create_tween()
 	var fling: Vector2 = dir.normalized() * FLING / maxf(1.0, size) if dir != Vector2.ZERO else Vector2.ZERO
 	tw.set_parallel()                                           # the death pose: knocked back and down, flashing white
-	tw.tween_property(e, "position", e.position + fling, 0.18).set_ease(Tween.EASE_OUT)
-	tw.tween_property(e.sprite, "rotation", 0.5 * signf(fling.x if fling.x != 0.0 else 1.0), 0.18 * (3.0 if boss else 1.0))
-	tw.tween_property(e.sprite, "scale", Vector2(e.sprite.scale.x * 1.25, e.sprite.scale.y * 0.55), 0.22 * (3.0 if boss else 1.0))
+	var pose: float = POSE * (3.0 if boss else 1.0)
+	tw.tween_property(e, "position", e.position + fling, pose * 0.6).set_ease(Tween.EASE_OUT)
+	tw.tween_property(e.sprite, "rotation", 0.5 * signf(fling.x if fling.x != 0.0 else 1.0), pose * 0.8).set_ease(Tween.EASE_OUT)
+	tw.tween_property(e.sprite, "scale", Vector2(e.sprite.scale.x * 1.25, e.sprite.scale.y * 0.55), pose).set_ease(Tween.EASE_IN)
 	(e.sprite.material as ShaderMaterial).set_shader_parameter("flash", 0.9)
 	tw.chain().tween_callback(func() -> void: _dissolve(e, at, size, glass))
-	tw.tween_property(e, "modulate:a", 0.0, 0.25)
+	tw.tween_property(e, "modulate:a", 0.0, FADE)
 	tw.tween_callback(e.queue_free)
 	Fx.flash(g.fx_layer, e.global_position, 70.0 * size, Pal.c("gold"), 1.2, 0.35)
 	if boss:
@@ -63,8 +66,9 @@ static func _ash(at: Vector2, size: float, elite: bool) -> void:
 		em.texture = LightTex.soft(8)
 		em.material = Fx.glow_material()
 		em.modulate = Pal.c("ember", 0.9)
-		var a: float = TAU * k / (ELITE_RING if elite else 3)
-		em.position = Vector2(cos(a) * 8.0 * size, sin(a) * 4.0 * size)
+		var a: float = TAU * (k + randf_range(-0.35, 0.35)) / (ELITE_RING if elite else 3)   # scattered, not a neat ring
+		em.position = Vector2(cos(a) * 8.0, sin(a) * 4.0) * size * randf_range(0.4, 1.3)
+		em.scale = Vector2.ONE * randf_range(0.5, 1.0)
 		heap.add_child(em)
 	g.fx_layer.add_child(heap)
 	var tw := heap.create_tween()

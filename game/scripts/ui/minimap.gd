@@ -18,16 +18,20 @@ const ARROW: float = 4.0
 const ZOOM: float = 2.0
 const LARGE_MARGIN: float = 40.0
 const OVERLAY_ZOOM: float = 5.0
-const OVERLAY_ALPHA: float = 0.45     ## default opacity of the Tab overlay
+const OVERLAY_ALPHA: float = 0.6      ## default opacity of the Tab overlay
 const OVERLAY_MIN: float = 0.15
 const OVERLAY_MAX: float = 0.9
 const OVERLAY_SCROLL: float = 0.05
 const CLEAR := Color(0, 0, 0, 0)
+const OVERLAY_FILL: float = 0.3      ## the overlay's ground wash, under its bright edges
 
 var g: Game
 var _base: Image
 var _shown: Image
 var _tex: ImageTexture
+var _lines_base: Image                 ## the overlay's look: bright edges of walkable ground, faint inside
+var _lines: Image
+var _lines_tex: ImageTexture
 var _seen: PackedByteArray
 var _last_cell := Vector2i(-99, -99)
 
@@ -91,17 +95,39 @@ func setup(game: Game) -> void:
 		for x: int in z.cols:
 			var name: String = COLORS[z.t(Vector2i(x, y))]
 			_base.set_pixel(x, y, Pal.c(name, 0.9) if name != "" else Color(Pal.c("moss_dk"), 0.55))
+	_lines_base = _outline(z)
 	_shown = Image.create(z.cols, z.rows, false, Image.FORMAT_RGBA8)
 	_shown.fill(CLEAR)
+	_lines = _shown.duplicate()
 	_seen = PackedByteArray()
 	_seen.resize(z.cols * z.rows)
 	_tex = ImageTexture.create_from_image(_shown)
+	_lines_tex = ImageTexture.create_from_image(_lines)
+
+
+## Edges of the ground you can walk (where it meets wall, tree or water's edge) drawn bright; the ground itself a
+## faint wash of its colour. Over the game this reads as a map without hiding what is under it.
+func _outline(z: ZoneLayout) -> Image:
+	var img := Image.create(z.cols, z.rows, false, Image.FORMAT_RGBA8)
+	for y: int in z.rows:
+		for x: int in z.cols:
+			var name: String = COLORS[z.t(Vector2i(x, y))]
+			if name == "":
+				continue
+			var edge: bool = false
+			for d: Vector2i in [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]:
+				var q := Vector2i(x, y) + d
+				edge = edge or not z.inside(q) or COLORS[z.t(q)] == ""
+			img.set_pixel(x, y, Pal.c("pale") if edge else Pal.c(name, OVERLAY_FILL))
+	return img
 
 
 func reveal_all() -> void:
 	_seen.fill(1)
 	_shown.copy_from(_base)
+	_lines.copy_from(_lines_base)
 	_tex.update(_shown)
+	_lines_tex.update(_lines)
 
 
 func _process(_delta: float) -> void:
@@ -124,9 +150,11 @@ func _reveal(c: Vector2i) -> void:
 			if z.inside(q) and _seen[z.idx(q)] == 0 and Vector2(q - c).length() <= REVEAL:
 				_seen[z.idx(q)] = 1
 				_shown.set_pixelv(q, _base.get_pixelv(q))
+				_lines.set_pixelv(q, _lines_base.get_pixelv(q))
 				changed = true
 	if changed:
 		_tex.update(_shown)
+		_lines_tex.update(_lines)
 
 
 ## Cell at the map's top-left corner (the map is centred on the Lamplighter).
@@ -148,7 +176,7 @@ func _draw() -> void:
 		draw_rect(r, FOG)
 	var src: Rect2 = Rect2(_origin(), size / _zoom()).intersection(Rect2(Vector2.ZERO, Vector2(g.layout.cols, g.layout.rows)))
 	if src.size.x > 0.0 and src.size.y > 0.0:
-		draw_texture_rect_region(_tex, Rect2((src.position - _origin()) * _zoom(), src.size * _zoom()), src,
+		draw_texture_rect_region(_lines_tex if see_through else _tex, Rect2((src.position - _origin()) * _zoom(), src.size * _zoom()), src,
 			Color(1, 1, 1, overlay_alpha()) if see_through else Color.WHITE)
 	if see_through:
 		_overlay_marks()
