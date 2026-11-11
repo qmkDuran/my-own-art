@@ -257,17 +257,23 @@ deaths are an upper bound for a human. Tuning done in this pass: enemy damage pe
 enemies x1.2-1.5 damage, Lamplighter +3% damage per level (was 4), Glazier 1100 -> 2000 life and 16 -> 10 damage,
 Matron 1900 -> 4200 life, Bellwright 2800 -> 4000 life and 19 -> 11 damage, Falls Heron 15 -> 14.
 
+With Wickbolt (pure caster), after the lighting pass and the avoidance fix:
+
 | Zone (level) | Pack clear (avg) | Life lost per pack | Deaths in 8 packs | Boss | Boss time | Boss deaths |
 |---|---|---|---|---|---|---|
-| Glasswood (4) | 5.6 s | 2% | 0 | Glazier (lvl 7) | 42 s | 1 |
-| Ember Road (8) | 3.8 s | 9% | 0 | - | - | - |
-| Moth Hollow (12) | 5.8 s | 1% | 0 | Moth Matron (lvl 15) | 28 s | 0 |
-| Upward River (16) | 6.6 s | 11% | 0 | - | - | - |
-| Rising Falls (17) | 7.9 s | 21% | 1 | - | - | - |
-| Saltmarsh (19) | 2.8 s | 4% | 0 | - | - | - |
-| Drowned Belfry (20) | 6.6 s | 16% | 0 | Bellwright (lvl 22) | 66 s | 2 |
-| Hollin's Ford (23) | 4.8 s | 19% | 0 | - | - | - |
-| Town of One Tuesday (26) | 4.6 s | 21% | 0 | the Mayor (lvl 28) | 40-68 s | 1-2 |
+| Glasswood (4) | 3.1 s | 3% | 0 | Glazier (lvl 7) | 30 s | 1 |
+| Ember Road (8) | 9.1 s (2 timeouts) | 13% | 0 | - | - | - |
+| Moth Hollow (12) | 5.7 s (1 timeout) | 4% | 0 | Moth Matron (lvl 15) | 40 s | 0 |
+| Upward River (16) | 3.8 s | 12% | 0 | - | - | - |
+| Rising Falls (17) | 3.7 s | 8% | 0 | - | - | - |
+| Saltmarsh (19) | 3.4 s | 6% | 0 | - | - | - |
+| Drowned Belfry (20) | 6.0 s | 9% | 0 | Bellwright (lvl 22) | 35 s | 1 |
+| Hollin's Ford (23) | 3.3 s | 5% | 0 | - | - | - |
+| Town of One Tuesday (26) | 7.3 s | 12% | 0 | the Mayor (lvl 28) | 46 s | 2 |
+
+A bug found on the way: the RVO avoidance answer could stop melee enemies dead (packs stood 280 px off, untouched);
+avoidance now only steers a charge, never stops it. The Ember Road / Moth Hollow timeouts are packs across water
+or thicket from where the runner places the bot (bolts stop at thicket), not tuning.
 Reading: Act 1 packs are easy at the intended level with rare gear (fast and punchy, as intended for the
 opening; a player with plainer gear will feel more pressure); Act 2 packs bite (Falls Herons diving in pairs).
 The Matron is now the easiest boss for her place — she should get tougher once the bot learns her gust (next

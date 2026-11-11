@@ -21,6 +21,8 @@ const MOVE_ANIM_SPEED: float = 8.0
 const SHROUD_TINT := Color(0.72, 0.7, 0.86)            ## outside the light: cooler, never a silhouette
 const AVOID_NEIGHBOURS: float = 90.0     ## RVO: how far an enemy looks for others to steer around
 const AVOID_HORIZON: float = 0.5
+const AVOID_STALE: int = 2
+const AVOID_MIN_SPEED: float = 0.3
 const BOSS_SHROUD_TINT := Color(0.85, 0.82, 0.95)       ## a boss is always readable
 const BOSS_LIGHT_RANGE: float = 150.0
 const BOSS_LIGHT_ENERGY: float = 0.75
@@ -48,6 +50,7 @@ var _flash_t: float = 0.0
 var _knock: Vector2 = Vector2.ZERO
 var _avoid: NavigationAgent2D
 var _safe: Vector2 = Vector2.ZERO
+var _safe_at: int = -10
 var _burn_dps: float = 0.0
 var _burn_t: float = 0.0
 var _burn_tick: float = 0.0
@@ -242,7 +245,9 @@ func _make_avoidance() -> void:
 	_avoid.neighbor_distance = AVOID_NEIGHBOURS
 	_avoid.time_horizon_agents = AVOID_HORIZON
 	_avoid.max_speed = speed * 3.0
-	_avoid.velocity_computed.connect(func(v: Vector2) -> void: _safe = v)
+	_avoid.velocity_computed.connect(func(v: Vector2) -> void:
+		_safe = v
+		_safe_at = Engine.get_physics_frames())
 	add_child(_avoid)
 
 
@@ -255,7 +260,11 @@ func _physics_process(delta: float) -> void:
 	if stun_t <= 0.0:
 		want = brain.think(delta)
 	_avoid.velocity = want                                  # RVO steers the wish around the pack and the Lamplighter
-	velocity = (_safe if want != Vector2.ZERO else Vector2.ZERO) + _knock + _separation() * speed * SEPARATION
+	var fresh: bool = Engine.get_physics_frames() - _safe_at <= AVOID_STALE      # no answer yet: go as the brain wants
+	velocity = want
+	if fresh and _safe.length() > want.length() * AVOID_MIN_SPEED:      # avoidance steers; it never stops a charge
+		velocity = _safe.normalized() * want.length()
+	velocity += _knock + _separation() * speed * SEPARATION
 	_knock = _knock.lerp(Vector2.ZERO, minf(1.0, KNOCK_DECAY * delta))
 	move_and_slide()
 	_animate(delta, want)
