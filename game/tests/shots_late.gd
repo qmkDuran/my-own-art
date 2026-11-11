@@ -130,3 +130,22 @@ func _shot_hollins() -> void:
 	h.cast("flare", g.player.global_position + Vector2(110, -10))
 	await _wait(0.1)
 	await _save("hollins_ford")
+
+
+## The Fourth Loaf: Wren at her stall, the second Tuesday you have warned her about the oven door.
+func _shot_wren() -> void:
+	var h := _bot()
+	h.story_at("one_tuesday", 3)
+	h.level_up(25)
+	h.clear_near(100000.0)
+	Session.campaign.place("fourth_loaf", 1)
+	Session.campaign.set_flag("met_wren")
+	g.loop.t = TuesdayLoop.LOOP * 0.85
+	var wren: Npc = _npc("wren")
+	h.place_player(wren.global_position + Vector2(95, 10))
+	await _wait(1.5)
+	g.player.face(wren.global_position)
+	wren.use(g)
+	g.hud.messages.advance()
+	await _wait(SETTLE)
+	await _save("wren_fourth_loaf")
