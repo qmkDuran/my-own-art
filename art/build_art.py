@@ -9,11 +9,12 @@ from pathlib import Path
 
 from PIL import Image
 
-import enemies
-import icons
-import people
-import props
-from pix import Spr, sheet
+sys.path.insert(0, str(Path(__file__).resolve().parent))   # -I drops the script's folder from the path
+import enemies  # noqa: E402
+import icons  # noqa: E402
+import people  # noqa: E402
+import props  # noqa: E402
+from pix import sheet  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 GAME = ROOT / "game"

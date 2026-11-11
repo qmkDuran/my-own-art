@@ -85,7 +85,7 @@ def _lineup(dest: Path, meta: dict) -> None:
         fr = _first_frame(f"actors/{k}.png", 64, 64).resize((cell, cell), Image.NEAREST)
         img.alpha_composite(fr, (10 + i * cell, 10))
         name = meta[k].get("name", "The Lamplighter")
-        role = meta[k].get("role", "the last of the order")
+        role = meta[k].get("role", "the Ninth of the order")
         d.text((14 + i * cell, cell + 20), name, font=_font(17), fill=PAL["gold"])
         d.text((14 + i * cell, cell + 48), role, font=_font(14), fill=PAL["pale"])
     img.save(dest / "npc_lineup.png")
