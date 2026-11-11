@@ -168,3 +168,13 @@ func _shot_p2_ground() -> void:
 	_bot().cast("wickbolt", g.event_target)
 	await _wait(0.18)
 	await _save("p2_practice_ground")
+
+
+func _shot_p2_town() -> void:
+	Session.campaign.place(Opening.QUEST, ShotHelper.ALL_STEPS)
+	Session.campaign.start("seven_heartbeats")
+	await _reenter()
+	_bot().place_player(Vector2(860, 1090))
+	g.camera.frames = []
+	await _wait(9.0)
+	await _save("p2_town")

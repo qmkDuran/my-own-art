@@ -11,7 +11,7 @@ declare -A ZONE=([light]=glasswood [dark]=glasswood [skills]=glasswood [passives
   [keystones]=ember_road [eclipse_tree]=ember_road [hollow]=moth_hollow [matron]=moth_hollow [river]=riverbank
   [falls]=falls [marsh]=saltmarsh [bellwright]=belfry [hollins]=hollins [orbs]=glasswood [yard_move]=tallow [yard_bolt]=tallow [yard_flare]=tallow [gate]=tallow [zonemap]=glasswood [tips]=glasswood [help]=glasswood [menu]=glasswood [house]=tallow [lightpool]=hollins [intro]=glasswood [school]=schoolhouse [wren]=tuesday [town]=tuesday [mayor]=tuesday
   [p2_impact]=glasswood [p2_death]=glasswood [p2_numbers]=glasswood [p2_charsheet]=glasswood [p2_compare]=glasswood
-  [p2_overlay]=glasswood [p2_trees]=glasswood [p2_spec]=glasswood [p2_opening]=tallow [p2_ground]=tallow)
+  [p2_overlay]=glasswood [p2_trees]=glasswood [p2_spec]=glasswood [p2_opening]=tallow [p2_ground]=tallow [p2_town]=tallow)
 SHOTS=("$@")
 if [ "${SHOTS[0]:-}" = "shadows" ]; then                 # one shadow still per zone
   for z in tallow hollins tuesday schoolhouse glasswood belfry moth_hollow ember_road; do
