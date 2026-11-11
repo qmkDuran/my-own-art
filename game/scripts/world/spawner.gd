@@ -47,16 +47,17 @@ func spawn_boss() -> Enemy:
 	return boss
 
 
-## The gloams that came over the wall: they arrive from the forest's edge east of the gate.
-func opening_ambush(a: Dictionary) -> void:
+## The gloams that came over the wall; false (nothing happens) if the Lamplighter has already left the gate.
+func opening_ambush(a: Dictionary) -> bool:
 	if player.global_position.distance_to(z.start) > AMBUSH_NEAR:
-		return
+		return false
 	var base: Vector2 = player.global_position + Vector2(float(a["offset"][0]), float(a["offset"][1]))
 	for k: int in int(a["count"]):
 		var at: Vector2 = _free_near(base + Vector2(randf_range(-1, 1), randf_range(-1, 1)) * AMBUSH_SPREAD, 10.0)
 		var e: Enemy = spawn(String(a["kind"]), at, "normal", [], 1)
 		e.wake()
 		Fx.burst(world, at, 10, Vector2(20, 60), 0.6, [Pal.c("violet", 0.8), Pal.c("void", 0.0)], Vector2.UP, 60.0, Vector2(2, 3), false)
+	return true
 
 
 ## A relight wave: the dark comes for the waylamp from all sides.

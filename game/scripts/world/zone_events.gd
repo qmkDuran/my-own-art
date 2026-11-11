@@ -19,8 +19,8 @@ func setup(game: Game) -> void:
 	if ev.has("ambush") and not Session.campaign.flags.has("ambush_" + g.zone_id):
 		Session.campaign.set_flag("ambush_" + g.zone_id)
 		get_tree().create_timer(AMBUSH_DELAY, false).timeout.connect(func() -> void:
-			g.spawner.opening_ambush(ev["ambush"])
-			g.hud.caption(String(C["ambush"])))
+			if g.spawner.opening_ambush(ev["ambush"]):
+				g.hud.caption(String(C["ambush"])))
 	if g.flags.has("boss_down"):
 		_after_boss(true)
 
