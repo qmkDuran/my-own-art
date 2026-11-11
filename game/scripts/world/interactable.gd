@@ -53,10 +53,11 @@ func pick_rect() -> Rect2:
 	return Rect2(global_position + Vector2(-w / 2.0, -h), Vector2(w, h)).grow(HOVER_PAD)
 
 
-func set_hover(on: bool) -> void:
+## `named`: show the name too (the input keeps names quiet mid-fight, so they never cover the fight).
+func set_hover(on: bool, named: bool = true) -> void:
 	hovered = on
 	_label.text = title
-	_label.visible = on and title != ""
+	_label.visible = on and named and title != ""
 	if sprite != null:
 		sprite.self_modulate = Color(1.25, 1.2, 1.1) if on else Color.WHITE
 

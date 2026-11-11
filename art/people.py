@@ -228,6 +228,12 @@ def _head(s: Spr, f: Fig) -> None:
         s.rect(CX - 4, hy - 2, CX + 4, hy + 1, "ink")             # the brim's shadow over the eyes
         s.px(CX - 2, hy, "gold", glow=True)
         s.px(CX + 2, hy, "gold", glow=True)
+    elif style == "bare":                   # a bald crown with grey tufts over the ears
+        hair = sp.get("hair", "stone_lt")
+        s.ellipse(CX, hy - 3, 6, 4, "skin")
+        s.px(CX - 2, hy - 6, "skin_lt")
+        for side in (-1, 1):
+            s.ellipse(CX + side * 6, hy - 1, 2, 3, hair)
     elif style == "hood":
         s.poly([(CX - 7, hy + 5), (CX - 7, hy - 3), (CX - 3, hy - 8), (CX + 3, hy - 8), (CX + 7, hy - 3), (CX + 7, hy + 5),
                 (CX + 4, hy + 5), (CX + 4, hy - 3), (CX - 4, hy - 3), (CX - 4, hy + 5)], hat[1])
@@ -408,4 +414,10 @@ NPCS = {
     "wren": {"name": "Wren Aldous", "role": "Baker of the Tuesday Market", "head": "cap", "hat": ("stone_lt", "pale", "bone"), "hair": "rust",
              "coat": ("dusk1", "dusk2", "dusk3"), "apron": "bone", "hem": 55, "hem_w": 12, "held_r": "loaf", "skin": "skin_lt",
              "glove": "skin", "width": 1.02, "split": False, "rim_warm": "amber"},
+    "ansel": {"name": "Master Ansel Crake", "role": "Schoolmaster of Hollin's Ford", "head": "bare", "hair": "stone_lt",
+              "spectacles": True, "coat": ("ink", "night", "dusk2"), "hem": 56, "hem_w": 10, "held_r": "pipe",
+              "skin": "skin", "trim": "pale", "buttons": [27, 31], "width": 0.92, "rim_warm": "amber"},
+    "tibb": {"name": "Tibb Orrin", "role": "A pupil, counting", "head": "cap", "hat": ("rust", "ember", "flame"), "hair": "earth",
+             "coat": ("earth_dk", "earth", "earth_lt"), "scale": 0.7, "hem": 44, "hem_w": 9, "legs": "stone_dk",
+             "skin": "skin_lt", "scarf": ("glass_dk", "glass")},
 }

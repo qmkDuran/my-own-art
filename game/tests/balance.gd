@@ -10,11 +10,6 @@ const STRAGGLER_RANGE: float = 480.0     # beyond the bot's sight: it walks over
 const APPROACH: float = 220.0            # arrives this far from the straggler
 const PACK_TIMEOUT: float = 30.0
 const BOSS_TIMEOUT: float = 150.0
-const PASSIVE_ORDER: Array[String] = ["wick", "iron_coat", "kindler", "steady_hand", "trimmed", "deep_oil", "road_legs", "hunger",
-	"ash_skin", "night_eyes", "steady_flame", "keen", "brightness", "second_wind"]
-const SPECS: Dictionary = {"sunlash": ["quick_wrist", "quick_wrist", "long_cord", "sear", "sear", "kindling", "backhand", "cruel_dark"],
-	"flare": ["wide", "refuel", "wide", "blinding", "afterglow"], "moth_swarm": ["brood", "brood", "swift", "light_feeders", "fire_moths"]}
-
 var g: Game
 var _deaths: int = 0
 
@@ -48,23 +43,9 @@ func _run() -> void:
 	get_tree().quit()
 
 
-## A player of this level: rare staff/coat/relic, passives spent in order, a few tree points per skill.
+## A player of this level (see ShotHelper.player_build).
 func _build(level: int) -> void:
-	var h := ShotHelper.new(g)
-	h.level_up(level)
-	h.gear_up(level)
-	g.player.prog.refund_passives()
-	var i: int = 0
-	while g.player.prog.passive_points() > 0 and i < 200:
-		g.player.prog.add_passive(PASSIVE_ORDER[i % PASSIVE_ORDER.size()])
-		i += 1
-	for s: String in SPECS:
-		if g.player.prog.skills.has(s):
-			var pts: int = mini(g.player.prog.skill_level(s), (SPECS[s] as Array).size())
-			h.spec(s, (SPECS[s] as Array).slice(0, pts))
-	g.player.life = g.player.stats.max_life()
-	g.player.refill_tonics()
-
+	ShotHelper.new(g).player_build(level)
 
 func _pack_centres() -> Array[Vector2]:
 	var seen: Dictionary = {}

@@ -141,7 +141,21 @@
    ],
    "music": "explore",
    "links": [
-    "hollins"
+    "hollins",
+    "schoolhouse"
+   ]
+  },
+  "schoolhouse": {
+   "name": "The Schoolhouse",
+   "biome": "schoolhouse",
+   "seed": 9100,
+   "level": [
+    25,
+    27
+   ],
+   "music": "explore",
+   "links": [
+    "tuesday"
    ]
   }
  }

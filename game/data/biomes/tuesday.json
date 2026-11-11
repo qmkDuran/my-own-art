@@ -102,20 +102,6 @@
     ]
    },
    {
-    "kind": "npc",
-    "npc": "nim",
-    "at": [
-     0,
-     30
-    ],
-    "when": {
-     "quest_step": [
-      "one_tuesday",
-      3
-     ]
-    }
-   },
-   {
     "kind": "bench",
     "at": [
      -90,
@@ -129,6 +115,14 @@
      10
     ],
     "note": "school_note"
+   },
+   {
+    "kind": "exit",
+    "to": "schoolhouse",
+    "at": [
+     0,
+     10
+    ]
    }
   ],
   "market": [

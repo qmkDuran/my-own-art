@@ -606,5 +606,128 @@
     ]
    }
   ]
+ },
+ "ansel": {
+  "name": "Master Ansel Crake",
+  "idle": [
+   "Ansel",
+   "Sit, sit. The lesson is the same as yesterday. That is rather the point of it."
+  ],
+  "topics": [
+   {
+    "when": {
+     "flag": "loop_broken"
+    },
+    "lines": [
+     [
+      "Ansel",
+      "It's Wednesday. I have no Wednesday lesson. I have never needed one."
+     ],
+     [
+      "Ansel",
+      "I shall have to teach them something new. I'd forgotten how frightening that is."
+     ]
+    ]
+   },
+   {
+    "when": {
+     "clock_after": 45
+    },
+    "lines": [
+     [
+      "Ansel",
+      "Nearly four. I ring the bell at four, and then it is a quarter past three again."
+     ],
+     [
+      "Ansel",
+      "I used to think I'd dreamt it. Now I keep the chalk in my left pocket, because yesterday I kept it in my right."
+     ]
+    ]
+   },
+   {
+    "when": {
+     "not_flag": "met_ansel"
+    },
+    "once": true,
+    "do": {
+     "flag": "met_ansel"
+    },
+    "lines": [
+     [
+      "Ansel",
+      "A visitor! Sit anywhere but the third desk. Nim Saltry sits there. Every day, apparently."
+     ],
+     [
+      "Ansel",
+      "Today's lesson is written on the board: 'Tuesday. The sun is resting. Be quiet.'"
+     ],
+     [
+      "Ansel",
+      "Who wrote it? I did. I think. The chalk is mine. The handwriting is mine. I don't remember the morning."
+     ]
+    ]
+   },
+   {
+    "when": {},
+    "lines": [
+     [
+      "Ansel",
+      "Quarter past three, half past. The children are very good. They have had a great deal of practice."
+     ]
+    ]
+   }
+  ]
+ },
+ "tibb": {
+  "name": "Tibb Orrin",
+  "idle": [
+   "Tibb",
+   "Six hundred and twelve."
+  ],
+  "topics": [
+   {
+    "when": {
+     "flag": "loop_broken"
+    },
+    "lines": [
+     [
+      "Tibb",
+      "...six hundred and twelve. SIX HUNDRED AND THIRTEEN!"
+     ],
+     [
+      "Tibb",
+      "Nobody's ever heard thirteen! I'm going to count to a thousand and nobody can stop me!"
+     ]
+    ]
+   },
+   {
+    "when": {
+     "clock_after": 45
+    },
+    "lines": [
+     [
+      "Tibb",
+      "...six hundred and nine, six hundred and ten — shh! I'm nearly there."
+     ],
+     [
+      "Tibb",
+      "I always get to twelve and then the bell goes and I'm back at one."
+     ]
+    ]
+   },
+   {
+    "when": {},
+    "lines": [
+     [
+      "Tibb",
+      "Two hundred and six, two hundred and seven..."
+     ],
+     [
+      "Tibb",
+      "Master Crake says if I reach a thousand I can go home. I don't think he knows I can't."
+     ]
+    ]
+   }
+  ]
  }
 }

@@ -20,7 +20,7 @@
    "lines": [
     "If you're reading this, Ottilie sent you. She lies when she's frightened.",
     "Ask her what the Great Lantern burns. Watch her hands when she answers.",
-    "\u2014 T. Morrow, Eighth"
+    "— T. Morrow, Eighth"
    ]
   },
   "brennick": {
@@ -43,7 +43,7 @@
    "lines": [
     "The road lamps aren't failing. Something drinks them.",
     "The moths carry the light east, into the hills. Like bees. Like offerings.",
-    "\u2014 T."
+    "— T."
    ]
   },
   "teague_hollow": {
@@ -51,7 +51,7 @@
    "lines": [
     "Followed the moths down. They feed her. She feeds on what the sun dreams.",
     "It is remembering, Ottilie. The Dusk is remembering.",
-    "\u2014 T."
+    "— T."
    ]
   },
   "river_note": {
@@ -59,7 +59,7 @@
    "lines": [
     "The water goes up because something up there is thirsty.",
     "Not the sky. The sky is just the way.",
-    "\u2014 T."
+    "— T."
    ]
   },
   "lull_bell": {
@@ -73,9 +73,9 @@
   "falls_note": {
    "title": "A soaked page by a cold campfire",
    "lines": [
-    "Climbed the falls. The water goes up and so does the noise \u2014 a bell, far off.",
+    "Climbed the falls. The water goes up and so does the noise — a bell, far off.",
     "Lights in the marsh ahead. Most of them have teeth.",
-    "\u2014 T."
+    "— T."
    ]
   },
   "marsh_note": {
@@ -91,7 +91,7 @@
    "lines": [
     "Hollin's Ford was the last town to see the sun.",
     "It saw it go down at four o'clock on a Tuesday. It decided not to let go of that.",
-    "\u2014 T."
+    "— T."
    ]
   },
   "school_note": {
@@ -144,6 +144,7 @@
   "belfry": "Sexton's Box",
   "falls": "Climber's Pack",
   "ford": "Farm Strongbox",
-  "market": "Market Cashbox"
+  "market": "Market Cashbox",
+  "school": "Schoolmaster's Drawer"
  }
 }

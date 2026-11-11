@@ -25,6 +25,11 @@ func broken() -> bool:
 	return Session.campaign.past(String(BROKEN_AT[0]), int(BROKEN_AT[1]))
 
 
+## Minutes past the hour on the town's clocks (0-59).
+func minute() -> int:
+	return int(60.0 * t / LOOP)
+
+
 func clock_text() -> String:
 	var m: float = START_MINUTES + 60.0 * t / LOOP + (60.0 * loops if broken() else 0.0)
 	return "%s  %d:%02d" % ["Wednesday" if broken() else "Tuesday", (int(m / 60.0) - 13) % 12 + 1, int(m) % 60]
@@ -32,6 +37,8 @@ func clock_text() -> String:
 
 func _process(delta: float) -> void:
 	t += delta
+	if broken() and not Session.campaign.flags.has("loop_broken"):
+		Session.campaign.set_flag("loop_broken")             # the townsfolk talk about Wednesday from now on
 	if t >= LOOP:
 		t = 0.0
 		loops += 1

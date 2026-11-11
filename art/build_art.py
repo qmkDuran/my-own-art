@@ -15,6 +15,7 @@ import icons  # noqa: E402
 import people  # noqa: E402
 import props  # noqa: E402
 import props_act1  # noqa: E402
+import props_school  # noqa: E402
 import props_town  # noqa: E402
 from pix import sheet  # noqa: E402
 
@@ -65,7 +66,7 @@ def build_enemies(meta: dict) -> None:
 
 def build_props() -> dict:
     out = {}
-    for key, spec in {**props.MANIFEST, **props_act1.MANIFEST, **props_town.MANIFEST}.items():
+    for key, spec in {**props.MANIFEST, **props_act1.MANIFEST, **props_town.MANIFEST, **props_school.MANIFEST}.items():
         makers = spec.get("frames", [spec.get("draw")])
         frames = [m() for m in makers]
         img, glow = sheet([frames], frames[0].w, frames[0].h)

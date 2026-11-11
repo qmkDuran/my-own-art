@@ -112,6 +112,12 @@ func fourth_loaf() -> void:
 	expect(c.is_done("fourth_loaf"), "after a second strike Wren remembers: The Fourth Loaf is done")
 	c.rewards.clear()                                   # later checks count on the character's level staying put
 	expect(loop.clock_text().begins_with("Tuesday"), "while the Mayor stands, it is always Tuesday")
+	g.loop = loop
+	loop.t = TuesdayLoop.LOOP * 0.9
+	var late: String = String(Dialogue.pick("tibb", c, [])["lines"][0][1])
+	loop.t = TuesdayLoop.LOOP * 0.1
+	var early: String = String(Dialogue.pick("tibb", c, [])["lines"][0][1])
+	expect(late != early and late.contains("six hundred"), "townsfolk talk by the hour: Tibb is nearly at 612 before four")
 	var before: Dictionary = c.quests.get("one_tuesday", {}).duplicate()
 	c.place("one_tuesday", 5)
 	expect(loop.clock_text().begins_with("Wednesday"), "with the Mayor down the town reaches Wednesday")
@@ -119,6 +125,7 @@ func fourth_loaf() -> void:
 		c.quests.erase("one_tuesday")
 	else:
 		c.quests["one_tuesday"] = before
+	g.loop = null
 	loop.queue_free()
 
 

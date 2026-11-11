@@ -212,6 +212,42 @@
    "name": "Wren Aldous",
    "role": "Baker of the Tuesday Market"
   },
+  "npc_ansel": {
+   "frame": [
+    64,
+    64
+   ],
+   "anchor": [
+    32,
+    61
+   ],
+   "poses": [
+    [
+     "idle",
+     8
+    ]
+   ],
+   "name": "Master Ansel Crake",
+   "role": "Schoolmaster of Hollin's Ford"
+  },
+  "npc_tibb": {
+   "frame": [
+    64,
+    64
+   ],
+   "anchor": [
+    32,
+    61
+   ],
+   "poses": [
+    [
+     "idle",
+     8
+    ]
+   ],
+   "name": "Tibb Orrin",
+   "role": "A pupil, counting"
+  },
   "folk_porter": {
    "frame": [
     64,

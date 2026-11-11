@@ -7,6 +7,7 @@ extends Node
 
 const REPATH: float = 0.12
 const ENEMY_PICK: float = 18.0
+const FIGHT_RANGE: float = 260.0      ## an awake enemy this close: names of usable things stay hidden
 const HOLD_SLOT: String = "lmb"
 
 var g: Game
@@ -170,8 +171,15 @@ func _hover() -> void:
 		for n: Node in get_tree().get_nodes_in_group("interactables"):
 			if (n as Interactable).pick_rect().has_point(c) and (n as Interactable).title != "":
 				hovered_use = n
-	if prev != hovered_use:
-		if is_instance_valid(prev):
-			prev.set_hover(false)
-		if hovered_use != null:
-			hovered_use.set_hover(true)
+	if prev != hovered_use and is_instance_valid(prev):
+		prev.set_hover(false)
+	if hovered_use != null:
+		hovered_use.set_hover(true, not _fighting())
+
+
+func _fighting() -> bool:
+	for n: Node in get_tree().get_nodes_in_group("enemies"):
+		var e := n as Enemy
+		if e.awake and not e.dead and e.global_position.distance_to(g.player.global_position) < FIGHT_RANGE:
+			return true
+	return false

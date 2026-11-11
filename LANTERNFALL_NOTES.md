@@ -232,7 +232,18 @@ reads *Wednesday*. **Side quest "The Fourth Loaf"** (loop-aware): Wren Aldous, t
 every Tuesday because her oven door sticks at 3:52. Meet her -> wait for a strike -> warn her (she wedges it with a
 brick) -> another strike -> she remembers your face, not why. Reward: Wren's Oven Mitts (unique gloves). Quest
 goals can now wait on `clock_strike`.
-Next for Act 3: the Schoolhouse as its own interior zone, more loop-aware townsfolk.
+**The Schoolhouse** (zone `schoolhouse`, through the door in the town's school square; still inside the loop):
+a long room of desks under a blackboard ("Tuesday. The sun is resting. Be quiet."), walls of bookshelves, a few
+Repeater pupils. Nim sits at the third desk from Find Nim until the quest ends. **Loop-aware townsfolk**: dialogue
+can now depend on the hour (`clock_after`: minutes past three on the town clocks) and on the broken loop
+(flag `loop_broken`, set once the Mayor is down). Master Ansel Crake, the schoolmaster, notices he moves his chalk
+between pockets each loop, and has no Wednesday lesson. Tibb Orrin counts toward a thousand and is always cut off at
+612 by the bell; after the Mayor, he shouts "613".
+**Act 1 replay** (`-- --replay`, part of `run_all.sh`): from the title screen (New Game, intro cards) the DemoBot
+plays every main-quest step to the end of Act 1 and checks Act 2 opens. It is moved between places, but it does
+each step for real (talk, exits, boss rings, lamp waves), at each zone's intended level. Last run: 11 steps,
+about 125 s of play, 1–2 deaths (Glazier, Matron), no stuck step.
+Next for Act 3: Tallow besieged (Act 4 opening), more of the town's loop-aware stories.
 
 ## 8c. Balance (bot-measured; `-- --balance --zone=<id>`, headless, fixed 60 fps)
 The DemoBot plays like a player at the zone's intended level (middle of its range; rare staff, coat and relic of

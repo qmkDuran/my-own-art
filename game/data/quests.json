@@ -457,8 +457,8 @@
      "nim"
     ],
     "target": {
-     "zone": "tuesday",
-     "at": "role:school"
+     "at": "npc:nim",
+     "zone": "schoolhouse"
     }
    },
    {
@@ -479,8 +479,8 @@
      "nim"
     ],
     "target": {
-     "zone": "tuesday",
-     "at": "role:school"
+     "at": "npc:nim",
+     "zone": "schoolhouse"
     }
    }
   ],

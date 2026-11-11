@@ -1,0 +1,241 @@
+{
+ "_doc": "The Hollin's Ford schoolhouse (Act 3): one long room of desks and shelves, still inside the Tuesday loop. Nim sits at her desk; the schoolmaster teaches the same lesson; a pupil counts toward a number he never reaches.",
+ "name": "The Schoolhouse",
+ "cols": 84,
+ "rows": 64,
+ "cell": 32,
+ "border": 2,
+ "loop": true,
+ "path": {
+  "half_width": 1.6,
+  "verge": 1.6,
+  "jitter": 0.1
+ },
+ "clearing_spacing": 14,
+ "clearings": [
+  {
+   "role": "start",
+   "r": [
+    8,
+    6
+   ],
+   "at_frac": [
+    0.5,
+    0.86
+   ]
+  },
+  {
+   "role": "classroom",
+   "r": [
+    13,
+    9
+   ],
+   "at_frac": [
+    0.5,
+    0.3
+   ]
+  },
+  {
+   "role": "hall",
+   "r": [
+    8,
+    6
+   ],
+   "count": 2
+  }
+ ],
+ "extra_links": 1,
+ "required": [
+  "start",
+  "classroom",
+  "hall"
+ ],
+ "setpieces": {
+  "start": [
+   {
+    "kind": "exit",
+    "to": "tuesday",
+    "sprite": "road_gate",
+    "at": [
+     0,
+     100
+    ]
+   },
+   {
+    "kind": "clock_post",
+    "at": [
+     -90,
+     40
+    ]
+   }
+  ],
+  "classroom": [
+   {
+    "kind": "blackboard",
+    "at": [
+     0,
+     -110
+    ]
+   },
+   {
+    "kind": "desk_a",
+    "at": [
+     -170,
+     -40
+    ]
+   },
+   {
+    "kind": "desk_b",
+    "at": [
+     -100,
+     -40
+    ]
+   },
+   {
+    "kind": "desk_a",
+    "at": [
+     100,
+     -40
+    ]
+   },
+   {
+    "kind": "desk_b",
+    "at": [
+     170,
+     -40
+    ]
+   },
+   {
+    "kind": "desk_b",
+    "at": [
+     -170,
+     40
+    ]
+   },
+   {
+    "kind": "desk_a",
+    "at": [
+     170,
+     40
+    ]
+   },
+   {
+    "kind": "npc",
+    "npc": "ansel",
+    "at": [
+     70,
+     -100
+    ]
+   },
+   {
+    "kind": "npc",
+    "npc": "tibb",
+    "at": [
+     100,
+     10
+    ]
+   },
+   {
+    "kind": "npc",
+    "npc": "nim",
+    "at": [
+     -100,
+     10
+    ],
+    "when": {
+     "quest_past": [
+      "one_tuesday",
+      2
+     ],
+     "quest_active": "one_tuesday"
+    }
+   }
+  ],
+  "hall": [
+   {
+    "kind": "bookshelf_a",
+    "at": [
+     -40,
+     -40
+    ]
+   },
+   {
+    "kind": "bookshelf_b",
+    "at": [
+     40,
+     -40
+    ]
+   },
+   {
+    "kind": "chest",
+    "at": [
+     0,
+     20
+    ],
+    "chest": "school"
+   }
+  ]
+ },
+ "trees": {
+  "edge_spacing": 40,
+  "deep_spacing": 70,
+  "edge_depth": 2,
+  "kinds": {
+   "bookshelf_a": 50,
+   "bookshelf_b": 50
+  }
+ },
+ "edge_props": {
+  "desk_a": 4,
+  "desk_b": 4
+ },
+ "packs": {
+  "count": 6,
+  "spacing": 10,
+  "safe_radius": 14,
+  "elites": 1,
+  "table": [
+   {
+    "from": 0.0,
+    "kinds": {
+     "repeater": 0.8,
+     "clockface": 0.2
+    },
+    "size": [
+     3,
+     4
+    ]
+   }
+  ]
+ },
+ "relight": {
+  "waves": 1,
+  "wave_size": 4,
+  "duration": 12.0,
+  "kinds": {
+   "repeater": 1.0
+  }
+ },
+ "ambient": {
+  "darkness": [
+   0.24,
+   0.22,
+   0.24
+  ],
+  "motes_color": "bone"
+ },
+ "ground": {
+  "c_moss_dk": "earth_dk",
+  "c_moss": "earth",
+  "c_moss_lt": "earth_lt",
+  "c_ink": "ink",
+  "c_earth_dk": "earth_dk",
+  "c_earth": "earth",
+  "c_earth_lt": "earth_lt"
+ },
+ "stone_style": "flags",
+ "stone_wear": 0.2,
+ "events": {
+  "caption": "The schoolhouse. Chalk dust hangs in the air and does not fall. A bell is about to ring."
+ }
+}

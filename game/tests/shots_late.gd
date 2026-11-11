@@ -149,3 +149,30 @@ func _shot_wren() -> void:
 	g.hud.messages.advance()
 	await _wait(SETTLE)
 	await _save("wren_fourth_loaf")
+
+
+## The Schoolhouse: Nim at the third desk, the schoolmaster at the board, Tibb counting.
+func _shot_school() -> void:
+	_bot().story_at("one_tuesday", 3)
+	await _reenter()                                         # who is in the room depends on the story
+	var h := _bot()
+	h.level_up(25)
+	h.clear_near(100000.0)
+	g.loop.t = TuesdayLoop.LOOP * 0.8
+	var nim: Npc = _npc("nim")
+	h.place_player(nim.global_position + Vector2(40, 70))
+	await _wait(1.5)
+	g.player.face(nim.global_position)
+	_npc("tibb").use(g)
+	await _wait(SETTLE)
+	await _save("schoolhouse")
+
+
+## Walk out and back in, so the zone is set up for the story as it now stands.
+func _reenter() -> void:
+	var left: Game = g
+	Session.travel(g, g.zone_id)
+	while Game.current == left or Game.current == null:
+		await get_tree().process_frame
+	g = Game.current
+	await _wait(1.0)
