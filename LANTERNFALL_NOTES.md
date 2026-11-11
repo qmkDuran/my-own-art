@@ -7,6 +7,21 @@ Silkscreen (OFL, licences in `game/fonts/`). Read STYLE.md (look) and CODE_STYLE
 Status: **pass 2 — Act 1 playable**: Tallow (hub, people, services), the Glasswood, the Ember Road, Moth Hollow
 and the Moth Matron; quests and dialogue as data; zone travel; loot filter; save format 2. See "Progress".
 
+
+## 0. PAUSED HERE (2026-11-11)
+The user paused LANTERNFALL; direction is moving to a creature-trainer ARPG. Everything is committed and pushed on
+branch `lanternfall`; all checks pass (`bash tools/run_all.sh`).
+- **Done:** Act 1 playable from the title (opening "First Light" inside Tallow with a practice ground, establishing
+  pan, Glasswood, Ember Road, Moth Hollow, Matron), Act 2/3 zones started (Riverbank, Falls, Saltmarsh, Belfry,
+  Hollin's Ford, Tuesday, Schoolhouse); Lamplighter rig animation; 13 skills with trees, passives, masteries,
+  specialisation slots; loot, compare, character sheet with real-number tooltips; Tab overlay map; combat weight
+  pass at 1x (12a-3); eerie exploration, cave and town loops; CC0 SFX layers (game/audio/CREDITS.md).
+- **Open:** a plain (non-kill) hit is still the least dramatic effect; passive-tree tooltip covers neighbours;
+  long keystone names touch frames; Tallow has no real streets; balance not re-run after the 1x combat pass;
+  music never listened to (only measured); gold does not exist; Acts 2-5 incomplete; old `tallow` shot in
+  tests/shots.gd fails since the opening runs first (use `p2_town`).
+- Latest stills: scratchpad `lanternfall_out/final/playtest3/`. Rule: stills only, no video (12b).
+
 ## 1. Premise and story bible
 
 **The world.** Three hundred years ago the sun went out. People live in walled cities under Great Lanterns,
