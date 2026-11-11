@@ -113,3 +113,20 @@ func _shot_mayor() -> void:
 	g.start_boss()
 	await _wait(3.0)
 	await _save("mayor_of_tuesday")
+
+
+## Hollin's Ford: a farm where every clock stopped at four, Repeaters coming across the field.
+func _shot_hollins() -> void:
+	var h := _bot()
+	h.story_at("one_tuesday", 2)
+	h.level_up(23)
+	h.gear_up(23)
+	h.clear_near(100000.0)
+	var at: Vector2 = g.layout.center_of(g.layout.clearing_of_role("farm")["center"])
+	h.place_player(at + Vector2(-60, 80))
+	h.pack_near(["repeater", "hound", "repeater", "clockface"], Vector2(150, -10))
+	g.player.light.value = 70.0
+	await _wait(1.4)
+	h.cast("flare", g.player.global_position + Vector2(110, -10))
+	await _wait(0.1)
+	await _save("hollins_ford")

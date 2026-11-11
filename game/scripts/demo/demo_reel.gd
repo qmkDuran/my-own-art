@@ -2,24 +2,27 @@ class_name DemoReel
 extends Node
 ## --demo / --demo2: the staged scenes of a recorded video, joined by fades, with a DemoBot playing each one.
 ## Reel 1 (pass 1): the gate ambush, an elite pack, the Glazier. Reel 2 (pass 2): Ottilie in Tallow, relighting a
-## road lamp on the Ember Road, the Moth Matron. Scenes that change zone wait for the new zone before setting up.
+## road lamp on the Ember Road, the Moth Matron. Reel 3 (--demo3, the best-of): Tallow, the road, the river, the
+## Matron, the Bellwright, the Mayor of Tuesday. Scenes that change zone wait for the new zone before setting up.
 ## Quits at the end.
 
 const DEMO_SEED: int = 7
 const TRAVEL: Dictionary = {"road": "ember_road", "hollow": "moth_hollow", "river": "riverbank", "glass": "glasswood",
-	"belfry": "belfry"}
+	"belfry": "belfry", "mayor": "tuesday"}
 const ARRIVE_PAN: float = 2.5
 const STORY: Dictionary = {"elite": ["seven_heartbeats", 0], "boss": ["seven_heartbeats", 1], "road": ["ember_road", 1],
-	"hollow": ["moth_hollow", 1], "river": ["upward_river", 2], "belfry": ["drowned_belfry", 1], "glass": ["seven_heartbeats", 1]}
+	"hollow": ["moth_hollow", 1], "river": ["upward_river", 2], "belfry": ["drowned_belfry", 1], "glass": ["seven_heartbeats", 1],
+	"mayor": ["one_tuesday", 4]}
 const REELS: Dictionary = {
 	"act1": [[0.0, "gate"], [15.0, "elite"], [29.0, "boss"], [46.0, "end"]],
 	"act2": [[0.0, "hub"], [10.5, "road"], [25.0, "hollow"], [45.0, "end"]],
-	"final": [[0.0, "arrive"], [8.0, "road"], [19.0, "river"], [30.0, "hollow"], [45.0, "belfry"], [62.0, "end"]],
+	"final": [[0.0, "arrive"], [7.0, "road"], [17.0, "river"], [27.0, "hollow"], [40.0, "belfry"], [53.0, "mayor"], [67.0, "end"]],
 }
 const BOSS_LIFE: float = 0.13
 const MATRON_LIFE: float = 0.4
 const BELLWRIGHT_LIFE: float = 0.3
-const RIVER_TOUGH: float = 2.5
+const MAYOR_LIFE: float = 0.35
+const RIVER_TOUGH: float = 1.0
 const PACK_RADIUS: float = 150.0
 const CLEAR_RADIUS: float = 800.0
 const ROAD_PROGRESS: float = 0.5
@@ -60,7 +63,7 @@ func _enter(id: String, g: Game) -> void:
 			get_tree().quit()
 		"gate", "hub":
 			_setup(id, g)
-		"road", "hollow", "river", "glass", "belfry":
+		"road", "hollow", "river", "glass", "belfry", "mayor":
 			_left = g
 			_pending = id
 			var to: String = String(TRAVEL[id])
@@ -85,6 +88,7 @@ func _setup(id: String, g: Game) -> void:
 		"river": _river(g, h)
 		"glass": _glass(g, h)
 		"belfry": _belfry(g, h)
+		"mayor": _mayor(g, h)
 
 
 func _build(g: Game, h: ShotHelper, level: int) -> void:
@@ -195,3 +199,10 @@ func _belfry(g: Game, h: ShotHelper) -> void:
 	_boss(g, h, 20, "beacon", BELLWRIGHT_LIFE)
 	g.player.prog.set_slot("e", "glass_ward")
 	g.player.prog.set_slot("r", "eclipse")
+
+
+## The Town of One Tuesday: the Mayor checks his watch; Noon and Cinder Rain ready on E and R.
+func _mayor(g: Game, h: ShotHelper) -> void:
+	_boss(g, h, 28, "beacon", MAYOR_LIFE)
+	g.player.prog.set_slot("e", "noon")
+	g.player.prog.set_slot("r", "cinder_rain")
