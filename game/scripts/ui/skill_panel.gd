@@ -1,0 +1,139 @@
+class_name SkillPanel
+extends GamePanel
+## Skills and their specialisation trees. Left: your skills (level, points free). Right: the selected skill's
+## tree — nodes in rows by the points they need, lines to the node they grow from; click to add a point,
+## right-click to refund. Below: put the skill on a hotbar key.
+
+const LIST_W: float = 150.0
+const ROW_H: float = 36.0
+const NODE := Vector2(76, 34)
+const STEP := Vector2(86, 64)
+const TREE_Y: float = 92.0
+const ICON: float = 24.0
+const ORDER: Array[String] = ["sunlash", "flare", "lantern_toss", "moth_swarm", "dash", "eclipse", "noon"]
+
+var selected: String = "sunlash"
+var _skills_tex: Texture2D
+var _glyphs: Texture2D
+
+
+func _ready() -> void:
+	_skills_tex = PropSprite.tex("res://art/ui/skills.png")
+
+
+func list_rect(i: int) -> Rect2:
+	return Rect2(8, CONTENT_Y + i * ROW_H, LIST_W - 8.0, ROW_H - 4.0)
+
+
+func node_rect(n: Dictionary) -> Rect2:
+	var origin := Vector2(LIST_W + 16.0, TREE_Y)
+	return Rect2(origin + Vector2(float(n["pos"][0]), float(n["pos"][1])) * STEP, NODE)
+
+
+func key_rect(i: int) -> Rect2:
+	return Rect2(LIST_W + 20.0 + i * 46.0, size.y - 34.0, 40.0, 22.0)
+
+
+func _content() -> void:
+	for i: int in ORDER.size():
+		_list_row(i, ORDER[i])
+	draw_line(Vector2(LIST_W, CONTENT_Y), Vector2(LIST_W, size.y - 8.0), Color(UiDraw.FRAME, 0.5))
+	_tree_header()
+	var nodes: Array = GameData.skill(selected)["nodes"]
+	for n: Dictionary in nodes:
+		if n.has("parent"):
+			var a: Rect2 = node_rect(g.player.prog.spec_node(selected, String(n["parent"])))
+			draw_line(a.get_center(), node_rect(n).get_center(), UiDraw.FRAME, 2.0)
+	for n: Dictionary in nodes:
+		_node(n)
+	if g.player.prog.skills.has(selected) and selected != "dash":
+		UiDraw.text(self, Vector2(LIST_W + 20.0, size.y - 40.0), "Hotbar key:", UiDraw.DIM, UiDraw.SMALL)
+		for i: int in InputSetup.SLOTS.size():
+			var k: String = InputSetup.SLOTS[i]
+			button(key_rect(i), InputSetup.SLOT_LABELS[k], g.player.prog.slots[k] != selected)
+
+
+func _list_row(i: int, id: String) -> void:
+	var r: Rect2 = list_rect(i)
+	var learned: bool = g.player.prog.skills.has(id) or id == "dash"
+	UiDraw.box(self, r, Color(0.16, 0.11, 0.07) if id == selected else Color(0.06, 0.05, 0.08), UiDraw.FRAME_LIT if id == selected else UiDraw.FRAME)
+	var icon: int = int(GameData.skill(id)["icon"])
+	draw_texture_rect_region(_skills_tex, Rect2(r.position + Vector2(4, 4), Vector2(ICON, ICON)), Rect2(icon * ICON, 0, ICON, ICON),
+		Color.WHITE if learned else Color(0.4, 0.4, 0.5))
+	UiDraw.text(self, r.position + Vector2(32, 13), String(GameData.skill(id)["name"]), UiDraw.TEXT if learned else UiDraw.LOCKED)
+	var sub: String = _sub(id, learned)
+	UiDraw.text(self, r.position + Vector2(32, 25), sub, UiDraw.GOLD if g.player.prog.spec_points(id) > 0 else UiDraw.DIM, UiDraw.SMALL)
+
+
+func _sub(id: String, learned: bool) -> String:
+	if GameData.skill(id).has("locked"):
+		return "later pass"
+	if not learned:
+		return "learn at level %d" % int(Progression.LEARN.get(id, 0))
+	if id == "dash":
+		return "movement"
+	var pts: int = g.player.prog.spec_points(id)
+	return "level %d%s" % [g.player.prog.skill_level(id), "   %d pts" % pts if pts > 0 else ""]
+
+
+func _tree_header() -> void:
+	var p: Progression = g.player.prog
+	var x: float = LIST_W + 14.0
+	var d: Dictionary = GameData.skill(selected)
+	UiDraw.text(self, Vector2(x, CONTENT_Y + 14.0), "%s  -  level %d" % [d["name"], p.skill_level(selected)], UiDraw.GOLD)
+	if p.skills.has(selected) and not d["nodes"].is_empty():
+		var xr := Rect2(x, CONTENT_Y + 22.0, size.x - x - 14.0, 4.0)
+		var sd: Dictionary = p.skills[selected]
+		draw_rect(xr.grow(1.0), UiDraw.INK)
+		draw_rect(Rect2(xr.position, Vector2(xr.size.x * float(sd["xp"]) / p.skill_xp_to_next(int(sd["level"])), xr.size.y)), Pal.c("violet_lt"))
+		UiDraw.text(self, Vector2(x, CONTENT_Y + 40.0), "Points to spend: %d   (one per skill level; the skill levels while on your hotbar)" % p.spec_points(selected),
+			UiDraw.TEXT, UiDraw.SMALL)
+	elif d.has("locked"):
+		UiDraw.text(self, Vector2(x, CONTENT_Y + 40.0), String(d["locked"]), UiDraw.LOCKED, UiDraw.SMALL)
+
+
+func _node(n: Dictionary) -> void:
+	var r: Rect2 = node_rect(n)
+	var p: Progression = g.player.prog
+	var rk: int = p.node_rank(selected, String(n["id"]))
+	var open: bool = p.spec_block(selected, String(n["id"])) == "" or rk > 0
+	var col: Color = UiDraw.FRAME_LIT if rk > 0 else (UiDraw.FRAME if open else UiDraw.LOCKED)
+	UiDraw.box(self, r, Color(0.2, 0.12, 0.05) if rk > 0 else Color(0.05, 0.045, 0.07), col)
+	UiDraw.text(self, r.position + Vector2(0, 14), _fit(String(n["name"]), r.size.x - 6.0), UiDraw.TEXT if open else UiDraw.LOCKED,
+		UiDraw.SMALL, HORIZONTAL_ALIGNMENT_CENTER, r.size.x)
+	UiDraw.text(self, r.position + Vector2(0, 28), "%d/%d" % [rk, int(n["max"])], UiDraw.GOLD if rk > 0 else UiDraw.DIM, UiDraw.SMALL,
+		HORIZONTAL_ALIGNMENT_CENTER, r.size.x)
+
+
+## The node's name if it fits the box, else its first word (the tooltip has the full name).
+func _fit(s: String, w: float) -> String:
+	return s if UiDraw.text_width(self, s, UiDraw.SMALL) <= w else s.split(" ")[0]
+
+
+func _click(at: Vector2, button_index: int) -> void:
+	for i: int in ORDER.size():
+		if list_rect(i).has_point(at):
+			selected = ORDER[i]
+			Audio.sfx("ui_click", -8.0)
+			return
+	for n: Dictionary in GameData.skill(selected)["nodes"]:
+		if node_rect(n).has_point(at):
+			var ok: bool = g.player.prog.add_spec(selected, String(n["id"])) if button_index == MOUSE_BUTTON_LEFT \
+				else g.player.prog.remove_spec(selected, String(n["id"]))
+			Audio.sfx("ui_click" if ok else "hiss", -6.0 if ok else -14.0)
+			return
+	for i: int in InputSetup.SLOTS.size():
+		if key_rect(i).has_point(at) and g.player.prog.skills.has(selected) and selected != "dash":
+			g.player.prog.set_slot(InputSetup.SLOTS[i], selected)
+			Audio.sfx("ui_click", -8.0)
+
+
+func _hover(at: Vector2) -> void:
+	for i: int in ORDER.size():
+		if list_rect(i).has_point(at):
+			tip(SkillText.rows(self, g.player, ORDER[i]))
+			return
+	for n: Dictionary in GameData.skill(selected)["nodes"]:
+		if node_rect(n).has_point(at):
+			tip(SkillText.node_rows(self, g.player, selected, n))
+			return

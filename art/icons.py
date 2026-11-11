@@ -262,3 +262,12 @@ def fx_spark() -> Spr:
     s.px(1, 2, "gold", glow=True)
     s.px(1, 1, "sun", glow=True)
     return s
+
+
+def fx_crescent() -> Spr:
+    """Sunwave: a crescent of light travelling to the right (+x), bulging forward."""
+    s = Spr(16, 32)
+    for r, c in ((14, "amber"), (12, "gold"), (11, "sun")):
+        pts = arc_points(0, 16, r, -1.2, 1.2, 12)
+        s.line(pts, c, width=2 if c != "sun" else 1, glow=True)
+    return s

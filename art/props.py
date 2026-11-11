@@ -398,6 +398,39 @@ def gate() -> Spr:
     return s
 
 
+def note() -> Spr:
+    """A page pinned to a stake: optional lore, readable from the path."""
+    s = Spr(18, 26)
+    s.line([(9, 25), (9, 8)], "earth_dk", width=2)
+    s.poly([(2, 3), (15, 2), (16, 13), (3, 14)], "bone")
+    s.line([(4, 6), (13, 5)], "stone")
+    s.line([(4, 9), (12, 8)], "stone")
+    s.px(9, 3, "rust")
+    return _finish(s, "sun", {"bone"})
+
+
+def cocoon(broken: bool) -> Spr:
+    """Nim, held in a shell of glass by the Glazier. Broken: shards on the ground and nobody inside."""
+    s = Spr(44, 60)
+    if broken:
+        for k in range(7):
+            _prism(s, (6 + k * 5, 57), -0.9 + k * 0.3, 6 + (k % 3) * 3, 2, ("glass_dk", "glass", "glint"))
+        s.outline()
+        return s
+    s.ellipse(22, 34, 15, 24, "glass_dk")
+    s.ellipse(22, 34, 12, 21, "glass")
+    s.ellipse(22, 22, 4, 4, "skin_lt")                                # a small figure curled inside
+    s.rect(18, 26, 26, 44, "moss_lt")
+    s.rect(17, 19, 27, 21, "glass_dk")
+    s.line([(12, 18), (16, 50)], "glint", glow=True)
+    s.line([(30, 14), (32, 30)], "glass_lt")
+    for k in range(4):
+        _prism(s, (10 + k * 8, 58), -0.5 + k * 0.33, 10 + (k % 2) * 6, 2.5, ("glass_dk", "glass_lt", "glint"))
+    s.outline()
+    s.recolor_edge(0, -1, "glint", only={"glass_dk"})
+    return s
+
+
 MANIFEST: dict[str, dict] = {
     # name: canvas, footprint (w, h) centred on the bottom anchor, emits light?, frames
     "tree_a": {"draw": lambda: glass_tree(64, 96, 1), "foot": [10, 8]},
@@ -429,4 +462,6 @@ MANIFEST: dict[str, dict] = {
     "bridge_south": {"draw": lambda: bridge("south"), "foot": [0, 0], "flat": True},
     "wall": {"draw": wall, "foot": [0, 0]},
     "gate": {"draw": gate, "foot": [0, 0]},
+    "note": {"draw": note, "foot": [8, 6]},
+    "cocoon": {"frames": [lambda: cocoon(False), lambda: cocoon(True)], "foot": [26, 10]},
 }

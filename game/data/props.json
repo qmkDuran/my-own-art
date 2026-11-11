@@ -404,5 +404,33 @@
   "light": "",
   "flat": false,
   "glow": true
+ },
+ "note": {
+  "size": [
+   18,
+   26
+  ],
+  "frames": 1,
+  "foot": [
+   8,
+   6
+  ],
+  "light": "",
+  "flat": false,
+  "glow": false
+ },
+ "cocoon": {
+  "size": [
+   44,
+   60
+  ],
+  "frames": 2,
+  "foot": [
+   26,
+   10
+  ],
+  "light": "",
+  "flat": false,
+  "glow": true
  }
 }

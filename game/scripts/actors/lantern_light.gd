@@ -1,0 +1,126 @@
+class_name LanternLight
+extends Node2D
+## The lantern's Light (data/light.json): a value from min to max that sets the radius. Hits dim it, kills feed
+## it, and it drifts back into a calm band so a bad moment never stays punishing. Blazing (high) adds damage;
+## Guttering (low) is a warning. Drawn as a banded warm light with a faint ring at the radius that matters.
+
+signal state_changed(state: String)
+
+const COLOR := Color(1.0, 0.8, 0.52)
+const ENERGY: float = 1.2
+const HALO_ENERGY: float = 0.28
+const HALO_SCALE: float = 1.7
+const TEX_RADIUS: float = 128.0
+const FLICKER: float = 0.05
+const RADIUS_LERP: float = 6.0
+const RING_DASHES: int = 48
+const RING_Z: int = -15
+const HIT_FLASH_TIME: float = 0.35
+
+var value: float
+var stats: Stats
+var thrown: bool = false
+var shown_radius: float = 0.0
+var _light: PointLight2D
+var _halo: PointLight2D
+var _state: String = "calm"
+var _hit_flash: float = 0.0
+var _t: float = 0.0
+
+
+func _ready() -> void:
+	var L: Dictionary = GameData.light
+	value = float(L["start"])
+	_light = _make_light(LightTex.banded(), ENERGY)
+	_halo = _make_light(LightTex.soft(256), HALO_ENERGY)
+	z_index = RING_Z
+	z_as_relative = false
+	material = Fx.unshaded()
+	add_to_group(LightField.GROUP)
+	shown_radius = target_radius()
+
+
+func _make_light(tex: Texture2D, energy: float) -> PointLight2D:
+	var l := PointLight2D.new()
+	l.texture = tex
+	l.color = COLOR
+	l.energy = energy
+	add_child(l)
+	return l
+
+
+func target_radius() -> float:
+	var L: Dictionary = GameData.light
+	var v: float = float(L["thrown_lantern_self_light"]) if thrown else value
+	var mult: float = stats.light_radius_mult() if stats != null else 1.0
+	return (float(L["radius_base"]) + float(L["radius_per_light"]) * v) * mult
+
+
+func light_pos() -> Vector2:
+	return global_position
+
+
+func light_radius() -> float:
+	return shown_radius
+
+
+func state() -> String:
+	var L: Dictionary = GameData.light
+	if value >= float(L["blazing_at"]) and not thrown:
+		return "blazing"
+	if value < float(L["guttering_below"]):
+		return "guttering"
+	return "calm"
+
+
+func add(amount: float) -> void:
+	var L: Dictionary = GameData.light
+	value = clampf(value + amount, float(L["min"]), float(L["max"]))
+
+
+## A hit for `fraction` of max life dims the lantern (less with Steady Flame and the like).
+func on_hit(fraction: float, extra: float) -> void:
+	var L: Dictionary = GameData.light
+	var loss: float = (float(L["hit_loss_flat"]) + float(L["hit_loss_per_life_fraction"]) * fraction) \
+		* (1.0 - minf(0.9, stats.v("light_loss_reduction") / 100.0)) + extra
+	add(-loss)
+	_hit_flash = HIT_FLASH_TIME
+
+
+func on_kill(rank: String) -> void:
+	var L: Dictionary = GameData.light
+	var gain: float = float(L.get("kill_gain_" + rank, L["kill_gain"])) if rank != "normal" else float(L["kill_gain"])
+	add(gain + stats.v("light_on_kill"))
+
+
+func _process(delta: float) -> void:
+	_t += delta
+	_drift(delta)
+	shown_radius = lerpf(shown_radius, target_radius(), minf(1.0, delta * RADIUS_LERP))
+	var flick: float = 1.0 + sin(_t * 13.0) * FLICKER * 0.5 + sin(_t * 7.3) * FLICKER * 0.5
+	_light.texture_scale = shown_radius / TEX_RADIUS
+	_light.energy = ENERGY * flick
+	_halo.texture_scale = shown_radius * HALO_SCALE / TEX_RADIUS
+	_hit_flash = maxf(0.0, _hit_flash - delta)
+	var s: String = state()
+	if s != _state:
+		_state = s
+		state_changed.emit(s)
+	queue_redraw()
+
+
+func _drift(delta: float) -> void:
+	var L: Dictionary = GameData.light
+	if value < float(L["calm_low"]):
+		add(float(L["drift_up_per_s"]) * delta)
+	elif value > float(L["calm_high"]):
+		add(-float(L["drift_down_per_s"]) * delta)
+
+
+func _draw() -> void:
+	var alpha: float = float(GameData.light["ring_alpha"])
+	var col: Color = Pal.c("rose", 0.6) if _hit_flash > 0.0 else Pal.c("gold" if _state == "blazing" else "amber", alpha)
+	var step: float = TAU / RING_DASHES
+	for i: int in RING_DASHES:
+		var a: float = i * step + _t * 0.15
+		draw_arc(Vector2.ZERO, shown_radius, a, a + step * 0.5, 3, col, 1.0)

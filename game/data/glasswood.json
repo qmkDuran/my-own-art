@@ -5,7 +5,7 @@
  "border": 2,
  "wall": {"cols": 44, "rows": 4, "gate_col": 14},
  "stream": {"x_frac": 0.56, "width": 3, "amp": [5, 9], "freq": [0.035, 0.06]},
- "path": {"half_width": 1.25, "verge": 2.6, "jitter": 0.22},
+ "path": {"half_width": 0.9, "verge": 2.6, "jitter": 0.22},
  "clearing_spacing": 21,
  "clearings": [
   {"role": "start", "r": [9, 7], "at": [16, 10]},
@@ -27,7 +27,7 @@
    {"kind": "npc", "npc": "ysolde", "at": [-20, -60]}, {"kind": "cart", "at": [-120, 50]}],
   "hut": [{"kind": "hut", "at": [0, -20]}, {"kind": "chest", "at": [66, -14], "chest": "hut"}, {"kind": "woodpile", "at": [-72, -24]},
    {"kind": "stump", "at": [-40, 34]}],
-  "pond": [{"kind": "pond", "at": [0, -60], "r": [5, 2.5]}, {"kind": "statue_fisher", "at": [30, 12], "note": "brennick"},
+  "pond": [{"kind": "pond", "at": [0, -100], "r": [5, 2.2]}, {"kind": "statue_fisher", "at": [30, 12], "note": "brennick"},
    {"kind": "reeds", "at": [-70, -8]}, {"kind": "reeds", "at": [86, -10]}, {"kind": "npc", "npc": "hask", "at": [-60, 50]}],
   "cairn": [{"kind": "cairn", "at": [0, -10], "note": "teague_cairn"}, {"kind": "crystal", "at": [-46, -28]}, {"kind": "crystal", "at": [50, 6]}],
   "tower": [{"kind": "tower", "at": [0, -30], "lamp_fixed": true}, {"kind": "chest", "at": [56, -16], "chest": "tower"},

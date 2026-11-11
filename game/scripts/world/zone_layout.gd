@@ -15,6 +15,7 @@ var seed: int
 var terrain: PackedByteArray
 var stream: PackedByteArray           ## 1 where the glass stream runs (paths may bridge it; ponds they may not)
 var clearing_id: PackedInt32Array     ## which clearing a cell belongs to (-1: none)
+var route: PackedByteArray            ## 1 along every path and trail (kept clear of props)
 var blocked: PackedByteArray          ## 1 where nothing can stand: non-walkable terrain or a prop's footprint
 var clearings: Array[Dictionary] = [] ## {role, center: Vector2i, r: Vector2, secret: bool}
 var links: Array[Vector2i] = []
@@ -42,6 +43,8 @@ func setup(c: int, r: int, cell_px: int, s: int) -> void:
 	clearing_id = PackedInt32Array()
 	clearing_id.resize(c * r)
 	clearing_id.fill(-1)
+	route = PackedByteArray()
+	route.resize(c * r)
 	blocked = PackedByteArray()
 	blocked.resize(c * r)
 
