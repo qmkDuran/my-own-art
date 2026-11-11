@@ -12,6 +12,10 @@ const MODES: Dictionary = {
 }
 
 
+const TITLE: String = "res://scenes/title.tscn"
+const LANTERNFALL_FLAGS: Array[String] = ["--demo", "--demo2", "--demo3", "--play"]
+
+
 func _ready() -> void:
 	var args: PackedStringArray = OS.get_cmdline_user_args()
 	for a: String in args:
@@ -22,6 +26,8 @@ func _ready() -> void:
 			if Session.zone_id != "tallow":        # tests set elsewhere start after the opening
 				Session.campaign.place(Opening.QUEST, ShotHelper.ALL_STEPS)
 				Session.campaign.start("seven_heartbeats")
+	if _lanternfall(args):                                  # the project opens the trainer prototype; Lanternfall's modes
+		get_tree().change_scene_to_file.call_deferred(TITLE)  # start from its title, as they always did
 	if args.has("--demo") or args.has("--demo2") or args.has("--demo3"):
 		var reel := DemoReel.new()
 		reel.process_mode = Node.PROCESS_MODE_ALWAYS
@@ -32,6 +38,13 @@ func _ready() -> void:
 			node.process_mode = Node.PROCESS_MODE_ALWAYS
 			add_child(node)
 			return
+
+
+func _lanternfall(args: PackedStringArray) -> bool:
+	for a: String in args:
+		if (MODES.has(a) or LANTERNFALL_FLAGS.has(a)) and not a.begins_with("--tamer"):
+			return true
+	return false
 
 
 static func out_dir() -> String:

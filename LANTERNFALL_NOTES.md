@@ -9,6 +9,9 @@ and the Moth Matron; quests and dialogue as data; zone travel; loot filter; save
 
 
 ## 0. PAUSED HERE (2026-11-11)
+On branch `tamer-arpg` the project launches the trainer prototype instead (TAMER_NOTES.md, PLAY.md); Lanternfall's
+title scene is `res://scenes/title.tscn`.
+
 The user paused LANTERNFALL; direction is moving to a creature-trainer ARPG. Everything is committed and pushed on
 branch `lanternfall`; all checks pass (`bash tools/run_all.sh`).
 - **Done:** Act 1 playable from the title (opening "First Light" inside Tallow with a practice ground, establishing

@@ -32,7 +32,9 @@ static func hit(at: Vector2, dir: Vector2, k: float, col: Color, crit: bool, kil
 	Fx.ring(fx, at + Vector2(0, 10), r * 0.4, r * 2.2, Color(Pal.c("sun"), 1.0), RING_TIME)
 	Fx.flash(fx, at + Vector2(0, 10), lerpf(GROUND_LIGHT.x, GROUND_LIGHT.y, minf(big, 1.0)), col, 3.0 + k * 2.0, 0.32)
 	var n: int = int(lerpf(SPARKS.x, SPARKS.y, minf(big, 1.0)))
-	var cols: Array[Color] = sparks if sparks.size() == 3 else [Pal.c("sun"), Pal.c("gold"), Pal.c("flame", 0.0)]
+	var cols: Array[Color] = [Pal.c("sun"), Pal.c("gold"), Pal.c("flame", 0.0)]
+	if sparks.size() == 3:
+		cols = sparks
 	Fx.burst(fx, at, n, Vector2(120, 280), 0.36, cols, dir, 70.0, Vector2(1.5, 2.5))
 	Fx.burst(fx, at, n / 2 + 4, Vector2(50, 150), 0.6, [cols[1], Color(cols[2], 1.0), Color(cols[2], 0.0)],
 		Vector2.UP, 180.0, Vector2(1, 2))

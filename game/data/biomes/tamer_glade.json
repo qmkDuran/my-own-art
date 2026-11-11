@@ -1,8 +1,8 @@
 {
  "_doc": "Biome rules for the trainer prototype's meadow: a Glasswood clearing country without the city wall. The starters wait in the start clearing; the camp clearing is the rest point. No packs from the generator (count 0): wild creatures are placed by TamerSpawner from data/tamer/tamer.json.",
  "name": "The Glass Meadow",
- "cols": 104,
- "rows": 70,
+ "cols": 110,
+ "rows": 74,
  "cell": 32,
  "border": 2,
  "stream": {
@@ -22,7 +22,7 @@
   "verge": 2.6,
   "jitter": 0.22
  },
- "clearing_spacing": 16,
+ "clearing_spacing": 14,
  "clearings": [
   {
    "role": "start",
@@ -79,13 +79,6 @@
    "r": [
     8,
     6
-   ]
-  },
-  {
-   "role": "glade",
-   "r": [
-    9,
-    7
    ]
   },
   {

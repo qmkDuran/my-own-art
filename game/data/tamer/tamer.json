@@ -47,6 +47,6 @@
   {"id": "camp", "text": "Rest at the camp (the fire, up the path): heal, pet and feed"},
   {"id": "upgrade", "text": "At camp, spend materials to raise a stat"},
   {"id": "bond", "text": "Fight together to fill the bond meter and unlock a bond move (T)"},
-  {"id": "free", "text": "Explore: befriend all three wild kinds and find the shiny maned wolf"}
+  {"id": "free", "text": "Explore: find the shiny maned wolf, raise your team at camp, unlock every bond move"}
  ]
 }
