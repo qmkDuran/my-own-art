@@ -35,7 +35,7 @@ static func _free_after(n: Node, seconds: float) -> void:
 	n.get_tree().create_timer(seconds, false).timeout.connect(n.queue_free)
 
 
-static func _ramp(cols: Array[Color]) -> Gradient:
+static func ramp(cols: Array[Color]) -> Gradient:
 	var g := Gradient.new()
 	g.set_color(0, cols[0])
 	g.set_color(1, cols[cols.size() - 1])
@@ -63,7 +63,7 @@ static func burst(parent: Node, at: Vector2, amount: int, speed: Vector2, life: 
 	p.initial_velocity_max = speed.y
 	p.scale_amount_min = scale_range.x
 	p.scale_amount_max = scale_range.y
-	p.color_ramp = _ramp(cols)
+	p.color_ramp = ramp(cols)
 	p.z_index = FX_Z
 	p.material = glow_material() if additive else unshaded()
 	parent.add_child(p)
@@ -138,7 +138,7 @@ static func motes(parent: Node, extents: Vector2, amount: int, col: Color) -> CP
 	p.initial_velocity_max = 9.0
 	p.scale_amount_min = 0.6
 	p.scale_amount_max = 1.0
-	p.color_ramp = _ramp([Color(col, 0.0), Color(col, 0.7), Color(col, 0.0)])
+	p.color_ramp = ramp([Color(col, 0.0), Color(col, 0.7), Color(col, 0.0)])
 	p.material = glow_material()
 	p.local_coords = false
 	p.z_index = FX_Z

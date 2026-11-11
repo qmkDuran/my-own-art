@@ -45,7 +45,7 @@ func _content() -> void:
 	for i: int in ITEMS.size():
 		button(item_rect(i), _label(ITEMS[i]))
 	var foot: Rect2 = layout_rects().back()
-	UiDraw.text(self, foot.position + Vector2(0, 9), "All art and sound made from code. Fonts: OFL.", UiDraw.DIM,
+	UiDraw.text(self, foot.position + Vector2(0, 9), "Art and music from code; some sounds CC0. Fonts: OFL.", UiDraw.DIM,
 		UiDraw.SMALL, HORIZONTAL_ALIGNMENT_CENTER, foot.size.x)
 
 

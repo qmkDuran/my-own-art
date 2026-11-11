@@ -6,6 +6,8 @@ extends Node2D
 const HIT_RADIUS: float = 12.0
 const LIGHT_RANGE: float = 50.0
 const MIRROR_RANGE: float = 40.0
+const TRAIL_AMOUNT: int = 18
+const TRAIL_LIFE: float = 0.3
 
 var velocity: Vector2
 var life: float = 2.0
@@ -36,9 +38,29 @@ static func spawn(parent: Node, at: Vector2, vel: Vector2, tex: Texture2D, col: 
 	l.texture_scale = LIGHT_RANGE / 32.0
 	l.color = col
 	l.energy = 0.7
+	l.range_item_cull_mask = Fx.GROUND_LIGHT_MASK | Fx.FLOOR_MASK    # it lights the ground it flies over
 	p.add_child(l)
+	if not hostile_shot:                                    # the player's shots trail embers
+		p.add_child(_trail(col))
 	parent.add_child(p)
 	return p
+
+
+static func _trail(col: Color) -> CPUParticles2D:
+	var t := CPUParticles2D.new()
+	t.amount = TRAIL_AMOUNT
+	t.lifetime = TRAIL_LIFE
+	t.local_coords = false
+	t.material = Fx.glow_material()
+	t.texture = LightTex.soft(8)
+	t.color_ramp = Fx.ramp([Color(col, 0.9), Pal.c("flame", 0.5), Pal.c("ember", 0.0)])
+	t.scale_amount_min = 0.8
+	t.scale_amount_max = 1.6
+	t.gravity = Vector2.ZERO
+	t.initial_velocity_min = 4.0
+	t.initial_velocity_max = 14.0
+	t.spread = 180.0
+	return t
 
 
 func _physics_process(delta: float) -> void:

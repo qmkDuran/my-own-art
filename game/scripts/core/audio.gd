@@ -1,5 +1,6 @@
 extends Node
-## Audio (autoload "Audio"). All sounds are procedural (art/audio/synth.py, CC0, made for this game). Music
+## Audio (autoload "Audio"). Sounds are procedural (art/audio/synth.py) or layered with CC0 recordings
+## (art/audio/layer.py; game/audio/CREDITS.md). Music
 ## cross-fades between the exploring score and the boss score. A hard limiter on the master bus keeps stacked
 ## hits clean, and copies of a sound already playing are quieter and capped. Buses: Music and SFX feed Master; the
 ## SFX bus has a reverb that caves and stone rooms switch on, and Master a low-pass that closes while the lantern is

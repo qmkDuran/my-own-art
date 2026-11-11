@@ -4,10 +4,6 @@ extends RefCounted
 ## take less, unless you build for it) x exposure x crit. Enemies' hits: base x level x rank x Shrouded bonus,
 ## less armour (blunt) or Dusk resistance (dusk); every hit dims the lantern.
 
-const HEAVY_STOP: float = 0.05
-const CRIT_STOP: float = 0.035
-const CRIT_SHAKE: float = 0.22
-const HIT_SHAKE: float = 0.06
 const KILL_SHAKE: float = 0.14
 
 
@@ -44,13 +40,18 @@ static func hit_enemy(e: Enemy, base: float, opts: Dictionary = {}) -> void:
 	FloatText.hit(e, dmg, crit, dot)
 	if dot:
 		return
-	Fx.hit_sparks(g.fx_layer, e.global_position + Vector2(0, -e.body_height() * 0.5), dir, crit)
-	Audio.sfx("hit", -9.0, randf_range(0.9, 1.15))
-	CameraRig.shake(CRIT_SHAKE if crit else HIT_SHAKE)
-	if crit or bool(opts.get("heavy", false)):
-		HitStop.trigger(g.get_tree(), CRIT_STOP if crit else HEAVY_STOP)
+	var share: float = dmg / maxf(e.max_life, 1.0)
+	var col: Color = Pal.c("gold") if String(opts.get("kind", "attack")) == "attack" else Pal.c("amber")
+	Impact.hit(e.global_position + Vector2(0, -e.body_height() * 0.5), dir, share * (1.5 if bool(opts.get("heavy", false)) else 1.0), col, crit)
+	Audio.sfx("impact", -7.0 + 5.0 * minf(share * 3.0, 1.0), randf_range(0.9, 1.1))
+	Audio.sfx("hurt_" + _family(e), -12.0, randf_range(0.9, 1.15))
 	if randf() * 100.0 < float(opts.get("burn_chance", 0.0)) + st.v("burn_chance") + kin.burn_chance():
 		e.ignite(dmg * 0.6)
+
+
+## Which hurt sound a creature makes.
+static func _family(e: Enemy) -> String:
+	return {"gloam": "dark", "moth": "moth", "crawler": "moth", "hound": "beast", "husk": "beast", "heron": "beast"}.get(e.kind, "glass")
 
 
 ## An enemy (or its shard) hits the Lamplighter.

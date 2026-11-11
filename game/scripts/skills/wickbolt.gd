@@ -14,6 +14,7 @@ const TRAIL_RADIUS: float = 16.0
 const TRAIL_TIME: float = 2.0
 const AIM_HEIGHT: float = 14.0         ## bolts fly at a body's middle, not its feet
 const DROP_TIME: float = 0.1
+const BOLT_SCALE: float = 1.5
 const TEX: String = "res://art/fx/bolt.png"
 
 var _count: int = 0
@@ -48,7 +49,8 @@ func use(target: Vector2) -> void:
 	var dir: Vector2 = (target - Vector2(0, AIM_HEIGHT) - from).normalized()
 	if dir == Vector2.ZERO:
 		dir = p.aim
-	Fx.flash(fx(), p.lantern_pos(), 40.0 if third else 26.0, Pal.c("gold"), 1.0, 0.1)
+	Fx.flash(fx(), p.lantern_pos(), 50.0 if third else 34.0, Pal.c("gold"), 1.3, 0.12)    # the staff flares at release
+	Fx.halo(fx(), p.lantern_pos(), 22.0 if third else 14.0, Pal.c("sun", 0.9), 0.12)
 	Audio.sfx("bolt", -8.0 if third else -11.0, randf_range(0.95, 1.1) * (0.85 if third else 1.0))
 	var pr: Projectile = _bolt(from, dir, float(data["third_mult"]) if third else 1.0, third, true)
 	_drop_from_lantern(pr, p.lantern_pos().y - from.y)
@@ -68,7 +70,7 @@ func _bolt(from: Vector2, dir: Vector2, mult: float, third: bool, can_fork: bool
 	shot.append(pr)
 	pr.pierce = true
 	pr.life = reach() / speed()
-	pr.scale = Vector2.ONE * (1.25 if third else 1.0)
+	pr.scale = Vector2.ONE * (BOLT_SCALE * (1.3 if third else 1.0))
 	return pr
 
 
@@ -82,8 +84,6 @@ func _drop_from_lantern(pr: Projectile, lift: float) -> void:
 
 func _land(e: Enemy, dir: Vector2, mult: float, third: bool, can_fork: bool) -> void:
 	var at: Vector2 = e.global_position + Vector2(0, -AIM_HEIGHT)
-	Fx.burst(fx(), at, 8 if third else 5, Vector2(40, 130), 0.3, [Pal.c("sun"), Pal.c("gold"), Pal.c("amber", 0.0)], -dir, 70.0)
-	Fx.flash(fx(), at, 34.0, Pal.c("amber"), 0.8, 0.12)
 	_hit(e, dir, mult * (1.0 if can_fork else val("fork_pct") / 100.0), third)
 	if third and rank("third_light") > 0:
 		burst_at(at, val("burst_pct"), e)

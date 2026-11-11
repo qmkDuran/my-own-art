@@ -9,7 +9,6 @@ signal died(e: Enemy)
 
 const HIT_FLASH: float = 0.035          ## about two frames
 const HIT_FLASH_AMOUNT: float = 0.45
-const DEATH_TIME: float = 0.28
 const KNOCK_DECAY: float = 9.0
 const SEPARATION: float = 0.9
 const PERSONAL_SPACE: float = 1.3       # bodies keep this much more than touching apart, so a crowd never reads as one blob
@@ -169,14 +168,33 @@ func attack_speed() -> float:
 
 # ------------------------------------------------------------------ being hit
 func take_damage(dmg: float, crit: bool, dir: Vector2, opts: Dictionary) -> void:
+	var share: float = dmg / maxf(max_life, 1.0)
 	life -= dmg
-	if not bool(opts.get("dot", false)):                   # burns and ground fires don't flash
-		_flash_t = HIT_FLASH
+	if not bool(opts.get("dot", false)):                   # burns and ground fires don't flash or stagger
+		_flash_t = HIT_FLASH * (1.0 + 2.0 * minf(share * 4.0, 1.0))
+		_stagger(share)
 	wake()
-	_knock += dir.normalized() * float(opts.get("knockback", 30.0 if crit else 12.0)) * (0.3 if rank == "boss" else 1.0) * 6.0
+	var mass: float = radius / 12.0 * (3.0 if rank == "boss" else (1.5 if rank != "normal" else 1.0))
+	_knock += dir.normalized() * float(opts.get("knockback", 30.0 if crit else 12.0)) * 6.0 * (0.6 + 2.0 * minf(share, 0.5)) / mass
 	stun_t = maxf(stun_t, float(opts.get("stun", 0.0)) * (0.3 if rank == "boss" else 1.0))
 	if life <= 0.0:
 		_die()
+
+
+## A squash-and-stretch jolt on a hit, bigger for bigger hits.
+func _stagger(share: float) -> void:
+	var k: float = 0.08 + minf(share, 0.5) * 0.4
+	var base: Vector2 = Vector2.ONE * sprite.scale.y
+	var tw := create_tween()
+	tw.tween_property(sprite, "scale", base * Vector2(1.0 + k, 1.0 - k), 0.05)
+	tw.tween_property(sprite, "scale", base, 0.12).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+
+func _death_sound() -> String:
+	if rank == "boss":
+		return "die_boss"
+	return {"gloam": "die_dark", "moth": "die_moth", "crawler": "die_moth", "hound": "die_beast", "husk": "die_beast",
+		"heron": "die_beast", "dummy": "die_straw"}.get(kind, "die_glass")
 
 
 func expose(pct: float, seconds: float) -> void:
@@ -208,21 +226,16 @@ func _die() -> void:
 	dead = true
 	collision_layer = 0
 	remove_from_group("enemies")
-	var size: float = sprite.scale.x * (2.2 if rank == "boss" else 1.0) * (1.4 if kind == "hound" else 1.0)
-	Fx.death_burst(Game.current.fx_layer, global_position + Vector2(0, -body_height() * 0.4), size, kind != "gloam")
-	Fx.flash(Game.current.fx_layer, global_position, 70.0 * size, Pal.c("violet_lt"), 0.9, 0.3)
-	Audio.sfx("die_glass" if kind != "gloam" else "die_dark", -6.0, randf_range(0.9, 1.1))
-	CameraRig.shake(Combat.KILL_SHAKE * size)
+	Audio.sfx(_death_sound(), -4.0, randf_range(0.9, 1.1))
+	Audio.sfx("kill_thump", -8.0 if rank == "normal" else -3.0, randf_range(0.85, 1.0))
+	CameraRig.shake(Combat.KILL_SHAKE * (1.0 if rank == "normal" else 2.0))
 	if mods.has("shard_burst"):
 		brain.shard_ring(int(GameData.enemies["mods"]["shard_burst"]["death_shards"]))
 	if data.has("death_burst"):
 		_death_burst(data["death_burst"])
 	died.emit(self)
-	var tw := create_tween()
-	tw.set_parallel()
-	tw.tween_property(sprite, "scale", Vector2(sprite.scale.x * 1.4, sprite.scale.y * 0.2), DEATH_TIME)
-	tw.tween_property(self, "modulate:a", 0.0, DEATH_TIME)
-	tw.chain().tween_callback(queue_free)
+	EnemyDeath.play(self, _knock)
+
 
 
 ## Husks burst when they fall: a circle warns, then the embers inside it burn (bursts landing together count

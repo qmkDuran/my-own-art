@@ -111,7 +111,7 @@ func _draw() -> void:
 	_draw_logo(c)
 	for i: int in _items.size():
 		_draw_item(i)
-	UiDraw.text(self, Vector2(0, vs.y - 10.0), "a test slice  -  everything you see and hear is made from code", UiDraw.DIM, UiDraw.SMALL,
+	UiDraw.text(self, Vector2(0, vs.y - 10.0), "a test slice  -  art and music made from code, some sounds CC0", UiDraw.DIM, UiDraw.SMALL,
 		HORIZONTAL_ALIGNMENT_CENTER, vs.x)
 
 
