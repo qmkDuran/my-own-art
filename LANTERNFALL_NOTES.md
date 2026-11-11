@@ -244,4 +244,11 @@ Glazier + Nim, death/respawn, save/load). Review screenshots: `--shots` (needs x
   Lamplighter + 7 NPC designs, gloam/hound/moth + elites (modifiers) + the Glazier, 4 skills with trees, Wickstep,
   tonics, Light, loot (5 rarities, tiers, uniques, set), inventory, character sheet, skill and passive panels,
   mastery, HUD, minimap with fog, damage numbers, hit-stop, shake, flashes, procedural audio + 2 music loops,
-  save/continue, all checks.
+  save/continue, all checks. Deliverables: screenshots (title, light, dark, skill tree, passives, inventory +
+  tooltip at 3 sizes, character sheet, boss, zone overview), `npc_lineup.png`, `reference_sheet.png`, a 46 s video
+  (three staged scenes joined by fades: gate ambush at level 1, an elite pack at level 7, the Glazier at level 10).
+- **Known weak spots after pass 1**: one zone only, no hub yet; Eclipse/Noon/crafting designed not built; people
+  have 4-frame idles and the Lamplighter's attack is one pose (direction comes from effects); enemies animate by
+  pose shifts, not drawn cycles; balance only bot-tested (elite packs are dangerous at level 5–7 — kept apart by
+  the generator now); performance measured only in software GL (~10 fps at 1080p, a real GPU will be fine but is
+  unmeasured); glass-tree canopies read a little like spiky shrubs.

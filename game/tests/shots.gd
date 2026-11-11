@@ -59,10 +59,10 @@ func _shot_light() -> void:
 	h.pack_near(["gloam", "gloam", "hound", "gloam", "moth"], Vector2(150, 30))
 	g.player.light.value = 85.0
 	await _wait(1.2)
-	h.cast("flare", g.player.global_position + Vector2(100, 0))
-	await _wait(0.12)
 	h.cast("moth_swarm", g.player.global_position + Vector2(160, 20))
-	await _wait(0.15)
+	await _wait(0.25)
+	h.cast("flare", g.player.global_position + Vector2(100, 0))
+	await _wait(0.1)
 	await _save("gameplay_light")
 
 

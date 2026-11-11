@@ -14,7 +14,7 @@ const ARRIVE: float = 6.0
 const LIGHT_OFFSET := Vector2(10, -6)
 const LANTERN_OFFSET := Vector2(20, -50)
 const HURT_TIME: float = 0.18
-const HIT_FLASH: float = 0.1
+const HIT_FLASH: float = 0.07
 const HURT_SHAKE: float = 0.3
 const DASH_GHOSTS: int = 4
 const INVULN_AFTER_RISE: float = 2.0
@@ -249,7 +249,7 @@ func _timers(delta: float) -> void:
 	_dash_cd = maxf(0.0, _dash_cd - delta)
 	_invuln = maxf(0.0, _invuln - delta)
 	_flash_t = maxf(0.0, _flash_t - delta)
-	(sprite.material as ShaderMaterial).set_shader_parameter("flash", 0.55 if _flash_t > 0.0 else 0.0)
+	(sprite.material as ShaderMaterial).set_shader_parameter("flash", 0.35 if _flash_t > 0.0 else 0.0)
 	sprite.modulate.a = 0.5 if _invuln > 0.0 and int(_invuln * 10.0) % 2 == 0 else 1.0
 	if dead:
 		return
