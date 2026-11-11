@@ -280,5 +280,6 @@
    "music": "boss",
    "caption": "The Bellwright. It rings for no one. It has been ringing for three hundred years."
   }
- }
+ },
+ "reverb": true
 }

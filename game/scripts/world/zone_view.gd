@@ -7,7 +7,6 @@ extends Node2D
 const GROUND_Z: int = -20
 const BRIDGE_Z: int = -19
 const TRUNK := Vector2(7, 4)             ## a tree's shadow-casting base (half sizes)
-const OCCLUDER_POINTS: int = 6
 const BUILT_W: float = 200.0           ## props wider than this are building parts: no shadow, never mirrored
 const CRYSTAL_LIGHT_RANGE: float = 80.0
 const CRYSTAL_LIGHT_ENERGY: float = 0.55
@@ -24,12 +23,14 @@ const INTERACTIVE: Array[String] = ["chest", "waylamp", "note", "cairn", "statue
 var z: ZoneLayout
 var body: StaticBody2D
 var fade: TreeFade
+var shadows := ShadowPool.new()
 
 
 func build(layout: ZoneLayout, world: Node2D) -> void:
 	z = layout
 	fade = TreeFade.new()
 	add_child(fade)
+	add_child(shadows)
 	_ground()
 	_bridges()
 	_wall(world)
@@ -156,7 +157,7 @@ func _props(world: Node2D) -> void:
 			fade.add(s)
 			s.add_to_group("tall_props")
 			if not bool(GameData.props[p["kind"]]["flat"]):
-				s.add_child(_occluder((p["foot"] as Rect2).size * Vector2(0.45, 0.6)))
+				shadows.add_caster(p["pos"], (p["foot"] as Rect2).size * Vector2(0.45, 0.6))
 		if String(GameData.props[p["kind"]]["light"]) != "":
 			_glow_light(s, Pal.c(GameData.props[p["kind"]]["light"]))
 
@@ -184,25 +185,12 @@ func _trees(world: Node2D) -> void:
 		world.add_child(s)
 		fade.add(s)
 		s.add_to_group("tall_props")
-		s.add_child(_occluder(TRUNK))
+		shadows.add_caster(t["pos"], TRUNK)
 
 
 ## How far this zone lifts its terrain and trees out of the dark (biome ambient "scenery_gain"; HDR above 1).
 static func gain() -> float:
 	return float(GameData.biome["ambient"].get("scenery_gain", 1.0))
-
-
-## A small footprint that blocks the lantern's light, so trunks, pillars and houses throw real moving shadows.
-static func _occluder(half: Vector2) -> LightOccluder2D:
-	var poly := OccluderPolygon2D.new()
-	var pts := PackedVector2Array()
-	for k: int in OCCLUDER_POINTS:
-		var a: float = TAU * k / OCCLUDER_POINTS
-		pts.append(Vector2(cos(a) * half.x, sin(a) * half.y - half.y))
-	poly.polygon = pts
-	var o := LightOccluder2D.new()
-	o.occluder = poly
-	return o
 
 
 ## One static body: blocked terrain merged into rectangles (row runs stacked downward) plus every footprint.

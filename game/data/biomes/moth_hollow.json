@@ -321,5 +321,6 @@
  "stone_style": "silk",
  "view": {
   "frames": []
- }
+ },
+ "reverb": true
 }

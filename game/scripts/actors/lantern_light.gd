@@ -140,6 +140,7 @@ func _process(delta: float) -> void:
 	_light.energy = ENERGY * flick * _pane
 	_halo.texture_scale = shown_radius * HALO_SCALE / TEX_RADIUS
 	_hit_flash = maxf(0.0, _hit_flash - delta)
+	Audio.set_muffled(thrown or _smother_t > 0.0)
 	var s: String = state()
 	if s != _state:
 		_state = s

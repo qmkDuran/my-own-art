@@ -64,9 +64,11 @@ func _ready() -> void:
 	Session.campaign.quest_done.connect(_on_quest_done)
 	Session.campaign.changed.connect(mark_dirty)
 	Audio.play_music(String(GameData.zone(zone_id)["music"]))
+	Audio.set_reverb(bool(GameData.biome.get("reverb", false)))
 
 
 func _exit_tree() -> void:
+	Audio.set_muffled(false)
 	if current == self:
 		Session.campaign.quest_done.disconnect(_on_quest_done)
 		Session.campaign.changed.disconnect(mark_dirty)

@@ -322,5 +322,6 @@
  "stone_wear": 0.2,
  "events": {
   "caption": "The schoolhouse. Chalk dust hangs in the air and does not fall. A bell is about to ring."
- }
+ },
+ "reverb": true
 }

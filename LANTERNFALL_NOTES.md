@@ -299,7 +299,13 @@ with 7–20% near-black, Eclipse 10.8%. `Atmosphere` (world/atmosphere.gd) owns 
 the grade layer and the WorldEnvironment glow; `ZoneView.gain()` lifts terrain/trees/props per zone; enemies use
 navigation avoidance (RVO, NavigationAgent2D per enemy, the Lamplighter is an obstacle) plus the old separation;
 the lantern light casts shadows from tree/prop occluders. Noon, the Tuesday strike flash and the Mayor's STOP now
-shift relative to the zone's own ambient.
+shift relative to the zone's own ambient. Shadows come from a pool of 48 occluders that follow the trunks, pillars and
+walls nearest the lantern (a zone has thousands of trees). Audio buses: Music and SFX into Master; reverb on SFX in
+Moth Hollow, the Belfry and the Schoolhouse (biome "reverb"); Master low-pass while the lantern is thrown or
+smothered. Cost (`-- --perf`, software GL under xvfb at 960x540, so only relative): Glasswood 31.5 -> 15.5 fps,
+draw calls 319 -> 309, nodes 7957 -> 8148 (glow about 7 fps of that, shadows about 3, the rest the grade's screen
+copy); Ember Road 27 -> 14 fps, 562 -> 563 draw calls, 10746 -> 10950 nodes. A real GPU will not notice; deferred:
+normal maps (art still changing) and GPU particles (no need yet).
 
 ## 9. Architecture (`game/scripts/`)
 | Folder | What |
