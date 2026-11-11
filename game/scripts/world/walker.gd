@@ -1,7 +1,8 @@
 class_name Walker
 extends Node2D
 ## A passer-by in Tallow: strolls between a few places on the cobbles, pauses, strolls on. Not interactive; only
-## there so the city feels lived in. Walks straight lines between waypoints chosen on open ground.
+## there so the city feels lived in. Walks straight lines between waypoints chosen on open ground; a waypoint
+## with a third number is a stop on their round (a stall, the well, the drill) where they linger that many seconds.
 
 const SPEED: float = 34.0
 const PAUSE: Vector2 = Vector2(1.5, 4.0)
@@ -11,16 +12,18 @@ const ARRIVE: float = 4.0
 
 var kind: String
 var route: Array[Vector2] = []
+var lingers: Array[float] = []          ## per waypoint: seconds to stay (0: a short random pause)
 var _i: int = 0
 var _wait: float = 0.0
 var _t: float = 0.0
 var _sprite: Sprite2D
 
 
-static func make(parent: Node, folk: String, points: Array[Vector2]) -> Walker:
+static func make(parent: Node, folk: String, points: Array[Vector2], stays: Array[float]) -> Walker:
 	var w := Walker.new()
 	w.kind = folk
 	w.route = points
+	w.lingers = stays
 	w.position = points[0]
 	parent.add_child(w)
 	return w
@@ -51,4 +54,4 @@ func _process(delta: float) -> void:
 	_sprite.frame = FRAMES + int(_t) % FRAMES
 	if position.distance_to(to) < ARRIVE:
 		_i = (_i + 1) % route.size()
-		_wait = randf_range(PAUSE.x, PAUSE.y)
+		_wait = lingers[_i] if lingers[_i] > 0.0 else randf_range(PAUSE.x, PAUSE.y)

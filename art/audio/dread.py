@@ -15,7 +15,7 @@ CLUSTER = (146.83, 155.56)                # D3 and E-flat 3: a minor second that
 FAR_NOTES = (587.33, 622.25, 830.61, 880.0, 1046.5)   # D, E-flat, G-sharp, A, C: a scale with the tritone in it
 REVERB_S = 3.2
 WET = 0.55
-PEAK = 0.4                                # quieter than the boss: the drone never stops, so it reads loud
+PEAK = 0.3                                # quieter than the boss: the drone never stops, so it reads loud
 
 
 def place(out: np.ndarray, x: np.ndarray, at: float) -> None:

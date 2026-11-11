@@ -355,7 +355,7 @@ player, stats, skills, passives, items, enemies, glasswood biome, story; props.j
 - `cd art/audio && python3 dread.py` — the exploration loops (`explore.ogg`, `cave.ogg` for Moth Hollow): dark and
   uneasy (Playtest 2): a D1 drone with a tritone ghost, a minor-second cluster that swells, far echoing bells on a
   scale with the tritone, reversed swells, sagging creaks, a metal scrape, an irregular heartbeat, all in a long
-  reverb; peak 0.4 so it sits under the boss loop. Then `layer.py` for the CC0-layered combat sounds.
+  reverb; peak 0.3 so it sits under the boss loop. Then `layer.py` for the CC0-layered combat sounds.
 
 ## 11. Checks (run every pass: `bash tools/run_all.sh`)
 `check_art.py` (palette, size classes, feet don't slide, palette mirror) · `check_code.py` (typed signatures,
@@ -374,7 +374,8 @@ Glazier + Nim, death/respawn, save/load). Review screenshots: `--shots` (needs x
 ## 12a. Easing in (first playtest)
 - Story cards (IntroCards): eight beats, typed out, never auto-advance (Space/Enter/click; hold Esc to skip).
 - New games start in Tallow at dusk with "First Light": Ottilie gives the staff and explains the Light, Captain
-  Marr sends you to the practice yard (walk to a marker, Wickbolt three straw targets, Wickstep, Flare a cluster),
+  Marr sends you to the practice ground (Playtest 2: a fenced square inside Tallow, north of the square, no zone
+  change; the layout check keeps every drill marker 40 px clear of props) (walk to a marker, Wickbolt three straw targets, Wickstep, Flare a cluster),
   then the Great Lantern goes dark for seven heartbeats and a small weak wave hits the gate with Marr fighting beside
   you. The Glasswood gate opens after that; the Glasswood no longer ambushes you on arrival.
 - Guidance (Last Epoch style, no hand-holding trail): the objective on the minimap and on the zone map (M/Tab),
@@ -387,6 +388,30 @@ Glazier + Nim, death/respawn, save/load). Review screenshots: `--shots` (needs x
   The UI check now also fails any panel content that spills out of its panel or overlaps another block.
 - Lantern shadows only fall on the ground (a floor-only shadow light; a shadowless light for everything standing),
   so houses never shade their own fronts and nobody in front of them is covered. Smoke-checked.
+
+## 12a-2. Playtest 2 (combat weight, pacing, stats, map, trees, opening, music, town)
+- Combat: staff flare at release, bigger bolts with a trail and ground light; `Impact.hit` (flash, light pulse,
+  sparks, embers, fading scorch, 2-4 frames hit-stop by damage share, camera kick on big hits); enemy flash,
+  squash-stretch and knockback by share and mass; `EnemyDeath` (0.3 s death pose, fling, dissolve to ash or shards,
+  ash heap; elites scatter embers; bosses three bursts); chunky outlined damage numbers sized by share of the
+  target's life, crits bigger and shaking. Sounds layered from CC0 packs (game/audio/CREDITS.md).
+- Pacing (Last Epoch-like): slower chasers, longer swarm wind-ups, wake range 330 (250-280 early), at most three
+  enemies winding up at once (the rest circle). Table in 8c.
+- Stats: character sheet (C and a HUD button) grouped with final numbers; every row's tooltip says what it means
+  and what +X more would change in real numbers (`Derived`); armour as "stops N of a 20 hit", Dusk resistance with
+  what a 20 hit deals. Items show "If you wear it:" in real numbers; passive and skill nodes show "One more point:".
+- Gear: hovering a bag item shows the worn one beside it (`TooltipLayer.show_pair`), changes green/red. Loot: name
+  plates beat nearby items for the hover; click a plate or the item to walk and take it; NEW until hovered.
+- UI: HUD buttons 34x22, 45% see-through until the mouse is over them, hideable (Esc menu). Tab: see-through map
+  over the game (bright edges of walkable ground, markers, objective, you), centred on you, opacity in the Esc menu
+  and shift+scroll; M keeps the full zone map. Trees (`TreeArt`): framed backdrop with vignette and drifting
+  embers that lean with the mouse, glowing connectors with travelling sparks, frames by kind (minor, notable,
+  keystone), hover glow, sparks on a new point, glyph icons on skill nodes, gold point counters. Specialisation
+  (`SpecSlotsView`): five sockets under Specialise (in use, open, locked with level) and a one-time explainer card.
+- Opening: after the last card the title fades to black; Tallow fades in on the Great Lantern with letterbox bars,
+  holds, pans down to the Lamplighter with a caption (input waits), then the bars slide away.
+- Music: `dread.py` (explore, cave), `town.py` (Tallow: wind, the Lantern's roar, the forge hammer, a murmur,
+  carts, a far bell). Tallow walkers have rounds with stops (stalls, the well, the drill, the forge).
 
 ## 12b. Deliverables rule (from the user)
 **No more video recording.** Deliver still screenshots only: zone shots (`tools/shoot.sh`), 4x close-ups, and sprite

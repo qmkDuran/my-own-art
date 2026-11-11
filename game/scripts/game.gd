@@ -180,9 +180,11 @@ func _framing() -> void:
 		camera.intro(Vector2(float(at[0]), float(at[1])), float(at[2]))
 	for w: Dictionary in GameData.biome.get("walkers", []):
 		var pts: Array[Vector2] = []
+		var stays: Array[float] = []
 		for q: Array in w["route"]:
 			pts.append(Vector2(float(q[0]), float(q[1])))
-		Walker.make(world, String(w["folk"]), pts)
+			stays.append(float(q[2]) if q.size() > 2 else 0.0)
+		Walker.make(world, String(w["folk"]), pts, stays)
 
 
 ## A new game opens in black on the Great Lantern, fades in, holds, and pans down to the Lamplighter with a caption.
