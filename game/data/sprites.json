@@ -140,6 +140,24 @@
    "name": "Hask",
    "role": "A man the Dusk half rewrote"
   },
+  "npc_mara": {
+   "frame": [
+    64,
+    64
+   ],
+   "anchor": [
+    32,
+    61
+   ],
+   "poses": [
+    [
+     "idle",
+     4
+    ]
+   ],
+   "name": "Mara Brennick",
+   "role": "The woodcutter's daughter"
+  },
   "npc_teague": {
    "frame": [
     64,
@@ -238,6 +256,78 @@
    "anchor": [
     64,
     124
+   ],
+   "poses": [
+    [
+     "idle",
+     4
+    ],
+    [
+     "move",
+     4
+    ],
+    [
+     "attack",
+     3
+    ]
+   ]
+  },
+  "husk": {
+   "frame": [
+    64,
+    64
+   ],
+   "anchor": [
+    32,
+    60
+   ],
+   "poses": [
+    [
+     "idle",
+     4
+    ],
+    [
+     "move",
+     4
+    ],
+    [
+     "attack",
+     3
+    ]
+   ]
+  },
+  "crawler": {
+   "frame": [
+    48,
+    40
+   ],
+   "anchor": [
+    24,
+    36
+   ],
+   "poses": [
+    [
+     "idle",
+     4
+    ],
+    [
+     "move",
+     4
+    ],
+    [
+     "attack",
+     3
+    ]
+   ]
+  },
+  "matron": {
+   "frame": [
+    176,
+    160
+   ],
+   "anchor": [
+    88,
+    156
    ],
    "poses": [
     [

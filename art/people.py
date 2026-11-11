@@ -165,6 +165,11 @@ def _held(s: Spr, f: Fig, item: str, hand: tuple[float, float]) -> None:
         s.rect(x - 5, y - 3, x + 3, y + 3, "bone")
         s.line([(x - 4, y - 1), (x + 1, y + 1)], "rust")
         s.px(x - 2, y + 2, "earth_lt")
+    elif item == "teapot":
+        s.ellipse(x, y + 3, 4, 3, "glass_lt")
+        s.line([(x + 4, y + 2), (x + 7, y)], "glass_lt")
+        s.rect(x - 1, y - 1, x + 1, y, "glass")
+        s.px(x - 1, y + 2, "glint")
     elif item == "shadow_hand":
         s.line([(x, y), (x + 2, y + 8), (x - 1, y + 13)], "void", width=2)
         s.px(x + 1, y + 6, "violet_lt", glow=True)
@@ -351,6 +356,9 @@ NPCS = {
     "hask": {"name": "Hask", "role": "A man the Dusk half rewrote", "head": "shadow", "coat": ("void", "ink", "night"),
              "skin": "void", "hem": 57, "hem_w": 14, "held_l": "shadow_hand", "rim_cool": "violet", "rim_warm": "violet_lt",
              "scarf": ("night", "void"), "tatters": True},
+    "mara": {"name": "Mara Brennick", "role": "The woodcutter's daughter", "head": "bun", "hat": ("earth_dk", "earth", "earth_lt"),
+             "coat": ("glass_dp", "glass_dk", "glass"), "cape": "rust", "hem": 57, "hem_w": 11, "held_r": "teapot",
+             "skin": "skin_lt", "apron": "bone", "split": False, "width": 0.95, "scarf": ("rust", "ember_dk")},
     "teague": {"name": "Teague Morrow", "role": "The Eighth Lamplighter (missing)", "head": "hood",
                "hat": ("ink", "night", "mist"), "coat": ("ink", "night", "dusk2"), "cape": "dusk1", "held_r": "lantern",
                "held_l": "whip", "skin": "pale", "eyes": "glint", "eyes_glow": True, "scarf": ("stone", "stone_dk"),

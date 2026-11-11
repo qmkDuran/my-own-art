@@ -207,4 +207,113 @@ def glazier(pose: str, i: int) -> Spr:
     return s
 
 
-KINDS = {"gloam": (gloam, 48, 48), "hound": (hound, 64, 48), "moth": (moth, 64, 56), "glazier": (glazier, 128, 128)}
+# ------------------------------------------------------------------ Husk: a farmhand of straw and embers
+def husk(pose: str, i: int) -> Spr:
+    """Straw stuffed into a dead man's coat, stitched with seams that glow; it walks the Ember Road's fields."""
+    s = Spr(64, 64)
+    bob = pick({"idle": (0, 0, 1, 1), "move": (0, 1, 0, 1), "attack": (1, -2, 2)}, pose, i)
+    step = pick({"idle": 0, "move": (-1, 0, 1, 0), "attack": 0}, pose, i)
+    lean = pick({"idle": 0, "move": (1, 2, 1, 0), "attack": (-2, 3, 6)}, pose, i)
+    cx, top = 32 + lean, 14 + bob
+    for side in (-1, 1):
+        lift = 2 if step == side else 0
+        s.line([(cx + side * 5, top + 32), (cx + side * 7, 60 - lift)], "earth_dk", width=3)
+        s.line([(cx + side * 7, 60 - lift), (cx + side * 9, 60 - lift)], "earth_lt")
+    s.poly([(cx - 10, top + 10), (cx + 10, top + 10), (cx + 12, top + 34), (cx - 12, top + 34)], "earth")
+    s.poly([(cx - 10, top + 10), (cx - 5, top + 10), (cx - 7, top + 34), (cx - 12, top + 34)], "earth_dk")
+    s.line([(cx - 1, top + 12), (cx + 1, top + 32)], "ember", glow=True)                     # the glowing seam
+    s.line([(cx - 8, top + 22), (cx + 8, top + 21)], "ember_dk")
+    arm_y = top + 13 if pose != "attack" else (top + 6, top - 6, top + 26)[i]
+    for side in (-1, 1):
+        s.line([(cx + side * 10, top + 12), (cx + side * 16, arm_y + 14)], "earth", width=3)
+        for k in range(3):
+            s.line([(cx + side * 16, arm_y + 14), (cx + side * (17 + k), arm_y + 19)], "amber")  # straw fingers
+    s.ellipse(cx, top + 4, 7, 7, "earth_lt")                                                 # a sack for a head
+    s.ellipse(cx - 2, top + 2, 4, 4, "skin")
+    s.line([(cx - 6, top + 8), (cx + 6, top + 9)], "earth_dk")
+    s.poly([(cx - 9, top), (cx + 9, top), (cx + 4, top - 7), (cx - 4, top - 7)], "ink")       # a ruined hat
+    s.line([(cx - 11, top), (cx + 11, top)], "ink", width=2)
+    s.poly([(cx - 5, top + 2), (cx - 2, top + 3), (cx - 3, top + 5)], "flame", glow=True)     # slanted ember eyes
+    s.poly([(cx + 5, top + 2), (cx + 2, top + 3), (cx + 3, top + 5)], "flame", glow=True)
+    s.line([(cx - 4, top + 7), (cx + 4, top + 7)], "ink")                                   # a stitched mouth
+    for x in range(cx - 3, cx + 4, 2):
+        s.line([(x, top + 6), (x, top + 8)], "ink")
+    s.outline()
+    s.recolor_edge(0, -1, "amber", only={"earth_lt", "earth"})
+    return s
+
+
+# ------------------------------------------------------------------ Silk Crawler: a grub that spits silk
+def crawler(pose: str, i: int) -> Spr:
+    s = Spr(48, 40)
+    bob = pick({"idle": (0, 1, 0, 1), "move": (0, -1, 0, -1), "attack": (0, -2, 1)}, pose, i)
+    rear = pick({"idle": 0, "move": 0, "attack": (2, 6, 1)}, pose, i)
+    by = 28 + bob
+    for k in range(3):                                                         # legs
+        for side in (-1, 1):
+            x = 18 + k * 7
+            kick = ((i + k) % 2) * 2
+            s.line([(x, by), (x + side * 3 + kick, by + 8)], "stone_dk")
+    for k in range(4):                                                         # segmented pale body
+        x = 12 + k * 7
+        s.ellipse(x, by - 2 - (rear if k == 3 else 0) * 0.5, 6, 5, "pale" if k % 2 else "bone")
+        s.line([(x - 4, by - 5), (x + 4, by - 5)], "mist")
+    hx, hy = 38, by - 4 - rear
+    s.ellipse(hx, hy, 6, 5, "mist")
+    s.rect(hx + 1, hy - 2, hx + 2, hy - 1, "violet_lt", glow=True)
+    s.rect(hx + 4, hy - 2, hx + 5, hy - 1, "violet_lt", glow=True)
+    s.line([(hx + 4, hy + 3), (hx + 7, hy + 5)], "stone_dk")
+    if pose == "attack" and i == 1:
+        s.ellipse(hx + 7, hy + 2, 2, 2, "bone", glow=True)
+    s.outline()
+    s.recolor_edge(0, -1, "bone", only={"pale", "mist"})
+    return s
+
+
+# ------------------------------------------------------------------ the Moth Matron (Act 1 boss)
+def matron(pose: str, i: int) -> Spr:
+    """The Moth Matron: a great moth of tattered silk, a ring of false eyes on her wings, her belly full of stolen
+    light. The sun's fear of being eaten, given wings."""
+    s = Spr(176, 160)
+    k = pick({"idle": (1.0, 0.82, 0.64, 0.82), "move": (1.0, 0.7, 0.45, 0.7), "attack": (1.0, 1.12, 1.18)}, pose, i)
+    cx, cy = 88, 78 + pick({"idle": (0, 1, 2, 1), "move": (0, 2, 4, 2), "attack": (2, -2, -4)}, pose, i)
+    for side in (-1, 1):
+        up = [(cx + side * 8, cy - 10), (cx + side * 70, cy - 10 - 52 * k), (cx + side * 86, cy - 18 - 22 * k),
+              (cx + side * 80, cy + 4), (cx + side * 10, cy + 6)]
+        low = [(cx + side * 8, cy + 4), (cx + side * 62, cy + 10), (cx + side * 70, cy + 22 + 26 * k),
+               (cx + side * 46, cy + 32 + 26 * k), (cx + side * 10, cy + 20)]
+        s.poly(up, "dusk2")
+        s.poly(low, "dusk1")
+        s.poly([(cx + side * 12, cy - 8), (cx + side * 64, cy - 12 - 44 * k), (cx + side * 40, cy - 10 - 16 * k)], "dusk3")
+        a, b = up[0], up[1]
+        for j in range(4):                                                     # tatters hanging off the wing edge
+            t = 0.3 + j * 0.17
+            ex, ey = a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t
+            s.poly([(ex, ey + 2), (ex + side * 5, ey - 5), (ex + side * 9, ey + 2)], "dusk2")
+        for j, (ox, oy, r) in enumerate(((44, -26, 7), (62, -14, 5), (34, 12, 6), (52, 22, 4))):   # false eyes
+            ex, ey = cx + side * ox, cy + oy * k
+            s.ellipse(ex, ey, r, r * max(k, 0.6), "ink")
+            s.ellipse(ex, ey, r - 2, (r - 2) * max(k, 0.6), "amber" if j % 2 == 0 else "rose", glow=True)
+            s.px(ex, ey, "void")
+        s.line([(cx + side * 10, cy - 6), (cx + side * 78, cy - 14 - 30 * k)], "ink")
+    s.ellipse(cx, cy + 14, 11, 26, "pale")                                      # body
+    for y in range(cy - 2, cy + 38, 5):
+        s.line([(cx - 9, y), (cx + 9, y)], "mist")
+    s.ellipse(cx, cy + 20, 6, 12, "gold", glow=True)                            # belly of stolen light
+    s.ellipse(cx, cy + 20, 3, 7, "sun", glow=True)
+    s.ellipse(cx, cy - 14, 9, 8, "bone")
+    for side in (-1, 1):
+        s.line([(cx + side * 3, cy - 20), (cx + side * 14, cy - 40), (cx + side * 26, cy - 44)], "pale", width=2)
+        for j in range(4):
+            fx = cx + side * (12 + j * 4)
+            s.line([(fx, cy - 38 - j), (fx + side * 3, cy - 44 - j)], "pale")
+        s.ellipse(cx + side * 4, cy - 14, 3, 3, "violet_lt", glow=True)
+    if pose == "attack":
+        s.ellipse(cx, cy + 20, 8 + i * 2, 14 + i * 2, "sun", glow=True)
+    s.outline()
+    s.recolor_edge(0, -1, "mist", only={"dusk2", "dusk3"})
+    return s
+
+
+KINDS = {"gloam": (gloam, 48, 48), "hound": (hound, 64, 48), "moth": (moth, 64, 56), "glazier": (glazier, 128, 128), "husk": (husk, 64, 64),
+         "crawler": (crawler, 48, 40), "matron": (matron, 176, 160)}

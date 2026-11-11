@@ -17,7 +17,8 @@ from palette import PAL  # noqa: E402
 
 ART = ROOT / "game" / "art"
 # visible body height (px) per size class
-CLASSES = {"lamplighter": (52, 62), "npc": (36, 64), "gloam": (24, 44), "hound": (24, 44), "moth": (30, 52), "glazier": (100, 126)}
+CLASSES = {"lamplighter": (52, 62), "npc": (36, 64), "gloam": (24, 44), "hound": (24, 44), "moth": (30, 52), "glazier": (100, 126), "husk": (44, 62),
+           "crawler": (16, 36), "matron": (110, 158)}
 FEET_TOLERANCE = 3
 
 
@@ -64,7 +65,7 @@ def actor_problems() -> list[str]:
             feet.append(box[3])
             if k == 0 and not lo <= box[3] - box[1] <= hi:
                 out.append(f"{name}: body {box[3] - box[1]} px tall, its class allows {lo}-{hi}")
-        if feet and max(feet) - min(feet) > FEET_TOLERANCE and cls not in ("moth",):
+        if feet and max(feet) - min(feet) > FEET_TOLERANCE and cls not in ("moth", "matron"):
             out.append(f"{name}: feet move {max(feet) - min(feet)} px between frames (sliding)")
     return out
 

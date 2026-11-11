@@ -432,5 +432,327 @@
   "light": "",
   "flat": false,
   "glow": true
+ },
+ "road_gate": {
+  "size": [
+   72,
+   84
+  ],
+  "frames": 1,
+  "foot": [
+   0,
+   0
+  ],
+  "light": "",
+  "flat": false,
+  "glow": false
+ },
+ "cave_mouth": {
+  "size": [
+   120,
+   96
+  ],
+  "frames": 1,
+  "foot": [
+   0,
+   0
+  ],
+  "light": "",
+  "flat": false,
+  "glow": false
+ },
+ "scarecrow": {
+  "size": [
+   36,
+   60
+  ],
+  "frames": 1,
+  "foot": [
+   10,
+   6
+  ],
+  "light": "",
+  "flat": false,
+  "glow": false
+ },
+ "farmhouse": {
+  "size": [
+   128,
+   100
+  ],
+  "frames": 1,
+  "foot": [
+   104,
+   30
+  ],
+  "light": "",
+  "flat": false,
+  "glow": true
+ },
+ "haystack": {
+  "size": [
+   44,
+   32
+  ],
+  "frames": 1,
+  "foot": [
+   36,
+   12
+  ],
+  "light": "",
+  "flat": false,
+  "glow": false
+ },
+ "well": {
+  "size": [
+   36,
+   44
+  ],
+  "frames": 1,
+  "foot": [
+   28,
+   12
+  ],
+  "light": "",
+  "flat": false,
+  "glow": false
+ },
+ "lamp_shrine": {
+  "size": [
+   32,
+   46
+  ],
+  "frames": 1,
+  "foot": [
+   22,
+   8
+  ],
+  "light": "",
+  "flat": false,
+  "glow": true
+ },
+ "stalagmite_a": {
+  "size": [
+   28,
+   52
+  ],
+  "frames": 1,
+  "foot": [
+   18,
+   8
+  ],
+  "light": "",
+  "flat": false,
+  "glow": false
+ },
+ "stalagmite_b": {
+  "size": [
+   40,
+   76
+  ],
+  "frames": 1,
+  "foot": [
+   24,
+   10
+  ],
+  "light": "",
+  "flat": false,
+  "glow": false
+ },
+ "cocoon_pod": {
+  "size": [
+   30,
+   40
+  ],
+  "frames": 1,
+  "foot": [
+   16,
+   8
+  ],
+  "light": "amber",
+  "flat": false,
+  "glow": true
+ },
+ "silk_web": {
+  "size": [
+   56,
+   40
+  ],
+  "frames": 1,
+  "foot": [
+   0,
+   0
+  ],
+  "light": "",
+  "flat": false,
+  "glow": false
+ },
+ "house_a": {
+  "size": [
+   112,
+   104
+  ],
+  "frames": 1,
+  "foot": [
+   96,
+   30
+  ],
+  "light": "",
+  "flat": false,
+  "glow": true
+ },
+ "house_b": {
+  "size": [
+   96,
+   96
+  ],
+  "frames": 1,
+  "foot": [
+   80,
+   28
+  ],
+  "light": "",
+  "flat": false,
+  "glow": true
+ },
+ "house_c": {
+  "size": [
+   128,
+   112
+  ],
+  "frames": 1,
+  "foot": [
+   112,
+   32
+  ],
+  "light": "",
+  "flat": false,
+  "glow": true
+ },
+ "great_lantern": {
+  "size": [
+   112,
+   208
+  ],
+  "frames": 1,
+  "foot": [
+   52,
+   20
+  ],
+  "light": "gold",
+  "flat": false,
+  "glow": true
+ },
+ "forge": {
+  "size": [
+   128,
+   104
+  ],
+  "frames": 1,
+  "foot": [
+   116,
+   30
+  ],
+  "light": "flame",
+  "flat": false,
+  "glow": true
+ },
+ "archive": {
+  "size": [
+   128,
+   112
+  ],
+  "frames": 1,
+  "foot": [
+   112,
+   32
+  ],
+  "light": "",
+  "flat": false,
+  "glow": true
+ },
+ "stall_a": {
+  "size": [
+   64,
+   60
+  ],
+  "frames": 1,
+  "foot": [
+   52,
+   14
+  ],
+  "light": "",
+  "flat": false,
+  "glow": false
+ },
+ "stall_b": {
+  "size": [
+   64,
+   60
+  ],
+  "frames": 1,
+  "foot": [
+   52,
+   14
+  ],
+  "light": "",
+  "flat": false,
+  "glow": false
+ },
+ "crates": {
+  "size": [
+   36,
+   30
+  ],
+  "frames": 1,
+  "foot": [
+   32,
+   12
+  ],
+  "light": "",
+  "flat": false,
+  "glow": false
+ },
+ "map_table": {
+  "size": [
+   52,
+   36
+  ],
+  "frames": 1,
+  "foot": [
+   44,
+   10
+  ],
+  "light": "",
+  "flat": false,
+  "glow": true
+ },
+ "lockers": {
+  "size": [
+   52,
+   44
+  ],
+  "frames": 1,
+  "foot": [
+   48,
+   10
+  ],
+  "light": "",
+  "flat": false,
+  "glow": false
+ },
+ "ledger": {
+  "size": [
+   28,
+   40
+  ],
+  "frames": 1,
+  "foot": [
+   16,
+   8
+  ],
+  "light": "",
+  "flat": false,
+  "glow": false
  }
 }

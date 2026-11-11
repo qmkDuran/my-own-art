@@ -14,6 +14,8 @@ import enemies  # noqa: E402
 import icons  # noqa: E402
 import people  # noqa: E402
 import props  # noqa: E402
+import props_act1  # noqa: E402
+import props_town  # noqa: E402
 from pix import sheet  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -50,7 +52,7 @@ def build_enemies(meta: dict) -> None:
 
 def build_props() -> dict:
     out = {}
-    for key, spec in props.MANIFEST.items():
+    for key, spec in {**props.MANIFEST, **props_act1.MANIFEST, **props_town.MANIFEST}.items():
         makers = spec.get("frames", [spec.get("draw")])
         frames = [m() for m in makers]
         img, glow = sheet([frames], frames[0].w, frames[0].h)
