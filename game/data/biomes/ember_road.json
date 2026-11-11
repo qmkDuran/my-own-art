@@ -359,7 +359,8 @@
    0.58
   ],
   "motes_color": "ember",
-  "scenery_gain": 1.98
+  "scenery_gain": 2.18,
+  "prop_gain": 1.1
  },
  "ground": {
   "c_moss_dk": "moss_dk",

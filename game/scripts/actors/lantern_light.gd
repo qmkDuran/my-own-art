@@ -10,6 +10,7 @@ const COLOR := Color(1.0, 0.9, 0.74)     ## warm but near white, so what it ligh
 const ENERGY: float = 0.75          ## the pool is ambient + this: bright and warm, never blown out on pale stone
 const HALO_ENERGY: float = 0.28
 const SHADOW_ALPHA: float = 0.75
+const STANDING_SHARE: float = 0.3        ## upright things (walls, people) take less of the pool than the ground: pale fronts never blow out
 const HALO_SCALE: float = 1.7
 const TEX_RADIUS: float = 128.0
 const FLICKER: float = 0.05
@@ -143,9 +144,9 @@ func _process(delta: float) -> void:
 	shown_radius = lerpf(shown_radius, target_radius(), minf(1.0, delta * RADIUS_LERP))
 	var flick: float = 1.0 + sin(_t * 13.0) * FLICKER * 0.5 + sin(_t * 7.3) * FLICKER * 0.5
 	_light.texture_scale = shown_radius / TEX_RADIUS
-	_light.energy = ENERGY * flick * _pane
+	_light.energy = ENERGY * flick * _pane * STANDING_SHARE
 	_floor.texture_scale = _light.texture_scale
-	_floor.energy = _light.energy
+	_floor.energy = ENERGY * flick * _pane
 	_halo.texture_scale = shown_radius * HALO_SCALE / TEX_RADIUS
 	_hit_flash = maxf(0.0, _hit_flash - delta)
 	Audio.set_muffled(thrown or _smother_t > 0.0)

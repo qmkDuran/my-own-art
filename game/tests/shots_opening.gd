@@ -105,3 +105,67 @@ func _shot_shadow() -> void:
 	_bot().place_player(prop.global_position + Vector2(30, -14))
 	await _wait(1.2)
 	await _save("shadow_behind_" + g.zone_id)
+
+
+const WALLS: Array[String] = ["glasswood", "schoolhouse"]
+const BOSS_CLEAR: float = 500.0
+const EDGE_ROOM: float = 420.0          ## far enough from the zone edge that the camera can centre on it
+const SHADOW_KINDS: Dictionary = {"tallow": ["house_a", "house_b", "house_c"], "hollins": ["farmhouse", "house_a", "house_b"],
+	"tuesday": ["house_a", "house_b", "house_c"], "schoolhouse": ["class_wall_n"], "belfry": ["pillar_a", "pillar_b"],
+	"moth_hollow": ["stalagmite_b", "stalagmite_d"], "ember_road": ["farmhouse"]}
+
+
+## A named object of this zone, him beside it, the camera on both: once in front of it (lower on screen) and once
+## behind it (above it, so the object covers him and fades), the lantern always in his hand between.
+func _shot_shadow_obj() -> void:
+	var obj: Array = _shadow_object()
+	if obj.is_empty():
+		push_error("SHOT shadow_obj: no %s in %s" % [SHADOW_KINDS.get(g.zone_id, []), g.zone_id])
+		return
+	var at: Vector2 = obj[0]
+	_bot().clear_near(100000.0)
+	g.camera.frames = []
+	g.player.light.value = 80.0
+	var sides: Array = [["front", obj[1]]]
+	if not WALLS.has(g.zone_id):                              # nobody stands behind a wall
+		sides.append(["behind", obj[2]])
+	for side: Array in sides:
+		_bot().place_player(side[1])
+		g.player.face(at + Vector2(0, -20))
+		g.camera.intro(at + Vector2(0, -50), 10.0)                # hold the frame on the object and him
+		g.camera.reset_smoothing()
+		await _wait(1.6)
+		await _save("shadow_%s_%s" % [g.zone_id, side[0]])
+
+
+## [object position, a spot in front of it, a spot behind it], picked so both spots are open ground; away from the
+## zone's edge if possible (so the camera can centre on it), else anywhere.
+func _shadow_object() -> Array:
+	var found: Array = _shadow_object_within(EDGE_ROOM)
+	return found if not found.is_empty() else _shadow_object_within(0.0)
+
+
+func _shadow_object_within(room: float) -> Array:
+	if g.zone_id == "glasswood":                              # the gate wall: just south of its face
+		var w := Vector2((g.layout.gate_col + 6) * g.layout.cell, g.layout.wall_rows * g.layout.cell)
+		return [w, w + Vector2(-30, 40), w]
+	var kinds: Array = SHADOW_KINDS.get(g.zone_id, [])
+	var found: Array = []
+	var things: Array = g.layout.props.duplicate()
+	things.append_array(g.layout.trees)
+	for pr: Dictionary in things:
+		if not kinds.has(pr["kind"]):
+			continue
+		var pos: Vector2 = pr["pos"]
+		var foot: Vector2 = ZoneLayout.footprint(String(pr["kind"]), pos).size
+		var front: Vector2 = pos + (Vector2(-60.0, 40.0) if WALLS.has(g.zone_id) else Vector2(-foot.x * 0.5 + 6.0, 26.0))
+		var behind: Vector2 = pos + Vector2(foot.x * 0.25, -foot.y - 22.0)
+		var inside := Rect2(Vector2.ONE * room, g.layout.size_px() - Vector2.ONE * room * 2.0)
+		if inside.has_point(pos) and _open(front) and (WALLS.has(g.zone_id) or _open(behind)) and \
+				(g.layout.boss.is_empty() or pos.distance_to(g.layout.circle_center()) > BOSS_CLEAR):
+			if found.is_empty() or pos.distance_to(g.player.global_position) < (found[0] as Vector2).distance_to(g.player.global_position):
+				found = [pos, front, behind]
+	return found
+
+func _open(at: Vector2) -> bool:
+	return g.layout.walkable(g.layout.cell_of(at))
