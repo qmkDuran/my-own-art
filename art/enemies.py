@@ -272,7 +272,7 @@ def crawler(pose: str, i: int) -> Spr:
 
 
 # ------------------------------------------------------------------ the Moth Matron (Act 1 boss)
-WING_BANDS = (("dusk3", 1.0), ("violet", 0.8), ("dusk3", 0.62), ("dusk2", 0.44), ("dusk1", 0.28))
+WING_BANDS = (("dusk3", 1.0), ("dusk2", 0.8), ("dusk3", 0.62), ("violet", 0.46), ("dusk3", 0.32), ("mist", 0.16))
 WING_POINTS = 28
 
 
@@ -296,6 +296,7 @@ def _shrink(pts: list, root: tuple, t: float) -> list:
 def _matron_wing(s: Spr, cx: float, cy: float, side: int, k: float) -> None:
     """One side of the Matron: rounded forewing and hindwing, shaded from a dusty pale edge in to a dark root in soft
     bands, veins fanning out, a scalloped edge, and false eyes that glow."""
+    rng = random.Random(11 + side)
     fore_root, hind_root = (cx + side * 6, cy - 4), (cx + side * 6, cy + 8)
     fore = _wing_shape(fore_root, side, 78, 1.1, 0.35 + 0.35 * (k - 0.8), 5)
     hind = _wing_shape(hind_root, side, 54, 1.0, -0.55 - 0.15 * (k - 0.8), 4)
@@ -303,6 +304,10 @@ def _matron_wing(s: Spr, cx: float, cy: float, side: int, k: float) -> None:
         s.poly(wing, "mist")
         for c, t in WING_BANDS:
             s.poly(_shrink(wing, root, t * 0.95), c)
+        for _ in range(14):                                    # fur over the wing root
+            a = rng.uniform(0, math.tau)
+            rr = rng.uniform(2, 9)
+            s.px(root[0] + side * abs(math.cos(a)) * rr, root[1] + math.sin(a) * rr, rng.choice(["dusk3", "mist", "dusk2"]))
         for j in range(4, WING_POINTS - 3, 5):                 # veins from the root to the edge
             tip = wing[j]
             s.line([root, (root[0] * 0.15 + tip[0] * 0.85, root[1] * 0.15 + tip[1] * 0.85)], "dusk1")
@@ -318,22 +323,22 @@ def _matron_wing(s: Spr, cx: float, cy: float, side: int, k: float) -> None:
 def _matron_body(s: Spr, cx: float, cy: float, rnd: random.Random) -> None:
     """A fuzzy moth body: thorax and a segmented abdomen in dusty mauve, lit from above, dark underneath; only a
     soft glow of stolen light shows through the belly."""
-    s.ellipse(cx, cy - 2, 12, 12, "dusk3")                    # thorax
-    s.ellipse(cx - 2, cy - 5, 8, 7, "mist")
+    s.ellipse(cx, cy - 2, 12, 12, "dusk2")                    # thorax
+    s.ellipse(cx - 2, cy - 5, 8, 7, "dusk3")
     for seg in range(6):                                      # abdomen segments, narrowing
         y = cy + 10 + seg * 6
         w = 10 - seg * 1.2
-        s.ellipse(cx, y, w, 4, "dusk2")
-        s.ellipse(cx - 1, y - 1, w - 2, 3, "dusk3")
-        s.line([(cx - w + 2, y - 1), (cx - 1, y - 2)], "mist")
+        s.ellipse(cx, y, w, 4, "dusk1")
+        s.ellipse(cx - 1, y - 1, w - 2, 3, "dusk2")
+        s.line([(cx - w + 2, y - 1), (cx - 1, y - 2)], "dusk3")
     s.ellipse(cx, cy + 22, 5, 9, "ember_dk")
-    s.ellipse(cx, cy + 22, 3, 6, "amber", glow=True)            # the soft belly glow
+    s.ellipse(cx, cy + 22, 3, 6, "ember", glow=True)            # the soft belly glow
     for _ in range(26):                                       # fuzz along the body's edge
         a = rnd.uniform(0, math.tau)
         rr = rnd.uniform(9, 13)
-        s.px(cx + math.cos(a) * rr, cy + 6 + math.sin(a) * rr * 2.0, rnd.choice(["mist", "dusk3", "pale"]))
-    s.ellipse(cx, cy - 16, 8, 7, "dusk3")                     # head
-    s.ellipse(cx - 2, cy - 18, 5, 4, "mist")
+        s.px(cx + math.cos(a) * rr, cy + 6 + math.sin(a) * rr * 2.0, rnd.choice(["dusk3", "dusk2", "mist"]))
+    s.ellipse(cx, cy - 16, 8, 7, "dusk2")                     # head
+    s.ellipse(cx - 2, cy - 18, 5, 4, "dusk3")
 
 
 def matron(pose: str, i: int) -> Spr:
@@ -354,7 +359,7 @@ def matron(pose: str, i: int) -> Spr:
     if pose == "attack":
         s.ellipse(cx, cy + 22, 5 + i * 2, 9 + i * 2, "gold", glow=True)
     s.outline()
-    s.recolor_edge(0, -1, "pale", only={"mist", "dusk3"})
+    s.recolor_edge(0, -1, "mist", only={"dusk3", "dusk2"})
     return s
 
 

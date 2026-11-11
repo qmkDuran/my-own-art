@@ -193,7 +193,8 @@ func _trees(world: Node2D) -> void:
 
 ## People and creatures are lifted too, a little less than the scenery, so they read against it in their own colours.
 static func actor_gain() -> float:
-	return 1.0 + (gain() - 1.0) * ACTOR_SHARE + ACTOR_LIFT
+	var lift: float = float(GameData.biome["ambient"].get("prop_gain", gain()))      # creatures go with the props
+	return 1.0 + (lift - 1.0) * ACTOR_SHARE + ACTOR_LIFT
 
 
 ## People (the Lamplighter, NPCs, townsfolk): only lifted, never tinted, so they keep their true palette in every zone.

@@ -300,7 +300,8 @@
   ],
   "motes_color": "amber",
   "scenery_gain": 2.4,
-  "prop_gain": 1.25
+  "prop_gain": 1.25,
+  "self_light": 3.5
  },
  "ground": {
   "c_moss_dk": "ink",

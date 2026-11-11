@@ -125,6 +125,11 @@ func _make_warm_light() -> void:
 	add_child(_warm)
 
 
+## Dark zones (Moth Hollow) let his own lantern light him a little more ("self_light" in the biome's ambient).
+func _self_light_boost() -> float:
+	return float(GameData.biome["ambient"].get("self_light", 1.0))
+
+
 ## The order's issue: a plain hook staff, a long coat and a hand lantern (worn from the start).
 func _starting_gear() -> void:
 	for id: String in GameData.player["starting_gear"]:
@@ -355,7 +360,7 @@ func _animate(delta: float) -> void:
 	anim.tick(delta)
 	anim.lantern.visible = not (skills.skill("lantern_toss") as LanternToss).away()
 	_warm.position = anim.lantern_offset()
-	_warm.energy = SELF_LIGHT_ENERGY * anim.pane() if anim.lantern.visible else 0.0
+	_warm.energy = SELF_LIGHT_ENERGY * _self_light_boost() * anim.pane() if anim.lantern.visible else 0.0
 	light.sway(LIGHT_OFFSET + Vector2(anim.lantern_offset().x * LIGHT_SWAY, 0.0), anim.pane() if anim.lantern.visible else 1.0)
 
 

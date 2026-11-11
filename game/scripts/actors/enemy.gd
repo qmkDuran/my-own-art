@@ -26,6 +26,7 @@ const AVOID_MIN_SPEED: float = 0.3
 const BOSS_SHROUD_TINT := Color(0.85, 0.82, 0.95)       ## a boss is always readable
 const BOSS_LIGHT_RANGE: float = 150.0
 const BOSS_LIGHT_ENERGY: float = 0.75
+const BOSS_LIGHT_MASK: int = 16
 
 var kind: String
 var data: Dictionary
@@ -127,7 +128,9 @@ func _make_sprite() -> void:
 	add_child(sprite)
 	PropSprite.add_glow(sprite, "res://art/actors/%s_glow.png" % data["sprite"])
 	if rank == "boss":                                      # its own dim light: the whole silhouette always reads
+		sprite.light_mask = 1 | BOSS_LIGHT_MASK
 		var l := PointLight2D.new()
+		l.range_item_cull_mask = BOSS_LIGHT_MASK             # it lights the boss, not the floor: the boss is the focus
 		l.texture = LightTex.soft(128)
 		l.texture_scale = BOSS_LIGHT_RANGE / 64.0
 		l.color = Pal.c("pale")
