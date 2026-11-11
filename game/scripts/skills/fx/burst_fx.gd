@@ -1,10 +1,10 @@
 class_name BurstFx
 extends Node2D
-## Flare's burst: a ring of sunfire racing outward with rays, or (Lancet) a fan of light toward the cursor.
+## Flare's burst: a ring of sunfire racing outward with a shimmering edge, or (Lancet) a fan of light toward the cursor.
 ## Additive and unlit; the ground and enemies around it are lit by a flash light at the same time.
 
 const TIME: float = 0.32
-const RAYS: int = 18
+const SHIMMER: int = 24
 const CONE_RAYS: int = 9
 
 var radius: float
@@ -41,15 +41,16 @@ func _draw() -> void:
 		draw_circle(Vector2.ZERO, r, Color(Pal.c("amber"), 0.18 * fade))
 		draw_arc(Vector2.ZERO, r, 0.0, TAU, 64, Color(Pal.c("flame"), 0.5 * fade), 6.0)
 		draw_arc(Vector2.ZERO, r, 0.0, TAU, 64, Color(Pal.c("sun"), fade), 2.0)
-		for i: int in RAYS:
-			var a: float = TAU * i / RAYS + k * 0.4
-			draw_line(Vector2.RIGHT.rotated(a) * r * 0.35, Vector2.RIGHT.rotated(a) * r, Color(Pal.c("gold"), 0.5 * fade), 1.0)
+		for i: int in SHIMMER:                                  # a soft shimmer just inside the edge
+			var a: float = TAU * i / SHIMMER + k * 2.0
+			var w: float = 0.5 + 0.5 * sin(k * 20.0 + i * 1.7)
+			draw_arc(Vector2.ZERO, r - 3.0, a, a + TAU / SHIMMER * 0.6, 4, Color(Pal.c("gold"), 0.35 * fade * w), 2.0)
 		return
 	var a0: float = dir.angle() - arc * 0.5
 	var pts := PackedVector2Array([Vector2.ZERO])
 	for i: int in CONE_RAYS + 1:
 		pts.append(Vector2.RIGHT.rotated(a0 + arc * i / CONE_RAYS) * r)
 	draw_colored_polygon(pts, Color(Pal.c("amber"), 0.28 * fade))
-	for i: int in CONE_RAYS + 1:
-		draw_line(Vector2.ZERO, Vector2.RIGHT.rotated(a0 + arc * i / CONE_RAYS) * r, Color(Pal.c("sun"), 0.7 * fade), 1.0)
+	for edge: float in [a0, a0 + arc]:
+		draw_line(Vector2.ZERO, Vector2.RIGHT.rotated(edge) * r, Color(Pal.c("sun"), 0.6 * fade), 1.0)
 	draw_arc(Vector2.ZERO, r, a0, a0 + arc, 24, Color(Pal.c("sun"), fade), 3.0)

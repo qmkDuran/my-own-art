@@ -31,14 +31,18 @@ func pack_near(kinds: Array, offset: Vector2) -> Array[Enemy]:
 	var out: Array[Enemy] = []
 	var base: Vector2 = g.player.global_position + offset
 	for i: int in kinds.size():
-		var at: Vector2 = base + Vector2(cos(i * 1.7), sin(i * 1.7)) * (18.0 + i * 9.0)
-		var c: Vector2i = g.nav.nearest_free(g.layout.cell_of(at))
-		if not g.layout.point_free(at, 12.0):
-			at = g.layout.center_of(c)
+		var at: Vector2 = base + Vector2(cos(i * 1.7), sin(i * 1.7)) * (24.0 + i * 12.0)
+		at = g.layout.free_spot_near(at, float(GameData.enemy(String(kinds[i]))["radius"]))
 		var e: Enemy = g.spawner.spawn(String(kinds[i]), at, "normal", [], 3)
 		e.wake()
 		out.append(e)
 	return out
+
+
+## Puts the Lamplighter at a free spot near p (never inside a prop) and snaps the camera.
+func place_player(p: Vector2) -> void:
+	g.player.global_position = g.layout.free_spot_near(p, g.player.radius)
+	g.camera.reset_smoothing()
 
 
 func cast(id: String, at: Vector2) -> bool:

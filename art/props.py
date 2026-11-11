@@ -30,29 +30,50 @@ def _prism(s: Spr, base: tuple[float, float], ang: float, length: float, width: 
     s.line([(bx + nx * 0.5, by + ny * 0.5), (tip[0], tip[1])], cols[2])
 
 
+def _crown_tier(s: Spr, rnd: random.Random, cx: float, cy: float, rx: float, ry: float) -> None:
+    """One layer of a glass crown: a jagged faceted mass, darker underneath, lit facets on top."""
+    pts = []
+    n = 14
+    for k in range(n):
+        a = math.tau * k / n
+        jag = rnd.uniform(0.82, 1.18) if k % 2 else rnd.uniform(1.0, 1.3)
+        pts.append((cx + math.cos(a) * rx * jag, cy + math.sin(a) * ry * jag - (ry * 0.35 if math.sin(a) < -0.3 else 0)))
+    s.poly(pts, "glass_dk")
+    s.poly([(cx - rx * 0.95, cy + ry * 0.1), (cx + rx * 0.95, cy + ry * 0.1)] + [(x, y) for x, y in pts if y > cy + ry * 0.1],
+           "glass_dp")
+    for k in range(0, n, 2):                                    # facets from the heart of the tier
+        x, y = pts[k]
+        if y < cy + ry * 0.2:
+            s.poly([(cx + (x - cx) * 0.25, cy + (y - cy) * 0.25 - 2), (x, y), pts[(k + 1) % n]],
+                   "glass" if x < cx + rx * 0.3 else "glass_dk")
+    for k in range(n):
+        x, y = pts[k]
+        if y < cy and x < cx + rx * 0.4:
+            s.line([(cx + (x - cx) * 0.4, cy + (y - cy) * 0.4), (x, y)], "glass_lt")
+
+
 def glass_tree(w: int, h: int, seed: int) -> Spr:
+    """A tree the Dusk turned to glass: a dark glass trunk and limbs carrying layered, faceted crowns."""
     rnd = random.Random(seed)
     s = Spr(w, h)
     cx, ground = w / 2, h - 3
-    s.poly([(cx - 4, ground), (cx + 4, ground), (cx + 2, ground - h * 0.45), (cx - 2, ground - h * 0.45)], "glass_dp")
-    s.line([(cx - 1, ground), (cx - 1, ground - h * 0.45)], "glass_dk")
-    for k in range(3):                                          # roots of glass running into the moss
+    top = h * 0.12
+    s.poly([(cx - 4, ground), (cx + 4, ground), (cx + 2, ground - h * 0.5), (cx - 2, ground - h * 0.5)], "glass_dp")
+    s.line([(cx + 1, ground - 1), (cx + 1, ground - h * 0.5)], "glass_dk")
+    for k in range(3):
         a = (-1, 1, 0.3)[k]
-        s.line([(cx, ground - 2), (cx + a * 8, ground)], "glass_dp", width=2)
-    crown = ground - h * 0.40
-    shards = []
-    for _ in range(int(w * 0.6)):
-        ang = rnd.uniform(-1.25, 1.25)
-        length = rnd.uniform(h * 0.18, h * 0.42) * (1.0 - abs(ang) * 0.3)
-        off = (rnd.uniform(-w * 0.12, w * 0.12), rnd.uniform(-h * 0.08, h * 0.06))
-        shards.append((ang, length, off))
-    shards.sort(key=lambda t: -t[1])
-    for ang, length, off in shards:
-        cols = rnd.choice([("glass_dp", "glass_dk", "glass"), ("glass_dk", "glass", "glass_lt"), ("glass", "glass_lt", "glint")])
-        _prism(s, (cx + off[0], crown + off[1]), ang, length, rnd.uniform(2.0, 3.6), cols)
+        s.line([(cx, ground - 2), (cx + a * 7, ground)], "glass_dp", width=2)
+    for side in (-1, 1):                                          # limbs reaching into the crown
+        s.line([(cx, ground - h * 0.42), (cx + side * w * 0.22, ground - h * 0.58)], "glass_dp", width=2)
+    tiers = 3
+    for k in range(tiers):                                        # widest at the bottom, layered upward
+        ty = ground - h * 0.5 - k * (ground - h * 0.5 - top) / tiers
+        rx = w * (0.46 - k * 0.1)
+        ry = h * (0.13 - k * 0.015)
+        _crown_tier(s, rnd, cx + rnd.uniform(-2, 2), ty, rx, ry)
     s.outline()
-    s.recolor_edge(0, -1, "glint", only={"glass", "glass_lt"})
-    for _ in range(4):                                           # a few glints catch any light (emissive)
+    s.recolor_edge(0, -1, "glint", only={"glass", "glass_lt", "glass_dk"})
+    for _ in range(6):                                             # glints catch any light (emissive)
         x, y = rnd.randrange(w), rnd.randrange(int(h * 0.1), int(h * 0.6))
         if s.opaque(x, y) and s.color_at(x, y)[:3] != (11, 10, 18):
             s.px(x, y, "glint", glow=True)
@@ -446,8 +467,8 @@ MANIFEST: dict[str, dict] = {
     "stump": {"draw": stump, "foot": [16, 8]},
     "chest": {"frames": [lambda: chest(False), lambda: chest(True)], "foot": [24, 10]},
     "waylamp": {"frames": [lambda: waylamp(False), lambda: waylamp(True)], "foot": [12, 8]},
-    "menhir_a": {"draw": lambda: menhir(10), "foot": [18, 8]},
-    "menhir_b": {"draw": lambda: menhir(11), "foot": [18, 8]},
+    "menhir_a": {"draw": lambda: menhir(10), "foot": [24, 12]},
+    "menhir_b": {"draw": lambda: menhir(11), "foot": [24, 12]},
     "tower": {"draw": tower, "foot": [60, 30]},
     "statue_fisher": {"draw": statue_fisher, "foot": [20, 10]},
     "statue_deer": {"draw": statue_deer, "foot": [30, 10]},

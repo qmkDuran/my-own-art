@@ -181,9 +181,13 @@ def _head(s: Spr, f: Fig) -> None:
     glow = sp.get("eyes_glow", False)
     s.px(CX - 2, hy, eyes, glow=glow)
     s.px(CX + 2, hy, eyes, glow=glow)
-    if sp.get("beard"):
-        s.rect(CX - 3, hy + 2, CX + 3, hy + 4, sp["beard"])
-        s.px(CX, hy + 3, "skin_dk")
+    if sp.get("beard"):                       # stubble, and the jaw caught by the lantern on his right
+        s.rect(CX - 3, hy + 3, CX + 1, hy + 4, sp["beard"])
+        s.px(CX + 2, hy + 2, "skin")
+        s.px(CX + 3, hy + 1, "skin")
+        s.px(CX + 3, hy + 2, "skin_lt")
+        s.px(CX + 2, hy + 3, "skin")
+        s.px(CX + 1, hy + 4, "skin_dk")
     if sp.get("mouth"):
         s.px(CX, hy + 3, sp["mouth"])
     style = sp["head"]
@@ -210,10 +214,12 @@ def _head(s: Spr, f: Fig) -> None:
         s.ellipse(CX + 1, hy - 8, 3, 3, hat[1])
         s.px(CX + 2, hy - 9, hat[2])
         s.rect(CX - 5, hy - 3, CX - 4, hy + 3, hat[0])
-        if sp.get("goggles"):
-            s.rect(CX - 5, hy - 4, CX + 5, hy - 3, "earth_dk")
-            s.rect(CX - 4, hy - 5, CX - 1, hy - 3, "glass_lt")
-            s.rect(CX + 1, hy - 5, CX + 4, hy - 3, "glass_lt")
+        if sp.get("spectacles"):              # small round brass spectacles on the nose
+            for ex in (CX - 2, CX + 2):
+                for dx, dy in ((-1, 0), (1, 0), (0, 1)):
+                    s.px(ex + dx, hy + dy, "amber")
+                s.px(ex, hy, "glass_lt")
+            s.px(CX, hy, "amber")
     elif style == "cap":
         s.ellipse(CX, hy - 4, 6, 3, hat[1])
         s.rect(CX - 1, hy - 3, CX + 8, hy - 2, hat[0])
@@ -324,7 +330,7 @@ LAMPLIGHTER = {
 }
 
 NPCS = {
-    "ottilie": {"name": "Mother Ottilie Brask", "role": "Keeper of the Great Lantern", "head": "bun", "goggles": True,
+    "ottilie": {"name": "Mother Ottilie Brask", "role": "Keeper of the Great Lantern", "head": "bun", "spectacles": True,
                 "hat": ("stone", "stone_lt", "bone"), "coat": ("earth_dk", "earth", "earth_lt"), "apron": "ember_dk",
                 "hem": 57, "hem_w": 12, "held_r": "pipe", "held_l": "small_lantern", "skin": "skin", "glove": "ink",
                 "width": 1.08, "split": False},

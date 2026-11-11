@@ -15,3 +15,10 @@ static func lines(g: Game) -> Array:
 	out.append(["Waylamps lit  %d / %d" % [g.lit_lamps(), g.lamps.size()], UiDraw.TEXT])
 	out.append(["Secrets found  %d / 1" % (1 if g.flags.has("secret") else 0), UiDraw.DIM])
 	return out
+
+
+## Where the current goal is on the map (INF if none to show).
+static func target(g: Game) -> Vector2:
+	if g.flags.has("slice_done"):
+		return Vector2.INF
+	return g.layout.circle_center()

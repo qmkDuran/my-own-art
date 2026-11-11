@@ -7,9 +7,11 @@ const W: float = 150.0
 const H: float = 96.0
 const TOP: float = 20.0
 const EDGE: float = 8.0
-const REVEAL: int = 9
+const REVEAL: int = 15
 const ENEMY_RANGE: float = 700.0
-const COLORS: Dictionary = {0: "moss_dk", 1: "moss_lt", 2: "earth_lt", 3: "glass", 4: "earth", 5: "stone_lt", 6: "stone"}
+const COLORS: Dictionary = {0: "", 1: "moss_lt", 2: "amber", 3: "glass_lt", 4: "earth_lt", 5: "pale", 6: "stone"}
+const FOG := Color(0.05, 0.05, 0.08, 0.85)
+const ARROW: float = 4.0
 
 var g: Game
 var _base: Image
@@ -30,9 +32,10 @@ func setup(game: Game) -> void:
 	_base = Image.create(z.cols, z.rows, false, Image.FORMAT_RGBA8)
 	for y: int in z.rows:
 		for x: int in z.cols:
-			_base.set_pixel(x, y, Pal.c(COLORS[z.t(Vector2i(x, y))]))
+			var name: String = COLORS[z.t(Vector2i(x, y))]
+			_base.set_pixel(x, y, Pal.c(name, 0.9) if name != "" else Color(Pal.c("moss_dk"), 0.55))
 	_shown = Image.create(z.cols, z.rows, false, Image.FORMAT_RGBA8)
-	_shown.fill(Color(0, 0, 0, 0.0))
+	_shown.fill(FOG)
 	_seen = PackedByteArray()
 	_seen.resize(z.cols * z.rows)
 	_tex = ImageTexture.create_from_image(_shown)
@@ -88,7 +91,26 @@ func _draw() -> void:
 			draw_rect(Rect2(_p(e.global_position) - Vector2(0.5, 0.5), Vector2(2, 2) if e.rank != "normal" else Vector2(1, 1)), col)
 	var view: Vector2 = get_viewport_rect().size / g.camera.zoom
 	draw_rect(Rect2(_p(g.camera.get_screen_center_position() - view / 2.0), view / float(g.layout.cell)), Color(1, 1, 1, 0.3), false, 1.0)
-	draw_rect(Rect2(_p(me) - Vector2(1.5, 1.5), Vector2(3, 3)), Color.WHITE)
+	_objective()
+	_arrow(_p(me), g.player.aim)
+
+
+## You: a small white arrow pointing where you face.
+func _arrow(at: Vector2, dir: Vector2) -> void:
+	var d: Vector2 = dir if dir != Vector2.ZERO else Vector2.DOWN
+	var pts := PackedVector2Array([at + d * ARROW, at + d.rotated(2.5) * ARROW * 0.8, at + d.rotated(-2.5) * ARROW * 0.8])
+	draw_colored_polygon(pts, Color.WHITE)
+	draw_polyline(PackedVector2Array([pts[0], pts[1], pts[2], pts[0]]), UiDraw.INK, 1.0)
+
+
+## Where the story wants you: a pulsing gold diamond.
+func _objective() -> void:
+	var t: Vector2 = Objectives.target(g)
+	if t == Vector2.INF:
+		return
+	var c: Vector2 = _p(t)
+	var k: float = 3.0 + sin(Time.get_ticks_msec() / 200.0)
+	draw_colored_polygon(PackedVector2Array([c + Vector2(0, -k), c + Vector2(k, 0), c + Vector2(0, k), c + Vector2(-k, 0)]), Pal.c("gold"))
 
 
 func _marker(it: Interactable) -> void:

@@ -10,6 +10,8 @@ const NOTICE_Y: float = 96.0
 const BOX_W: float = 470.0
 const NOTE_W: float = 380.0
 const FADE: float = 0.5
+const PLATE_PAD: float = 8.0
+const PLATE_ALPHA: float = 0.78
 
 var hud: Hud
 var _notices: Array = []          ## [text, time left]
@@ -85,16 +87,40 @@ func _draw() -> void:
 	var cluster: Rect2 = Hud.layout(vs)["cluster"]
 	for i: int in _notices.size():
 		var a: float = clampf(float(_notices[i][1]) / FADE, 0.0, 1.0)
-		UiDraw.text(self, Vector2(0, NOTICE_Y + i * 14.0), String(_notices[i][0]), Color(UiDraw.GOLD, a), UiDraw.BODY, HORIZONTAL_ALIGNMENT_CENTER, vs.x)
-	if _caption_t > 0.0 and _dialogue.is_empty():
-		var a: float = clampf(_caption_t / FADE, 0.0, 1.0)
-		UiDraw.text(self, Vector2(0, cluster.position.y - 14.0), _caption, Color(UiDraw.TEXT, a), UiDraw.BODY, HORIZONTAL_ALIGNMENT_CENTER, vs.x)
+		_plate_text(String(_notices[i][0]), NOTICE_Y + i * 16.0, UiDraw.GOLD, a, vs)
+	if caption_visible():
+		_plate_text(_caption, cluster.position.y - 14.0, UiDraw.TEXT, clampf(_caption_t / FADE, 0.0, 1.0), vs)
 	if not _dialogue.is_empty():
 		_draw_dialogue(vs, cluster)
 	if not _note.is_empty():
 		_draw_note(vs)
 	if end_card:
 		_draw_end(vs)
+
+
+func caption_visible() -> bool:
+	return _caption_t > 0.0 and _dialogue.is_empty()
+
+
+## The caption's plate on screen (for fading what stands behind it); empty when no caption shows.
+func caption_rect() -> Rect2:
+	if not caption_visible():
+		return Rect2()
+	var vs: Vector2 = get_viewport_rect().size
+	return _plate_rect(_caption, Hud.layout(vs)["cluster"].position.y - 14.0, vs)
+
+
+func _plate_rect(text: String, baseline: float, vs: Vector2) -> Rect2:
+	var w: float = UiDraw.text_width(self, text) + PLATE_PAD * 2.0
+	return Rect2(roundf((vs.x - w) / 2.0), baseline - 11.0, w, 15.0)
+
+
+## Words on a dark plate, so they read over any ground or prop.
+func _plate_text(text: String, baseline: float, col: Color, a: float, vs: Vector2) -> void:
+	var r: Rect2 = _plate_rect(text, baseline, vs)
+	draw_rect(r, Color(UiDraw.PANEL_DEEP, PLATE_ALPHA * a))
+	draw_rect(r, Color(UiDraw.FRAME, 0.4 * a), false, 1.0)
+	UiDraw.text(self, Vector2(0, baseline), text, Color(col, a), UiDraw.BODY, HORIZONTAL_ALIGNMENT_CENTER, vs.x)
 
 
 func _draw_dialogue(vs: Vector2, cluster: Rect2) -> void:

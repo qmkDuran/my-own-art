@@ -10,6 +10,7 @@ signal boss_died(e: Enemy)
 const CHECK_EVERY: float = 0.4
 const WAVE_RING: float = 260.0
 const AMBUSH_SPREAD: float = 60.0
+const ARRIVAL_TRIES: int = 8
 
 var world: Node2D
 var z: ZoneLayout
@@ -66,12 +67,22 @@ func wave(center: Vector2, n: int, kinds: Dictionary, lvl: int) -> void:
 		Fx.burst(world, at, 10, Vector2(20, 60), 0.6, [Pal.c("violet", 0.8), Pal.c("void", 0.0)], Vector2.UP, 60.0, Vector2(2, 3), false)
 
 
+## A free spot near p, also clear of every living enemy (arrivals never land inside one another).
 func _free_near(p: Vector2, radius: float) -> Vector2:
-	var nav: Nav = Game.current.nav
-	if z.point_free(p, radius):
-		return p
-	var c: Vector2i = nav.nearest_free(z.cell_of(p))
-	return z.center_of(c) if c.x >= 0 else player.global_position
+	var q: Vector2 = z.free_spot_near(p, radius)
+	for k: int in ARRIVAL_TRIES:
+		if not _crowded(q, radius):
+			return q
+		q = z.free_spot_near(q + Vector2.RIGHT.rotated(randf() * TAU) * radius * 3.0, radius)
+	return q
+
+
+func _crowded(p: Vector2, radius: float) -> bool:
+	for n: Node in get_tree().get_nodes_in_group("enemies"):
+		var e := n as Enemy
+		if e.global_position.distance_to(p) < e.radius + radius:
+			return true
+	return false
 
 
 func _weighted(t: Dictionary) -> String:

@@ -154,11 +154,11 @@ func _gauge(r: Rect2, label_r: Rect2) -> void:
 		var x: float = r.position.x + r.size.x * (float(L[mark]) - float(L["min"])) / (float(L["max"]) - float(L["min"]))
 		draw_line(Vector2(x, r.position.y - 1), Vector2(x, r.end.y + 1), UiDraw.FRAME_LIT if mark == "blazing_at" else UiDraw.FRAME)
 	draw_rect(r, UiDraw.FRAME, false, 1.0)
-	var word: String = {"blazing": "BLAZING", "guttering": "GUTTERING", "calm": "LIGHT"}[lt.state()]
+	var word: String = {"blazing": "Blazing", "guttering": "Guttering", "calm": ""}[lt.state()]
 	if lt.thrown:
-		word = "LANTERN THROWN"
-	UiDraw.text(self, label_r.position + Vector2(0, 9), "%s %d   radius %d" % [word, roundi(lt.value), roundi(lt.light_radius())],
-		col, UiDraw.SMALL, HORIZONTAL_ALIGNMENT_CENTER, label_r.size.x)
+		word = "Lantern thrown"
+	if word != "":
+		UiDraw.text(self, label_r.position + Vector2(0, 9), word, col, UiDraw.SMALL, HORIZONTAL_ALIGNMENT_CENTER, label_r.size.x)
 
 
 func _slot(r: Rect2, i: int) -> void:

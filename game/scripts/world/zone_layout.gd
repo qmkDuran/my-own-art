@@ -7,6 +7,7 @@ extends RefCounted
 enum T { THICKET, MOSS, PATH, WATER, BRIDGE, STONE, WALL }
 
 const WALKABLE: Array[int] = [T.MOSS, T.PATH, T.BRIDGE, T.STONE]
+const FREE_SEARCH: int = 8
 
 var cols: int
 var rows: int
@@ -129,6 +130,27 @@ func point_free(p: Vector2, radius: float) -> bool:
 		if r.grow(radius).has_point(p):
 			return false
 	return true
+
+
+## The nearest point to `p` where a body of `radius` can stand (searching outward cell by cell), or `p` itself.
+func free_spot_near(p: Vector2, radius: float) -> Vector2:
+	if point_free(p, radius):
+		return p
+	var c0: Vector2i = cell_of(p)
+	for r: int in range(1, FREE_SEARCH):
+		var best := Vector2.INF
+		for y: int in range(c0.y - r, c0.y + r + 1):
+			for x: int in range(c0.x - r, c0.x + r + 1):
+				var q: Vector2 = center_of(Vector2i(x, y))
+				if inside(Vector2i(x, y)) and point_free(q, radius) and q.distance_to(p) < best.distance_to(p):
+					best = q
+		if best != Vector2.INF:
+			return best
+	return p
+
+
+func circle_center() -> Vector2:
+	return Vector2(circle.x, circle.y)
 
 
 func props_of(kind: String) -> Array[Dictionary]:

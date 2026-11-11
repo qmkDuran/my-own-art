@@ -127,13 +127,21 @@ vec4 water(vec2 px, float edge) {
 	return col;
 }
 
-vec4 stone(vec2 px) {
+// Flagstones that have seen weather: per-tile shade, cracks, missing tiles and moss, all wearing more toward the
+// edge of the paved area (edge: 0 at its centre, 1 at its rim).
+vec4 stone(vec2 px, float edge) {
 	vec2 q = px / vec2(20.0, 14.0);
 	q.x += floor(q.y) * 0.5;
 	vec2 f = fract(q);
 	vec2 id = floor(q);
-	if (f.x < 0.07 || f.y < 0.1) { return hash(id) > 0.7 ? c_moss_dk : c_stone_dk; }
-	return dith(c_stone, c_stone_lt, hash(id) * 0.5 + fbm(px * 0.1) * 0.4 - 0.1, px);
+	float h = hash(id);
+	float wear = edge * edge * 0.9 + fbm(px * 0.03) * 0.35;
+	if (h < wear * 0.32) { return dith(c_earth_dk, c_moss_dk, fbm(px * 0.1), px); }
+	if (f.x < 0.07 || f.y < 0.1) { return (h > 0.6 || wear > 0.55) ? c_moss_dk : c_stone_dk; }
+	vec4 col = dith(c_stone, c_stone_lt, h * 0.6 + fbm(px * 0.1) * 0.35 - 0.15 - wear * 0.3, px);
+	if (hash(id + 7.0) > 0.72 && abs(f.x - f.y * (hash(id + 3.0) - 0.5) * 1.6 - 0.5) < 0.035) { col = c_stone_dk; }
+	if (fbm(px * 0.06 + 11.0) > 0.66 - wear * 0.25) { col = dith(col, c_moss, 0.55, px); }
+	return col;
 }
 
 void fragment() {
@@ -147,7 +155,7 @@ void fragment() {
 	if (raw == WATER || raw == BRIDGE) {
 		col = water(px, raw == BRIDGE ? -cell : water_edge(px, is_stream));
 	} else if (t == THICKET) { col = thicket(px); }
-	else if (t == STONE && length(px - circle.xy) < circle.z) { col = stone(px); }
+	else if (t == STONE && length(px - circle.xy) < circle.z) { col = stone(px, length(px - circle.xy) / circle.z); }
 	else {
 		float m = path_mask(px, w);
 		col = (m > 0.5 && (t == MOSS || t == PATH || t == STONE)) ? path(px, m) : moss(px);

@@ -57,10 +57,8 @@ func _elite(h: ShotHelper) -> void:
 	h.level_up(7)
 	for s: String in SPECS:
 		h.spec(s, SPECS[s])
-	var target: Vector2 = _elite_spot()
-	g.player.global_position = target
+	h.place_player(_elite_spot())
 	g.player.light.value = 45.0
-	g.camera.reset_smoothing()
 	g.hud.caption("Deep in the Glasswood: an elite pack. Outside your light, they hit harder.")
 
 
@@ -89,8 +87,7 @@ func _boss(h: ShotHelper) -> void:
 	for id: String in PASSIVES:
 		g.player.prog.add_passive(id)
 	h.clear_near(100000.0)
-	g.player.global_position = g.layout.boss["pos"] + Vector2(-30, 190)
-	g.camera.reset_smoothing()
+	h.place_player(g.layout.circle_center() + Vector2(0, 80))
 	g.player.light.value = 70.0
 	g.player.refill_tonics()
 	g.player.life = g.player.stats.max_life()

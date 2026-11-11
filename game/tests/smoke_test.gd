@@ -38,6 +38,8 @@ func _run() -> void:
 	await frames(2)
 	expect(LayoutCheck.problems(g.layout).is_empty(), "the zone keeps every layout rule")
 	expect(get_tree().get_nodes_in_group("enemies").size() >= 60, "packs spawned (%d enemies)" % get_tree().get_nodes_in_group("enemies").size())
+	expect(ActorCheck.problems(g).is_empty(), "no body stands inside a prop at the start %s" % ActorCheck.problems(g))
+	expect(ActorCheck.enemy_overlaps(g) == 0, "no two enemies spawn inside each other")
 	_stats_math()
 	await _damage_rules()
 	await _light_rules()
@@ -237,10 +239,11 @@ func _interactables() -> void:
 func _boss(h: ShotHelper) -> void:
 	h.clear_near(100000.0)
 	await frames(2)
-	p.global_position = g.layout.boss["pos"] + Vector2(0, 160)
+	h.place_player(g.layout.circle_center() + Vector2(0, 80))
 	g.start_boss()
 	await frames(30)
 	expect(is_instance_valid(g.spawner.boss), "the Glazier rises in the stone ring")
+	expect(ActorCheck.problems(g).is_empty(), "nobody stands inside a standing stone %s" % ActorCheck.problems(g))
 	g.spawner.boss.life = 1.0
 	Combat.hit_enemy(g.spawner.boss, 50.0)
 	await frames(30)

@@ -127,8 +127,7 @@ func _shot_character() -> void:
 func _shot_boss() -> void:
 	var h := _bot()
 	h.clear_near(5000.0)
-	g.player.global_position = g.layout.boss["pos"] + Vector2(-40, 170)
-	g.camera.reset_smoothing()
+	h.place_player(g.layout.circle_center() + Vector2(0, 80))
 	g.player.light.value = 70.0
 	await _wait(0.4)
 	g.start_boss()
