@@ -30,11 +30,14 @@ static func play(e: Enemy, dir: Vector2) -> void:
 	if boss:
 		for k: int in 3:
 			g.get_tree().create_timer(0.3 * (k + 1), false).timeout.connect(func() -> void:
-				Fx.death_burst(g.fx_layer, at + Vector2(randf_range(-30, 30), randf_range(-30, 10)), size * 0.7, glass))
+				if is_instance_valid(g) and g == Game.current:          # the zone may have been left meanwhile
+					Fx.death_burst(g.fx_layer, at + Vector2(randf_range(-30, 30), randf_range(-30, 10)), size * 0.7, glass))
 
 
 static func _dissolve(e: Enemy, at: Vector2, size: float, glass: bool) -> void:
 	var g: Game = Game.current
+	if g == null:
+		return
 	Fx.death_burst(g.fx_layer, at, size, glass)
 	Fx.burst(g.fx_layer, at, int(8 * size), Vector2(20, 60 * size), 1.1, [Pal.c("stone"), Pal.c("stone_dk"), Pal.c("ink", 0.0)],
 		Vector2.UP, 180.0, Vector2(1.5, 2.5), false)                 # ash and debris
@@ -44,6 +47,8 @@ static func _dissolve(e: Enemy, at: Vector2, size: float, glass: bool) -> void:
 ## The heap left behind: dark ash with a few dying embers, fading after a few seconds.
 static func _ash(at: Vector2, size: float, elite: bool) -> void:
 	var g: Game = Game.current
+	if g == null:
+		return
 	var heap := Node2D.new()
 	heap.position = at
 	heap.z_index = -13
