@@ -54,6 +54,10 @@ func cast(id: String, at: Vector2) -> bool:
 
 func spec(skill: String, nodes: Array) -> void:
 	var p: Progression = g.player.prog
+	if not p.is_specialised(skill):
+		if p.specialised.size() >= p.spec_slots():
+			p.forget(String(p.specialised[p.specialised.size() - 1]))
+		p.specialised.append(skill)
 	p.skills[skill]["level"] = maxi(int(p.skills[skill]["level"]), nodes.size() + 2)
 	for n: String in nodes:
 		p.add_spec(skill, n)

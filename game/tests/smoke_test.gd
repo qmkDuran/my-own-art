@@ -134,6 +134,7 @@ func _skills(h: ShotHelper) -> void:
 		(p.skills.skill("lantern_toss") as LanternToss).recall()
 		foes[0].queue_free()
 		await frames(40)
+	expect(p.prog.is_specialised("sunlash") and p.prog.spec_slots() >= 2, "Sunlash takes a specialisation slot")
 	h.spec("sunlash", ["quick_wrist", "long_cord", "long_cord", "sear", "kindling", "backhand"])
 	expect(p.prog.node_rank("sunlash", "backhand") == 1, "spending Sunlash points opens Backhand")
 	var behind: Array[Enemy] = h.pack_near(["gloam"], Vector2(-45, 0))
@@ -357,6 +358,27 @@ func _pass3(h: ShotHelper) -> void:
 	expect(foes.all(func(f: Enemy) -> bool: return f.life < 99999.0), "Noon burns every enemy on screen")
 	for f: Enemy in foes:
 		f.queue_free()
+	await _more_skills(h)
+	_keystones()
+
+
+func _more_skills(h: ShotHelper) -> void:
+	h.level_up(12)
+	for id: String in ["kindle", "hook", "glass_ward", "cinder_rain", "wick_trap", "lull"]:
+		var foe: Enemy = h.pack_near(["hound"], Vector2(60, 0))[0]
+		foe.max_life = 99999.0
+		foe.life = 99999.0
+		await frames(3)
+		expect(h.cast(id, foe.global_position), "%s can be used" % id)
+		if id == "kindle":
+			h.cast("sunlash", foe.global_position)
+		await get_tree().create_timer(2.2).timeout
+		var hurt: bool = foe.life < 99999.0 or (id == "glass_ward" and (p.skills.skill("glass_ward") as GlassWard).up())
+		expect(hurt, "%s works (%s)" % [id, "the ward is up" if id == "glass_ward" else "the enemy was hurt"])
+		foe.queue_free()
+
+
+func _keystones() -> void:
 	p.prog.passives["ks_lighthouse"] = 1
 	p.refresh_stats()
 	var lv: float = p.light.value

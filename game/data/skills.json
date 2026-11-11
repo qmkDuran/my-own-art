@@ -736,5 +736,544 @@
     "vals": {}
    }
   ]
+ },
+ "kindle": {
+  "name": "Kindle",
+  "icon": 8,
+  "kind": "spell",
+  "tags": [
+   "Spell",
+   "Sunfire",
+   "Buff"
+  ],
+  "desc": "Feed the lantern's fire into your hands. For a while every hit carries added sunfire and may set the target alight.",
+  "base": [
+   4.0,
+   7.0
+  ],
+  "per_level_pct": 6.0,
+  "cost": 15.0,
+  "cooldown": 12.0,
+  "time": 0.25,
+  "duration": 8.0,
+  "burn_chance": 30.0,
+  "nodes": [
+   {
+    "id": "long_kindle",
+    "name": "Long Kindle",
+    "max": 3,
+    "req": 0,
+    "pos": [
+     0,
+     0
+    ],
+    "text": "+2 s per point",
+    "vals": {
+     "duration": 2.0
+    }
+   },
+   {
+    "id": "stoke",
+    "name": "Stoke",
+    "max": 3,
+    "req": 0,
+    "pos": [
+     2,
+     0
+    ],
+    "text": "+25% added sunfire per point",
+    "vals": {
+     "added_pct": 25.0
+    }
+   },
+   {
+    "id": "warm_hands",
+    "name": "Warm Hands",
+    "max": 2,
+    "req": 2,
+    "pos": [
+     1,
+     1
+    ],
+    "text": "+10% attack and cast speed per point while kindled",
+    "vals": {
+     "speed_pct": 10.0
+    }
+   },
+   {
+    "id": "ember_skin",
+    "name": "Ember Skin",
+    "max": 1,
+    "req": 3,
+    "pos": [
+     3,
+     1
+    ],
+    "text": "While kindled, whatever hits you is set alight",
+    "vals": {}
+   },
+   {
+    "id": "wildfire",
+    "name": "Wildfire",
+    "max": 1,
+    "req": 5,
+    "pos": [
+     1,
+     2
+    ],
+    "text": "While kindled, burning enemies that die set their neighbours alight",
+    "vals": {}
+   }
+  ]
+ },
+ "hook": {
+  "name": "Hook",
+  "icon": 9,
+  "kind": "attack",
+  "tags": [
+   "Melee",
+   "Attack",
+   "Movement"
+  ],
+  "desc": "Cast the light-whip out in a line. The first thing it catches is dragged to your feet and left reeling.",
+  "damage_pct": 120.0,
+  "cost": 8.0,
+  "cooldown": 3.0,
+  "time": 0.3,
+  "range": 220.0,
+  "stun": 0.6,
+  "nodes": [
+   {
+    "id": "barbed",
+    "name": "Barbed",
+    "max": 3,
+    "req": 0,
+    "pos": [
+     0,
+     0
+    ],
+    "text": "+25% damage per point",
+    "vals": {
+     "damage_pct": 25.0
+    }
+   },
+   {
+    "id": "long_line",
+    "name": "Long Line",
+    "max": 2,
+    "req": 0,
+    "pos": [
+     2,
+     0
+    ],
+    "text": "+20% reach per point",
+    "vals": {
+     "range_pct": 20.0
+    }
+   },
+   {
+    "id": "drag_light",
+    "name": "Drag the Light",
+    "max": 2,
+    "req": 2,
+    "pos": [
+     1,
+     1
+    ],
+    "text": "Each catch feeds the lantern +3 Light per point",
+    "vals": {
+     "light": 3.0
+    }
+   },
+   {
+    "id": "double_hook",
+    "name": "Double Hook",
+    "max": 1,
+    "req": 4,
+    "pos": [
+     3,
+     1
+    ],
+    "text": "Catches the first two enemies in the line",
+    "vals": {}
+   },
+   {
+    "id": "snap",
+    "name": "Snap",
+    "max": 1,
+    "req": 6,
+    "pos": [
+     1,
+     2
+    ],
+    "text": "Caught enemies are struck again by a free Sunlash crack",
+    "vals": {}
+   }
+  ]
+ },
+ "glass_ward": {
+  "name": "Glass Ward",
+  "icon": 10,
+  "kind": "spell",
+  "tags": [
+   "Spell",
+   "Defence"
+  ],
+  "desc": "Glass grows over your coat: a barrier that takes hits for you. When it breaks or fades, it bursts outward in shards.",
+  "base": [
+   16.0,
+   26.0
+  ],
+  "per_level_pct": 6.0,
+  "cost": 18.0,
+  "cooldown": 10.0,
+  "time": 0.3,
+  "barrier_pct": 30.0,
+  "duration": 6.0,
+  "burst_radius": 90.0,
+  "nodes": [
+   {
+    "id": "thick_glass",
+    "name": "Thick Glass",
+    "max": 3,
+    "req": 0,
+    "pos": [
+     0,
+     0
+    ],
+    "text": "+10% of your life as barrier per point",
+    "vals": {
+     "barrier_pct": 10.0
+    }
+   },
+   {
+    "id": "sharp_edges",
+    "name": "Sharp Edges",
+    "max": 3,
+    "req": 0,
+    "pos": [
+     2,
+     0
+    ],
+    "text": "+40% burst damage per point",
+    "vals": {
+     "burst_pct": 40.0
+    }
+   },
+   {
+    "id": "quick_set",
+    "name": "Quick Set",
+    "max": 2,
+    "req": 2,
+    "pos": [
+     1,
+     1
+    ],
+    "text": "-1.5 s cooldown per point",
+    "vals": {
+     "cd": 1.5
+    }
+   },
+   {
+    "id": "mirror",
+    "name": "Mirror",
+    "max": 1,
+    "req": 4,
+    "pos": [
+     3,
+     1
+    ],
+    "text": "While the ward holds, enemy shots that touch you shatter",
+    "vals": {}
+   },
+   {
+    "id": "rewall",
+    "name": "Rewall",
+    "max": 1,
+    "req": 6,
+    "pos": [
+     1,
+     2
+    ],
+    "text": "The burst grows a smaller second ward (half as strong)",
+    "vals": {}
+   }
+  ]
+ },
+ "cinder_rain": {
+  "name": "Cinder Rain",
+  "icon": 11,
+  "kind": "spell",
+  "tags": [
+   "Spell",
+   "Sunfire",
+   "Area"
+  ],
+  "desc": "Cinders fall from the dark onto a place you choose, each one a small burst of sunfire.",
+  "base": [
+   8.0,
+   13.0
+  ],
+  "per_level_pct": 6.0,
+  "cost": 20.0,
+  "cooldown": 6.0,
+  "time": 0.35,
+  "count": 8,
+  "radius": 80.0,
+  "spread_time": 1.4,
+  "blast": 30.0,
+  "range": 360.0,
+  "nodes": [
+   {
+    "id": "downpour",
+    "name": "Downpour",
+    "max": 3,
+    "req": 0,
+    "pos": [
+     0,
+     0
+    ],
+    "text": "+2 cinders per point",
+    "vals": {
+     "count": 2.0
+    }
+   },
+   {
+    "id": "wide_rain",
+    "name": "Wide Rain",
+    "max": 2,
+    "req": 0,
+    "pos": [
+     2,
+     0
+    ],
+    "text": "+20% area per point",
+    "vals": {
+     "area_pct": 20.0
+    }
+   },
+   {
+    "id": "guided",
+    "name": "Guided",
+    "max": 1,
+    "req": 3,
+    "pos": [
+     1,
+     1
+    ],
+    "text": "Cinders fall on enemies in the area first",
+    "vals": {}
+   },
+   {
+    "id": "lingering",
+    "name": "Lingering",
+    "max": 2,
+    "req": 3,
+    "pos": [
+     3,
+     1
+    ],
+    "text": "Each cinder leaves fire on the ground for 1.5 s per point",
+    "vals": {
+     "linger": 1.5
+    }
+   },
+   {
+    "id": "meteor",
+    "name": "Last Cinder",
+    "max": 1,
+    "req": 6,
+    "pos": [
+     1,
+     2
+    ],
+    "text": "The rain ends with one great cinder (400% damage, wide)",
+    "vals": {}
+   }
+  ]
+ },
+ "wick_trap": {
+  "name": "Wick Trap",
+  "icon": 12,
+  "kind": "spell",
+  "tags": [
+   "Spell",
+   "Sunfire",
+   "Trap"
+  ],
+  "desc": "Set a lit wick in the ground. When something steps near, it bursts. Up to three at once.",
+  "base": [
+   20.0,
+   30.0
+  ],
+  "per_level_pct": 6.0,
+  "cost": 10.0,
+  "cooldown": 1.5,
+  "time": 0.25,
+  "max": 3,
+  "arm": 0.5,
+  "trigger": 32.0,
+  "radius": 70.0,
+  "range": 300.0,
+  "nodes": [
+   {
+    "id": "more_traps",
+    "name": "More Wicks",
+    "max": 2,
+    "req": 0,
+    "pos": [
+     0,
+     0
+    ],
+    "text": "+1 trap at once per point",
+    "vals": {
+     "max": 1.0
+    }
+   },
+   {
+    "id": "big_bang",
+    "name": "Big Bang",
+    "max": 3,
+    "req": 0,
+    "pos": [
+     2,
+     0
+    ],
+    "text": "+15% area and +20% damage per point",
+    "vals": {
+     "area_pct": 15.0,
+     "damage_pct": 20.0
+    }
+   },
+   {
+    "id": "bright_wick",
+    "name": "Bright Wick",
+    "max": 2,
+    "req": 2,
+    "pos": [
+     1,
+     1
+    ],
+    "text": "Each burst feeds the lantern +2 Light per point",
+    "vals": {
+     "light": 2.0
+    }
+   },
+   {
+    "id": "chain",
+    "name": "Chain",
+    "max": 1,
+    "req": 4,
+    "pos": [
+     3,
+     1
+    ],
+    "text": "A burst sets off any trap within its reach",
+    "vals": {}
+   },
+   {
+    "id": "snare",
+    "name": "Snare",
+    "max": 1,
+    "req": 6,
+    "pos": [
+     1,
+     2
+    ],
+    "text": "Bursts stun for 0.8 s",
+    "vals": {
+     "stun": 0.8
+    }
+   }
+  ]
+ },
+ "lull": {
+  "name": "Lull",
+  "icon": 13,
+  "kind": "spell",
+  "tags": [
+   "Spell",
+   "Sound",
+   "Control"
+  ],
+  "desc": "Strike the lantern like a bell. The tone stuns everything near you for a moment. (The order knows this sound. So does the sun.)",
+  "base": [
+   10.0,
+   16.0
+  ],
+  "per_level_pct": 6.0,
+  "cost": 16.0,
+  "cooldown": 8.0,
+  "time": 0.35,
+  "radius": 140.0,
+  "stun": 1.0,
+  "nodes": [
+   {
+    "id": "deep_toll",
+    "name": "Deep Toll",
+    "max": 3,
+    "req": 0,
+    "pos": [
+     0,
+     0
+    ],
+    "text": "+0.3 s stun per point",
+    "vals": {
+     "stun": 0.3
+    }
+   },
+   {
+    "id": "wide_toll",
+    "name": "Wide Toll",
+    "max": 2,
+    "req": 0,
+    "pos": [
+     2,
+     0
+    ],
+    "text": "+15% radius per point",
+    "vals": {
+     "area_pct": 15.0
+    }
+   },
+   {
+    "id": "resonance",
+    "name": "Resonance",
+    "max": 2,
+    "req": 2,
+    "pos": [
+     1,
+     1
+    ],
+    "text": "+2 Oil per enemy struck per point",
+    "vals": {
+     "oil": 2.0
+    }
+   },
+   {
+    "id": "echo",
+    "name": "Echo",
+    "max": 1,
+    "req": 4,
+    "pos": [
+     3,
+     1
+    ],
+    "text": "The bell rings again a second later at half strength",
+    "vals": {}
+   },
+   {
+    "id": "hush",
+    "name": "Hush",
+    "max": 1,
+    "req": 6,
+    "pos": [
+     1,
+     2
+    ],
+    "text": "Stunned enemies take 25% more damage while stunned",
+    "vals": {}
+   }
+  ]
  }
 }

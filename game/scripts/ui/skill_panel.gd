@@ -5,12 +5,14 @@ extends GamePanel
 ## right-click to refund. Below: put the skill on a hotbar key.
 
 const LIST_W: float = 150.0
-const ROW_H: float = 36.0
+const ROW_H: float = 27.0
 const NODE := Vector2(76, 34)
 const STEP := Vector2(86, 64)
 const TREE_Y: float = 92.0
 const ICON: float = 24.0
-const ORDER: Array[String] = ["sunlash", "flare", "lantern_toss", "moth_swarm", "dash", "eclipse", "noon"]
+const LIST_ICON: float = 23.0
+const ORDER: Array[String] = ["sunlash", "flare", "lantern_toss", "moth_swarm", "eclipse", "noon", "kindle", "hook", "glass_ward",
+	"cinder_rain", "wick_trap", "lull", "dash"]
 
 var selected: String = "sunlash"
 var _skills_tex: Texture2D
@@ -22,7 +24,7 @@ func _ready() -> void:
 
 
 func list_rect(i: int) -> Rect2:
-	return Rect2(8, CONTENT_Y + i * ROW_H, LIST_W - 8.0, ROW_H - 4.0)
+	return Rect2(8, CONTENT_Y + 2.0 + i * ROW_H, LIST_W - 8.0, ROW_H - 2.0)
 
 
 func node_rect(n: Dictionary) -> Rect2:
@@ -46,6 +48,7 @@ func _content() -> void:
 			draw_line(a.get_center(), node_rect(n).get_center(), UiDraw.FRAME, 2.0)
 	for n: Dictionary in nodes:
 		_node(n)
+	_spec_button()
 	if g.player.prog.skills.has(selected) and selected != "dash":
 		UiDraw.text(self, Vector2(LIST_W + 20.0, size.y - 40.0), "Hotbar key:", UiDraw.DIM, UiDraw.SMALL)
 		for i: int in InputSetup.SLOTS.size():
@@ -53,16 +56,30 @@ func _content() -> void:
 			button(key_rect(i), InputSetup.SLOT_LABELS[k], g.player.prog.slots[k] != selected)
 
 
+func spec_rect() -> Rect2:
+	return Rect2(size.x - 134.0, CONTENT_Y + 4.0, 120.0, 18.0)
+
+
+## Specialise / Forget, and how many slots are in use.
+func _spec_button() -> void:
+	var p: Progression = g.player.prog
+	if not p.skills.has(selected) or GameData.skill(selected)["nodes"].is_empty():
+		return
+	var label: String = "Forget (resets)" if p.is_specialised(selected) else "Specialise"
+	button(spec_rect(), label, p.is_specialised(selected) or p.can_specialise(selected))
+	UiDraw.text(self, Vector2(size.x - 134.0, CONTENT_Y + 32.0), "slots %d / %d" % [p.specialised.size(), p.spec_slots()], UiDraw.DIM, UiDraw.SMALL)
+
+
 func _list_row(i: int, id: String) -> void:
 	var r: Rect2 = list_rect(i)
 	var learned: bool = g.player.prog.skills.has(id) or id == "dash"
 	UiDraw.box(self, r, Color(0.16, 0.11, 0.07) if id == selected else Color(0.06, 0.05, 0.08), UiDraw.FRAME_LIT if id == selected else UiDraw.FRAME)
 	var icon: int = int(GameData.skill(id)["icon"])
-	draw_texture_rect_region(_skills_tex, Rect2(r.position + Vector2(4, 4), Vector2(ICON, ICON)), Rect2(icon * ICON, 0, ICON, ICON),
+	draw_texture_rect_region(_skills_tex, Rect2(r.position + Vector2(2, 1), Vector2(LIST_ICON, LIST_ICON)), Rect2(icon * ICON, 0, ICON, ICON),
 		Color.WHITE if learned else Color(0.4, 0.4, 0.5))
-	UiDraw.text(self, r.position + Vector2(32, 13), String(GameData.skill(id)["name"]), UiDraw.TEXT if learned else UiDraw.LOCKED)
+	UiDraw.text(self, r.position + Vector2(28, 11), String(GameData.skill(id)["name"]), UiDraw.TEXT if learned else UiDraw.LOCKED)
 	var sub: String = _sub(id, learned)
-	UiDraw.text(self, r.position + Vector2(32, 25), sub, UiDraw.GOLD if g.player.prog.spec_points(id) > 0 else UiDraw.DIM, UiDraw.SMALL)
+	UiDraw.text(self, r.position + Vector2(28, 22), sub, UiDraw.GOLD if g.player.prog.spec_points(id) > 0 else UiDraw.DIM, UiDraw.SMALL)
 
 
 func _sub(id: String, learned: bool) -> String:
@@ -70,6 +87,8 @@ func _sub(id: String, learned: bool) -> String:
 		return "learn at level %d" % int(Progression.LEARN.get(id, 0))
 	if id == "dash":
 		return "movement"
+	if not g.player.prog.is_specialised(id):
+		return "not specialised"
 	var pts: int = g.player.prog.spec_points(id)
 	return "level %d%s" % [g.player.prog.skill_level(id), "   %d pts" % pts if pts > 0 else ""]
 
@@ -80,11 +99,11 @@ func _tree_header() -> void:
 	var d: Dictionary = GameData.skill(selected)
 	UiDraw.text(self, Vector2(x, CONTENT_Y + 14.0), "%s  -  level %d" % [d["name"], p.skill_level(selected)], UiDraw.GOLD)
 	if p.skills.has(selected) and not d["nodes"].is_empty():
-		var xr := Rect2(x, CONTENT_Y + 22.0, size.x - x - 14.0, 4.0)
+		var xr := Rect2(x, CONTENT_Y + 22.0, size.x - x - 150.0, 4.0)
 		var sd: Dictionary = p.skills[selected]
 		draw_rect(xr.grow(1.0), UiDraw.INK)
 		draw_rect(Rect2(xr.position, Vector2(xr.size.x * float(sd["xp"]) / p.skill_xp_to_next(int(sd["level"])), xr.size.y)), Pal.c("violet_lt"))
-		UiDraw.text(self, Vector2(x, CONTENT_Y + 40.0), "Points to spend: %d   (one per skill level; the skill levels while on your hotbar)" % p.spec_points(selected),
+		UiDraw.text(self, Vector2(x, CONTENT_Y + 40.0), "Points to spend: %d   (one per skill level; specialised skills level up)" % p.spec_points(selected),
 			UiDraw.TEXT, UiDraw.SMALL)
 
 
@@ -112,6 +131,13 @@ func _click(at: Vector2, button_index: int) -> void:
 			selected = ORDER[i]
 			Audio.sfx("ui_click", -8.0)
 			return
+	if spec_rect().has_point(at) and g.player.prog.skills.has(selected):
+		if g.player.prog.is_specialised(selected):
+			g.player.prog.forget(selected)
+		else:
+			g.player.prog.specialise(selected)
+		Audio.sfx("ui_click", -6.0)
+		return
 	for n: Dictionary in GameData.skill(selected)["nodes"]:
 		if node_rect(n).has_point(at):
 			var ok: bool = g.player.prog.add_spec(selected, String(n["id"])) if button_index == MOUSE_BUTTON_LEFT \

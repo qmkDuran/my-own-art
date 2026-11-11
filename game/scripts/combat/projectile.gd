@@ -5,6 +5,7 @@ extends Node2D
 
 const HIT_RADIUS: float = 12.0
 const LIGHT_RANGE: float = 50.0
+const MIRROR_RANGE: float = 40.0
 
 var velocity: Vector2
 var life: float = 2.0
@@ -53,7 +54,7 @@ func _physics_process(delta: float) -> void:
 		if p.global_position.distance_to(position + Vector2(0, 14)) < hit_radius + p.radius:
 			on_hit.call(p)
 			_fizzle()
-		elif Game.current.moth_guards_catch(position):
+		elif Game.current.moth_guards_catch(position) or _mirror(p):
 			_fizzle()
 		return
 	for n: Node in get_tree().get_nodes_in_group("enemies"):
@@ -66,6 +67,12 @@ func _physics_process(delta: float) -> void:
 			if not pierce:
 				_fizzle()
 				return
+
+
+## Glass Ward's Mirror: shots that reach a warded Lamplighter shatter.
+func _mirror(p: Player) -> bool:
+	var w: GlassWard = p.skills.skill("glass_ward") as GlassWard
+	return w.up() and w.rank("mirror") > 0 and p.global_position.distance_to(position) < MIRROR_RANGE
 
 
 func _fizzle() -> void:

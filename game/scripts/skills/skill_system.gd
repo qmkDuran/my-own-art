@@ -19,7 +19,8 @@ var cooldowns: Dictionary = {}
 
 func _ready() -> void:
 	var kinds: Dictionary = {"sunlash": Sunlash, "flare": Flare, "lantern_toss": LanternToss, "moth_swarm": MothSwarm,
-		"eclipse": Eclipse, "noon": Noon}
+		"eclipse": Eclipse, "noon": Noon, "kindle": Kindle, "hook": Hook, "glass_ward": GlassWard, "cinder_rain": CinderRain,
+		"wick_trap": WickTrap, "lull": Lull}
 	for id: String in kinds:
 		all[id] = (kinds[id] as GDScript).new().setup(id, player)
 
@@ -86,6 +87,8 @@ func _process(delta: float) -> void:
 	for id: String in cooldowns:
 		cooldowns[id] = maxf(0.0, float(cooldowns[id]) - delta)
 	(skill("eclipse") as Eclipse).tick(delta)
+	(skill("kindle") as Kindle).tick(delta)
+	(skill("glass_ward") as GlassWard).tick(delta)
 
 
 func move_mult() -> float:
@@ -108,6 +111,7 @@ func dark_more() -> float:
 ## Something died: Eclipse's Umbra and New Moon, Brood of Embers' moths.
 func on_kill(e: Enemy) -> void:
 	(skill("eclipse") as Eclipse).on_kill(e)
+	(skill("kindle") as Kindle).on_kill(e)
 	if player.stats.has_special("brood_kill") and randf() < BROOD_CHANCE:
 		(skill("moth_swarm") as MothSwarm).loose_from(e.global_position)
 

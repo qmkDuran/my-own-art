@@ -168,6 +168,36 @@ def _skill(name: str) -> Spr:
     elif name == "noon":
         s.ellipse(12, 12, 10, 10, "gold", glow=True)
         s.ellipse(12, 12, 7, 7, "sun", glow=True)
+    elif name == "kindle":
+        s.poly([(6, 20), (18, 20), (17, 11), (12, 3), (10, 10), (7, 9)], "flame", glow=True)
+        s.poly([(9, 20), (15, 20), (12, 12)], "gold", glow=True)
+        s.ellipse(12, 21, 8, 2, "ember")
+    elif name == "hook":
+        s.line([(3, 21), (10, 12), (17, 6)], "amber", width=2, glow=True)
+        s.line([(17, 6), (21, 5), (21, 10), (18, 12)], "stone_lt", width=2)
+    elif name == "glass_ward":
+        for a in range(6):
+            x, y = 12 + math.cos(a * 1.047) * 8, 12 + math.sin(a * 1.047) * 8
+            s.poly([(12, 12), (x, y), (12 + math.cos(a * 1.047 + 0.5) * 9, 12 + math.sin(a * 1.047 + 0.5) * 9)],
+                   "glass_lt" if a % 2 else "glass", glow=a % 2 == 0)
+        s.ellipse(12, 12, 3, 3, "glint", glow=True)
+    elif name == "cinder_rain":
+        for x, y in ((5, 4), (11, 9), (17, 5), (8, 15), (15, 14), (19, 19)):
+            s.line([(x - 2, y - 3), (x, y)], "ember", glow=True)
+            s.px(x, y, "gold", glow=True)
+        s.line([(3, 21), (21, 21)], "ember_dk")
+    elif name == "wick_trap":
+        s.ellipse(12, 15, 8, 5, "stone")
+        s.ellipse(12, 14, 6, 3, "ink")
+        s.line([(12, 14), (12, 5)], "bone")
+        s.px(12, 4, "flame", glow=True)
+        s.px(12, 3, "gold", glow=True)
+    elif name == "lull":
+        s.poly([(6, 18), (8, 8), (12, 5), (16, 8), (18, 18)], "amber")
+        s.rect(5, 18, 19, 20, "gold")
+        s.ellipse(12, 21, 2, 2, "stone_lt")
+        for r in (3, 6):
+            s.line([(1 + r, 4 + r * 2), (1, 2 + r * 2)], "glint", glow=True)
     elif name == "tonic":
         s.rect(10, 2, 14, 6, "earth")
         s.poly([(8, 7), (16, 7), (19, 21), (5, 21)], "glass_dk")
@@ -177,7 +207,8 @@ def _skill(name: str) -> Spr:
     return s
 
 
-SKILLS = ["sunlash", "flare", "lantern_toss", "moth_swarm", "dash", "eclipse", "noon", "tonic"]
+SKILLS = ["sunlash", "flare", "lantern_toss", "moth_swarm", "dash", "eclipse", "noon", "tonic", "kindle", "hook", "glass_ward",
+          "cinder_rain", "wick_trap", "lull"]
 
 
 # ------------------------------------------------------------------ passive glyphs (16 px)

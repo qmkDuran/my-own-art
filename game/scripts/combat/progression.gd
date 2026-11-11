@@ -8,7 +8,8 @@ signal leveled(level: int)
 signal skill_leveled(skill: String, level: int)
 signal learned(skill: String)
 
-const LEARN: Dictionary = {"sunlash": 1, "flare": 1, "lantern_toss": 2, "moth_swarm": 3, "eclipse": 6, "noon": 10}
+const LEARN: Dictionary = {"sunlash": 1, "flare": 1, "lantern_toss": 2, "moth_swarm": 3, "kindle": 4, "hook": 5, "eclipse": 6,
+	"glass_ward": 7, "cinder_rain": 9, "noon": 10, "wick_trap": 11, "lull": 12}
 
 var level: int = 1
 var xp: float = 0.0
@@ -16,6 +17,7 @@ var passives: Dictionary = {}       ## node id -> rank
 var mastery: String = ""
 var skills: Dictionary = {}         ## skill id -> {level, xp, nodes: {id: rank}}
 var slots: Dictionary = {"lmb": "", "rmb": "", "q": "", "w": "", "e": "", "r": ""}
+var specialised: Array = []         ## skills in specialisation slots (only these level up and take points)
 
 
 func _init() -> void:
@@ -34,7 +36,7 @@ func add_xp(amount: float) -> void:
 		level += 1
 		_learn_up_to(level)
 		leveled.emit(level)
-	for s: String in slotted():
+	for s: String in specialised:
 		_add_skill_xp(s, amount)
 	changed.emit()
 
@@ -44,6 +46,7 @@ func _learn_up_to(l: int) -> void:
 		if int(LEARN[s]) <= l and not skills.has(s):
 			skills[s] = {"level": 1, "xp": 0.0, "nodes": {}}
 			_auto_slot(s)
+			specialise(s)
 			learned.emit(s)
 
 
@@ -73,6 +76,38 @@ func set_slot(key: String, skill: String) -> void:
 			slots[k] = slots[key]
 	slots[key] = skill
 	changed.emit()
+
+
+# ------------------------------------------------------------------ specialisation slots
+## Slots open by level (player.json skill_slot_levels): 5 in all.
+func spec_slots() -> int:
+	return (GameData.player["skill_slot_levels"] as Array).filter(func(l: Variant) -> bool: return int(l) <= level).size()
+
+
+func is_specialised(s: String) -> bool:
+	return specialised.has(s)
+
+
+func can_specialise(s: String) -> bool:
+	return skills.has(s) and not specialised.has(s) and specialised.size() < spec_slots() and not GameData.skill(s)["nodes"].is_empty()
+
+
+func specialise(s: String) -> bool:
+	if not can_specialise(s):
+		return false
+	specialised.append(s)
+	changed.emit()
+	return true
+
+
+## Leaving a slot forgets the skill's training: back to level 1, tree cleared.
+func forget(s: String) -> void:
+	if specialised.has(s):
+		specialised.erase(s)
+		skills[s]["level"] = 1
+		skills[s]["xp"] = 0.0
+		skills[s]["nodes"] = {}
+		changed.emit()
 
 
 # ------------------------------------------------------------------ skills
@@ -122,6 +157,8 @@ func spec_block(s: String, node: String) -> String:
 	var n: Dictionary = spec_node(s, node)
 	if not skills.has(s):
 		return "Skill not learned"
+	if not specialised.has(s):
+		return "Specialise this skill first (a free slot is needed)"
 	if node_rank(s, node) >= int(n["max"]):
 		return "Maxed"
 	if spec_points(s) <= 0:
@@ -295,7 +332,8 @@ func passive_stats() -> Dictionary:
 
 # ------------------------------------------------------------------ save
 func to_dict() -> Dictionary:
-	return {"level": level, "xp": xp, "passives": passives, "mastery": mastery, "skills": skills, "slots": slots}
+	return {"level": level, "xp": xp, "passives": passives, "mastery": mastery, "skills": skills, "slots": slots,
+		"specialised": specialised}
 
 
 func from_dict(d: Dictionary) -> void:
@@ -305,6 +343,7 @@ func from_dict(d: Dictionary) -> void:
 	mastery = String(d.get("mastery", ""))
 	skills = d.get("skills", {})
 	slots = d.get("slots", slots)
+	specialised = d.get("specialised", [])
 	for s: String in skills:
 		skills[s]["level"] = int(skills[s]["level"])
 	changed.emit()

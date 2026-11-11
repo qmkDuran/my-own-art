@@ -160,6 +160,15 @@ func expose(pct: float, seconds: float) -> void:
 	_exposed_t = seconds
 
 
+func burning() -> bool:
+	return _burn_t > 0.0
+
+
+## Hook: dragged toward a point (a strong shove that decays like knockback).
+func pull_toward(at: Vector2, strength: float) -> void:
+	_knock = (at - global_position).normalized() * minf(strength, global_position.distance_to(at) * KNOCK_DECAY)
+
+
 func ignite(total: float) -> void:
 	_burn_dps = maxf(_burn_dps, total / BURN_TIME)
 	_burn_t = BURN_TIME

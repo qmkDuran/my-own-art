@@ -40,7 +40,8 @@ func cooldown() -> float:
 
 
 func speed_mult() -> float:
-	return p.stats.cast_speed_mult() if is_spell() else p.stats.attack_speed_mult()
+	var haste: float = (p.skills.skill("kindle") as Kindle).haste() if p.skills != null else 1.0
+	return (p.stats.cast_speed_mult() if is_spell() else p.stats.attack_speed_mult()) * haste
 
 
 func cast_time() -> float:
@@ -90,6 +91,16 @@ func info() -> Array:
 
 func fx() -> Node2D:
 	return Game.current.fx_layer
+
+
+## Hits every enemy within `r` of `center` for `pct` of the base; returns how many were hit.
+func hit_area(center: Vector2, r: float, pct: float, extra: Dictionary = {}) -> int:
+	var hits: Array[Enemy] = enemies_in_arc(center, Vector2.RIGHT, r, 360.0)
+	for e: Enemy in hits:
+		var o: Dictionary = extra.duplicate()
+		o["dir"] = e.global_position - center
+		Combat.hit_enemy(e, roll(pct), opts(o))
+	return hits.size()
 
 
 ## Enemies in a cone (or circle when arc >= 360) around a point.

@@ -60,6 +60,12 @@ func _hit(e: Enemy, dir: Vector2, mult: float, crack: bool) -> void:
 	p.light.add(val("light_per_hit"))
 
 
+## Hook's Snap: a free crack on one enemy.
+func crack_at(e: Enemy) -> void:
+	if is_instance_valid(e) and not e.dead:
+		_hit(e, (e.global_position - p.global_position).normalized(), float(data["crack_mult"]), true)
+
+
 func _waves(dir: Vector2) -> void:
 	var n: int = 1 + int(val("extra_waves"))
 	for k: int in n:

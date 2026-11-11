@@ -20,6 +20,9 @@ static func hit_enemy(e: Enemy, base: float, opts: Dictionary = {}) -> void:
 	var st: Stats = g.player.stats
 	var L: Dictionary = GameData.light
 	var dot: bool = bool(opts.get("dot", false))
+	var kin: Kindle = g.player.skills.skill("kindle") as Kindle
+	if not dot:
+		base += kin.added()
 	var dmg: float = base * st.increased(String(opts.get("kind", "attack"))) * float(opts.get("more", 1.0))
 	if g.player.light.state() == "blazing":
 		dmg *= 1.0 + (float(L["blazing_damage_pct"]) + st.v("blazing_pct") + float(opts.get("blazing_pct", 0.0))) / 100.0
@@ -43,7 +46,7 @@ static func hit_enemy(e: Enemy, base: float, opts: Dictionary = {}) -> void:
 	CameraRig.shake(CRIT_SHAKE if crit else HIT_SHAKE)
 	if crit or bool(opts.get("heavy", false)):
 		HitStop.trigger(g.get_tree(), CRIT_STOP if crit else HEAVY_STOP)
-	if randf() * 100.0 < float(opts.get("burn_chance", 0.0)) + st.v("burn_chance"):
+	if randf() * 100.0 < float(opts.get("burn_chance", 0.0)) + st.v("burn_chance") + kin.burn_chance():
 		e.ignite(dmg * 0.6)
 
 
@@ -63,5 +66,8 @@ static func hit_player(src: Enemy, base: float, type: String, at: Vector2) -> vo
 		dmg *= 1.0 - p.stats.dusk_res() / 100.0
 	dmg = maxf(1.0, roundf(dmg))
 	var drain: float = src.light_drain() if alive else 0.0
+	dmg = (p.skills.skill("glass_ward") as GlassWard).absorb(dmg)
+	if alive:
+		(p.skills.skill("kindle") as Kindle).struck_by(src)
 	p.take_hit(dmg, at, drain)
 	FloatText.hit(p, dmg, false, false, Pal.c("rose"))
