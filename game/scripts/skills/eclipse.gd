@@ -6,7 +6,7 @@ extends Skill
 ## Pitch Dark (Flare and Lantern Toss cost nothing), New Moon (faster recovery; kills extend it).
 
 const KILL_EXTEND: float = 1.0
-const ECLIPSE_DIM: float = 0.4         ## the world darkens by this much under Eclipse: deep, never black
+const ECLIPSE_DIM: float = 0.3         ## the world darkens by this much under Eclipse: deep, never black
 const MAX_EXTEND: float = 4.0
 const UMBRA_RADIUS: float = 60.0
 

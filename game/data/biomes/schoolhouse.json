@@ -302,18 +302,18 @@
  },
  "ambient": {
   "darkness": [
-   1.05,
-   0.94,
-   0.82
+   0.89,
+   0.8,
+   0.7
   ],
   "motes_color": "bone",
-  "scenery_gain": 1.6
+  "scenery_gain": 1.73
  },
  "ground": {
-  "c_moss_dk": "ink",
+  "c_moss_dk": "dusk1",
   "c_moss": "night",
   "c_moss_lt": "dusk1",
-  "c_ink": "void",
+  "c_ink": "night",
   "c_earth_dk": "ink",
   "c_earth": "earth_dk",
   "c_earth_lt": "earth"

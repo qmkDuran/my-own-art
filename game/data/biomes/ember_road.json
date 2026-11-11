@@ -354,12 +354,12 @@
  },
  "ambient": {
   "darkness": [
-   1.05,
-   0.75,
-   0.68
+   0.89,
+   0.64,
+   0.58
   ],
   "motes_color": "ember",
-  "scenery_gain": 1.7
+  "scenery_gain": 1.71
  },
  "ground": {
   "c_moss_dk": "moss_dk",

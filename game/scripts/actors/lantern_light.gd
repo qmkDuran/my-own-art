@@ -7,7 +7,7 @@ extends Node2D
 signal state_changed(state: String)
 
 const COLOR := Color(1.0, 0.8, 0.52)
-const ENERGY: float = 1.2
+const ENERGY: float = 1.6
 const HALO_ENERGY: float = 0.28
 const SHADOW_ALPHA: float = 0.75
 const HALO_SCALE: float = 1.7

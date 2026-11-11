@@ -534,12 +534,12 @@
  },
  "ambient": {
   "darkness": [
-   0.68,
-   0.92,
-   1.05
+   0.58,
+   0.78,
+   0.89
   ],
   "motes": 70,
-  "scenery_gain": 1.5
+  "scenery_gain": 1.4
  },
  "events": {
   "caption": "The Glasswood. It was a forest, once.",

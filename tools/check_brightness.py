@@ -12,7 +12,7 @@ from PIL import Image
 
 PLAY = (0.0, 0.11, 1.0, 0.86)                    # the play area as fractions of the frame (left, top, right, bottom)
 NEAR_BLACK = 0.1
-AVG_RANGE = (0.22, 0.45)
+AVG_RANGE = (0.20, 0.33)            # aim for the middle: a rich dusk, not a bright day
 BLACK_MAX = 0.25
 ECLIPSE_MIN = 0.10
 PANELS = ("skill_tree", "passive", "inventory", "character", "loot_filter", "quest_log", "stash", "title",

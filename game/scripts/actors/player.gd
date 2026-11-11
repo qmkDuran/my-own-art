@@ -14,6 +14,9 @@ const LIGHT_SWAY: float = 0.6         ## how much of the lantern's swing the lig
 const DEATH_TIME: float = 1.0
 const RISE_TIME: float = 0.9
 const AVOID_MARGIN: float = 1.6
+const SELF_LIGHT_MASK: int = 8
+const SELF_LIGHT_RADIUS: float = 44.0
+const SELF_LIGHT_ENERGY: float = 0.9
 const STEP_DB: float = -24.0
 const HOLD_LAMP_RANGE: float = 90.0
 const RUN_BASE_SPEED: float = 150.0   ## the run cycle's natural speed; faster movement plays it faster
@@ -35,6 +38,7 @@ var light: LanternLight
 var skills: SkillSystem
 var sprite: Sprite2D
 var anim := PlayerAnimator.new()
+var _warm: PointLight2D
 var radius: float
 var life: float
 var oil: float
@@ -99,10 +103,25 @@ func _make_body() -> void:
 			Audio.sfx("step", STEP_DB, randf_range(0.9, 1.1)))
 	sprite = anim.body
 	sprite.self_modulate = Color.WHITE * ZoneView.actor_gain()
+	_make_warm_light()
 	var mat := ShaderMaterial.new()
 	mat.shader = preload("res://shaders/hit_flash.gdshader")
 	mat.set_shader_parameter("flash_color", Pal.c("rose"))
 	sprite.material = mat
+
+
+## His own lantern lights him warmly from its side (a small light that touches only him), so he never reads as a
+## silhouette in the dark.
+func _make_warm_light() -> void:
+	sprite.light_mask = 1 | SELF_LIGHT_MASK
+	anim.lantern.light_mask = 1 | SELF_LIGHT_MASK
+	_warm = PointLight2D.new()
+	_warm.texture = LightTex.soft(64)
+	_warm.texture_scale = SELF_LIGHT_RADIUS / 32.0
+	_warm.color = Pal.c("amber")
+	_warm.energy = SELF_LIGHT_ENERGY
+	_warm.range_item_cull_mask = SELF_LIGHT_MASK
+	add_child(_warm)
 
 
 ## The order's issue: a plain hook staff, a long coat and a hand lantern (worn from the start).
@@ -332,6 +351,8 @@ func _animate(delta: float) -> void:
 		anim.loop("walk" if moving else ("channel" if _holding_lamp() else "idle"))
 	anim.tick(delta)
 	anim.lantern.visible = not (skills.skill("lantern_toss") as LanternToss).away()
+	_warm.position = anim.lantern_offset()
+	_warm.energy = SELF_LIGHT_ENERGY * anim.pane() if anim.lantern.visible else 0.0
 	light.sway(LIGHT_OFFSET + Vector2(anim.lantern_offset().x * LIGHT_SWAY, 0.0), anim.pane() if anim.lantern.visible else 1.0)
 
 

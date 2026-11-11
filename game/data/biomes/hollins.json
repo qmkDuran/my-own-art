@@ -271,9 +271,9 @@
  },
  "ambient": {
   "darkness": [
-   0.95,
-   0.88,
-   0.92
+   0.81,
+   0.75,
+   0.78
   ],
   "motes_color": "bone",
   "scenery_gain": 1.5

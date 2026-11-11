@@ -7,10 +7,10 @@ uniform sampler2D screen_tex : hint_screen_texture, filter_nearest;
 uniform vec2 light_uv = vec2(0.5);          // the lantern pool's centre on screen (0..1)
 uniform float light_r = 0.2;                // its radius, as a share of the screen width
 uniform float aspect = 1.7778;
-uniform float outside_desat = 0.3;
-uniform vec3 outside_tint : source_color = vec3(0.86, 0.92, 1.06);
+uniform float outside_desat = 0.45;
+uniform vec3 outside_tint : source_color = vec3(0.78, 0.88, 1.08);
 uniform vec3 haze : source_color = vec3(0.35, 0.38, 0.5);
-uniform float haze_amount = 0.05;
+uniform float haze_amount = 0.035;
 uniform float vignette = 0.22;
 uniform float time = 0.0;
 
