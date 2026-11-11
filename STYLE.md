@@ -29,7 +29,9 @@ sprite pixel must be in the palette (`tools/check_art.py`). UI uses palette name
 - Bright things bloom (2D HDR glow, threshold high); the UI is on higher canvas layers and never blooms.
 - Trees and tall props cast real shadows from the lantern (small LightOccluder2D footprints).
 - Enemies are always readable: outside the light they cool (`SHROUD_TINT`), they never go black.
-- Targets, checked by `tools/check_brightness.py SHOTS`: play-area average 22–45% (aim 25–30%), near-black under
+- Ground tones: no 50% ordered dither over large areas (it reads as a checkerboard or stripes once scaled); mid
+  blends are flat stepped tones, dither only speckles near the ends. Pale ground rolls off before white.
+- Targets, checked by `tools/check_brightness.py SHOTS` (also: under 3% of the play area near white): play-area average 22–45% (aim 25–30%), near-black under
   25%; Eclipse at least 10%. A Brightness control (Esc menu) scales the ambient.
 
 ## Sprites

@@ -16,6 +16,11 @@ uniform float stream_half = 1.0;
 uniform float stone_wear = 1.0;
 uniform float water_flow = 1.0;          // 1 flows down the screen, -1 up (the Upward River)
 uniform int stone_style = 0;            // 0 flagstones, 1 cobbles (the city), 2 silk (a moth nest)
+const float DITHER_EDGE = 0.2;
+const float DITHER_STEPS = 4.0;
+const float SILK_BASE = 0.12;
+const float SILK_VARY = 0.22;
+const float SILK_THREAD = 0.35;
 const float HIGHLIGHT_KNEE = 0.55;
 const float HIGHLIGHT_ROLLOFF = 1.2;
 uniform vec3 scenery_tint = vec3(1.0);   // the zone's colour and lift (the world ambient itself is neutral)
@@ -58,7 +63,13 @@ float fbm(vec2 p) { return vnoise(p) * 0.6 + vnoise(p * 2.03) * 0.3 + vnoise(p *
 float bayer2(vec2 a) { a = floor(a); return fract(dot(a, vec2(0.5, a.y * 0.75))); }
 float bayer4(vec2 a) { return bayer2(0.5 * a) * 0.25 + bayer2(a); }
 
-vec4 dith(vec4 a, vec4 b, float t, vec2 px) { return t > bayer4(px) ? b : a; }
+// Blend two palette tones. A per-pixel ordered dither at mid strength reads as a checkerboard (stripes once scaled),
+// so mid values become a flat in-between tone (stepped, so it still reads as pixel art); only near the ends does the
+// dither speckle the occasional pixel.
+vec4 dith(vec4 a, vec4 b, float t, vec2 px) {
+	if (t < DITHER_EDGE || t > 1.0 - DITHER_EDGE) { return t > bayer4(px) ? b : a; }
+	return mix(a, b, floor(t * DITHER_STEPS + 0.5) / DITHER_STEPS);
+}
 
 int terr(vec2 px) {
 	ivec2 c = clamp(ivec2(floor(px / cell)), ivec2(0), ivec2(map_size) - 1);
@@ -171,16 +182,18 @@ vec4 cobbles(vec2 px) {
 	return col;
 }
 
-// A moth nest's floor: concentric silk and radial strands around the arena's centre.
+// A moth nest's floor: dim, low-contrast silk (no per-pixel dither: a 50% dither over a whole floor reads as stripes)
+// with faint concentric threads and radial strands around the arena's centre, torn in places.
 vec4 silk(vec2 px) {
 	vec2 d = px - circle.xy;
 	float r = length(d);
 	float a = atan(d.y, d.x);
-	vec4 col = dith(c_stone_dk, c_stone, fbm(px * 0.07) * 1.2 - 0.3, px);
+	float shade = SILK_BASE + SILK_VARY * fbm(px * 0.05);
+	vec4 col = mix(c_stone_dk, c_stone, shade);
 	float ring = fract(r / 26.0 + fbm(px * 0.03) * 0.9);
 	float spoke = fract(a / 6.2832 * 13.0 + fbm(px * 0.02 + 3.0) * 0.6);
-	bool broken = fbm(px * 0.05 + 9.0) < 0.45;          // the web is torn in places
-	if (!broken && (ring < 0.03 || spoke < 0.02)) { col = dith(col, c_stone_lt, 0.35, px); }
+	bool broken = fbm(px * 0.05 + 9.0) < 0.45;
+	if (!broken && (ring < 0.03 || spoke < 0.02)) { col = mix(col, c_stone_lt, SILK_THREAD); }
 	return col;
 }
 

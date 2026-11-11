@@ -217,13 +217,15 @@ func _shot_matron() -> void:
 	h.story_at("moth_hollow", 1)
 	h.level_up(14)
 	h.clear_near(100000.0)
-	h.place_player(g.layout.circle_center() + Vector2(0, 50))
+	h.place_player(g.layout.circle_center() + Vector2(0, 40))
 	g.player.light.value = 70.0
 	await _wait(0.4)
 	g.start_boss()
-	await _wait(3.2)
+	await _wait(2.6)
+	h.place_player(g.layout.circle_center() + Vector2(-30, 40))          # her gust shoves; stand him back in the clear
+	await _wait(0.4)
 	h.cast("wickbolt", g.spawner.boss.global_position)
-	await _wait(0.06)
+	await _wait(0.1)
 	await _save("matron_fight")
 
 

@@ -57,6 +57,7 @@ func _run() -> void:
 	await more.act1_foes(h)
 	await more.pass3(ShotHelper.new(g))
 	more.forge()
+	await SmokeCollide.new(self).run(ShotHelper.new(g))
 	await _campaign()
 	print("SMOKE %s (%d checks, %d failed)" % ["PASS" if _fails.is_empty() else "FAIL", _count, _fails.size()])
 	get_tree().quit(0 if _fails.is_empty() else 1)

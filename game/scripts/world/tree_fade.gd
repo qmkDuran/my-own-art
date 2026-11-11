@@ -12,6 +12,8 @@ const COVER_W: float = 34.0
 const COVER_H: float = 110.0
 const ENEMY_RANGE: float = 260.0
 const TALL: float = 120.0
+const BODY_POINTS: Array[float] = [3.0, 14.0, 28.0, 44.0]
+const BODY_HALF_W: float = 7.0
 
 var _buckets: Dictionary = {}          ## Vector2i -> Array[Sprite2D]
 var _faded: Dictionary = {}            ## Sprite2D -> target alpha
@@ -80,4 +82,10 @@ func _near(p: Vector2) -> Array:
 
 ## A tree covers a body when the body stands behind it (higher on screen) within its canopy.
 func _covers(tree: Sprite2D, body: Vector2) -> bool:
-	return tree.position.y > body.y and tree.position.y - body.y < COVER_H and absf(tree.position.x - body.x) < COVER_W
+	if tree.position.y <= body.y or tree.position.y - body.y > COVER_H or absf(tree.position.x - body.x) > COVER_W:
+		return false
+	for up: float in BODY_POINTS:                          # its real shape over his feet, knees, chest or head
+		for dx: float in [-BODY_HALF_W, 0.0, BODY_HALF_W]:
+			if PropSprite.opaque_at(tree, body + Vector2(dx, -up)):
+				return true
+	return false

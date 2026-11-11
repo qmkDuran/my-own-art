@@ -122,42 +122,54 @@ def lamp_shrine() -> Spr:
 
 # ------------------------------------------------------------------ Moth Hollow
 def stalagmite(w: int, h: int, seed: int) -> Spr:
+    """A cave stalagmite: a lumpy cone, lit on its left from above (mid tones, not black), wet bands near the top."""
     rnd = random.Random(seed)
     s = Spr(w, h)
-    pts = [(2, h - 2), (w * 0.3, h * 0.4), (w * 0.45, 3), (w * 0.6, h * 0.35), (w - 2, h - 2)]
-    dither_fill(s, pts, "stone_dk", "stone", 0.18, seed)
-    s.poly([(w * 0.3, h * 0.4), (w * 0.45, 3), (w * 0.5, h * 0.45), (w * 0.4, h - 2), (2, h - 2)], "ink")
-    for _ in range(3):
-        y = rnd.uniform(h * 0.4, h * 0.9)
-        s.line([(w * 0.35, y), (w * 0.62, y + 2)], "stone_lt")
-    return _finish(s, "mist", {"stone"})
+    cx = w * 0.48 + rnd.uniform(-1, 1)
+    lumps = [(cx - w * 0.46, h - 2), (cx - w * 0.3, h * 0.62), (cx - w * 0.2, h * 0.38), (cx - 2, 3), (cx + 2, 4),
+             (cx + w * 0.18, h * 0.42), (cx + w * 0.3, h * 0.66), (cx + w * 0.46, h - 2)]
+    s.poly(lumps, "stone")
+    s.poly([(cx + 1, 5), (cx + w * 0.18, h * 0.42), (cx + w * 0.3, h * 0.66), (cx + w * 0.46, h - 2), (cx + 2, h - 2)], "stone_dk")
+    s.poly([(cx - 1, 6), (cx - w * 0.12, h * 0.4), (cx - w * 0.2, h * 0.7), (cx - w * 0.08, h * 0.72)], "stone_lt")
+    for k in range(3):                                         # wet growth bands, following the cone
+        y = h * (0.3 + 0.18 * k) + rnd.uniform(-2, 2)
+        half = w * (0.12 + 0.11 * k)
+        s.line([(cx - half, y), (cx + half * 0.2, y + 1)], "dusk3")
+    s.rect(cx - w * 0.46, h - 4, cx + w * 0.46, h - 2, "stone_dk")
+    return _finish(s, "mist", {"stone", "stone_lt"})
 
 
 def cocoon_pod(seed: int) -> Spr:
-    """A moth cocoon on the cave floor: pale silk, something faintly lit inside."""
+    """A moth cocoon on the cave floor: wrapped silk with shadowed turns, something faintly lit inside."""
     rnd = random.Random(seed)
     s = Spr(30, 40)
-    s.ellipse(15, 22, 10, 16, "pale")
-    s.ellipse(17, 22, 6, 12, "mist")
-    for k in range(5):
-        y = 10 + k * 6
-        s.line([(6, y), (24, y + rnd.uniform(-2, 2))], "bone")
-    s.ellipse(15, 24, 3, 5, "amber", glow=True)
-    s.line([(15, 6), (14, 0)], "pale")
-    return _finish(s, "bone", {"pale"})
+    s.ellipse(15, 23, 10, 15, "dusk2")
+    s.ellipse(13, 21, 7, 12, "dusk3")
+    s.ellipse(11, 17, 3, 6, "mist")
+    s.ellipse(19, 27, 5, 9, "dusk1")
+    for k in range(6):                                         # the wrapping: curved turns, darker toward the right
+        y = 11 + k * 5 + rnd.uniform(-1, 1)
+        s.line([(7, y), (15, y + 2), (23, y)], "dusk1" if k % 2 else "dusk3")
+    s.ellipse(15, 25, 2.5, 4, "ember", glow=True)
+    s.px(15, 25, "gold", glow=True)
+    s.line([(15, 8), (14, 0)], "mist")
+    s.rect(7, 36, 23, 38, "night")
+    return _finish(s, "pale", {"dusk3"})
 
 
 def silk_web() -> Spr:
-    """Silk strung between two stones: the Matron's road markers."""
+    """Silk strung between two stones: the Matron's road markers. Thin sagging threads, not stripes."""
     s = Spr(56, 40)
-    s.ellipse(6, 32, 5, 6, "stone_dk")
-    s.ellipse(50, 30, 5, 7, "stone_dk")
-    for k in range(6):
-        s.line([(8, 28 - k * 3), (48, 26 - k * 2.5)], "pale")
-    for k in range(4):
-        x = 14 + k * 9
-        s.line([(x, 14), (x + 2, 30)], "mist")
-    return _finish(s, "bone", {"stone_dk"})
+    s.ellipse(6, 32, 5, 6, "stone")
+    s.ellipse(5, 31, 3, 4, "stone_lt")
+    s.ellipse(50, 30, 5, 7, "stone")
+    s.ellipse(49, 29, 3, 4, "stone_lt")
+    for k in range(4):                                         # threads sag between the stones
+        y0, y1 = 27 - k * 4, 25 - k * 3.5
+        s.line([(9, y0), (28, y0 + 3 + k * 0.5), (46, y1)], "mist" if k % 2 else "dusk3")
+    s.line([(20, 14), (22, 29)], "dusk3")
+    s.line([(34, 13), (35, 28)], "dusk3")
+    return _finish(s, "pale", {"stone"})
 
 
 def hedge(seed: int) -> Spr:

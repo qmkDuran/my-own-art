@@ -6,6 +6,8 @@ extends RefCounted
 const DEEP: float = 0.5
 const SEE_THROUGH_OK: float = 0.6
 const FEET_UP: float = 4.0
+const KNEES_UP: float = 14.0
+const LEG_HALF_W: float = 5.0
 
 
 static func problems(g: Game) -> PackedStringArray:
@@ -49,9 +51,16 @@ static func hidden(g: Game) -> PackedStringArray:
 		var s := n as Sprite2D
 		if s.modulate.a < SEE_THROUGH_OK:
 			continue
-		var sz: Vector2 = s.texture.get_size() / Vector2(s.hframes, s.vframes)
-		var r := Rect2(s.global_position + Vector2(-sz.x * 0.35, -sz.y), Vector2(sz.x * 0.7, sz.y))
 		for b: Node2D in bodies:
-			if s.global_position.y > b.global_position.y and r.has_point(b.global_position + Vector2(0, -FEET_UP)):
+			if s.global_position.y > b.global_position.y and _over_legs(s, b.global_position):
 				out.append("%s hides someone's feet at %s" % [s.texture.resource_path.get_file(), b.global_position])
 	return out
+
+
+## The prop's real picture (opaque pixels) over a body's feet or knees.
+static func _over_legs(s: Sprite2D, at: Vector2) -> bool:
+	for up: float in [FEET_UP, KNEES_UP]:
+		for dx: float in [-LEG_HALF_W, 0.0, LEG_HALF_W]:
+			if PropSprite.opaque_at(s, at + Vector2(dx, -up)):
+				return true
+	return false

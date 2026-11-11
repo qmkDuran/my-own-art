@@ -40,6 +40,32 @@ static func add_glow(s: Sprite2D, path: String) -> Sprite2D:
 	return g
 
 
+## Is the sprite's own picture opaque at this world point (its real shape, not its bounding box)?
+static func opaque_at(s: Sprite2D, world: Vector2) -> bool:
+	var img: Image = _image(s.texture)
+	if img == null:
+		return false
+	var fsz := Vector2i(img.get_width() / s.hframes, img.get_height() / s.vframes)
+	var local: Vector2 = s.to_local(world) - s.offset + Vector2(fsz) / 2.0
+	if s.flip_h:
+		local.x = fsz.x - 1 - local.x
+	var px := Vector2i(local.floor()) + Vector2i(s.frame % s.hframes * fsz.x, s.frame / s.hframes * fsz.y)
+	if local.x < 0 or local.y < 0 or local.x >= fsz.x or local.y >= fsz.y:
+		return false
+	return img.get_pixelv(px).a > 0.5
+
+
+static var _images: Dictionary = {}
+
+
+static func _image(t: Texture2D) -> Image:
+	if t == null:
+		return null
+	if not _images.has(t):
+		_images[t] = t.get_image()
+	return _images[t]
+
+
 static func set_frame(s: Sprite2D, f: int) -> void:
 	s.frame = f
 	var g: Sprite2D = s.get_node_or_null("Glow") as Sprite2D
