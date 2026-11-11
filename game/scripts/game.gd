@@ -114,6 +114,12 @@ func _interactables() -> void:
 		if p["kind"] == "hunger":
 			HungerZone.make(world, p["pos"], float(p.get("r", 150.0)))
 			continue
+		if p["kind"] == "updraft":
+			Updraft.make(world, p["pos"], float(p.get("r", 70.0)))
+			continue
+		if p["kind"] == "lure":
+			Lure.make(world, p["pos"], int(p.get("count", 3)))
+			continue
 		if not by_kind.has(p["kind"]) or not Dialogue.holds(p.get("when", {}), Session.campaign):
 			continue
 		var it: Interactable = (by_kind[p["kind"]] as GDScript).new().setup(p)

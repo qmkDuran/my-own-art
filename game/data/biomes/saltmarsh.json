@@ -1,0 +1,284 @@
+{
+ "_doc": "The Saltmarsh of Lanterns (Act 2): flat salt marsh where drowned lanterns burn under the water; false lights (lures) spring Bog Lurkers; the road to the Belfry crosses it.",
+ "name": "The Saltmarsh of Lanterns",
+ "cols": 160,
+ "rows": 90,
+ "cell": 32,
+ "border": 2,
+ "stream": {
+  "x_frac": 0.7,
+  "width": 3,
+  "amp": [
+   6,
+   9
+  ],
+  "freq": [
+   0.05,
+   0.08
+  ]
+ },
+ "path": {
+  "half_width": 0.9,
+  "verge": 2.0,
+  "jitter": 0.22
+ },
+ "clearing_spacing": 18,
+ "clearings": [
+  {
+   "role": "start",
+   "r": [
+    7,
+    6
+   ],
+   "at_frac": [
+    0.07,
+    0.5
+   ]
+  },
+  {
+   "role": "exit_east",
+   "r": [
+    7,
+    6
+   ],
+   "at_frac": [
+    0.93,
+    0.5
+   ]
+  },
+  {
+   "role": "marsh",
+   "r": [
+    10,
+    8
+   ],
+   "count": 4
+  },
+  {
+   "role": "lamp",
+   "r": [
+    6,
+    5
+   ],
+   "count": 2
+  },
+  {
+   "role": "shrine",
+   "r": [
+    6,
+    5
+   ]
+  },
+  {
+   "role": "pool",
+   "r": [
+    10,
+    8
+   ],
+   "count": 2
+  }
+ ],
+ "extra_links": 3,
+ "required": [
+  "start",
+  "exit_east",
+  "marsh",
+  "shrine"
+ ],
+ "setpieces": {
+  "start": [
+   {
+    "kind": "exit",
+    "to": "falls",
+    "sprite": "road_gate",
+    "at": [
+     -60,
+     -10
+    ]
+   }
+  ],
+  "exit_east": [
+   {
+    "kind": "exit",
+    "to": "belfry",
+    "sprite": "dock",
+    "at": [
+     0,
+     -30
+    ]
+   },
+   {
+    "kind": "boat",
+    "at": [
+     -60,
+     30
+    ]
+   }
+  ],
+  "marsh": [
+   {
+    "kind": "lure",
+    "at": [
+     0,
+     0
+    ],
+    "count": 3
+   },
+   {
+    "kind": "rock_a",
+    "at": [
+     -70,
+     -30
+    ]
+   },
+   {
+    "kind": "hedge_b",
+    "at": [
+     70,
+     -30
+    ]
+   },
+   {
+    "kind": "stump",
+    "at": [
+     30,
+     60
+    ]
+   }
+  ],
+  "lamp": [
+   {
+    "kind": "waylamp",
+    "at": [
+     0,
+     -10
+    ],
+    "lamp": "marsh",
+    "lit": false
+   }
+  ],
+  "shrine": [
+   {
+    "kind": "lamp_shrine",
+    "at": [
+     0,
+     -10
+    ],
+    "note": "marsh_note"
+   },
+   {
+    "kind": "rock_a",
+    "at": [
+     50,
+     20
+    ]
+   }
+  ],
+  "pool": [
+   {
+    "kind": "pond",
+    "at": [
+     0,
+     -100
+    ],
+    "r": [
+     5,
+     2.2
+    ]
+   },
+   {
+    "kind": "reeds",
+    "at": [
+     -80,
+     -8
+    ]
+   },
+   {
+    "kind": "reeds",
+    "at": [
+     90,
+     -10
+    ]
+   },
+   {
+    "kind": "rising_drops",
+    "at": [
+     0,
+     20
+    ]
+   }
+  ]
+ },
+ "trees": {
+  "edge_spacing": 34,
+  "deep_spacing": 74,
+  "edge_depth": 3,
+  "kinds": {
+   "reeds": 45,
+   "tree_dead": 25,
+   "hedge_b": 30
+  }
+ },
+ "edge_props": {
+  "reeds": 24,
+  "rock_a": 8
+ },
+ "packs": {
+  "count": 30,
+  "spacing": 11,
+  "safe_radius": 16,
+  "elites": 3,
+  "table": [
+   {
+    "from": 0.0,
+    "kinds": {
+     "lurker": 0.5,
+     "drowned": 0.5
+    },
+    "size": [
+     3,
+     5
+    ]
+   },
+   {
+    "from": 0.5,
+    "kinds": {
+     "lurker": 0.4,
+     "drowned": 0.3,
+     "undertow": 0.3
+    },
+    "size": [
+     4,
+     6
+    ]
+   }
+  ]
+ },
+ "relight": {
+  "waves": 2,
+  "wave_size": 7,
+  "duration": 15.0,
+  "kinds": {
+   "lurker": 0.5,
+   "drowned": 0.5
+  }
+ },
+ "ambient": {
+  "darkness": [
+   0.19,
+   0.19,
+   0.21
+  ],
+  "motes_color": "gold"
+ },
+ "ground": {
+  "c_moss_dk": "moss_dk",
+  "c_moss": "earth_dk",
+  "c_moss_lt": "earth",
+  "c_ink": "ink",
+  "c_glint": "gold"
+ },
+ "events": {
+  "caption": "The Saltmarsh of Lanterns. Lights burn under the water. Some of them are not lamps."
+ }
+}

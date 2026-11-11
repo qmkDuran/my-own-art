@@ -3,7 +3,7 @@ extends Node
 ## set things up, wait for effects to land, save out/<name>_<w>x<h>.png. --only=name runs one shot.
 
 const SETTLE: float = 0.9
-const PASS2: Array[String] = ["bellwright", "river", "forge", "tallow", "road", "hollow", "matron", "quests", "filter", "stash", "eclipse", "noon", "keystones",
+const PASS2: Array[String] = ["falls", "marsh", "bellwright", "river", "forge", "tallow", "road", "hollow", "matron", "quests", "filter", "stash", "eclipse", "noon", "keystones",
 	"eclipse_tree"]
 
 var g: Game
@@ -36,7 +36,7 @@ func _run() -> void:
 		return
 	g = Game.current
 	var shots: Array[String] = ["light", "dark", "skills", "passives", "inventory", "character", "boss", "overview",
-		"bellwright", "river", "forge", "tallow", "road", "hollow", "matron", "quests", "filter", "stash", "eclipse", "noon", "keystones", "eclipse_tree"]
+		"falls", "marsh", "bellwright", "river", "forge", "tallow", "road", "hollow", "matron", "quests", "filter", "stash", "eclipse", "noon", "keystones", "eclipse_tree"]
 	for s: String in shots:
 		if (_only() == "" and not PASS2.has(s)) or _only() == s:
 			await call("_shot_" + s)
@@ -345,7 +345,7 @@ func _shot_forge() -> void:
 ## The Bellwright: a toll rolling out across the flooded square, a gap to stand in.
 func _shot_bellwright() -> void:
 	var h := _bot()
-	h.story_at("drowned_belfry", 2)
+	h.story_at("drowned_belfry", 1)
 	h.level_up(20)
 	h.gear_up(20)
 	h.clear_near(100000.0)
@@ -357,3 +357,38 @@ func _shot_bellwright() -> void:
 	(b.brain as BellwrightBrain)._i = 0
 	await _wait(1.9)
 	await _save("bellwright_toll")
+
+
+## The Rising Falls: an updraft column, herons diving.
+func _shot_falls() -> void:
+	var h := _bot()
+	h.story_at("rising_falls", 1)
+	h.level_up(17)
+	h.gear_up(17)
+	h.clear_near(100000.0)
+	var at: Vector2 = g.layout.center_of(g.layout.clearing_of_role("terrace")["center"])
+	h.place_player(at + Vector2(-40, 70))
+	h.pack_near(["heron", "heron", "undertow", "heron"], Vector2(130, -30))
+	g.player.light.value = 70.0
+	await _wait(1.6)
+	h.cast("sunlash", g.player.global_position + Vector2(80, -20))
+	await _wait(0.08)
+	await _save("rising_falls")
+
+
+## The Saltmarsh: a lure has just sprung; Bog Lurkers rise round the Lamplighter.
+func _shot_marsh() -> void:
+	var h := _bot()
+	h.story_at("saltmarsh", 0)
+	h.level_up(19)
+	h.gear_up(19)
+	h.clear_near(100000.0)
+	var at: Vector2 = g.layout.center_of(g.layout.clearing_of_role("marsh")["center"])
+	h.place_player(at + Vector2(0, 140))
+	g.player.light.value = 60.0
+	await _wait(0.6)
+	g.player.walk_to(at + Vector2(0, 60))
+	await _wait(1.8)
+	h.cast("flare", g.player.global_position)
+	await _wait(0.12)
+	await _save("saltmarsh_lure")

@@ -292,23 +292,12 @@
    "xp": 1200,
    "unique": "clapper"
   },
-  "next": "drowned_belfry"
+  "next": "rising_falls"
  },
  "drowned_belfry": {
   "title": "The Drowned Belfry",
   "main": true,
   "steps": [
-   {
-    "text": "Take Odile's ferry to the Belfry",
-    "goal": [
-     "enter_zone",
-     "belfry"
-    ],
-    "target": {
-     "zone": "riverbank",
-     "at": "npc:odile"
-    }
-   },
    {
     "text": "Find what is ringing the bell",
     "goal": [
@@ -346,5 +335,81 @@
   "reward": {
    "xp": 2000
   }
+ },
+ "rising_falls": {
+  "title": "The Rising Falls",
+  "main": true,
+  "steps": [
+   {
+    "text": "Climb the Rising Falls (north of the river)",
+    "goal": [
+     "enter_zone",
+     "falls"
+    ],
+    "target": {
+     "zone": "falls",
+     "at": "lamp"
+    }
+   },
+   {
+    "text": "Relight the falls lamps",
+    "goal": [
+     "lamp_lit",
+     "falls",
+     3
+    ],
+    "target": {
+     "zone": "falls",
+     "at": "lamp"
+    }
+   },
+   {
+    "text": "Go north into the Saltmarsh",
+    "goal": [
+     "enter_zone",
+     "saltmarsh"
+    ],
+    "target": {
+     "zone": "saltmarsh",
+     "at": "role:shrine"
+    }
+   }
+  ],
+  "reward": {
+   "xp": 1400
+  },
+  "next": "saltmarsh"
+ },
+ "saltmarsh": {
+  "title": "The Saltmarsh of Lanterns",
+  "main": true,
+  "steps": [
+   {
+    "text": "Find the order's shrine in the marsh",
+    "goal": [
+     "read",
+     "marsh_note"
+    ],
+    "target": {
+     "zone": "saltmarsh",
+     "at": "role:shrine"
+    }
+   },
+   {
+    "text": "Cross to the Drowned Belfry",
+    "goal": [
+     "enter_zone",
+     "belfry"
+    ],
+    "target": {
+     "zone": "belfry",
+     "at": "circle"
+    }
+   }
+  ],
+  "reward": {
+   "xp": 1400
+  },
+  "next": "drowned_belfry"
  }
 }

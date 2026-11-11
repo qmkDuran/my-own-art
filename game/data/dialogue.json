@@ -396,27 +396,6 @@
    {
     "when": {
      "quest_step": [
-      "drowned_belfry",
-      0
-     ]
-    },
-    "lines": [
-     [
-      "Odile",
-      "The water's let up. Get in. Don't trail your fingers."
-     ],
-     [
-      "Odile",
-      "When it rings, cover the lantern. I've seen what that sound does to a flame."
-     ]
-    ],
-    "do": {
-     "service": "ferry"
-    }
-   },
-   {
-    "when": {
-     "quest_step": [
       "upward_river",
       3
      ]
@@ -428,13 +407,16 @@
      ],
      [
       "Odile",
-      "Upstream is the Belfry. Every night at the same hour, it rings. Nobody's there to ring it."
+      "Up the falls, across the marsh, there's a belfry nobody built. Every night at the same hour, it rings."
      ],
      [
       "Odile",
-      "Get some rest, then come back. I'll take you up to the Belfry when the water lets me."
+      "The north path's open now the lamps hold. Don't follow lights in the marsh. Follow the road."
      ]
-    ]
+    ],
+    "do": {
+     "flag": "falls_open"
+    }
    },
    {
     "when": {

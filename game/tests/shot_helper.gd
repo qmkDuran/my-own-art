@@ -3,6 +3,7 @@ extends RefCounted
 ## Shortcuts for scripted test scenes (screenshots, smoke test, demo): level the character, place a pack, use a
 ## skill regardless of cooldown, spend points, fill the bag, point the mouse at something, show the whole zone.
 
+const ALL_STEPS: int = 99
 const OVERVIEW_DARK := Color(0.55, 0.55, 0.62)
 
 var g: Game
@@ -98,16 +99,15 @@ func gear_up(lv: int) -> void:
 ## Puts the campaign where a staged scene sits in the story: every quest before `quest` done, `quest` at `step`.
 func story_at(quest: String, step: int) -> void:
 	var c: Campaign = Session.campaign
-	var order: Array[String] = ["seven_heartbeats", "ember_road", "moth_hollow", "upward_river", "drowned_belfry"]
+	var order: Array[String] = ["seven_heartbeats", "ember_road", "moth_hollow", "upward_river", "rising_falls", "saltmarsh",
+		"drowned_belfry"]
 	for id: String in order:
 		if id == quest:
 			break
-		c.start(id)
-		while not c.is_done(id):
-			c._advance(id)
-	c.start(quest)
-	while c.step_index(quest) < step and not c.is_done(quest):
-		c._advance(quest)
+		c.place(id, ALL_STEPS)
+	c.place(quest, step)
+	if order.find(quest) > order.find("moth_hollow"):
+		c.flags["act1_done"] = true
 	c.rewards.clear()
 
 

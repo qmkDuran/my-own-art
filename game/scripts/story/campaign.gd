@@ -30,6 +30,12 @@ func active() -> Array[String]:
 	return out
 
 
+## Puts a quest at a step without events or rewards (staged scenes, tests). step >= steps: done.
+func place(id: String, step: int) -> void:
+	var n: int = (GameData.quests[id]["steps"] as Array).size()
+	quests[id] = {"step": mini(step, n), "count": 0, "done": step >= n}
+
+
 func is_done(id: String) -> bool:
 	return quests.has(id) and bool(quests[id]["done"])
 

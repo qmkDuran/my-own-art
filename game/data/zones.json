@@ -70,6 +70,7 @@
    "music": "explore",
    "links": [
     "ember_road",
+    "falls",
     "belfry"
    ]
   },
@@ -83,7 +84,36 @@
    ],
    "music": "explore",
    "links": [
+    "saltmarsh",
     "riverbank"
+   ]
+  },
+  "falls": {
+   "name": "The Rising Falls",
+   "biome": "falls",
+   "seed": 6000,
+   "level": [
+    16,
+    19
+   ],
+   "music": "explore",
+   "links": [
+    "riverbank",
+    "saltmarsh"
+   ]
+  },
+  "saltmarsh": {
+   "name": "The Saltmarsh of Lanterns",
+   "biome": "saltmarsh",
+   "seed": 7000,
+   "level": [
+    18,
+    21
+   ],
+   "music": "explore",
+   "links": [
+    "falls",
+    "belfry"
    ]
   }
  }

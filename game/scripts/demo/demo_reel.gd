@@ -10,7 +10,7 @@ const TRAVEL: Dictionary = {"road": "ember_road", "hollow": "moth_hollow", "rive
 	"belfry": "belfry"}
 const ARRIVE_PAN: float = 2.5
 const STORY: Dictionary = {"elite": ["seven_heartbeats", 0], "boss": ["seven_heartbeats", 1], "road": ["ember_road", 1],
-	"hollow": ["moth_hollow", 1], "river": ["upward_river", 2], "belfry": ["drowned_belfry", 2], "glass": ["seven_heartbeats", 1]}
+	"hollow": ["moth_hollow", 1], "river": ["upward_river", 2], "belfry": ["drowned_belfry", 1], "glass": ["seven_heartbeats", 1]}
 const REELS: Dictionary = {
 	"act1": [[0.0, "gate"], [15.0, "elite"], [29.0, "boss"], [46.0, "end"]],
 	"act2": [[0.0, "hub"], [10.5, "road"], [25.0, "hollow"], [45.0, "end"]],

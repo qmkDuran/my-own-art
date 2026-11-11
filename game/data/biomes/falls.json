@@ -1,0 +1,297 @@
+{
+ "_doc": "The Rising Falls (Act 2): the river climbs a cliff of terraces. Rock is the thicket; terraces are clearings; updrafts push you north; herons stalk the pools.",
+ "name": "The Rising Falls",
+ "cols": 110,
+ "rows": 130,
+ "cell": 32,
+ "border": 2,
+ "stream": {
+  "x_frac": 0.3,
+  "width": 4,
+  "amp": [
+   3,
+   6
+  ],
+  "freq": [
+   0.04,
+   0.06
+  ]
+ },
+ "path": {
+  "half_width": 1.0,
+  "verge": 2.2,
+  "jitter": 0.22
+ },
+ "clearing_spacing": 18,
+ "clearings": [
+  {
+   "role": "start",
+   "r": [
+    8,
+    6
+   ],
+   "at_frac": [
+    0.6,
+    0.92
+   ]
+  },
+  {
+   "role": "exit_north",
+   "r": [
+    7,
+    6
+   ],
+   "at_frac": [
+    0.6,
+    0.07
+   ]
+  },
+  {
+   "role": "terrace",
+   "r": [
+    9,
+    7
+   ],
+   "count": 4
+  },
+  {
+   "role": "lamp",
+   "r": [
+    6,
+    5
+   ],
+   "count": 3
+  },
+  {
+   "role": "camp",
+   "r": [
+    8,
+    6
+   ]
+  },
+  {
+   "role": "pool",
+   "r": [
+    9,
+    7
+   ]
+  }
+ ],
+ "extra_links": 3,
+ "required": [
+  "start",
+  "exit_north",
+  "terrace",
+  "lamp",
+  "camp"
+ ],
+ "setpieces": {
+  "start": [
+   {
+    "kind": "exit",
+    "to": "riverbank",
+    "sprite": "road_gate",
+    "at": [
+     -60,
+     20
+    ]
+   }
+  ],
+  "exit_north": [
+   {
+    "kind": "exit",
+    "to": "saltmarsh",
+    "sprite": "road_gate",
+    "at": [
+     0,
+     -30
+    ]
+   },
+   {
+    "kind": "signpost",
+    "at": [
+     60,
+     30
+    ],
+    "sign": "marsh"
+   }
+  ],
+  "terrace": [
+   {
+    "kind": "updraft",
+    "at": [
+     0,
+     0
+    ],
+    "r": 70
+   },
+   {
+    "kind": "rising_drops",
+    "at": [
+     -80,
+     -40
+    ]
+   },
+   {
+    "kind": "rising_drops",
+    "at": [
+     80,
+     -30
+    ]
+   },
+   {
+    "kind": "rock_b",
+    "at": [
+     -60,
+     40
+    ]
+   }
+  ],
+  "lamp": [
+   {
+    "kind": "waylamp",
+    "at": [
+     0,
+     -10
+    ],
+    "lamp": "falls",
+    "lit": false
+   }
+  ],
+  "camp": [
+   {
+    "kind": "campfire",
+    "at": [
+     0,
+     0
+    ]
+   },
+   {
+    "kind": "bedroll",
+    "at": [
+     -44,
+     -26
+    ]
+   },
+   {
+    "kind": "chest",
+    "at": [
+     6,
+     50
+    ],
+    "chest": "falls"
+   },
+   {
+    "kind": "note",
+    "at": [
+     50,
+     -20
+    ],
+    "note": "falls_note"
+   }
+  ],
+  "pool": [
+   {
+    "kind": "pond",
+    "at": [
+     0,
+     -100
+    ],
+    "r": [
+     5,
+     2.2
+    ]
+   },
+   {
+    "kind": "reeds",
+    "at": [
+     -80,
+     -8
+    ]
+   },
+   {
+    "kind": "reeds",
+    "at": [
+     90,
+     -10
+    ]
+   }
+  ]
+ },
+ "trees": {
+  "edge_spacing": 40,
+  "deep_spacing": 80,
+  "edge_depth": 2,
+  "kinds": {
+   "stalagmite_a": 30,
+   "rock_b": 20,
+   "rising_drops": 25,
+   "tree_c": 25
+  }
+ },
+ "edge_props": {
+  "rock_a": 14,
+  "crystal": 8,
+  "reeds": 10
+ },
+ "packs": {
+  "count": 30,
+  "spacing": 11,
+  "safe_radius": 16,
+  "elites": 3,
+  "table": [
+   {
+    "from": 0.0,
+    "kinds": {
+     "heron": 0.4,
+     "undertow": 0.6
+    },
+    "size": [
+     3,
+     5
+    ]
+   },
+   {
+    "from": 0.5,
+    "kinds": {
+     "heron": 0.5,
+     "undertow": 0.3,
+     "drowned": 0.2
+    },
+    "size": [
+     3,
+     6
+    ]
+   }
+  ]
+ },
+ "relight": {
+  "waves": 2,
+  "wave_size": 6,
+  "duration": 14.0,
+  "kinds": {
+   "heron": 0.5,
+   "undertow": 0.5
+  }
+ },
+ "ambient": {
+  "darkness": [
+   0.14,
+   0.17,
+   0.22
+  ],
+  "motes_color": "glint"
+ },
+ "ground": {
+  "c_moss_dk": "stone_dk",
+  "c_moss": "stone",
+  "c_moss_lt": "stone_lt",
+  "c_ink": "glass_dp",
+  "c_glint": "glint"
+ },
+ "water_flow": -1.0,
+ "stone_style": "flags",
+ "events": {
+  "caption": "The Rising Falls. The river climbs the cliff in sheets, and the spray goes up."
+ }
+}

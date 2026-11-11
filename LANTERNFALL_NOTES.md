@@ -284,6 +284,13 @@ Glazier + Nim, death/respawn, save/load). Review screenshots: `--shots` (needs x
   its boss the Bellwright (a bell-headed giant: toll rings with gaps you stand in or Wickstep through, falling bells,
   Undertows from the water, the Lull Bell smothers your lantern; two rings per toll below half life). Lio's reveal:
   the bell was cast by the order "to be rung only at noon" — we put the sun to sleep. 95-check smoke test.
+  Act 2 route now: Upward River -> (north gate, after its lamps) the Rising Falls (a tall cliff of terraces;
+  updrafts push you north; Falls Herons dive) -> the Saltmarsh of Lanterns (false lights that spring Bog Lurkers;
+  the order's shrine: "we carried it here so no one in the cities would hear it ring") -> the Drowned Belfry.
+  Review fixes: Fx.flash lights touch only the ground/props (light mask 2) — they had blown dark sprites out to
+  cream; life bars only on hovered and elite enemies; the camera frames the Great Lantern with you; staged scenes
+  place the campaign silently (Campaign.place). New layout rule: every set-piece group must really be placed
+  (it caught three silently missing groups).
 - **Pass 3 (started)**: Eclipse (shutter the lantern: everything Shrouded, +60% vs Shrouded, speed, leech, a
   closing burst; tree: Long Night, Night Hunger, Predator, Unshutter, Umbra, Pitch Dark, New Moon) learned at level 6;
   Noon (daylight for a breath: every enemy on screen burns and reels, your Light blazes at full; tree: High Noon,

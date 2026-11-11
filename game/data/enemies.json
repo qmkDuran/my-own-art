@@ -266,6 +266,42 @@
    "call": 3,
    "lull_time": 3.5,
    "lore": "The sun's fear of the bell that rang it to sleep. Its rope goes up into the dark, and something up there pulls back."
+  },
+  "heron": {
+   "name": "Falls Heron",
+   "sprite": "heron",
+   "life": 80.0,
+   "damage": 15.0,
+   "speed": 110.0,
+   "radius": 13.0,
+   "ai": "leaper",
+   "type": "blunt",
+   "xp": 22.0,
+   "range": 36.0,
+   "windup": 0.5,
+   "cooldown": 1.8,
+   "leap_min": 60.0,
+   "leap_max": 180.0,
+   "leap_speed": 460.0,
+   "fps": 8.0,
+   "lore": "It waits at the top of the falls for whatever the water carries up. Lately, that has been people."
+  },
+  "lurker": {
+   "name": "Bog Lurker",
+   "sprite": "lurker",
+   "life": 60.0,
+   "damage": 16.0,
+   "speed": 58.0,
+   "radius": 14.0,
+   "ai": "swarm",
+   "type": "blunt",
+   "xp": 20.0,
+   "range": 30.0,
+   "windup": 0.4,
+   "cooldown": 1.4,
+   "lunge": 60.0,
+   "fps": 6.0,
+   "lore": "A mouth under the mud and a light above it. Travellers lost on the marsh walk toward the light."
   }
  }
 }

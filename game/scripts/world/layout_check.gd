@@ -30,6 +30,19 @@ static func _roles(z: ZoneLayout, out: PackedStringArray) -> void:
 			out.append("clearing '%s' could not be placed" % role)
 	if GameData.biome.get("events", {}).has("boss") and z.boss.is_empty():
 		out.append("no boss placed in its arena")
+	_setpieces_placed(z, out)
+
+
+## Every clearing with a set-piece really got it (a group that cannot fit must not vanish silently).
+static func _setpieces_placed(z: ZoneLayout, out: PackedStringArray) -> void:
+	var sp: Dictionary = GameData.biome.get("setpieces", {})
+	for i: int in z.clearings.size():
+		var role: String = String(z.clearings[i]["role"])
+		var wants: Array = (sp.get(role, []) as Array).filter(func(d: Dictionary) -> bool: return d["kind"] != "pond" and not d.get("gate", false))
+		if wants.is_empty() or GameData.biome.get("city", false):
+			continue
+		if not z.props.any(func(p: Dictionary) -> bool: return int(p.get("clearing", -2)) == i):
+			out.append("the %s set-piece could not be placed in its clearing" % role)
 
 
 ## Flood fill from the start over walkable, unblocked cells.

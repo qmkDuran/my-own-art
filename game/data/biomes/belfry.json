@@ -78,7 +78,7 @@
   "start": [
    {
     "kind": "exit",
-    "to": "riverbank",
+    "to": "saltmarsh",
     "sprite": "dock",
     "at": [
      -50,

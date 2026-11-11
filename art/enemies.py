@@ -366,6 +366,57 @@ def drowned_lantern(pose: str, i: int) -> Spr:
     return s
 
 
+# ------------------------------------------------------------------ Falls Heron: a heron of falling-up water
+def heron(pose: str, i: int) -> Spr:
+    """A tall wading bird of glassy water that stalks the Rising Falls and stabs from above; side view."""
+    s = Spr(64, 72)
+    bob = pick({"idle": (0, 0, 1, 1), "move": (0, 1, 0, 1), "attack": (2, -3, 1)}, pose, i)
+    stride = pick({"idle": 0.0, "move": (0.5, 0.0, -0.5, 0.0), "attack": (0.0, 0.0, 0.0)}, pose, i)
+    neck = pick({"idle": 0, "move": 2, "attack": (-6, 8, 14)}, pose, i)
+    by = 40 + bob
+    for k, sgn in enumerate((1, -1)):                                       # long legs
+        hip = (30, by + 4)
+        foot = (30 + sgn * stride * 10 + (k * 4 - 2), 70)
+        s.line([hip, ((hip[0] + foot[0]) / 2 + 3, (hip[1] + foot[1]) / 2), foot], "stone_lt" if k else "stone", width=1)
+        s.line([foot, (foot[0] + 4, foot[1])], "stone_lt")
+    s.ellipse(28, by, 12, 7, "glass_dk")                                    # body
+    s.ellipse(25, by - 2, 9, 4, "glass")
+    s.poly([(16, by - 2), (6, by + 6), (18, by + 4)], "glass_dp")         # tail feathers
+    hx, hy = 40 + neck, by - 22 + max(0, neck // 2)
+    s.line([(36, by - 4), (38 + neck * 0.5, by - 14), (hx, hy)], "glass_lt", width=2)   # S neck
+    s.ellipse(hx, hy, 4, 3, "glass_lt")
+    s.poly([(hx + 3, hy - 1), (hx + 16, hy + 1), (hx + 3, hy + 2)], "amber")  # beak
+    s.px(hx + 1, hy - 1, "sun", glow=True)
+    for k in range(3):                                                     # drops rising off its back
+        s.px(20 + k * 6, by - 10 - (i * 3 + k * 4) % 9, "glint", glow=k == 1)
+    s.outline()
+    s.recolor_edge(0, -1, "glint", only={"glass_dk", "glass"})
+    return s
+
+
+# ------------------------------------------------------------------ Bog Lurker: a lure on a stalk
+def lurker(pose: str, i: int) -> Spr:
+    """Something squat under the Saltmarsh mud with a lantern-lure on a stalk: what drowned travellers followed."""
+    s = Spr(48, 52)
+    sq = pick({"idle": (0, 1, 0, -1), "move": (1, 0, -1, 0), "attack": (-2, -3, 2)}, pose, i)
+    sway = pick({"idle": (-1, 0, 1, 0), "move": (-2, -1, 0, -1), "attack": (2, 4, -2)}, pose, i)
+    cx, base = 24, 49
+    s.ellipse(cx, base - 8 + sq // 2, 15 + max(0, sq), 8 - sq // 2, "moss_dk")
+    s.ellipse(cx - 3, base - 11, 9, 4, "moss")
+    s.line([(cx + 4, base - 14), (cx + 8 + sway, base - 30), (cx + 2 + sway * 2, base - 40)], "moss_lt")   # stalk
+    s.ellipse(cx + 2 + sway * 2, base - 42, 4, 4, "gold", glow=True)                                       # the lure
+    s.ellipse(cx + 2 + sway * 2, base - 42, 2, 2, "sun", glow=True)
+    open_ = 3 if pose == "attack" and i > 0 else 1
+    s.poly([(cx - 12, base - 6), (cx + 12, base - 6), (cx + 10, base - 6 + open_), (cx - 10, base - 6 + open_)], "void")
+    for x in range(cx - 10, cx + 11, 3):
+        s.px(x, base - 6, "bone")
+    s.px(cx - 6, base - 12, "amber", glow=True)
+    s.px(cx + 2, base - 12, "amber", glow=True)
+    s.outline()
+    s.recolor_edge(0, -1, "moss_lt", only={"moss_dk", "moss"})
+    return s
+
+
 # ------------------------------------------------------------------ the Bellwright (Act 2 boss)
 def bellwright(pose: str, i: int) -> Spr:
     """The Bellwright: a stooped giant in a drowned verdigris coat whose head is a bronze bell; the clapper hangs
@@ -427,4 +478,4 @@ def bellwright(pose: str, i: int) -> Spr:
 KINDS = {"gloam": (gloam, 48, 48), "hound": (hound, 64, 48), "moth": (moth, 64, 56), "glazier": (glazier, 128, 128), "husk": (husk, 64, 64),
          "crawler": (crawler, 48, 40), "matron": (matron, 176, 160),
          "undertow": (undertow, 64, 64), "drowned": (drowned_lantern, 48, 56),
-         "bellwright": (bellwright, 160, 176)}
+         "bellwright": (bellwright, 160, 176), "heron": (heron, 64, 72), "lurker": (lurker, 48, 52)}

@@ -69,13 +69,30 @@
     "TO BE RUNG ONLY AT NOON.",
     "(Below, scratched by a newer hand: 'It worked. Forgive us. It worked.')"
    ]
+  },
+  "falls_note": {
+   "title": "A soaked page by a cold campfire",
+   "lines": [
+    "Climbed the falls. The water goes up and so does the noise \u2014 a bell, far off.",
+    "Lights in the marsh ahead. Most of them have teeth.",
+    "\u2014 T."
+   ]
+  },
+  "marsh_note": {
+   "title": "The order's marsh shrine",
+   "lines": [
+    "THE BELL ROAD. KEEP TO THE STONES.",
+    "WE CARRIED IT HERE SO NO ONE IN THE CITIES WOULD HEAR IT RING.",
+    "(Scratched under it: 'They still hear it. In their sleep.')"
+   ]
   }
  },
  "signs": {
   "road": "The Ember Road  -  Tallow west, the hills east",
   "east": "East: the Ember Road  -  (scratched under it: the lamps are out)",
   "north": "North: the River Road  -  (the river is not where it used to be)",
-  "river": "The Upward River  -  Ferry at the hamlet"
+  "river": "The Upward River  -  Ferry at the hamlet",
+  "marsh": "North: the Saltmarsh  -  keep to the road"
  },
  "lamps": {
   "gate": "Gate Waylamp",
@@ -93,7 +110,9 @@
   "road5": "Road Lamp",
   "hollow": "Hollow Lamp",
   "river": "River Lamp",
-  "belfry": "Belfry Lamp"
+  "belfry": "Belfry Lamp",
+  "falls": "Falls Lamp",
+  "marsh": "Marsh Lamp"
  },
  "chests": {
   "hut": "Woodcutter's Chest",
@@ -103,6 +122,7 @@
   "farm": "Farmhouse Chest",
   "hollow": "Teague's Pack",
   "hamlet": "Ferry Strongbox",
-  "belfry": "Sexton's Box"
+  "belfry": "Sexton's Box",
+  "falls": "Climber's Pack"
  }
 }

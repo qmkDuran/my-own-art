@@ -36,6 +36,17 @@
    ]
   },
   {
+   "role": "exit_north",
+   "r": [
+    7,
+    6
+   ],
+   "at_frac": [
+    0.85,
+    0.1
+   ]
+  },
+  {
    "role": "hamlet",
    "r": [
     11,
@@ -88,7 +99,8 @@
   "dock",
   "pool",
   "lamp",
-  "shrine"
+  "shrine",
+  "exit_north"
  ],
  "setpieces": {
   "start": [
@@ -192,20 +204,6 @@
     ]
    },
    {
-    "kind": "rising_drops",
-    "at": [
-     -30,
-     -90
-    ]
-   },
-   {
-    "kind": "rising_drops",
-    "at": [
-     40,
-     -100
-    ]
-   },
-   {
     "kind": "reeds",
     "at": [
      -80,
@@ -217,6 +215,13 @@
     "at": [
      90,
      -10
+    ]
+   },
+   {
+    "kind": "rising_drops",
+    "at": [
+     0,
+     20
     ]
    }
   ],
@@ -250,17 +255,10 @@
   ],
   "reeds": [
    {
-    "kind": "reeds",
+    "kind": "rock_a",
     "at": [
      -30,
      -10
-    ]
-   },
-   {
-    "kind": "reeds",
-    "at": [
-     30,
-     20
     ]
    },
    {
@@ -269,6 +267,30 @@
      60,
      -30
     ]
+   },
+   {
+    "kind": "stump",
+    "at": [
+     30,
+     30
+    ]
+   }
+  ],
+  "exit_north": [
+   {
+    "kind": "exit",
+    "to": "falls",
+    "sprite": "road_gate",
+    "at": [
+     0,
+     -30
+    ],
+    "when": {
+     "quest_past": [
+      "upward_river",
+      2
+     ]
+    }
    }
   ]
  },
