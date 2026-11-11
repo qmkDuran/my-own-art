@@ -5,6 +5,7 @@ extends Interactable
 
 const FPS: float = 6.0
 const FRAMES: int = 8
+const SEAT_DROP: float = 16.0   ## a seated person (prop "seated") is drawn this much lower, legs hidden by the desk before them
 
 var npc_id: String
 var talked: int = 0
@@ -21,7 +22,7 @@ func make_sprite() -> Sprite2D:
 	var s := Sprite2D.new()
 	s.texture = PropSprite.tex("res://art/actors/npc_%s.png" % npc_id)
 	s.hframes = FRAMES
-	s.offset = Vector2(0, -32 + 3)
+	s.offset = Vector2(0, -32 + 3 + (SEAT_DROP if bool(prop.get("seated", false)) else 0.0))
 	PropSprite.add_glow(s, "res://art/actors/npc_%s_glow.png" % npc_id)
 	s.add_child(PropSprite.shadow(28.0))
 	return s

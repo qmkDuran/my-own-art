@@ -7,9 +7,9 @@
  "border": 2,
  "loop": true,
  "path": {
-  "half_width": 1.6,
-  "verge": 1.6,
-  "jitter": 0.1
+  "half_width": 1.0,
+  "verge": 1.0,
+  "jitter": 0.0
  },
  "clearing_spacing": 14,
  "clearings": [
@@ -27,28 +27,19 @@
   {
    "role": "classroom",
    "r": [
-    13,
-    9
+    17,
+    13
    ],
    "at_frac": [
     0.5,
     0.3
    ]
-  },
-  {
-   "role": "hall",
-   "r": [
-    8,
-    6
-   ],
-   "count": 2
   }
  ],
- "extra_links": 1,
+ "extra_links": 0,
  "required": [
   "start",
-  "classroom",
-  "hall"
+  "classroom"
  ],
  "setpieces": {
   "start": [
@@ -71,76 +62,179 @@
   ],
   "classroom": [
    {
-    "kind": "blackboard",
+    "kind": "class_floor",
     "at": [
      0,
-     -110
+     160
     ]
    },
    {
-    "kind": "desk_a",
+    "kind": "class_wall_n",
     "at": [
-     -170,
-     -40
+     0,
+     -256
     ]
    },
    {
-    "kind": "desk_b",
+    "kind": "class_wall_side",
     "at": [
-     -100,
-     -40
+     -328,
+     176
     ]
    },
    {
-    "kind": "desk_a",
+    "kind": "class_wall_side",
     "at": [
-     100,
-     -40
+     328,
+     176
     ]
    },
    {
-    "kind": "desk_b",
+    "kind": "class_wall_s",
     "at": [
-     170,
-     -40
+     -200,
+     176
     ]
    },
    {
-    "kind": "desk_b",
+    "kind": "class_wall_s",
     "at": [
-     -170,
-     40
+     200,
+     176
     ]
    },
    {
-    "kind": "desk_a",
+    "kind": "master_desk",
     "at": [
-     170,
-     40
+     0,
+     -195
     ]
    },
    {
-    "kind": "npc",
-    "npc": "ansel",
+    "kind": "stove",
     "at": [
-     70,
-     -100
+     270,
+     -200
     ]
    },
    {
-    "kind": "npc",
-    "npc": "tibb",
+    "kind": "bookshelf_a",
     "at": [
-     100,
+     -290,
+     -190
+    ]
+   },
+   {
+    "kind": "bookshelf_b",
+    "at": [
+     -290,
+     -90
+    ]
+   },
+   {
+    "kind": "bookshelf_a",
+    "at": [
+     290,
+     -90
+    ]
+   },
+   {
+    "kind": "bookshelf_b",
+    "at": [
+     290,
      10
+    ]
+   },
+   {
+    "kind": "desk_b",
+    "at": [
+     -165,
+     -140
+    ]
+   },
+   {
+    "kind": "desk_a",
+    "at": [
+     -95,
+     -140
+    ]
+   },
+   {
+    "kind": "desk_b",
+    "at": [
+     95,
+     -140
+    ]
+   },
+   {
+    "kind": "desk_a",
+    "at": [
+     165,
+     -140
+    ]
+   },
+   {
+    "kind": "desk_a",
+    "at": [
+     -165,
+     -75
+    ]
+   },
+   {
+    "kind": "desk_b",
+    "at": [
+     -95,
+     -75
+    ]
+   },
+   {
+    "kind": "desk_a",
+    "at": [
+     95,
+     -75
+    ]
+   },
+   {
+    "kind": "desk_b",
+    "at": [
+     165,
+     -75
+    ]
+   },
+   {
+    "kind": "desk_b",
+    "at": [
+     -165,
+     -10
+    ]
+   },
+   {
+    "kind": "desk_a",
+    "at": [
+     -95,
+     -10
+    ]
+   },
+   {
+    "kind": "desk_b",
+    "at": [
+     95,
+     -10
+    ]
+   },
+   {
+    "kind": "desk_a",
+    "at": [
+     165,
+     -10
     ]
    },
    {
     "kind": "npc",
     "npc": "nim",
     "at": [
-     -100,
-     10
+     -95,
+     -103
     ],
     "when": {
      "quest_past": [
@@ -148,62 +242,52 @@
       2
      ],
      "quest_active": "one_tuesday"
-    }
-   }
-  ],
-  "hall": [
-   {
-    "kind": "bookshelf_a",
-    "at": [
-     -40,
-     -40
-    ]
+    },
+    "seated": true
    },
    {
-    "kind": "bookshelf_b",
+    "kind": "npc",
+    "npc": "tibb",
     "at": [
-     40,
-     -40
-    ]
-   },
-   {
-    "kind": "chest",
-    "at": [
-     0,
-     20
+     95,
+     -38
     ],
-    "chest": "school"
+    "seated": true
+   },
+   {
+    "kind": "npc",
+    "npc": "ansel",
+    "at": [
+     -70,
+     -200
+    ]
    }
   ]
  },
  "trees": {
-  "edge_spacing": 40,
-  "deep_spacing": 70,
-  "edge_depth": 2,
+  "edge_spacing": 2000,
+  "deep_spacing": 2000,
+  "edge_depth": 1,
   "kinds": {
    "bookshelf_a": 50,
    "bookshelf_b": 50
   }
  },
- "edge_props": {
-  "desk_a": 4,
-  "desk_b": 4
- },
+ "edge_props": {},
  "packs": {
-  "count": 6,
+  "count": 3,
   "spacing": 10,
   "safe_radius": 14,
-  "elites": 1,
+  "elites": 0,
   "table": [
    {
     "from": 0.0,
     "kinds": {
-     "repeater": 0.8,
-     "clockface": 0.2
+     "repeater": 1.0
     },
     "size": [
-     3,
-     4
+     2,
+     3
     ]
    }
   ]
@@ -225,15 +309,15 @@
   "motes_color": "bone"
  },
  "ground": {
-  "c_moss_dk": "earth_dk",
-  "c_moss": "earth",
-  "c_moss_lt": "earth_lt",
-  "c_ink": "ink",
-  "c_earth_dk": "earth_dk",
-  "c_earth": "earth",
-  "c_earth_lt": "earth_lt"
+  "c_moss_dk": "ink",
+  "c_moss": "night",
+  "c_moss_lt": "dusk1",
+  "c_ink": "void",
+  "c_earth_dk": "ink",
+  "c_earth": "earth_dk",
+  "c_earth_lt": "earth"
  },
- "stone_style": "flags",
+ "stone_style": "cobbles",
  "stone_wear": 0.2,
  "events": {
   "caption": "The schoolhouse. Chalk dust hangs in the air and does not fall. A bell is about to ring."

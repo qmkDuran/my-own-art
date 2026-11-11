@@ -979,6 +979,90 @@
   "flat": false,
   "glow": false
  },
+ "class_floor": {
+  "size": [
+   640,
+   416
+  ],
+  "frames": 1,
+  "foot": [
+   0,
+   0
+  ],
+  "light": "",
+  "flat": true,
+  "glow": false
+ },
+ "class_wall_n": {
+  "size": [
+   672,
+   120
+  ],
+  "frames": 1,
+  "foot": [
+   672,
+   16
+  ],
+  "light": "",
+  "flat": false,
+  "glow": true
+ },
+ "class_wall_side": {
+  "size": [
+   16,
+   432
+  ],
+  "frames": 1,
+  "foot": [
+   16,
+   416
+  ],
+  "light": "",
+  "flat": false,
+  "glow": false
+ },
+ "class_wall_s": {
+  "size": [
+   240,
+   24
+  ],
+  "frames": 1,
+  "foot": [
+   200,
+   14
+  ],
+  "light": "",
+  "flat": false,
+  "glow": false
+ },
+ "master_desk": {
+  "size": [
+   64,
+   38
+  ],
+  "frames": 1,
+  "foot": [
+   58,
+   10
+  ],
+  "light": "",
+  "flat": false,
+  "glow": false
+ },
+ "stove": {
+  "size": [
+   36,
+   76
+  ],
+  "frames": 1,
+  "foot": [
+   26,
+   10
+  ],
+  "light": "flame",
+  "flat": false,
+  "glow": true
+ },
  "desk_a": {
   "size": [
    34,

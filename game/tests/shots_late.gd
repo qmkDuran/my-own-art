@@ -160,7 +160,7 @@ func _shot_school() -> void:
 	h.clear_near(100000.0)
 	g.loop.t = TuesdayLoop.LOOP * 0.8
 	var nim: Npc = _npc("nim")
-	h.place_player(nim.global_position + Vector2(40, 70))
+	h.place_player(nim.global_position + Vector2(95, 30))
 	await _wait(1.5)
 	g.player.face(nim.global_position)
 	_npc("tibb").use(g)

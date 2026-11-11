@@ -6,6 +6,7 @@ extends Node2D
 
 const GROUND_Z: int = -20
 const BRIDGE_Z: int = -19
+const BUILT_W: float = 200.0           ## props wider than this are building parts: no shadow, never mirrored
 const CRYSTAL_LIGHT_RANGE: float = 80.0
 const CRYSTAL_LIGHT_ENERGY: float = 0.55
 const WALL_W: int = 96
@@ -139,9 +140,13 @@ func _props(world: Node2D) -> void:
 		var s := PropSprite.make(p["kind"])
 		s.light_mask = SCENERY_MASK
 		s.position = p["pos"]
-		s.flip_h = int(p["pos"].x) % 3 == 0 and not ["hut", "tower"].has(p["kind"])
-		if (p["foot"] as Rect2).size.x > 0.0:
-			s.add_child(PropSprite.shadow((p["foot"] as Rect2).size.x * 1.2))
+		var foot_w: float = (p["foot"] as Rect2).size.x
+		var built: bool = bool(GameData.props[p["kind"]]["flat"]) or foot_w > BUILT_W   # floors and walls
+		s.flip_h = int(p["pos"].x) % 3 == 0 and not ["hut", "tower"].has(p["kind"]) and not built
+		if bool(GameData.props[p["kind"]]["flat"]):
+			s.z_index = BRIDGE_Z                                  # a floor: under everyone, never y-sorted
+		elif foot_w > 0.0 and not built:
+			s.add_child(PropSprite.shadow(foot_w * 1.2))
 		world.add_child(s)
 		if float(GameData.props[p["kind"]]["size"][1]) >= TALL_PROP:
 			fade.add(s)

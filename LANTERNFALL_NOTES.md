@@ -233,8 +233,10 @@ every Tuesday because her oven door sticks at 3:52. Meet her -> wait for a strik
 brick) -> another strike -> she remembers your face, not why. Reward: Wren's Oven Mitts (unique gloves). Quest
 goals can now wait on `clock_strike`.
 **The Schoolhouse** (zone `schoolhouse`, through the door in the town's school square; still inside the loop):
-a long room of desks under a blackboard ("Tuesday. The sun is resting. Be quiet."), walls of bookshelves, a few
-Repeater pupils. Nim sits at the third desk from Find Nim until the quest ends. **Loop-aware townsfolk**: dialogue
+one room built from code-drawn parts: floorboards (a flat prop under everyone), a back wall with two lit windows,
+the blackboard ("Tuesday. The sun is resting. Be quiet."), a wall clock stopped at four and coat pegs; side walls,
+a front wall with the door; three rows of four desks facing the board, the master's desk, a stove, shelves against
+the walls; a few Repeater pupils. Seated people (prop `seated`) are drawn lower behind their desk. Nim sits at a desk from Find Nim until the quest ends. **Loop-aware townsfolk**: dialogue
 can now depend on the hour (`clock_after`: minutes past three on the town clocks) and on the broken loop
 (flag `loop_broken`, set once the Mayor is down). Master Ansel Crake, the schoolmaster, notices he moves his chalk
 between pockets each loop, and has no Wednesday lesson. Tibb Orrin counts toward a thousand and is always cut off at
