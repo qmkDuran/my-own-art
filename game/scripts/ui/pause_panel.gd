@@ -33,7 +33,7 @@ func _label(id: String) -> String:
 	match id:
 		"resume": return "Resume"
 		"help": return "Help and controls (H)"
-		"guide": return "Objective guide: %s" % ("on" if bool(GameData.setting("guide", true)) else "off")
+		"guide": return "Objective pointer: %s" % ("on" if bool(GameData.setting("guide", false)) else "off")
 		"shake": return "Screen shake: %s" % ("on" if float(GameData.setting("screen_shake", 1.0)) > 0.0 else "off")
 		"numbers": return "Damage numbers: %s" % ("on" if FloatText.enabled else "off")
 		"graphics": return "Graphics: %s (next zone)" % String(GameData.setting("graphics", "medium")).capitalize()
@@ -67,7 +67,7 @@ func _do(id: String) -> void:
 			g.ui.set_paused(false)
 			g.ui.open(g.ui.help)
 		"guide":
-			GameData.settings["guide"] = not bool(GameData.setting("guide", true))
+			GameData.settings["guide"] = not bool(GameData.setting("guide", false))
 		"shake":
 			GameData.settings["screen_shake"] = 0.0 if float(GameData.setting("screen_shake", 1.0)) > 0.0 else 1.0
 		"numbers":

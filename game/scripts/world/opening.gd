@@ -74,11 +74,7 @@ func _mark(offset: Vector2) -> void:
 		_marker.queue_free()
 	_marker = Node2D.new()
 	_marker.position = _at(offset)
-	var glow := Sprite2D.new()
-	glow.texture = LightTex.soft(64)
-	glow.material = Fx.glow_material()
-	glow.modulate = Pal.c("gold", 0.8)
-	_marker.add_child(glow)
+	_marker.set_script(preload("res://scripts/world/yard_marker.gd"))
 	g.world.add_child(_marker)
 	g.event_target = _marker.position
 

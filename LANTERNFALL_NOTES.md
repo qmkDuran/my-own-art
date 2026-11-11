@@ -365,6 +365,23 @@ Glazier + Nim, death/respawn, save/load). Review screenshots: `--shots` (needs x
 - Video: `... --resolution 960x540 --fixed-fps 60 --write-movie frames/f.png --path game -- --demo`, then ffmpeg
   scale 2x with `-sws_flags neighbor` (pixel-identical to 1080p, 4x faster to render in software GL).
 
+## 12a. Easing in (first playtest)
+- Story cards (IntroCards): eight beats, typed out, never auto-advance (Space/Enter/click; hold Esc to skip).
+- New games start in Tallow at dusk with "First Light": Ottilie gives the staff and explains the Light, Captain
+  Marr sends you to the practice yard (walk to a marker, Wickbolt three straw targets, Wickstep, Flare a cluster),
+  then the Great Lantern goes dark for seven heartbeats and a small weak wave hits the gate with Marr fighting beside
+  you. The Glasswood gate opens after that; the Glasswood no longer ambushes you on arrival.
+- Guidance (Last Epoch style, no hand-holding trail): the objective on the minimap and on the zone map (M/Tab),
+  exits marked (gold when they lead toward the objective, named on the zone map), the tracker's "> Take the way to
+  X" line; an edge pointer only as an opt-in setting (off by default).
+- First-time tips (loot, rare, level, new skill, passives, waylamp, out of Oil, loot filter): small panels with a
+  key hint and "Got it". Help (H or the Esc menu). HUD buttons Bag/Skills/Passives/Quests/Map with keys; Skills and
+  Passives pulse when there are points.
+- Esc closes the top-most thing (tip, Help, panels) and toggles the menu; the UI layer handles keys while paused.
+  The UI check now also fails any panel content that spills out of its panel or overlaps another block.
+- Lantern shadows only fall on the ground (a floor-only shadow light; a shadowless light for everything standing),
+  so houses never shade their own fronts and nobody in front of them is covered. Smoke-checked.
+
 ## 12b. Deliverables rule (from the user)
 **No more video recording.** Deliver still screenshots only: zone shots (`tools/shoot.sh`), 4x close-ups, and sprite
 sheets for animation (`tools/anim_sheet.py`). Do not run `--write-movie`, the best-of reel or the animation reel.

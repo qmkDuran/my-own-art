@@ -8,7 +8,7 @@ const KEYS: Dictionary = {
 	"slot_q": [KEY_Q], "slot_w": [KEY_W], "slot_e": [KEY_E], "slot_r": [KEY_R], "dash": [KEY_SPACE], "tonic": [KEY_1],
 	"inventory": [KEY_I], "character": [KEY_C], "skills": [KEY_K], "passives": [KEY_P], "labels": [KEY_ALT],
 	"menu": [KEY_ESCAPE], "stand": [KEY_SHIFT], "interact": [KEY_F], "quests": [KEY_J], "filter": [KEY_L],
-	"help": [KEY_H], "map": [KEY_M],
+	"help": [KEY_H], "map": [KEY_M, KEY_TAB],
 }
 const MOUSE: Dictionary = {"click": MOUSE_BUTTON_LEFT, "slot_rmb": MOUSE_BUTTON_RIGHT}
 ## Hotbar order: slot action -> label shown on the bar.

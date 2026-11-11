@@ -5,12 +5,13 @@ extends GamePanel
 
 const COL_GAP: float = 16.0
 const ROW: float = 13.0
+const KEY_W: float = 64.0
 const KEYS: Array = [
-	["Left click", "walk; on an enemy: Wickbolt; on a thing: use it"], ["Hold Shift", "stand still and cast"],
+	["Left click", "walk, Wickbolt an enemy, use a thing"], ["Hold Shift", "stand still and cast"],
 	["Right click", "Flare (RMB slot)"], ["Q W E R", "your other skills"], ["Space", "Wickstep (dash)"],
 	["1", "drink a tonic"], ["F", "talk, read, continue"], ["Alt", "show item names"],
-	["I", "inventory"], ["C", "character"], ["K", "skill trees (spend skill points)"], ["P", "passives (level 2 on)"],
-	["J", "quests"], ["L", "loot filter"], ["M", "large map"], ["H", "this help"], ["Esc", "close, or the menu"],
+	["I", "inventory"], ["C", "character"], ["K", "skill trees"], ["P", "passives (from level 2)"],
+	["J", "quests"], ["L", "loot filter"], ["M / Tab", "zone map"], ["H", "this help"], ["Esc", "close, or the menu"],
 ]
 const SYSTEMS: Array = [
 	["Light", "Your lantern's Light is your radius. Enemies outside it are Shrouded: they take less and hit harder. Hits dim it; kills feed it."],
@@ -29,7 +30,7 @@ func _content() -> void:
 	y += ROW + 4.0
 	for k: Array in KEYS:
 		UiDraw.text(self, Vector2(SIDE + 4.0, y + 8.0), String(k[0]), UiDraw.GOLD, UiDraw.SMALL)
-		UiDraw.text(self, Vector2(SIDE + 76.0, y + 8.0), String(k[1]), UiDraw.TEXT, UiDraw.SMALL)
+		UiDraw.text(self, Vector2(SIDE + KEY_W, y + 8.0), String(k[1]), UiDraw.TEXT, UiDraw.SMALL)
 		y += ROW
 	var x: float = SIDE + col_w + COL_GAP
 	y = CONTENT_Y + 6.0
@@ -46,7 +47,10 @@ func _content() -> void:
 
 func layout_rects() -> Array[Rect2]:
 	var col_w: float = (size.x - SIDE * 2.0 - COL_GAP) / 2.0
-	return [Rect2(SIDE, CONTENT_Y, col_w, ROW * (KEYS.size() + 1) + 10.0),
+	var widest: float = 0.0
+	for k: Array in KEYS:                                       # each key's description must end inside its column
+		widest = maxf(widest, KEY_W + UiDraw.text_width(self, String(k[1]), UiDraw.SMALL))
+	return [Rect2(SIDE, CONTENT_Y, maxf(col_w, widest), ROW * (KEYS.size() + 1) + 10.0),
 		Rect2(SIDE + col_w + COL_GAP, CONTENT_Y, col_w, _systems_height(col_w))]
 
 

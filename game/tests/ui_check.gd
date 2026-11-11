@@ -50,7 +50,12 @@ func _check_size(g: Game, vs: Vector2) -> void:
 	for p: GamePanel in g.ui.panels():
 		var r: Rect2 = p.place_rect(vs)
 		p.size = r.size
-		for inner: Rect2 in p.layout_rects():                # everything a panel draws stays inside it
+		var rects: Array[Rect2] = p.layout_rects()
+		for i: int in rects.size():                         # everything a panel draws stays inside it, columns apart
+			var inner: Rect2 = rects[i]
+			for j: int in range(i + 1, rects.size()):
+				if inner.intersects(rects[j]):
+					_fails.append("%s panel: content blocks %d and %d overlap at %s" % [p.title, i, j, vs])
 			if not Rect2(Vector2.ZERO, r.size).encloses(inner):
 				_fails.append("%s panel content %s spills out of %s at %s" % [p.title, inner, r.size, vs])
 		if not screen.encloses(r):

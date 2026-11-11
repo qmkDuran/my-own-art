@@ -14,7 +14,7 @@ const COLORS: Dictionary = {0: "", 1: "moss_lt", 2: "amber", 3: "glass_lt", 4: "
 const FOG := Color(0.05, 0.05, 0.08, 0.85)
 const ARROW: float = 4.0
 const ZOOM: float = 2.0
-const LARGE: float = 3.0
+const LARGE_MARGIN: float = 40.0
 
 var g: Game
 var _base: Image
@@ -28,10 +28,16 @@ static var large: bool = false        ## M: the map at its large size, centred
 
 
 static func rect_for(vs: Vector2) -> Rect2:
-	if large:
-		var sz := Vector2(W, H) * LARGE
-		return Rect2(roundf((vs.x - sz.x) / 2.0), TOP + 30.0, sz.x, sz.y)
+	if large:                                             # the zone map: most of the screen
+		return Rect2(Vector2(LARGE_MARGIN, LARGE_MARGIN), vs - Vector2(LARGE_MARGIN * 2.0, LARGE_MARGIN * 2.0 + Hud.ORB))
 	return Rect2(vs.x - EDGE - W, TOP, W, H)
+
+
+## Pixels per cell: the minimap's fixed zoom, or, as the zone map, whatever fits the whole zone.
+func _zoom() -> float:
+	if not large:
+		return ZOOM
+	return minf(size.x / g.layout.cols, size.y / g.layout.rows)
 
 
 func toggle_large() -> void:
@@ -88,20 +94,22 @@ func _reveal(c: Vector2i) -> void:
 
 ## Cell at the map's top-left corner (the map is centred on the Lamplighter).
 func _origin() -> Vector2:
-	return g.player.global_position / float(g.layout.cell) - size / ZOOM / 2.0
+	if large:                                             # the whole zone, centred in the map
+		return -(size / _zoom() - Vector2(g.layout.cols, g.layout.rows)) / 2.0
+	return g.player.global_position / float(g.layout.cell) - size / _zoom() / 2.0
 
 
 func _p(world: Vector2) -> Vector2:
-	return (world / float(g.layout.cell) - _origin()) * ZOOM
+	return (world / float(g.layout.cell) - _origin()) * _zoom()
 
 
 func _draw() -> void:
 	var r := Rect2(Vector2.ZERO, size)
 	UiDraw.box(self, r.grow(2.0), Color(0.02, 0.02, 0.04, 0.9))
 	draw_rect(r, FOG)
-	var src: Rect2 = Rect2(_origin(), size / ZOOM).intersection(Rect2(Vector2.ZERO, Vector2(g.layout.cols, g.layout.rows)))
+	var src: Rect2 = Rect2(_origin(), size / _zoom()).intersection(Rect2(Vector2.ZERO, Vector2(g.layout.cols, g.layout.rows)))
 	if src.size.x > 0.0 and src.size.y > 0.0:
-		draw_texture_rect_region(_tex, Rect2((src.position - _origin()) * ZOOM, src.size * ZOOM), src)
+		draw_texture_rect_region(_tex, Rect2((src.position - _origin()) * _zoom(), src.size * _zoom()), src)
 	UiDraw.text(self, Vector2(0, -6), String(GameData.biome["name"]), UiDraw.GOLD, UiDraw.SMALL, HORIZONTAL_ALIGNMENT_RIGHT, size.x)
 	for n: Node in get_tree().get_nodes_in_group("interactables"):
 		_marker(n as Interactable)
@@ -113,7 +121,7 @@ func _draw() -> void:
 			if r_has(_p(e.global_position)):
 				draw_rect(Rect2(_p(e.global_position) - Vector2(1, 1), Vector2(3, 3) if e.rank != "normal" else Vector2(2, 2)), col)
 	var view: Vector2 = get_viewport_rect().size / g.camera.zoom
-	draw_rect(Rect2(_p(g.camera.get_screen_center_position() - view / 2.0), view / float(g.layout.cell) * ZOOM), Color(1, 1, 1, 0.25), false, 1.0)
+	draw_rect(Rect2(_p(g.camera.get_screen_center_position() - view / 2.0), view / float(g.layout.cell) * _zoom()), Color(1, 1, 1, 0.25), false, 1.0)
 	_objective()
 	_arrow(_p(me), g.player.aim)
 
@@ -153,10 +161,26 @@ func _marker(it: Interactable) -> void:
 		col = Pal.c("amber")
 	elif it is Npc:
 		col = Color("8fdc6a")
+	elif it is ZoneExit:
+		_exit_marker(it as ZoneExit)
+		return
 	else:
 		return
 	if r_has(_p(it.global_position)):
 		draw_rect(Rect2(_p(it.global_position) - Vector2(2, 2), Vector2(4, 4)), col)
+
+
+## A way out: a bright door mark, gold when it leads toward the objective, with its destination on the zone map.
+func _exit_marker(e: ZoneExit) -> void:
+	var at: Vector2 = _p(e.global_position)
+	if not r_has(at):
+		return
+	var toward: bool = Objectives.target(g).distance_to(e.global_position) < 1.0
+	var col: Color = Pal.c("gold") if toward else Pal.c("pale")
+	draw_rect(Rect2(at - Vector2(3, 4), Vector2(6, 8)), UiDraw.INK)
+	draw_rect(Rect2(at - Vector2(2, 3), Vector2(4, 6)), col)
+	if large:
+		UiDraw.text(self, at + Vector2(-60, -8), String(GameData.zone(e.to)["name"]), col, UiDraw.SMALL, HORIZONTAL_ALIGNMENT_CENTER, 120.0)
 
 
 func r_has(p: Vector2) -> bool:

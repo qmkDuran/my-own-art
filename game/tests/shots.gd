@@ -34,13 +34,42 @@ func _run() -> void:
 		await _save("title")
 		get_tree().quit()
 		return
+	if _only() == "intro":
+		await _intro_card()
+		get_tree().quit()
+		return
 	g = Game.current
+	if _only() != "" and has_method("_shot_" + _only()) and not _listed(_only()):
+		await call("_shot_" + _only())
+		get_tree().quit()
+		return
 	var shots: Array[String] = ["light", "dark", "skills", "passives", "inventory", "character", "boss", "overview",
 		"orbs", "school", "wren", "hollins", "town", "mayor", "falls", "marsh", "bellwright", "river", "forge", "tallow", "road", "hollow", "matron", "quests", "filter", "stash", "eclipse", "noon", "keystones", "eclipse_tree"]
 	for s: String in shots:
 		if (_only() == "" and not PASS2.has(s)) or _only() == s:
 			await call("_shot_" + s)
 	get_tree().quit()
+
+
+func _listed(id: String) -> bool:
+	return ["light", "dark", "skills", "passives", "inventory", "character", "boss", "overview"].has(id) or PASS2.has(id)
+
+
+## A story card part-typed and one fully typed, from the title's New Game.
+func _intro_card() -> void:
+	var title: Node = get_tree().current_scene
+	title.call("_choose", "new")
+	var intro: IntroCards = title.get("_intro")
+	intro.press()
+	intro.press()
+	intro.press()
+	await _wait(0.6)
+	await _save("intro_card")
+	intro.press()
+	intro.press()
+	intro.press()
+	await _wait(1.0)
+	await _save("intro_card_typing")
 
 
 func _save(name: String) -> void:
