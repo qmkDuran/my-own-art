@@ -365,6 +365,10 @@ Glazier + Nim, death/respawn, save/load). Review screenshots: `--shots` (needs x
 - Video: `... --resolution 960x540 --fixed-fps 60 --write-movie frames/f.png --path game -- --demo`, then ffmpeg
   scale 2x with `-sws_flags neighbor` (pixel-identical to 1080p, 4x faster to render in software GL).
 
+## 12b. Deliverables rule (from the user)
+**No more video recording.** Deliver still screenshots only: zone shots (`tools/shoot.sh`), 4x close-ups, and sprite
+sheets for animation (`tools/anim_sheet.py`). Do not run `--write-movie`, the best-of reel or the animation reel.
+
 ## 13. Lessons
 - With 2D HDR on, `--write-movie` frames come out sRGB-encoded twice (washed out): encode videos with a 2.2 gamma
   (`ffmpeg -vf lutrgb=r='255*pow(val/255\,2.2)':...`). Screenshots from the viewport are right as they are.
