@@ -243,6 +243,17 @@ func remove_passive(id: String) -> bool:
 	return true
 
 
+func refund_passives() -> void:
+	passives = {}
+	changed.emit()
+
+
+func refund_skill(s: String) -> void:
+	if skills.has(s):
+		skills[s]["nodes"] = {}
+		changed.emit()
+
+
 func can_choose_mastery() -> bool:
 	return mastery == "" and level >= int(GameData.player["mastery_level"])
 

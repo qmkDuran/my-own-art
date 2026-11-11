@@ -1,0 +1,62 @@
+{
+ "_doc": "The zones of the campaign and how they connect. A new game starts at `start`. Each zone has its biome file (data/biomes/<biome>.json), a seed, enemy levels and its music. Exits are defined in the biome (which set-piece leads where). links: neighbouring zones (for routing the objective marker).",
+ "start": "glasswood",
+ "hub": "tallow",
+ "zones": {
+  "tallow": {
+   "name": "Tallow",
+   "biome": "tallow",
+   "seed": 77,
+   "level": [
+    1,
+    1
+   ],
+   "music": "town",
+   "safe": true,
+   "links": [
+    "glasswood"
+   ]
+  },
+  "glasswood": {
+   "name": "The Glasswood",
+   "biome": "glasswood",
+   "seed": 1000,
+   "level": [
+    1,
+    7
+   ],
+   "music": "explore",
+   "links": [
+    "tallow",
+    "ember_road"
+   ]
+  },
+  "ember_road": {
+   "name": "The Ember Road",
+   "biome": "ember_road",
+   "seed": 2000,
+   "level": [
+    6,
+    11
+   ],
+   "music": "explore",
+   "links": [
+    "glasswood",
+    "moth_hollow"
+   ]
+  },
+  "moth_hollow": {
+   "name": "Moth Hollow",
+   "biome": "moth_hollow",
+   "seed": 3000,
+   "level": [
+    10,
+    15
+   ],
+   "music": "cave",
+   "links": [
+    "ember_road"
+   ]
+  }
+ }
+}

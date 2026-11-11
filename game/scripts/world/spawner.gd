@@ -29,7 +29,7 @@ func setup(w: Node2D, layout: ZoneLayout, p: Player) -> void:
 
 
 func level_at(progress: float) -> int:
-	var r: Array = GameData.biome["level"]
+	var r: Array = GameData.zone(GameData.zone_id)["level"]
 	return roundi(lerpf(float(r[0]), float(r[1]), clampf(progress, 0.0, 1.0)))
 
 
@@ -48,10 +48,9 @@ func spawn_boss() -> Enemy:
 
 
 ## The gloams that came over the wall: they arrive from the forest's edge east of the gate.
-func opening_ambush() -> void:
+func opening_ambush(a: Dictionary) -> void:
 	if player.global_position.distance_to(z.start) > AMBUSH_NEAR:
 		return
-	var a: Dictionary = GameData.biome["opening_ambush"]
 	var base: Vector2 = player.global_position + Vector2(float(a["offset"][0]), float(a["offset"][1]))
 	for k: int in int(a["count"]):
 		var at: Vector2 = _free_near(base + Vector2(randf_range(-1, 1), randf_range(-1, 1)) * AMBUSH_SPREAD, 10.0)
@@ -122,6 +121,7 @@ func _on_died(e: Enemy) -> void:
 	if randf() < float(GameData.player["tonic"]["kill_refill_chance"]) and player.tonics < player.max_tonics():
 		player.tonics += 1
 	_drop_loot(e)
+	Session.campaign.killed(e.kind)
 	killed.emit(e)
 	if e == boss:
 		boss_died.emit(e)
@@ -135,9 +135,16 @@ func _drop_loot(e: Enemy) -> void:
 	drop_items(e.global_position, int(D["count"][source]), source, e.level)
 
 
+## Rolls n items and lays the ones the loot filter shows on open ground.
 func drop_items(at: Vector2, n: int, source: String, lvl: int) -> void:
-	var spots: Array[Vector2] = LootDrop.free_spots(z, at, n, player.global_position)
-	for i: int in spots.size():
+	var items: Array = []
+	for i: int in n:
 		var it: Dictionary = LootGen.make(lvl, LootGen.roll_rarity(source))
-		GroundItem.spawn(world, spots[i], it)
-		Audio.sfx("drop_" + ("rare" if ["rare", "set", "unique"].has(it["rarity"]) else "item"), -8.0)
+		if LootFilter.shows(it):
+			items.append(it)
+		else:
+			LootFilter.hidden_count += 1
+	var spots: Array[Vector2] = LootDrop.free_spots(z, at, items.size(), player.global_position)
+	for i: int in spots.size():
+		GroundItem.spawn(world, spots[i], items[i])
+		Audio.sfx("drop_rare" if LootFilter.emphasised(items[i]) else "drop_item", -8.0)

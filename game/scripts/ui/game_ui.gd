@@ -15,6 +15,12 @@ var character: CharacterPanel
 var skills: SkillPanel
 var passives: PassivePanel
 var pause: PausePanel
+var quests: QuestPanel
+var filter: FilterPanel
+var travel: TravelPanel
+var stash: StashPanel
+var respec: RespecPanel
+var bestiary: BestiaryPanel
 var tooltip: TooltipLayer
 var _fade: ColorRect
 
@@ -34,6 +40,12 @@ func setup(game: Game) -> void:
 	skills = _panel(SkillPanel.new(), "Skills", Vector2(560, 400), "left")
 	passives = _panel(PassivePanel.new(), "Passives", Vector2(660, 400), "center")
 	pause = _panel(PausePanel.new(), "Paused", Vector2(300, 190), "center")
+	quests = _panel(QuestPanel.new(), "Quests", Vector2(360, 400), "left")
+	filter = _panel(FilterPanel.new(), "Loot Filter", Vector2(300, 330), "center")
+	travel = _panel(TravelPanel.new(), "Nim's Maps", Vector2(320, 200), "center")
+	stash = _panel(StashPanel.new(), "Fenn's Lockers", Vector2(280, 250), "left")
+	respec = _panel(RespecPanel.new(), "The Order's Ledger", Vector2(320, 220), "center")
+	bestiary = _panel(BestiaryPanel.new(), "Bestiary", Vector2(400, 400), "left")
 	tooltip = TooltipLayer.new()
 	add_child(tooltip)
 	_fade = ColorRect.new()
@@ -50,7 +62,15 @@ func _panel(p: GamePanel, title: String, sz: Vector2, side: String) -> GamePanel
 
 
 func panels() -> Array[GamePanel]:
-	return [inventory, character, skills, passives, pause]
+	return [inventory, character, skills, passives, pause, quests, filter, travel, stash, respec, bestiary]
+
+
+func left_panels() -> Array[GamePanel]:
+	return [character, skills, passives, quests, stash, bestiary]
+
+
+func center_panels() -> Array[GamePanel]:
+	return [passives, pause, filter, travel, respec]
 
 
 func blocking() -> bool:
@@ -62,19 +82,23 @@ func set_paused(on: bool) -> void:
 	pause.visible = on
 
 
+## One panel on the left, one on the right (the inventory); centre panels stand alone.
 func open(p: GamePanel) -> void:
 	var was: bool = p.visible
-	if p == passives or p == pause:
+	if center_panels().has(p):
 		_close_all()
 	elif p == inventory:
-		passives.visible = false
+		for o: GamePanel in center_panels():
+			o.visible = false
 	else:
-		for o: GamePanel in [character, skills, passives]:
+		for o: GamePanel in left_panels() + center_panels():
 			o.visible = false
 	p.visible = was
 	p.toggle()
-	minimap.visible = not (inventory.visible or passives.visible)
-	hud.tracker_hidden = character.visible or skills.visible or passives.visible
+	if p == stash and stash.visible:
+		inventory.visible = true
+	minimap.visible = not (inventory.visible or panels().any(func(o: GamePanel) -> bool: return o.visible and center_panels().has(o)))
+	hud.tracker_hidden = left_panels().any(func(o: GamePanel) -> bool: return o.visible) or center_panels().any(func(o: GamePanel) -> bool: return o.visible)
 
 
 func _close_all() -> void:
@@ -95,7 +119,8 @@ func handle_global(event: InputEvent) -> bool:
 		else:
 			set_paused(not pause.visible)
 		return true
-	var map: Dictionary = {"inventory": inventory, "character": character, "skills": skills, "passives": passives}
+	var map: Dictionary = {"inventory": inventory, "character": character, "skills": skills, "passives": passives,
+		"quests": quests, "filter": filter}
 	for action: String in map:
 		if event.is_action_pressed(action):
 			open(map[action])
@@ -114,10 +139,9 @@ func fade_through(action: Callable) -> void:
 	tw.tween_property(_fade, "color:a", 0.0, FADE)
 
 
-func dialogue_closed() -> void:
-	if g.flags.has("nim_free") and not g.flags.has("slice_done"):
-		for n: Node in get_tree().get_nodes_in_group("interactables"):
-			if n is Npc and (n as Npc).npc_id == "nim" and (n as Npc).talked > 0:
-				g.flags["slice_done"] = true
-				hud.messages.show_end_card()
-				g.mark_dirty()
+## A person's service after a talk: travel (Nim's maps), stash (Fenn's lockers), respec (Ottilie's ledger),
+## bestiary (Lio's shelf).
+func open_service(service: String) -> void:
+	var map: Dictionary = {"travel": travel, "stash": stash, "respec": respec, "bestiary": bestiary}
+	if map.has(service):
+		open(map[service])

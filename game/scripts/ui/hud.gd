@@ -69,8 +69,8 @@ func caption(s: String) -> void:
 	messages.caption(s)
 
 
-func show_dialogue(lines: Array) -> void:
-	messages.dialogue(lines)
+func show_dialogue(lines: Array, on_done: Callable = Callable()) -> void:
+	messages.dialogue(lines, on_done)
 
 
 func show_note(title: String, lines: Array) -> void:

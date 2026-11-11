@@ -17,6 +17,10 @@ static var biome: Dictionary = {}
 static var story: Dictionary = {}
 static var props: Dictionary = {}
 static var sprites: Dictionary = {}
+static var zones: Dictionary = {}
+static var quests: Dictionary = {}
+static var dialogue: Dictionary = {}
+static var zone_id: String = ""         ## the zone being played (biome holds its rules)
 
 
 static func ensure() -> void:
@@ -30,7 +34,10 @@ static func ensure() -> void:
 	passives = load_json("passives")
 	items = load_json("items")
 	enemies = load_json("enemies")
-	biome = load_json("glasswood")
+	zones = load_json("zones")
+	quests = load_json("quests")
+	dialogue = load_json("dialogue")
+	use_zone(String(zones["start"]))
 	story = load_json("story")
 	props = load_json("props")
 	sprites = load_json("sprites")
@@ -41,6 +48,16 @@ static func load_json(name: String) -> Dictionary:
 	var d: Variant = JSON.parse_string(text)
 	assert(d is Dictionary, "bad json: " + name)
 	return d
+
+
+## Makes `id` the current zone: its biome rules become GameData.biome.
+static func use_zone(id: String) -> void:
+	zone_id = id
+	biome = load_json("biomes/" + String(zone(id)["biome"]))
+
+
+static func zone(id: String) -> Dictionary:
+	return zones["zones"][id]
 
 
 static func skill(id: String) -> Dictionary:

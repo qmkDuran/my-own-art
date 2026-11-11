@@ -2,12 +2,12 @@ class_name InputSetup
 extends RefCounted
 ## Input actions (mouse + keyboard). LMB: move / attack / take / use (hold to keep moving toward the cursor);
 ## hold Shift: stand still and attack or cast toward the cursor; RMB and Q W E R: skill slots; Space: Wickstep;
-## 1: tonic; I inventory, C character, K skills, P passives, Alt labels, Esc menu.
+## 1: tonic; I inventory, C character, K skills, P passives, J quests, L loot filter, Alt labels, Esc menu.
 
 const KEYS: Dictionary = {
 	"slot_q": [KEY_Q], "slot_w": [KEY_W], "slot_e": [KEY_E], "slot_r": [KEY_R], "dash": [KEY_SPACE], "tonic": [KEY_1],
 	"inventory": [KEY_I], "character": [KEY_C], "skills": [KEY_K], "passives": [KEY_P], "labels": [KEY_ALT],
-	"menu": [KEY_ESCAPE], "stand": [KEY_SHIFT], "interact": [KEY_F],
+	"menu": [KEY_ESCAPE], "stand": [KEY_SHIFT], "interact": [KEY_F], "quests": [KEY_J], "filter": [KEY_L],
 }
 const MOUSE: Dictionary = {"click": MOUSE_BUTTON_LEFT, "slot_rmb": MOUSE_BUTTON_RIGHT}
 ## Hotbar order: slot action -> label shown on the bar.

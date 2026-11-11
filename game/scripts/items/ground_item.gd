@@ -40,7 +40,7 @@ func _ready() -> void:
 		beam.texture = LightTex.soft(64)
 		beam.texture_scale = BEAM_RANGE / 32.0
 		beam.color = col
-		beam.energy = BEAM_ENERGY
+		beam.energy = BEAM_ENERGY * (1.6 if LootFilter.emphasised(item) else 1.0)
 		add_child(beam)
 		Fx.burst(Game.current.fx_layer, position, 10, Vector2(20, 60), 0.6, [col, Color(col, 0.0)], Vector2.UP, 25.0)
 	label = Label.new()

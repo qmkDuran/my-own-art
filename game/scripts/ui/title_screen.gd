@@ -80,9 +80,12 @@ func _gui_input(event: InputEvent) -> void:
 func _choose(id: String) -> void:
 	match id:
 		"continue":
+			if not SaveGame.load_session():
+				Session.reset()
 			get_tree().change_scene_to_file(GAME_SCENE)
 		"new":
 			SaveGame.erase()
+			Session.reset()
 			_card = 0
 			_card_t = 0.0
 		"quit":

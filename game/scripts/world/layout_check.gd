@@ -7,7 +7,6 @@ const T := ZoneLayout.T
 const CHEST_REASONS: Array[String] = ["hut", "tower", "cart", "bedroll", "campfire", "cairn"]
 const CHEST_REASON_DIST: float = 110.0
 const START_CLEAR: float = 420.0
-const ROLES_REQUIRED: Array[String] = ["start", "circle", "hut", "pond", "cairn", "tower", "camp", "secret"]
 
 
 static func problems(z: ZoneLayout) -> PackedStringArray:
@@ -23,12 +22,13 @@ static func problems(z: ZoneLayout) -> PackedStringArray:
 	return out
 
 
+## Every clearing the biome requires was placed; a zone with a boss has its arena and boss.
 static func _roles(z: ZoneLayout, out: PackedStringArray) -> void:
-	for role: String in ROLES_REQUIRED:
+	for role: String in GameData.biome.get("required", []):
 		if z.clearing_of_role(role).is_empty():
 			out.append("clearing '%s' could not be placed" % role)
-	if z.boss.is_empty():
-		out.append("no boss placed in the stone circle")
+	if GameData.biome.get("events", {}).has("boss") and z.boss.is_empty():
+		out.append("no boss placed in its arena")
 
 
 ## Flood fill from the start over walkable, unblocked cells.
@@ -63,7 +63,7 @@ static func _reachable(z: ZoneLayout, out: PackedStringArray) -> void:
 
 
 static func _interactive(p: Dictionary) -> bool:
-	return ["chest", "waylamp", "note", "npc", "cairn", "statue_fisher", "cocoon"].has(p["kind"])
+	return ["chest", "waylamp", "note", "npc", "cairn", "statue_fisher", "cocoon", "exit"].has(p["kind"])
 
 
 static func _stand_spot_reached(z: ZoneLayout, p: Dictionary, seen: PackedByteArray) -> bool:
@@ -160,5 +160,5 @@ static func _spawns(z: ZoneLayout, out: PackedStringArray) -> void:
 			var o: Dictionary = z.spawns[j]
 			if (o["pos"] as Vector2).distance_to(p) < r + float(GameData.enemy(o["kind"])["radius"]):
 				out.append("%s and %s spawn overlapping at %s" % [s["kind"], o["kind"], p])
-	if z.spawns.size() < int(GameData.biome["packs"]["count"]) * 2:
+	if z.spawns.size() < int(GameData.biome.get("packs", {}).get("count", 0)) * 2:
 		out.append("too few enemies (%d)" % z.spawns.size())

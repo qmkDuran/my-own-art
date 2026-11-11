@@ -35,8 +35,6 @@ func _depth() -> PackedInt32Array:
 
 
 ## Trees stand only in the thicket, trunks clear of open ground (so what you see blocks you exactly where it
-
-
 ## stands), denser at the forest's edge than deep inside.
 
 

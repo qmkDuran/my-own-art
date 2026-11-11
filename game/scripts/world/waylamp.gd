@@ -52,6 +52,7 @@ func use(g: Game) -> void:
 		g.player.refill_tonics()
 		g.player.respawn_at = stand_point()
 		g.hud.notice("Tonics refilled")
+		g.ui.open(g.ui.travel)
 		return
 	if not relighting:
 		relighting = true
@@ -66,6 +67,8 @@ func _process(delta: float) -> void:
 	if g.player.global_position.distance_to(global_position) > STAY_RANGE:
 		return
 	var R: Dictionary = GameData.biome["relight"]
+	if R.is_empty():
+		return
 	progress += delta / float(R["duration"])
 	var due: int = int(progress * int(R["waves"])) + 1
 	if _waves_sent < mini(due, int(R["waves"])):
@@ -88,4 +91,5 @@ func _complete(g: Game) -> void:
 	g.player.refill_tonics()
 	g.spawner.drop_items(global_position, REWARD_ITEMS, "chest", g.spawner.level_at(g.progress_at(global_position)) + 1)
 	lit_up.emit(self)
+	Session.campaign.notify("lamp_lit", g.zone_id)
 	g.mark_dirty()

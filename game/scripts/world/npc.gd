@@ -1,7 +1,7 @@
 class_name Npc
 extends Interactable
-## A person you can talk to: an idle-animated figure with a name; lines come one at a time from story.json, then
-## a short repeat line.
+## A person you can talk to: an idle-animated figure with a name. What they say comes from Dialogue (it depends on
+## the campaign: quests, flags, what they said before).
 
 const FPS: float = 4.0
 
@@ -12,7 +12,7 @@ var _t: float = 0.0
 
 func _ready() -> void:
 	npc_id = String(prop["npc"])
-	title = String(GameData.story["npcs"][npc_id]["name"])
+	title = String(GameData.dialogue[npc_id]["name"])
 	super()
 
 
@@ -33,7 +33,13 @@ func _process(delta: float) -> void:
 
 
 func use(g: Game) -> void:
-	var d: Dictionary = GameData.story["npcs"][npc_id]
-	g.hud.show_dialogue(d["lines"] if talked == 0 else [d["repeat"]])
+	var c: Campaign = Session.campaign
+	var topic: Dictionary = Dialogue.pick(npc_id, c, c.said_of(npc_id))
 	talked += 1
-	g.mark_dirty()
+	g.hud.show_dialogue(topic["lines"], func() -> void:
+		c.mark_said(npc_id, int(topic["index"]))
+		var service: String = Dialogue.apply(topic, c)
+		c.notify("talk", npc_id)
+		if service != "":
+			g.ui.open_service(service)
+		g.mark_dirty())

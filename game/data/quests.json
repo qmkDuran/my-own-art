@@ -1,0 +1,30 @@
+{
+ "_doc": "Quests: ordered steps; a step is done when its goal event happens ([event, argument] or [event, argument, count]). Events: enter_zone, talk, boss_seen, boss_down, lamp_lit (argument: zone), read (note id), flag. target says where the tracker and minimap point: zone + a place (circle, npc:<id>, exit:<zone>, lamp, role:<clearing role>).",
+ "seven_heartbeats": {"title": "Seven Heartbeats", "main": true, "steps": [
+   {"text": "Find Nim Saltry in the Glasswood", "goal": ["boss_seen", "glazier"], "target": {"zone": "glasswood", "at": "circle"}},
+   {"text": "Break the Glazier", "goal": ["boss_down", "glazier"], "target": {"zone": "glasswood", "at": "circle"}},
+   {"text": "Talk to Nim", "goal": ["talk", "nim"], "target": {"zone": "glasswood", "at": "npc:nim"}},
+   {"text": "Bring Nim home to Tallow", "goal": ["enter_zone", "tallow"], "target": {"zone": "tallow", "at": "npc:ottilie"}},
+   {"text": "Tell Mother Ottilie what Nim saw", "goal": ["talk", "ottilie"], "target": {"zone": "tallow", "at": "npc:ottilie"}}],
+  "reward": {"xp": 300}, "next": "ember_road"},
+ "ember_road": {"title": "The Ember Road", "main": true, "steps": [
+   {"text": "Take the Ember Road east of the Glasswood", "goal": ["enter_zone", "ember_road"], "target": {"zone": "ember_road", "at": "lamp"}},
+   {"text": "Relight the road lamps", "goal": ["lamp_lit", "ember_road", 4], "target": {"zone": "ember_road", "at": "lamp"}},
+   {"text": "Find where the moths come from", "goal": ["enter_zone", "moth_hollow"], "target": {"zone": "moth_hollow", "at": "circle"}}],
+  "reward": {"xp": 600}, "next": "moth_hollow"},
+ "moth_hollow": {"title": "The Matron's Nest", "main": true, "steps": [
+   {"text": "Go down into Moth Hollow", "goal": ["boss_seen", "matron"], "target": {"zone": "moth_hollow", "at": "circle"}},
+   {"text": "Kill the Moth Matron", "goal": ["boss_down", "matron"], "target": {"zone": "moth_hollow", "at": "circle"}},
+   {"text": "Return to Mother Ottilie", "goal": ["talk", "ottilie"], "target": {"zone": "tallow", "at": "npc:ottilie"}}],
+  "reward": {"xp": 900}},
+ "tea_on_tuesdays": {"title": "Tea on Tuesdays", "main": false, "steps": [
+   {"text": "Find Mara's father by the Glasswood pond", "goal": ["read", "brennick"], "target": {"zone": "glasswood", "at": "role:pond"}},
+   {"text": "Tell Mara what you found", "goal": ["talk", "mara"], "target": {"zone": "tallow", "at": "npc:mara"}}],
+  "reward": {"xp": 250, "unique": "ottilies_spare"}},
+ "teagues_trail": {"title": "Teague's Trail", "main": false, "steps": [
+   {"text": "Find Teague's notes (the Glasswood)", "goal": ["read", "teague_cairn"], "target": {"zone": "glasswood", "at": "role:cairn"}},
+   {"text": "Find Teague's notes (the Ember Road)", "goal": ["read", "teague_road"], "target": {"zone": "ember_road", "at": "role:shrine"}},
+   {"text": "Find Teague's notes (Moth Hollow)", "goal": ["read", "teague_hollow"], "target": {"zone": "moth_hollow", "at": "role:camp"}},
+   {"text": "Bring the notes to Lio at the Archive", "goal": ["talk", "lio"], "target": {"zone": "tallow", "at": "npc:lio"}}],
+  "reward": {"xp": 500, "set": "ninth_watch"}}
+}

@@ -77,6 +77,10 @@ func _click(at: Vector2, _button: int) -> void:
 			return
 	for i: int in inv.bag.size():
 		if bag_rect(i).has_point(at) and not (inv.bag[i] as Dictionary).is_empty():
+			if g.ui.stash.visible:
+				if g.ui.stash.store(inv.bag[i]):
+					inv.remove_at(i)
+				return
 			if inv.equip(i, g.player.prog.level):
 				Audio.sfx("pickup", -6.0, 0.9)
 			else:

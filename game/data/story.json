@@ -7,48 +7,51 @@
   "You are the Ninth Lamplighter. The other eight are dead or missing. Go."
  ],
  "captions": {
-  "arrive": "The Glasswood. It was a forest, once.",
   "ambush": "They're through the gate! Lamplighter!",
   "first_dark": "Outside your light, the Dusk hits harder. Keep it fed.",
   "first_level": "The lantern burns brighter for you. Spend your points (K, P).",
   "lamp_lit": "The waylamp holds. This ground remembers the light.",
   "relight_start": "Hold the lamp until it catches. The dark will come for it.",
-  "boss": "The stone ring. Something tall stands among the stones, and it is holding a child made of glass.",
-  "slice_end": "End of the test slice. Nim is home. The Dusk is not done with Tallow."
- },
- "npcs": {
-  "ysolde": {"name": "Captain Ysolde Marr", "lines": [
-    ["Ysolde", "Seven heartbeats of dark and the Glasswood came knocking. They took Nim Saltry off the wall-walk."],
-    ["Ysolde", "I'd send soldiers. Soldiers don't come back from the Dusk. Lamplighters sometimes did."],
-    ["Ysolde", "Light the old waylamps as you go. Each one is a place the dark has to remember to fear."],
-    ["Ysolde", "And if you meet something that talks... don't let it finish its sentences."]],
-   "repeat": ["Ysolde", "Gate stays shut until you're back. With her."]},
-  "hask": {"name": "Hask", "lines": [
-    ["Hask", "Easy with the light, Lamplighter. I'm only half of what you'd be hitting."],
-    ["Hask", "The girl? The Glazier took her to the stone ring. It collects things that shine."],
-    ["Hask", "Ask yourself why the Dusk wanted a child who maps the wall. Then don't ask me."],
-    ["Hask", "Your predecessor asked better questions. Look where it got him. Cairn by the deer trail."]],
-   "repeat": ["Hask", "Still here. Still half. Go on."]},
-  "nim": {"name": "Nim Saltry", "lines": [
-    ["Nim", "You took your time. I counted. Four thousand one hundred heartbeats."],
-    ["Nim", "It kept asking where the Lantern's heart is. I lied. I'm very good at lying."],
-    ["Nim", "Lamplighter... it wasn't angry. It was scared. Of you. Of that lantern."]],
-   "repeat": ["Nim", "Walk me home? I know a shortcut. It's mostly screaming."]}
+  "act_end": "End of Act 1. The moths are gone from the road. The Dusk is remembering."
  },
  "notes": {
-  "teague_cairn": {"title": "A note under a cold lantern", "lines": [
+  "teague_cairn": {
+   "title": "A note under a cold lantern",
+   "lines": [
     "If you're reading this, Ottilie sent you. She lies when she's frightened.",
     "Ask her what the Great Lantern burns. Watch her hands when she answers.",
-    "— T. Morrow, Eighth"]},
-  "brennick": {"title": "Old Brennick, still fishing", "lines": [
+    "\u2014 T. Morrow, Eighth"
+   ]
+  },
+  "brennick": {
+   "title": "Old Brennick, still fishing",
+   "lines": [
     "A woodcutter, turned to glass where he sat. His line still hangs in the water.",
-    "Tied to the rod, a child's note: 'Da. I bring you tea on Tuesdays. Come home when the fish bite.'"]},
-  "order_rules": {"title": "A page from a Lamplighter's cache", "lines": [
+    "Tied to the rod, a child's note: 'Da. I bring you tea on Tuesdays. Come home when the fish bite.'"
+   ]
+  },
+  "order_rules": {
+   "title": "A page from a Lamplighter's cache",
+   "lines": [
     "Rule one: never look into the shard.",
     "Rule two: it is not a stone.",
-    "Rule three: if it speaks, it is dreaming. Do not answer."]}
+    "Rule three: if it speaks, it is dreaming. Do not answer."
+   ]
+  }
  },
- "signs": {"road": "Tallow  -  Glasswood Road  -  (someone scratched: TURN BACK)"},
- "lamps": {"gate": "Gate Waylamp", "tower": "Watchtower Waylamp", "camp": "Old Camp Waylamp"},
- "chests": {"hut": "Woodcutter's Chest", "tower": "Watch Locker", "camp": "Expedition Crate", "secret": "Lamplighter's Cache"}
+ "signs": {
+  "road": "Tallow  -  Glasswood Road  -  (someone scratched: TURN BACK)",
+  "east": "East: the Ember Road  -  (scratched under it: the lamps are out)"
+ },
+ "lamps": {
+  "gate": "Gate Waylamp",
+  "tower": "Watchtower Waylamp",
+  "camp": "Old Camp Waylamp"
+ },
+ "chests": {
+  "hut": "Woodcutter's Chest",
+  "tower": "Watch Locker",
+  "camp": "Expedition Crate",
+  "secret": "Lamplighter's Cache"
+ }
 }

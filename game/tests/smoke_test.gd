@@ -266,6 +266,6 @@ func _save_load() -> void:
 	var bag: int = p.inv.bag_items().size()
 	p.prog.level = 1
 	p.inv.bag.fill({})
-	SaveGame.apply(g, back)
+	SaveGame.apply_character(g, back["character"])
 	expect(p.prog.level == level and p.inv.bag_items().size() == bag, "save and load restore level %d and %d bag items" % [level, bag])
 	expect(p.prog.mastery == "duskwalker", "save keeps the mastery")

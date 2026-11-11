@@ -164,11 +164,23 @@ static func make_unique(id: String, ilvl: int) -> Dictionary:
 	return {}
 
 
+## Every piece of a set (a quest reward).
+static func set_pieces(sid: String) -> Array:
+	var out: Array = []
+	for pc: Dictionary in GameData.items["sets"][sid]["pieces"]:
+		out.append(_piece(sid, pc))
+	return out
+
+
 static func _set_piece() -> Dictionary:
 	var sets: Dictionary = GameData.items["sets"]
 	var sid: String = String(sets.keys()[rng.randi_range(0, sets.size() - 1)])
 	var pieces: Array = sets[sid]["pieces"]
-	var pc: Dictionary = pieces[rng.randi_range(0, pieces.size() - 1)]
+	return _piece(sid, pieces[rng.randi_range(0, pieces.size() - 1)])
+
+
+static func _piece(sid: String, pc: Dictionary) -> Dictionary:
+	var sets: Dictionary = GameData.items["sets"]
 	var it: Dictionary = _from_base(base_by_id(String(pc["base"])), 1, "set")
 	it["name"] = pc["name"]
 	it["set"] = sid

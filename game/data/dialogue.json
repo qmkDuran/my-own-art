@@ -1,0 +1,72 @@
+{
+ "_doc": "Who says what, when. For each person, the first topic whose `when` holds and that has not been said (if `once`) plays; otherwise `idle`. Conditions: quest_step [quest, step], quest_active, quest_done, flag, not_flag. Effects (`do`): start_quest, flag, service (opens a service after the talk: stash, travel, respec, bestiary). Talking always tells the campaign 'talk <person>'. Lines: one or two short sentences.",
+ "ysolde": {"name": "Captain Ysolde Marr", "topics": [
+   {"when": {"quest_done": "seven_heartbeats"}, "once": true, "lines": [
+     ["Ysolde", "You brought her back. I owe you a drink and an apology."],
+     ["Ysolde", "Mostly the drink. The gate opens for you now. Don't make me regret it."]]},
+   {"when": {}, "once": true, "lines": [
+     ["Ysolde", "Seven heartbeats of dark and the Glasswood came knocking. They took Nim Saltry off the wall-walk."],
+     ["Ysolde", "I'd send soldiers. Soldiers don't come back from the Dusk. Lamplighters sometimes did."],
+     ["Ysolde", "Light the old waylamps as you go. Each one is a place the dark has to remember to fear."],
+     ["Ysolde", "And if you meet something that talks... don't let it finish its sentences."]]}],
+  "idle": ["Ysolde", "Gate's behind me. Tallow's behind the gate. The rest is yours."]},
+ "hask": {"name": "Hask", "topics": [
+   {"when": {}, "once": true, "lines": [
+     ["Hask", "Easy with the light, Lamplighter. I'm only half of what you'd be hitting."],
+     ["Hask", "The girl? The Glazier took her to the stone ring. It collects things that shine."],
+     ["Hask", "Ask yourself why the Dusk wanted a child who maps the wall. Then don't ask me."],
+     ["Hask", "Your predecessor asked better questions. Look where it got him. Cairn by the deer trail."]]}],
+  "idle": ["Hask", "Still here. Still half. Go on."]},
+ "nim": {"name": "Nim Saltry", "topics": [
+   {"when": {"quest_done": "seven_heartbeats"}, "lines": [
+     ["Nim", "I drew everything I saw out there. Want to go somewhere? I'll show you the way."]], "do": {"service": "travel"}},
+   {"when": {"quest_step": ["seven_heartbeats", 2]}, "lines": [
+     ["Nim", "You took your time. I counted. Four thousand one hundred heartbeats."],
+     ["Nim", "It kept asking where the Lantern's heart is. I lied. I'm very good at lying."],
+     ["Nim", "Lamplighter... it wasn't angry. It was scared. Of you. Of that lantern."],
+     ["Nim", "Walk me home? The gate's back the way you came."]]}],
+  "idle": ["Nim", "Home's that way. I know a shortcut. It's mostly screaming."]},
+ "ottilie": {"name": "Mother Ottilie Brask", "topics": [
+   {"when": {"quest_step": ["seven_heartbeats", 4]}, "lines": [
+     ["Ottilie", "Nim's home. Good. Sit. No — stand, you'll fall asleep."],
+     ["Ottilie", "It asked her where the Lantern's heart is? Then it knows the Lantern has one."],
+     ["Ottilie", "The road lamps on the Ember Road went out the same night. Something is eating light out there."],
+     ["Ottilie", "Relight the road. Follow the moths. And don't look into anything that glows back."]],
+    "do": {"start_quest": "ember_road"}},
+   {"when": {"quest_step": ["moth_hollow", 2]}, "lines": [
+     ["Ottilie", "The Matron's dead? Then why are your hands shaking? ...Mine too."],
+     ["Ottilie", "Teague used to come back like that. Before he stopped coming back."],
+     ["Ottilie", "Rest. Tomorrow I'll tell you what the Lantern burns. Maybe."]], "do": {"flag": "act1_done"}},
+   {"when": {"flag": "read_teague_cairn", "not_flag": "asked_lantern"}, "lines": [
+     ["Lamplighter", "Teague's note says to ask you what the Great Lantern burns."],
+     ["Ottilie", "Oil. Wick. Stubbornness. Ask me again when you've earned the answer."]], "do": {"flag": "asked_lantern"}},
+   {"when": {"not_flag": "nim_home"}, "once": true, "lines": [
+     ["Ottilie", "You're back without her. Then go out again. The Lantern can wait. Nim can't."]]},
+   {"when": {}, "lines": [["Ottilie", "Need your points straightened out? I keep the order's ledger."]], "do": {"service": "respec"}}],
+  "idle": ["Ottilie", "Mind the Lantern. It's older than both of us and twice as grumpy."]},
+ "fenn": {"name": "Auntie Fenn Caddock", "topics": [
+   {"when": {}, "once": true, "lines": [
+     ["Fenn", "WHAT? Speak up, I've been hitting things since dawn."],
+     ["Fenn", "You want your spare gear kept? It goes in my lockers. I guard them with this hammer."],
+     ["Fenn", "Bring me embers from the Dusk sometime. I'll make you something that doesn't break."]], "do": {"service": "stash"}}],
+  "idle": ["Fenn", "LOCKERS. BEHIND ME. NO, THE OTHER BEHIND."], "service": "stash"},
+ "lio": {"name": "Lio Quill", "topics": [
+   {"when": {"quest_step": ["teagues_trail", 3]}, "lines": [
+     ["Lio", "Three notes in the same hand. 'It is remembering.' Remembering what? It's darkness."],
+     ["Lio", "Unless it isn't. Unless it's a dream, and dreams are made of memories."],
+     ["Lio", "Take this. Teague's old watch-coat. It was in a box marked NINTH."]]},
+   {"when": {}, "once": true, "lines": [
+     ["Lio", "Careful — that jar is a Tuesday. Don't open it."],
+     ["Lio", "I study what the Dusk rewrites. Kill something new out there and I'll write it down."],
+     ["Lio", "And Teague left notes behind him, everywhere he went. Bring me every one."]], "do": {"start_quest": "teagues_trail"}}],
+  "idle": ["Lio", "The bestiary's on the shelf. Mind the jar."], "service": "bestiary"},
+ "mara": {"name": "Mara Brennick", "topics": [
+   {"when": {"quest_step": ["tea_on_tuesdays", 1]}, "lines": [
+     ["Mara", "Glass. All of him?"],
+     ["Mara", "...Then he's still fishing. He'd like that."],
+     ["Mara", "Take the lantern Ottilie gave him. He won't need it now."]]},
+   {"when": {}, "once": true, "lines": [
+     ["Mara", "My da went fishing in the Glasswood the night the glass came. He hasn't come home."],
+     ["Mara", "If you see him... tell him the tea's getting cold."]], "do": {"start_quest": "tea_on_tuesdays"}}],
+  "idle": ["Mara", "Tuesdays I still make two cups."]}
+}

@@ -8,6 +8,9 @@ const SHIFTS: Array[Vector2] = [Vector2.ZERO, Vector2(32, 0), Vector2(-32, 0), V
 	Vector2(48, 32), Vector2(-48, 32), Vector2(48, -32), Vector2(-48, -32), Vector2(64, 0), Vector2(-64, 0)]
 
 
+const GATE_STEP: float = 6.0
+
+
 func run() -> void:
 	_setpieces()
 	_rebuild_blocked()
@@ -35,6 +38,9 @@ func _try_group(ci: int, center: Vector2, spec: Array) -> Array[Dictionary]:
 	for sp: Dictionary in spec:
 		if sp["kind"] == "pond":
 			continue
+		if sp.get("gate", false):
+			out.append(_at_gate(sp, ci))
+			continue
 		var pos: Vector2 = (center + _vec(sp["at"])).round()
 		var kind: String = String(sp["kind"])
 		var prop: Dictionary = sp.duplicate()
@@ -48,9 +54,17 @@ func _try_group(ci: int, center: Vector2, spec: Array) -> Array[Dictionary]:
 	return out
 
 
+## Something standing at the city gate itself (the way back into Tallow): in front of the gate, on the cleared
+## strip below the wall, not blocking anything.
+func _at_gate(sp: Dictionary, ci: int) -> Dictionary:
+	var prop: Dictionary = sp.duplicate()
+	prop["pos"] = Vector2((z.gate_col + 2) * z.cell, z.wall_rows * z.cell + GATE_STEP)
+	prop["foot"] = Rect2(prop["pos"], Vector2.ZERO)
+	prop["clearing"] = ci
+	return prop
+
+
 ## Ground under a prop must be open moss or stone of a clearing (never a path, bridge or water), clear of other
-
-
 ## props; shore props (reeds, the fisher) must also stand within two cells of water.
 
 

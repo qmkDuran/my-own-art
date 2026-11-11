@@ -18,6 +18,13 @@ func use(g: Game) -> void:
 		g.hud.caption("The glass won't break while the Glazier stands.")
 
 
+## Already broken (a later visit): no burst, no sound.
+func open_quietly() -> void:
+	broken = true
+	title = ""
+	PropSprite.set_frame(sprite, 1)
+
+
 func shatter(g: Game) -> void:
 	if broken:
 		return

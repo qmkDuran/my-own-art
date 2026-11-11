@@ -1,21 +1,18 @@
 class_name Game
 extends Node2D
-## One play session in a zone: builds the world from the generated layout, wires the systems together, and keeps
-## the story beats of the Glasswood slice (ambush at the gate, waylamps, the Glazier, Nim). Input is turned into
-## commands by GameInput; the HUD and panels live in GameUi. `Game.current` is the one way systems reach the
-## session (documented service locator; set in _ready, cleared on exit).
+## One zone being played: builds it from its generated layout, puts the Lamplighter where he arrives (an exit he
+## came through, a saved spot, or the zone's start), restores the character and the zone's state from Session,
+## and wires the systems. Story moments are ZoneEvents; input is GameInput; screens are GameUi. `Game.current` is
+## the one way systems reach the zone being played (documented service locator; set in _ready, cleared on exit).
 
 static var current: Game
 
-const ZONE_SEED: int = 1000
 const SAVE_EVERY: float = 10.0
-const BOSS_TRIGGER: float = 300.0
-const AMBUSH_DELAY: float = 2.5
-const DARK_TIP_LIGHT: float = 40.0
 const MOTES: int = 60
 const MOTES_EXTENTS := Vector2(520, 300)
 const ROOF_ROOM: float = 120.0
 
+var zone_id: String
 var layout: ZoneLayout
 var nav: Nav
 var world: Node2D
@@ -26,9 +23,11 @@ var camera: CameraRig
 var ui: GameUi
 var hud: Hud
 var input: GameInput
+var events: ZoneEvents
 var lamps: Array[Waylamp] = []
+var exits: Array[ZoneExit] = []
 var cocoon: Cocoon
-var flags: Dictionary = {}
+var flags: Dictionary = {}               ## this zone's own flags (boss, boss_down)
 var _dirty: bool = false
 var _save_t: float = 0.0
 
@@ -37,29 +36,32 @@ func _ready() -> void:
 	current = self
 	GameData.ensure()
 	InputSetup.ensure()
+	if Session.zone_id == "":
+		Session.reset()
+	zone_id = Session.zone_id
+	GameData.use_zone(zone_id)
 	FloatText.enabled = bool(GameData.setting("damage_numbers", true))
-	layout = ZoneGen.make(GameData.biome, ZONE_SEED)
+	layout = ZoneGen.make(GameData.biome, int(GameData.zone(zone_id)["seed"]))
 	nav = Nav.new(layout)
 	Overlay.create(self)
 	_build_world()
-	ui = GameUi.new()
-	add_child(ui)
-	ui.setup(self)
-	hud = ui.hud
-	input = GameInput.new()
-	add_child(input)
-	input.setup(self)
-	_story_start()
-	if SaveGame.enabled() and SaveGame.read(self):
-		hud.notice("Welcome back, Lamplighter")
-	player.prog.changed.connect(mark_dirty)
-	player.inv.changed.connect(mark_dirty)
+	_build_ui()
+	_restore()
+	events = ZoneEvents.new()
+	add_child(events)
+	events.setup(self)
+	Session.campaign.notify("enter_zone", zone_id)
+	Session.campaign.quest_done.connect(_on_quest_done)
+	Session.campaign.changed.connect(mark_dirty)
+	Audio.play_music(String(GameData.zone(zone_id)["music"]))
 	if OS.get_cmdline_user_args().has("--demo"):
 		add_child(DemoBot.new())
 
 
 func _exit_tree() -> void:
 	if current == self:
+		Session.campaign.quest_done.disconnect(_on_quest_done)
+		Session.campaign.changed.disconnect(mark_dirty)
 		if SaveGame.enabled():
 			SaveGame.write(self)
 		current = null
@@ -85,32 +87,77 @@ func _build_world() -> void:
 	camera = CameraRig.new()
 	add_child(camera)
 	camera.setup(player, layout.size_px(), -ROOF_ROOM)
-	Fx.motes(camera, MOTES_EXTENTS, MOTES, Pal.c("glint", 0.8))
+	Fx.motes(camera, MOTES_EXTENTS, MOTES, Pal.c(String(GameData.biome["ambient"].get("motes_color", "glint")), 0.8))
 	spawner = Spawner.new()
 	add_child(spawner)
 	spawner.setup(world, layout, player)
-	spawner.boss_died.connect(_on_boss_died)
 	player.died_and_rose.connect(camera.reset_smoothing)
 	_interactables()
 	add_child(LabelStack.new())
 
 
+func _build_ui() -> void:
+	ui = GameUi.new()
+	add_child(ui)
+	ui.setup(self)
+	hud = ui.hud
+	input = GameInput.new()
+	add_child(input)
+	input.setup(self)
+
+
 func _interactables() -> void:
 	var by_kind: Dictionary = {"chest": Chest, "waylamp": Waylamp, "npc": Npc, "cocoon": Cocoon, "note": LoreObject,
-		"cairn": LoreObject, "statue_fisher": LoreObject, "signpost": LoreObject}
+		"cairn": LoreObject, "statue_fisher": LoreObject, "signpost": LoreObject, "exit": ZoneExit}
 	for p: Dictionary in layout.props:
-		if not by_kind.has(p["kind"]):
+		if not by_kind.has(p["kind"]) or not Dialogue.holds(p.get("when", {}), Session.campaign):
 			continue
 		var it: Interactable = (by_kind[p["kind"]] as GDScript).new().setup(p)
 		world.add_child(it)
 		if it is Waylamp:
 			lamps.append(it)
-			(it as Waylamp).lit_up.connect(func(_l: Waylamp) -> void: mark_dirty())
+		elif it is ZoneExit:
+			exits.append(it)
 		elif it is Cocoon:
 			cocoon = it
 
 
-## 0 at the gate, 1 at the farthest point (drives enemy and loot level).
+## The character and this zone's state come back from Session; the Lamplighter stands where he arrives.
+func _restore() -> void:
+	if not Session.character.is_empty():
+		SaveGame.apply_character(self, Session.character)
+	SaveGame.apply_zone(self, Session.zone_state(zone_id))
+	player.global_position = _arrival()
+	player.respawn_at = _respawn_point()
+	camera.reset_smoothing()
+
+
+func _arrival() -> Vector2:
+	if Session.arrive_at_lamp:
+		for l: Waylamp in lamps:
+			if l.lit:
+				return l.stand_point()
+	for e: ZoneExit in exits:
+		if e.to == Session.arrive_from:
+			return e.stand_point()
+	if Session.position != Vector2.INF and layout.point_free(Session.position, player.radius):
+		return Session.position
+	return layout.start
+
+
+## Where you wake if you fall: the lit waylamp nearest to where you arrived (else the arrival itself).
+func _respawn_point() -> Vector2:
+	var best: Vector2 = player.global_position
+	var best_d: float = INF
+	for l: Waylamp in lamps:
+		var d: float = l.global_position.distance_to(player.global_position)
+		if l.lit and d < best_d:
+			best_d = d
+			best = l.stand_point()
+	return best
+
+
+## 0 at the zone's start, 1 at the farthest point (drives enemy and loot level).
 func progress_at(p: Vector2) -> float:
 	return clampf(p.distance_to(layout.start) / layout.size_px().length() * 1.6, 0.0, 1.0)
 
@@ -119,20 +166,12 @@ func mark_dirty() -> void:
 	_dirty = true
 
 
-# ------------------------------------------------------------------ story beats
-func _story_start() -> void:
-	Audio.play_music("explore")
-	var C: Dictionary = GameData.story["captions"]
-	hud.caption(String(C["arrive"]))
-	if SaveGame.enabled() and SaveGame.exists():
-		return
-	get_tree().create_timer(AMBUSH_DELAY, false).timeout.connect(func() -> void:
-		spawner.opening_ambush()
-		hud.caption(String(C["ambush"])))
+func start_boss() -> void:
+	events.start_boss()
 
 
 func _process(delta: float) -> void:
-	_beats()
+	_pay_rewards()
 	_save_t -= delta
 	if _dirty and _save_t <= 0.0 and SaveGame.enabled():
 		_save_t = SAVE_EVERY
@@ -140,40 +179,27 @@ func _process(delta: float) -> void:
 		SaveGame.write(self)
 
 
-func _beats() -> void:
-	var C: Dictionary = GameData.story["captions"]
-	if not flags.has("dark_tip") and player.light.value < DARK_TIP_LIGHT:
-		flags["dark_tip"] = true
-		hud.caption(String(C["first_dark"]))
-	if not flags.has("level_tip") and player.prog.level >= 2:
-		flags["level_tip"] = true
-		hud.caption(String(C["first_level"]))
-	if not flags.has("boss") and player.global_position.distance_to(layout.boss["pos"]) < BOSS_TRIGGER:
-		start_boss()
+## Quest rewards: experience now, items at your feet.
+func _pay_rewards() -> void:
+	var c: Campaign = Session.campaign
+	while not c.rewards.is_empty():
+		var r: Dictionary = c.rewards.pop_front()
+		player.prog.add_xp(float(r.get("xp", 0.0)))
+		var items: Array = []
+		if r.has("unique"):
+			items.append(LootGen.make_unique(String(r["unique"]), player.prog.level))
+		if r.has("set"):
+			items.append_array(LootGen.set_pieces(String(r["set"])))
+		var spots: Array[Vector2] = LootDrop.free_spots(layout, player.global_position, items.size(), player.global_position)
+		for i: int in mini(items.size(), spots.size()):
+			GroundItem.spawn(world, spots[i], items[i])
 
 
-func start_boss() -> void:
-	if flags.has("boss"):
-		return
-	flags["boss"] = true
-	var b: Enemy = spawner.spawn_boss()
-	b.wake()
-	hud.track_boss(b)
-	hud.caption(String(GameData.story["captions"]["boss"]))
-	Audio.play_music("boss", 1.0)
-	Audio.sfx("boss_wind", -2.0, 0.6)
-
-
-func _on_boss_died(_e: Enemy) -> void:
-	flags["boss_down"] = true
-	Audio.play_music("explore", 3.0)
-	if cocoon != null:
-		cocoon.shatter(self)
-		var nim := Npc.new()
-		nim.setup({"kind": "npc", "npc": "nim", "pos": cocoon.global_position + Vector2(0, 24), "foot": Rect2()})
-		world.add_child(nim)
-		flags["nim_free"] = true
-	mark_dirty()
+func _on_quest_done(id: String) -> void:
+	hud.notice("Quest complete: " + String(GameData.quests[id]["title"]))
+	Audio.sfx("level_up", -6.0, 1.2)
+	if id == "moth_hollow":
+		hud.messages.show_end_card()
 
 
 func lit_lamps() -> int:

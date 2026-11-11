@@ -23,4 +23,7 @@ func use(g: Game) -> void:
 		g.hud.caption(String(GameData.story["signs"][prop["sign"]]))
 	if not read:
 		read = true
+		if note_id != "":
+			Session.campaign.set_flag("read_" + note_id)
+			Session.campaign.notify("read", note_id)
 		g.mark_dirty()

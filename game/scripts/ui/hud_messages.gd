@@ -18,6 +18,7 @@ var _notices: Array = []          ## [text, time left]
 var _caption: String = ""
 var _caption_t: float = 0.0
 var _dialogue: Array = []
+var _on_done: Callable
 var _note_title: String = ""
 var _note: Array = []
 var end_card: bool = false
@@ -38,8 +39,9 @@ func caption(s: String) -> void:
 	_caption_t = CAPTION_TIME
 
 
-func dialogue(lines: Array) -> void:
+func dialogue(lines: Array, on_done: Callable = Callable()) -> void:
 	_dialogue = lines.duplicate()
+	_on_done = on_done
 	Audio.sfx("ui_open", -6.0)
 
 
@@ -62,8 +64,8 @@ func advance() -> bool:
 	if not _dialogue.is_empty():
 		_dialogue.pop_front()
 		Audio.sfx("ui_click", -8.0)
-		if _dialogue.is_empty():
-			hud.g.ui.dialogue_closed()
+		if _dialogue.is_empty() and _on_done.is_valid():
+			_on_done.call()
 		return true
 	if not _note.is_empty():
 		_note = []
@@ -151,10 +153,9 @@ func _draw_note(vs: Vector2) -> void:
 func _draw_end(vs: Vector2) -> void:
 	draw_rect(Rect2(Vector2.ZERO, vs), Color(0, 0, 0, 0.7))
 	var p: Player = hud.g.player
-	var lines: Array[String] = [String(GameData.story["captions"]["slice_end"]), "",
-		"Level %d   Waylamps %d / %d   Mastery: %s" % [p.prog.level, hud.g.lit_lamps(), hud.g.lamps.size(),
-			p.prog.mastery.capitalize() if p.prog.mastery != "" else "none yet"],
-		"Thank you for playing the test. Click to keep exploring."]
+	var lines: Array[String] = [String(GameData.story["captions"]["act_end"]), "",
+		"Level %d   Mastery: %s" % [p.prog.level, p.prog.mastery.capitalize() if p.prog.mastery != "" else "none yet"],
+		"Thank you for playing. Click to keep exploring."]
 	UiDraw.text(self, Vector2(0, vs.y * 0.38), "LANTERNFALL", UiDraw.GOLD, UiDraw.TITLE, HORIZONTAL_ALIGNMENT_CENTER, vs.x)
 	for i: int in lines.size():
 		UiDraw.text(self, Vector2(0, vs.y * 0.38 + 28.0 + i * 14.0), lines[i], UiDraw.TEXT, UiDraw.BODY, HORIZONTAL_ALIGNMENT_CENTER, vs.x)

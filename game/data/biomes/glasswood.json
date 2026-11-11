@@ -1,0 +1,578 @@
+{
+ "_doc": "Biome rules for the Glasswood (Act 1). The generator lays the zone from these each run; set-pieces are props placed relative to their clearing's centre (px), each with a reason to be there. events: the zone's story moments (ZoneEvents). Exits: set-pieces of kind 'exit' (to: zone).",
+ "name": "The Glasswood",
+ "act": 1,
+ "cols": 150,
+ "rows": 96,
+ "cell": 32,
+ "border": 2,
+ "wall": {
+  "cols": 44,
+  "rows": 4,
+  "gate_col": 14
+ },
+ "stream": {
+  "x_frac": 0.56,
+  "width": 3,
+  "amp": [
+   5,
+   9
+  ],
+  "freq": [
+   0.035,
+   0.06
+  ]
+ },
+ "path": {
+  "half_width": 0.9,
+  "verge": 2.6,
+  "jitter": 0.22
+ },
+ "clearing_spacing": 21,
+ "clearings": [
+  {
+   "role": "start",
+   "r": [
+    9,
+    7
+   ],
+   "at": [
+    16,
+    10
+   ]
+  },
+  {
+   "role": "circle",
+   "r": [
+    10,
+    9
+   ],
+   "at_frac": [
+    0.86,
+    0.78
+   ]
+  },
+  {
+   "role": "exit_east",
+   "r": [
+    6,
+    5
+   ],
+   "at_frac": [
+    0.94,
+    0.22
+   ]
+  },
+  {
+   "role": "hut",
+   "r": [
+    9,
+    7
+   ]
+  },
+  {
+   "role": "pond",
+   "r": [
+    10,
+    8
+   ]
+  },
+  {
+   "role": "cairn",
+   "r": [
+    6,
+    5
+   ]
+  },
+  {
+   "role": "tower",
+   "r": [
+    9,
+    8
+   ]
+  },
+  {
+   "role": "camp",
+   "r": [
+    8,
+    6
+   ]
+  },
+  {
+   "role": "grove",
+   "r": [
+    8,
+    7
+   ]
+  },
+  {
+   "role": "grove",
+   "r": [
+    7,
+    6
+   ]
+  },
+  {
+   "role": "glade",
+   "r": [
+    7,
+    6
+   ]
+  },
+  {
+   "role": "glade",
+   "r": [
+    8,
+    6
+   ]
+  },
+  {
+   "role": "secret",
+   "r": [
+    4,
+    4
+   ],
+   "secret": true
+  }
+ ],
+ "extra_links": 2,
+ "setpieces": {
+  "start": [
+   {
+    "kind": "waylamp",
+    "at": [
+     -70,
+     -40
+    ],
+    "lamp": "gate",
+    "lit": true
+   },
+   {
+    "kind": "signpost",
+    "at": [
+     70,
+     30
+    ],
+    "sign": "road"
+   },
+   {
+    "kind": "npc",
+    "npc": "ysolde",
+    "at": [
+     -20,
+     -60
+    ]
+   },
+   {
+    "kind": "cart",
+    "at": [
+     -120,
+     50
+    ]
+   },
+   {
+    "kind": "exit",
+    "to": "tallow",
+    "gate": true
+   }
+  ],
+  "hut": [
+   {
+    "kind": "hut",
+    "at": [
+     0,
+     -20
+    ]
+   },
+   {
+    "kind": "chest",
+    "at": [
+     66,
+     -14
+    ],
+    "chest": "hut"
+   },
+   {
+    "kind": "woodpile",
+    "at": [
+     -72,
+     -24
+    ]
+   },
+   {
+    "kind": "stump",
+    "at": [
+     -40,
+     34
+    ]
+   }
+  ],
+  "pond": [
+   {
+    "kind": "pond",
+    "at": [
+     0,
+     -100
+    ],
+    "r": [
+     5,
+     2.2
+    ]
+   },
+   {
+    "kind": "statue_fisher",
+    "at": [
+     30,
+     12
+    ],
+    "note": "brennick"
+   },
+   {
+    "kind": "reeds",
+    "at": [
+     -70,
+     -8
+    ]
+   },
+   {
+    "kind": "reeds",
+    "at": [
+     86,
+     -10
+    ]
+   },
+   {
+    "kind": "npc",
+    "npc": "hask",
+    "at": [
+     -60,
+     50
+    ]
+   }
+  ],
+  "cairn": [
+   {
+    "kind": "cairn",
+    "at": [
+     0,
+     -10
+    ],
+    "note": "teague_cairn"
+   },
+   {
+    "kind": "crystal",
+    "at": [
+     -46,
+     -28
+    ]
+   },
+   {
+    "kind": "crystal",
+    "at": [
+     50,
+     6
+    ]
+   }
+  ],
+  "tower": [
+   {
+    "kind": "tower",
+    "at": [
+     0,
+     -30
+    ],
+    "lamp_fixed": true
+   },
+   {
+    "kind": "chest",
+    "at": [
+     56,
+     -16
+    ],
+    "chest": "tower"
+   },
+   {
+    "kind": "waylamp",
+    "at": [
+     -80,
+     40
+    ],
+    "lamp": "tower",
+    "lit": false
+   }
+  ],
+  "camp": [
+   {
+    "kind": "campfire",
+    "at": [
+     0,
+     0
+    ]
+   },
+   {
+    "kind": "bedroll",
+    "at": [
+     -44,
+     -26
+    ]
+   },
+   {
+    "kind": "bedroll",
+    "at": [
+     40,
+     -30
+    ]
+   },
+   {
+    "kind": "cart",
+    "at": [
+     -60,
+     50
+    ]
+   },
+   {
+    "kind": "chest",
+    "at": [
+     6,
+     50
+    ],
+    "chest": "camp"
+   },
+   {
+    "kind": "waylamp",
+    "at": [
+     80,
+     34
+    ],
+    "lamp": "camp",
+    "lit": false
+   }
+  ],
+  "grove": [
+   {
+    "kind": "crystal_big",
+    "at": [
+     -40,
+     -20
+    ]
+   },
+   {
+    "kind": "crystal",
+    "at": [
+     36,
+     -34
+    ]
+   },
+   {
+    "kind": "statue_deer",
+    "at": [
+     30,
+     30
+    ]
+   }
+  ],
+  "glade": [
+   {
+    "kind": "rock_b",
+    "at": [
+     -50,
+     -30
+    ]
+   },
+   {
+    "kind": "crystal",
+    "at": [
+     50,
+     20
+    ]
+   }
+  ],
+  "secret": [
+   {
+    "kind": "chest",
+    "at": [
+     0,
+     -16
+    ],
+    "chest": "secret"
+   },
+   {
+    "kind": "bedroll",
+    "at": [
+     -36,
+     10
+    ]
+   },
+   {
+    "kind": "note",
+    "at": [
+     30,
+     12
+    ],
+    "note": "order_rules"
+   }
+  ],
+  "circle": [
+   {
+    "kind": "stone_ring",
+    "r": 150,
+    "count": 8
+   },
+   {
+    "kind": "cocoon",
+    "at": [
+     0,
+     0
+    ]
+   },
+   {
+    "kind": "boss",
+    "enemy": "glazier",
+    "at": [
+     0,
+     -70
+    ]
+   }
+  ],
+  "exit_east": [
+   {
+    "kind": "exit",
+    "to": "ember_road",
+    "sprite": "road_gate",
+    "at": [
+     44,
+     -10
+    ]
+   },
+   {
+    "kind": "signpost",
+    "at": [
+     -40,
+     34
+    ],
+    "sign": "east"
+   }
+  ]
+ },
+ "trees": {
+  "edge_spacing": 38,
+  "deep_spacing": 70,
+  "edge_depth": 3,
+  "kinds": {
+   "tree_a": 34,
+   "tree_b": 22,
+   "tree_c": 32,
+   "tree_dead": 12
+  }
+ },
+ "edge_props": {
+  "crystal": 26,
+  "rock_a": 18,
+  "crystal_big": 6
+ },
+ "packs": {
+  "count": 34,
+  "spacing": 11,
+  "safe_radius": 16,
+  "elites": 4,
+  "table": [
+   {
+    "from": 0.0,
+    "kinds": {
+     "gloam": 1.0
+    },
+    "size": [
+     4,
+     6
+    ]
+   },
+   {
+    "from": 0.25,
+    "kinds": {
+     "gloam": 0.6,
+     "hound": 0.4
+    },
+    "size": [
+     3,
+     5
+    ]
+   },
+   {
+    "from": 0.45,
+    "kinds": {
+     "gloam": 0.4,
+     "hound": 0.3,
+     "moth": 0.3
+    },
+    "size": [
+     3,
+     6
+    ]
+   },
+   {
+    "from": 0.7,
+    "kinds": {
+     "gloam": 0.3,
+     "hound": 0.35,
+     "moth": 0.35
+    },
+    "size": [
+     4,
+     7
+    ]
+   }
+  ]
+ },
+ "relight": {
+  "waves": 2,
+  "wave_size": 6,
+  "duration": 14.0,
+  "kinds": {
+   "gloam": 0.7,
+   "hound": 0.3
+  }
+ },
+ "ambient": {
+  "darkness": [
+   0.075,
+   0.08,
+   0.13
+  ],
+  "motes": 70
+ },
+ "events": {
+  "caption": "The Glasswood. It was a forest, once.",
+  "ambush": {
+   "kind": "gloam",
+   "count": 5,
+   "offset": [
+    180,
+    60
+   ]
+  },
+  "boss": {
+   "kind": "glazier",
+   "trigger": 300,
+   "music": "boss",
+   "caption": "The stone ring. Something tall stands among the stones, and it is holding a child made of glass.",
+   "frees": {
+    "npc": "nim",
+    "quest": [
+     "seven_heartbeats",
+     2
+    ]
+   }
+  }
+ },
+ "required": [
+  "start",
+  "circle",
+  "exit_east",
+  "hut",
+  "pond",
+  "cairn",
+  "tower",
+  "camp",
+  "secret"
+ ]
+}
