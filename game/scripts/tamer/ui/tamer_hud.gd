@@ -38,6 +38,7 @@ var card := CreatureCard.new()
 var strip := TeamStrip.new()
 var camp_panel := CampPanel.new()
 var info_panel := CreatureInfoPanel.new()
+var sanctuary := SanctuaryPanel.new()
 var tracker_hidden: bool = false
 var forced_tip: int = -1                ## tests and stills: show this card slot's tooltip as if hovered
 var _canvas := Control.new()
@@ -62,6 +63,8 @@ func setup(game: TamerGame) -> void:
 	add_child(camp_panel)
 	info_panel.setup(g)
 	add_child(info_panel)
+	sanctuary.setup(g)
+	add_child(sanctuary)
 	_vignette.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_vignette.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_vignette.texture = _vignette_tex()
@@ -129,7 +132,7 @@ func _gauge(at: Vector2) -> void:
 
 
 func panel_open() -> bool:
-	return camp_panel.visible or info_panel.visible
+	return camp_panel.visible or info_panel.visible or sanctuary.visible
 
 
 ## Hovering a move on the card shows what it does; hovering the team strip says it can be clicked.
@@ -169,6 +172,7 @@ func _process(delta: float) -> void:
 	card.position = Vector2(roundf((vp.x - card.size.x) * 0.5), vp.y - MARGIN - card.size.y - GAUGE_ROOM)
 	strip.position = Vector2(vp.x - MARGIN - strip.size.x, vp.y - MARGIN - strip.size.y)
 	camp_panel.position = ((vp - camp_panel.size) * 0.5).round()
+	sanctuary.position = ((vp - sanctuary.size) * 0.5).round()
 	info_panel.position = Vector2(roundf((vp.x - info_panel.size.x) * 0.5), MARGIN * 3.0)   # clear of the cards below
 	_tip.queue_redraw()
 	for n: Array in _notices:

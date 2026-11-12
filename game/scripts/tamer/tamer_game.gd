@@ -31,7 +31,7 @@ var hud: TamerHud
 var input: TamerInput
 var spawner: TamerSpawner
 var camp: Camp
-var befriend: Befriending
+var lens: SyncLens
 var meeting: StarterMeeting
 var aim: AimPreview
 var slow: SlowTime
@@ -113,9 +113,9 @@ func _build_systems() -> void:
 	slow = SlowTime.new()
 	add_child(slow)
 	slow.setup(self)
-	befriend = Befriending.new()
-	fx_layer.add_child(befriend)
-	befriend.setup(self)
+	lens = SyncLens.new()
+	fx_layer.add_child(lens)
+	lens.setup(self)
 	input = TamerInput.new()
 	add_child(input)
 	input.setup(self)
@@ -123,7 +123,7 @@ func _build_systems() -> void:
 
 func _wire() -> void:
 	spawner.defeated.connect(_on_defeated)
-	befriend.befriended.connect(func(_r: CreatureRecord) -> void: guide.done("befriend"))
+	lens.synced.connect(func(_r: CreatureRecord) -> void: guide.done("befriend"))
 	camp.rested.connect(func() -> void:
 		guide.done("camp")
 		if not team.members.is_empty():

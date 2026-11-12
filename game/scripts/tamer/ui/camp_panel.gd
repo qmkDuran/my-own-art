@@ -6,12 +6,12 @@ extends Control
 
 const W: float = 470.0
 const HEAD: float = 30.0
-const ROW: float = 84.0
+const ROW: float = 68.0
 const PORTRAIT: float = 46.0
 const PAD: float = 8.0
 const BTN := Vector2(46, 18)
 const STAT_X: float = 196.0
-const STAT_LINE: float = 22.0
+const STAT_LINE: float = 19.0
 const BAR_W: float = 120.0
 
 var g: TamerGame
@@ -50,15 +50,16 @@ func _rebuild() -> void:
 	for i: int in g.team.members.size():
 		_row_buttons(g.team.members[i], Vector2(PAD, HEAD + PAD + i * ROW))
 	_button("Close (C)", Vector2(W - 80.0 - PAD, size.y - 24.0), Vector2(80, 18), close)
+	_button("Sanctuary", Vector2(W - 170.0 - PAD, size.y - 24.0), Vector2(84, 18), func() -> void: g.hud.sanctuary.open())
 	queue_redraw()
 
 
 func _row_buttons(rec: CreatureRecord, at: Vector2) -> void:
-	_button("Info", at + Vector2(PORTRAIT + 8.0 + 2.0 * (BTN.x + 6.0), 52.0), BTN, func() -> void: g.hud.info_panel.open(rec))
+	_button("Info", at + Vector2(PORTRAIT + 8.0 + 2.0 * (BTN.x + 6.0), 46.0), BTN, func() -> void: g.hud.info_panel.open(rec))
 	var care: Array[String] = ["pet", "feed"]
 	for k: int in care.size():
 		var kind: String = care[k]
-		var b: Button = _button(kind.capitalize(), at + Vector2(PORTRAIT + 8.0 + k * (BTN.x + 6.0), 52.0), BTN, func() -> void:
+		var b: Button = _button(kind.capitalize(), at + Vector2(PORTRAIT + 8.0 + k * (BTN.x + 6.0), 46.0), BTN, func() -> void:
 			if g.camp.care(rec, kind):
 				queue_redraw()
 				_rebuild())
@@ -105,7 +106,7 @@ func _row(rec: CreatureRecord, at: Vector2) -> void:
 	var bar := Rect2(Vector2(x, at.y + 28.0), Vector2(BAR_W, 4.0))
 	draw_rect(bar.grow(1.0), UiDraw.INK)
 	draw_rect(Rect2(bar.position, Vector2(BAR_W * rec.bond_frac(), 4.0)), Pal.c("rose"))
-	UiDraw.text(self, Vector2(x, at.y + 44.0), "Bond move unlocked (T)" if rec.bond_move_ready() else "Bond move at %d" % int(TamerData.rule("bond.unlock")),
+	UiDraw.text(self, Vector2(x, at.y + 40.0), "Bond move unlocked (T)" if rec.bond_move_ready() else "Bond move at %d" % int(TamerData.rule("bond.unlock")),
 		Pal.c("sun") if rec.bond_move_ready() else UiDraw.DIM, UiDraw.SMALL)
 	for k: int in 3:
 		_stat(rec, ["life", "power", "speed"][k], Vector2(at.x + STAT_X, at.y + k * STAT_LINE + 13.0))

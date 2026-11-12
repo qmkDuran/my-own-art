@@ -2,7 +2,7 @@ class_name PartnerBrain
 extends CreatureBrain
 ## Your creature on its own: it walks at your side (a little behind, never in your way: you do not collide), fights
 ## the foe you marked (in battle you control it yourself: BattleMode), or else the nearest wild creature that is after you or close by, and comes back if the fight
-## pulls it too far. It leaves dazed creatures alone (you befriend those) unless you point at one.
+## pulls it too far. It leaves dazed creatures alone (you sync those) unless you point at one.
 
 const RETARGET: float = 0.2
 const STOP_NEAR: float = 0.4

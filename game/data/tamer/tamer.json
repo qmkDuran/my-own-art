@@ -1,7 +1,7 @@
 {
- "_doc": "Rules of the trainer prototype (feel numbers live here, not in code). trainer: the person you play; never damaged. aura: your creature deals more damage near you. commands: the trainer's own buttons (A S D G), stronger with bond (command_bond_scale at full bond). perfect_swap: swapping just as a wild attack is about to land on your creature. white_out: every creature knocked out -> back to camp (lose `lose` of each material). items: keys 4 and 5. control: your creature in battle (camera blend, speed, dodge, outline). partner: how your creature follows and picks fights. wild: behaviour and scaling (windup: the telegraphed pause before every wild attack). befriend: F sends the trainer to calm a dazed wild creature. bond: meter 0-100 per creature. camp: the rest point. materials and upgrades: the grind loop. spawn: wild packs (size grows deeper in). guide: the tracker's steps in order.",
+ "_doc": "Rules of the trainer prototype (feel numbers live here, not in code). trainer: the person you play; never damaged. aura: your creature deals more damage near you. commands: the trainer's own buttons (A S D G), stronger with bond (command_bond_scale at full bond). perfect_swap: swapping just as a wild attack is about to land on your creature. white_out: every creature knocked out -> back to camp (lose `lose` of each material). items: keys Z and V. control: your creature in battle (camera blend, speed, dodge, outline). partner: how your creature follows and picks fights. wild: behaviour and scaling (windup: the telegraphed pause before every wild attack). sync: the Sync Lens (F, hold) on a weakened or staggered wild creature; the first sync_to_team join the team (max team_max), the rest go to the Sanctuary. bond: meter 0-100 per creature. camp: the rest point. materials and upgrades: the grind loop. spawn: wild packs (size grows deeper in). guide: the tracker's steps in order.",
  "zone": "tamer_glade",
- "team_max": 3,
+ "team_max": 6,
  "starter_level": 3,
  "trainer": {
   "speed": 165,
@@ -15,14 +15,14 @@
  "items": {
   "berry": {
    "name": "Honeyberry",
-   "key": "4",
+   "key": "Z",
    "count": 4,
    "heal": 0.5,
    "text": "Heals your creature by half"
   },
   "salts": {
    "name": "Smelling Salts",
-   "key": "5",
+   "key": "V",
    "count": 2,
    "revive": 0.4,
    "text": "Wakes a knocked-out creature"
@@ -70,12 +70,6 @@
   "damage": 12,
   "radius": 70,
   "stun": 0.4
- },
- "befriend": {
-  "hold": 1.0,
-  "range": 76,
-  "join_text": "%s joined your team!",
-  "full_text": "Your team is full (3)."
  },
  "bond": {
   "max": 100,
@@ -250,11 +244,11 @@
   },
   {
    "id": "befriend",
-   "text": "Weaken a wild creature until it is dazed, then press F: your trainer calms it"
+   "text": "Weaken (dazed) or stagger a wild creature, press F and HOLD it: your trainer syncs it with the Sync Lens"
   },
   {
    "id": "swap",
-   "text": "Press 1, 2 or 3 to swap (1 gauge in battle). Swap just as a red warning lands for a perfect swap"
+   "text": "Press 1-6 to swap (1 gauge in battle). Swap just as a red warning lands for a perfect swap"
   },
   {
    "id": "camp",
@@ -399,5 +393,10 @@
     "lose": "Mara: Swap smarter. Watch for the openings."
    }
   ]
+ },
+ "sync_to_team": 3,
+ "sync": {
+  "hold": 1.2,
+  "range": 150
  }
 }

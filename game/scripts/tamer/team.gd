@@ -8,6 +8,7 @@ signal joined(rec: CreatureRecord)
 signal bond_unlocked(rec: CreatureRecord)
 
 var members: Array[CreatureRecord] = []
+var sanctuary: Array[CreatureRecord] = []     ## synced creatures not in the team (move them at camp)
 var active: int = -1
 var materials: Dictionary = {}          ## material id -> count
 var items: Dictionary = {}              ## item id -> count
@@ -38,6 +39,37 @@ func spend_gauge(segments: int) -> bool:
 
 func full() -> bool:
 	return members.size() >= int(TamerData.rule("team_max"))
+
+
+## A newly synced creature: it joins the team while the team has fewer than sync_to_team, else the Sanctuary.
+func sync(rec: CreatureRecord) -> bool:
+	if members.size() < int(TamerData.rule("sync_to_team")):
+		return add(rec)
+	rec.wild = false
+	sanctuary.append(rec)
+	changed.emit()
+	return false
+
+
+## Sanctuary -> team (if the team has room).
+func from_sanctuary(rec: CreatureRecord) -> bool:
+	if full() or not sanctuary.has(rec):
+		return false
+	sanctuary.erase(rec)
+	return add(rec)
+
+
+## Team -> Sanctuary (never the one that is out, never the last one).
+func to_sanctuary(rec: CreatureRecord) -> bool:
+	var i: int = members.find(rec)
+	if i < 0 or i == active or members.size() <= 1:
+		return false
+	members.remove_at(i)
+	if active > i:
+		active -= 1
+	sanctuary.append(rec)
+	changed.emit()
+	return true
 
 
 func add(rec: CreatureRecord) -> bool:

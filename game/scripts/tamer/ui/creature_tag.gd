@@ -42,8 +42,8 @@ func _draw() -> void:
 		var label: String = "%s  Lv %d" % [c.rec.display_name(), c.rec.level]
 		var col: Color = Pal.c("gold") if c.rec.shiny else UiDraw.TEXT
 		UiDraw.text(self, Vector2(-NAME_W / 2.0, top - 4.0), label, col, UiDraw.SMALL, HORIZONTAL_ALIGNMENT_CENTER, NAME_W)
-	if c.dazed and _trainer_near():
-		UiDraw.text(self, Vector2(-NAME_W / 2.0, top - 4.0 - PROMPT_GAP), "Press F to befriend", Pal.c("rose"), UiDraw.SMALL,
+	if SyncLens.syncable(c) and _trainer_near():
+		UiDraw.text(self, Vector2(-NAME_W / 2.0, top - 4.0 - PROMPT_GAP), "F: Sync Lens", Pal.c("rose"), UiDraw.SMALL,
 			HORIZONTAL_ALIGNMENT_CENTER, NAME_W)
 
 
@@ -71,4 +71,4 @@ func _bar(at: Vector2) -> void:
 
 func _trainer_near() -> bool:
 	var tr: Trainer = TamerGame.current.trainer
-	return tr.global_position.distance_to(c.global_position) < float(TamerData.rule("befriend.range")) * 1.6
+	return tr.global_position.distance_to(c.global_position) < float(TamerData.rule("sync.range")) * 1.6

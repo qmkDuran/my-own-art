@@ -1,11 +1,11 @@
 class_name TeamStrip
 extends Control
-## Your team on keys 1-3: a portrait per member with its life and bond, the one that is out framed in gold, a
+## Your team on keys 1-6: a portrait per member with its life and bond, the one that is out framed in gold, a
 ## knocked-out one greyed with its recovery time, and empty slots waiting to be filled by befriending. Click one for
 ## its info panel.
 
-const SLOT := Vector2(44, 44)
-const GAP: float = 6.0
+const SLOT := Vector2(38, 38)
+const GAP: float = 4.0
 const BAR_H: float = 3.0
 const HEART: float = 2.0
 

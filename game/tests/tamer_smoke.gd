@@ -44,11 +44,12 @@ func _run() -> void:
 	await _battle()
 	await _windup()
 	await _befriend()
+	_sanctuary()
 	await _swap_and_knockout()
 	await _bond()
 	await _combat_model()
 	await _ring()
-	await _rival()
+	await TamerSmokeRival.new(self).run()
 	await _camp()
 	await _drops_and_white_out()
 	await TamerPackFight.new(self).run()
@@ -205,22 +206,38 @@ func _clarity() -> void:
 	g.hud.info_panel.close()
 
 
-## Befriending is the trainer's job: F sends them to a dazed creature to calm it.
+## Catching is the trainer's job: F sends them to a weakened creature, holding F runs the Sync Lens scan.
 func _befriend() -> void:
 	var aye: Creature = _wild("aye_aye", Vector2(140, 10))
 	aye.brain = null
 	await frames(2)
 	aye.receive_hit(aye.rec.max_life() * 0.7, Vector2.RIGHT, 0.0, 0.0, null)
-	expect(aye.dazed, "a weakened wild creature is dazed (can be befriended)")
-	expect(g.befriend.request(), "F sends the trainer to the dazed creature")
-	await seconds(1.0)
+	expect(aye.dazed and SyncLens.syncable(aye), "a weakened wild creature can be synced")
+	g.lens.set_meta("held", true)
+	expect(g.lens.request(), "F sends the trainer to it with the Sync Lens")
+	await seconds(0.6)
+	expect(g.lens.scanning, "holding F scans it")
 	aye.receive_hit(1.0, Vector2.LEFT, 0.0, 0.0, null)
 	await frames(2)
-	expect(g.befriend.progress < 0.2 and g.befriend.target == null, "hitting the creature you calm startles it")
-	g.befriend.request()
-	await seconds(2.5)
-	expect(g.team.members.size() == 2 and g.team.members[1].species_id == "aye_aye", "the trainer wins the aye-aye over")
-	expect(g.guide.is_done("befriend"), "the guide counts the befriending")
+	expect(g.lens.progress < 0.2 and g.lens.target == null, "hitting the target makes it break free")
+	g.lens.request()
+	await seconds(2.8)
+	g.lens.set_meta("held", false)
+	expect(g.team.members.size() == 2 and g.team.members[1].species_id == "aye_aye", "the Sync Lens syncs the aye-aye to the team")
+	expect(g.guide.is_done("befriend"), "the guide counts the sync")
+
+
+## Past the first three, synced creatures go to the Sanctuary; at camp they move between it and the team (max 6).
+func _sanctuary() -> void:
+	for k: String in ["maned_wolf", "tas_devil"]:
+		g.team.sync(CreatureRecord.make(k, 2, false))
+	expect(g.team.members.size() == 3 and g.team.sanctuary.size() == 1, "the 4th creature goes to the Sanctuary")
+	var rec: CreatureRecord = g.team.sanctuary[0]
+	expect(g.team.from_sanctuary(rec) and g.team.members.size() == 4, "a Sanctuary creature can join the team")
+	expect(g.team.to_sanctuary(rec) and g.team.sanctuary.has(rec), "and go back")
+	g.hud.sanctuary.open()
+	expect(g.hud.sanctuary.visible, "the Sanctuary screen opens")
+	g.hud.sanctuary.close()
 
 
 func _swap_and_knockout() -> void:
@@ -356,31 +373,3 @@ func _ring() -> void:
 	expect(not g.battle.on and g.battle._grace > 0.0, "after a battle there is a grace before the next one")
 	expect(p.alive(), "your creature is fine")
 	await seconds(4.5)
-
-
-## A rival trainer spots you, walks up, battles with a team, uses a heal once, and is beaten for a reward.
-func _rival() -> void:
-	_clear_wild(3000.0)
-	g.battle.end(false)
-	g.battle._grace = 0.0
-	g.team.rest()
-	var r: RivalTrainer = g.rivals[0]
-	expect(r.state == "waiting", "a rival trainer waits on the route")
-	g.trainer.place(g.layout.free_spot_near(r.global_position + Vector2(-200, 0), 8.0))
-	g.field.partner.global_position = g.trainer.global_position
-	await seconds(float(TamerData.rule("rivals.talk_time")) + 2.0)
-	expect(g.battle.on and g.battle.rival == r, "the rival spots you, walks up and battles")
-	var first: Creature = r.active
-	first.rec.life = first.rec.max_life() * 0.3
-	await seconds(0.3)
-	expect(r._item_used or r.active != first, "the rival heals or swaps when its creature is hurt")
-	var wins: int = 0
-	for k: int in 8:
-		if not g.battle.on:
-			break
-		if r.active != null and is_instance_valid(r.active) and not r.active.fainted_now:
-			r.active.faint()
-			wins += 1
-		await seconds(1.4)
-	expect(r.state == "beaten" and not g.battle.on, "beating every creature wins the trainer battle (%d down)" % wins)
-	expect(r.active == null, "the rival's creatures are gone")

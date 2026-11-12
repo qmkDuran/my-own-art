@@ -1,9 +1,9 @@
 class_name TeamField
 extends Node
-## Puts your active creature on the field and takes it back: swapping (1-3) calls the new one out with a small
+## Puts your active creature on the field and takes it back: swapping (1-6) calls the new one out with a small
 ## entry attack; a knocked-out creature fades away and the next one that can fight steps in; one that recovers
 ## comes back to your side; with none left the trainer retreats to camp (TamerGame.white_out). A swap timed just
-## before a wild attack lands is a perfect swap. Items (4, 5) heal or wake your creatures. Bond milestones here.
+## before a wild attack lands is a perfect swap. Items (Z, V) heal or wake your creatures. Bond milestones here.
 
 signal swapped(rec: CreatureRecord)
 signal partner_changed(c: Creature)
@@ -58,7 +58,7 @@ func _entry_attack(c: Creature, perfect: bool) -> void:
 		CreatureCombat.hit(c, f, m, (f.global_position - c.global_position).normalized())
 
 
-## 1-3: swap to member `i` (not to one that is knocked out).
+## 1-6: swap to member `i` (not to one that is knocked out).
 func swap(i: int) -> bool:
 	if _swap_cd > 0.0 or not g.team.can_swap_to(i):
 		return false

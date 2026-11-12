@@ -162,7 +162,7 @@ func _physics_process(delta: float) -> void:
 ## The trainer walks (on their own) to a spot behind your creature, on the far side from the foes.
 func _keep_trainer_safe(c: Creature) -> void:
 	var foes: Array[Creature] = awake_foes(c)
-	if foes.is_empty() or g.befriend.target != null:
+	if foes.is_empty() or g.lens.target != null:
 		return
 	var mid: Vector2 = Vector2.ZERO
 	for f: Creature in foes:
@@ -228,7 +228,7 @@ func _summary() -> Array[String]:
 	var dazed: int = get_tree().get_nodes_in_group(Combatant.SIDE_WILD).filter(func(n: Node) -> bool:
 		return (n as Creature).dazed and (n as Creature).global_position.distance_to(g.trainer.global_position) < ESCAPE).size()
 	if dazed > 0:
-		out.append("%d dazed: press F to befriend" % dazed)
+		out.append("%d weakened: press F to sync" % dazed)
 	var rec: CreatureRecord = _tally.get("rec")
 	if rec != null:
 		out.append("Bond +%d (%s)" % [roundi(rec.bond - float(_tally.get("bond", rec.bond))), rec.data()["name"]])

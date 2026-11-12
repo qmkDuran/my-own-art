@@ -3,7 +3,7 @@ extends Node
 ## Mouse and keys to commands, by mode (BattleMode). Exploring: LMB walks the trainer (hold to keep walking; on a
 ## starter in the opening it picks it), RMB on a wild creature starts a battle with it. In battle you control your
 ## creature: LMB moves it (hold to keep moving), RMB attacks the creature under the cursor (or swings toward the
-## cursor), Space is its dodge. Always: Q W E R and T aim while held and fire on release, 1-3 swap, 4-5 items,
+## cursor), Space is its dodge. Always: Q W E R and T aim while held and fire on release, 1-6 swap, Z V items,
 ## F Sync Lens (the trainer scans a weakened or staggered creature), C camp, I creature info, F1 (dev) a shiny.
 ## The pointer can be the real mouse or a test's virtual cursor.
 
@@ -28,7 +28,9 @@ func cursor() -> Vector2:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if g.hud.panel_open() and event.is_action_pressed("menu"):
-		if g.hud.info_panel.visible:
+		if g.hud.sanctuary.visible:
+			g.hud.sanctuary.close()
+		elif g.hud.info_panel.visible:
 			g.hud.info_panel.close()
 		else:
 			g.hud.camp_panel.close()
@@ -65,7 +67,7 @@ func _keys(event: InputEvent) -> void:
 	elif event.is_action_pressed("dev_shiny"):
 		g.spawner.spawn_shiny_near(g.trainer.global_position)
 	elif event.is_action_pressed("interact"):
-		g.befriend.request()
+		g.lens.request()
 	elif event.is_action_pressed("camp") and g.camp.resting:
 		g.hud.camp_panel.toggle()
 	for i: int in TamerKeys.SWAPS.size():
@@ -91,7 +93,7 @@ func _move_to(p: Vector2) -> void:
 		g.battle.brain().goal = p
 		g.battle.brain().target = null
 	else:
-		g.befriend.cancel()
+		g.lens.cancel()
 		g.trainer.walk_to(p)
 
 
