@@ -1,7 +1,7 @@
 # Trainer prototype: notes
 
 A playable feel prototype for the creature-trainer action RPG in VISION.md. It answers one question: **does fighting as
-a trainer with a creature partner, using hybrid control, feel good?** Built on the Lanternfall foundation (Godot 4.7.2,
+a trainer with a creature partner feel good?** It now uses battle mode (exploring as the trainer, battles as the creature). Built on the Lanternfall foundation (Godot 4.7.2,
 typed GDScript, code-made art). How to play: PLAY.md.
 
 ## What is in
@@ -10,19 +10,24 @@ typed GDScript, code-made art). How to play: PLAY.md.
   flickers through colours / curls into a ball) with a line. Click one to pick it; the other two hop away.
 - **One meadow** from Lanternfall's zone generator (biome `tamer_glade`: Glasswood look, daylit, no city wall),
   18 wild packs (one kind per pack; tougher kinds and levels further out) and a camp clearing.
-- **Trainer:** click to move (hold to keep walking), Space to roll (i-frames), items on 4 (Honeyberry heal) and
-  5 (Smelling Salts revive), 1-3 swap (the one coming in does an entry blast). You can be hit; a fall wakes you at camp.
-- **Partner:** always out, follows a little behind and to the side, never collides with you (separate physics layers),
-  fights what you clicked, else whatever is attacking you or comes close, leaves dazed creatures alone, comes back if
-  pulled too far, and teleports back if it gets lost.
-- **Moves:** Q W E R per species (4 distinct kits for the starters, kits for the wild kinds too) plus a bond move on T.
-  Five move kinds: strike (an arc), bolt (projectiles, fans, rings), lunge (a dash or a blink, path or landing hits),
-  burst (an area at self or aim, with a warning circle, optionally pulsing), guard (a ward for creature and trainer).
-  Element-coloured slashes, orbs with trails, blasts, streaks, wards; Lanternfall's impact, hit-stop, shake and
-  camera punch on every hit.
-- **Hybrid control:** hold Shift. The camera blends over to the creature, it gets a gold outline and a pulsing ground
-  ring (the trainer has the outline otherwise), the HUD badge says who you control, and clicks or arrow keys move it.
-  It has its own dodge (Space). Let go and it returns to following. It is held within a leash around the trainer.
+- **Battle mode** (`battle_mode.gd`; replaced the earlier Shift steering after the first playtest): exploring, you are
+  the trainer (left click walks) and your creature follows. Right-click a wild creature, or let one notice your team,
+  and a battle starts with a short beat ("Go, <name>!", a leap, camera punch, vignette). You then control the
+  creature: left click moves, right click attacks the target (or swings toward the cursor), Space dodges, Q W E R
+  aim while held and fire on release (`AimPreview`: arc, bolt lines, dash path and landing, burst circle, ward).
+  The trainer walks to a safe spot behind the fight by themselves. It ends when no awake wild creature is near (or
+  you run out of range), with a Victory summary (defeated, materials, bond, dazed ones to befriend).
+- **The trainer is never damaged** (not a Combatant). Their part: commands on A S D G (`TrainerCommands`: Cheer,
+  Focus, Rally, Mark, cooldowns, stronger with bond), the **bond aura** (+15% damage within 170 px of the trainer,
+  a faint ring), swaps on 1-3 with an entry attack and a **perfect swap** (just before a telegraphed attack lands:
+  it whiffs and the entry hits twice as hard), items on 4/5, and befriending (F: the trainer walks over and calms
+  the dazed creature).
+- **Move clarity:** every move has a sentence in `moves.json`; hovering a move icon shows it with real numbers
+  (`MoveText`); the first use of each move shows its name; the creature info panel (I, or click the team strip, or
+  Info at camp) lists all five moves with element, kind, words and numbers.
+- **Wild creatures** telegraph every attack (a red cone or circle and a wind-up), go only for your creature, and start
+  small near the start (1-2 per pack, more deeper in). A full team wipe is a **white-out**: fade, retreat to camp,
+  recover, lose one of each material.
 - **Elements:** the 8-element chart from VISION.md (`data/tamer/elements.json`): x1.6 super effective, x0.6 resisted,
   with a "Super effective!" or "Resisted" word over the target (one per target per 0.6 s).
 - **Befriending:** below its species' threshold (the pink notch on its life bar) a wild creature is dazed (gold stars,
@@ -39,8 +44,7 @@ typed GDScript, code-made art). How to play: PLAY.md.
 - **Materials:** each wild kind drops its own (1-2, flying to you when near): devils give Rot Fangs (Life), wolves Wind
   Tufts (Power), aye-ayes Night Whiskers (Speed). Costs rise 2, 3, 4, 5, 6 per level.
 - **Knock-outs:** a knocked-out creature fades and recovers after 20 s (or at camp); the next one steps in by itself.
-  With none left, the wild creatures go for you.
-- **HUD:** trainer life orb, the two items, the "controlling" badge, the active creature's card (portrait, element and
+- **HUD:** the trainer's commands, the two items, the Exploring/Battle badge, the active creature's card (portrait, element and
   level, life, bond meter with the unlock mark, Q W E R + T slots with cooldowns), the team strip (1-3, life, bond,
   knock-out timers), materials, notices and captions, and the tracker telling you what to try next.
 
@@ -53,12 +57,12 @@ typed GDScript, code-made art). How to play: PLAY.md.
 | `team.gd` | The team, active index, materials, items (state plus signals) |
 | `combatant.gd` | Base of trainer and creatures: sides, `receive_hit`, knockback, steering around blocked ground |
 | `creature.gd`, `creature_sprite.gd` | A creature on the field; its look (sheet, gait, hit flash, outline, stars, sparkle) |
-| `trainer.gd` | Click-to-move, roll, life, ward, fall and rise |
+| `trainer.gd` | Click-to-move, roll, the bond aura; never a target |
 | `brains/` | `PartnerBrain`, `WildBrain`, `ControlledBrain`, `CampBrain`, `MeetBrain` (one job each, swapped at runtime) |
 | `moves/` | `MoveBook` maps a move's `kind` to a `MoveKind` (strike, bolt, lunge, burst, guard). A new kind is a new subclass |
 | `creature_combat.gd`, `creature_bolt.gd`, `tamer_fx.gd` | Damage with elements and feedback; projectiles; element effects |
 | `team_field.gd` | Puts the active creature on the field: summon, swap and entry attack, knock-out and step-in, items, bond celebrations |
-| `hybrid_control.gd` | Shift control: brains, outlines, camera focus blend, leash |
+| `battle_mode.gd`, `trainer_commands.gd`, `aim_preview.gd` | Exploring/battle switch, beat, trainer safe spot, Victory; trainer commands; move ghosts |
 | `befriending.gd`, `tamer_spawner.gd`, `material_pickup.gd`, `camp.gd`, `starter_meeting.gd` | Each one system |
 | `tamer_input.gd`, `tamer_keys.gd`, `tamer_guide.gd` | Input to commands; extra key actions; tracker steps |
 | `ui/` | `TamerHud`, `CreatureCard`, `TeamStrip`, `CampPanel`, `CreatureTag`, `MoveIcon`, `CreaturePortrait` |
@@ -78,17 +82,19 @@ act 2) and their shiny palettes from `art/creatures.py`, plus the trainer from L
 gained 8 colours for elements (leaf greens, sea blues, bile). `tools/check_art.py` covers them.
 
 ## Checks and stills
-- `bash tools/run_all.sh`: Lanternfall's checks plus `-- --tamer-smoke` (46 checks: chart, meeting and pick, moves,
-  auto-attack, hybrid on/off, creature dodge, befriending and its interruption, swap with entry hit, knock-out and
-  step-in, items, bond and bond move, camp rest, pet, upgrade, drops, the shiny, falling and waking at camp, and a
-  pack fight timing).
-- `tools/tamer_shots.sh OUT_DIR [shot ...]`: stills (meeting, combat, hybrid, befriend, shiny, swap, camp, camp_panel,
-  hud) under xvfb. No video.
+- `bash tools/run_all.sh`: Lanternfall's checks plus `-- --tamer-smoke` (72 checks: chart, meeting and pick, moves,
+  clarity (descriptions, tooltip, info panel), battle mode (LMB walks, RMB battles, control, aim and release,
+  trainer stays back and is never targeted, Victory), wind-ups, befriending by the trainer, swaps, knock-outs,
+  items, bond move, commands, aura, perfect swap, camp, upgrades, drops, the shiny, the white-out, and a pack fight
+  (`tests/tamer_pack_fight.gd`: three fights, a move about once a second; target 20-35% life lost, last run 25%).
+- `tools/tamer_shots.sh OUT_DIR [shot ...]`: stills (meeting, exploring, battle_start, battle, befriend, victory, info, shiny,
+  swap, camp, camp_panel, hud) under xvfb. No video.
 
 ## Known gaps (honest)
-- **Never played by a person.** The smoke test plays it, and a pack-fight probe set wild damage: a starter alone, on
-  auto-attack only, beats two level-1 wild creatures in about 7-9 s and loses 35-70% of its life. Feel numbers
-  (speeds, cooldowns, follow distance, camera blend) live in `data/tamer/*.json` for quick tuning.
+- **Battle mode is untested by a person.** The pack-fight probe tunes it (5-9 s per near 2-pack, ~25% life lost);
+  feel numbers live in `data/tamer/*.json`.
+- The battle-start beat has no real zoom (a non-integer zoom would smear the pixel art); it uses a punch, a shake
+  and a vignette. Items are not thrown yet (they apply at once). No retreat key: run out of range to escape.
 - Creature art is small and simple (side-on, 4-frame cycles, no turn or attack anims beyond a lean). The pangolin's
   scales are busy at 1x. The trainer is front-facing and only mirrors.
 - No music (Lanternfall's dread score does not fit a daylit meadow); sound effects are Lanternfall's.

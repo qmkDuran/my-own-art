@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 # Review stills of the trainer prototype: tools/tamer_shots.sh OUT_DIR [shot ...]  (needs xvfb-run)
-# Shots: meeting combat hybrid befriend shiny swap camp camp_panel hud (camp_panel follows camp in one run).
+# Shots: meeting exploring battle_start battle befriend victory info shiny swap camp camp_panel hud (camp_panel follows camp in one run).
 set -u
 cd "$(dirname "$0")/.."
 GODOT="${GODOT:-/tmp/claude-0/-home-user-my-own-art/cb019c91-d4b5-5ec5-a8ec-8aef6ba03cf6/scratchpad/godot/Godot_v4.7.2-stable_linux.x86_64}"
 OUT="$1"; shift
 SHOTS=("$@")
-[ ${#SHOTS[@]} -eq 0 ] && SHOTS=(meeting combat hybrid befriend shiny swap camp hud)
+[ ${#SHOTS[@]} -eq 0 ] && SHOTS=(meeting exploring battle_start battle befriend victory info shiny swap camp hud)
 mkdir -p "$OUT"
 for s in "${SHOTS[@]}"; do
   only="$s"

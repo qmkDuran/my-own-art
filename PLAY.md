@@ -1,7 +1,7 @@
 # How to play the trainer prototype
 
-This is a quick feel prototype for one question: **does fighting as a trainer beside a creature partner, with hybrid
-control, feel good?** It takes about 10 minutes to try everything.
+This is a quick feel prototype for one question: **does exploring as a trainer and battling as your creature,
+with the trainer helping from behind, feel good?** It takes about 10 minutes to try everything.
 
 ## Run it (Windows)
 1. Clone the repository and check out the `tamer-arpg` branch.

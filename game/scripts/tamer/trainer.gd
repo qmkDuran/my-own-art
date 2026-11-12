@@ -10,7 +10,7 @@ const FPS: float = 8.0
 const COLS: int = 8
 const MOVING: float = 10.0
 const ROLL_SPIN: float = TAU
-const AURA_ALPHA := Vector2(0.12, 0.45)         ## the aura ring: faint, brighter while your creature is inside it
+const AURA_ALPHA := Vector2(0.05, 0.2)         ## the aura ring: faint, brighter while your creature is inside it
 
 var heading: Vector2 = Vector2.DOWN     ## last walking direction (the partner walks behind it)
 var attack_target: Combatant            ## a foe your creature should go for on its own (Mark)

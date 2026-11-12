@@ -1,9 +1,10 @@
 extends Node
 ## --tamer-shots: review stills of the trainer prototype (needs a display; tools/tamer_shots.sh runs it under
-## xvfb). --only=NAME picks one scene: meeting, combat, hybrid, befriend, shiny, swap, camp, camp_panel, hud. Each is
+## xvfb). --only=NAME picks one scene (SHOTS). Each is
 ## staged in the real prototype (moved into place, then played for real) and saved as NAME_<w>x<h>.png in --out.
 
-const SHOTS: Array[String] = ["meeting", "combat", "hybrid", "befriend", "shiny", "swap", "camp", "camp_panel", "hud"]
+const SHOTS: Array[String] = ["meeting", "exploring", "battle_start", "battle", "befriend", "victory", "info", "shiny", "swap",
+	"camp", "camp_panel", "hud"]
 const HUD_CROP: float = 0.3             ## the bottom share of the screen kept for the HUD close-up
 
 var g: TamerGame
@@ -92,36 +93,46 @@ func _shot_meeting() -> void:
 	await _save("meeting")
 
 
-func _shot_combat() -> void:
+func _shot_exploring() -> void:
+	_team(0, [])
+	_place(g.layout.start + Vector2(40, 60))
+	_clear_wild(500.0)
+	g.trainer.walk_to(g.trainer.global_position + Vector2(120, 20))
+	await _wait(1.2)
+	await _save("exploring")
+
+
+## The battle-start beat: right-click a wild creature; "Go!", the leap, the vignette.
+func _shot_battle_start() -> void:
 	_team(0, [])
 	_place(g.layout.start + Vector2(40, 60))
 	_clear_wild(1400.0)
 	await _wait(1.0)
-	var foes: Array[Creature] = [_wild("tas_devil", Vector2(130, -10)), _wild("tas_devil", Vector2(160, 30))]
-	for f: Creature in foes:
-		_hold(f)
+	var foe: Creature = _wild("maned_wolf", Vector2(170, 0))
+	foe.set_physics_process(false)
+	(foe.brain as WildBrain).wake(g.field.partner)
+	await _wait(0.22)
+	await _save("battle_start")
+
+
+## Mid-battle: holding W shows the ghost of the move, the mouse is on its icon (tooltip), a red warning is coming.
+func _shot_battle() -> void:
+	_team(0, [])
+	_place(g.layout.start + Vector2(40, 60))
+	_clear_wild(1400.0)
+	await _wait(1.0)
+	var foes: Array[Creature] = [_wild("tas_devil", Vector2(190, -10)), _wild("maned_wolf", Vector2(230, 40))]
+	g.battle.engage(foes[0])
+	await _wait(1.6)
 	var p: Creature = g.field.partner
-	p.global_position = foes[0].global_position + Vector2(-34, 4)
-	await _wait(0.3)
+	g.input.cursor_override = foes[1].global_position
+	g.aim.aim(p, "ember_pounce")
+	g.hud.forced_tip = 1
 	p.cast("claw_rush", foes[0].global_position)
 	await _wait(0.07)
-	await _save("combat")
-
-
-func _shot_hybrid() -> void:
-	_team(1, [])
-	_place(g.layout.start + Vector2(-60, 70))
-	_clear_wild(1400.0)
-	await _wait(0.8)
-	g.control.take()
-	var foe: Creature = _wild("maned_wolf", Vector2(250, -30))
-	_hold(foe)
-	g.control.brain().goal = g.trainer.global_position + Vector2(170, -10)
-	await _wait(1.2)
-	g.input.cursor_override = foe.global_position + Vector2(0, -10)
-	g.field.partner.cast("shard_fan", foe.global_position)
-	await _wait(0.12)
-	await _save("hybrid")
+	await _save("battle")
+	g.hud.forced_tip = -1
+	g.aim.clear()
 
 
 func _shot_befriend() -> void:
@@ -129,14 +140,35 @@ func _shot_befriend() -> void:
 	_place(g.layout.start + Vector2(30, 60))
 	_clear_wild(1400.0)
 	await _wait(0.8)
-	var wolf: Creature = _wild("maned_wolf", Vector2(54, -6))
-	wolf.receive_hit(wolf.rec.max_life() * 0.65, Vector2.RIGHT, 0.0, 0.0, null)
+	var wolf: Creature = _wild("maned_wolf", Vector2(150, -6))
 	_hold(wolf)
+	wolf.receive_hit(wolf.rec.max_life() * 0.65, Vector2.RIGHT, 0.0, 0.0, null)
 	await _wait(0.4)
-	g.befriend.set_meta("forced", true)
-	await _wait(0.6)
+	g.befriend.request()
+	await _wait(1.3)
 	await _save("befriend")
-	g.befriend.set_meta("forced", false)
+
+
+func _shot_victory() -> void:
+	_team(0, [])
+	_place(g.layout.start + Vector2(40, 60))
+	_clear_wild(1400.0)
+	await _wait(1.0)
+	var foe: Creature = _wild("tas_devil", Vector2(120, 0))
+	g.battle.engage(foe)
+	await _wait(0.8)
+	foe.receive_hit(9999.0, Vector2.RIGHT, 0.0, 0.0, g.field.partner)
+	await _wait(2.4)
+	await _save("victory")
+
+
+func _shot_info() -> void:
+	_team(0, ["aye_aye"])
+	_place(g.layout.start + Vector2(40, 60))
+	await _wait(0.6)
+	g.hud.info_panel.open(g.team.members[0])
+	await _wait(0.3)
+	await _save("info")
 
 
 func _shot_shiny() -> void:
@@ -203,6 +235,5 @@ func _shot_hud() -> void:
 	g.field.partner.cooldowns["ember_pounce"] = 2.4
 	g.field.partner.cooldowns["cinder_roar"] = 5.0
 	g.team.members[2].knock_out()
-	g.trainer.life = 72.0
 	await _wait(0.3)
 	await _save("hud", HUD_CROP)

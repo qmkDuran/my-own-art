@@ -167,7 +167,7 @@ func _process(delta: float) -> void:
 	card.position = Vector2(roundf((vp.x - card.size.x) * 0.5), vp.y - MARGIN - card.size.y)
 	strip.position = Vector2(vp.x - MARGIN - strip.size.x, vp.y - MARGIN - strip.size.y)
 	camp_panel.position = ((vp - camp_panel.size) * 0.5).round()
-	info_panel.position = ((vp - info_panel.size) * 0.5).round()
+	info_panel.position = Vector2(roundf((vp.x - info_panel.size.x) * 0.5), MARGIN * 3.0)   # clear of the cards below
 	_tip.queue_redraw()
 	for n: Array in _notices:
 		n[1] = float(n[1]) - delta

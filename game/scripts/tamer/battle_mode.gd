@@ -173,6 +173,10 @@ func _summary() -> Array[String]:
 		var gained: int = g.team.count(id) - int(before.get(id, 0))
 		if gained > 0:
 			out.append("+%d %s" % [gained, TamerData.rule("materials." + id + ".name")])
+	var dazed: int = get_tree().get_nodes_in_group(Combatant.SIDE_WILD).filter(func(n: Node) -> bool:
+		return (n as Creature).dazed and (n as Creature).global_position.distance_to(g.trainer.global_position) < ESCAPE).size()
+	if dazed > 0:
+		out.append("%d dazed: press F to befriend" % dazed)
 	var rec: CreatureRecord = _tally.get("rec")
 	if rec != null:
 		out.append("Bond +%d (%s)" % [roundi(rec.bond - float(_tally.get("bond", rec.bond))), rec.data()["name"]])

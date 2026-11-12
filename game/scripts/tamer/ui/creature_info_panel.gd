@@ -4,7 +4,7 @@ extends Control
 ## that element beats and fears, role, level and stats, bond, and all five moves (Q W E R and the bond move on T)
 ## with their icon, element, what they do and their numbers.
 
-const W: float = 480.0
+const W: float = 600.0
 const HEAD: float = 30.0
 const PAD: float = 8.0
 const PORTRAIT: float = 56.0
@@ -101,5 +101,5 @@ func _move(id: String, key: String, at: Vector2, bond: bool) -> void:
 	var nums: Array[String] = []
 	for row: Array in MoveText.numbers(m, rec.power()):
 		nums.append(String(row[0]))
-	UiDraw.text(self, Vector2(x, at.y + 33.0), "  -  ".join(nums), UiDraw.DIM, UiDraw.SMALL)
+	UiDraw.text(self, Vector2(x, at.y + 33.0), ", ".join(nums), UiDraw.DIM, UiDraw.SMALL)
 	draw_line(Vector2(PAD, at.y + MOVE_H - 4.0), Vector2(W - PAD, at.y + MOVE_H - 4.0), Color(UiDraw.FRAME, 0.4))

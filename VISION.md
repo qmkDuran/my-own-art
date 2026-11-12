@@ -4,7 +4,8 @@
 **An action RPG where you're a trainer, not a hero: you raise a team of creatures, fight beside them in real time, and become the very best at your chosen element.**
 
 ## Who you are
-- You are the **trainer**. Your creatures are the stars of combat. You command them, dodge, use items, and cheer them on.
+- You are the **trainer**. Your creatures are the stars of combat. You command them, use items, and cheer them on.
+- **The trainer is never damaged** (as in the shows). Wild creatures ignore the trainer and fight your team.
 - The heart of the game is **your relationship with your team**, like Ash and Pikachu. Closeness, not fusion.
 - **Elements still exist** for matchups (fire, glass, storm, and so on), but you don't specialise in one.
 
@@ -20,9 +21,9 @@
 ## How it plays
 - **Your partner is always out:** walking beside you, resting with you, fighting at your side.
 - **The team:** up to 6 creatures. One partner fights at a time, and you swap in others instantly.
-- **Combat:** hybrid control (see below). Moves have cooldowns, and elements matter, so swapping to the right creature for the fight is part of the skill.
+- **Combat:** exploring as the trainer, battles as your creature (see below). Moves have cooldowns, and elements matter, so swapping to the right creature for the fight is part of the skill.
 - **Catching (befriending):** weaken a wild creature and win it over. Common ones are easy. Rarer ones need the right time, weather, place or approach.
-- **Gentle defeat:** a knocked-out creature recovers after a while or at a rest point. Nothing is lost permanently (except in the opt-in hardcore modes).
+- **Gentle defeat:** a knocked-out creature recovers after a while or at a rest point. If your whole team is knocked out, the screen fades and you retreat to the last rest point, where they recover (a small material cost at most). Nothing is lost permanently (except in the opt-in hardcore modes).
 
 ## Starters
 - **Choose 1 of 3 at the start,** each with a clear role: a brave close-range fighter, a quick ranged trickster, a sturdy protector.
@@ -63,10 +64,22 @@
 - **Memory:** milestones and history ("together for 100 battles", first evolution, favourite food).
 - **Story:** your team is part of story moments, and some quests are about them.
 
-## Control: hybrid
-- **Normally:** you move as the trainer and your creature follows and fights beside you. You call its 4 moves (Q W E R) at the cursor.
-- **Hold a key** to take direct control of your creature for precise dodges and positioning. Release it to go back to the trainer.
-- **The trainer can always** dodge, use items, and swap creatures.
+## Control: exploring and battle (decided after the first prototype)
+- **Exploring:** you control the trainer (left click walks, interact, befriend, camp). Your creature follows.
+- **Battle** starts when you right-click a wild creature or one notices your team. A short beat ("Go, <name>!", the
+  creature leaps in, a camera punch, a vignette), then **you control your creature directly**: left click moves,
+  right click attacks, Q W E R are its moves at the cursor (hold to see where they land, release to use), Space
+  dodges. Wild attacks are telegraphed so dodging is a skill.
+- **The trainer's role in battle** (so both halves matter):
+  - stays back on their own, safe, behind the fight;
+  - **commands** with cooldowns that grow with bond: Cheer (hits harder), Focus (next move crits), Rally (heal over
+    time), Mark (a foe takes more and is prioritised);
+  - **bond aura:** your creature fights better near its trainer, so where the trainer stands matters;
+  - **swaps** (1-3) with an entry attack, and a **perfect swap** bonus for swapping just before an attack lands;
+  - **items**, and **befriending**: the trainer walks up to a dazed creature and calms it.
+- **Battle ends** when no awake wild creature is left nearby, or you run out of range; control eases back to the
+  trainer and a Victory summary shows what was earned.
+- The earlier "hold Shift to steer the creature" idea was tried in the prototype and replaced by battle mode.
 
 ## Honing your creatures (no element path)
 - **Your build is how deeply you've raised the creatures you have,** not a chosen element. "Being the very best" means mastering your own team.
