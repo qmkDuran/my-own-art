@@ -1,5 +1,12 @@
 # Creature-trainer demo: notes
 
+> **Project stopped.** The user ended the creature-trainer ARPG. What was learned: across four combat iterations
+> (cooldown spam, Shift steering, the gauge model with slow-time, and the arena skillshot model) real-time
+> creature combat kept feeling confusing or spammy. Controlling a creature in real time while a trainer stands
+> by never became clearly readable and fun. The balance bot also showed that AI-vs-AI fights are close to
+> deterministic, so small edges (an element advantage) turn into lopsided matchups. The code and these notes stay
+> as a reference.
+
 A playable combat test for the creature-trainer action RPG in VISION.md. It answers one question: **is the combat
 fun and fair?** Built on the Lanternfall foundation (Godot 4.7.2, typed GDScript, code-made art). How to play:
 PLAY.md. Wider idea list: BATTLE_IDEAS.md.
