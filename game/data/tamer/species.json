@@ -1,5 +1,5 @@
 {
- "_doc": "Creatures of the demo. stats: life, power (damage scale), speed (px/s), radius (body). basic: the right-click physical attack. learn: [level, move] unlocked by level (the level-25 one is its signature move); kit: the 4 active moves by default (the team station changes them). sync_at: share of life at or below which it is weakened (it stops fighting and can be synced). material: what it drops. home: its home terrain bonus and cost (VISION.md). temperament: on the route (shy flees, calm ignores, territorial warns, aggressive chases). rarity: common or rare (the basic Sync Lens only syncs common ones). evolve: a level and what it becomes. shiny_chance: 1 in 4096 (F1 spawns one). ai: how it fights (style flanker / brawler / skirmisher; attacks: the moves it uses with their reach and the pause it takes after (its opening); the tell is the move's own wind-up, the same as yours).",
+ "_doc": "Creatures of the demo. stats: life, power (damage scale), speed (px/s), radius (body). basic: the right-click physical attack. learn: [level, move] unlocked by level (the level-25 one is its signature move); kit: the 4 active moves by default (the team station changes them). sync_at: share of life at or below which it is weakened (it stops fighting and can be synced). material: what it drops. home: its home terrain bonus and cost (VISION.md). temperament: on the route (shy flees, calm ignores, territorial warns, aggressive chases). rarity: common or rare (the basic Sync Lens only syncs common ones). evolve: a level and what it becomes. shiny_chance: 1 in 4096 (F1 spawns one). ai: how it fights (style: one of the movement styles in styles.json; attacks: the moves it uses with their reach and the pause it takes after (its opening); the tell is the move's own wind-up, the same as yours).",
  "species": {
   "honey_badger": {
    "name": "Honey Badger",
@@ -123,10 +123,7 @@
    "material": "glass_scale",
    "shiny_chance": 0.000244140625,
    "ai": {
-    "style": "skirmisher",
-    "keep": 150,
-    "flee_below": 0.5,
-    "flee_keep": 220,
+    "style": "kiter",
     "attacks": [
      {
       "move": "tentacle_snap",
@@ -218,7 +215,7 @@
    "material": "bloom_leaf",
    "shiny_chance": 0.000244140625,
    "ai": {
-    "style": "brawler",
+    "style": "tank",
     "attacks": [
      {
       "move": "tail_swipe",
@@ -303,9 +300,6 @@
    "shiny_chance": 0.000244140625,
    "ai": {
     "style": "flanker",
-    "flank": 80,
-    "retreat": 140,
-    "retreat_time": 1.0,
     "attacks": [
      {
       "move": "gust_bite",
@@ -386,10 +380,7 @@
    "material": "night_whisker",
    "shiny_chance": 0.000244140625,
    "ai": {
-    "style": "skirmisher",
-    "keep": 120,
-    "flee_below": 0.65,
-    "flee_keep": 190,
+    "style": "kiter",
     "attacks": [
      {
       "move": "echo_pulse",

@@ -91,6 +91,7 @@ func _through_gate(arena_id: String) -> void:
 		var kinds: Array = TamerData.rule("battle.wild_species")
 		var rec := CreatureRecord.make(String(kinds[randi() % kinds.size()]), level, true)
 		rec.alpha = opponent == "alpha"
+		rec.life = rec.max_life()
 		g.battle.start_wild(rec, arena_id, tier_id())
 
 

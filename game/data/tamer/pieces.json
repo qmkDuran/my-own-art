@@ -1,0 +1,243 @@
+{
+ "_doc": "The piece library arenas are built from (arenas.json \"pieces\": [piece, [x, y, w, h]]). A piece is drawn in a box of `size` cells; `paint` lists features as [feature, [x, y, w, h]] inside that box, and the piece is stretched to the box the arena gives it. A new arena is a new list of pieces.",
+ "grass": {
+  "size": [
+   1,
+   1
+  ],
+  "paint": [
+   [
+    "grass",
+    [
+     0,
+     0,
+     1,
+     1
+    ]
+   ]
+  ]
+ },
+ "rock": {
+  "size": [
+   1,
+   1
+  ],
+  "paint": [
+   [
+    "rock",
+    [
+     0,
+     0,
+     1,
+     1
+    ]
+   ]
+  ]
+ },
+ "pillar": {
+  "size": [
+   1,
+   1
+  ],
+  "paint": [
+   [
+    "tree",
+    [
+     0,
+     0,
+     1,
+     1
+    ]
+   ]
+  ]
+ },
+ "tree": {
+  "size": [
+   1,
+   1
+  ],
+  "paint": [
+   [
+    "tree",
+    [
+     0,
+     0,
+     1,
+     1
+    ]
+   ]
+  ]
+ },
+ "mud": {
+  "size": [
+   1,
+   1
+  ],
+  "paint": [
+   [
+    "mud",
+    [
+     0,
+     0,
+     1,
+     1
+    ]
+   ]
+  ]
+ },
+ "water": {
+  "size": [
+   1,
+   1
+  ],
+  "paint": [
+   [
+    "shallow",
+    [
+     0,
+     0,
+     1,
+     1
+    ]
+   ]
+  ]
+ },
+ "thicket": {
+  "size": [
+   1,
+   1
+  ],
+  "paint": [
+   [
+    "thicket",
+    [
+     0,
+     0,
+     1,
+     1
+    ]
+   ]
+  ]
+ },
+ "roots": {
+  "size": [
+   1,
+   1
+  ],
+  "paint": [
+   [
+    "roots",
+    [
+     0,
+     0,
+     1,
+     1
+    ]
+   ]
+  ]
+ },
+ "thorns": {
+  "size": [
+   1,
+   1
+  ],
+  "paint": [
+   [
+    "thorns",
+    [
+     0,
+     0,
+     1,
+     1
+    ]
+   ]
+  ]
+ },
+ "cracked": {
+  "size": [
+   1,
+   1
+  ],
+  "paint": [
+   [
+    "cracked",
+    [
+     0,
+     0,
+     1,
+     1
+    ]
+   ]
+  ]
+ },
+ "river": {
+  "size": [
+   6,
+   10
+  ],
+  "paint": [
+   [
+    "shallow",
+    [
+     0,
+     0,
+     6,
+     10
+    ]
+   ],
+   [
+    "deep",
+    [
+     2,
+     0,
+     2,
+     10
+    ]
+   ],
+   [
+    "bridge",
+    [
+     2,
+     4,
+     2,
+     2
+    ]
+   ]
+  ]
+ },
+ "ledge": {
+  "size": [
+   8,
+   5
+  ],
+  "paint": [
+   [
+    "ledge",
+    [
+     1,
+     0,
+     6,
+     5
+    ]
+   ],
+   [
+    "ramp",
+    [
+     0,
+     2,
+     1,
+     1
+    ]
+   ],
+   [
+    "ramp",
+    [
+     7,
+     2,
+     1,
+     1
+    ]
+   ]
+  ]
+ }
+}

@@ -40,6 +40,12 @@ func display_name() -> String:
 	return ("Shiny " if shiny else "") + ("Alpha " if alpha else "") + growth.form_name()
 
 
+## Its signature move: the one it learns last (an alpha already knows it).
+func signature_move() -> String:
+	var learn: Array = data()["learn"]
+	return String(learn[learn.size() - 1][1])
+
+
 func A() -> Dictionary:
 	return TamerData.rule("alpha")
 

@@ -12,6 +12,8 @@ static var rules: Dictionary = {}
 static var sprites: Dictionary = {}
 static var effects: Dictionary = {}
 static var arenas: Dictionary = {}
+static var styles: Dictionary = {}
+static var pieces: Dictionary = {}
 
 
 static func ensure() -> void:
@@ -24,6 +26,8 @@ static func ensure() -> void:
 	rules = GameData.load_json("tamer/tamer")
 	sprites = GameData.load_json("tamer/creature_sprites")
 	effects = GameData.load_json("tamer/effects")
+	styles = GameData.load_json("tamer/styles")
+	pieces = GameData.load_json("tamer/pieces")
 	arenas = GameData.load_json("tamer/arenas")
 
 

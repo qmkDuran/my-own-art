@@ -21,7 +21,11 @@ func run() -> void:
 	await _shiny()
 	await _rival()
 	await _temperaments()
+	await _quick_win()
 	await _lose()
+	await smoke.go_hall()
+	await _alpha()
+	await _bait()
 
 
 func _trainer_battle() -> void:
@@ -184,6 +188,54 @@ func _temperaments() -> void:
 	await smoke.until(func() -> bool: return g.battle.on, 6.0)
 	smoke.expect(g.battle.on and g.battle.route_creature == agg, "an aggressive one chases you into a battle")
 	await smoke.until(smoke.settled)
+	await smoke.leave()
+
+
+## Far above a wild creature's level, walking into it beats it on the spot: no arena.
+func _quick_win() -> void:
+	var rec: CreatureRecord = g.team.current()
+	rec.growth.set_level(15)
+	var xp: float = rec.growth.xp
+	var c: Creature = _route_creature("maned_wolf", "calm", Vector2(120, 0))
+	c.rec.level = 3
+	g.encounter(c)
+	await smoke.frames(5)
+	smoke.expect(not g.battle.on and c.fainted_now and rec.growth.xp > xp, "a quick win: far above its level, walking into it beats it on the map")
+	rec.growth.set_level(5)
+
+
+## Alphas: bigger, glowing, tougher, with an extra move; one waits on the route; the hall's switch sends one.
+func _alpha() -> void:
+	var on_route: bool = false
+	for n: Node in g.get_tree().get_nodes_in_group(Combatant.SIDE_WILD):
+		on_route = on_route or (n as Creature).rec.alpha
+	smoke.expect(on_route, "an alpha waits on the route")
+	g.hall.opponent = "alpha"
+	g.trainer.place(g.hall.gate_spot(0) + Vector2(0, 40))
+	await smoke.frames(2)
+	g.trainer.place(g.hall.gate_spot(0))
+	await smoke.until(func() -> bool: return g.battle.foe != null and smoke.settled())
+	var foe: Creature = g.battle.foe
+	var plain := CreatureRecord.make(foe.rec.species_id, foe.rec.level, true)
+	smoke.expect(foe.rec.alpha and foe.size_k > g.field.partner.size_k * 1.3 and foe.rec.max_life() > plain.max_life() * 1.5,
+		"the switch sends an alpha: bigger, with more life")
+	var b := foe.brain as FoeBrain
+	smoke.expect(b.style.attacks().any(func(a: Dictionary) -> bool: return a["move"] == foe.rec.signature_move()), "and an extra move (its signature)")
+	g.hall.opponent = "wild"
+	await smoke.leave()
+	g.trainer.place(g.hall.spot("you"))
+	await smoke.frames(3)
+
+
+## Hard AI v2 baits: it steps into your range and dodges the moment you commit.
+func _bait() -> void:
+	var foe: Creature = await smoke.wild("maned_wolf", "meadow", "hard")
+	var b := foe.brain as FoeBrain
+	b.tactics.bait(g.field.partner)
+	g.field.partner.commit_t = 0.5
+	b.tactics.think(g.field.partner, 0.016)
+	await smoke.seconds(float(b.tier["react"]) + 0.2)
+	smoke.expect(b.tactics.baits_dodged == 1 and foe.dodge_cd > 0.0, "Hard baits: it dodges the move you committed to")
 	await smoke.leave()
 
 

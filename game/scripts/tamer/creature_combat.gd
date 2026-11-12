@@ -63,10 +63,7 @@ static func _gauge_and_stagger(user: Creature, tc: Creature, m: Dictionary, dmg:
 	var G: Dictionary = TamerData.rule("combat.gauge")
 	if String(m.get("type", "physical")) == "physical":
 		var fill: float = float(G["per_physical_hit"]) * (float(G["on_staggered_mult"]) if tc.stagger.is_staggered() else 1.0)
-		if user.side == Combatant.SIDE_TEAM:
-			TamerGame.current.team.add_gauge(fill)
-		else:
-			user.gauge = minf(float(G["segments"]), user.gauge + fill)
+		user.add_gauge(fill)
 	var k: float = float(m.get("stagger", 1.0))
 	if advantage:
 		k *= float(TamerData.rule("combat.stagger.advantage_mult"))

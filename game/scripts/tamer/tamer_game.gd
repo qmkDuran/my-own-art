@@ -172,9 +172,13 @@ func partner() -> Creature:
 	return field.partner
 
 
-## You walked into a wild creature on the route: a 1v1 in the arena that suits the ground (the meadow).
+## You walked into a wild creature on the route: a 1v1 in the arena that suits the ground (the meadow). One far
+## below your active creature's level (not an alpha) is beaten on the spot: a burst, its XP and materials, no arena.
 func encounter(c: Creature) -> void:
 	if battle.on or transition.busy or field.partner == null or team.all_out():
+		return
+	if not c.rec.alpha and team.current().level >= c.rec.level + int(TamerData.rule("battle.quick_win_levels")):
+		quick_win(c)
 		return
 	battle.start_wild(c.rec, String(TamerData.rule("battle.route_arena")), String(TamerData.rule("battle.route_tier")), c)
 
@@ -189,6 +193,24 @@ func dev_shiny() -> void:
 	var kind: String = String(TamerData.rule("spawn.showcase_shiny"))
 	var lvl: int = team.current().level if team.current() != null else 5
 	battle.start_wild(CreatureRecord.make(kind, lvl, true, true), "meadow", hall.tier_id())
+
+
+func quick_win(c: Creature) -> void:
+	TamerFx.blast(c.global_position, 50.0, field.partner.element_id(), true)
+	TamerFx.word(c.global_position, "Quick win!", Pal.c("gold"), UiDraw.TITLE)
+	reward(c, float(TamerData.rule("progression.win_xp")))
+	c.faint()
+
+
+## A beaten foe's XP (to your active creature) and materials; an alpha gives more of both.
+func reward(c: Creature, xp: float) -> void:
+	var k: float = float(c.rec.A()["rewards"]) if c.rec.alpha else 1.0
+	team.current().growth.add_xp(xp * k)
+	var span: Array = TamerData.rule("battle.rewards.materials")
+	var got: int = roundi(randi_range(int(span[0]), int(span[1])) * k)
+	var mat: String = String(c.rec.data()["material"])
+	team.add_material(mat, got)
+	TamerFx.word(c.global_position + Vector2(0, -14), "+%d %s" % [got, TamerData.rule("materials." + mat + ".name")], Pal.c("gold"))
 
 
 func go_route() -> void:

@@ -1,7 +1,7 @@
 class_name Arena
 extends Node2D
-## One battle arena, built from data/tamer/arenas.json at `origin` (away from the route) in a size (medium or large:
-## the layout is scaled to fit): a square walled ArenaLayout, its view, a y-sorted stage for the creatures, and fog
+## One battle arena, built from data/tamer/arenas.json (a list of pieces from pieces.json) at `origin` (away from the
+## route) in a size (medium or large: the layout is scaled to fit): a square walled ArenaLayout, its view, a y-sorted stage for the creatures, and fog
 ## if it has any. The trainers watch from outside its left and right walls. Moves change it through affect() and
 ## grow_vine() (TerrainChange).
 
@@ -24,9 +24,8 @@ func build(arena_id: String, at: Vector2, size_id: String = "medium") -> Arena:
 	var sz: Array = A["sizes"][size_id]
 	_scale = Vector2(float(sz[0]) / float(A["cols"]), float(sz[1]) / float(A["rows"]))
 	layout = ArenaLayout.new().build(int(sz[0]), int(sz[1]), int(A["cell"]), at)
-	var life: Dictionary = data.get("life", {})
-	for p: Array in data["paint"]:
-		layout.paint(String(p[0]), _scaled(p[1]), float(life.get(String(p[0]), 0.0)))
+	for p: Array in data["pieces"]:
+		_place(String(p[0]), p[1])
 	change = TerrainChange.new(self)
 	stage = Node2D.new()
 	stage.y_sort_enabled = true
@@ -37,6 +36,17 @@ func build(arena_id: String, at: Vector2, size_id: String = "medium") -> Arena:
 		fog = ArenaFog.new().setup(layout)
 		add_child(fog)
 	return self
+
+
+## A piece from the library (pieces.json) stretched over the box [x, y, w, h].
+func _place(piece: String, box: Array) -> void:
+	var P: Dictionary = TamerData.pieces[piece]
+	var k := Vector2(float(box[2]) / float(P["size"][0]), float(box[3]) / float(P["size"][1]))
+	var life: Dictionary = data.get("life", {})
+	for f: Array in P["paint"]:
+		var r: Array = f[1]
+		var at: Array = [float(box[0]) + float(r[0]) * k.x, float(box[1]) + float(r[1]) * k.y, float(r[2]) * k.x, float(r[3]) * k.y]
+		layout.paint(String(f[0]), _scaled(at), float(life.get(String(f[0]), 0.0)))
 
 
 ## A painted rectangle [x, y, w, h] in this size's cells (features keep at least one cell).

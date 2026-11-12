@@ -38,7 +38,8 @@ Gate Hall and the camp heal.
   - **Physical** moves are free and fill the gauge.
   - **Special** moves cost gauge (pips on the icon). Hold the key to see where it goes, release to use it. They are
     **skillshots**: they wind up, fly where you aimed, and can miss. Lead moving targets.
-  - **Status** moves (marked HOLD) are **channelled**: hold the key; the bar under your creature fills (the longer,
+  - Every wind-up (yours in gold, the foe's in red) shows on the ground where the move will land.
+  - **Status** moves (marked HOLD) are **channelled**: hold the key; the circle at your creature's feet fills (the longer,
     the stronger, up to 100%); release to use it. You can't move or dodge while channelling, and a hit cancels it.
     When a foe channels, hit it.
 - **Space** dodges (short, with a cooldown). Moves commit: no dodging during a wind-up or recovery.
@@ -46,7 +47,10 @@ Gate Hall and the camp heal.
 - **F** syncs (see below). No items in battle.
 
 **What to watch:**
-- **Red warnings** show where a foe's attack will land. Easy foes wind up longer; Hard ones less.
+- **Red warnings** show where a foe's attack will land, for exactly as long as its wind-up (the same wind-ups as
+  yours). Easy foes react slowly, attack less often and rarely dodge; Hard ones dodge your wind-ups, lead their
+  shots, take cover and high ground, **bait** you (step into your range, then dodge the move you commit to),
+  **push** you toward walls, rocks and thorns, and burn or flatten your home terrain.
 - **Elements:** a hit with the element advantage does x1.3 ("Strong hit!") and staggers faster. Nothing is ever
   resisted. Press **I** for a creature's element and what it is strong against.
 - **Stagger:** the gold bar under a foe's life fills with hits. Full, it is **STAGGERED**: it reels and takes 50% more.
@@ -66,8 +70,12 @@ Gate Hall and the camp heal.
   the bridge (whoever is on it falls in) and cracked floor (a pit). Walls, ledges and deep water never break.
 - **Bonuses are capped:** element + terrain + buffs add at most +40% damage together.
 - **Channelling** shows as a circle filling at the creature's feet.
-- **Equal footing:** opponents play by exactly your rules (same stats at the same level, moves, wind-ups and red
-  warnings, gauge, swap cost, no items). Difficulty only changes how smart they are.
+- **Equal footing:** opponents play by exactly your rules (same stats at the same level, the same moves, wind-ups,
+  gauge, swap cost and cooldown, entry strike, no items). Difficulty only changes how smart they are. Each species
+  moves in its own style: brawlers walk in, kiters keep their distance, tanks advance slowly and hold, flankers
+  circle and strike.
+- **Alphas:** rare, bigger, glowing wild creatures with more life and their signature move. A real fight, double
+  rewards. One roams the route; the Gate Hall's switch sends one too.
 - **Your trainer** calls the swaps and shouts on big moments from the arena edge.
 - **Winning** a wild battle gives XP and materials; a trainer battle is 3v3 (their creatures are the balls at the
   top). **Losing** (your whole team down) ends the battle; on the route you wake at camp and lose one of each material.
@@ -76,6 +84,8 @@ Gate Hall and the camp heal.
 - **Exploring:** left click walks, Space rolls. Your creature follows.
 - **Wild creatures never force a fight.** Shy ones flee, calm ones ignore you, territorial ones warn ("!") and calm
   down if you back off, and the rare **aggressive** one (red eye glint) chases you. Walk into one to battle it.
+- **Quick win:** if your active creature is 8 or more levels above a wild one, walking into it beats it on the
+  spot (XP and materials, no arena). Alphas always fight.
 - **Ivo**, a rival trainer, asks "Want to battle?" when you come close: Accept or Decline.
 - **Sync Lens:** in a wild battle, weaken the creature until **gold stars** show (its life under the pink mark),
   then press **F**: your trainer's lens beam locks on and a 2.5 s scan runs. The creature **struggles** (red-telegraphed
@@ -112,4 +122,5 @@ Gate Hall and the camp heal.
 - Do skillshots feel readable, both yours and theirs? Too slow, too fast?
 - Is channelling a status move worth the risk?
 - Does Easy / Normal / Hard feel like three different opponents?
-- Which arena was the most fun, and why?
+- Which arena was the most fun, and why? Medium or large?
+- Did burning, smoke or a broken bridge ever feel unfair, or just change the fight?

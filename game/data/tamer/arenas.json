@@ -1,5 +1,5 @@
 {
- "_doc": "Battle arenas (square, walled: nobody leaves) and the Gate Hall. Drawn for cols x rows cells of `cell` px and scaled to each of `sizes` (medium, large; picked in the Gate Hall). features painted as [x, y, w, h] cell rectangles in order (later ones win); life: hit points of breakable things. you/foe: where the two creatures start. style: how pillars and ground are drawn. fog: short vision. main: the one main terrain mechanic (the others are secondary). checklist: the sign by its gate.",
+ "_doc": "Battle arenas (square, walled: nobody leaves) and the Gate Hall. Each arena is a list of pieces from pieces.json placed as [piece, [x, y, w, h]] on a cols x rows grid of `cell` px (later ones win), scaled to each of `sizes` (medium, large; picked in the Gate Hall). life: hit points of breakable features. you/foe: where the two creatures start. style: how pillars and ground are drawn. fog: short vision. main: the one main terrain mechanic (the others are secondary). checklist: the sign by its gate.",
  "cell": 32,
  "rows": 12,
  "cols": 24,
@@ -16,7 +16,7 @@
     20,
     6
    ],
-   "paint": [
+   "pieces": [
     [
      "grass",
      [
@@ -112,32 +112,14 @@
     20,
     6
    ],
-   "paint": [
+   "pieces": [
     [
-     "shallow",
+     "river",
      [
       9,
       1,
       6,
       10
-     ]
-    ],
-    [
-     "deep",
-     [
-      11,
-      1,
-      2,
-      10
-     ]
-    ],
-    [
-     "bridge",
-     [
-      11,
-      5,
-      2,
-      2
      ]
     ],
     [
@@ -201,8 +183,7 @@
     20,
     6
    ],
-   "fog": true,
-   "paint": [
+   "pieces": [
     [
      "tree",
      [
@@ -303,6 +284,7 @@
      ]
     ]
    ],
+   "fog": true,
    "checklist": [
     "Fog: you only see what is near",
     "Gale moves clear the fog around them",
@@ -323,36 +305,18 @@
     20,
     6
    ],
-   "paint": [
+   "pieces": [
     [
      "ledge",
      [
-      9,
+      8,
       3,
-      6,
+      8,
       5
      ]
     ],
     [
-     "ramp",
-     [
-      8,
-      5,
-      1,
-      1
-     ]
-    ],
-    [
-     "ramp",
-     [
-      15,
-      5,
-      1,
-      1
-     ]
-    ],
-    [
-     "tree",
+     "pillar",
      [
       5,
       3,
@@ -361,7 +325,7 @@
      ]
     ],
     [
-     "tree",
+     "pillar",
      [
       5,
       8,
@@ -370,7 +334,7 @@
      ]
     ],
     [
-     "tree",
+     "pillar",
      [
       18,
       3,
@@ -379,7 +343,7 @@
      ]
     ],
     [
-     "tree",
+     "pillar",
      [
       18,
       8,

@@ -26,6 +26,13 @@ func _init(creature: Creature, tier_id: String = "normal") -> void:
 	tactics = FoeTactics.new(self)
 
 
+## Who it fights: your creature, or (a bot playing your side in the balance run) the opponent.
+func opponent() -> Creature:
+	var g: TamerGame = TamerGame.current
+	var o: Creature = g.battle.foe if c.side == Combatant.SIDE_TEAM else g.partner()
+	return o if o != null and is_instance_valid(o) else null
+
+
 func think(delta: float) -> Vector2:
 	_pace -= delta
 	if c.dazed and not TamerGame.current.lens.scanning_at(c):
@@ -35,7 +42,7 @@ func think(delta: float) -> Vector2:
 		return Vector2.ZERO
 	if _channel_left > 0.0:
 		return Vector2.ZERO
-	_target = TamerGame.current.partner()
+	_target = opponent()
 	if _target == null or not _target.alive():
 		return Vector2.ZERO
 	if c.dazed:
@@ -83,7 +90,7 @@ func attack_with(a: Dictionary, target: Creature, now: bool = false) -> bool:
 	var aim: Vector2 = tactics.lead(target, m) if String(m["kind"]) == "bolt" else target.global_position
 	if not c.cast(id, aim):
 		return false
-	c.gauge = maxf(0.0, c.gauge - float(m.get("cost", 0)))
+	c.pay_gauge(float(m.get("cost", 0)))
 	_after(a)
 	return true
 

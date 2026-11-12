@@ -1,0 +1,18 @@
+{
+ "_doc": "The four movement styles every species picks one of (species.json ai.style), used by FightStyle for any creature the AI plays. brawler: walks straight in. kiter: keeps `keep` px away (more when below `flee_below` life: `flee_keep`), backs off slower than it chases. tank: advances slowly (`advance` x speed), holds its ground, and channels its status move when hurt below `guard_below`. flanker: circles `flank` px to your side, strikes, runs `retreat` px off for `retreat_time` s, comes again.",
+ "brawler": {},
+ "kiter": {
+  "keep": 140,
+  "flee_below": 0.55,
+  "flee_keep": 210
+ },
+ "tank": {
+  "advance": 0.7,
+  "guard_below": 0.5
+ },
+ "flanker": {
+  "flank": 80,
+  "retreat": 140,
+  "retreat_time": 1.0
+ }
+}

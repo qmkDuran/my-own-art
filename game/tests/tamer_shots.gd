@@ -4,7 +4,7 @@ extends Node
 ## and saved as NAME_<w>x<h>.png in --out.
 
 const SHOTS: Array[String] = ["hall", "station", "transition", "meadow", "riverbank", "forest", "ruins", "channel",
-	"effects", "burn", "catch", "large", "trainer", "route", "evolution"]
+	"effects", "burn", "catch", "large", "trainer", "route", "evolution", "alpha", "quick_win"]
 
 var g: TamerGame
 var _out: String
@@ -233,3 +233,31 @@ func _shot_large() -> void:
 	g.hall.size_id = "large"
 	await _arena_shot("riverbank", "tas_devil", "normal")
 	g.hall.size_id = "medium"
+
+
+## An alpha in the meadow: bigger, glowing, its name in front.
+func _shot_alpha() -> void:
+	var rec := CreatureRecord.make("tas_devil", g.team.current().level, true)
+	rec.alpha = true
+	rec.life = rec.max_life()
+	g.battle.start_wild(rec, "meadow", "normal")
+	while g.battle.foe == null or g.transition.busy:
+		await _wait(0.05)
+	await _play(g.battle.arena.center() - Vector2(80, 0), 1.4)
+	await _save("alpha")
+	await _leave()
+
+
+## A quick win on the route: a creature far below your level beaten on the spot.
+func _shot_quick_win() -> void:
+	g.go_route()
+	while g.area != "route" or g.transition.busy:
+		await _wait(0.05)
+	g.team.current().growth.set_level(15)
+	var at: Vector2 = g.trainer.global_position
+	g.spawner.clear_near(at, 500.0)
+	var c: Creature = g.spawner.spawn("maned_wolf", g.route_layout.free_spot_near(at + Vector2(70, 0), 14.0), 3)
+	c.brain = null
+	g.encounter(c)
+	await _wait(0.25)
+	await _save("quick_win")

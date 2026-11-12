@@ -20,6 +20,7 @@ const STAR_ORBIT := Vector2(13.0, 4.0)
 const VEIL_OWN: float = 0.45           ## your hidden creature: still clear to you
 const VEIL_FOE: float = 0.1            ## a hidden foe: a faint shimmer, so a hidden foe is never quite unfair
 const VEIL_RATE: float = 4.0
+const ALPHA_GLOW: float = 0.55
 
 var sprite: Sprite2D
 var ring: Sprite2D                      ## under the one you steer
@@ -89,6 +90,19 @@ func set_highlight(on: bool) -> void:
 
 func set_dazed(on: bool) -> void:
 	stars.visible = on
+
+
+## An alpha glows in its element's light, under its feet and around it.
+func add_alpha_glow() -> void:
+	var glow := Sprite2D.new()
+	glow.texture = LightTex.soft(64)
+	glow.material = Fx.glow_material()
+	glow.modulate = TamerData.color(element, "light", ALPHA_GLOW)
+	glow.position = Vector2(0, -_height * 0.4)
+	glow.scale = Vector2.ONE * 1.2
+	glow.show_behind_parent = true
+	add_child(glow)
+	move_child(glow, 0)
 
 
 ## Hidden (tall grass, fog, camouflage): yours turns see-through, a foe all but disappears.

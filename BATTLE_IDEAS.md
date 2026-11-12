@@ -47,6 +47,14 @@ A menu to pick from. Everything has a counter, and every buff has a cost.
 **Arenas**
 - Two sizes (medium, large) picked in the Gate Hall; the camera fits each with a margin; creatures stay 1.5x.
 
+**Wild variety and reusable blocks**
+- Quick win: walking into a wild creature 8+ levels below your active one beats it on the map (no arena).
+- Alphas: rare bigger wild creatures (x1.4, a glow, more life, their signature move), a real fight with better
+  rewards. A visible variant of the species, not a hidden edge.
+- Every species picks one of four movement styles (brawler, kiter, tank, flanker) from data; arenas are composed
+  from a piece library in data, so a new arena is a data file.
+- A headless balance bot plays every creature x arena x difficulty and flags outliers.
+
 **Parked**
 - Bond, as a NON-COMBAT system for later (ideas: field abilities, finding secrets, personality, cosmetics, bond
   events). It never gives a combat advantage. Not in the demo.

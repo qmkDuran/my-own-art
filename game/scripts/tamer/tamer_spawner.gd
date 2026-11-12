@@ -2,7 +2,7 @@ class_name TamerSpawner
 extends Node
 ## Wild creatures on the route: one per patch of tall grass, spread over open ground away from the start and the
 ## camp (tougher kinds and levels further out, tamer.json "spawn"), a shiny roll each (1 in 4096; F1 spawns one for
-## testing), and fresh ones when you rest at camp.
+## testing), one rare alpha (tamer.json "alpha.route"), and fresh ones when you rest at camp.
 
 const T := ZoneLayout.T
 const MEMBER_SPREAD := Vector2(60, 44)
@@ -76,7 +76,7 @@ func spawn_all(keep_clear: Vector2 = Vector2.INF) -> void:
 	for i: int in packs.size():
 		if keep_clear != Vector2.INF and (packs[i]["pos"] as Vector2).distance_to(keep_clear) < g.view_radius():
 			continue
-		_spawn_pack(i)
+		_spawn_pack(i, i < int(TamerData.rule("alpha.route")))
 
 
 func _row(progress: float) -> Dictionary:
@@ -87,14 +87,17 @@ func _row(progress: float) -> Dictionary:
 	return row
 
 
-func _spawn_pack(i: int) -> void:
+## Pack `i`; the first ones are alphas (tamer.json "alpha.route"), one creature each.
+func _spawn_pack(i: int, alpha: bool = false) -> void:
 	var row: Dictionary = _row(float(packs[i]["progress"]))
 	var size: Array = row["size"]                          # small packs near the start, bigger deeper in
 	var kind: String = _weighted(row["kinds"])             # a pack is one kind: easy to read, easy to plan for
 	for k: int in rng.randi_range(int(size[0]), int(size[1])):
 		var at: Vector2 = _member_spot(packs[i]["pos"])
 		if at != Vector2.INF:
-			spawn(kind, at, int(row["level"]))
+			spawn(kind, at, int(row["level"]), -1, alpha)
+		if alpha:
+			return
 
 
 func _member_spot(center: Vector2) -> Vector2:
@@ -122,8 +125,10 @@ func _shiny_roll(kind: String) -> bool:
 
 
 ## A wild creature on the route, roaming by its temperament (RouteBrain). Walking into it starts a battle.
-func spawn(kind: String, at: Vector2, level: int, shiny: int = -1) -> Creature:
+func spawn(kind: String, at: Vector2, level: int, shiny: int = -1, alpha: bool = false) -> Creature:
 	var rec := CreatureRecord.make(kind, level, true, _shiny_roll(kind) if shiny < 0 else shiny == 1)
+	rec.alpha = alpha
+	rec.life = rec.max_life()
 	var c := Creature.new().setup(rec, Combatant.SIDE_WILD)
 	c.position = at
 	c.brain = RouteBrain.new(c, at)

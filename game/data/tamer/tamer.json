@@ -321,7 +321,7 @@
   "spread_steps": 3
  },
  "ai_tiers": {
-  "_doc": "How well the opponent plays. Only DECISION-MAKING (equal footing: the same stats, moves, wind-ups, gauge and rules as yours). react: seconds before it responds; pace: seconds it waits between attacks; dodge: chance to dodge your wind-ups; lead: how well it leads shots (0 aims at you, 1 at where you'll be); cover: chance to step behind cover when hurt; grass: chance to hide in grass; high_ground: chance to climb a ledge when you are at range; swap_below: a trainer swaps out under this life; counter_swap: swaps into an element advantage; save_gauge: waits for a full gauge or a stagger to spend; status: chance to channel its status move; channel: how long it channels (share of max).",
+  "_doc": "How well the opponent plays. Only DECISION-MAKING (equal footing: the same stats, moves, wind-ups, gauge and rules as yours). react: seconds before it responds; pace: seconds it waits between attacks; dodge: chance to dodge your wind-ups; lead: how well it leads shots (0 aims at you, 1 at where you'll be); cover: chance to step behind cover when hurt; grass: chance to hide in grass; high_ground: chance to climb a ledge when you are at range; swap_below: a trainer swaps out under this life; counter_swap: swaps into an element advantage; save_gauge: waits for a full gauge or a stagger to spend; status: chance to channel its status move; channel: how long it channels (share of max). bait: chance to step into your range when you have gauge and dodge your move; push: chance to get on the far side of you from a hazard; deny: chance to burn or flatten your home terrain under you.",
   "easy": {
    "react": 0.7,
    "dodge": 0.0,
@@ -334,7 +334,10 @@
    "status": 0.15,
    "channel": 0.4,
    "high_ground": 0.0,
-   "pace": 1.4
+   "pace": 1.4,
+   "bait": 0,
+   "push": 0,
+   "deny": 0
   },
   "normal": {
    "react": 0.35,
@@ -348,7 +351,10 @@
    "status": 0.3,
    "channel": 0.7,
    "high_ground": 0.2,
-   "pace": 0.8
+   "pace": 0.8,
+   "bait": 0.15,
+   "push": 0.2,
+   "deny": 0.3
   },
   "hard": {
    "react": 0.15,
@@ -362,7 +368,10 @@
    "status": 0.45,
    "channel": 1.0,
    "high_ground": 0.6,
-   "pace": 0.45
+   "pace": 0.45,
+   "bait": 0.5,
+   "push": 0.6,
+   "deny": 0.9
   }
  },
  "progression": {
@@ -377,7 +386,7 @@
   ]
  },
  "battle": {
-  "_doc": "Arena battles: transition time, how wild opponents are picked in the Gate Hall, rewards, trainers.",
+  "_doc": "Arena battles: transition time, how wild opponents are picked in the Gate Hall, rewards, trainers. quick_win_levels: walking into a wild creature this many levels below your active one beats it on the spot (no arena; not an alpha).",
   "transition": 0.55,
   "wild_species": [
    "maned_wolf",
@@ -429,7 +438,8 @@
     }
    }
   },
-  "route_arena": "meadow"
+  "route_arena": "meadow",
+  "quick_win_levels": 8
  },
  "temperament": {
   "_doc": "Wild creatures on the route never force a fight (walking into one starts it). warn: a territorial one warns at this range and calms after `calm_after` s if you back off; flee_range: a shy one runs from you; chase_range: an aggressive one (rare, red eye glint) chases.",

@@ -32,7 +32,7 @@ var dazed: bool = false                 ## weak enough to sync: it stops fightin
 var catchable: bool = true              ## a trainer's creature is never dazed (it can't be synced)
 var stagger: StaggerBar
 var effects := CreatureEffects.new()
-var gauge: float = 0.0                  ## an opposing creature's own gauge (yours is the team's)
+var gauge: float = 0.0                  ## an opposing creature's gauge (its trainer's carries over); yours is the team's
 var combo_scale: float = 1.0            ## the current basic hit's share of the combo (the last hit is the big one)
 var commit_t: float = 0.0               ## a move's wind-up and recovery: no moving, no dodging
 var channel_id: String = ""             ## a status move being channelled
@@ -65,6 +65,8 @@ func _ready() -> void:
 	view = CreatureSprite.new().setup(rec)
 	view.scale = Vector2.ONE * size_k
 	add_child(view)
+	if rec.alpha:
+		view.add_alpha_glow()
 	stagger = StaggerBar.new(self)
 	if rec.life < 0.0:
 		rec.life = rec.max_life()
@@ -72,6 +74,25 @@ func _ready() -> void:
 
 func hit_radius() -> float:
 	return rec.base_radius() * size_k
+
+
+## The gauge it fights with: your team's shared one, or its own (gauge_now, add_gauge, pay_gauge work for both).
+func gauge_now() -> float:
+	return TamerGame.current.team.gauge if side == SIDE_TEAM else gauge
+
+
+func add_gauge(amount: float) -> void:
+	if side == SIDE_TEAM:
+		TamerGame.current.team.add_gauge(amount)
+	else:
+		gauge = minf(float(TamerData.rule("combat.gauge.segments")), gauge + amount)
+
+
+func pay_gauge(amount: float) -> void:
+	if side == SIDE_TEAM:
+		TamerGame.current.team.gauge = maxf(0.0, TamerGame.current.team.gauge - amount)
+	else:
+		gauge = maxf(0.0, gauge - amount)
 
 
 ## How much further than its species it reaches, being bigger (bodies touch sooner).

@@ -91,11 +91,8 @@ func _send(rec: CreatureRecord, entry: bool = false) -> void:
 
 func _on_foe_down(c: Creature) -> void:
 	_defeated += 1
-	g.team.current().growth.add_xp(float(TamerData.rule("progression.trainer_win_xp" if opponent != null else "progression.win_xp")))
-	var span: Array = TamerData.rule("battle.rewards.materials")
-	var got: int = randi_range(int(span[0]), int(span[1]))
-	g.team.add_material(String(c.rec.data()["material"]), got)
-	TamerFx.word(c.global_position, "+%d %s" % [got, TamerData.rule("materials." + String(c.rec.data()["material"]) + ".name")], Pal.c("gold"))
+	var xp: float = float(TamerData.rule("progression.trainer_win_xp" if opponent != null else "progression.win_xp"))
+	g.reward(c, xp)
 	if opponent != null and opponent.has_more():
 		_send_t = float(TamerData.rule("combat.step_in_delay"))
 	else:
