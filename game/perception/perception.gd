@@ -3,7 +3,9 @@ extends Node
 ## The bot's senses. Eyes: a vision cone with a line-of-sight ray (trees, rocks, logs and the ground block it). A
 ## target hidden in a bush or tall grass is invisible unless very close, or unless the bot watched it go in. Ears:
 ## any sound the target makes within its radius (running is loud, sneaking quiet, attacks loud). Memory: the last
-## known position and heading, and every snare it saw or heard being set (or spotted up close while searching).
+## known position, heading and observed velocity, the target's life when last seen, when it last saw the target
+## roll, and every snare it saw or heard being set (or spotted up close while searching). Nothing is read from the
+## player that the bot could not see or hear.
 
 var sees_target: bool = false
 var time_since_seen: float = INF
@@ -13,11 +15,19 @@ var last_known_heading: Vector3 = Vector3.ZERO
 var has_lead: bool = false
 var searching_carefully: bool = false
 var known_snares: Array[Vector3] = []
+var observed_velocity: Vector3 = Vector3.ZERO
+var target_life_seen: float = 1.0
+var since_roll_seen: float = INF
+## The hiding spot the bot watched the target enter (null when none).
+var watched_hiding_spot: HidingSpot:
+	get:
+		return _saw_enter_spot
 var _bot: Creature
 var _target: Creature
 var _fresh_lead: bool = false
 var _saw_enter_spot: HidingSpot
 var _was_seeing_in_open: bool = false
+var _last_seen_at: Vector3 = Vector3.INF
 
 
 func setup(bot: Creature, target: Creature) -> void:
@@ -32,11 +42,13 @@ func tick(delta: float) -> void:
 	_remember_hiding_spot_entry()
 	sees_target = can_see_target()
 	time_since_heard += delta
+	since_roll_seen += delta
 	if sees_target:
 		time_since_seen = 0.0
-		_track_target()
+		_track_target(delta)
 	else:
 		time_since_seen += delta
+		_last_seen_at = Vector3.INF
 	_was_seeing_in_open = sees_target and not _target.stealth.is_hidden()
 	if searching_carefully:
 		_spot_snares_close_by()
@@ -97,14 +109,43 @@ func _remember_hiding_spot_entry() -> void:
 		_saw_enter_spot = _target.stealth.current_spot()
 
 
-func _track_target() -> void:
+## Is the target's creature facing us right now? Only known while we can see it; unseen, assume it cannot see us.
+func target_facing_me() -> bool:
+	if not sees_target:
+		return false
+	var to_me: Vector3 = _bot.global_position - _target.global_position
+	to_me.y = 0.0
+	return _target.forward().angle_to(to_me) <= deg_to_rad(Tuning.ai_f("senses", "facing_half_angle_deg"))
+
+
+## Was the target last seen heading toward us?
+func target_approaching() -> bool:
+	var to_me: Vector3 = _bot.global_position - last_known_position
+	to_me.y = 0.0
+	return last_known_heading.dot(to_me.normalized()) >= Tuning.ai_f("senses", "approach_dot")
+
+
+func _track_target(delta: float) -> void:
+	_observe_motion(delta)
+	target_life_seen = _target.health.fraction()
+	if _target.dodge.protects():
+		since_roll_seen = 0.0
 	last_known_position = _target.global_position
-	var moving := Vector3(_target.velocity.x, 0.0, _target.velocity.z)
-	if moving.length() > Creature.MOVING_SPEED:
-		last_known_heading = moving.normalized()
 	has_lead = true
 	if _target.trap.phase == Ability.Phase.WINDUP:
 		_remember_snare(_target.trap.place_spot)
+
+
+## Velocity and heading worked out from where we saw the target last frame and now (smoothed).
+func _observe_motion(delta: float) -> void:
+	if _last_seen_at != Vector3.INF:
+		var step: Vector3 = (_target.global_position - _last_seen_at) / delta
+		step.y = 0.0
+		var blend: float = clampf(Tuning.ai_f("prediction", "velocity_smoothing") * delta, 0.0, 1.0)
+		observed_velocity = observed_velocity.lerp(step, blend)
+		if observed_velocity.length() > Creature.MOVING_SPEED:
+			last_known_heading = observed_velocity.normalized()
+	_last_seen_at = _target.global_position
 
 
 func _spot_snares_close_by() -> void:

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Every check for the creature prototype: the clean-code lint, the headless smoke test of the real game scene,
-# and a long headless duel (the bot must never get stuck). Prints ALL CHECKS PASS or SOME CHECKS FAILED and
+# and a long headless duel (the bot must never get stuck) whose session log is then summarised. Prints ALL CHECKS PASS or SOME CHECKS FAILED and
 # exits 1 on any failure. Never commit on a failure.
 set -u
 cd "$(dirname "$0")/.."
@@ -16,5 +16,11 @@ echo "$out" | grep -qE "^SMOKE PASS" || status=1
 out=$(timeout 600 "$GODOT" --headless --fixed-fps 60 --path game -- --duel 2>&1)
 echo "$out" | grep -E "^DUEL (states|PASS|FAIL|stuck)|SCRIPT ERROR" | head -10
 echo "$out" | grep -qE "^DUEL PASS" || status=1
+log=$(echo "$out" | sed -n 's/^DUEL log //p' | tail -1)
+if [ -n "$log" ] && [ -f "$log" ]; then
+  python3 -I tools/analyze_session.py "$log" | sed 's/^/  /' || status=1
+else
+  echo "duel: no session log written"; status=1
+fi
 [ $status -eq 0 ] && echo "ALL CHECKS PASS" || echo "SOME CHECKS FAILED"
 exit $status

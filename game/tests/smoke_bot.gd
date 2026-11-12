@@ -31,7 +31,7 @@ func _takes_cover() -> void:
 	t.stage.face(t.m.bot, t.m.player.global_position)
 	await t.stage.frames(2)
 	t.m.brain.active = true
-	t.m.brain.change_state("fight")
+	t.m.brain.change_state("spit")
 	var took_cover: bool = await t.wait_until(_shoot_until_cover, COVER_LIMIT)
 	t.expect(took_cover, "spat at, the bot switches to taking cover")
 	var hidden: bool = await t.wait_until(func() -> bool:

@@ -21,6 +21,7 @@ var _sneak: bool = false
 var _stuck_for: float = 0.0
 var _was_stuck: bool = false
 var _detour: Vector3 = Vector3.INF
+var _arrive: float = 0.0
 var _stuck_count: int = 0
 var _window_start: Vector3 = Vector3.ZERO
 var _sidestep: Vector3 = Vector3.ZERO
@@ -38,8 +39,10 @@ func setup(bot: Creature, senses: Perception, woods: Woods) -> void:
 	bot.add_child(_agent)
 
 
-func go_to(point: Vector3, sneak: bool) -> void:
+## precise goals (a spot behind cover, a bush) must be reached closely; others count as reached a step away.
+func go_to(point: Vector3, sneak: bool, precise: bool = false) -> void:
 	_sneak = sneak
+	_arrive = Tuning.f("bot", "precise_arrive_distance" if precise else "arrive_distance")
 	var goal: Vector3 = _woods.on_navmesh(_clear_of_snares(point))
 	if _moving and goal.distance_to(_destination) < Tuning.f("bot", "repath_distance"):
 		return
@@ -73,7 +76,7 @@ func tick(delta: float) -> void:
 	if not _moving:
 		_bot.move_intent = Vector3.ZERO
 		return
-	if _flat(_destination - _bot.global_position).length() <= Tuning.f("bot", "arrive_distance"):
+	if _flat(_destination - _bot.global_position).length() <= _arrive:
 		stop()
 		return
 	if _sidestep_left > 0.0:

@@ -3,7 +3,7 @@ extends Node
 ## Stills only (no video). Needs a display (xvfb-run is fine).
 
 const SHOTS: Array[String] = ["overview", "third_person", "lock_on", "spit_tree", "hiding", "searching",
-	"ridge_fight", "hud_closeup", "start_screen"]
+	"ridge_fight", "hud_closeup", "start_screen", "mind_overlay"]
 const OVERVIEW_EYE: Vector3 = Vector3(0, 46, 40)
 const OVERVIEW_FOG_SHARE: float = 0.35
 const HUD_TOP_SHARE: float = 0.12
@@ -181,6 +181,15 @@ func _stage_hud_closeup() -> void:
 	await stage.seconds(Tuning.f("spit", "windup") + 0.6)
 	m.player.dodge.cooldown_left = Tuning.f("dodge", "cooldown") * 0.6
 	m.player.trap.cooldown_left = Tuning.f("trap", "cooldown") * 0.8
+
+
+## F3 on while the bot searches for a player it has learned likes this bush.
+func _stage_mind_overlay() -> void:
+	for k: int in 3:
+		m.model.note_hide(m.woods.hiding_spots[3])
+	await _stage_searching()
+	m.overlay.toggle()
+	await stage.seconds(0.6)
 
 
 func _stage_start_screen() -> void:

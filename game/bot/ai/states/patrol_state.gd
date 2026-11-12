@@ -1,6 +1,6 @@
 class_name PatrolState
 extends BotState
-## Patrol: walk quietly from patrol point to patrol point, pausing at each. Anything seen or heard: notice.
+## Patrol: with no clue where the player is, walk quietly from patrol point to patrol point, pausing at each.
 
 var _index: int = 0
 var _pause_left: float = 0.0
@@ -11,14 +11,11 @@ func enter() -> void:
 	_go_next()
 
 
-func tick(delta: float) -> String:
-	if senses().sees_target or senses().take_fresh_lead():
-		return "notice"
+func tick(delta: float) -> void:
 	if mover().arrived():
 		_pause_left -= delta
 		if _pause_left <= 0.0:
 			_go_next()
-	return ""
 
 
 func _go_next() -> void:

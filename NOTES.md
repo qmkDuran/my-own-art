@@ -35,25 +35,63 @@ audio and no external services.
   differs). Its dodge reactions are decided once per threat with a 50 % chance. An unseen bot moving within 7 m
   always gives itself away: bushes sway, and amber "rustle" chevrons around the crosshair point at it.
 
-## The bot's mind (state machine, `game/bot/`)
+## The bot's mind (`game/bot/`)
 
-| State | What it does | Leaves for |
-| --- | --- | --- |
-| patrol | walks quietly between patrol points, pausing at each | notice (sees you, hears you, gets hit) |
-| notice | stops and turns toward the clue for 0.8 s, "!" overhead | stalk (saw you, you have not seen it), hunt (saw you), search (only heard) |
-| stalk | sneaks in, aiming to come from behind you, opens with an ambush bite | fight (you notice it or it struck), hunt (too far), search (lost you) |
-| hunt | runs at you; when you break line of sight it swings wide around your last spot (a flank) | fight (in range and seen), search (lost) |
-| fight | faces you, holds ~7 m, strafes and switches side, spits when it has a clear shot, rushes in to bite when it plans to | cover (being shot at), hunt (lost you or too far) |
-| cover | runs behind the nearest trunk or boulder that blocks your line of fire, waits until its spit is ready | fight (sees you), hunt (to flank), fight if you close in |
-| search | goes to the last known spot, looks around, then checks the 3 nearest hiding spots (nearest to where you were heading first), sneaking and listening; a new sound moves the search; "?" overhead | fight/hunt (finds you), patrol (gives up after 24 s) |
-| retreat | at 35 % life: slips away to the refuge farthest from you that you cannot see (often a bush) and heals | patrol (healed to 80 %), fight (cornered within 5 m) |
+**Fair by construction.** The bot only knows what its senses give it: what it sees (vision cone, line of sight,
+the hiding rule), what it hears (noise radii), and what it remembers. Its velocity estimate of the player comes from
+successive sightings; the player's life is "as last seen"; whether the player is facing it is read from the player's
+creature while visible. It never reads the player's awareness, cooldowns or hidden position.
 
-Around the states: **senses** (`perception/perception.gd`: vision cone 120 deg, 24 m, line-of-sight ray, close
-awareness 2.2 m, hidden rule, hearing, memory of last position/heading and of snares), **reflexes**
-(`bot/bot_reflexes.gd`: roll out of an incoming glob or back from a visible bite wind-up), and **legs**
-(`bot/bot_mover.gd`: a NavigationAgent3D on a navmesh baked at start from the terrain, trunks, rocks, logs and the
-arena edge; snare detours; eases into goals; progress is measured by distance, it side-steps off snags and gives
-up on unreachable goals, so it never stays stuck).
+**Utility AI** (`bot/utility/`). Every think interval (0.25 s Hard, 0.4 s Normal, 0.7 s Easy) `BotFacts` gathers
+facts (distance and line of sight to the last known spot, own life, the player's life as last seen, cooldowns, being
+shot at, cover and ambush quality nearby, height advantage, its own snare, learned habits) and `UtilitySelector`
+scores each option: base weight x a curve per consideration, all in `game/data/ai.json`. A little noise (more on
+Easy) blurs close calls; the current option gets a small inertia bonus; an option that just finished is skipped once.
+A first sound or sighting while idle forces a "notice" beat of the difficulty's reaction time.
+
+| Option (state) | What it does |
+| --- | --- |
+| patrol | no clue: walk quietly between patrol points |
+| chase | run at the player or its last known spot |
+| spit | hold ~7 m, strafe, spit with a lead on the observed movement |
+| bite | close in and bite; vs players it learned roll early, it waits for the roll first |
+| cover | run to the best covered point (solid cover across its body width), shelter until its spit is back |
+| flank | just lost sight: go to the best flanking point around the predicted position |
+| stalk | sees the player, who is not facing it: sneak in from behind, open with a bite |
+| snare | player out of sight: set its own snare by the player's favourite hiding spot (or on the way) |
+| ambush | player probably coming: wait concealed near the predicted path, strike when it passes |
+| retreat | low life: go to the best refuge (far, covered, concealed, with exits) and heal |
+| search | go to the predicted spot, look around, check hiding spots (favourites first, then along the heading) |
+| bait | its snare is set and the player watches: stand beyond the snare and spit to draw the player over it |
+
+**Tactical positions** (`bot/tactics/tactical_eval.gd`). Candidates: rings around a centre, every nearby hiding spot,
+and the lee side of every nearby trunk and boulder, snapped to the navmesh. Features: solid cover from the threat,
+sightline to it, concealment, high ground, escape routes (open directions), distance band, travel cost, snare risk
+(known snares and learned snare areas) and cutting off the player's learned escape direction. Each purpose (cover,
+flank, ambush, retreat, bait) weighs them from `ai.json`. F3 shows the best points and their scores in the world.
+
+**Prediction** (`bot/prediction.gd`): intercept-time lead for spit, the last known spot pushed along the observed
+heading for the time it has been unseen, and the hiding spots ahead along that heading. After it sees the player roll
+it attacks inside the roll's cooldown.
+
+**Memory** (`bot/memory/`). `PlayerWatcher` turns sightings into `PlayerModel` entries: hiding spots and kinds
+(watched or found), bite vs spit, how soon you roll after its wind-up starts, time on high ground, snare spots, flee
+direction when hurt. It persists in `user://player_model.json` (F9 wipes it) and adapts within and across fights:
+favourite spots are searched first, snares go by your favourite bush, learned snare areas are avoided, ambush and
+flank points lean across your usual escape route, the ridge is worth more if you like it, early rollers are waited
+out. Learning shows only in the F3 overlay ("the bot is learning", barks like "It remembers you like the bushes.").
+
+**Difficulty** (`core/difficulty.gd`, keys 1/2/3 on the start or pause screen) changes only reaction time, think
+interval, decision noise, reflex delay and how much memory is used. Never stats.
+
+**Session logs** (`core/session_log.gd`): one JSON per fight in `playtest/sessions/` (player trail, hide events,
+moves and hits for both, bot states and decisions with top scores, outcome, duration). `tools/analyze_session.py`
+summarises one and flags suspicious moments (long fruitless searches, flip-flopping, ambushes walked into).
+
+Around the decisions: **senses** (`perception/perception.gd`), **reflexes** (`bot/bot_reflexes.gd`: roll out of a
+visible glob or back from a visible bite wind-up, after the difficulty's reflex delay) and **legs**
+(`bot/bot_mover.gd`: navmesh paths, snare detours, precise arrival for tactical points, side-steps off snags, gives up
+on unreachable goals).
 
 ## Tuning
 
@@ -75,13 +113,17 @@ The woods (layout, colours, light) are in `game/data/woods.json`; the two creatu
 - `world/`: `TerrainShape` (pure height function), `TerrainBuilder`, `ForestScatter`, `Props`, `Foliage` /
   `HidingSpot`, `Atmosphere`, `Woods` (builds it all and bakes the navmesh).
 - `ui/`: small `_draw()` widgets sharing `HudStyle`.
-- Checks: `tools/run_all.sh` runs the lint (`tools/check_code.py`), the smoke test (`--smoke`, 40+ checks) and a
-  150 s duel against a scripted player (`--duel`, fails if the bot ever stops making progress while walking).
+- Checks: `tools/run_all.sh` runs the lint (`tools/check_code.py`), the smoke test (`--smoke`, 50+ checks), a
+  duel against a scripted player (`--duel`, fails if the bot ever stops making progress while walking) and the
+  session analyzer on the duel's log.
   `tools/shoot.sh OUT_DIR` renders the review stills (`--shots`).
 
 ## Choices made without asking
 
-- The bot does not set snares itself (the trap is the player's outsmarting tool); everything else is shared.
+- The bot sets snares too (same move and rules). Its snares are faint to the player until within 2.2 m, just as the
+  player's are invisible to the bot until it is that close while searching.
+- The player's view of the bot uses the bot's own vision range (24 m) and needs a clear line from both the creature
+  and the camera, so the bot's life bar shows only when you really see it.
 - Ambush = "the target has not noticed you", one rule for both sides, rather than "attacked from a bush".
   A bot that watched you dive into a bush is not fooled.
 - Hidden creatures are only revealed within 2.5 m, so a bush ambush is a timing game: strike while it passes in
@@ -92,12 +134,12 @@ The woods (layout, colours, light) are in `game/data/woods.json`; the two creatu
 ## Known gaps and weak spots
 
 - No sound at all, so hearing is only shown through the stealth eye and the rustle chevrons.
-- The bot's stalk only triggers when it spots you first while you are not looking; against an attentive player
-  it mostly hunts and fights in the open.
-- The bot reads the player's exact position while it can see them and knows exactly where a noise came from;
-  there is no uncertainty in its hearing.
-- Cover picking uses tree trunks and boulders only (not logs) and checks one line of sight; a player who moves
-  fast around the cover can still get a shot.
+- The bot knows exactly where a noise came from; there is no uncertainty in its hearing.
+- Tactical evaluation is sampled (rings plus hiding spots plus lee points), not a full visibility map; logs are not
+  used as cover points.
+- The utility weights are first-pass and tuned against a scripted player only; the duel probe shows the bot still
+  switches plans often in close fights (the analyzer flags it).
+- Bait and ambush are simple: bait stands beyond its snare and spits; ambush waits up to 12 s.
 - The creatures' collision is a vertical capsule, so the head pokes past it a little in melee.
 - Retreat-and-heal can drag a fight out if you let the bot rest; chase it to stop its regeneration.
 - Balance is first-pass: one tuning file, little playtesting. The duel probe shows fights of 1-2 minutes against a

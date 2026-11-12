@@ -109,6 +109,7 @@ func _on_state(state: String) -> void:
 
 func _report() -> void:
 	print("DUEL states: ", _visited, "  outcome: ", MatchFlow.Phase.keys()[m.flow.phase])
+	print("DUEL log ", m.session_log.write("timeout"))
 	var ok: bool = _stuck_events == 0 and _visited.size() >= MIN_STATES
 	print("DUEL PASS" if ok else "DUEL FAIL (stuck %d, states %d)" % [_stuck_events, _visited.size()])
 	get_tree().quit(0 if ok else 1)

@@ -1,13 +1,16 @@
 extends Node
-## Autoload "Tuning": every feel number, the woods layout and the creature looks, loaded once from data/*.json so
-## the game is tuned in data, not code. Read numbers with Tuning.f("bite", "damage").
+## Autoload "Tuning": every feel number, the woods layout, the creature looks and the bot's decision data (utility
+## curves, tactical weights, memory, difficulty), loaded once from data/*.json so the game is tuned in data, not
+## code. Read numbers with Tuning.f("bite", "damage") and Tuning.ai_f("prediction", "max_lead_time").
 
 const TUNING_PATH: String = "res://data/tuning.json"
 const WOODS_PATH: String = "res://data/woods.json"
 const CREATURES_PATH: String = "res://data/creatures.json"
+const AI_PATH: String = "res://data/ai.json"
 
 var woods: Dictionary = {}
 var creatures: Dictionary = {}
+var ai: Dictionary = {}
 var _tuning: Dictionary = {}
 
 
@@ -15,12 +18,20 @@ func _init() -> void:
 	_tuning = _load_json(TUNING_PATH)
 	woods = _load_json(WOODS_PATH)
 	creatures = _load_json(CREATURES_PATH)
+	ai = _load_json(AI_PATH)
 
 
 ## One tuning number; a missing key is a data bug, so it fails loudly.
 func f(section: String, key: String) -> float:
 	var table: Dictionary = _tuning[section]
 	assert(table.has(key), "tuning.json has no %s.%s" % [section, key])
+	return float(table[key])
+
+
+## One number from data/ai.json.
+func ai_f(section: String, key: String) -> float:
+	var table: Dictionary = ai[section]
+	assert(table.has(key), "ai.json has no %s.%s" % [section, key])
 	return float(table[key])
 
 

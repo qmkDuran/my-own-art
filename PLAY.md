@@ -30,6 +30,9 @@ It uses the Compatibility renderer (OpenGL), so it runs on almost any graphics c
 | Tab | **lock on** to Thornback while you can see it (again to release) |
 | Esc | pause and free the mouse (Esc or click to resume) |
 | R | restart (any time after the start screen; shown on the win and lose screens) |
+| 1 / 2 / 3 | difficulty Easy / Normal / Hard (on the start or pause screen) |
+| F3 | show the bot's mind: its plan, scores, best tactical spots, what it has learned |
+| F9 | wipe what the bot has learned about you |
 
 ## How to win
 
@@ -47,6 +50,14 @@ It uses the Compatibility renderer (OpenGL), so it runs on almost any graphics c
   when you shoot down from it.
 - **Patience**: both of you heal slowly after about 6 s without being hurt. Thornback plays by exactly the same
   rules as you (same life, speeds, moves, wind-ups and cooldowns).
+
+## Thornback learns
+
+Thornback only knows what it sees and hears. It remembers your habits across fights (favourite hiding spots, how
+early you roll, where you set snares, which way you run when hurt) and plays around them: it checks your favourite
+bush first, sets its own snare beside it, waits out early rolls. Its snares are hard to see until you are close.
+Difficulty changes how fast and how well it thinks and how much it uses that memory, never its stats.
+Each fight writes a log to `playtest/sessions/`; `python3 tools/analyze_session.py` summarises the newest one.
 
 ## The HUD
 

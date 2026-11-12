@@ -7,6 +7,7 @@ const CONTROLS: Array[Array] = [
 	["Left click", "Bite: wind-up, lunge, close range"], ["Right click", "Spit: slow glob, aim with the crosshair"],
 	["Space", "dodge roll (cooldown)"], ["F", "set a snare (1 at a time, takes a second, noisy)"],
 	["Tab", "lock on to Thornback when you can see it"], ["Esc", "pause and free the mouse"], ["R", "restart"],
+	["F3 / F9", "show the bot's mind / wipe what it learned about you"],
 ]
 const DIM: Color = Color(0.02, 0.04, 0.03, 0.78)
 const COLUMN_GAP: int = 28
@@ -43,8 +44,10 @@ func show_phase(phase: MatchFlow.Phase) -> void:
 		MatchFlow.Phase.INTRO:
 			_fill("CREATURE WOODS", "Outsmart Thornback: stalk, hide, ambush, set snares.",
 					"Click or press Enter to start", true)
+			_box.add_child(_label(_difficulty_line(), HudStyle.FONT_SMALL, HudStyle.INK))
 		MatchFlow.Phase.PAUSED:
 			_fill("PAUSED", "", "Esc or click to resume   ·   R to restart", true)
+			_box.add_child(_label(_difficulty_line(), HudStyle.FONT_SMALL, HudStyle.INK))
 		MatchFlow.Phase.WON:
 			_fill("YOU WIN", "Thornback is beaten.", "Press R to play again", false)
 		MatchFlow.Phase.LOST:
@@ -59,6 +62,11 @@ func _fill(title: String, subtitle: String, prompt: String, with_controls: bool)
 		_box.add_child(_controls())
 		_box.add_child(_label(TIPS, HudStyle.FONT_SMALL, HudStyle.INK_DIM))
 	_box.add_child(_label(prompt, HudStyle.FONT_MEDIUM, HudStyle.AMBUSH_COLOR))
+
+
+static func _difficulty_line() -> String:
+	return "Difficulty: %s   (1 Easy  ·  2 Normal  ·  3 Hard: changes how Thornback thinks, never its stats)" \
+			% Difficulty.level.capitalize()
 
 
 func _controls() -> GridContainer:

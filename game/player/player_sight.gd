@@ -2,7 +2,8 @@ class_name PlayerSight
 extends Node
 ## What the player can perceive of the bot, by the same visibility rules the bot uses (range, line of sight, hidden
 ## in a bush unless very close) plus "on screen". Drives the bot's life bar, the lock-on, the player's awareness
-## (for ambush rules) and the rustle cue: an unseen bot moving close by always gives itself away.
+## (for ambush rules) and the rustle cue: an unseen bot moving close by always gives itself away. Seeing it takes a
+## clear line both from the creature's eyes and from the camera, so a bot hidden from your view stays hidden.
 
 var sees_bot: bool = false
 var rustling: bool = false
@@ -40,4 +41,6 @@ func can_see_bot() -> bool:
 		return false
 	if not _rig.camera.is_position_in_frustum(_bot.chest_position()):
 		return false
-	return Sight.clear(_player.get_world_3d(), _player.eye_position(), _bot.chest_position())
+	var world: World3D = _player.get_world_3d()
+	var from_eyes: bool = Sight.clear(world, _player.eye_position(), _bot.chest_position())
+	return from_eyes and Sight.clear(world, _rig.camera.global_position, _bot.chest_position())

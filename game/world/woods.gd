@@ -111,8 +111,9 @@ func _add_hiding_spots(layout: Dictionary) -> void:
 	for patch: Dictionary in layout["grass"]:
 		var ground: Vector3 = ground_at(Tuning.vec2(patch["pos"]))
 		hiding_spots.append(Foliage.tall_grass(ground, float(patch["radius"]), density, _rng, shape))
-	for spot: HidingSpot in hiding_spots:
-		holder.add_child(spot)
+	for index: int in hiding_spots.size():
+		hiding_spots[index].spot_id = index
+		holder.add_child(hiding_spots[index])
 
 
 func _bake_navigation() -> void:

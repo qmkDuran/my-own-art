@@ -37,6 +37,13 @@ func setup(match_root: Main) -> void:
 	root.add_child(screens)
 
 
+## The F3 view sits under the start / pause screens.
+func add_overlay(overlay: Control) -> void:
+	HudStyle.pin(overlay, Vector2.ZERO, Vector2.ONE * HudStyle.MARGIN, DebugOverlay.PANEL_SIZE)
+	screens.get_parent().add_child(overlay)
+	screens.get_parent().move_child(overlay, screens.get_index())
+
+
 func watch_flow(flow: MatchFlow) -> void:
 	flow.phase_changed.connect(screens.show_phase)
 	screens.show_phase(flow.phase)

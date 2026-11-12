@@ -1,8 +1,8 @@
 class_name BotReflexes
 extends RefCounted
 ## Split-second reactions, decided once per threat with a fixed chance so the bot is beatable: roll sideways out of
-## the path of an incoming glob of spit, or roll back from a bite wind-up it can see. Also reports incoming spit
-## so the fight state can decide to take cover.
+## the path of an incoming glob of spit it can see, or roll back from a bite wind-up it can see. The roll comes
+## after the difficulty's reflex delay. Also reports incoming spit so the bot can decide to take cover.
 
 const ROLL_SIDE_ANGLE: float = PI * 0.25
 
@@ -12,6 +12,8 @@ var _senses: Perception
 var _rng: RandomNumberGenerator
 var _decided: Dictionary = {}
 var _bite_decided: bool = false
+var _pending: Vector3 = Vector3.ZERO
+var _pending_left: float = INF
 
 
 func _init(bot: Creature, target: Creature, senses: Perception, rng: RandomNumberGenerator) -> void:
@@ -21,12 +23,16 @@ func _init(bot: Creature, target: Creature, senses: Perception, rng: RandomNumbe
 	_rng = rng
 
 
-func tick() -> void:
+func tick(delta: float) -> void:
+	_pending_left -= delta
+	if _pending_left <= 0.0:
+		_pending_left = INF
+		_roll(_pending)
 	var glob: SpitProjectile = incoming_spit()
 	if glob != null and not _decided.has(glob.get_instance_id()):
 		_decided[glob.get_instance_id()] = true
 		if _rng.randf() < Tuning.f("bot", "dodge_chance"):
-			_roll(glob.velocity().cross(Vector3.UP).normalized() * BotBrain.random_side(_rng))
+			_plan_roll(glob.velocity().cross(Vector3.UP).normalized() * BotBrain.random_side(_rng))
 	_react_to_bite()
 
 
@@ -34,7 +40,7 @@ func tick() -> void:
 func incoming_spit() -> SpitProjectile:
 	for node: Node in _bot.get_tree().get_nodes_in_group("spit"):
 		var glob := node as SpitProjectile
-		if glob.shooter != _target:
+		if glob.shooter != _target or not Sight.clear(_bot.get_world_3d(), _bot.eye_position(), glob.global_position):
 			continue
 		var offset: Vector3 = _bot.chest_position() - glob.global_position
 		var speed_sq: float = glob.velocity().length_squared()
@@ -58,7 +64,12 @@ func _react_to_bite() -> void:
 	if _rng.randf() < Tuning.f("bot", "dodge_chance"):
 		var away: Vector3 = _bot.global_position - _target.global_position
 		var back: Vector3 = Vector3(away.x, 0.0, away.z).normalized()
-		_roll(back.rotated(Vector3.UP, BotBrain.random_side(_rng) * ROLL_SIDE_ANGLE))
+		_plan_roll(back.rotated(Vector3.UP, BotBrain.random_side(_rng) * ROLL_SIDE_ANGLE))
+
+
+func _plan_roll(direction: Vector3) -> void:
+	_pending = direction
+	_pending_left = Difficulty.setting("reflex_delay")
 
 
 func _roll(direction: Vector3) -> void:

@@ -1,9 +1,9 @@
 class_name CoverState
 extends BotState
-## Cover: being shot at, the bot runs behind the nearest trunk or boulder that blocks the player's line of fire,
-## waits there until its own spit is ready again, then comes back out (or flanks if it lost sight of the player).
+## Cover: being shot at, the bot runs to the best covered point nearby (blocked from the player's last known spot,
+## with escape routes, not into a known snare) and holds there for a moment (until its spit is ready again). It
+## breaks off at once if the player closes in.
 
-var _spot: Vector3 = Vector3.INF
 var _time: float = 0.0
 var _hidden_for: float = 0.0
 
@@ -12,28 +12,23 @@ func enter() -> void:
 	brain.since_cover = 0.0
 	_time = 0.0
 	_hidden_for = 0.0
-	_spot = CoverFinder.find(brain.woods, bot().global_position, target().chest_position())
-	if _spot != Vector3.INF:
-		mover().go_to(_spot, false)
+	done = not go_to_tactical("cover", bot().global_position, false)
 
 
 func exit() -> void:
 	stop_looking()
 
 
-func tick(delta: float) -> String:
-	if _spot == Vector3.INF or distance_to_target() <= Tuning.f("bot", "cover_min_distance"):
-		return "fight"
+func tick(delta: float) -> void:
 	_time += delta
-	if _time > Tuning.f("bot", "cover_max_time"):
-		return _come_out()
 	if mover().arrived():
-		look_at_point(target().global_position)
+		look_at_point(senses().last_known_position)
 		_hidden_for += delta
-		if _hidden_for >= Tuning.f("bot", "cover_min_wait") and bot().spit.is_ready():
-			return _come_out()
-	return ""
+	var rested: bool = _hidden_for >= Tuning.f("bot", "cover_min_wait") and bot().spit.is_ready()
+	var rushed: bool = senses().sees_target and distance_to_clue() < Tuning.f("bot", "cover_min_distance")
+	done = done or rested or rushed or _time > Tuning.f("bot", "cover_max_time")
 
 
-func _come_out() -> String:
-	return "fight" if senses().sees_target else "hunt"
+## Holds the plan until it has reached cover and sheltered there a moment.
+func committed() -> bool:
+	return not done and _hidden_for < Tuning.f("bot", "cover_min_wait")

@@ -14,6 +14,8 @@ const BODY_INSET: float = 0.45
 const SEE_THROUGH_ALPHA: float = 0.35
 
 var kind: String = "bush"
+## Stable index in the woods (the layout is seeded), so the bot's memory of favourite spots survives restarts.
+var spot_id: int = -1
 var radius: float = 1.5
 var sway_root: Node3D
 var occupants: Array[Creature] = []

@@ -1,13 +1,20 @@
 class_name BotState
 extends RefCounted
-## One state of the bot's mind. enter() and exit() bracket it; tick() runs every physics frame and returns the name
-## of the next state, or "" to stay. Shared helpers keep the states short and readable.
+## One way of acting, carried out while the brain's utility choice stays the same. enter() and exit() bracket it;
+## tick() runs every physics frame. A state sets `done` when it has finished (the brain then decides again at once)
+## and answers committed() while it must not be interrupted (mid-bite, setting a snare).
 
 var brain: BotBrain
+var done: bool = false
 
 
 func _init(owner: BotBrain) -> void:
 	brain = owner
+
+
+func begin() -> void:
+	done = false
+	enter()
 
 
 func enter() -> void:
@@ -18,8 +25,12 @@ func exit() -> void:
 	pass
 
 
-func tick(_delta: float) -> String:
-	return ""
+func tick(_delta: float) -> void:
+	pass
+
+
+func committed() -> bool:
+	return bot().busy()
 
 
 func bot() -> Creature:
@@ -38,8 +49,9 @@ func mover() -> BotMover:
 	return brain.mover
 
 
-func distance_to_target() -> float:
-	return bot().global_position.distance_to(target().global_position)
+## Distance to where the player is known (or last known) to be.
+func distance_to_clue() -> float:
+	return bot().global_position.distance_to(senses().last_known_position)
 
 
 func look_at_point(point: Vector3) -> void:
@@ -51,8 +63,11 @@ func stop_looking() -> void:
 	bot().has_look_target = false
 
 
-## Where to go after losing sight: fight up close if visible, else chase, else search.
-func pursuit_state() -> String:
-	if senses().sees_target:
-		return "fight" if distance_to_target() <= Tuning.f("bot", "fight_range") else "hunt"
-	return "search"
+## Goes to the best spot for a tactical purpose around a centre, judged against the player's last known spot.
+## Returns false when there is none.
+func go_to_tactical(purpose: String, around: Vector3, sneak: bool) -> bool:
+	var best: Dictionary = brain.tactics.best(purpose, around, senses().last_known_position)
+	if best.is_empty():
+		return false
+	mover().go_to(best["pos"], sneak, true)
+	return true

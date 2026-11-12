@@ -2,7 +2,8 @@ extends Node
 ## --smoke: headless checks of the real game scene. Loads the woods, then checks movement, spit (blocked by a tree,
 ## hits in the open), bite range, the ambush bonus, snares (root, and the bot avoiding one it saw set), hiding
 ## (the bot loses you in a bush it did not see you enter), search-then-find, taking cover from spit, win, lose and
-## restart. Prints "SMOKE ok/FAIL: ..." per check, then SMOKE PASS or SMOKE FAIL.
+## restart, the smarter bot (utility, tactics, prediction, learning), the HUD rules and the session log. Prints
+## "SMOKE ok/FAIL: ..." per check, then SMOKE PASS or SMOKE FAIL.
 
 const SETTLE_TIME: float = 0.5
 
@@ -29,6 +30,7 @@ func _run() -> void:
 	await SmokeCombat.new(self).run()
 	await SmokeStealth.new(self).run()
 	await SmokeBot.new(self).run()
+	await SmokeMind.new(self).run()
 	await _win_lose_restart()
 	print("SMOKE PASS" if _fails.is_empty() else "SMOKE FAIL (%d): %s" % [_fails.size(), ", ".join(_fails)])
 	get_tree().quit(0 if _fails.is_empty() else 1)
@@ -88,6 +90,10 @@ func _win_lose_restart() -> void:
 	m.bot.take_hit(m.bot.health.maximum * 2.0, m.player, false, "bite")
 	await get_tree().process_frame
 	expect(m.flow.phase == MatchFlow.Phase.WON, "beating the bot wins")
+	var log_path: String = m.session_log.written_path
+	var logged: Variant = JSON.parse_string(FileAccess.get_file_as_string(log_path)) if log_path != "" else null
+	expect(logged is Dictionary and logged["outcome"] == "won" and not (logged["trail"] as Array).is_empty(),
+			"the fight's session log is written (%s)" % log_path.get_file())
 	m.flow.restart()
 	await get_tree().process_frame
 	await get_tree().process_frame
