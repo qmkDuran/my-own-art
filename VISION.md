@@ -32,7 +32,7 @@
 - **The other two aren't lost.** They appear rarely later, and in the endgame.
 
 ## Elements (8, each strong against 2 and weak against 2)
-**Advantage only:** a hit with the element advantage does x1.3 ("Strong hit!") and fills the stagger bar faster.
+**Advantage only:** a hit with the element advantage does x1.3 ("Strong hit!").
 Nothing is ever resisted, so no creature is ever useless in a matchup, only better or worse placed.
 
 | Element | Strong against | Weak against |
@@ -82,7 +82,7 @@ Battles are meant to be **fun and fair**: readable, skill-based, no surprises yo
 - **Buffs and debuffs always have a cost:** Sprint leaves Lethargy behind, Harden is slow and can't dodge, Berserk
   takes more damage, Camouflage makes the first hit taken a critical. Buffs fade faster when you are hit; debuffs
   just run out. Icons with timers show on both creatures.
-- **Stagger:** hits fill a bar (an element advantage fills it faster); a staggered creature reels and takes 50% more.
+- **Stagger:** hits fill a bar; a staggered creature reels and takes 50% more.
 - **Swaps** cost a gauge segment and have a short cooldown; the swap-in strikes as it lands.
 - **Terrain:** each arena has its own (tall grass hides you at range until you attack, water slows, mud, a deep
   channel, a breakable bridge, trees as pillars, thickets, roots that trip a dash, fog, a ledge that gives high

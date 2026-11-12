@@ -231,6 +231,9 @@ func _alpha() -> void:
 func _bait() -> void:
 	var foe: Creature = await smoke.wild("maned_wolf", "meadow", "hard")
 	var b := foe.brain as FoeBrain
+	foe.brain = null                                      # only the bait decision runs, nothing else in its way
+	foe.cancel_channel()
+	await smoke.until(func() -> bool: return foe.commit_t <= 0.0 and foe.busy_t <= 0.0 and foe.dodge_cd <= 0.0, 3.0)
 	b.tactics.bait(g.field.partner)
 	g.field.partner.commit_t = 0.5
 	b.tactics.think(g.field.partner, 0.016)

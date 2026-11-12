@@ -1,6 +1,6 @@
 class_name StaggerBar
 extends RefCounted
-## A creature's stagger: hits fill it (an element advantage much faster); when it fills the creature is STAGGERED for
+## A creature's stagger: hits fill it; when it fills the creature is STAGGERED for
 ## a few seconds: it reels (stunned), takes more damage, and your gauge fills faster on it. It drains when the
 ## creature is left alone for a moment.
 

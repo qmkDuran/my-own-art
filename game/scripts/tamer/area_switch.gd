@@ -40,13 +40,15 @@ func enter_arena(a: Arena) -> void:
 	_fit(a.layout.rect_px())
 
 
-## Zoom so the arena and the trainers beside it fit above the cards; the view centre sits that much lower.
+## Zoom so the arena and the trainers beside it fit above the cards, snapped down to a crisp scale (a whole number of
+## screen pixels per world pixel: steps of one over the window's pixel scale); the view centre sits that much lower.
 func _fit(r: Rect2) -> void:
 	var V: Dictionary = TamerData.rule("arena_view")
 	var vp: Vector2 = g.get_viewport().get_visible_rect().size
 	var room := Vector2(vp.x, vp.y - float(V["hud"]))
 	var need: Vector2 = r.size + Vector2(float(V["margin"][0]), float(V["margin"][1])) * 2.0
-	var z: float = minf(room.x / need.x, room.y / need.y)
+	var step: float = 1.0 / maxf(1.0, roundf(g.get_viewport().get_final_transform().get_scale().x))
+	var z: float = maxf(step, floorf(minf(room.x / need.x, room.y / need.y) / step) * step)
 	g.camera.zoom = Vector2.ONE * z
 	g.view_shift = Vector2(0, float(V["hud"]) * 0.5 / z)
 

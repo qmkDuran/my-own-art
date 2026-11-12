@@ -4,7 +4,7 @@ extends RefCounted
 ## strong against the target's, never a penalty) x buffs and debuffs x the ground (home terrain, high ground), those
 ## three together capped at +40% (tamer.json "combat.bonus_cap"), x the combo step x a staggered target's weakness x
 ## a little spread. Physical hits fill the gauge (yours, or the
-## opponent's own); every hit fills the target's stagger bar (an advantage fills it faster). Then the weight of the
+## opponent's own); every hit fills the target's stagger bar. Then the weight of the
 ## hit: Lanternfall's impact, hit-stop and shake in the element's colours, the number, and "Strong hit!".
 
 const SPREAD: float = 0.1
@@ -33,7 +33,7 @@ static func hit(user: Creature, target: Combatant, m: Dictionary, dir: Vector2, 
 	if advantage:
 		_strong_word(tc)
 	var was_staggered: bool = tc.stagger.is_staggered()
-	_gauge_and_stagger(user, tc, m, dmg, advantage)
+	_gauge_and_stagger(user, tc, m, dmg)
 	if tc.stagger.is_staggered() and not was_staggered and user.side == Combatant.SIDE_TEAM:
 		TamerGame.current.guide.done("stagger")
 		TrainerShout.moment("staggered")
@@ -59,15 +59,12 @@ static func bonus(user: Creature, tc: Creature, advantage: bool) -> float:
 
 
 ## Physical hits fill the hitter's gauge (more on a staggered target); every hit fills the target's stagger bar.
-static func _gauge_and_stagger(user: Creature, tc: Creature, m: Dictionary, dmg: float, advantage: bool) -> void:
+static func _gauge_and_stagger(user: Creature, tc: Creature, m: Dictionary, dmg: float) -> void:
 	var G: Dictionary = TamerData.rule("combat.gauge")
 	if String(m.get("type", "physical")) == "physical":
 		var fill: float = float(G["per_physical_hit"]) * (float(G["on_staggered_mult"]) if tc.stagger.is_staggered() else 1.0)
 		user.add_gauge(fill)
-	var k: float = float(m.get("stagger", 1.0))
-	if advantage:
-		k *= float(TamerData.rule("combat.stagger.advantage_mult"))
-	tc.stagger.add(dmg * k)
+	tc.stagger.add(dmg * float(m.get("stagger", 1.0)))
 
 
 static func _feedback(target: Creature, dmg: float, share: float, el: String, dir: Vector2, big: bool) -> void:

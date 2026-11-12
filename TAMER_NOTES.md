@@ -8,8 +8,8 @@ PLAY.md. Wider idea list: BATTLE_IDEAS.md.
 - **Gate Hall** (the start): four gates into arenas, a sign per gate with a checklist, a difficulty lever, an
   opponent switch (wild 1v1 / trainer 3v3), a team station (pick 3 of 6, level 5/15/30, 4 active moves), a Sync
   Lens stand (basic / plus) and a door to the route. The hall heals.
-- **Arenas** (`data/tamer/arenas.json`): walled squares of 32 px cells (medium 24x12, large 32x16, picked in the
-  hall; the camera zooms to fit), each a list of pieces from the library (`data/tamer/pieces.json`: grass, rock,
+- **Arenas** (`data/tamer/arenas.json`): walled squares of 32 px cells (medium 22x11, large 27x13, picked in the
+  hall; both fit at a crisp zoom of 1), each a list of pieces from the library (`data/tamer/pieces.json`: grass, rock,
   pillar, tree, mud, water, thicket, roots, thorns, cracked floor, river, ledge), so a new arena is a data file.
   Meadow (tall grass, cover rocks), Riverbank (shallow water, a deep channel, a breakable bridge, mud), Forest
   (trees as pillars, thickets, roots, fog), Ruins (a ledge with ramps, pillars, cracked floor, thorns, walls).
@@ -89,34 +89,69 @@ cooldowns, the AI tell multiplier and the opposing trainer's heal (equal footing
 - Hard's bait is honest (it stands in your range and dodges), not a fake wind-up, which equal footing rules out.
   Its push picks a spot but its knockback is the move's own, so slams are not guaranteed.
 - A weakened wild creature stops fighting (the catch window): the one deliberate asymmetry, for syncing.
-- Fractional camera zoom in arenas softens the pixel art a little (large arenas most).
+- The balance bot plays both sides with the same AI, so fights are close to deterministic: any small edge (an
+  element advantage) shows up as a lopsided matchup. A person will vary far more.
 - No Tide creature in the six, so no flooding move; no crystals (Echo breaks rock instead).
 - The evolved Ratel Warden reuses the honey badger's sprite (bigger, renamed, stronger).
 - Elements with no creature yet (Tide, Shade) only exist in the chart.
 - No music; nothing is saved; the HUD was checked at 1920x1080 only.
 
 ## Balance (`--tamer-balance`)
-<!-- balance:start -->
+Targets: each creature wins 40-60% at Normal and 25-45% on Hard; no single matchup or arena over 70% or under 30% at Normal. `tools/tamer_balance.sh LABEL` reruns it (four headless processes).
 
-Bot (your side, AI at Normal) vs the AI at each tier, level 10, 1v1, 40 s cap, every arena, opponents rotating through the other species.
-Cells: win rate / average time / average life left.
+<!-- balance:before:start -->
 
-| Creature | Easy | Normal | Hard |
-|---|---|---|---|
-| Honey Badger | 100% / 21 s / 62% | 100% / 19 s / 73% | 100% / 29 s / 74% |
-| Cuttlefish | 0% / 28 s / 19% | 25% / 25 s / 46% | 25% / 27 s / 44% |
-| Pangolin | 75% / 27 s / 87% | 75% / 23 s / 63% | 50% / 36 s / 47% |
-| Maned Wolf | 25% / 28 s / 27% | 25% / 22 s / 23% | 0% / 29 s / 27% |
-| Aye-aye | 0% / 23 s / 6% | 0% / 23 s / 18% | 0% / 19 s / 0% |
-| Tasmanian Devil | 75% / 16 s / 60% | 75% / 17 s / 56% | 75% / 22 s / 55% |
+**before** (240 fights; bot at Normal vs the AI at each tier, level 10, 1v1, 40 s cap, every ordered pair in every arena).
 
-| Arena | Easy | Normal | Hard |
-|---|---|---|---|
-| Meadow | 50% / 23 s / 34% | 67% / 21 s / 44% | 33% / 28 s / 44% |
-| Riverbank | 33% / 24 s / 46% | 50% / 20 s / 42% | 33% / 25 s / 43% |
-| Forest | 50% / 28 s / 43% | 33% / 27 s / 52% | 33% / 32 s / 33% |
-| Ruins | 50% / 20 s / 51% | 50% / 18 s / 48% | 67% / 23 s / 44% |
+| Creature | Normal (win / avg s) | Hard (win / avg s) | Forest | Meadow | Riverbank | Ruins |
+|---|---|---|---|---|---|---|
+| Aye-aye | 0% / 26 | 0% / 25 | 0% | 0% | 0% | 0% |
+| Cuttlefish | 20% / 26 | 10% / 29 | 20% | 20% | 20% | 20% |
+| Honey Badger | 80% / 17 | 80% / 22 | 80% | 80% | 80% | 80% |
+| Maned Wolf | 10% / 25 | 0% / 25 | 0% | 0% | 20% | 20% |
+| Pangolin | 60% / 27 | 30% / 34 | 20% | 80% | 60% | 80% |
+| Tasmanian Devil | 80% / 18 | 50% / 29 | 80% | 80% | 80% | 80% |
 
-Outliers: Honey Badger wins 100% at Normal; Aye-aye wins 0% at Normal.
+Normal matchups (row's win rate against the column, both directions pooled):
 
-<!-- balance:end -->
+| vs | Aye-aye | Cuttlefish | Honey Badger | Maned Wolf | Pangolin | Tasmanian Devil |
+|---|---|---|---|---|---|---|
+| Aye-aye | - | 0% | 0% | 0% | 0% | 0% |
+| Cuttlefish | 12% | - | 0% | 100% | 0% | 0% |
+| Honey Badger | 100% | 100% | - | 100% | 25% | 100% |
+| Maned Wolf | 50% | 0% | 0% | - | 0% | 0% |
+| Pangolin | 88% | 75% | 50% | 100% | - | 12% |
+| Tasmanian Devil | 100% | 100% | 0% | 100% | 88% | - |
+
+Outside the targets: Aye-aye 0% at Normal; Aye-aye 0% at Hard; Aye-aye 0% in the forest; Aye-aye 0% in the meadow; Aye-aye 0% in the riverbank; Aye-aye 0% in the ruins; Cuttlefish 20% at Normal; Cuttlefish 10% at Hard; Cuttlefish 20% in the forest; Cuttlefish 20% in the meadow; Cuttlefish 20% in the riverbank; Cuttlefish 20% in the ruins; Honey Badger 80% at Normal; Honey Badger 80% at Hard; Honey Badger 80% in the forest; Honey Badger 80% in the meadow; Honey Badger 80% in the riverbank; Honey Badger 80% in the ruins; Maned Wolf 10% at Normal; Maned Wolf 0% at Hard; Maned Wolf 0% in the forest; Maned Wolf 0% in the meadow; Maned Wolf 20% in the riverbank; Maned Wolf 20% in the ruins; Pangolin 20% in the forest; Pangolin 80% in the meadow; Pangolin 80% in the ruins; Tasmanian Devil 80% at Normal; Tasmanian Devil 50% at Hard; Tasmanian Devil 80% in the forest; Tasmanian Devil 80% in the meadow; Tasmanian Devil 80% in the riverbank; Tasmanian Devil 80% in the ruins; Aye-aye vs Cuttlefish 0%; Aye-aye vs Honey Badger 0%; Aye-aye vs Maned Wolf 0%; Aye-aye vs Pangolin 0%; Aye-aye vs Tasmanian Devil 0%; Cuttlefish vs Honey Badger 0%; Cuttlefish vs Maned Wolf 100%; Cuttlefish vs Pangolin 0%; Cuttlefish vs Tasmanian Devil 0%; Honey Badger vs Maned Wolf 100%; Honey Badger vs Pangolin 25%; Honey Badger vs Tasmanian Devil 100%; Maned Wolf vs Pangolin 0%; Maned Wolf vs Tasmanian Devil 0%; Pangolin vs Tasmanian Devil 12%.
+
+<!-- balance:before:end -->
+
+
+<!-- balance:after:start -->
+
+**after** (480 fights; bot at Normal vs the AI at each tier, level 10, 1v1, 40 s cap, every ordered pair in every arena).
+
+| Creature | Normal (win / avg s) | Hard (win / avg s) | Forest | Meadow | Riverbank | Ruins |
+|---|---|---|---|---|---|---|
+| Aye-aye | 45% / 24 | 30% / 28 | 20% | 50% | 50% | 60% |
+| Cuttlefish | 42% / 24 | 18% / 26 | 40% | 30% | 60% | 40% |
+| Honey Badger | 55% / 27 | 48% / 32 | 30% | 40% | 90% | 60% |
+| Maned Wolf | 42% / 30 | 35% / 33 | 40% | 40% | 60% | 30% |
+| Pangolin | 50% / 31 | 30% / 35 | 20% | 30% | 60% | 90% |
+| Tasmanian Devil | 55% / 26 | 62% / 28 | 30% | 60% | 60% | 70% |
+
+Normal matchups (row's win rate against the column, both directions pooled):
+
+| vs | Aye-aye | Cuttlefish | Honey Badger | Maned Wolf | Pangolin | Tasmanian Devil |
+|---|---|---|---|---|---|---|
+| Aye-aye | - | 44% | 31% | 44% | 31% | 31% |
+| Cuttlefish | 44% | - | 25% | 50% | 50% | 25% |
+| Honey Badger | 62% | 62% | - | 31% | 12% | 38% |
+| Maned Wolf | 50% | 38% | 56% | - | 0% | 38% |
+| Pangolin | 62% | 44% | 44% | 75% | - | 12% |
+| Tasmanian Devil | 69% | 69% | 31% | 44% | 62% | - |
+
+Outside the targets: Aye-aye 20% in the forest; Cuttlefish 18% at Hard; Honey Badger 48% at Hard; Honey Badger 90% in the riverbank; Pangolin 20% in the forest; Pangolin 90% in the ruins; Tasmanian Devil 62% at Hard; Cuttlefish vs Honey Badger 25%; Cuttlefish vs Tasmanian Devil 25%; Honey Badger vs Pangolin 12%; Maned Wolf vs Pangolin 0%; Pangolin vs Tasmanian Devil 12%.
+
+<!-- balance:after:end -->

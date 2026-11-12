@@ -11,8 +11,8 @@
   "guard_below": 0.5
  },
  "flanker": {
-  "flank": 80,
+  "flank": 110,
   "retreat": 140,
-  "retreat_time": 1.0
+  "retreat_time": 0.7
  }
 }

@@ -51,7 +51,7 @@ Gate Hall and the camp heal.
   yours). Easy foes react slowly, attack less often and rarely dodge; Hard ones dodge your wind-ups, lead their
   shots, take cover and high ground, **bait** you (step into your range, then dodge the move you commit to),
   **push** you toward walls, rocks and thorns, and burn or flatten your home terrain.
-- **Elements:** a hit with the element advantage does x1.3 ("Strong hit!") and staggers faster. Nothing is ever
+- **Elements:** a hit with the element advantage does x1.3 ("Strong hit!"). Nothing is ever
   resisted. Press **I** for a creature's element and what it is strong against.
 - **Stagger:** the gold bar under a foe's life fills with hits. Full, it is **STAGGERED**: it reels and takes 50% more.
 - **Buffs and debuffs:** a **gold ring with rising arrows** at a creature's feet is a buff, a **purple ring with

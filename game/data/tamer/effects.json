@@ -2,12 +2,67 @@
  "_doc": "Buffs (on yourself) and debuffs (on the foe) from status moves. Every one has a cost (tit for tat; BATTLE_IDEAS.md 3). Strength 0..1 from how long the move was channelled scales the numbers marked *s (min 0.25). time: seconds; buffs lose `hit_drain` seconds per hit taken, debuffs just run out. then: an effect that follows when it ends (Lethargy after Sprint). mods: speed, dealt, taken (multipliers, 1 + value x strength), no_dodge, hidden (foes lose track; attacking ends it), crit_first (the first hit taken is a critical).",
  "hit_drain": 1.0,
  "effects": {
-  "weakened": {"name": "Weakened", "kind": "debuff", "time": 6.0, "dealt": -0.3, "color": "rose", "icon": "slash"},
-  "rattled": {"name": "Rattled", "kind": "debuff", "time": 6.0, "taken": 0.3, "color": "violet_lt", "icon": "burst"},
-  "hardened": {"name": "Hardened", "kind": "buff", "time": 5.0, "taken": -0.5, "speed_flat": 0.5, "no_dodge": true, "color": "leaf_lt", "icon": "shield"},
-  "sprint": {"name": "Sprint", "kind": "buff", "time": 4.0, "speed": 0.6, "then": "lethargy", "color": "bone", "icon": "dash"},
-  "lethargy": {"name": "Lethargy", "kind": "debuff", "time": 4.0, "speed_flat": 0.7, "color": "mist", "icon": "spin"},
-  "berserk": {"name": "Berserk", "kind": "buff", "time": 6.0, "dealt": 0.5, "taken": 0.5, "color": "blood", "icon": "star"},
-  "hidden": {"name": "Hidden", "kind": "buff", "time": 3.0, "time_extra": 3.0, "hidden": true, "crit_first": true, "color": "glint", "icon": "shield"}
+  "weakened": {
+   "name": "Weakened",
+   "kind": "debuff",
+   "time": 6.0,
+   "dealt": -0.3,
+   "color": "rose",
+   "icon": "slash"
+  },
+  "rattled": {
+   "name": "Rattled",
+   "kind": "debuff",
+   "time": 6.0,
+   "taken": 0.3,
+   "color": "violet_lt",
+   "icon": "burst"
+  },
+  "hardened": {
+   "name": "Hardened",
+   "kind": "buff",
+   "time": 5.0,
+   "taken": -0.4,
+   "speed_flat": 0.5,
+   "no_dodge": true,
+   "color": "leaf_lt",
+   "icon": "shield"
+  },
+  "sprint": {
+   "name": "Sprint",
+   "kind": "buff",
+   "time": 4.0,
+   "speed": 0.6,
+   "then": "lethargy",
+   "color": "bone",
+   "icon": "dash"
+  },
+  "lethargy": {
+   "name": "Lethargy",
+   "kind": "debuff",
+   "time": 4.0,
+   "speed_flat": 0.7,
+   "color": "mist",
+   "icon": "spin"
+  },
+  "berserk": {
+   "name": "Berserk",
+   "kind": "buff",
+   "time": 6.0,
+   "dealt": 0.5,
+   "taken": 0.5,
+   "color": "blood",
+   "icon": "star"
+  },
+  "hidden": {
+   "name": "Hidden",
+   "kind": "buff",
+   "time": 3.0,
+   "time_extra": 1.5,
+   "hidden": true,
+   "crit_first": true,
+   "color": "glint",
+   "icon": "shield"
+  }
  }
 }

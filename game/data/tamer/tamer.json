@@ -231,7 +231,6 @@
   "channel_min": 0.25,
   "stagger": {
    "max_per_life": 0.6,
-   "advantage_mult": 2.0,
    "time": 3.0,
    "damage_taken": 1.5,
    "decay": 10.0,
@@ -357,10 +356,10 @@
    "deny": 0.3
   },
   "hard": {
-   "react": 0.15,
-   "dodge": 0.75,
+   "react": 0.1,
+   "dodge": 0.9,
    "lead": 1.0,
-   "cover": 0.6,
+   "cover": 0.4,
    "grass": 0.5,
    "swap_below": 0.35,
    "counter_swap": true,
@@ -368,9 +367,9 @@
    "status": 0.45,
    "channel": 1.0,
    "high_ground": 0.6,
-   "pace": 0.45,
-   "bait": 0.5,
-   "push": 0.6,
+   "pace": 0.3,
+   "bait": 0.3,
+   "push": 0.4,
    "deny": 0.9
   }
  },
@@ -485,13 +484,13 @@
   ]
  },
  "arena_view": {
-  "_doc": "Creatures render (and their bodies are) `creature_scale` times bigger in arenas. The camera fits the arena plus `margin` px; `hud` px at the bottom stay clear for the cards.",
+  "_doc": "Creatures render (and their bodies are) `creature_scale` times bigger in arenas. The camera fits the arena plus `margin` px, with `hud` px at the bottom clear for the cards, snapped down to a crisp zoom (whole screen pixels per world pixel). The arena sizes (arenas.json) are chosen so both fit at zoom 1.",
   "creature_scale": 1.5,
   "margin": [
-   70,
-   30
+   40,
+   6
   ],
-  "hud": 110
+  "hud": 100
  },
  "alpha": {
   "_doc": "Rare bigger wild creatures: drawn and built `scale` times bigger with a glow, more life and power, their signature move as an extra attack (`attack`: its tell), and better rewards (`rewards` x XP and materials). One waits on the route; the Gate Hall's switch can send one.",

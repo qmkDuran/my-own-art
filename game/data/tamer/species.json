@@ -7,8 +7,8 @@
    "role": "Brave fighter",
    "nature": "brave",
    "stats": {
-    "life": 150,
-    "power": 1.25,
+    "life": 145,
+    "power": 0.95,
     "speed": 98,
     "radius": 11
    },
@@ -106,8 +106,8 @@
    "role": "Quick trickster",
    "nature": "playful",
    "stats": {
-    "life": 110,
-    "power": 1.1,
+    "life": 105,
+    "power": 1.05,
     "speed": 114,
     "radius": 10
    },
@@ -199,7 +199,7 @@
    "role": "Sturdy protector",
    "nature": "shy",
    "stats": {
-    "life": 195,
+    "life": 165,
     "power": 1.0,
     "speed": 88,
     "radius": 12
@@ -283,9 +283,9 @@
    "role": "Swift striker",
    "nature": "proud",
    "stats": {
-    "life": 110,
-    "power": 1.05,
-    "speed": 110,
+    "life": 165,
+    "power": 1.45,
+    "speed": 126,
     "radius": 11
    },
    "anim_fps": 9,
@@ -311,13 +311,19 @@
       "move": "wind_dash",
       "opening": 0.7,
       "reach": 220,
-      "min": 90
+      "min": 60
      },
      {
       "move": "gale_shot",
       "opening": 0.5,
       "reach": 280,
       "min": 120
+     },
+     {
+      "move": "sprint",
+      "opening": 0.2,
+      "reach": 400,
+      "min": 150
      }
     ]
    },
@@ -364,9 +370,9 @@
    "role": "Eerie caster",
    "nature": "shy",
    "stats": {
-    "life": 90,
-    "power": 1.0,
-    "speed": 91,
+    "life": 115,
+    "power": 1.1,
+    "speed": 104,
     "radius": 10
    },
    "anim_fps": 7,
@@ -389,9 +395,15 @@
       "min": 0
      },
      {
+      "move": "ghost_finger",
+      "opening": 0.5,
+      "reach": 150,
+      "min": 60
+     },
+     {
       "move": "echo_tap",
       "opening": 0.3,
-      "reach": 260,
+      "reach": 300,
       "min": 100
      },
      {
@@ -444,8 +456,8 @@
    "role": "Ferocious brawler",
    "nature": "proud",
    "stats": {
-    "life": 140,
-    "power": 1.1,
+    "life": 150,
+    "power": 1.18,
     "speed": 94,
     "radius": 11
    },

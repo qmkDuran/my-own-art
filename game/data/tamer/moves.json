@@ -1,5 +1,5 @@
 {
- "_doc": "Creature moves. type: physical (close, builds gauge), special (a skillshot that costs `cost` gauge segments; it travels and can miss), status (HOLD to channel up to `channel` seconds: the longer, the stronger its `effect` (effects.json); no moving or dodging, and a hit cancels it). kind picks the behaviour (MoveBook: strike, bolt, lunge, burst, guard, wall, status). windup/recovery: commitment (no dodging). stagger: stagger per point of damage. burns (Ember: grass to coals, vines burn), gale (flattens grass, clears fog), echo (reveals, shatters rocks), blooms (regrows burnt or flattened grass). desc: the sentence tooltips show (the numbers are added).",
+ "_doc": "Creature moves. type: physical (close, builds gauge), special (a skillshot that costs `cost` gauge segments, or nothing for a ranged creature's poke; it travels and can miss), status (HOLD to channel up to `channel` seconds: the longer, the stronger its `effect` (effects.json); no moving or dodging, and a hit cancels it). kind picks the behaviour (MoveBook: strike, bolt, lunge, burst, guard, wall, status). windup/recovery: commitment (no dodging). stagger: stagger per point of damage. burns (Ember: grass to coals, vines burn), gale (flattens grass, clears fog), echo (reveals, shatters rocks), blooms (regrows burnt or flattened grass). desc: the sentence tooltips show (the numbers are added).",
  "moves": {
   "badger_bite": {
    "name": "Bite",
@@ -17,7 +17,7 @@
    "name": "Claw Rush",
    "type": "physical",
    "kind": "strike",
-   "damage": 15,
+   "damage": 13,
    "range": 44,
    "arc": 140,
    "knock": 10,
@@ -32,7 +32,7 @@
    "name": "Ember Pounce",
    "type": "physical",
    "kind": "lunge",
-   "damage": 22,
+   "damage": 18,
    "range": 170,
    "time": 0.26,
    "radius": 44,
@@ -162,10 +162,10 @@
    "name": "Prism Shot",
    "type": "special",
    "kind": "bolt",
-   "cost": 1,
-   "damage": 18,
+   "cost": 0,
+   "damage": 12,
    "range": 320,
-   "speed": 340,
+   "speed": 320,
    "count": 1,
    "spread": 0,
    "size": 1.2,
@@ -173,7 +173,7 @@
    "recovery": 0.25,
    "stagger": 1.2,
    "icon": "bolt",
-   "desc": "A fast glass bolt. The quickest special to land."
+   "desc": "A fast glass bolt, free to fire: the cuttlefish's poke from range."
   },
   "camouflage": {
    "name": "Camouflage",
@@ -272,7 +272,7 @@
    "name": "Tail Swipe",
    "type": "physical",
    "kind": "strike",
-   "damage": 14,
+   "damage": 12,
    "range": 50,
    "arc": 200,
    "knock": 18,
@@ -309,7 +309,7 @@
    "target": "self",
    "channel": 1.4,
    "icon": "shield",
-   "desc": "Hold to harden: takes up to half damage. Slow and unable to dodge while hardened.",
+   "desc": "Hold to harden: takes up to 40% less damage. Slow and unable to dodge while hardened.",
    "cost": 0
   },
   "vine_wall": {
@@ -379,7 +379,7 @@
    "name": "Gust Bite",
    "type": "physical",
    "kind": "strike",
-   "damage": 14,
+   "damage": 16,
    "range": 46,
    "arc": 110,
    "knock": 14,
@@ -394,7 +394,7 @@
    "name": "Wind Dash",
    "type": "physical",
    "kind": "lunge",
-   "damage": 16,
+   "damage": 24,
    "range": 220,
    "time": 0.22,
    "radius": 32,
@@ -491,10 +491,10 @@
    "name": "Echo Tap",
    "type": "special",
    "kind": "bolt",
-   "cost": 1,
-   "damage": 12,
-   "range": 280,
-   "speed": 280,
+   "cost": 0,
+   "damage": 11,
+   "range": 310,
+   "speed": 340,
    "count": 2,
    "spread": 10,
    "size": 1.0,
@@ -502,7 +502,7 @@
    "recovery": 0.25,
    "stagger": 1.2,
    "icon": "bolt",
-   "desc": "Two echo bolts toward the cursor."
+   "desc": "Two quick echo bolts toward the cursor. Free: the aye-aye's poke from range."
   },
   "screech": {
    "name": "Screech",

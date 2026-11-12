@@ -18,7 +18,6 @@ const PUSH_STAND: float = 60.0
 const HAZARDS: Array[int] = [ArenaLayout.F.WALL, ArenaLayout.F.ROCK, ArenaLayout.F.TREE, ArenaLayout.F.THORNS, ArenaLayout.F.PIT]
 
 var b: FoeBrain
-var _react: float = 0.0
 var _plan: Vector2 = Vector2.INF        ## a spot it is heading for (cover or grass)
 var _plan_t: float = 0.0
 var _seen_commit: bool = false
@@ -37,12 +36,9 @@ func T() -> Dictionary:
 
 ## A movement that overrides its style this frame, or Vector2.INF.
 func think(target: Creature, delta: float) -> Vector2:
-	_react -= delta
 	_plan_t -= delta
 	_baiting -= delta
 	if _dodge_windup(target):
-		return Vector2.ZERO
-	if _react > 0.0:
 		return Vector2.ZERO
 	if _plan != Vector2.INF and _plan_t > 0.0:
 		var dir: Vector2 = b.c.steer_to(_plan, delta)
@@ -64,7 +60,6 @@ func _dodge_windup(target: Creature) -> bool:
 	var winding: bool = target.commit_t > 0.0
 	if winding and not _seen_commit:
 		_seen_commit = true
-		_react = float(T()["react"])
 		var baited: bool = _baiting > 0.0
 		if baited:
 			baits_dodged += 1
