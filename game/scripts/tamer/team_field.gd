@@ -36,7 +36,8 @@ func _on_leveled(rec: CreatureRecord) -> void:
 func _on_evolved(rec: CreatureRecord) -> void:
 	if partner != null and is_instance_valid(partner) and partner.rec == rec:
 		EvolutionCeremony.play(partner)
-	g.hud.notice("%s evolved into %s!" % [rec.data()["name"], rec.display_name()])
+	else:
+		g.hud.notice("%s evolved into %s!" % [rec.data()["name"], rec.display_name()])
 
 
 ## Calls member `i` out where the last one stood, or beside the trainer (in an arena, at your start spot); with

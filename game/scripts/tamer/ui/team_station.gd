@@ -9,6 +9,7 @@ const HEAD: float = 30.0
 const PAD: float = 10.0
 const PICK := Vector2(56, 56)
 const CHIP := Vector2(44, 18)
+const PICK_GAP: float = 14.0
 const ROW: float = 58.0
 const SLOT := Vector2(108, 40)
 const PORTRAIT: float = 44.0
@@ -82,7 +83,7 @@ func _show() -> void:
 func _height() -> float:
 	if only != null:
 		return HEAD + PAD + ROW + 36.0
-	return HEAD + PAD + PICK.y + 22.0 + CHIP.y + 16.0 + PICKS * ROW + 36.0
+	return HEAD + PAD + PICK.y + 30.0 + CHIP.y + 16.0 + PICKS * ROW + 36.0
 
 
 func close() -> void:
@@ -149,15 +150,15 @@ func _rows() -> Array[CreatureRecord]:
 # --- layout (shared by drawing and clicking) ---
 
 func _pick_rect(i: int) -> Rect2:
-	return Rect2(Vector2(PAD + i * (PICK.x + 8.0), HEAD + PAD), PICK)
+	return Rect2(Vector2(PAD + i * (PICK.x + PICK_GAP), HEAD + PAD), PICK)
 
 
 func _chip_rect(i: int) -> Rect2:
-	return Rect2(Vector2(PAD + 50.0 + i * (CHIP.x + 6.0), HEAD + PAD + PICK.y + 22.0), CHIP)
+	return Rect2(Vector2(PAD + 50.0 + i * (CHIP.x + 6.0), HEAD + PAD + PICK.y + 30.0), CHIP)
 
 
 func _rows_top() -> float:
-	return HEAD + PAD if only != null else HEAD + PAD + PICK.y + 22.0 + CHIP.y + 16.0
+	return HEAD + PAD if only != null else HEAD + PAD + PICK.y + 30.0 + CHIP.y + 16.0
 
 
 func _slot_rect(row: int, i: int) -> Rect2:
@@ -226,9 +227,11 @@ func _draw_picks() -> void:
 			UiDraw.text(self, r.position + Vector2(3, 10), str(k + 1), UiDraw.GOLD, UiDraw.BODY)
 		else:
 			draw_rect(r, Color(0, 0, 0, 0.35))
-		UiDraw.text(self, r.position + Vector2(-6, r.size.y + 11.0), String(TamerData.species(id)["name"]), UiDraw.TEXT,
-			UiDraw.SMALL, HORIZONTAL_ALIGNMENT_CENTER, r.size.x + 12.0)
-	UiDraw.text(self, Vector2(PAD + 7.0 * (PICK.x + 8.0) - 30.0, HEAD + PAD + 20.0), "Pick %d (%d/%d)" % [PICKS, picks.size(), PICKS],
+		var label: PackedStringArray = UiDraw.wrap(self, String(TamerData.species(id)["name"]), r.size.x + 14.0, UiDraw.SMALL)
+		for j: int in label.size():
+			UiDraw.text(self, r.position + Vector2(-7, r.size.y + 11.0 + j * 9.0), label[j], UiDraw.TEXT, UiDraw.SMALL,
+				HORIZONTAL_ALIGNMENT_CENTER, r.size.x + 14.0)
+	UiDraw.text(self, Vector2(PAD + 6.0 * (PICK.x + PICK_GAP) + 10.0, HEAD + PAD + 20.0), "Pick %d (%d/%d)" % [PICKS, picks.size(), PICKS],
 		UiDraw.GOLD, UiDraw.BODY)
 	var levels: Array = TamerData.rule("progression.levels")
 	UiDraw.text(self, Vector2(PAD, _chip_rect(0).position.y + 13.0), "Level", UiDraw.TEXT, UiDraw.BODY)
@@ -236,7 +239,7 @@ func _draw_picks() -> void:
 		var c: Rect2 = _chip_rect(i)
 		var on: bool = int(levels[i]) == level
 		UiDraw.box(self, c, Pal.c("earth") if on else UiDraw.PANEL_DEEP, UiDraw.FRAME_LIT if on else UiDraw.FRAME)
-		UiDraw.text(self, c.position + Vector2(0, 13), str(levels[i]), UiDraw.GOLD if on else UiDraw.TEXT, UiDraw.BODY,
+		UiDraw.text(self, c.position + Vector2(0, 13), str(int(levels[i])), UiDraw.GOLD if on else UiDraw.TEXT, UiDraw.BODY,
 			HORIZONTAL_ALIGNMENT_CENTER, c.size.x)
 
 
@@ -244,7 +247,7 @@ func _draw_row(rec: CreatureRecord, row: int) -> void:
 	var y: float = _rows_top() + row * ROW
 	CreaturePortrait.draw_in(self, Rect2(Vector2(PAD, y), Vector2(PORTRAIT, PORTRAIT)), rec)
 	UiDraw.text(self, Vector2(PAD + PORTRAIT + 6.0, y + 12.0), rec.display_name(), Pal.c("gold") if rec.shiny else UiDraw.TEXT, UiDraw.BODY)
-	UiDraw.text(self, Vector2(PAD + PORTRAIT + 6.0, y + 25.0), "Lv %d  -  knows %d moves" % [rec.level, rec.growth.learned().size()],
+	UiDraw.text(self, Vector2(PAD + PORTRAIT + 6.0, y + 25.0), "Lv %d, %d moves" % [rec.level, rec.growth.learned().size()],
 		UiDraw.DIM, UiDraw.SMALL)
 	for i: int in 4:
 		var s: Rect2 = _slot_rect(row, i)

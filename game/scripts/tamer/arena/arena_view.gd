@@ -124,6 +124,9 @@ func _ground(c: Vector2i) -> void:
 		ArenaLayout.F.WALL:
 			draw_rect(Rect2(r.position - Vector2(0, WALL_H), Vector2(r.size.x, r.size.y)), Pal.c("stone_lt"))
 			draw_rect(Rect2(r.position - Vector2(0, WALL_H), Vector2(r.size.x, r.size.y)), Pal.c("void"), false, 1.0)
+		ArenaLayout.F.RAMP:
+			for k: int in 3:
+				draw_line(r.position + Vector2(2, 8 + k * 8), r.position + Vector2(r.size.x - 2, 8 + k * 8), Pal.c("stone_dk"), 2.0)
 		ArenaLayout.F.CRACKED:
 			draw_line(r.position + Vector2(4, 6), r.position + Vector2(20, 24), Pal.c("void"), 1.0)
 			draw_line(r.position + Vector2(20, 24), r.position + Vector2(28, 14), Pal.c("void"), 1.0)

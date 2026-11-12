@@ -62,7 +62,6 @@ func _row_buttons(rec: CreatureRecord, at: Vector2) -> void:
 		var stat: String = stats[k]
 		var b: Button = _button("Raise", Vector2(W - PAD - BTN.x, at.y + k * STAT_LINE), BTN, func() -> void:
 			if g.team.upgrade(rec, stat):
-				g.guide.done("upgrade")
 				Audio.sfx("level_up", -8.0, 1.4)
 				TamerFx.word(g.camp.spot_of(rec), "%s up!" % TamerData.rule("upgrades." + stat + ".name"), Pal.c("gold")))
 		var cost: int = rec.upgrade_cost(stat)

@@ -21,7 +21,7 @@ out=$(timeout 900 "$GODOT" --headless --fixed-fps 60 --path game -- --replay 2>&
 echo "$out" | grep -E "^REPLAY (PASS|FAIL)|STUCK|SCRIPT ERROR" | head -10
 echo "$out" | grep -qE "^REPLAY PASS" || status=1
 echo "$out" | grep -q "SCRIPT ERROR" && { echo "replay: script errors"; status=1; }
-# the trainer prototype (the default scene now): meeting, fights, hybrid control, befriending, swaps, camp
+# the creature-trainer demo (the default scene): Gate Hall, arenas, combat, AI tiers, trainers, syncing, growth
 out=$(timeout 600 "$GODOT" --headless --fixed-fps 60 --path game -- --tamer-smoke 2>&1)
 echo "$out" | grep -E "^TAMER (PASS|FAIL)|TAMER FAIL:|SCRIPT ERROR|pack fight" | head -10
 echo "$out" | grep -qE "^TAMER PASS" || status=1

@@ -204,7 +204,7 @@ func _tracker(at: Vector2) -> void:
 	var lines: PackedStringArray = UiDraw.wrap(_canvas, String(step["text"]), TRACKER_W - 16.0, UiDraw.BODY)
 	var r := Rect2(at, Vector2(TRACKER_W, 24.0 + lines.size() * LINE))
 	UiDraw.box(_canvas, r, Color(UiDraw.PANEL, 0.8))
-	UiDraw.text(_canvas, at + Vector2(8, 14), "Trainer prototype", UiDraw.GOLD, UiDraw.BODY)
+	UiDraw.text(_canvas, at + Vector2(8, 14), "Creature trainer demo", UiDraw.GOLD, UiDraw.BODY)
 	UiDraw.text(_canvas, at + Vector2(0, 13), g.guide.progress(), UiDraw.DIM, UiDraw.SMALL, HORIZONTAL_ALIGNMENT_RIGHT, TRACKER_W - 8.0)
 	for i: int in lines.size():
 		UiDraw.text(_canvas, at + Vector2(14, 28 + i * LINE), lines[i], UiDraw.TEXT, UiDraw.BODY)

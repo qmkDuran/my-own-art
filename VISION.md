@@ -21,8 +21,8 @@
 ## How it plays
 - **Your partner is always out:** walking beside you, resting with you, fighting at your side.
 - **The team:** up to 6 creatures. One partner fights at a time, and you swap in others instantly.
-- **Combat:** exploring as the trainer, battles as your creature (see below). Moves have cooldowns, and elements matter, so swapping to the right creature for the fight is part of the skill.
-- **Catching (befriending):** weaken a wild creature and win it over. Common ones are easy. Rarer ones need the right time, weather, place or approach.
+- **Combat:** exploring as the trainer, battles as your creature in a separate arena (see below). Elements matter, so swapping to the right creature for the fight is part of the skill.
+- **Catching (syncing):** weaken or stagger a wild creature in battle and the trainer syncs it with the Sync Lens. The basic lens only syncs weakened common creatures; upgraded lenses are faster and work on rarer ones.
 - **Gentle defeat:** a knocked-out creature recovers after a while or at a rest point. If your whole team is knocked out, the screen fades and you retreat to the last rest point, where they recover (a small material cost at most). Nothing is lost permanently (except in the opt-in hardcore modes).
 
 ## Starters
@@ -32,6 +32,9 @@
 - **The other two aren't lost.** They appear rarely later, and in the endgame.
 
 ## Elements (8, each strong against 2 and weak against 2)
+**Advantage only:** a hit with the element advantage does x1.3 ("Strong hit!") and fills the stagger bar faster.
+Nothing is ever resisted, so no creature is ever useless in a matchup, only better or worse placed.
+
 | Element | Strong against | Weak against |
 |---|---|---|
 | Ember | Glass, Rot | Tide, Gale |
@@ -54,6 +57,7 @@
 - **Shade:** thylacine, fossa, binturong
 
 ## Bond
+*(Long-term. Not in the current combat demo: its bond meter and bond moves were taken out to keep the test about combat; each creature's signature move now unlocks at level 25.)*
 - **How it grows:** fighting together, winning hard fights, exploring, resting at camp, feeding and playing.
 - **High bond unlocks:**
   - holding on through a knockout hit for you
@@ -64,26 +68,49 @@
 - **Memory:** milestones and history ("together for 100 battles", first evolution, favourite food).
 - **Story:** your team is part of story moments, and some quests are about them.
 
-## Control: exploring and battle (prototype iterations; being reworked)
-- **Exploring:** you control the trainer. Your creature follows. Wild creatures roam in tall grass.
-- **Battle** (second prototype iteration, "gauge" model): a glowing ring closes around the fight (outsiders can't
-  join; 4 s of grace after). You control your creature directly. Basic combos (right click) fill a shared 3-segment
-  bond gauge; moves cost 1-3 segments, and holding a move key slows time while you aim. Moves commit (wind-up and
-  recovery, no dodge). Perfect dodges and perfect swaps reward reading the telegraphs. Stagger bars fill with hits
-  (weaknesses much faster); a staggered foe takes 50% more.
-- **The trainer is never damaged.** In battle the trainer stays back on their own; their part is swaps, items and
-  catching (the Sync Lens on a weakened or staggered creature).
-- Wild species fight in their own styles (flanker, brawler, skirmisher) with tells and openings. Rival trainers on
-  the route battle with teams and swap intelligently.
-- **Next (being specified with the user):** separate battle arenas with a transition, 1v1, cover, slower movement,
-  no slow-time. The earlier "hold Shift to steer" and the gauge-free cooldown spam were tried and replaced.
+## Battles (the current model; BATTLE_IDEAS.md has the wider idea list)
+Battles are meant to be **fun and fair**: readable, skill-based, no surprises you could not see coming.
+- **Exploring:** you are the trainer; your creature follows. Wild creatures never force a fight. Their temperament
+  shows how they react: shy ones flee, calm ones ignore you, territorial ones warn (a "!" and a growl) and calm
+  down if you back off, and the rare aggressive one (a red eye glint) chases you. Trainers ask "Want to battle?"
+  and you can decline.
+- **Starting a battle:** walk into a creature or accept a trainer. An old-school black swirl closes and you are in a
+  **separate square walled arena**, 1v1, with a fixed camera that shows all of it. The trainers stand outside the
+  walls (never hurt). Afterwards the swirl takes you back to the exact spot. On the route your creatures' health
+  carries over between battles; resting (camp, the Gate Hall) heals.
+- **Controls (Battlerite-style):** you are your creature. Left click moves, right click is its basic physical
+  attack, Q W E R are its 4 moves, Space dodges, 1-3 swap. Movement is deliberate (slower than the first
+  prototypes) and projectiles are slow enough to read and dodge. No slow-time, no perfect dodge, no items in battle.
+- **Three kinds of move:**
+  - **Physical:** close range, fills the shared 3-segment gauge.
+  - **Special:** costs gauge; a true skillshot with a wind-up. It flies where you aimed and can miss (no homing).
+  - **Status:** hold to channel; the longer you hold, the stronger (up to a cap). You can't move or dodge while
+    channelling, and a hit cancels it.
+  Every creature has a mixed kit. Moves commit (wind-up and recovery: no dodging).
+- **Buffs and debuffs always have a cost:** Sprint leaves Lethargy behind, Harden is slow and can't dodge, Berserk
+  takes more damage, Camouflage makes the first hit taken a critical. Buffs fade faster when you are hit; debuffs
+  just run out. Icons with timers show on both creatures.
+- **Stagger:** hits fill a bar (an element advantage fills it faster); a staggered creature reels and takes 50% more.
+- **Swaps** cost a gauge segment and have a short cooldown; the swap-in strikes as it lands.
+- **Terrain:** each arena has its own (tall grass hides you at range until you attack, water slows, mud, a deep
+  channel, a breakable bridge, trees as pillars, thickets, roots that trip a dash, fog, a ledge that gives high
+  ground, walls you can be slammed into, thorns, cracked floor). Moves change it: Ember burns grass and vines,
+  Gale flattens grass and clears fog, Echo shatters rock and crystal, Bloom grows a vine wall, Tide floods.
+- **Home terrain:** every creature has one where it gets a bonus, with a cost, and it is **never weaker
+  elsewhere** (the honey badger hits harder on burning ground and doesn't burn there; the cuttlefish hides in
+  water but its shots are weaker; the aye-aye reaches further from high ground but takes more).
+- **Opponents** fight in their species' style with tells and openings, at a difficulty tier: Easy (slow to react,
+  long tells), Normal, Hard (leads its shots, dodges your wind-ups, hides in grass, takes cover and high ground,
+  saves its gauge, counter-swaps).
+- **Wild battles** reward XP, materials and the chance to sync. **Trainer battles** are 3v3, one creature at a time,
+  and the trainer swaps smartly.
 
 ## Honing your creatures (no element path)
 - **Your build is how deeply you've raised the creatures you have,** not a chosen element. "Being the very best" means mastering your own team.
 - **Each creature has its own growth:**
   - its own small skill tree
   - stats raised with materials
-  - move choices (pick 4 from the ones it has learned)
+  - move choices (pick 4 from the ones it has learned; moves unlock by level)
   - evolutions, and bond-unlocked moves and traits
 - **Mastery comes from using a creature:** the more battles it fights with you, the more it unlocks. Long-time partners become specialists.
 - **Any creature you love can be raised to the top.** No creature is a dead end.
@@ -96,10 +123,10 @@
   - **Rarer sources:** bosses and the endgame drop rare materials.
   - **Duplicates** of a creature count as upgrade material.
   - **Visible progress:** bars toward each upgrade, so it never feels like failing.
-- **Evolutions** are big moments. Early forms are small and charming; final forms are powerful and cool.
+- **Evolutions** are big moments with a short ceremony. Early forms are small and charming; final forms are powerful and cool.
 
 ## Shinies
-- **How rare:** about 1 in 200, with better odds from tougher enemies and endgame modifiers.
+- **How rare:** 1 in 4096 in the demo (a dev key spawns one for testing); better odds from tougher enemies and endgame modifiers later.
 - **How they look:** a distinct colour, a sparkle, and a special sound when one appears.
 - **What they give:** a small bonus or a unique move.
 - **Never required.** Shinies are the chase for people who want it.
@@ -140,11 +167,9 @@
 5. **Title.**
 
 ## Next steps
-1. **You approve or change this vision.**
-2. **A rough prototype** (simple shapes, no polished art) on a new branch, reusing Lanternfall's combat foundation:
-   - your partner follows you, with hybrid control (hold a key to steer it directly)
-   - you command 4 moves and swap between 3 creatures
-   - you dodge and use items
-   - a simple bond meter with one bond move, and a camp moment
-3. **You play it for about 10 minutes** and answer one question: does commanding your creature feel good?
-4. **Then:** art direction (creature concepts you approve), a polished 30–45 minute vertical slice, then production one region at a time, and the endgame last.
+1. **The current demo** starts in a **Gate Hall**: a test hub with a gate per arena (meadow, riverbank, forest,
+   ruins), each with a sign listing what to try, a difficulty lever, an opponent switch (wild 1v1 or trainer 3v3),
+   a team station (pick 3 of 6, a level, the 4 active moves) and a door to the route (exploring, temperaments, the
+   Sync Lens, a rival). It exists to answer one question: **is the combat fun and fair?**
+2. **Then:** the canopy arena and more of BATTLE_IDEAS.md if the core holds up, art direction (creature concepts
+   you approve), a polished vertical slice, then production one region at a time, and the endgame last.

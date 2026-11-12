@@ -92,7 +92,7 @@ static func ward(who: Node2D, radius: float, element: String, time: float) -> vo
 	tw.tween_callback(s.queue_free)
 
 
-## A word that pops over a creature ("Super effective!", "Resisted", "Bond!").
+## A word that pops over a creature ("Strong hit!", "STAGGERED!", "Lv 6!").
 static func word(at: Vector2, text: String, col: Color, size: int = UiDraw.BODY) -> void:
 	if Overlay.layer == null:
 		return

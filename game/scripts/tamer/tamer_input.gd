@@ -107,6 +107,7 @@ func attack() -> void:
 	if not fighting():
 		return
 	var foe: Creature = hovered if hovered != null and hovered.side == Combatant.SIDE_WILD else null
+	g.guide.done("battle")
 	brain().goal = Vector2.INF
 	brain().target = foe
 	if foe != null:

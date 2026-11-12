@@ -13,7 +13,7 @@
    "paint": [["shallow", [9, 1, 6, 10]], ["deep", [11, 1, 2, 10]], ["bridge", [11, 5, 2, 2]], ["mud", [3, 8, 4, 3]],
     ["mud", [17, 1, 4, 3]], ["rock", [6, 3, 1, 1]], ["rock", [18, 8, 1, 1]]],
    "life": {"rock": 70, "bridge": 60},
-   "checklist": ["Shallow water slows (Tide creatures are faster)", "The deep channel can't be crossed", "Break the bridge with someone on it", "Mud slows everyone", "Devils heal slowly in mud"]},
+   "checklist": ["Shallow water slows; the cuttlefish hides in it", "The deep channel can't be crossed", "Break the bridge with someone on it", "Mud slows everyone", "Devils heal slowly in mud"]},
   "forest": {"name": "Forest", "style": "forest", "you": [3, 6], "foe": [20, 6], "fog": true,
    "paint": [["tree", [6, 3, 1, 1]], ["tree", [6, 8, 1, 1]], ["tree", [11, 2, 1, 1]], ["tree", [12, 9, 1, 1]],
     ["tree", [17, 3, 1, 1]], ["tree", [17, 8, 1, 1]], ["thicket", [9, 5, 2, 2]], ["thicket", [14, 4, 2, 2]],

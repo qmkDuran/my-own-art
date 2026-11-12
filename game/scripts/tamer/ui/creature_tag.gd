@@ -10,7 +10,9 @@ const BAR := Vector2(30, 3)
 const STAGGER_H: float = 2.0
 const ABOVE: float = 8.0
 const NAME_W: float = 140.0
-const EFFECT: float = 10.0
+const EFFECT: float = 12.0
+const CHANNEL_H: float = 3.0
+const CHANNEL_BELOW: float = 8.0       ## the channel bar sits under its feet
 
 static var hovered: Creature
 
@@ -35,7 +37,9 @@ func _draw() -> void:
 	var battle: bool = TamerGame.current.battle.on
 	if battle:
 		_bar(Vector2(-BAR.x / 2.0, top))
-		EffectIcons.draw_row(self, Vector2(-BAR.x / 2.0, top - 26.0), c.effects, EFFECT, false)
+		EffectIcons.draw_row(self, Vector2(-BAR.x / 2.0, top - 28.0), c.effects, EFFECT, false)
+	if c.channel_id != "":
+		_channel(Vector2(-BAR.x / 2.0, CHANNEL_BELOW))
 	if c.side == Combatant.SIDE_TEAM:
 		return
 	if c.brain is RouteBrain and (c.brain as RouteBrain).temperament == "aggressive":
@@ -47,6 +51,15 @@ func _draw() -> void:
 	if battle and SyncLens.syncable(c):
 		UiDraw.text(self, Vector2(-NAME_W / 2.0, top - 30.0), "Hold F: Sync Lens", Pal.c("rose"), UiDraw.SMALL,
 			HORIZONTAL_ALIGNMENT_CENTER, NAME_W)
+
+
+## A status move being channelled: how strong it is so far (on a foe: the moment to punish it).
+func _channel(at: Vector2) -> void:
+	var s: float = c.channel_strength()
+	draw_rect(Rect2(at - Vector2.ONE, Vector2(BAR.x + 2.0, CHANNEL_H + 2.0)), UiDraw.INK)
+	draw_rect(Rect2(at, Vector2(BAR.x * s, CHANNEL_H)), Pal.c("glint") if s < 1.0 else Pal.c("sun"))
+	UiDraw.text(self, Vector2(-NAME_W / 2.0, at.y + CHANNEL_H + 9.0), "%s %d%%" % [TamerData.move(c.channel_id)["name"], roundi(s * 100.0)],
+		Pal.c("glint"), UiDraw.SMALL, HORIZONTAL_ALIGNMENT_CENTER, NAME_W)
 
 
 ## Two red eyes that flicker: this one chases.

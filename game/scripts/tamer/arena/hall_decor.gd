@@ -4,7 +4,7 @@ extends Node2D
 ## (with the current difficulty), the opponent switch, the team station, the lens stand and the route door, each
 ## labelled with "F" when you stand next to it.
 
-const SIGN_W: float = 150.0
+const SIGN_W: float = 176.0
 const LINE: float = 10.0
 const SIGN_Z: int = -5                  ## above the floor, under everyone walking past
 
@@ -31,7 +31,7 @@ func _draw() -> void:
 	_station(hall.spot("lens"), TamerData.rule("sync.lenses." + hall.g.lens.tier + ".name"), Pal.c("glint"))
 	var door: Vector2 = hall.door_spot()
 	draw_rect(Rect2(door - Vector2(14, 30), Vector2(28, 40)), Pal.c("earth_dk"))
-	UiDraw.text(self, door + Vector2(-60, -36), "To the route", UiDraw.TEXT, UiDraw.SMALL, HORIZONTAL_ALIGNMENT_CENTER, 120.0)
+	UiDraw.text(self, door + Vector2(-110, -36), "To the route", UiDraw.TEXT, UiDraw.SMALL, HORIZONTAL_ALIGNMENT_RIGHT, 120.0)
 
 
 func _gate(i: int) -> void:
@@ -43,12 +43,17 @@ func _gate(i: int) -> void:
 	draw_rect(Rect2(at - Vector2(38, 50), Vector2(6, 56)), Pal.c("stone_lt"))
 	draw_rect(Rect2(at + Vector2(32, -50), Vector2(6, 56)), Pal.c("stone_lt"))
 	var sign_at: Vector2 = at + Vector2(-SIGN_W * 0.5, 28)
-	var lines: Array = a["checklist"]
-	draw_rect(Rect2(sign_at, Vector2(SIGN_W, 16 + lines.size() * LINE)), Color(Pal.c("ink"), 0.85))
-	draw_rect(Rect2(sign_at, Vector2(SIGN_W, 16 + lines.size() * LINE)), Pal.c("earth_lt"), false, 1.0)
+	var lines: PackedStringArray = []
+	for item: String in a["checklist"]:
+		var wrapped: PackedStringArray = UiDraw.wrap(self, item, SIGN_W - 14.0, UiDraw.SMALL)
+		for k: int in wrapped.size():
+			lines.append(("- " if k == 0 else "  ") + wrapped[k])
+	var box := Rect2(sign_at, Vector2(SIGN_W, 18 + lines.size() * LINE))
+	draw_rect(box, Color(Pal.c("ink"), 0.85))
+	draw_rect(box, Pal.c("earth_lt"), false, 1.0)
 	UiDraw.text(self, sign_at + Vector2(0, 11), String(a["name"]).to_upper(), UiDraw.GOLD, UiDraw.SMALL, HORIZONTAL_ALIGNMENT_CENTER, SIGN_W)
 	for k: int in lines.size():
-		UiDraw.text(self, sign_at + Vector2(4, 22 + k * LINE), "- " + String(lines[k]), UiDraw.TEXT, UiDraw.SMALL)
+		UiDraw.text(self, sign_at + Vector2(4, 22 + k * LINE), lines[k], UiDraw.TEXT, UiDraw.SMALL)
 
 
 func _station(at: Vector2, label: String, col: Color) -> void:
