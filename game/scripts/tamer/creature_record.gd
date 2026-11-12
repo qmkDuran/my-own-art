@@ -14,6 +14,7 @@ var bond: float = 0.0
 var upgrades: Dictionary = {"life": 0, "power": 0, "speed": 0}
 var life: float = -1.0                  ## -1: full
 var ko_left: float = 0.0                ## seconds until it recovers from a knock-out (0: awake)
+var used_moves: Dictionary = {}         ## moves it has used with you (the first use shows the move's name)
 
 
 static func make(id: String, lvl: int, is_wild: bool, is_shiny: bool = false) -> CreatureRecord:
@@ -78,6 +79,11 @@ func knock_out() -> void:
 func revive(frac: float) -> void:
 	ko_left = 0.0
 	life = maxf(life, max_life() * frac)
+
+
+func heal_points(amount: float) -> void:
+	if not knocked_out():
+		life = minf(max_life(), life + amount)
 
 
 func heal(frac: float) -> void:

@@ -2,7 +2,7 @@ class_name TamerGame
 extends Node2D
 ## The trainer prototype: one generated meadow (Lanternfall's zone generator and view), the trainer, your team on
 ## the field, wild packs, the camp, and the opening meeting with the three starters. This node wires the pieces and
-## routes a few events between them (a win grows bond, a fall sends you to camp). `TamerGame.current` is the one
+## routes a few events between them (a win grows bond, a wiped team retreats to camp). `TamerGame.current` is the one
 ## way the prototype's systems reach the field (the same documented service-locator pattern as Game.current).
 
 static var current: TamerGame
@@ -23,13 +23,16 @@ var camera: CameraRig
 var team: Team
 var guide := TamerGuide.new()
 var field: TeamField
-var control: HybridControl
+var battle: BattleMode
 var hud: TamerHud
 var input: TamerInput
 var spawner: TamerSpawner
 var camp: Camp
 var befriend: Befriending
 var meeting: StarterMeeting
+var aim: AimPreview
+var commands: TrainerCommands
+var retreating: bool = false            ## the team was wiped and the trainer is on the way back to camp
 
 
 func _ready() -> void:
@@ -87,20 +90,27 @@ func _build_systems() -> void:
 	add_child(hud)
 	hud.setup(self)
 	Fx.screen = hud
-	control = HybridControl.new()
-	add_child(control)
-	control.setup(self)
-	camera = CameraRig.new()
-	add_child(camera)
-	camera.setup(control.focus, layout.size_px(), -ROOF_ROOM)
-	Fx.motes(camera, MOTES_EXTENTS, MOTES, Pal.c("glint", 0.8))
 	spawner = TamerSpawner.new()
 	add_child(spawner)
 	spawner.setup(self)
+	battle = BattleMode.new()
+	add_child(battle)
+	battle.setup(self)
+	camera = CameraRig.new()
+	add_child(camera)
+	camera.setup(battle.focus, layout.size_px(), -ROOF_ROOM)
+	Fx.motes(camera, MOTES_EXTENTS, MOTES, Pal.c("glint", 0.8))
 	spawner.spawn_all()
+	aim = AimPreview.new()
+	fx_layer.add_child(aim)
+	aim.clear()
 	befriend = Befriending.new()
 	fx_layer.add_child(befriend)
 	befriend.setup(self)
+	commands = TrainerCommands.new()
+	add_child(commands)
+	commands.setup(self)
+	commands.used.connect(func(_id: String) -> void: guide.done("command"))
 	input = TamerInput.new()
 	add_child(input)
 	input.setup(self)
@@ -113,10 +123,7 @@ func _wire() -> void:
 		guide.done("camp")
 		if not team.members.is_empty():
 			hud.camp_panel.open())
-	control.toggled.connect(func(on: bool) -> void:
-		if on:
-			guide.done("control"))
-	trainer.fell.connect(_on_fell)
+	battle.started.connect(func() -> void: guide.done("battle"))
 
 
 ## A wild creature fainted: your creature out grows closer, and the fight step is done.
@@ -126,12 +133,20 @@ func _on_defeated(_c: Creature) -> void:
 		field.partner.rec.add_bond(float(TamerData.rule("bond.per_win")))
 
 
-func _on_fell() -> void:
-	hud.notice("You fell! You wake at camp.")
-	control.release()
-	get_tree().create_timer(float(TamerData.rule("trainer.respawn_delay"))).timeout.connect(func() -> void:
-		trainer.rise_at(layout.free_spot_near(camp_point() + CAMP_STAND, trainer.hit_radius()))
-		camera.reset_smoothing())
+## Every creature knocked out (the "white out"): the screen fades, you retreat to camp and the team recovers there.
+## Gentle: you lose one of each material you carry, nothing else.
+func white_out() -> void:
+	retreating = true
+	battle.end(false)
+	var W: Dictionary = TamerData.rule("white_out")
+	hud.fade(float(W["fade"]), float(W["hold"]), func() -> void:
+		for id: String in team.materials:
+			team.materials[id] = maxi(0, int(team.materials[id]) - int(W["lose"]))
+		trainer.place(layout.free_spot_near(camp_point() + CAMP_STAND, trainer.hit_radius()))
+		camera.reset_smoothing()
+		team.rest()
+		retreating = false
+		hud.notice(String(W["text"])))
 
 
 func camp_point() -> Vector2:

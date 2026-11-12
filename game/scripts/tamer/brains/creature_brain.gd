@@ -1,7 +1,7 @@
 class_name CreatureBrain
 extends RefCounted
 ## What a creature wants to do each frame, as a velocity. Partners follow and assist the trainer, wild creatures
-## wander and defend themselves, and a creature you steer goes where you point. Swapped at runtime by HybridControl.
+## wander and defend themselves, and in battle your creature goes where you point. Swapped at runtime by BattleMode.
 
 var c: Creature
 
@@ -30,5 +30,10 @@ func fight(target: Combatant, delta: float, slack: float, speed: float) -> Vecto
 	if d > reach:
 		return c.steer_to(target.global_position, delta) * speed
 	c.face(target.global_position)
-	c.cast(basic_id(), target.global_position)
+	attack(basic_id(), target)
 	return Vector2.ZERO
+
+
+## Uses a move on the target; wild creatures wind up first (WildBrain).
+func attack(id: String, target: Combatant) -> void:
+	c.cast(id, target.global_position)

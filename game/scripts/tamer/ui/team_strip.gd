@@ -1,7 +1,8 @@
 class_name TeamStrip
 extends Control
 ## Your team on keys 1-3: a portrait per member with its life and bond, the one that is out framed in gold, a
-## knocked-out one greyed with its recovery time, and empty slots waiting to be filled by befriending.
+## knocked-out one greyed with its recovery time, and empty slots waiting to be filled by befriending. Click one for
+## its info panel.
 
 const SLOT := Vector2(44, 44)
 const GAP: float = 6.0
@@ -13,9 +14,29 @@ var g: TamerGame
 
 func setup(game: TamerGame) -> void:
 	g = game
-	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	mouse_filter = Control.MOUSE_FILTER_STOP
+	gui_input.connect(_on_input)
+	tooltip_text = ""
 	var n: int = int(TamerData.rule("team_max"))
 	size = Vector2(n * SLOT.x + (n - 1) * GAP, SLOT.y + 22.0)
+
+
+## Clicking a member opens its info panel.
+func _on_input(event: InputEvent) -> void:
+	var mb := event as InputEventMouseButton
+	if mb == null or not mb.pressed or mb.button_index != MOUSE_BUTTON_LEFT:
+		return
+	var i: int = member_at(mb.position)
+	if i >= 0:
+		g.hud.info_panel.toggle(g.team.members[i])
+		accept_event()
+
+
+func member_at(p: Vector2) -> int:
+	for i: int in g.team.members.size():
+		if Rect2(Vector2(i * (SLOT.x + GAP), 0), SLOT).has_point(p):
+			return i
+	return -1
 
 
 func _process(_delta: float) -> void:

@@ -1,52 +1,335 @@
 {
- "_doc": "Rules of the trainer prototype (feel numbers live here, not in code). trainer: the person you play. items: keys 4 and 5. control: hybrid control (hold Shift). partner: how your creature follows and picks fights. wild: how wild creatures behave and scale. befriend: hold F near a weakened wild creature. bond: meter 0-100 per creature. camp: the rest point. materials and upgrades: the grind loop. spawn: wild packs. guide: the tracker's steps in order.",
+ "_doc": "Rules of the trainer prototype (feel numbers live here, not in code). trainer: the person you play; never damaged. aura: your creature deals more damage near you. commands: the trainer's own buttons (A S D G), stronger with bond (command_bond_scale at full bond). perfect_swap: swapping just as a wild attack is about to land on your creature. white_out: every creature knocked out -> back to camp (lose `lose` of each material). items: keys 4 and 5. control: your creature in battle (camera blend, speed, dodge, outline). partner: how your creature follows and picks fights. wild: behaviour and scaling (windup: the telegraphed pause before every wild attack). befriend: F sends the trainer to calm a dazed wild creature. bond: meter 0-100 per creature. camp: the rest point. materials and upgrades: the grind loop. spawn: wild packs (size grows deeper in). guide: the tracker's steps in order.",
  "zone": "tamer_glade",
  "team_max": 3,
  "starter_level": 3,
- "trainer": {"life": 100, "speed": 165, "radius": 7, "dodge": {"distance": 120, "time": 0.26, "cooldown": 0.8, "iframes": 0.34},
-  "hurt_iframes": 0.5, "regen_out_of_fight": 4.0, "respawn_delay": 2.0},
+ "trainer": {
+  "speed": 165,
+  "radius": 7,
+  "dodge": {
+   "distance": 120,
+   "time": 0.26,
+   "cooldown": 0.8
+  }
+ },
  "items": {
-  "berry": {"name": "Honeyberry", "key": "4", "count": 4, "heal": 0.5, "text": "Heals your creature by half"},
-  "salts": {"name": "Smelling Salts", "key": "5", "count": 2, "revive": 0.4, "text": "Wakes a knocked-out creature"}
+  "berry": {
+   "name": "Honeyberry",
+   "key": "4",
+   "count": 4,
+   "heal": 0.5,
+   "text": "Heals your creature by half"
+  },
+  "salts": {
+   "name": "Smelling Salts",
+   "key": "5",
+   "count": 2,
+   "revive": 0.4,
+   "text": "Wakes a knocked-out creature"
+  }
  },
- "control": {"camera_ease": 7.0, "speed_mult": 1.15, "dodge": {"distance": 100, "time": 0.2, "cooldown": 0.6, "iframes": 0.26},
-  "outline": "gold", "leash": 420},
- "partner": {"follow": 44, "follow_side": 26, "catch_up": 1.35, "assist_range": 260, "guard_range": 150, "leash": 340,
-  "basic_range_slack": 0.85, "teleport_after": 700, "swap_entry": "entry"},
- "wild": {"wake_range": 210, "chase_leash": 520, "wander": 60, "think": 0.25, "basic_range_slack": 0.85, "move_chance": 0.25,
-  "life_mult": 0.75, "power_mult": 0.35, "level_life": 0.12, "level_power": 0.08, "trainer_aggro": 0.35, "regen": 6.0},
- "level": {"life": 0.08, "power": 0.06},
- "entry": {"damage": 12, "radius": 70, "stun": 0.4},
- "befriend": {"hold": 1.0, "range": 76, "join_text": "%s joined your team!", "full_text": "Your team is full (3)."},
- "bond": {"max": 100, "unlock": 60, "per_hit": 0.6, "per_win": 7, "per_befriend": 10, "feed": 15, "pet": 8, "camp_rest": 4},
- "knockout": {"recover": 20.0, "trainer_vulnerable_mult": 1.0},
- "camp": {"radius": 130, "sit_radius": 46},
+ "control": {
+  "camera_ease": 7.0,
+  "speed_mult": 1.15,
+  "dodge": {
+   "distance": 100,
+   "time": 0.2,
+   "cooldown": 0.6,
+   "iframes": 0.26
+  },
+  "outline": "gold"
+ },
+ "partner": {
+  "follow": 44,
+  "follow_side": 26,
+  "catch_up": 1.35,
+  "assist_range": 260,
+  "guard_range": 150,
+  "leash": 340,
+  "basic_range_slack": 0.85,
+  "teleport_after": 700,
+  "swap_entry": "entry"
+ },
+ "wild": {
+  "wake_range": 210,
+  "chase_leash": 520,
+  "wander": 60,
+  "think": 0.25,
+  "basic_range_slack": 0.85,
+  "move_chance": 0.25,
+  "life_mult": 1.4,
+  "power_mult": 0.58,
+  "level_life": 0.12,
+  "level_power": 0.08,
+  "regen": 6.0,
+  "windup": 0.45
+ },
+ "level": {
+  "life": 0.08,
+  "power": 0.06
+ },
+ "entry": {
+  "damage": 12,
+  "radius": 70,
+  "stun": 0.4
+ },
+ "befriend": {
+  "hold": 1.0,
+  "range": 76,
+  "join_text": "%s joined your team!",
+  "full_text": "Your team is full (3)."
+ },
+ "bond": {
+  "max": 100,
+  "unlock": 60,
+  "per_hit": 0.6,
+  "per_win": 7,
+  "per_befriend": 10,
+  "feed": 15,
+  "pet": 8,
+  "camp_rest": 4
+ },
+ "knockout": {
+  "recover": 20.0,
+  "trainer_vulnerable_mult": 1.0
+ },
+ "camp": {
+  "radius": 130,
+  "sit_radius": 46
+ },
  "materials": {
-  "ember_tuft": {"name": "Ember Tuft", "color": "flame"}, "glass_scale": {"name": "Glass Scale", "color": "glint"},
-  "bloom_leaf": {"name": "Bloom Leaf", "color": "leaf_lt"}, "wind_tuft": {"name": "Wind Tuft", "color": "bone"},
-  "night_whisker": {"name": "Night Whisker", "color": "violet_lt"}, "rot_fang": {"name": "Rot Fang", "color": "bile"}
+  "ember_tuft": {
+   "name": "Ember Tuft",
+   "color": "flame"
+  },
+  "glass_scale": {
+   "name": "Glass Scale",
+   "color": "glint"
+  },
+  "bloom_leaf": {
+   "name": "Bloom Leaf",
+   "color": "leaf_lt"
+  },
+  "wind_tuft": {
+   "name": "Wind Tuft",
+   "color": "bone"
+  },
+  "night_whisker": {
+   "name": "Night Whisker",
+   "color": "violet_lt"
+  },
+  "rot_fang": {
+   "name": "Rot Fang",
+   "color": "bile"
+  }
  },
- "drops": {"count": [1, 2], "chance": 0.9},
+ "drops": {
+  "count": [
+   1,
+   2
+  ],
+  "chance": 0.9
+ },
  "upgrades": {
-  "life": {"name": "Life", "per_level": 0.12, "material": "rot_fang", "cost": [2, 3, 4, 5, 6]},
-  "power": {"name": "Power", "per_level": 0.1, "material": "wind_tuft", "cost": [2, 3, 4, 5, 6]},
-  "speed": {"name": "Speed", "per_level": 0.06, "material": "night_whisker", "cost": [2, 3, 4, 5, 6]}
+  "life": {
+   "name": "Life",
+   "per_level": 0.12,
+   "material": "rot_fang",
+   "cost": [
+    2,
+    3,
+    4,
+    5,
+    6
+   ]
+  },
+  "power": {
+   "name": "Power",
+   "per_level": 0.1,
+   "material": "wind_tuft",
+   "cost": [
+    2,
+    3,
+    4,
+    5,
+    6
+   ]
+  },
+  "speed": {
+   "name": "Speed",
+   "per_level": 0.06,
+   "material": "night_whisker",
+   "cost": [
+    2,
+    3,
+    4,
+    5,
+    6
+   ]
+  }
  },
- "spawn": {"packs": 18, "spacing": 10, "safe_radius": 14, "camp_clear": 9, "size": [2, 3],
-  "table": [{"from": 0.0, "kinds": {"maned_wolf": 0.6, "aye_aye": 0.4}, "level": 1},
-   {"from": 0.35, "kinds": {"maned_wolf": 0.35, "aye_aye": 0.3, "tas_devil": 0.35}, "level": 2},
-   {"from": 0.65, "kinds": {"maned_wolf": 0.3, "aye_aye": 0.3, "tas_devil": 0.4}, "level": 4}],
-  "guarantee_shiny": "maned_wolf"},
- "meet": {"spots": [[-140, 0], [0, -64], [140, 0]], "react_range": 90, "caption": "Three young creatures are waiting in the meadow. Walk up to each, then click the one you want."},
+ "spawn": {
+  "packs": 18,
+  "spacing": 10,
+  "safe_radius": 14,
+  "camp_clear": 9,
+  "table": [
+   {
+    "from": 0.0,
+    "kinds": {
+     "maned_wolf": 0.6,
+     "aye_aye": 0.4
+    },
+    "level": 1,
+    "size": [
+     1,
+     2
+    ]
+   },
+   {
+    "from": 0.35,
+    "kinds": {
+     "maned_wolf": 0.35,
+     "aye_aye": 0.3,
+     "tas_devil": 0.35
+    },
+    "level": 2,
+    "size": [
+     2,
+     3
+    ]
+   },
+   {
+    "from": 0.65,
+    "kinds": {
+     "maned_wolf": 0.3,
+     "aye_aye": 0.3,
+     "tas_devil": 0.4
+    },
+    "level": 4,
+    "size": [
+     2,
+     4
+    ]
+   }
+  ],
+  "guarantee_shiny": "maned_wolf"
+ },
+ "meet": {
+  "spots": [
+   [
+    -140,
+    0
+   ],
+   [
+    0,
+    -64
+   ],
+   [
+    140,
+    0
+   ]
+  ],
+  "react_range": 90,
+  "caption": "Three young creatures are waiting in the meadow. Walk up to each, then click the one you want."
+ },
  "guide": [
-  {"id": "pick", "text": "Meet the three creatures and click one to choose it"},
-  {"id": "fight", "text": "Click a wild creature: your partner fights it. Use Q W E R at the cursor"},
-  {"id": "control", "text": "Hold Shift to steer your partner yourself; Space dodges"},
-  {"id": "befriend", "text": "Weaken a wild creature, then hold F near it to befriend it"},
-  {"id": "swap", "text": "Press 1, 2 or 3 to swap creatures (the new one strikes as it enters)"},
-  {"id": "camp", "text": "Rest at the camp (the fire, up the path): heal, pet and feed"},
-  {"id": "upgrade", "text": "At camp, spend materials to raise a stat"},
-  {"id": "bond", "text": "Fight together to fill the bond meter and unlock a bond move (T)"},
-  {"id": "free", "text": "Explore: find the shiny maned wolf, raise your team at camp, unlock every bond move"}
- ]
+  {
+   "id": "pick",
+   "text": "Meet the three creatures and click one to choose it"
+  },
+  {
+   "id": "battle",
+   "text": "Right-click a wild creature to start a battle. Then YOU are your creature: left click moves, right click attacks, hold Q W E R to aim a move"
+  },
+  {
+   "id": "fight",
+   "text": "Win a battle: Space dodges the red warnings, hover the move icons to learn your moves"
+  },
+  {
+   "id": "command",
+   "text": "Help as the trainer: A Cheer, S Focus, D Rally, G Mark. Your creature hits harder inside your ring"
+  },
+  {
+   "id": "befriend",
+   "text": "Weaken a wild creature until it is dazed, then press F: your trainer calms it"
+  },
+  {
+   "id": "swap",
+   "text": "Press 1, 2 or 3 to swap. Swap just before a red warning lands for a perfect swap"
+  },
+  {
+   "id": "camp",
+   "text": "Rest at the camp (the fire, up the path): heal, pet and feed"
+  },
+  {
+   "id": "upgrade",
+   "text": "At camp, spend materials to raise a stat"
+  },
+  {
+   "id": "bond",
+   "text": "Battle together to fill the bond meter and unlock a bond move (T)"
+  },
+  {
+   "id": "free",
+   "text": "Explore: find the shiny maned wolf, raise your team at camp, unlock every bond move"
+  }
+ ],
+ "aura": {
+  "radius": 170,
+  "damage": 0.15
+ },
+ "commands": {
+  "cheer": {
+   "name": "Cheer",
+   "key": "A",
+   "cooldown": 14,
+   "time": 6,
+   "power": 0.3,
+   "icon": "star",
+   "color": "gold",
+   "desc": "Your creature hits 30% harder for 6 s."
+  },
+  "focus": {
+   "name": "Focus",
+   "key": "S",
+   "cooldown": 12,
+   "crit": 1.8,
+   "window": 0.8,
+   "icon": "bolt",
+   "color": "sun",
+   "desc": "Its next move is a critical hit (x1.8)."
+  },
+  "rally": {
+   "name": "Rally",
+   "key": "D",
+   "cooldown": 18,
+   "time": 5,
+   "heal": 0.3,
+   "icon": "shield",
+   "color": "leaf_lt",
+   "desc": "Heals your creature 30% of its life over 5 s."
+  },
+  "mark": {
+   "name": "Mark",
+   "key": "G",
+   "cooldown": 10,
+   "time": 8,
+   "damage": 0.25,
+   "icon": "spin",
+   "color": "rose",
+   "desc": "Mark the wild creature under the cursor: your creature goes for it and deals 25% more to it."
+  }
+ },
+ "command_bond_scale": 0.5,
+ "perfect_swap": {
+  "window": 0.35,
+  "mult": 2.0
+ },
+ "white_out": {
+  "fade": 0.6,
+  "hold": 0.8,
+  "lose": 1,
+  "text": "Your team is worn out. You hurry back to camp, and they recover by the fire."
+ }
 }

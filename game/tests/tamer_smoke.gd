@@ -1,8 +1,9 @@
 extends Node
 ## --tamer-smoke: headless play of the trainer prototype. Starts the real prototype scene, then: the meeting and
-## picking a starter, the element chart, moves and the partner's auto-attack, hybrid control on and off, befriending
+## picking a starter, the element chart, moves, battle mode (start, control, end with Victory), befriending
 ## (and being interrupted), swapping with the entry attack, a knock-out and the step-in, bond and the bond move, camp
-## (rest, pet, an upgrade), drops, the shiny, and the trainer falling and waking at camp. Prints TAMER PASS or FAIL.
+## (rest, pet, an upgrade), drops, the shiny, trainer commands, the white-out retreat, and a pack fight. Prints
+## TAMER PASS or FAIL.
 
 var g: TamerGame
 var _fails: PackedStringArray = []
@@ -38,13 +39,16 @@ func _run() -> void:
 	_chart()
 	await _meeting()
 	await _fight()
-	await _hybrid()
+	_clarity()
+	await _battle()
+	await _windup()
 	await _befriend()
 	await _swap_and_knockout()
 	await _bond()
+	await _commands()
 	await _camp()
-	await _fall()
-	await _pack_fight()
+	await _drops_and_white_out()
+	await TamerPackFight.new(self).run()
 	print("TAMER %s (%d checks, %d failed)" % ["PASS" if _fails.is_empty() else "FAIL", _count, _fails.size()])
 	get_tree().quit(0 if _fails.is_empty() else 1)
 
@@ -92,6 +96,7 @@ func _fight() -> void:
 	await frames(2)
 	var p: Creature = g.field.partner
 	var wolf: Creature = _wild("maned_wolf", Vector2(70, 0))
+	wolf.brain = null                                      # held still (and not noticing anyone) for the check
 	await frames(2)
 	var before: float = wolf.rec.life
 	g.input.cursor_override = wolf.global_position
@@ -100,52 +105,116 @@ func _fight() -> void:
 	await frames(4)
 	expect(wolf.rec.life < before, "Claw Rush hits the wild wolf (%d -> %d)" % [before, wolf.rec.life])
 	expect(p.cooldown_frac("claw_rush") > 0.0, "the move goes on cooldown")
-	wolf.rec.life = wolf.rec.max_life()
-	g.trainer.attack_target = wolf
-	var mid: float = wolf.rec.life
-	await seconds(2.0)
-	expect(not is_instance_valid(wolf) or wolf.rec.life < mid, "the partner auto-attacks what you clicked")
-	g.trainer.attack_target = null
+	expect(p.rec.used_moves.has("claw_rush"), "the first use of a move is remembered (its name popped up)")
 	_clear_wild(900.0)
 	await frames(2)
 
 
-func _hybrid() -> void:
-	var p: Creature = g.field.partner
-	expect(g.control.take(), "holding Shift hands control to the creature")
-	expect(p.brain is ControlledBrain and g.control.controlled() == p, "the creature is the one you steer")
-	var from: Vector2 = p.global_position
-	var goal: Vector2 = g.layout.free_spot_near(from + Vector2(120, 0), 12.0)
-	g.control.brain().goal = goal
-	var trainer_at: Vector2 = g.trainer.global_position
-	await seconds(1.0)
-	expect(p.global_position.distance_to(goal) < from.distance_to(goal) - 40.0, "the steered creature goes where you click")
-	expect(g.trainer.global_position.distance_to(trainer_at) < 4.0, "the trainer waits while you steer (moved %.1f)" % g.trainer.global_position.distance_to(trainer_at))
-	expect(g.control.blend > 0.5, "the camera eases over to the creature")
-	expect(p.dodge(p.global_position + Vector2(0, 80), TamerData.rule("control.dodge")), "the creature has its own dodge")
-	await seconds(0.4)
-	g.control.release()
-	expect(p.brain is PartnerBrain and g.control.controlled() == g.trainer, "letting go hands back to the trainer")
-	await seconds(1.5)
-	expect(p.global_position.distance_to(g.trainer.global_position) < 110.0, "the creature returns to following")
-
-
-func _befriend() -> void:
-	var aye: Creature = _wild("aye_aye", Vector2(50, 10))
+## Exploring: left click walks the trainer, even on a wild creature; right click on one starts a battle in which
+## you control the creature; the trainer keeps away and is never a target; the battle ends with a Victory.
+func _battle() -> void:
+	_clear_wild(2000.0)
+	g.battle.end(false)
 	await frames(2)
-	aye.set_physics_process(false)
+	expect(not g.battle.on, "you start out exploring as the trainer")
+	g.field.partner.global_position = g.trainer.global_position
+	var wolf: Creature = _wild("maned_wolf", Vector2(320, 0))
+	wolf.set_physics_process(false)                         # it must not notice us before the clicks are checked
+	await frames(2)
+	g.input.cursor_override = wolf.global_position
+	g.input.hovered = wolf
+	g.input.press()
+	expect(not g.battle.on and g.trainer.walking(), "left click on a wild creature walks, never attacks")
+	g.trainer.stop()
+	wolf.set_physics_process(true)
+	g.input.attack()
+	var p: Creature = g.field.partner
+	expect(g.battle.on and p.brain is ControlledBrain, "right click on a wild creature starts a battle: you control your creature")
+	expect(g.guide.is_done("battle"), "the guide counts the battle")
+	var goal: Vector2 = g.layout.free_spot_near(p.global_position + Vector2(0, 90), 12.0)
+	g.input.hovered = null
+	g.input.cursor_override = goal
+	g.input.press()
+	await seconds(0.8)
+	expect(p.global_position.distance_to(goal) < 40.0, "in battle, left click moves your creature")
+	expect(g.battle.blend > 0.5, "the camera eases over to your creature")
+	expect(p.dodge(p.global_position + Vector2(0, 80), TamerData.rule("control.dodge")), "Space is your creature's dodge")
+	await seconds(0.4)
+	await _battle_fight(p, wolf)
+
+
+func _battle_fight(p: Creature, wolf: Creature) -> void:
+	g.input.cursor_override = wolf.global_position
+	g.input.hovered = wolf
+	g.input.attack()
+	expect(g.battle.brain().target == wolf, "right click in battle attacks the creature under the cursor")
+	p.cooldowns.clear()
+	g.input.start_aim(1)
+	expect(g.aim.aiming() and g.aim.move_id == String(p.rec.moves()[1]), "holding W shows where the move will land")
+	await frames(2)
+	g.input.release_aim(1)
+	expect(not g.aim.aiming() and p.cooldown_frac(String(p.rec.moves()[1])) > 0.0, "releasing W uses it at the cursor")
+	await seconds(2.5)
+	expect(get_tree().get_nodes_in_group(Combatant.SIDE_TEAM).all(func(n: Node) -> bool: return n is Creature),
+		"only your creature can be targeted: the trainer never is")
+	if is_instance_valid(wolf):
+		expect(g.trainer.global_position.distance_to(wolf.global_position) > 50.0, "the trainer keeps back from the fight on their own (%.0f px)" % g.trainer.global_position.distance_to(wolf.global_position))
+		wolf.faint()
+	await seconds(1.0)
+	expect(not g.battle.on and p.brain is PartnerBrain, "no foes left: the battle ends and the trainer leads again")
+	await seconds(1.0)
+	expect(g.hud._victory_t > 0.0, "a Victory summary shows what the fight earned")
+	g.input.hovered = null
+	await frames(2)
+
+
+## Wild attacks wind up (a telegraph) before they land.
+func _windup() -> void:
+	var p: Creature = g.field.partner
+	var wolf: Creature = _wild("maned_wolf", Vector2(30, 0))
+	await frames(2)
+	var brain := wolf.brain as WildBrain
+	var life: float = p.rec.life
+	p.global_position = wolf.global_position + Vector2(24, 0)
+	wolf.cooldowns.clear()
+	brain.attack("wolf_nip", p)
+	await frames(3)
+	expect(p.rec.life == life and brain.winding_at(p), "a wild attack winds up before it lands")
+	g.battle.end(false)
+	_clear_wild(900.0)
+	await frames(2)
+
+
+## Every move says what it does; the HUD tooltip and the info panel show it.
+func _clarity() -> void:
+	var missing: Array[String] = []
+	for id: String in TamerData.moves:
+		if String(TamerData.move(id).get("desc", "")) == "":
+			missing.append(id)
+	expect(missing.is_empty(), "every move has a description %s" % [missing])
+	var rows: Array = MoveText.rows(g.hud.card, "ember_pounce", 1.2, "ember", "W")
+	expect(rows.size() >= 5 and String(rows[0][0]).contains("Ember Pounce"), "a move tooltip has its name, words and numbers")
+	expect(not g.hud.card.move_at(g.hud.card._slot_rect(0).get_center()).is_empty(), "hovering a move slot finds the move")
+	g.hud.info_panel.open(g.team.current())
+	expect(g.hud.info_panel.visible, "the creature info panel opens")
+	g.hud.info_panel.close()
+
+
+## Befriending is the trainer's job: F sends them to a dazed creature to calm it.
+func _befriend() -> void:
+	var aye: Creature = _wild("aye_aye", Vector2(140, 10))
+	aye.brain = null
+	await frames(2)
 	aye.receive_hit(aye.rec.max_life() * 0.7, Vector2.RIGHT, 0.0, 0.0, null)
 	expect(aye.dazed, "a weakened wild creature is dazed (can be befriended)")
-	g.befriend.set_meta("forced", true)
-	await seconds(0.5)
-	g.trainer.iframe_t = 0.0
-	g.trainer.receive_hit(1.0, Vector2.LEFT, 0.0, 0.0, null)
+	expect(g.befriend.request(), "F sends the trainer to the dazed creature")
+	await seconds(1.0)
+	aye.receive_hit(1.0, Vector2.LEFT, 0.0, 0.0, null)
 	await frames(2)
-	expect(g.befriend.progress < 0.2, "being hit interrupts befriending (progress %.2f, life %.0f)" % [g.befriend.progress, g.trainer.life])
-	g.trainer.iframe_t = 0.0
-	await seconds(1.4)
-	g.befriend.set_meta("forced", false)
-	expect(g.team.members.size() == 2 and g.team.members[1].species_id == "aye_aye", "holding F wins the aye-aye over")
+	expect(g.befriend.progress < 0.2 and g.befriend.target == null, "hitting the creature you calm startles it")
+	g.befriend.request()
+	await seconds(2.5)
+	expect(g.team.members.size() == 2 and g.team.members[1].species_id == "aye_aye", "the trainer wins the aye-aye over")
 	expect(g.guide.is_done("befriend"), "the guide counts the befriending")
 
 
@@ -195,7 +264,7 @@ func _camp() -> void:
 	expect(shinies >= 1, "a shiny maned wolf is out in the meadow (%d shiny)" % shinies)
 
 
-func _fall() -> void:
+func _drops_and_white_out() -> void:
 	g.trainer.global_position = g.layout.free_spot_near(g.camp_point() + Vector2(0, 400), 8.0)
 	await seconds(0.3)
 	var wolf: Creature = _wild("maned_wolf", Vector2(40, 0))
@@ -206,32 +275,61 @@ func _fall() -> void:
 	var drops: int = get_tree().get_nodes_in_group("material_drops").size()
 	await seconds(1.0)
 	expect(drops > 0 or g.team.count("wind_tuft") > 0, "a fainted wild creature drops its material")
-	g.trainer.iframe_t = 0.0
-	g.trainer.receive_hit(9999.0, Vector2.RIGHT, 0.0, 0.0, null)
-	expect(not g.trainer.alive(), "the trainer can fall")
-	await seconds(float(TamerData.rule("trainer.respawn_delay")) + 0.5)
-	expect(g.trainer.alive() and g.trainer.global_position.distance_to(g.camp_point()) < 140.0, "the trainer wakes at camp")
+	await _white_out()
 
 
-## Feel check: a starter at its level beats a near pack of two on auto-attack alone in reasonable time, and it is a
-## real fight (it loses some life). Printed for tuning.
-func _pack_fight() -> void:
-	g.trainer.global_position = g.layout.free_spot_near(g.layout.start + Vector2(0, 40), 8.0)
-	g.team.rest()
-	g.field.swap(0)
+## The trainer is never a target; with every creature knocked out the team retreats to camp and recovers.
+func _white_out() -> void:
+	g.trainer.place(g.layout.free_spot_near(g.layout.start, 8.0))      # far from camp (resting there would revive them)
+	var wolf: Creature = _wild("maned_wolf", Vector2(40, 0))
 	await seconds(1.0)
-	_clear_wild(1400.0)
-	var pack: Array[Creature] = [_wild("maned_wolf", Vector2(150, 0)), _wild("aye_aye", Vector2(170, 40))]
-	for c: Creature in pack:
-		(c.brain as WildBrain).wake(g.trainer)
+	var foes: Array = get_tree().get_nodes_in_group(Combatant.SIDE_TEAM).filter(func(n: Node) -> bool: return n is Trainer)
+	expect(foes.is_empty() and not g.trainer.has_method("receive_hit"), "the trainer can never be targeted or hit")
+	for n: Node in get_tree().get_nodes_in_group("material_drops"):
+		n.queue_free()
+	g.team.add_material("bloom_leaf", 2)
+	var tufts: int = g.team.count("bloom_leaf")
+	for r: CreatureRecord in g.team.members:
+		if r != g.field.partner.rec:
+			r.knock_out()
+	g.field.partner.receive_hit(99999.0, Vector2.RIGHT, 0.0, 0.0, null)
+	await seconds(1.0 + float(TamerData.rule("white_out.fade")) * 2.0 + float(TamerData.rule("white_out.hold")) + 0.5)
+	expect(g.trainer.global_position.distance_to(g.camp_point()) < 160.0, "a wiped team retreats to camp")
+	expect(not g.team.all_out() and g.field.partner != null, "the team recovers at camp")
+	expect(g.team.count("bloom_leaf") == tufts - int(TamerData.rule("white_out.lose")), "the white-out costs one of each material (gentle: %d -> %d)" % [tufts, g.team.count("bloom_leaf")])
+
+
+## The trainer's commands: Cheer, Focus, Rally, Mark; and the perfect swap.
+func _commands() -> void:
 	var p: Creature = g.field.partner
-	var t: float = 0.0
-	while t < 40.0 and pack.any(func(c: Creature) -> bool: return is_instance_valid(c) and c.alive()):
-		for c: Creature in pack:
-			if is_instance_valid(c) and c.dazed:
-				c.faint()
-		await frames(6)
-		t += 0.1
-	var lost: float = 1.0 - (p.rec.life_frac() if is_instance_valid(p) else 0.0)
-	print("TAMER pack fight: %.1f s, partner lost %d%% life, trainer life %d" % [t, roundi(lost * 100.0), g.trainer.life])
-	expect(t < 40.0, "the starter wins a near pack of two on its own (%.1f s)" % t)
+	g.commands.cooldowns.clear()
+	expect(g.commands.use("cheer", Vector2.ZERO) and p.cheer_t > 0.0 and p.outgoing_mult(null) > 1.0, "Cheer makes your creature hit harder")
+	expect(not g.commands.use("cheer", Vector2.ZERO), "commands have cooldowns")
+	expect(g.commands.use("focus", Vector2.ZERO) and p.focus_ready, "Focus readies a critical move")
+	p.rec.life = p.rec.max_life() * 0.5
+	var life: float = p.rec.life
+	expect(g.commands.use("rally", Vector2.ZERO), "Rally starts")
+	await seconds(1.0)
+	expect(p.rec.life > life, "Rally heals over time")
+	var wolf: Creature = _wild("maned_wolf", Vector2(80, 0))
+	await frames(2)
+	expect(g.commands.use("mark", wolf.global_position) and wolf.marked_t > 0.0 and g.trainer.attack_target == wolf, "Mark picks the target")
+	expect(p.outgoing_mult(wolf) > p.outgoing_mult(null), "marked creatures take more from yours")
+	expect(g.guide.is_done("command"), "the guide counts a command")
+	g.trainer.global_position = p.global_position
+	await frames(2)
+	var near: float = p.outgoing_mult(null)
+	g.trainer.global_position = p.global_position + Vector2(400, 0)
+	await frames(2)
+	expect(p.outgoing_mult(null) < near, "your creature hits harder inside your bond aura")
+	g.trainer.global_position = p.global_position
+	await frames(2)
+	(wolf.brain as WildBrain).wake(p)
+	wolf.global_position = p.global_position + Vector2(24, 0)
+	wolf.cooldowns.clear()
+	(wolf.brain as WildBrain).attack("wolf_nip", p)
+	await seconds(float(TamerData.rule("wild.windup")) - 0.2)
+	var i: int = g.team.next_awake()
+	expect(i >= 0 and g.field.swap(i), "a swap just before a wild attack lands")
+	expect(not (wolf.brain as WildBrain).winding_at(p), "the perfect swap makes the attack whiff")
+	_clear_wild(900.0)

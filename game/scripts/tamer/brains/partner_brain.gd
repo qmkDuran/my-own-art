@@ -1,7 +1,7 @@
 class_name PartnerBrain
 extends CreatureBrain
 ## Your creature on its own: it walks at your side (a little behind, never in your way: you do not collide), fights
-## what you clicked, or else the nearest wild creature that is after you or close by, and comes back if the fight
+## the foe you marked (in battle you control it yourself: BattleMode), or else the nearest wild creature that is after you or close by, and comes back if the fight
 ## pulls it too far. It leaves dazed creatures alone (you befriend those) unless you point at one.
 
 const RETARGET: float = 0.2
@@ -24,6 +24,18 @@ func think(delta: float) -> Vector2:
 	if _target != null and is_instance_valid(_target) and _target.alive():
 		return fight(_target, delta, float(P["basic_range_slack"]), c.rec.speed())
 	return _follow(tr, P, delta)
+
+
+## The nearest living wild creature within `r` of the creature (dazed ones only if nothing else is there).
+static func nearest_foe(cr: Creature, r: float) -> Combatant:
+	var best: Combatant = null
+	var best_d: float = r
+	for f: Combatant in cr.foes():
+		var d: float = f.global_position.distance_to(cr.global_position)
+		if d < best_d and not (f is Creature and (f as Creature).dazed):
+			best_d = d
+			best = f
+	return best
 
 
 func _pick(tr: Trainer, P: Dictionary) -> Combatant:

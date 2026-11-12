@@ -1,7 +1,7 @@
 class_name Creature
 extends Combatant
 ## A creature on the field, yours or wild, made from its CreatureRecord. Its brain (partner, wild or your direct
-## control) says where to go; moves (MoveBook) run on cooldowns; hits shove and stun it. A partner never blocks the
+## control in battle) says where to go; moves (MoveBook) run on cooldowns; hits shove and stun it. A partner never blocks the
 ## trainer (they do not collide); creatures keep a little personal space from each other instead.
 
 signal fainted(c: Creature)
@@ -26,6 +26,15 @@ var guard_left: float = 0.0             ## damage a ward still soaks
 var guard_t: float = 0.0
 var dodge_cd: float = 0.0
 var dazed: bool = false                 ## weak enough to befriend: it stops fighting
+var cheer_t: float = 0.0                ## trainer commands: Cheer (more power), Focus (next move crits), Rally (heal
+var cheer_power: float = 0.0            ## over time), Mark (on a wild creature: your creature goes for it, deals more)
+var focus_ready: bool = false
+var focus_crit: float = 1.0
+var focus_t: float = 0.0
+var regen_t: float = 0.0
+var regen_rate: float = 0.0
+var marked_t: float = 0.0
+var mark_bonus: float = 0.0
 var fainted_now: bool = false
 
 
@@ -77,6 +86,21 @@ func power() -> float:
 	return rec.power()
 
 
+## What this creature's hits on `target` are multiplied by: Cheer, the trainer's bond aura, a Mark on the target.
+func outgoing_mult(target: Combatant) -> float:
+	var k: float = 1.0 + (cheer_power if cheer_t > 0.0 else 0.0)
+	if side == SIDE_TEAM and TamerGame.current.trainer.in_aura(global_position):
+		k += float(TamerData.rule("aura.damage"))
+	var t := target as Creature
+	if t != null and t.marked_t > 0.0 and side == SIDE_TEAM:
+		k += t.mark_bonus
+	return k
+
+
+func critical() -> bool:
+	return focus_t > 0.0
+
+
 func move_ready(id: String) -> bool:
 	return float(cooldowns.get(id, 0.0)) <= 0.0 and busy_t <= 0.0 and stun_t <= 0.0 and alive()
 
@@ -94,7 +118,13 @@ func cast(id: String, at: Vector2) -> bool:
 	cooldowns[id] = float(m["cooldown"])
 	face(at)
 	view.act()
+	if focus_ready and id != String(rec.data()["basic"]):
+		focus_ready = false
+		focus_t = float(TamerData.rule("commands.focus.window"))
 	MoveBook.cast(self, id, at)
+	if side == SIDE_TEAM and not rec.used_moves.has(id) and not bool(m.get("bond", false)):
+		rec.used_moves[id] = true
+		TamerFx.word(global_position + Vector2(0, -12), String(m["name"]), TamerData.color(CreatureCombat.move_element(self, m), "light"), UiDraw.TITLE)
 	return true
 
 
@@ -192,6 +222,12 @@ func _tick(delta: float) -> void:
 	iframe_t = maxf(0.0, iframe_t - delta)
 	dodge_cd = maxf(0.0, dodge_cd - delta)
 	guard_t = maxf(0.0, guard_t - delta)
+	cheer_t = maxf(0.0, cheer_t - delta)
+	focus_t = maxf(0.0, focus_t - delta)
+	marked_t = maxf(0.0, marked_t - delta)
+	if regen_t > 0.0:
+		regen_t -= delta
+		rec.heal_points(regen_rate * delta)
 
 
 ## Creatures keep a little apart so a pack never reads as one blob.

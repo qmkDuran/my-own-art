@@ -2,7 +2,8 @@ class_name TeamField
 extends Node
 ## Puts your active creature on the field and takes it back: swapping (1-3) calls the new one out with a small
 ## entry attack; a knocked-out creature fades away and the next one that can fight steps in; one that recovers
-## comes back to your side. Items (4, 5) heal or wake your creatures. Bond milestones are celebrated here.
+## comes back to your side; with none left the trainer retreats to camp (TamerGame.white_out). A swap timed just
+## before a wild attack lands is a perfect swap. Items (4, 5) heal or wake your creatures. Bond milestones here.
 
 signal swapped(rec: CreatureRecord)
 signal partner_changed(c: Creature)
@@ -16,7 +17,6 @@ var g: TamerGame
 var partner: Creature
 var _swap_cd: float = 0.0
 var _auto_t: float = -1.0
-var _warned_alone: bool = false
 
 
 func setup(game: TamerGame) -> void:
@@ -25,7 +25,7 @@ func setup(game: TamerGame) -> void:
 
 
 ## Calls member `i` out beside the trainer; with `entry`, it strikes as it lands.
-func summon(i: int, entry: bool) -> void:
+func summon(i: int, entry: bool, perfect: bool = false) -> void:
 	var rec: CreatureRecord = g.team.members[i]
 	g.team.set_active(i)
 	var c := Creature.new().setup(rec, Combatant.SIDE_TEAM)
@@ -36,19 +36,22 @@ func summon(i: int, entry: bool) -> void:
 	g.world.add_child(c)
 	c.add_to_group(TreeFade.FOCUS)
 	partner = c
-	_warned_alone = false
 	Fx.burst(g.fx_layer, c.global_position + Vector2(0, -12), 22, Vector2(50, 160), 0.45, TamerData.sparks(rec.element()))
 	Fx.ring(g.fx_layer, c.global_position, 6.0, 46.0, TamerData.color(rec.element(), "light"), 0.3)
 	if entry:
-		_entry_attack(c)
+		_entry_attack(c, perfect)
 	partner_changed.emit(c)
 
 
-func _entry_attack(c: Creature) -> void:
+func _entry_attack(c: Creature, perfect: bool) -> void:
 	var E: Dictionary = TamerData.rule("entry")
-	var m: Dictionary = {"name": "Entry", "damage": E["damage"], "stun": E["stun"], "knock": 14.0}
+	var k: float = float(TamerData.rule("perfect_swap.mult")) if perfect else 1.0
+	var m: Dictionary = {"name": "Entry", "damage": float(E["damage"]) * k, "stun": float(E["stun"]) * k, "knock": 14.0}
 	TamerFx.blast(c.global_position, float(E["radius"]), c.element_id(), true)
-	TamerFx.word(c.global_position, "Go, %s!" % c.rec.data()["name"], TamerData.color(c.element_id(), "light"), UiDraw.TITLE)
+	var call: String = "Perfect swap! Go, %s!" if perfect else "Go, %s!"
+	TamerFx.word(c.global_position, call % c.rec.data()["name"], Pal.c("gold") if perfect else TamerData.color(c.element_id(), "light"), UiDraw.TITLE)
+	if perfect:
+		Fx.screen_flash(Pal.c("gold"), 0.2, 0.3)
 	Audio.sfx("slam", -6.0, 1.1)
 	for f: Combatant in MoveKind.foes_in(c, c.global_position, float(E["radius"])):
 		CreatureCombat.hit(c, f, m, (f.global_position - c.global_position).normalized())
@@ -56,13 +59,28 @@ func _entry_attack(c: Creature) -> void:
 
 ## 1-3: swap to member `i` (not to one that is knocked out).
 func swap(i: int) -> bool:
-	if _swap_cd > 0.0 or not g.team.can_swap_to(i) or not g.trainer.alive():
+	if _swap_cd > 0.0 or not g.team.can_swap_to(i):
 		return false
 	_swap_cd = SWAP_COOLDOWN
+	var perfect: bool = _dodge_incoming()
 	recall()
-	summon(i, true)
+	summon(i, true, perfect)
 	swapped.emit(g.team.members[i])
 	return true
+
+
+## Swapping just as a wild attack is about to land on your creature: the attack whiffs and the swap-in hits twice
+## as hard (perfect_swap.window seconds before it lands).
+func _dodge_incoming() -> bool:
+	if partner == null:
+		return false
+	var perfect: bool = false
+	for n: Node in get_tree().get_nodes_in_group(Combatant.SIDE_WILD):
+		var b := (n as Creature).brain as WildBrain
+		if b != null and b.winding_at(partner) and b.windup_left() <= float(TamerData.rule("perfect_swap.window")):
+			b.cancel_windup()
+			perfect = true
+	return perfect
 
 
 ## Takes the partner off the field (it keeps its record: life, bond, cooldowns start fresh).
@@ -96,7 +114,7 @@ func _process(delta: float) -> void:
 		_auto_t -= delta
 		if _auto_t <= 0.0:
 			_step_in()
-	elif partner == null and g.team.current() != null and g.trainer.alive():
+	elif partner == null and g.team.current() != null and not g.retreating:
 		if not g.team.current().knocked_out():
 			summon(g.team.active, false)                 # it recovered and comes back to your side
 		elif g.team.next_awake() >= 0:
@@ -107,9 +125,8 @@ func _step_in() -> void:
 	var i: int = g.team.next_awake()
 	if i >= 0:
 		summon(i, true)
-	elif not _warned_alone:
-		_warned_alone = true
-		g.hud.notice("All your creatures are out. You're on your own: roll away (Space) and get to camp!")
+	elif not g.retreating:
+		g.white_out()
 
 
 func use_item(id: String) -> bool:

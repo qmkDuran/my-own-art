@@ -61,6 +61,27 @@ func _bars(rec: CreatureRecord, at: Vector2, w: float) -> void:
 	draw_rect(Rect2(bt + Vector2(mark, -2), Vector2(1, BOND_H + 4.0)), Pal.c("sun") if rec.bond_move_ready() else UiDraw.DIM)
 
 
+## The move under a point in the card's own coordinates ([id, key] or empty), for the tooltip.
+func move_at(p: Vector2) -> Array:
+	var rec: CreatureRecord = g.team.current()
+	if rec == null:
+		return []
+	var ids: Array = rec.moves().duplicate()
+	ids.append(rec.bond_move())
+	var keys: Array[String] = TamerKeys.MOVE_LABELS.duplicate()
+	keys.append("T")
+	for i: int in ids.size():
+		if _slot_rect(i).has_point(p):
+			return [String(ids[i]), keys[i]]
+	return []
+
+
+func _slot_rect(i: int) -> Rect2:
+	var at := Vector2(GAP + PORTRAIT + GAP, GAP + 27.0)
+	var x: float = i * (SLOT + SLOT_GAP) + (SLOT_GAP if i >= TamerKeys.MOVE_LABELS.size() else 0.0)
+	return Rect2(at + Vector2(x, 0), Vector2(SLOT, SLOT))
+
+
 func _moves(rec: CreatureRecord, at: Vector2) -> void:
 	var c: Creature = g.field.partner if g.field.partner != null and g.field.partner.rec == rec else null
 	var kit: Array = rec.moves()

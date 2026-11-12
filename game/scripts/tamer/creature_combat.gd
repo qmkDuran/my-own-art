@@ -1,7 +1,7 @@
 class_name CreatureCombat
 extends RefCounted
-## Damage between creatures (and the trainer): the move's damage x the user's power x the element matchup x a
-## little spread, then the weight of the hit (Lanternfall's impact, hit-stop and shake, in the element's colours),
+## Damage between creatures: the move's damage x the user's power x the element matchup x the trainer's help (Cheer,
+## the bond aura, Mark, a Focus crit) x a little spread, then the weight of the hit (Lanternfall's impact, hit-stop and shake, in the element's colours),
 ## the number, the "Super effective!" or "Resisted" word, and bond for your creature.
 
 const SPREAD: float = 0.1
@@ -21,11 +21,14 @@ static func hit(user: Creature, target: Combatant, m: Dictionary, dir: Vector2, 
 		return 0.0
 	var el: String = move_element(user, m)
 	var mult: float = TamerData.element_mult(el, target.element_id()) if target.element_id() != "" else 1.0
-	var dmg: float = float(m["damage"]) * user.power() * mult * scale * randf_range(1.0 - SPREAD, 1.0 + SPREAD)
+	var crit: bool = user.critical()
+	var dmg: float = float(m["damage"]) * user.power() * mult * scale * user.outgoing_mult(target) * randf_range(1.0 - SPREAD, 1.0 + SPREAD)
+	if crit:
+		dmg *= user.focus_crit
 	dmg = maxf(1.0, roundf(dmg))
 	var share: float = dmg / maxf(target.max_life_value(), 1.0)
 	target.receive_hit(dmg, dir, float(m.get("knock", 6.0)), float(m.get("stun", 0.0)), user)
-	_feedback(target, dmg, share, el, dir, bool(m.get("bond", false)))
+	_feedback(target, dmg, share, el, dir, bool(m.get("bond", false)) or crit)
 	if target.element_id() != "":
 		_matchup_word(target, TamerData.matchup(el, target.element_id()))
 	if user.side == Combatant.SIDE_TEAM and user.rec != null:

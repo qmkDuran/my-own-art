@@ -1,43 +1,55 @@
 class_name Befriending
 extends Node2D
-## Winning a wild creature over: once it is dazed (weak enough), stand near it and hold F. A ring fills around it
-## over `hold` seconds; letting go, being hit, rolling, moving away or the creature fainting breaks it off. Then it
-## joins your team (if there is room) with a burst of light; a shiny one sparkles and chimes.
+## Winning a wild creature over is the trainer's job: once one is dazed (weak enough), press F and the trainer walks
+## up to it (even mid-battle; your creature keeps fighting) and calms it: a ring fills around it over `hold` seconds.
+## Hitting it, rolling, walking elsewhere or it fainting breaks it off. It joins your team (if there is room) with a
+## burst of light; a shiny one sparkles and chimes. The dazed creature stops fighting, so the trainer is never at risk.
 
 signal befriended(rec: CreatureRecord)
 
 const RING_R: float = 22.0
 const RING_W: float = 3.0
 const JOIN_LIFE: float = 0.5
+const FIND_RANGE: float = 420.0         ## F looks this far around the trainer for a dazed creature
+const REWALK: float = 0.3
 
 var g: TamerGame
 var target: Creature
 var progress: float = 0.0
+var _walk_t: float = 0.0
 
 
 func setup(game: TamerGame) -> void:
 	g = game
 	z_index = Fx.FX_Z
-	g.trainer.hurt.connect(func() -> void:
-		if progress > 0.0:
-			_cancel()
-			g.hud.notice("Interrupted!"))
 
 
-func held() -> bool:
-	return Input.is_action_pressed("interact") or bool(get_meta("forced", false))
+## F: the trainer goes to calm the nearest dazed creature. Returns whether there was one.
+func request() -> bool:
+	cancel()
+	target = _nearest_dazed()
+	if target == null:
+		g.hud.notice("No dazed creature nearby. Weaken one first (its life bar's pink mark).")
+		return false
+	target.struck.connect(_on_struck, CONNECT_ONE_SHOT)
+	g.trainer.walk_to(target.global_position)
+	return true
 
 
 func _process(delta: float) -> void:
-	var tr: Trainer = g.trainer
-	if not held() or not tr.alive() or tr.rolling() or tr.walking():
-		_cancel()
+	if target == null:
 		return
-	if target == null or not _valid(target):
-		_cancel()
-		target = _nearest_dazed()
-		if target == null:
-			return
+	if not _valid(target) or g.trainer.rolling():
+		cancel()
+		return
+	var tr: Trainer = g.trainer
+	if tr.global_position.distance_to(target.global_position) > float(TamerData.rule("befriend.range")):
+		_walk_t -= delta
+		if _walk_t <= 0.0:
+			_walk_t = REWALK
+			tr.walk_to(target.global_position)
+		return
+	tr.stop()
 	progress += delta / float(TamerData.rule("befriend.hold"))
 	global_position = target.global_position
 	queue_redraw()
@@ -46,13 +58,12 @@ func _process(delta: float) -> void:
 
 
 func _valid(c: Creature) -> bool:
-	return is_instance_valid(c) and c.alive() and c.dazed and \
-		c.global_position.distance_to(g.trainer.global_position) <= float(TamerData.rule("befriend.range"))
+	return is_instance_valid(c) and c.alive() and c.dazed
 
 
 func _nearest_dazed() -> Creature:
 	var best: Creature = null
-	var best_d: float = INF
+	var best_d: float = FIND_RANGE
 	for n: Node in get_tree().get_nodes_in_group(Combatant.SIDE_WILD):
 		var c := n as Creature
 		var d: float = c.global_position.distance_to(g.trainer.global_position)
@@ -62,7 +73,16 @@ func _nearest_dazed() -> Creature:
 	return best
 
 
-func _cancel() -> void:
+## The creature is hit while you calm it: it startles and you start over.
+func _on_struck(c: Creature, _by: Combatant) -> void:
+	if c == target and progress > 0.0:
+		cancel()
+		g.hud.notice("Startled! Keep it calm: don't hit it while you befriend it.")
+
+
+func cancel() -> void:
+	if target != null and is_instance_valid(target) and target.struck.is_connected(_on_struck):
+		target.struck.disconnect(_on_struck)
 	if progress > 0.0:
 		progress = 0.0
 		queue_redraw()

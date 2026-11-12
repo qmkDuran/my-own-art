@@ -77,7 +77,7 @@ func _row(progress: float) -> Dictionary:
 
 func _spawn_pack(i: int) -> void:
 	var row: Dictionary = _row(float(packs[i]["progress"]))
-	var size: Array = TamerData.rule("spawn.size")
+	var size: Array = row["size"]                          # small packs near the start, bigger deeper in
 	var kind: String = _weighted(row["kinds"])             # a pack is one kind: easy to read, easy to plan for
 	for k: int in rng.randi_range(int(size[0]), int(size[1])):
 		var at: Vector2 = _member_spot(packs[i]["pos"])

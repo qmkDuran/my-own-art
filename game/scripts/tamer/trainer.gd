@@ -1,53 +1,48 @@
 class_name Trainer
-extends Combatant
-## You, the trainer: you walk where you click (grid path), roll out of danger (Space, with a moment of
-## untouchability), use items, and point your creature at foes. You can be hit; a ward from your creature soaks hits.
-## If you fall you wake at camp, gently. Life comes back slowly out of a fight.
-
-signal fell
-signal rose
-signal hurt
+extends Node2D
+## You, the trainer. You are never hurt (as in the shows): wild creatures ignore you. You walk where you left-click
+## (grid path), roll (Space) to reposition, command your creature (TrainerCommands), befriend, use items and call
+## swaps. Your creature fights better near you: the bond aura (a faint ring around you) is where that bonus holds,
+## so where you stand matters even while you steer the creature. Not a Combatant: nothing can target you.
 
 const TEAM_LAYER: int = 4
 const FPS: float = 8.0
 const COLS: int = 8
 const MOVING: float = 10.0
-const QUIET_AFTER: float = 4.0          ## seconds since the last hit before life starts coming back
 const ROLL_SPIN: float = TAU
+const AURA_ALPHA := Vector2(0.12, 0.45)         ## the aura ring: faint, brighter while your creature is inside it
 
-var life: float
-var max_life: float
 var heading: Vector2 = Vector2.DOWN     ## last walking direction (the partner walks behind it)
-var attack_target: Combatant            ## the foe you clicked: your creature goes for it
+var attack_target: Combatant            ## a foe your creature should go for on its own (Mark)
 var sprite: Sprite2D
-var down: bool = false
-var guard_left: float = 0.0
-var guard_t: float = 0.0
+var body: CharacterBody2D
+var aura: Sprite2D
+var T: Dictionary
 var _goal: Vector2 = Vector2.INF
+var _path := PackedVector2Array()
+var _repath: float = 0.0
 var _roll_vel: Vector2 = Vector2.ZERO
 var _roll_t: float = 0.0
 var _roll_cd: float = 0.0
-var _quiet: float = 0.0
 var _anim_t: float = 0.0
-var _flash_t: float = 0.0
-var T: Dictionary
 
 
 func _ready() -> void:
 	T = TamerData.rule("trainer")
-	side = SIDE_TEAM
-	add_to_group(SIDE_TEAM)
 	add_to_group(TreeFade.FOCUS)
-	collision_layer = TEAM_LAYER
-	collision_mask = WORLD_MASK
-	motion_mode = CharacterBody2D.MOTION_MODE_FLOATING
-	max_life = float(T["life"])
-	life = max_life
+	body = CharacterBody2D.new()
+	body.collision_layer = TEAM_LAYER
+	body.collision_mask = Combatant.WORLD_MASK
+	body.motion_mode = CharacterBody2D.MOTION_MODE_FLOATING
 	var cs := CollisionShape2D.new()
 	var shape := CircleShape2D.new()
 	shape.radius = float(T["radius"])
 	cs.shape = shape
-	add_child(cs)
+	body.add_child(cs)
+	add_child(body)
+	body.top_level = true
+	body.global_position = global_position
+	aura = _make_aura()
 	add_child(PropSprite.shadow(22.0))
 	var meta: Dictionary = TamerData.sprites["trainer"]
 	sprite = Sprite2D.new()
@@ -62,16 +57,29 @@ func _ready() -> void:
 	add_child(sprite)
 
 
+func _make_aura() -> Sprite2D:
+	var s := Sprite2D.new()
+	s.texture = LightTex.ring()
+	s.material = Fx.glow_material()
+	s.modulate = Pal.c("rose", AURA_ALPHA.x)
+	s.scale = Vector2(1.0, Fx.RING_SQUASH) * aura_radius() * 2.0 / 128.0
+	s.z_index = -1
+	s.show_behind_parent = true
+	add_child(s)
+	return s
+
+
+func aura_radius() -> float:
+	return float(TamerData.rule("aura.radius"))
+
+
+## Is a point inside the bond aura (your creature hits harder there)?
+func in_aura(p: Vector2) -> bool:
+	return global_position.distance_to(p) <= aura_radius()
+
+
 func hit_radius() -> float:
 	return float(T["radius"]) + 4.0
-
-
-func alive() -> bool:
-	return not down
-
-
-func max_life_value() -> float:
-	return max_life
 
 
 func set_highlight(on: bool) -> void:
@@ -80,12 +88,12 @@ func set_highlight(on: bool) -> void:
 
 func walk_to(p: Vector2) -> void:
 	_goal = p
-	clear_path()
+	_path.clear()
 
 
 func stop() -> void:
 	_goal = Vector2.INF
-	clear_path()
+	_path.clear()
 
 
 func walking() -> bool:
@@ -96,16 +104,15 @@ func rolling() -> bool:
 	return _roll_t > 0.0
 
 
-## Space: a quick roll toward the cursor; you can't be hit while rolling.
+## Space: a quick roll toward the cursor (a fast reposition; you are never in danger).
 func roll(toward: Vector2) -> bool:
-	if _roll_cd > 0.0 or down:
+	if _roll_cd > 0.0:
 		return false
 	var d: Dictionary = T["dodge"]
 	var dir: Vector2 = (toward - global_position).normalized() if toward.distance_to(global_position) > 1.0 else heading
 	_roll_vel = dir * float(d["distance"]) / float(d["time"])
 	_roll_t = float(d["time"])
 	_roll_cd = float(d["cooldown"])
-	iframe_t = float(d["iframes"])
 	stop()
 	Audio.sfx("dash", -8.0)
 	Fx.burst(TamerGame.current.fx_layer, global_position + Vector2(0, -4), 10, Vector2(30, 90), 0.35,
@@ -116,78 +123,43 @@ func roll(toward: Vector2) -> bool:
 	return true
 
 
-func add_guard(amount: float, time: float) -> void:
-	guard_left = maxf(guard_left, amount)
-	guard_t = time
-
-
-func heal(amount: float) -> void:
-	if not down:
-		life = minf(max_life, life + amount)
-
-
-func receive_hit(dmg: float, dir: Vector2, knock_px: float, _stun: float, _attacker: Combatant) -> void:
-	if untouchable():
-		return
-	if guard_t > 0.0:
-		var soak: float = minf(guard_left, dmg)
-		guard_left -= soak
-		dmg -= soak
-	life -= dmg
-	hurt.emit()
-	_quiet = QUIET_AFTER
-	_flash_t = 0.06
-	iframe_t = float(T["hurt_iframes"])
-	shove(dir, knock_px)
-	CameraRig.shake(0.2)
-	if life <= 0.0:
-		_fall()
-
-
-func _fall() -> void:
-	down = true
-	life = 0.0
+## Moved at once (the retreat to camp after a white-out).
+func place(at: Vector2) -> void:
 	stop()
-	attack_target = null
-	sprite.rotation = PI * 0.5
-	Audio.sfx("hurt", -2.0, 0.8)
-	fell.emit()
-
-
-## Back on your feet at `at` (the camp), whole again.
-func rise_at(at: Vector2) -> void:
-	down = false
-	life = max_life
 	global_position = at
-	sprite.rotation = 0.0
-	iframe_t = 1.0
-	rose.emit()
+	body.global_position = at
 
 
 func _physics_process(delta: float) -> void:
-	_tick(delta)
+	_roll_cd = maxf(0.0, _roll_cd - delta)
 	var want: Vector2 = Vector2.ZERO
 	if _roll_t > 0.0:
 		_roll_t -= delta
 		want = _roll_vel
-	elif not down and _goal != Vector2.INF:
-		want = steer_to(_goal, delta) * float(T["speed"])
+	elif _goal != Vector2.INF:
+		want = _steer(delta) * float(T["speed"])
 		if want == Vector2.ZERO:
 			_goal = Vector2.INF
 	if want.length() > MOVING:
 		heading = want.normalized()
-	velocity = want + knock_velocity(delta)
-	move_and_slide()
+	body.global_position = global_position             # tests and retreats may move the trainer directly
+	body.velocity = want
+	body.move_and_slide()
+	global_position = body.global_position
 	_animate(delta, want)
 
 
-func _tick(delta: float) -> void:
-	_roll_cd = maxf(0.0, _roll_cd - delta)
-	iframe_t = maxf(0.0, iframe_t - delta)
-	guard_t = maxf(0.0, guard_t - delta)
-	_quiet -= delta
-	if _quiet <= 0.0 and not down:
-		life = minf(max_life, life + float(T["regen_out_of_fight"]) * delta)
+func _steer(delta: float) -> Vector2:
+	var nav: Nav = TamerGame.current.nav
+	if nav.line_free(global_position, _goal):
+		return (_goal - global_position).normalized() if global_position.distance_to(_goal) > Combatant.ARRIVE else Vector2.ZERO
+	_repath -= delta
+	if _path.is_empty() or _repath <= 0.0:
+		_repath = Combatant.REPATH
+		_path = nav.path(global_position, _goal)
+	while not _path.is_empty() and global_position.distance_to(_path[0]) < Combatant.ARRIVE:
+		_path.remove_at(0)
+	return Vector2.ZERO if _path.is_empty() else (_path[0] - global_position).normalized()
 
 
 func _animate(delta: float, want: Vector2) -> void:
@@ -196,6 +168,6 @@ func _animate(delta: float, want: Vector2) -> void:
 	sprite.frame = row * COLS + int(_anim_t) % COLS
 	if absf(want.x) > MOVING:
 		sprite.flip_h = want.x < 0.0
-	_flash_t = maxf(0.0, _flash_t - delta)
-	sprite.modulate = Color(2.0, 1.2, 1.2) if _flash_t > 0.0 else Color.WHITE
-	sprite.self_modulate.a = 0.6 if iframe_t > 0.0 and _roll_t <= 0.0 and int(_anim_t * 2.0) % 2 == 0 else 1.0
+	var p: Creature = TamerGame.current.field.partner if TamerGame.current.field != null else null
+	var inside: bool = p != null and is_instance_valid(p) and in_aura(p.global_position)
+	aura.modulate.a = lerpf(aura.modulate.a, AURA_ALPHA.y if inside else AURA_ALPHA.x, minf(1.0, delta * 6.0))

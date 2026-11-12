@@ -1,7 +1,7 @@
 class_name GuardMove
 extends MoveKind
-## A ward: the user (and, for your creature, the trainer) soaks `absorb` damage for `duration` seconds; a bond ward
-## also heals and blasts the foes around it.
+## A ward: the user soaks `absorb` damage for `duration` seconds; a bond ward also heals it and blasts the foes
+## around it.
 
 const WARD_R: float = 22.0
 
@@ -12,11 +12,7 @@ func cast(user: Creature, m: Dictionary, _at: Vector2) -> void:
 	user.add_guard(float(m["absorb"]), time)
 	TamerFx.ward(user, WARD_R, el, time)
 	Audio.sfx("lamp_lit", -8.0, 1.3)
-	if user.side == Combatant.SIDE_TEAM:
-		var tr: Trainer = TamerGame.current.trainer
-		tr.add_guard(float(m["absorb"]), time)
-		TamerFx.ward(tr, WARD_R, el, time)
-		tr.heal(float(m.get("heal", 0.0)))
+	user.rec.heal_points(float(m.get("heal", 0.0)))
 	if float(m.get("radius", 0.0)) > 0.0:
 		TamerFx.blast(user.global_position, float(m["radius"]), el, true)
 		for f: Combatant in foes_in(user, user.global_position, float(m["radius"])):

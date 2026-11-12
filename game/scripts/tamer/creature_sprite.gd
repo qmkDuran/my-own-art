@@ -87,6 +87,15 @@ func set_dazed(on: bool) -> void:
 	stars.visible = on
 
 
+## Rears back before a wild attack: a squat and a red glow that build up over `time`.
+func windup(time: float) -> void:
+	var tw := create_tween()
+	tw.tween_property(sprite, "scale", Vector2(0.9, 1.12), time * 0.8)
+	tw.parallel().tween_property(sprite, "self_modulate", Color(1.6, 0.7, 0.7), time * 0.8)
+	tw.tween_property(sprite, "scale", Vector2.ONE, 0.05)
+	tw.parallel().tween_property(sprite, "self_modulate", Color.WHITE, 0.1)
+
+
 func act() -> void:
 	_act_t = ACT_TIME
 

@@ -68,7 +68,7 @@ func _process(delta: float) -> void:
 	_glow.modulate.a = 0.3 + 0.06 * sin(_t * 9.0) + 0.04 * sin(_t * 23.0)
 	for s: Node2D in _sitters:
 		(s as CreatureSprite).animate(delta, Vector2.ZERO, -1.0 if s.position.x > position.x else 1.0)
-	var near: bool = g.trainer.alive() and g.trainer.global_position.distance_to(global_position) < radius()
+	var near: bool = g.trainer.global_position.distance_to(global_position) < radius()
 	if near and not resting and _safe():
 		_rest()
 	elif not near and resting:
@@ -87,7 +87,6 @@ func _rest() -> void:
 	resting = true
 	petted.clear()
 	fed.clear()
-	g.trainer.heal(g.trainer.max_life)
 	g.team.rest()
 	for r: CreatureRecord in g.team.members:
 		r.add_bond(float(TamerData.rule("bond.camp_rest")))

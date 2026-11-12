@@ -5,7 +5,7 @@ extends Node2D
 
 const POP_HEIGHT: float = 18.0
 const POP_TIME: float = 0.35
-const PULL_RANGE: float = 90.0
+const PULL_RANGE: float = 420.0         ## they find the trainer after a fight (who stays back)
 const PULL_SPEED: float = 380.0
 const TAKE_RANGE: float = 12.0
 const GEM: float = 3.5
@@ -44,7 +44,7 @@ func _process(delta: float) -> void:
 		return
 	var tr: Trainer = TamerGame.current.trainer
 	var d: float = global_position.distance_to(tr.global_position)
-	if tr.alive() and d < PULL_RANGE:
+	if d < PULL_RANGE:
 		global_position = global_position.move_toward(tr.global_position, PULL_SPEED * delta)
 		if d < TAKE_RANGE:
 			_take()

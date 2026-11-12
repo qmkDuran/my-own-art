@@ -1,7 +1,7 @@
 class_name BurstMove
 extends MoveKind
 ## An area: at the user ("self", it follows them for pulses) or at the aim, after a warning circle in the element's
-## colour (so wild creatures' big moves can be dodged), in one or several pulses. Seed bursts also heal the trainer.
+## colour (so wild creatures' big moves can be dodged), in one or several pulses. Seed bursts also heal the user.
 
 const WARN_ALPHA: float = 0.9
 
@@ -38,5 +38,5 @@ func _pulse(user: Creature, m: Dictionary, fixed: Vector2) -> void:
 	Audio.sfx("flare", -10.0, randf_range(1.1, 1.4))
 	for f: Combatant in foes_in(user, center, float(m["radius"])):
 		CreatureCombat.hit(user, f, m, (f.global_position - center).normalized())
-	if m.has("heal_trainer") and user.side == Combatant.SIDE_TEAM:
-		TamerGame.current.trainer.heal(float(m["heal_trainer"]))
+	if m.has("heal"):
+		user.rec.heal_points(float(m["heal"]))

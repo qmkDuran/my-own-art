@@ -54,6 +54,7 @@ func _rebuild() -> void:
 
 
 func _row_buttons(rec: CreatureRecord, at: Vector2) -> void:
+	_button("Info", at + Vector2(PORTRAIT + 8.0 + 2.0 * (BTN.x + 6.0), 52.0), BTN, func() -> void: g.hud.info_panel.open(rec))
 	var care: Array[String] = ["pet", "feed"]
 	for k: int in care.size():
 		var kind: String = care[k]
