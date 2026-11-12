@@ -1,0 +1,68 @@
+{
+  "seed": 7,
+  "arena_half_size": 30.0,
+  "terrain": {
+    "size": 80.0, "step": 1.0,
+    "hills": [[0.6, 0.15, 0.12, 0.0], [0.35, 0.21, 0.17, 1.3], [0.25, 0.37, 0.31, 2.1]],
+    "ridge": { "from": [8, -23], "to": [23, -8], "height": 3.4, "width": 4.5 },
+    "ravine": { "points": [[-31, -2], [-19, -1], [-9, 5], [-5, 14], [-4, 31]], "depth": 2.0, "width": 2.6 },
+    "rim": { "start": 26.0, "end": 36.0, "height": 4.0 }
+  },
+  "clearings": [
+    { "pos": [-16, 16], "radius": 6.0 }, { "pos": [2, -1], "radius": 7.0 }, { "pos": [-14, -14], "radius": 5.0 },
+    { "pos": [15, 14], "radius": 5.0 }, { "pos": [15.5, -15.5], "radius": 4.5 }
+  ],
+  "light_shafts": [[-16, 16], [2, -1], [15, 14], [-14, -14]],
+  "player_spawn": [-18, 18],
+  "bot_spawn": [15, -15],
+  "patrol_points": [[15, -15], [3, -2], [-14, -14], [15, 14], [-20, -6], [8, 6], [-8, 20], [22, -2]],
+  "rocks": [
+    { "pos": [12.5, -18.5], "size": [2.4, 1.8, 2.0] }, { "pos": [18.8, -12.2], "size": [2.2, 1.6, 2.6] },
+    { "pos": [10.5, -13.0], "size": [1.6, 1.3, 1.5] }, { "pos": [20.5, -19.5], "size": [1.8, 1.4, 1.7] },
+    { "pos": [4.5, -4.0], "size": [2.0, 1.6, 1.8] }, { "pos": [-2.5, 5.5], "size": [1.6, 1.3, 1.5] },
+    { "pos": [-17.0, 10.5], "size": [1.8, 1.5, 2.0] }, { "pos": [8.5, 12.5], "size": [2.2, 1.6, 1.8] },
+    { "pos": [-20.0, -20.0], "size": [2.0, 1.7, 2.0] }, { "pos": [22.0, 4.0], "size": [1.8, 1.5, 1.6] },
+    { "pos": [-8.0, -12.0], "size": [2.0, 1.5, 1.8] }, { "pos": [-24.0, 12.0], "size": [2.0, 1.6, 2.0] }
+  ],
+  "logs": [
+    { "pos": [-7.0, -3.0], "length": 5.0, "yaw": 20 }, { "pos": [6.0, -8.5], "length": 4.5, "yaw": 100 },
+    { "pos": [-11.0, 20.0], "length": 4.0, "yaw": 70 }, { "pos": [12.0, 6.0], "length": 5.0, "yaw": -30 },
+    { "pos": [-3.0, -15.0], "length": 4.5, "yaw": 45 }, { "pos": [20.0, 9.0], "length": 4.0, "yaw": 10 },
+    { "pos": [-21.0, -15.0], "length": 4.0, "yaw": 120 }
+  ],
+  "log_radius": 0.38,
+  "bushes": [
+    { "pos": [-11, 10], "radius": 1.6 }, { "pos": [-21, 8], "radius": 1.5 }, { "pos": [-6, -7], "radius": 1.6 },
+    { "pos": [7, 5], "radius": 1.5 }, { "pos": [6, -12], "radius": 1.6 }, { "pos": [-13, 3], "radius": 1.5 },
+    { "pos": [10, -9], "radius": 1.5 }, { "pos": [22, -22], "radius": 1.5 }, { "pos": [-18, -9], "radius": 1.6 },
+    { "pos": [-9, -19], "radius": 1.5 }, { "pos": [12, 19], "radius": 1.6 }, { "pos": [21, 13], "radius": 1.5 },
+    { "pos": [9, 1], "radius": 1.5 }, { "pos": [-3, 21], "radius": 1.6 }
+  ],
+  "grass": [
+    { "pos": [-12, 13], "radius": 2.8 }, { "pos": [-1, 3], "radius": 2.6 }, { "pos": [-15, -16], "radius": 2.6 },
+    { "pos": [17, 16], "radius": 2.6 }, { "pos": [5, -16], "radius": 2.8 }, { "pos": [-23, -1], "radius": 2.4 }
+  ],
+  "grass_blades_per_m2": 32,
+  "trees": {
+    "inner_count": 115, "inner_spacing": 3.4, "ring_count": 150, "ring_spacing": 2.3, "ring_from": 27.0,
+    "ring_to": 33.0, "pine_share": 0.45, "scale_min": 0.85, "scale_max": 1.25, "clearing_margin": 1.0,
+    "rock_margin": 1.3, "log_margin": 1.3, "bush_margin": 0.9, "grass_margin": 0.4, "point_margin": 2.6,
+    "ravine_margin": 1.6, "ridge_crest_margin": 1.5, "max_attempts": 6000
+  },
+  "palette": {
+    "grass": [0.25, 0.38, 0.17], "grass_light": [0.42, 0.52, 0.24], "moss": [0.17, 0.29, 0.14],
+    "dirt": [0.36, 0.28, 0.18], "rock": [0.46, 0.44, 0.40], "rock_dark": [0.34, 0.33, 0.31],
+    "bark": [0.30, 0.21, 0.14], "bark_dark": [0.22, 0.16, 0.11], "log_end": [0.62, 0.48, 0.30],
+    "pine": [0.12, 0.27, 0.15], "pine_light": [0.16, 0.33, 0.17], "leaf": [0.20, 0.38, 0.15],
+    "leaf_light": [0.31, 0.46, 0.17], "leaf_warm": [0.38, 0.45, 0.16], "bush": [0.15, 0.32, 0.13],
+    "bush_light": [0.22, 0.40, 0.15], "tall_grass": [0.40, 0.50, 0.20], "tall_grass_tip": [0.62, 0.62, 0.30],
+    "sun": [1.0, 0.92, 0.76], "sky_top": [0.42, 0.56, 0.68], "sky_horizon": [0.70, 0.76, 0.70],
+    "ground_horizon": [0.22, 0.26, 0.18], "fog": [0.56, 0.64, 0.58], "ambient": [0.52, 0.60, 0.52],
+    "shaft": [1.0, 0.94, 0.70, 0.06]
+  },
+  "atmosphere": {
+    "sun_pitch_deg": -52.0, "sun_yaw_deg": 35.0, "sun_energy": 1.35, "shadow_blur": 1.6,
+    "shadow_distance": 55.0, "ambient_energy": 0.55, "fog_density": 0.014, "fog_sky_affect": 0.6,
+    "shaft_length": 16.0, "shaft_top_radius": 1.2, "shaft_bottom_radius": 2.2
+  }
+}
