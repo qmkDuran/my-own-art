@@ -2,7 +2,8 @@ class_name CreatureTag
 extends Node2D
 ## Words and bars over a wild creature, on the overlay so they stay crisp: a life bar once it is hurt (with a notch
 ## where it can be befriended), its name and level when you point at it, a star if it is shiny, and "Hold F" once it
-## is dazed and you stand close enough. Starters in the opening meeting show their kind, element and role.
+## is dazed and you stand close enough. Name and level also show for any creature in a fight with you, and the
+## tag is on the overlay, so it reads above tree canopies. Starters in the opening meeting show their kind, element and role.
 
 const BAR := Vector2(30, 3)
 const ABOVE: float = 8.0
@@ -35,7 +36,8 @@ func _draw() -> void:
 	var hurt: bool = c.rec.life_frac() < 0.999
 	if hurt or hovered == c:
 		_bar(Vector2(-BAR.x / 2.0, top))
-	if hovered == c or c.rec.shiny:
+	var fighting: bool = c.brain is WildBrain and (c.brain as WildBrain).awake
+	if hovered == c or c.rec.shiny or fighting:
 		var label: String = "%s  Lv %d" % [c.rec.display_name(), c.rec.level]
 		var col: Color = Pal.c("gold") if c.rec.shiny else UiDraw.TEXT
 		UiDraw.text(self, Vector2(-NAME_W / 2.0, top - 4.0), label, col, UiDraw.SMALL, HORIZONTAL_ALIGNMENT_CENTER, NAME_W)

@@ -20,12 +20,16 @@ const LINE: float = 13.0
 const BADGE := Vector2(150, 18)
 const VIGNETTE_TIME: float = 0.35
 const VICTORY_TIME: float = 3.5
+const CALLOUT_TIME: float = 1.6
 
 var g: TamerGame
 var _fade := ColorRect.new()
 var _vignette := TextureRect.new()
 var _victory: Array[String] = []
 var _victory_t: float = 0.0
+var _callout: String = ""               ## a move's name the first time it is used, just above the creature card
+var _callout_col: Color
+var _callout_t: float = 0.0
 var card := CreatureCard.new()
 var strip := TeamStrip.new()
 var camp_panel := CampPanel.new()
@@ -151,6 +155,12 @@ func _command_at(p: Vector2) -> int:
 	return -1
 
 
+func callout(text: String, col: Color) -> void:
+	_callout = text
+	_callout_col = col
+	_callout_t = CALLOUT_TIME
+
+
 func notice(text: String) -> void:
 	_notices.append([text, NOTICE_TIME])
 	while _notices.size() > NOTICE_MAX:
@@ -174,6 +184,7 @@ func _process(delta: float) -> void:
 	_notices = _notices.filter(func(n: Array) -> bool: return float(n[1]) > 0.0)
 	_caption_t -= delta
 	_victory_t -= delta
+	_callout_t -= delta
 	_canvas.queue_redraw()
 
 
@@ -191,6 +202,9 @@ func _draw_canvas() -> void:
 			HORIZONTAL_ALIGNMENT_CENTER, vp.x)
 	if _victory_t > 0.0:
 		_victory_box(vp)
+	if _callout_t > 0.0:
+		UiDraw.text(_canvas, Vector2(card.position.x, card.position.y - 8.0), "New move: " + _callout,
+			Color(_callout_col, clampf(_callout_t * 2.0, 0.0, 1.0)), UiDraw.TITLE, HORIZONTAL_ALIGNMENT_CENTER, card.size.x)
 	if _caption_t > 0.0 and _caption != "":
 		_caption_box(vp)
 

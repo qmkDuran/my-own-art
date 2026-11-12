@@ -45,10 +45,12 @@ func _mark() -> void:
 	var bodies: Array[Vector2] = []
 	for n: Node in get_tree().get_nodes_in_group(FOCUS):
 		bodies.append((n as Node2D).global_position)
-	for group: String in FOES:
+	var focus: Array[Vector2] = bodies.duplicate()
+	for group: String in FOES:                             # foes near any watched body (a fight can be away from you)
 		for n: Node in get_tree().get_nodes_in_group(group):
-			if (n as Node2D).global_position.distance_to(bodies[0]) < ENEMY_RANGE:
-				bodies.append((n as Node2D).global_position)
+			var at: Vector2 = (n as Node2D).global_position
+			if focus.any(func(f: Vector2) -> bool: return f.distance_to(at) < ENEMY_RANGE):
+				bodies.append(at)
 	for s: Sprite2D in _faded.keys():
 		_faded[s] = 1.0
 	for b: Vector2 in bodies:

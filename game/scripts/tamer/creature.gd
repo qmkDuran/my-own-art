@@ -124,7 +124,7 @@ func cast(id: String, at: Vector2) -> bool:
 	MoveBook.cast(self, id, at)
 	if side == SIDE_TEAM and not rec.used_moves.has(id) and not bool(m.get("bond", false)):
 		rec.used_moves[id] = true
-		TamerFx.word(global_position + Vector2(0, -12), String(m["name"]), TamerData.color(CreatureCombat.move_element(self, m), "light"), UiDraw.TITLE)
+		TamerGame.current.hud.callout(String(m["name"]), TamerData.color(CreatureCombat.move_element(self, m), "light"))
 	return true
 
 

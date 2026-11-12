@@ -6,11 +6,15 @@ extends RefCounted
 
 const SLASH_TIME: float = 0.16
 const SLASH_WIDTH: float = 7.0
-const WORD_RISE: float = 26.0
+const WORD_RISE: float = 10.0
 const WORD_TIME: float = 0.9
 const WORD_HEAD: float = 64.0
 const BLAST_TIME: float = 0.3
 const WARD_ALPHA: float = 0.5
+const LANE: float = 17.0                ## words near each other stack in lanes this far apart
+const LANE_NEAR := Vector2(110.0, 80.0)
+
+static var _words: Array = []           ## [position, label] of words still on screen, for lanes
 
 
 static func layer() -> Node2D:
@@ -100,7 +104,7 @@ static func word(at: Vector2, text: String, col: Color, size: int = UiDraw.BODY)
 	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	l.size = Vector2(160, size + 8)
 	l.pivot_offset = l.size / 2.0
-	l.position = at + Vector2(-80, -WORD_HEAD)
+	l.position = at + Vector2(-80, -WORD_HEAD - _lane(at, l) * LANE)
 	l.scale = Vector2.ONE * 1.5
 	Overlay.layer.add_child(l)
 	var tw := l.create_tween().set_parallel()
@@ -108,6 +112,22 @@ static func word(at: Vector2, text: String, col: Color, size: int = UiDraw.BODY)
 	tw.tween_property(l, "position:y", l.position.y - WORD_RISE, WORD_TIME).set_ease(Tween.EASE_OUT)
 	tw.tween_property(l, "modulate:a", 0.0, WORD_TIME * 0.4).set_delay(WORD_TIME * 0.6)
 	tw.chain().tween_callback(l.queue_free)
+
+
+## How many recent words are still showing near `at` (this one goes above them).
+## Lanes are taken by labels still on screen (hit-stop slows their fade, so time alone is not enough); the lowest
+## free lane is used.
+static func _lane(at: Vector2, label: Label) -> int:
+	_words = _words.filter(func(w: Array) -> bool: return is_instance_valid(w[1]))
+	var taken: Array[int] = []
+	for w: Array in _words:
+		if absf((w[0] as Vector2).x - at.x) < LANE_NEAR.x and absf((w[0] as Vector2).y - at.y) < LANE_NEAR.y:
+			taken.append(int(w[2]))
+	var lane: int = 0
+	while taken.has(lane):
+		lane += 1
+	_words.append([at, label, lane])
+	return lane
 
 
 ## Bond up: hearts of light rise around the creature and the trainer, with a chime.
