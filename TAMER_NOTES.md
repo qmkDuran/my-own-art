@@ -48,6 +48,16 @@ typed GDScript, code-made art). How to play: PLAY.md.
   level, life, bond meter with the unlock mark, Q W E R + T slots with cooldowns), the team strip (1-3, life, bond,
   knock-out timers), materials, notices and captions, and the tracker telling you what to try next.
 
+## Current state (gauge combat iteration, on hold)
+The latest iteration replaced cooldown moves with a shared bond gauge (basic combos fill it, moves cost 1-3
+segments, holding a move key slows time to 20% while aiming), move commitment (wind-up and recovery), perfect
+dodges, stagger bars, a battle ring with a 4 s grace, species fight styles (`brains/fight_style.gd`), rival
+trainers (`rival_trainer.gd`), the Sync Lens (`sync_lens.gd`) with a Sanctuary (`ui/sanctuary_panel.gd`), team
+of 6 (keys 1-6, items Z/V), 1-in-64 shinies (F1 dev spawn), and a daylit route look (leafy trees, tall grass,
+`art/props_route.py`). Trainer commands and the bond aura were removed. The user has asked for a different battle
+structure next (separate arenas, 1v1, cover, slower movement, no slow-time). Some sections below describe earlier
+iterations and are superseded by this note.
+
 ## Architecture (`game/scripts/tamer/`, data in `game/data/tamer/`)
 | Script | Job |
 |---|---|

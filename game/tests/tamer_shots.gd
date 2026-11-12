@@ -3,8 +3,8 @@ extends Node
 ## xvfb). --only=NAME picks one scene (SHOTS). Each is
 ## staged in the real prototype (moved into place, then played for real) and saved as NAME_<w>x<h>.png in --out.
 
-const SHOTS: Array[String] = ["meeting", "exploring", "battle_start", "battle", "befriend", "victory", "info", "shiny", "swap",
-	"camp", "camp_panel", "hud"]
+const SHOTS: Array[String] = ["meeting", "route", "battle_start", "slow_aim", "stagger", "rival", "sync", "victory", "info",
+	"shiny", "swap", "camp", "camp_panel", "sanctuary", "hud"]
 const HUD_CROP: float = 0.3             ## the bottom share of the screen kept for the HUD close-up
 
 var g: TamerGame
@@ -93,13 +93,13 @@ func _shot_meeting() -> void:
 	await _save("meeting")
 
 
-func _shot_exploring() -> void:
+func _shot_route() -> void:
 	_team(0, [])
 	_place(g.layout.start + Vector2(40, 60))
 	_clear_wild(500.0)
 	g.trainer.walk_to(g.trainer.global_position + Vector2(120, 20))
 	await _wait(1.2)
-	await _save("exploring")
+	await _save("route")
 
 
 ## The battle-start beat: right-click a wild creature; "Go!", the leap, the vignette.
@@ -115,27 +115,30 @@ func _shot_battle_start() -> void:
 	await _save("battle_start")
 
 
-## Mid-battle: holding W shows the ghost of the move, the mouse is on its icon (tooltip), a red warning is coming.
-func _shot_battle() -> void:
+## Mid-battle: holding W slows time (grey, vignette), shows the ghost of the move and its tooltip.
+func _shot_slow_aim() -> void:
 	_team(0, [])
 	_place(g.layout.start + Vector2(40, 60))
 	_clear_wild(1400.0)
 	await _wait(1.0)
 	var foes: Array[Creature] = [_wild("tas_devil", Vector2(190, -10)), _wild("maned_wolf", Vector2(230, 40))]
+	for f: Creature in foes:
+		f.rec.life_boost = 3.0                            # sturdy enough to still be fighting in the still
+		f.rec.life = f.rec.max_life()
 	g.battle.engage(foes[0])
+	g.battle.add_fighter(foes[1])
 	await _wait(1.6)
-	var p: Creature = g.field.partner
+	g.team.gauge = 2.4
 	g.input.cursor_override = foes[1].global_position
-	g.aim.aim(p, "ember_pounce")
+	g.input.start_aim(1)
 	g.hud.forced_tip = 1
-	p.cast("claw_rush", foes[0].global_position)
-	await _wait(0.07)
-	await _save("battle")
+	await _wait(0.3)
+	await _save("slow_aim")
 	g.hud.forced_tip = -1
-	g.aim.clear()
+	g.input.release_aim(1)
 
 
-func _shot_befriend() -> void:
+func _shot_sync() -> void:
 	_team(2, [])
 	_place(g.layout.start + Vector2(30, 60))
 	_clear_wild(1400.0)
@@ -144,9 +147,11 @@ func _shot_befriend() -> void:
 	_hold(wolf)
 	wolf.receive_hit(wolf.rec.max_life() * 0.65, Vector2.RIGHT, 0.0, 0.0, null)
 	await _wait(0.4)
-	g.befriend.request()
-	await _wait(1.3)
-	await _save("befriend")
+	g.lens.set_meta("held", true)
+	g.lens.request()
+	await _wait(1.0)
+	await _save("sync")
+	g.lens.set_meta("held", false)
 
 
 func _shot_victory() -> void:
@@ -237,3 +242,42 @@ func _shot_hud() -> void:
 	g.team.members[2].knock_out()
 	await _wait(0.3)
 	await _save("hud", HUD_CROP)
+
+
+## A staggered devil reeling (gold), the gauge full, the ring around the fight.
+func _shot_stagger() -> void:
+	_team(0, [])
+	_place(g.layout.start + Vector2(40, 60))
+	_clear_wild(1400.0)
+	await _wait(1.0)
+	var foe: Creature = _wild("tas_devil", Vector2(150, 0))
+	g.battle.engage(foe)
+	await _wait(1.2)
+	g.team.gauge = 3.0
+	foe.stagger.add(foe.stagger.max_value())
+	g.field.partner.cast("badger_bite", foe.global_position)
+	await _wait(0.5)
+	await _save("stagger")
+
+
+## A rival trainer battle: Ivo's creature in the ring, both trainers standing back.
+func _shot_rival() -> void:
+	_team(0, ["aye_aye"])
+	_clear_wild(1400.0)
+	var r: RivalTrainer = g.rivals[0]
+	_place(r.global_position + Vector2(-230, 20))
+	g.field.partner.global_position = g.trainer.global_position
+	await _wait(float(TamerData.rule("rivals.talk_time")) + 2.6)
+	await _save("rival")
+
+
+func _shot_sanctuary() -> void:
+	_team(0, ["aye_aye", "pangolin"])
+	for k: String in ["maned_wolf", "tas_devil", "maned_wolf"]:
+		g.team.sync(CreatureRecord.make(k, 2, false))
+	_place(g.camp_point() + Vector2(10, 52))
+	await _wait(1.5)
+	g.hud.camp_panel.close()
+	g.hud.sanctuary.open()
+	await _wait(0.3)
+	await _save("sanctuary")

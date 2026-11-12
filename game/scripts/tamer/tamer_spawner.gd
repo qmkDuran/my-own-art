@@ -9,6 +9,8 @@ signal defeated(c: Creature)
 const T := ZoneLayout.T
 const MEMBER_SPREAD := Vector2(60, 44)
 const MEMBER_TRIES: int = 30
+const GRASS_TUFTS: int = 22
+const GRASS_SPREAD := Vector2(100, 60)
 const SEED_OFFSET: int = 31
 
 var g: TamerGame
@@ -45,6 +47,20 @@ func _place_packs() -> void:
 		if packs.any(func(p: Dictionary) -> bool: return (p["pos"] as Vector2).distance_to(pos) < float(S["spacing"]) * g.layout.cell):
 			continue
 		packs.append({"pos": pos, "progress": pos.distance_to(g.layout.start) / far})
+		_grass(pos)
+
+
+## A patch of tall grass where the pack roams (decoration: nothing collides with it).
+func _grass(center: Vector2) -> void:
+	for k: int in GRASS_TUFTS:
+		var at: Vector2 = center + Vector2(rng.randf_range(-GRASS_SPREAD.x, GRASS_SPREAD.x), rng.randf_range(-GRASS_SPREAD.y, GRASS_SPREAD.y))
+		if not g.layout.point_free(at, 4.0):
+			continue
+		var s: Sprite2D = PropSprite.make("tall_grass", k % 3)
+		s.position = at.round()
+		s.flip_h = rng.randf() < 0.5
+		s.modulate = ZoneView.prop_tint()
+		g.world.add_child(s)
 
 
 func _cell_ok(c: Vector2i, S: Dictionary, camp: Vector2) -> bool:

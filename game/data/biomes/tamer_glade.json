@@ -1,6 +1,6 @@
 {
- "_doc": "Biome rules for the trainer prototype's meadow: a Glasswood clearing country without the city wall. The starters wait in the start clearing; the camp clearing is the rest point. No packs from the generator (count 0): wild creatures are placed by TamerSpawner from data/tamer/tamer.json.",
- "name": "The Glass Meadow",
+ "_doc": "Biome rules for the trainer prototype's route: a sunny meadow of leafy trees and a stream, a dirt path from the start to the camp and on to the far clearings, rocks and signposts. Wild creatures roam in tall-grass patches (TamerSpawner); rival trainers stand on the route. No packs from the generator.",
+ "name": "Route 1",
  "cols": 110,
  "rows": 74,
  "cell": 32,
@@ -181,59 +181,59 @@
   ],
   "grove": [
    {
-    "kind": "crystal_big",
+    "kind": "rock_b",
     "at": [
      -40,
      -20
     ]
    },
    {
-    "kind": "crystal",
+    "kind": "stump",
     "at": [
      36,
-     -34
+     -30
     ]
    },
    {
-    "kind": "statue_deer",
+    "kind": "signpost",
     "at": [
      30,
      30
-    ]
+    ],
+    "sign": "road"
    }
   ],
   "glade": [
    {
-    "kind": "rock_b",
+    "kind": "rock_a",
     "at": [
      -50,
      -30
     ]
    },
    {
-    "kind": "crystal",
+    "kind": "signpost",
     "at": [
      50,
      20
-    ]
+    ],
+    "sign": "road"
    }
   ]
  },
  "trees": {
-  "edge_spacing": 38,
-  "deep_spacing": 70,
+  "edge_spacing": 40,
+  "deep_spacing": 72,
   "edge_depth": 3,
   "kinds": {
-   "tree_a": 34,
-   "tree_b": 22,
-   "tree_c": 32,
-   "tree_dead": 12
+   "tree_leafy_a": 55,
+   "tree_leafy_b": 45
   }
  },
  "edge_props": {
-  "crystal": 16,
-  "rock_a": 12,
-  "crystal_big": 4
+  "rock_a": 16,
+  "rock_b": 8,
+  "stump": 6
  },
  "packs": {
   "count": 0,
@@ -253,13 +253,28 @@
  },
  "ambient": {
   "darkness": [
+   1.12,
    1.1,
-   1.16,
-   1.18
+   1.0
   ],
-  "motes": 50,
-  "scenery_gain": 1.8,
-  "prop_gain": 1.45
+  "motes": 30,
+  "motes_color": "gold",
+  "scenery_gain": 1.0,
+  "prop_gain": 1.0
  },
- "wake_range": 240.0
+ "wake_range": 240.0,
+ "ground": {
+  "c_moss_dk": "leaf_dk",
+  "c_moss": "leaf",
+  "c_moss_lt": "leaf_lt",
+  "c_glass_dp": "moss_lt",
+  "c_glass_dk": "leaf_dk",
+  "c_glass": "sea",
+  "c_glass_lt": "sea_lt",
+  "c_glint": "bone",
+  "c_ink": "moss_dk",
+  "c_earth_dk": "earth",
+  "c_earth": "earth_lt",
+  "c_earth_lt": "skin"
+ }
 }

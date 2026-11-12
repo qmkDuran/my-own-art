@@ -14,6 +14,8 @@ const CAMP_STAND := Vector2(0, 40)
 const ROOF_ROOM: float = 60.0
 const ROUTE_REACH: float = 0.92         ## the last rival stands just short of the far clearing
 const RIVAL_ROOM: float = 10.0
+const CAMP_AWAY: float = 600.0
+const ROUTE_STEP: float = 0.05
 const RIVAL_CLEAR: float = 300.0
 const FLASH_GAIN: float = 0.35          ## the meadow is daylit: hit lights only need to warm the ground
 
@@ -108,7 +110,7 @@ func _build_systems() -> void:
 	Fx.motes(camera, MOTES_EXTENTS, MOTES, Pal.c("glint", 0.8))
 	spawner.spawn_all()
 	aim = AimPreview.new()
-	fx_layer.add_child(aim)
+	Overlay.layer.add_child(aim)                             # above the slow-time wash
 	aim.clear()
 	slow = SlowTime.new()
 	add_child(slow)
@@ -162,7 +164,10 @@ func _place_rivals() -> void:
 		if not bool(cl.get("secret", false)) and at.distance_to(layout.start) > far.distance_to(layout.start):
 			far = at
 	for d: Dictionary in TamerData.rule("rivals.trainers"):
-		var at: Vector2 = layout.free_spot_near(layout.start.lerp(far, float(d["route"]) * ROUTE_REACH), RIVAL_ROOM)
+		var f: float = float(d["route"]) * ROUTE_REACH
+		while layout.start.lerp(far, f).distance_to(camp_point()) < CAMP_AWAY and f < ROUTE_REACH:
+			f += ROUTE_STEP                                    # not at the camp: resting must stay peaceful
+		var at: Vector2 = layout.free_spot_near(layout.start.lerp(far, f), RIVAL_ROOM)
 		var r := RivalTrainer.new().setup(self, d, at)
 		world.add_child(r)
 		rivals.append(r)

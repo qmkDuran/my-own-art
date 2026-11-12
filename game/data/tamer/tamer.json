@@ -53,7 +53,7 @@
  "wild": {
   "wake_range": 210,
   "chase_leash": 520,
-  "wander": 140,
+  "wander": 80,
   "think": 0.25,
   "basic_range_slack": 0.85,
   "life_mult": 0.9,
@@ -345,7 +345,7 @@
     "id": "ivo",
     "name": "Ivo",
     "sprite": "rival_ivo",
-    "route": 0.5,
+    "route": 0.6,
     "team": [
      [
       "maned_wolf",

@@ -12,6 +12,7 @@ from PIL import Image
 sys.path.insert(0, str(Path(__file__).resolve().parent))   # -I drops the script's folder from the path
 import creatures  # noqa: E402
 import people  # noqa: E402
+import props_route  # noqa: E402
 from pix import sheet  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -63,6 +64,20 @@ def build() -> dict:
     return meta
 
 
+def build_route_props() -> None:
+    """The prototype's route props (trees, tall grass), merged into game/data/props.json (build_art.py makes the
+    same entries when it rebuilds everything)."""
+    path = ROOT / "game" / "data" / "props.json"
+    meta = json.loads(path.read_text())
+    for key, spec in props_route.MANIFEST.items():
+        frames = [m() for m in spec.get("frames", [spec.get("draw")])]
+        img, glow = sheet([frames], frames[0].w, frames[0].h)
+        img.save(ROOT / "game" / "art" / "props" / f"{key}.png")
+        meta[key] = {"size": [frames[0].w, frames[0].h], "frames": len(frames), "foot": spec["foot"], "light": "",
+                     "flat": False, "glow": False}
+    path.write_text(json.dumps(meta, indent=1))
+
+
 def review(out: Path) -> None:
     """Every creature's sheet (normal above shiny) and the trainer, at 4x on a mid ground tone."""
     sheets = [Image.open(OUT / f"{sid}{suf}.png") for sid in creatures.SPECIES for suf in ("", "_shiny")]
@@ -81,6 +96,7 @@ def review(out: Path) -> None:
 
 def main() -> None:
     meta = build()
+    build_route_props()
     path = ROOT / "game" / "data" / "tamer" / "creature_sprites.json"
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(meta, indent=1))

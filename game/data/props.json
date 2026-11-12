@@ -1202,5 +1202,47 @@
   "light": "",
   "flat": false,
   "glow": false
+ },
+ "tree_leafy_a": {
+  "size": [
+   64,
+   88
+  ],
+  "frames": 1,
+  "foot": [
+   10,
+   8
+  ],
+  "light": "",
+  "flat": false,
+  "glow": false
+ },
+ "tree_leafy_b": {
+  "size": [
+   56,
+   76
+  ],
+  "frames": 1,
+  "foot": [
+   10,
+   8
+  ],
+  "light": "",
+  "flat": false,
+  "glow": false
+ },
+ "tall_grass": {
+  "size": [
+   28,
+   20
+  ],
+  "frames": 3,
+  "foot": [
+   0,
+   0
+  ],
+  "light": "",
+  "flat": false,
+  "glow": false
  }
 }

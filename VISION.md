@@ -64,22 +64,19 @@
 - **Memory:** milestones and history ("together for 100 battles", first evolution, favourite food).
 - **Story:** your team is part of story moments, and some quests are about them.
 
-## Control: exploring and battle (decided after the first prototype)
-- **Exploring:** you control the trainer (left click walks, interact, befriend, camp). Your creature follows.
-- **Battle** starts when you right-click a wild creature or one notices your team. A short beat ("Go, <name>!", the
-  creature leaps in, a camera punch, a vignette), then **you control your creature directly**: left click moves,
-  right click attacks, Q W E R are its moves at the cursor (hold to see where they land, release to use), Space
-  dodges. Wild attacks are telegraphed so dodging is a skill.
-- **The trainer's role in battle** (so both halves matter):
-  - stays back on their own, safe, behind the fight;
-  - **commands** with cooldowns that grow with bond: Cheer (hits harder), Focus (next move crits), Rally (heal over
-    time), Mark (a foe takes more and is prioritised);
-  - **bond aura:** your creature fights better near its trainer, so where the trainer stands matters;
-  - **swaps** (1-3) with an entry attack, and a **perfect swap** bonus for swapping just before an attack lands;
-  - **items**, and **befriending**: the trainer walks up to a dazed creature and calms it.
-- **Battle ends** when no awake wild creature is left nearby, or you run out of range; control eases back to the
-  trainer and a Victory summary shows what was earned.
-- The earlier "hold Shift to steer the creature" idea was tried in the prototype and replaced by battle mode.
+## Control: exploring and battle (prototype iterations; being reworked)
+- **Exploring:** you control the trainer. Your creature follows. Wild creatures roam in tall grass.
+- **Battle** (second prototype iteration, "gauge" model): a glowing ring closes around the fight (outsiders can't
+  join; 4 s of grace after). You control your creature directly. Basic combos (right click) fill a shared 3-segment
+  bond gauge; moves cost 1-3 segments, and holding a move key slows time while you aim. Moves commit (wind-up and
+  recovery, no dodge). Perfect dodges and perfect swaps reward reading the telegraphs. Stagger bars fill with hits
+  (weaknesses much faster); a staggered foe takes 50% more.
+- **The trainer is never damaged.** In battle the trainer stays back on their own; their part is swaps, items and
+  catching (the Sync Lens on a weakened or staggered creature).
+- Wild species fight in their own styles (flanker, brawler, skirmisher) with tells and openings. Rival trainers on
+  the route battle with teams and swap intelligently.
+- **Next (being specified with the user):** separate battle arenas with a transition, 1v1, cover, slower movement,
+  no slow-time. The earlier "hold Shift to steer" and the gauge-free cooldown spam were tried and replaced.
 
 ## Honing your creatures (no element path)
 - **Your build is how deeply you've raised the creatures you have,** not a chosen element. "Being the very best" means mastering your own team.
