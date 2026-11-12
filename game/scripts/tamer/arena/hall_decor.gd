@@ -1,7 +1,7 @@
 class_name HallDecor
 extends Node2D
 ## What the Gate Hall shows: an arch over each gate with a sign naming its arena and listing what to try, the lever
-## (with the current difficulty), the opponent switch, the team station, the lens stand and the route door, each
+## (with the current difficulty), the arena size lever, the opponent switch, the team station, the lens stand and the route door, each
 ## labelled with "F" when you stand next to it.
 
 const SIGN_W: float = 176.0
@@ -26,7 +26,8 @@ func _draw() -> void:
 	for i: int in hall.data["gates"].size():
 		_gate(i)
 	_station(hall.spot("lever"), "Difficulty: %s" % hall.tier_id().capitalize(), Pal.c("amber"))
-	_station(hall.spot("switch"), "Opponent: %s" % ("Trainer 3v3" if hall.trainer_battle else "Wild 1v1"), Pal.c("rose"))
+	_station(hall.spot("size"), "Arena size: %s" % hall.size_id.capitalize(), Pal.c("sea_lt"))
+	_station(hall.spot("switch"), "Opponent: %s" % GateHall.OPPONENT_NAMES[hall.opponent], Pal.c("rose"))
 	_station(hall.spot("station"), "Team station", Pal.c("leaf_lt"))
 	_station(hall.spot("lens"), TamerData.rule("sync.lenses." + hall.g.lens.tier + ".name"), Pal.c("glint"))
 	var door: Vector2 = hall.door_spot()
@@ -43,17 +44,20 @@ func _gate(i: int) -> void:
 	draw_rect(Rect2(at - Vector2(38, 50), Vector2(6, 56)), Pal.c("stone_lt"))
 	draw_rect(Rect2(at + Vector2(32, -50), Vector2(6, 56)), Pal.c("stone_lt"))
 	var sign_at: Vector2 = at + Vector2(-SIGN_W * 0.5, 28)
+	var main: PackedStringArray = UiDraw.wrap(self, "Main: " + String(a["main"]), SIGN_W - 8.0, UiDraw.SMALL)
 	var lines: PackedStringArray = []
 	for item: String in a["checklist"]:
 		var wrapped: PackedStringArray = UiDraw.wrap(self, item, SIGN_W - 14.0, UiDraw.SMALL)
 		for k: int in wrapped.size():
 			lines.append(("- " if k == 0 else "  ") + wrapped[k])
-	var box := Rect2(sign_at, Vector2(SIGN_W, 18 + lines.size() * LINE))
+	var box := Rect2(sign_at, Vector2(SIGN_W, 18 + (main.size() + lines.size()) * LINE))
 	draw_rect(box, Color(Pal.c("ink"), 0.85))
 	draw_rect(box, Pal.c("earth_lt"), false, 1.0)
 	UiDraw.text(self, sign_at + Vector2(0, 11), String(a["name"]).to_upper(), UiDraw.GOLD, UiDraw.SMALL, HORIZONTAL_ALIGNMENT_CENTER, SIGN_W)
+	for k: int in main.size():
+		UiDraw.text(self, sign_at + Vector2(4, 22 + k * LINE), main[k], Pal.c("sun"), UiDraw.SMALL)
 	for k: int in lines.size():
-		UiDraw.text(self, sign_at + Vector2(4, 22 + k * LINE), lines[k], UiDraw.TEXT, UiDraw.SMALL)
+		UiDraw.text(self, sign_at + Vector2(4, 22 + (main.size() + k) * LINE), lines[k], UiDraw.TEXT, UiDraw.SMALL)
 
 
 func _station(at: Vector2, label: String, col: Color) -> void:

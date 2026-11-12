@@ -21,7 +21,7 @@ func tick(_delta: float) -> void:
 
 ## Range of the creature's auto-attack (basic move), with some slack so it stands inside it.
 func basic_reach(slack: float) -> float:
-	return float(TamerData.move(String(c.rec.data()["basic"]))["range"]) * slack
+	return float(TamerData.move(String(c.rec.data()["basic"]))["range"]) * slack + c.extra_reach()
 
 
 func basic_id() -> String:

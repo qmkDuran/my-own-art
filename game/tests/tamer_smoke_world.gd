@@ -25,7 +25,7 @@ func run() -> void:
 
 
 func _trainer_battle() -> void:
-	g.hall.trainer_battle = true
+	g.hall.opponent = "trainer"
 	g.hall.tier = 2
 	g.trainer.place(g.hall.gate_spot(3) + Vector2(0, 40))
 	await smoke.frames(2)
@@ -35,9 +35,13 @@ func _trainer_battle() -> void:
 	smoke.expect(o != null and o.team.size() == 3 and g.battle.arena.id == "ruins", "the switch makes it a 3v3 trainer battle (ruins)")
 	smoke.expect(g.battle.tier_id == "hard" and g.hud.panel_open() == false, "at the lever's difficulty (Hard)")
 	var first: Creature = g.battle.foe
+	first.brain = null
 	first.rec.life = first.rec.max_life() * 0.25
 	await smoke.seconds(1.2)
-	smoke.expect(o._item_used or g.battle.foe != first, "a hurt opponent creature is healed or swapped out")
+	smoke.expect(g.battle.foe == first, "with no gauge the opposing trainer can't swap (your rules)")
+	first.gauge = 2.0
+	await smoke.seconds(1.2)
+	smoke.expect(g.battle.foe != first and g.battle.foe.gauge < 1.01, "with gauge it swaps a hurt creature out, paying a segment")
 	var downs: int = 0
 	for k: int in 10:
 		if not g.battle.on:
@@ -50,44 +54,58 @@ func _trainer_battle() -> void:
 	await smoke.until(func() -> bool: return not g.battle.on and g.area == "hall" and smoke.settled())
 	smoke.expect(downs >= 3 and o.remaining() == 0, "they send one at a time until all three are down (%d)" % downs)
 	smoke.expect(g.area == "hall" and g.guide.is_done("win"), "a 3v3 win, back in the Gate Hall")
-	g.hall.trainer_battle = false
+	g.hall.opponent = "wild"
 	g.hall.tier = 1
 	g.trainer.place(g.hall.spot("you"))
 	await smoke.frames(3)
 
 
-## The basic lens only reads common creatures; the upgraded one is faster and reads rare ones.
+## Catching: weaken it (gold stars), F starts the scan from the edge; it struggles, and a hit on your creature
+## breaks the scan (the stars stay, retry after a moment); then a clean scan syncs it and wins the battle. The basic
+## lens only reads common creatures; the upgraded one is faster and reads rare ones.
 func _sync_tiers() -> void:
 	g.lens.tier = "basic"
-	var foe: Creature = await smoke.wild("aye_aye", "meadow")
-	foe.brain = null
+	var foe: Creature = await smoke.wild("maned_wolf", "meadow")
 	foe.set_dazed(true)
+	g.field.partner.global_position = foe.global_position + Vector2(-70, 0)
+	smoke.expect(g.lens.request() and g.lens.scanning_at(foe), "F on a weakened creature starts the scan")
+	await smoke.until(func() -> bool: return not g.lens.scanning(), 4.0)
+	smoke.expect(g.lens.retry_t > 0.0 and foe.dazed and g.battle.on, "it struggles: a hit on your creature breaks the scan, the stars stay")
+	smoke.expect(not g.lens.request(), "and the lens needs a moment before a retry")
+	await smoke.seconds(float(TamerData.rule("sync.retry")) + 0.1)
+	_keep_away(foe)
+	var slow: float = await _progress_after(foe, 0.6)
+	g.lens.cancel()
+	g.lens.tier = "plus"
+	var fast: float = await _progress_after(foe, 0.6)
+	smoke.expect(fast > slow * 1.5, "the upgraded lens scans faster (%.2f vs %.2f)" % [fast, slow])
+	var before: int = g.team.members.size() + g.team.sanctuary.size()
+	await smoke.until(func() -> bool: return not g.battle.on, 4.0)
+	smoke.expect(g.team.members.size() + g.team.sanctuary.size() == before + 1, "a clean scan syncs it and wins the battle")
+	await smoke.leave()
+	g.lens.tier = "basic"
+	var aye: Creature = await smoke.wild("aye_aye", "meadow")
+	aye.set_dazed(true)
 	smoke.expect(not g.lens.request(), "the basic Sync Lens can't read a rare aye-aye")
 	g.lens.tier = "plus"
-	smoke.expect(g.lens.request(), "the upgraded lens can, from outside the arena")
-	g.lens.set_meta("held", true)
-	var team_before: int = g.team.members.size() + g.team.sanctuary.size()
-	await smoke.until(func() -> bool: return not g.battle.on, 4.0)
-	g.lens.set_meta("held", false)
-	smoke.expect(g.team.members.size() + g.team.sanctuary.size() == team_before + 1, "holding F syncs it and wins the battle")
-	await smoke.leave()
-	var wolf: Creature = await smoke.wild("maned_wolf", "meadow")
-	wolf.brain = null
-	wolf.set_dazed(true)
-	g.lens.tier = "basic"
-	g.lens.request()
-	g.lens.set_meta("held", true)
-	await smoke.seconds(0.4)
-	var slow: float = g.lens.progress
-	g.lens.cancel()
-	g.lens.tier = "plus"
-	g.lens.request()
-	await smoke.seconds(0.4)
-	smoke.expect(g.lens.progress > slow * 1.5, "the upgraded lens scans faster (%.2f vs %.2f)" % [g.lens.progress, slow])
-	g.lens.set_meta("held", false)
+	smoke.expect(g.lens.request(), "the upgraded lens can")
 	g.lens.cancel()
 	g.lens.tier = "basic"
 	await smoke.leave()
+
+
+## Your creature out of the struggling creature's reach.
+func _keep_away(foe: Creature) -> void:
+	var r: Rect2 = g.battle.arena.layout.rect_px()
+	var far: Vector2 = Vector2(r.position.x + 60.0 if foe.global_position.x > r.get_center().x else r.end.x - 60.0, r.position.y + 60.0)
+	g.field.partner.global_position = g.battle.arena.layout.free_spot_near(far, 20.0)
+	(g.field.partner.brain as ControlledBrain).goal = Vector2.INF
+
+
+func _progress_after(foe: Creature, s: float) -> float:
+	g.lens.request()
+	await smoke.seconds(s)
+	return g.lens.progress if g.lens.scanning_at(foe) else 1.0
 
 
 func _growth() -> void:
@@ -98,6 +116,9 @@ func _growth() -> void:
 	r.growth.add_xp(CreatureGrowth.xp_to_next(15) + 1.0)
 	smoke.expect(r.level == 16 and r.growth.evolved_form and r.display_name() == "Ratel Warden", "at 16 it evolves into the Ratel Warden")
 	smoke.expect(r.max_life() > life * 1.2, "a stronger form")
+	smoke.expect(not r.growth.learned().has("honey_rage"), "the signature move waits for level 25")
+	r.growth.set_level(25)
+	smoke.expect(r.growth.learned().has("honey_rage"), "it comes at 25, the same for everyone")
 	r.growth.set_level(5)
 	smoke.expect(not r.growth.evolved_form and r.growth.learned().size() == 4, "back at level 5: unevolved, four moves known")
 	var rec: CreatureRecord = g.team.current()

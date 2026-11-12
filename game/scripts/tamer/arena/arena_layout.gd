@@ -3,21 +3,23 @@ extends ZoneLayout
 ## A small hand-made space (a battle arena, the Gate Hall) as a ZoneLayout, so movement, pathing and placement work
 ## as on the route. It sits at `origin` in the world, away from the route. On top of the walkable grid it keeps a
 ## feature per cell (tall grass, water, mud, cover rocks, trees, ledges...) that moves and terrain rules read
-## (ArenaFeatures) and that moves can change (burn grass, raise vines, break rocks).
+## (TerrainRules) and that moves can change (TerrainChange: burn grass, raise vines, break rocks).
 
-enum F { NONE, GRASS, SHALLOW, DEEP, MUD, ROCK, TREE, THICKET, ROOTS, LEDGE, RAMP, THORNS, WALL, BRIDGE, CRACKED, COALS, VINE, FLAT }
+enum F { NONE, GRASS, SHALLOW, DEEP, MUD, ROCK, TREE, THICKET, ROOTS, LEDGE, RAMP, THORNS, WALL, BRIDGE, CRACKED, COALS, VINE, FLAT,
+	ASH, BURNT, RUBBLE, PIT }
 
 const MOVE_BLOCK: Array[int] = [F.ROCK, F.TREE, F.THICKET, F.WALL, F.DEEP, F.VINE]
 const SHOT_BLOCK: Array[int] = [F.ROCK, F.TREE, F.WALL, F.VINE]
 const NAMES: Dictionary = {"none": F.NONE, "grass": F.GRASS, "shallow": F.SHALLOW, "deep": F.DEEP, "mud": F.MUD,
 	"rock": F.ROCK, "tree": F.TREE, "thicket": F.THICKET, "roots": F.ROOTS, "ledge": F.LEDGE, "ramp": F.RAMP,
-	"thorns": F.THORNS, "wall": F.WALL, "bridge": F.BRIDGE, "cracked": F.CRACKED, "coals": F.COALS, "vine": F.VINE}
+	"thorns": F.THORNS, "wall": F.WALL, "bridge": F.BRIDGE, "cracked": F.CRACKED, "coals": F.COALS, "vine": F.VINE,
+	"flat": F.FLAT, "ash": F.ASH, "burnt": F.BURNT, "rubble": F.RUBBLE, "pit": F.PIT}
 
 var origin: Vector2 = Vector2.ZERO
 var feature: PackedByteArray
-var hp: PackedFloat32Array              ## rocks, bridges, cracked floor and vines can break
-var timer: PackedFloat32Array           ## coals and vines go back to what they were after a while
-var under: PackedByteArray              ## what a temporary feature (coals, vines) replaced
+var hp: PackedFloat32Array              ## rocks, bridges, cracked floor and vines can break (burning cells: how far the fire spread)
+var timer: PackedFloat32Array           ## passing states (burning, ash, burnt, flattened, vines) last this long
+var under: PackedByteArray              ## what a passing state replaced
 
 
 func build(c: int, r: int, cell_px: int, at: Vector2) -> ArenaLayout:
@@ -75,27 +77,33 @@ func set_f(c: Vector2i, v: int, life: float = 0.0) -> void:
 	blocked[idx(c)] = 1 if MOVE_BLOCK.has(v) else 0
 
 
-## A feature that reverts after `seconds` (burning coals, a vine wall).
-func set_temporary(c: Vector2i, v: int, seconds: float, life: float = 0.0) -> void:
+## A passing state that lasts `seconds` (TerrainChange decides what follows). The first of a chain remembers what it
+## replaced; `chained` states (fire -> ash -> burnt) keep that memory.
+func set_temporary(c: Vector2i, v: int, seconds: float, life: float = 0.0, chained: bool = false) -> void:
 	if not inside(c) or f(c) == F.WALL:
 		return
-	if timer[idx(c)] <= 0.0:
+	if timer[idx(c)] <= 0.0 and not chained:
 		under[idx(c)] = f(c)
 	set_f(c, v, life)
 	timer[idx(c)] = seconds
 
 
-## Ticks temporary features; returns whether any cell changed (so the view redraws).
-func tick(delta: float) -> bool:
-	var changed: bool = false
+## A lasting feature: any passing state on the cell ends.
+func set_lasting(c: Vector2i, v: int) -> void:
+	if inside(c):
+		timer[idx(c)] = 0.0
+		set_f(c, v)
+
+
+## Ticks passing states; returns the cells whose state just ran out.
+func tick(delta: float) -> Array[Vector2i]:
+	var out: Array[Vector2i] = []
 	for i: int in timer.size():
 		if timer[i] > 0.0:
 			timer[i] -= delta
 			if timer[i] <= 0.0:
-				var c := Vector2i(i % cols, i / cols)
-				set_f(c, int(under[i]))
-				changed = true
-	return changed
+				out.append(Vector2i(i % cols, i / cols))
+	return out
 
 
 func blocks_shot(p: Vector2) -> bool:

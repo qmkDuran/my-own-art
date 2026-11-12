@@ -12,7 +12,6 @@ const MOTES: int = 30
 const MOTES_EXTENTS := Vector2(520, 300)
 const VIEW_RADIUS: float = 560.0
 const FLASH_GAIN: float = 0.35          ## daylight: hit lights only need to warm the ground
-const ARENA_VIEW_SHIFT := Vector2(0, 36)  ## the fixed arena camera sits a little low, so the cards don't cover the arena
 
 var route_layout: ZoneLayout
 var route_nav: Nav
@@ -42,6 +41,7 @@ var aim: AimPreview
 var transition: Transition
 var areas: AreaSwitch
 var rivals: Array[RivalTrainer] = []
+var view_shift := Vector2.ZERO         ## the arena camera sits this much low, so the cards don't cover the arena
 var retreating: bool = false            ## the team was wiped and you are on the way back
 
 
@@ -245,4 +245,4 @@ func _after_loss(where: String) -> void:
 
 
 func _process(_delta: float) -> void:
-	focus.global_position = arena.center() + ARENA_VIEW_SHIFT if area == "arena" and arena != null else trainer.global_position
+	focus.global_position = arena.center() + view_shift if area == "arena" and arena != null else trainer.global_position

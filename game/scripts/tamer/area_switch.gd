@@ -2,7 +2,8 @@ class_name AreaSwitch
 extends Node
 ## Moves you between the demo's places: the Gate Hall, the route and an arena. Only the active place is visible and
 ## running (the route's wild creatures wait while you are away); the trainer moves to it, your creature comes along
-## (in an arena the battle places it), and the camera takes the place's bounds.
+## (in an arena the battle places it), and the camera takes the place's bounds. In an arena the camera is fixed and
+## zoomed to fit the whole arena with a margin, above the cards (tamer.json "arena_view").
 
 const ARENA_MARGIN: float = 600.0       ## the camera never reaches an arena's bounds: it stays fixed on its centre
 const HALL_TOP: float = 60.0
@@ -36,6 +37,18 @@ func enter_route(at: Vector2) -> void:
 
 func enter_arena(a: Arena) -> void:
 	_activate("arena", a.layout, Nav.new(a.layout), a.stage, a.layout.rect_px().grow(ARENA_MARGIN), a.trainer_spot(true))
+	_fit(a.layout.rect_px())
+
+
+## Zoom so the arena and the trainers beside it fit above the cards; the view centre sits that much lower.
+func _fit(r: Rect2) -> void:
+	var V: Dictionary = TamerData.rule("arena_view")
+	var vp: Vector2 = g.get_viewport().get_visible_rect().size
+	var room := Vector2(vp.x, vp.y - float(V["hud"]))
+	var need: Vector2 = r.size + Vector2(float(V["margin"][0]), float(V["margin"][1])) * 2.0
+	var z: float = minf(room.x / need.x, room.y / need.y)
+	g.camera.zoom = Vector2.ONE * z
+	g.view_shift = Vector2(0, float(V["hud"]) * 0.5 / z)
 
 
 func _activate(name: String, lay: ZoneLayout, nv: Nav, root: Node2D, bounds: Rect2, at: Vector2) -> void:
@@ -47,6 +60,8 @@ func _activate(name: String, lay: ZoneLayout, nv: Nav, root: Node2D, bounds: Rec
 	_show(g.route_root, name == "route")
 	_show(g.hall, name == "hall")
 	g.ambient.color = Atmosphere.ambient(GameData.biome) if name == "route" else Color.WHITE
+	g.camera.zoom = Vector2.ONE
+	g.view_shift = Vector2.ZERO
 	g.field.recall_now()
 	g.trainer.reparent(root)
 	g.trainer.place(at)

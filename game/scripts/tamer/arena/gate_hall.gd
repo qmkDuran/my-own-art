@@ -1,22 +1,27 @@
 class_name GateHall
 extends Node2D
 ## The Gate Hall, where the demo starts: a stone hall with a gate per arena along its back wall (walk through one and
-## the battle starts there), a sign by each gate with what to try, a difficulty lever (Easy / Normal / Hard), an
-## opponent switch (a wild 1v1 or a trainer 3v3), the team station (your 3 creatures, their level and moves), a
-## Sync Lens upgrade stand, and the door to the route. F uses whatever you stand next to.
+## the battle starts there), a sign by each gate with its main mechanic and what to try, a difficulty lever (Easy /
+## Normal / Hard), an arena size lever (medium / large), an opponent switch (a wild 1v1, a wild alpha, or a trainer
+## 3v3), the team station (your 3 creatures, their level and moves), a Sync Lens upgrade stand, and the door to the
+## route. F uses whatever you stand next to.
 
 signal used(what: String)
 
 const HALL_ORIGIN := Vector2(-6000, 2000)
 const USE_RANGE: float = 44.0
 const TIERS: Array[String] = ["easy", "normal", "hard"]
+const SIZES: Array[String] = ["medium", "large"]
+const OPPONENTS: Array[String] = ["wild", "alpha", "trainer"]
+const OPPONENT_NAMES: Dictionary = {"wild": "Wild 1v1", "alpha": "Wild alpha", "trainer": "Trainer 3v3"}
 
 var g: TamerGame
 var layout: ArenaLayout
 var view: ArenaView
 var stage: Node2D
 var tier: int = 1
-var trainer_battle: bool = false
+var opponent: String = "wild"
+var size_id: String = "medium"
 var data: Dictionary
 var _armed: bool = true                ## a gate works again once you have stepped away from it
 
@@ -79,23 +84,28 @@ func _process(_delta: float) -> void:
 ## Through a gate: a battle in that arena against the opponent the lever and switch say.
 func _through_gate(arena_id: String) -> void:
 	var level: int = g.team.current().level if g.team.current() != null else 5
-	if trainer_battle:
+	if opponent == "trainer":
 		var t := OpponentTrainer.new().setup(TamerData.rule("battle.trainers.hall"), level, tier_id())
 		g.battle.start_trainer(t, arena_id)
 	else:
 		var kinds: Array = TamerData.rule("battle.wild_species")
-		g.battle.start_wild(CreatureRecord.make(String(kinds[randi() % kinds.size()]), level, true), arena_id, tier_id())
+		var rec := CreatureRecord.make(String(kinds[randi() % kinds.size()]), level, true)
+		rec.alpha = opponent == "alpha"
+		g.battle.start_wild(rec, arena_id, tier_id())
 
 
-## F next to something: the lever, the switch, the team station or the lens stand.
+## F next to something: a lever, the switch, the team station or the lens stand.
 func use_nearby() -> bool:
 	var tr: Vector2 = g.trainer.global_position
 	if tr.distance_to(spot("lever")) < USE_RANGE:
 		tier = (tier + 1) % TIERS.size()
 		g.hud.notice("Opponents: %s" % tier_id().capitalize())
+	elif tr.distance_to(spot("size")) < USE_RANGE:
+		size_id = SIZES[(SIZES.find(size_id) + 1) % SIZES.size()]
+		g.hud.notice("Arenas: %s" % size_id.capitalize())
 	elif tr.distance_to(spot("switch")) < USE_RANGE:
-		trainer_battle = not trainer_battle
-		g.hud.notice("Opponent: %s" % ("a trainer, 3v3" if trainer_battle else "a wild creature, 1v1"))
+		opponent = OPPONENTS[(OPPONENTS.find(opponent) + 1) % OPPONENTS.size()]
+		g.hud.notice("Opponent: %s" % OPPONENT_NAMES[opponent])
 	elif tr.distance_to(spot("station")) < USE_RANGE:
 		g.hud.station.open()
 	elif tr.distance_to(spot("lens")) < USE_RANGE:

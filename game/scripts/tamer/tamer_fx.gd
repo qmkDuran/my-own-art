@@ -130,7 +130,7 @@ static func _lane(at: Vector2, label: Label) -> int:
 	return lane
 
 
-## Bond up: hearts of light rise around the creature and the trainer, with a chime.
+## A big moment (an evolution): sparks and light rise around the creature, with a chime.
 static func celebrate(who: Node2D, element: String) -> void:
 	var fx: Node2D = layer()
 	var at: Vector2 = who.global_position + Vector2(0, -16)

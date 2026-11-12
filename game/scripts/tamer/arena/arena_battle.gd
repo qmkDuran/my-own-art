@@ -7,7 +7,6 @@ extends Node
 ## and the transition back to the exact spot you left. Your team wiped: you lose (the white-out).
 
 const ARENA_ORIGIN := Vector2(-6000, 0)
-const SEND_DELAY: float = 1.0
 const DECIDE_EVERY: float = 0.5
 
 var g: TamerGame
@@ -57,21 +56,25 @@ func _begin(arena_id: String, tier: String) -> void:
 
 
 func _enter(arena_id: String) -> void:
-	arena = Arena.new().build(arena_id, ARENA_ORIGIN)
+	arena = Arena.new().build(arena_id, ARENA_ORIGIN, g.hall.size_id)
 	g.add_child(arena)
 	g.enter_arena(arena)
 	g.trainer.place(arena.trainer_spot(true))
 	g.field.summon_at(g.team.active, arena.you_spot(), false)
 	if opponent != null:
+		opponent.stand_at = arena.trainer_spot(false) + Vector2(0, -20)
 		_stand_in(String(opponent.data.get("sprite", "rival_ivo")), arena.trainer_spot(false))
 		_send(opponent.best_against(g.field.partner))
 	else:
 		_send(_wild_rec)
 
 
-## A creature of theirs comes out on the right (with its entry word in a trainer battle).
-func _send(rec: CreatureRecord) -> void:
+## A creature of theirs comes out on the right. A trainer's keeps the gauge its team has built (as yours does),
+## and one that comes in after a swap or a knock-out strikes as it lands (as yours does).
+func _send(rec: CreatureRecord, entry: bool = false) -> void:
+	var gauge: float = foe.gauge if foe != null and is_instance_valid(foe) else 0.0
 	foe = Creature.new().setup(rec, Combatant.SIDE_WILD)
+	foe.gauge = gauge
 	foe.position = arena.layout.free_spot_near(arena.foe_spot(), rec.radius())
 	foe.catchable = opponent == null
 	foe.brain = FoeBrain.new(foe, tier_id)
@@ -80,8 +83,10 @@ func _send(rec: CreatureRecord) -> void:
 	CreatureTag.attach(foe)
 	if opponent != null:
 		opponent.active = foe
-		TamerFx.word(foe.global_position, "%s: Go, %s!" % [opponent.display_name(), rec.data()["name"]], Pal.c("rose"))
-	TamerFx.blast(foe.global_position, 46.0, rec.element(), true)
+	if entry:
+		CreatureCombat.entry(foe)
+	else:
+		TamerFx.blast(foe.global_position, 46.0, rec.element(), true)
 
 
 func _on_foe_down(c: Creature) -> void:
@@ -92,7 +97,7 @@ func _on_foe_down(c: Creature) -> void:
 	g.team.add_material(String(c.rec.data()["material"]), got)
 	TamerFx.word(c.global_position, "+%d %s" % [got, TamerData.rule("materials." + String(c.rec.data()["material"]) + ".name")], Pal.c("gold"))
 	if opponent != null and opponent.has_more():
-		_send_t = SEND_DELAY
+		_send_t = float(TamerData.rule("combat.step_in_delay"))
 	else:
 		end(true)
 
@@ -110,22 +115,30 @@ func _process(delta: float) -> void:
 	if _send_t > 0.0:
 		_send_t -= delta
 		if _send_t <= 0.0:
-			_send(opponent.best_against(g.field.partner))
+			_send(opponent.best_against(g.field.partner), true)
 		return
 	_decide_t -= delta
 	if opponent != null and _decide_t <= 0.0:
 		_decide_t = DECIDE_EVERY
 		var swap: CreatureRecord = opponent.decide(g.field.partner)
 		if swap != null:
-			TamerFx.word(foe.global_position, "%s: Come back!" % opponent.display_name(), Pal.c("rose"))
-			foe.fainted.disconnect(_on_foe_down)
-			foe.recall_quietly()
-			_send(swap)
+			_swap_foe(swap)
+
+
+## The opposing trainer swaps by your rules: a gauge segment and the swap cooldown (OpponentTrainer.decide).
+func _swap_foe(swap: CreatureRecord) -> void:
+	TamerFx.word(opponent.stand_at, "Come back, %s! Go, %s!" % [foe.rec.display_name(), swap.display_name()], Pal.c("rose"))
+	foe.gauge = maxf(0.0, foe.gauge - float(TamerData.rule("combat.gauge.swap_cost")))
+	foe.fainted.disconnect(_on_foe_down)
+	foe.recall_quietly()
+	_send(swap, true)
 
 
 func end(won: bool) -> void:
 	if not on:
 		return
+	if won:
+		TrainerShout.moment("win")
 	on = false
 	g.field.release_control()
 	if won:

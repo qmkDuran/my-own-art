@@ -13,9 +13,11 @@ their own.
 
 ## The Gate Hall
 - **Four gates** along the back wall: **Meadow, Riverbank, Forest, Ruins**. Walk through one and the battle starts
-  in that arena. The sign under each gate lists things to try there.
+  in that arena. The sign under each gate names its main mechanic and lists things to try there.
 - **Difficulty lever** (left, F): Easy / Normal / Hard.
-- **Opponent switch** (left, F): a wild creature 1v1, or a trainer 3v3 (the Gate Warden).
+- **Arena size lever** (left, F): medium or large arenas (the camera fits either).
+- **Opponent switch** (left, F): a wild creature 1v1, a wild **alpha** (bigger, tougher, better rewards), or a
+  trainer 3v3 (the Gate Warden).
 - **Team station** (right, F): pick 3 of the 6 creatures (the order is the swap order), a level (5, 15 or 30), and
   each one's 4 moves (click a slot to cycle through the moves it knows; hover for what it does). Closing it makes
   the picks your team.
@@ -48,14 +50,25 @@ Gate Hall and the camp heal.
 - **Elements:** a hit with the element advantage does x1.3 ("Strong hit!") and staggers faster. Nothing is ever
   resisted. Press **I** for a creature's element and what it is strong against.
 - **Stagger:** the gold bar under a foe's life fills with hits. Full, it is **STAGGERED**: it reels and takes 50% more.
-- **Buffs and debuffs** show as icons with timers over both creatures and on your card. Each buff has a cost:
+- **Buffs and debuffs:** a **gold ring with rising arrows** at a creature's feet is a buff, a **purple ring with
+  sinking arrows** a debuff; icons with timers show over both creatures and on your card. One buff and one debuff
+  at a time (a new one replaces the old). Each buff has a cost:
   Sprint leaves Lethargy behind, Harden is slow and can't dodge, Berserk takes more, Camouflage makes the first hit
   taken a critical. Buffs fade faster when you are hit.
 - **Home terrain** (in the info panel): each creature has a bonus somewhere (the honey badger on burning ground,
   the cuttlefish in water, the pangolin on roots and rubble, the wolf in tall grass, the aye-aye on high ground, the
   devil in mud). Each bonus has a cost, and nobody is weaker anywhere else.
-- **Terrain your moves change:** Ember burns grass to coals, Gale flattens grass and clears fog, Echo and heavy hits
-  break rocks, the bridge and cracked floor, the pangolin's Vine Wall grows cover (Ember burns it).
+- **Terrain your moves change** (it changes the fight, never ends it; only moves change it, and only a patch):
+  Ember sets grass burning; the fire creeps slowly through grass and burns anyone in it (you too), then leaves ash
+  and smoke that hide whoever is inside, then a burnt field that slows a little, and the grass regrows after about
+  20 s. Gale flattens grass (it regrows) and blows smoke and fog away. Bloom moves regrow grass at once, and the
+  pangolin's Vine Wall grows cover (Ember burns it). Echo and heavy hits break a rock into rubble (trips a dash),
+  the bridge (whoever is on it falls in) and cracked floor (a pit). Walls, ledges and deep water never break.
+- **Bonuses are capped:** element + terrain + buffs add at most +40% damage together.
+- **Channelling** shows as a circle filling at the creature's feet.
+- **Equal footing:** opponents play by exactly your rules (same stats at the same level, moves, wind-ups and red
+  warnings, gauge, swap cost, no items). Difficulty only changes how smart they are.
+- **Your trainer** calls the swaps and shouts on big moments from the arena edge.
 - **Winning** a wild battle gives XP and materials; a trainer battle is 3v3 (their creatures are the balls at the
   top). **Losing** (your whole team down) ends the battle; on the route you wake at camp and lose one of each material.
 
@@ -64,9 +77,12 @@ Gate Hall and the camp heal.
 - **Wild creatures never force a fight.** Shy ones flee, calm ones ignore you, territorial ones warn ("!") and calm
   down if you back off, and the rare **aggressive** one (red eye glint) chases you. Walk into one to battle it.
 - **Ivo**, a rival trainer, asks "Want to battle?" when you come close: Accept or Decline.
-- **Sync Lens:** in a wild battle, weaken a creature (its life under the pink mark: it stops fighting) or stagger
-  it, then **hold F**: the scan ring fills and it joins your team (or the Sanctuary at camp) and the battle is won.
-  The basic lens only reads common creatures; the aye-aye is rare (switch to Sync Lens+ at the Gate Hall).
+- **Sync Lens:** in a wild battle, weaken the creature until **gold stars** show (its life under the pink mark),
+  then press **F**: your trainer's lens beam locks on and a 2.5 s scan runs. The creature **struggles** (red-telegraphed
+  lunges at your creature): dodge them, because a hit on your creature (or you hitting it) breaks the scan; the
+  stars stay and you can retry after a moment. Success: it joins your team (or the Sanctuary at camp) and the
+  battle is won. The basic lens only reads common creatures; the aye-aye is rare (switch to Sync Lens+ at the
+  Gate Hall, which also scans faster).
 - **Camp:** walk into the campfire clearing to rest: everyone is healed, the camp panel opens (C): choose moves,
   raise stats with materials, the Sanctuary. **Z / V** use a Honeyberry or Smelling Salts outside battle.
 
@@ -86,7 +102,7 @@ Gate Hall and the camp heal.
 | **Q W E R** | - | Moves: hold to aim (or channel a status move), release to use |
 | **Space** | Roll | Dodge |
 | **1 2 3** | Swap creature | Swap (1 gauge, then a cooldown) |
-| **F** | Use the hall object you stand at (lever, switch, station, lens) | Hold to sync a weakened or staggered creature |
+| **F** | Use the hall object you stand at (levers, switch, station, lens) | Sync Lens on a weakened creature (gold stars) |
 | **Z / V** | Honeyberry (heal) / Smelling Salts (revive) | - |
 | **I / C / Esc** | Creature info / camp panel (at camp) / close panels | same |
 | **F1** | Dev: a shiny | - |

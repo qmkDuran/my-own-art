@@ -12,6 +12,8 @@ const FEATURE: Dictionary = {
 	ArenaLayout.F.LEDGE: ["bone", 0.35], ArenaLayout.F.RAMP: ["stone_lt", 0.8], ArenaLayout.F.WALL: ["stone", 1.0],
 	ArenaLayout.F.BRIDGE: ["earth_lt", 1.0], ArenaLayout.F.CRACKED: ["stone", 1.0], ArenaLayout.F.COALS: ["ember_dk", 1.0],
 	ArenaLayout.F.THORNS: ["earth_dk", 0.6], ArenaLayout.F.FLAT: ["leaf_lt", 0.35], ArenaLayout.F.GRASS: ["leaf_dk", 0.35],
+	ArenaLayout.F.ASH: ["stone_dk", 0.9], ArenaLayout.F.BURNT: ["void", 0.7], ArenaLayout.F.RUBBLE: ["stone", 0.45],
+	ArenaLayout.F.PIT: ["void", 1.0],
 }
 
 

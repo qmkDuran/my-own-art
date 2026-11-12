@@ -4,7 +4,7 @@ extends Node
 ## and saved as NAME_<w>x<h>.png in --out.
 
 const SHOTS: Array[String] = ["hall", "station", "transition", "meadow", "riverbank", "forest", "ruins", "channel",
-	"effects", "trainer", "route", "evolution"]
+	"effects", "burn", "catch", "large", "trainer", "route", "evolution"]
 
 var g: TamerGame
 var _out: String
@@ -104,7 +104,7 @@ func _arena_shot(id: String, kind: String, tier: String) -> void:
 	await _wait(0.5)
 	g.input.press_move(3)
 	await _wait(0.2)
-	await _save(id)
+	await _save(id if g.hall.size_id == "medium" else id + "_large")
 	g.input.release_move(3)
 	g.input.cursor_override = Vector2.INF
 	g.battle.end(true)
@@ -193,3 +193,43 @@ func _shot_evolution() -> void:
 	rec.growth.add_xp(CreatureGrowth.xp_to_next(15))
 	await _wait(1.3)
 	await _save("evolution")
+
+
+func _leave() -> void:
+	g.battle.end(true)
+	while g.battle.on or g.transition.busy:
+		await _wait(0.05)
+
+
+## Burning to ash: one patch burning with flames, the one beside it already ash and smoke.
+func _shot_burn() -> void:
+	var foe: Creature = await _battle("maned_wolf", "meadow", "easy")
+	foe.brain = null
+	var a: Arena = g.battle.arena
+	var patch := Vector2i(4, 3)
+	a.affect(a.layout.center_of(patch), 40.0, {"burns": true}, false)
+	a.change.tick(float(TerrainChange.state("coals")["time"]) + 0.05)
+	a.affect(a.layout.center_of(patch + Vector2i(3, 0)), 30.0, {"burns": true}, false)
+	a.view.refresh()
+	await _play(a.layout.center_of(patch + Vector2i(1, 3)), 0.8)
+	await _save("burn")
+	await _leave()
+
+
+## The catch: the beam from the trainer at the edge, the scan ring filling, the creature lunging (its tell).
+func _shot_catch() -> void:
+	var foe: Creature = await _battle("maned_wolf", "meadow", "easy")
+	foe.set_dazed(true)
+	await _play(foe.global_position + Vector2(-120, 0), 1.0)
+	g.lens.request()
+	await _wait(0.95)
+	await _save("catch")
+	g.lens.cancel()
+	await _leave()
+
+
+## A large arena: the camera pulls back to fit it.
+func _shot_large() -> void:
+	g.hall.size_id = "large"
+	await _arena_shot("riverbank", "tas_devil", "normal")
+	g.hall.size_id = "medium"

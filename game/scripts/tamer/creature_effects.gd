@@ -3,6 +3,7 @@ extends RefCounted
 ## Buffs and debuffs on a creature (data/tamer/effects.json), each with its cost built in: speed, damage dealt and
 ## taken, no dodging, hidden. Strength (0..1, how long the status move was channelled) scales them. Buffs drain
 ## faster when the creature is hit; debuffs just run out. An effect can leave another behind (Sprint -> Lethargy).
+## At most one buff and one debuff at a time: a new one replaces the old one of its kind.
 
 var list: Dictionary = {}               ## effect id -> {"t": seconds left, "max": its full time, "s": strength}
 
@@ -13,12 +14,23 @@ static func data(id: String) -> Dictionary:
 
 func add(id: String, strength: float) -> void:
 	var d: Dictionary = data(id)
+	for other: String in list.keys():
+		if String(data(other)["kind"]) == String(d["kind"]):
+			list.erase(other)
 	var time: float = float(d["time"]) + float(d.get("time_extra", 0.0)) * strength
 	list[id] = {"t": time, "max": time, "s": clampf(strength, 0.0, 1.0)}
 
 
 func has(id: String) -> bool:
 	return list.has(id)
+
+
+## The active buff or debuff ("" when none).
+func of_kind(kind: String) -> String:
+	for id: String in list:
+		if String(data(id)["kind"]) == kind:
+			return id
+	return ""
 
 
 func remove(id: String) -> void:

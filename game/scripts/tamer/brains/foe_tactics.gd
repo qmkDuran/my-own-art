@@ -118,5 +118,5 @@ func may_use(m: Dictionary, target: Creature) -> bool:
 ## Where to aim a shot: at the target, or (better tiers) where it will be when the shot arrives.
 func lead(target: Creature, m: Dictionary) -> Vector2:
 	var speed: float = float(m["speed"]) * float(TamerData.rule("combat.bolt_speed_mult"))
-	var travel: float = b.c.global_position.distance_to(target.global_position) / maxf(speed, 1.0)
+	var travel: float = b.c.global_position.distance_to(target.global_position) / maxf(speed, 1.0) + float(m.get("windup", 0.0))
 	return target.global_position + target.velocity * travel * float(T()["lead"])

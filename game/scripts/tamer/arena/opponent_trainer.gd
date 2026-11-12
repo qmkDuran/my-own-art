@@ -2,16 +2,16 @@ class_name OpponentTrainer
 extends RefCounted
 ## The opposing trainer in a 3v3 arena battle (tamer.json "battle.trainers"): three creatures sent one at a time.
 ## It sends the creature with the advantage over yours, sends the next when one falls, and (by tier) swaps out at low
-## life or into a counter, and uses a heal once. It stands outside the arena like you, and is never hurt.
-
-const ITEM_BELOW: float = 0.3
+## life or into a counter. Its swaps follow your rules (a gauge segment, the swap cooldown) and it has no items in
+## battle, as you have none. It stands outside the arena like you, and is never hurt.
 
 var data: Dictionary
 var tier_id: String
 var team: Array[CreatureRecord] = []
 var active: Creature
+var stand_at: Vector2                   ## where it stands (its calls show there)
 var _swapped: Dictionary = {}
-var _item_used: bool = false
+var _swap_ready_at: float = 0.0
 
 
 func setup(trainer_data: Dictionary, level: int, tier: String) -> OpponentTrainer:
@@ -54,20 +54,19 @@ func best_against(yours: Creature) -> CreatureRecord:
 	return best
 
 
-## Between blows: the heal once when low, or a swap (out at low life, or into a counter on Hard). Returns the
-## record to swap in, or null.
+## Between blows: a swap (out at low life, or into a counter on Hard), if its gauge can pay and the swap cooldown
+## has run out. Returns the record to swap in, or null.
 func decide(yours: Creature) -> CreatureRecord:
 	if active == null or not is_instance_valid(active) or active.fainted_now or _swapped.has(active.rec):
 		return null
-	var life: float = active.rec.life_frac()
-	if not _item_used and life < ITEM_BELOW:
-		_item_used = true
-		active.rec.heal(0.4)
-		TamerFx.word(active.global_position, "%s used a Honeyberry!" % display_name(), Pal.c("leaf_lt"))
+	var now: float = Time.get_ticks_msec() / 1000.0
+	if now < _swap_ready_at or active.gauge + 0.001 < float(TamerData.rule("combat.gauge.swap_cost")):
 		return null
+	var life: float = active.rec.life_frac()
 	var low: bool = life < float(T()["swap_below"])
 	var counter: bool = bool(T()["counter_swap"]) and yours != null and TamerData.advantage(yours.element_id(), active.element_id())
 	if (low or counter) and best_against(yours) != null:
 		_swapped[active.rec] = true
+		_swap_ready_at = now + float(TamerData.rule("combat.swap_cooldown"))
 		return best_against(yours)
 	return null

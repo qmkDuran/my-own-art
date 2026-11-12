@@ -46,8 +46,12 @@ func pick(d: float) -> Dictionary:
 	return {}
 
 
+## Its best attack for the distance, or its basic (the same right-click combo as yours) when it is close.
 func _try(target: Creature) -> bool:
-	var a: Dictionary = pick(b.c.global_position.distance_to(target.global_position))
+	var d: float = b.c.global_position.distance_to(target.global_position) - b.c.extra_reach() - target.extra_reach()
+	var a: Dictionary = pick(d)
+	if a.is_empty() and d <= b.basic_reach(1.0) - b.c.extra_reach() + target.hit_radius():
+		a = {"move": b.basic_id(), "opening": 0.0}
 	return not a.is_empty() and b.attack_with(a, target)
 
 

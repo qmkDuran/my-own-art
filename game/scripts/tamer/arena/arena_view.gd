@@ -1,12 +1,17 @@
 class_name ArenaView
 extends Node2D
-## Draws an ArenaLayout: the ground cell by cell in the arena's style (grass, water, mud, ledge, coals...), the
-## standing things as sprites y-sorted with the creatures (tall grass, rocks, trees or pillars, vines), the stone
-## wall around it, and one static body that matches what blocks movement. refresh() redraws after a change.
+## Draws an ArenaLayout: the ground cell by cell in the arena's style (grass, water, mud, ledge...) with each
+## changed state distinct (flickering flames, ash, a black burnt field, rubble, a pit, cracks), the standing things
+## as sprites y-sorted with the creatures (tall grass, rocks, trees or pillars, vines), smoke over ash drawn above
+## everyone (it hides them), the stone wall around it, and one static body that matches what blocks movement.
+## refresh() rebuilds after a change.
 
 const GROUND_Z: int = -20
 const TUFTS: int = 2
 const WALL_H: float = 10.0
+const SMOKE_Z: int = 40
+const FLAMES: int = 3
+const PUFFS: int = 3
 
 var a: ArenaLayout
 var style: String = "meadow"
@@ -14,6 +19,7 @@ var stage: Node2D                       ## the y-sorted root standing sprites go
 var body: StaticBody2D
 var _standing: Array[Node2D] = []
 var _t: float = 0.0
+var _smoke := Node2D.new()
 
 
 func setup(layout: ArenaLayout, arena_style: String, root: Node2D) -> ArenaView:
@@ -25,6 +31,10 @@ func setup(layout: ArenaLayout, arena_style: String, root: Node2D) -> ArenaView:
 	body = StaticBody2D.new()
 	body.collision_layer = Combatant.WORLD_MASK
 	add_child(body)
+	_smoke.z_index = SMOKE_Z
+	_smoke.z_as_relative = false
+	_smoke.draw.connect(_draw_smoke)
+	add_child(_smoke)
 	refresh()
 	return self
 
@@ -42,10 +52,8 @@ func refresh() -> void:
 
 func _process(delta: float) -> void:
 	_t += delta
-	if a.tick(delta):
-		refresh()
-	else:
-		queue_redraw()                                     # water shimmers, coals glow
+	queue_redraw()                                         # water shimmers, flames flicker, smoke drifts
+	_smoke.queue_redraw()
 
 
 ## Sprites for what stands up (y-sorted with the creatures).
@@ -112,12 +120,12 @@ func _ground(c: Vector2i) -> void:
 	var col: Color = ArenaPalette.feature(f, style)
 	if col.a > 0.0:
 		draw_rect(r, col)
+	if _changed(r, c, f):
+		return
 	match f:
 		ArenaLayout.F.SHALLOW, ArenaLayout.F.DEEP:
 			var shine: float = sin(_t * 2.0 + c.x * 0.7 + c.y * 1.3)
 			draw_rect(Rect2(r.position + Vector2(6 + shine * 3.0, 10), Vector2(10, 2)), Pal.c("sea_lt", 0.6))
-		ArenaLayout.F.COALS:
-			draw_rect(Rect2(r.position + Vector2(8, 8), Vector2(3, 3)), Pal.c("flame") if int(_t * 4.0 + c.x) % 2 == 0 else Pal.c("gold"))
 		ArenaLayout.F.LEDGE:
 			if a.f(c + Vector2i(0, 1)) != ArenaLayout.F.LEDGE:
 				draw_rect(Rect2(r.position + Vector2(0, r.size.y - 6), Vector2(r.size.x, 6)), Pal.c("stone_dk"))
@@ -137,3 +145,48 @@ func _ground(c: Vector2i) -> void:
 			draw_rect(r.grow(-2.0), Pal.c("leaf_dk"))
 			draw_line(r.position + Vector2(6, 2), r.position + Vector2(10, 30), Pal.c("leaf_lt"), 2.0)
 			draw_line(r.position + Vector2(22, 2), r.position + Vector2(18, 30), Pal.c("leaf_lt"), 2.0)
+
+
+## The states destroyed terrain passes through, each its own look: flames, ash, burnt ground, rubble, a pit.
+func _changed(r: Rect2, c: Vector2i, f: int) -> bool:
+	match f:
+		ArenaLayout.F.COALS:
+			_flames(r, c)
+		ArenaLayout.F.BURNT, ArenaLayout.F.ASH:
+			for k: int in 3:
+				draw_rect(Rect2(r.position + Vector2(5 + k * 9, 8 + (k * 11) % 16), Vector2(2, 2)), Pal.c("ember_dk"))
+		ArenaLayout.F.RUBBLE:
+			for k: int in 4:
+				var p: Vector2 = r.position + Vector2(5 + (k * 13) % 22, 6 + (k * 7) % 20)
+				draw_rect(Rect2(p, Vector2(6, 4)), Pal.c("stone_lt"))
+				draw_rect(Rect2(p + Vector2(0, 3), Vector2(6, 1)), Pal.c("stone_dk"))
+		ArenaLayout.F.PIT:
+			draw_rect(Rect2(r.position, Vector2(r.size.x, 4)), Pal.c("stone_dk"))
+			draw_rect(Rect2(r.position + Vector2(3, 6), r.size - Vector2(6, 9)), Pal.c("ink"))
+		_:
+			return false
+	return true
+
+
+## Burning grass: tongues of flame that flicker, over glowing ground.
+func _flames(r: Rect2, c: Vector2i) -> void:
+	draw_rect(r.grow(-3.0), Pal.c("ember", 0.5))
+	for k: int in FLAMES:
+		var x: float = r.position.x + 6.0 + k * 9.0
+		var h: float = 10.0 + 6.0 * sin(_t * 11.0 + c.x * 1.7 + c.y * 2.3 + k * 2.1)
+		var base: float = r.end.y - 6.0
+		draw_colored_polygon(PackedVector2Array([Vector2(x - 4, base), Vector2(x + 4, base), Vector2(x, base - h)]), Pal.c("flame"))
+		draw_colored_polygon(PackedVector2Array([Vector2(x - 2, base), Vector2(x + 2, base), Vector2(x, base - h * 0.6)]), Pal.c("sun"))
+
+
+## Smoke over ash, above everyone: whoever stands in it can't be seen.
+func _draw_smoke() -> void:
+	for y: int in a.rows:
+		for x: int in a.cols:
+			var c := Vector2i(x, y)
+			if a.f(c) != ArenaLayout.F.ASH:
+				continue
+			var at: Vector2 = a.center_of(c)
+			for k: int in PUFFS:
+				var drift: float = fmod(_t * 8.0 + k * 11.0 + x * 5.0, 30.0)
+				_smoke.draw_circle(at + Vector2(sin(_t + k * 2.0 + y) * 6.0, -drift), 12.0 - drift * 0.15, Pal.c("mist", 0.55))

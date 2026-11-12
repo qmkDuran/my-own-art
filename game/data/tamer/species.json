@@ -1,5 +1,5 @@
 {
- "_doc": "Creatures of the demo. stats: life, power (damage scale), speed (px/s), radius (body). basic: the right-click physical attack. learn: [level, move] unlocked by level (the level-25 one is its signature move); kit: the 4 active moves by default (the team station changes them). sync_at: share of life at or below which it is weakened (it stops fighting and can be synced). material: what it drops. home: its home terrain bonus and cost (VISION.md). temperament: on the route (shy flees, calm ignores, territorial warns, aggressive chases). rarity: common or rare (the basic Sync Lens only syncs common ones). evolve: a level and what it becomes. shiny_chance: 1 in 4096 (F1 spawns one). ai: how it fights (style flanker / brawler / skirmisher; attacks with their tells: windup before, opening after, reach).",
+ "_doc": "Creatures of the demo. stats: life, power (damage scale), speed (px/s), radius (body). basic: the right-click physical attack. learn: [level, move] unlocked by level (the level-25 one is its signature move); kit: the 4 active moves by default (the team station changes them). sync_at: share of life at or below which it is weakened (it stops fighting and can be synced). material: what it drops. home: its home terrain bonus and cost (VISION.md). temperament: on the route (shy flees, calm ignores, territorial warns, aggressive chases). rarity: common or rare (the basic Sync Lens only syncs common ones). evolve: a level and what it becomes. shiny_chance: 1 in 4096 (F1 spawns one). ai: how it fights (style flanker / brawler / skirmisher; attacks: the moves it uses with their reach and the pause it takes after (its opening); the tell is the move's own wind-up, the same as yours).",
  "species": {
   "honey_badger": {
    "name": "Honey Badger",
@@ -27,28 +27,24 @@
     "attacks": [
      {
       "move": "claw_rush",
-      "windup": 0.4,
       "opening": 0.35,
       "reach": 55,
       "min": 0
      },
      {
       "move": "ember_pounce",
-      "windup": 0.6,
       "opening": 0.8,
       "reach": 170,
       "min": 80
      },
      {
       "move": "cinder_spit",
-      "windup": 0.5,
       "opening": 0.5,
       "reach": 300,
       "min": 140
      },
      {
       "move": "growl",
-      "windup": 0.0,
       "opening": 0.4,
       "reach": 260,
       "min": 0
@@ -134,28 +130,24 @@
     "attacks": [
      {
       "move": "tentacle_snap",
-      "windup": 0.35,
       "opening": 0.3,
       "reach": 55,
       "min": 0
      },
      {
       "move": "prism_shot",
-      "windup": 0.35,
       "opening": 0.3,
       "reach": 320,
       "min": 90
      },
      {
       "move": "shard_fan",
-      "windup": 0.5,
       "opening": 0.5,
       "reach": 230,
       "min": 60
      },
      {
       "move": "camouflage",
-      "windup": 0.0,
       "opening": 0.3,
       "reach": 400,
       "min": 0
@@ -230,21 +222,18 @@
     "attacks": [
      {
       "move": "tail_swipe",
-      "windup": 0.5,
       "opening": 0.4,
       "reach": 55,
       "min": 0
      },
      {
       "move": "roll_charge",
-      "windup": 0.6,
       "opening": 0.8,
       "reach": 200,
       "min": 80
      },
      {
       "move": "harden",
-      "windup": 0.0,
       "opening": 0.3,
       "reach": 400,
       "min": 0
@@ -320,21 +309,18 @@
     "attacks": [
      {
       "move": "gust_bite",
-      "windup": 0.4,
       "opening": 0.35,
       "reach": 50,
       "min": 0
      },
      {
       "move": "wind_dash",
-      "windup": 0.55,
       "opening": 0.7,
       "reach": 220,
       "min": 90
      },
      {
       "move": "gale_shot",
-      "windup": 0.5,
       "opening": 0.5,
       "reach": 280,
       "min": 120
@@ -407,21 +393,18 @@
     "attacks": [
      {
       "move": "echo_pulse",
-      "windup": 0.45,
       "opening": 0.5,
       "reach": 90,
       "min": 0
      },
      {
       "move": "echo_tap",
-      "windup": 0.35,
       "opening": 0.3,
       "reach": 260,
       "min": 100
      },
      {
       "move": "screech",
-      "windup": 0.0,
       "opening": 0.4,
       "reach": 260,
       "min": 0
@@ -490,28 +473,24 @@
     "attacks": [
      {
       "move": "crunch",
-      "windup": 0.45,
       "opening": 0.4,
       "reach": 50,
       "min": 0
      },
      {
       "move": "frenzy",
-      "windup": 0.85,
       "opening": 1.3,
       "reach": 170,
       "min": 70
      },
      {
       "move": "rot_spit",
-      "windup": 0.6,
       "opening": 0.5,
       "reach": 240,
       "min": 140
      },
      {
       "move": "berserk",
-      "windup": 0.0,
       "opening": 0.3,
       "reach": 400,
       "min": 0

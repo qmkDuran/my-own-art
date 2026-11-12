@@ -13,7 +13,8 @@ static func play(c: Creature) -> void:
 		return
 	var g: TamerGame = TamerGame.current
 	var v: CreatureSprite = c.view
-	var to_scale: Vector2 = Vector2.ONE * c.rec.growth.size_mult()
+	c.size_k = c.size_now()
+	var to_scale: Vector2 = Vector2.ONE * c.size_k
 	Audio.sfx("lamp_lit", -4.0, 0.8)
 	Fx.burst(g.fx_layer, c.global_position + Vector2(0, -14), 40, Vector2(30, 90), SPIN_TIME, [Pal.c("sun"), Pal.c("glint"), Pal.c("bone", 0.0)],
 		Vector2.UP, 180.0)

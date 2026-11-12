@@ -7,7 +7,7 @@ const HEIGHT: float = 10.0
 
 func cast(user: Creature, m: Dictionary, at: Vector2, _strength: float = 1.0) -> void:
 	var dir: Vector2 = dir_to(user, at)
-	var reach: float = float(m["range"])
+	var reach: float = float(m["range"]) + user.extra_reach()
 	var half: float = deg_to_rad(float(m.get("arc", 120.0))) * 0.5
 	TamerFx.slash(user.global_position + Vector2(0, -HEIGHT) + dir * 6.0, dir, reach, float(m.get("arc", 120.0)), element(user, m))
 	Audio.sfx("hit", -8.0, randf_range(1.0, 1.2))

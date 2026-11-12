@@ -1,8 +1,9 @@
 class_name CreatureRecord
 extends RefCounted
 ## One creature as a living record, in the world or not: its species, level and growth (CreatureGrowth: XP, moves,
-## evolution), shiny form, raised stats, current life and knock-out time. A team member keeps its record while it
-## is called back; the Creature node that fights is made from it and writes its life back.
+## evolution), shiny or alpha form, raised stats, current life and knock-out time. A team
+## member keeps its record while it is called back; the Creature node that fights is made from it and writes its
+## life back.
 
 var species_id: String
 var shiny: bool = false
@@ -12,6 +13,7 @@ var upgrades: Dictionary = {"life": 0, "power": 0, "speed": 0}
 var life: float = -1.0                  ## -1: full
 var ko_left: float = 0.0                ## seconds until it recovers from a knock-out (0: awake)
 var used_moves: Dictionary = {}         ## moves it has used with you (the first use shows the move's name)
+var alpha: bool = false                 ## a rare bigger wild one (tamer.json "alpha")
 var growth: CreatureGrowth
 
 
@@ -35,22 +37,26 @@ func element() -> String:
 
 
 func display_name() -> String:
-	return ("Shiny " if shiny else "") + growth.form_name()
+	return ("Shiny " if shiny else "") + ("Alpha " if alpha else "") + growth.form_name()
+
+
+func A() -> Dictionary:
+	return TamerData.rule("alpha")
 
 
 func max_life() -> float:
 	var base: float = float(data()["stats"]["life"]) * (1.0 + float(TamerData.rule("level.life")) * (level - 1))
 	base *= 1.0 + float(TamerData.rule("upgrades.life.per_level")) * int(upgrades["life"])
-	if wild:
-		base *= float(TamerData.rule("wild.life_mult"))
+	if alpha:
+		base *= float(A()["life"])
 	return roundf(base * growth.life_mult())
 
 
 func power() -> float:
 	var p: float = float(data()["stats"]["power"]) * (1.0 + float(TamerData.rule("level.power")) * (level - 1))
 	p *= 1.0 + float(TamerData.rule("upgrades.power.per_level")) * int(upgrades["power"])
-	if wild:
-		p *= float(TamerData.rule("wild.power_mult"))
+	if alpha:
+		p *= float(A()["power"])
 	return p * growth.power_mult()
 
 
@@ -58,8 +64,17 @@ func speed() -> float:
 	return float(data()["stats"]["speed"]) * (1.0 + float(TamerData.rule("upgrades.speed.per_level")) * int(upgrades["speed"]))
 
 
-func radius() -> float:
+func base_radius() -> float:
 	return float(data()["stats"]["radius"])
+
+
+func radius() -> float:
+	return base_radius() * body_scale()
+
+
+## How much bigger than its species it is drawn and built (evolved, alpha).
+func body_scale() -> float:
+	return growth.size_mult() * (float(A()["scale"]) if alpha else 1.0)
 
 
 func life_frac() -> float:

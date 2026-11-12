@@ -45,6 +45,10 @@ static func speed_mult(c: Creature) -> float:
 			k *= float(T()["shallow_speed"])
 		F.MUD:
 			k *= float(T()["mud_speed"])
+		F.BURNT:
+			k *= float(T()["burnt_speed"])
+		F.PIT:
+			k *= float(T()["pit_speed"])
 	return k
 
 
@@ -66,11 +70,16 @@ static func range_mult(c: Creature) -> float:
 	return k
 
 
-## Can `observer` see `c`? Tall grass (or a home that hides it) and fog hide it at range until it attacks.
+## Can `observer` see `c`? Smoke hides it; tall grass (or a home that hides it) and fog hide it at range until it
+## attacks.
 static func hidden_from(c: Creature, observer: Node2D) -> bool:
 	if c.effects.flag("hidden"):
 		return true
-	if c.reveal_t > 0.0 or arena() == null:
+	if arena() == null:
+		return false
+	if feature_at(c.global_position) == F.ASH:
+		return true                                        # smoke hides even someone who just attacked
+	if c.reveal_t > 0.0:
 		return false
 	var d: float = observer.global_position.distance_to(c.global_position)
 	if arena().fog != null and d > float(T()["fog_vision"]) and not arena().fog.cleared_at(c.global_position):
@@ -79,7 +88,8 @@ static func hidden_from(c: Creature, observer: Node2D) -> bool:
 	return in_cover and d > float(T()["grass_hide_range"])
 
 
-## Every frame in an arena: coals burn (except on an Ember creature at home), a Rot creature heals in its mud.
+## Every frame in an arena: fire burns whoever stands in it, the one who lit it too (except an Ember creature at
+## home in it); a Rot creature heals in its mud.
 static func tick(c: Creature, delta: float) -> void:
 	if arena() == null:
 		return
@@ -113,5 +123,4 @@ static func on_impact(at: Vector2, r: float, m: Dictionary, damage: float) -> vo
 	var a: Arena = arena()
 	if a == null:
 		return
-	a.affect(at, r, bool(m.get("burns", false)), bool(m.get("gale", false)), bool(m.get("echo", false)),
-		damage >= float(T()["heavy_hit"]))
+	a.affect(at, r, m, damage >= float(T()["heavy_hit"]))

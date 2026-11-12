@@ -39,6 +39,7 @@ var channel_id: String = ""             ## a status move being channelled
 var channel_t: float = 0.0
 var reveal_t: float = 0.0               ## just attacked: tall grass doesn't hide it
 var fainted_now: bool = false
+var size_k: float = 1.0                 ## drawn and built this many times its species' size (size_now)
 var _combo_i: int = 0
 var _combo_quiet: float = 0.0
 
@@ -57,11 +58,12 @@ func _ready() -> void:
 	motion_mode = CharacterBody2D.MOTION_MODE_FLOATING
 	var cs := CollisionShape2D.new()
 	var shape := CircleShape2D.new()
-	shape.radius = rec.radius()
+	size_k = size_now()
+	shape.radius = rec.base_radius() * size_k
 	cs.shape = shape
 	add_child(cs)
 	view = CreatureSprite.new().setup(rec)
-	view.scale = Vector2.ONE * rec.growth.size_mult()
+	view.scale = Vector2.ONE * size_k
 	add_child(view)
 	stagger = StaggerBar.new(self)
 	if rec.life < 0.0:
@@ -69,7 +71,19 @@ func _ready() -> void:
 
 
 func hit_radius() -> float:
-	return rec.radius()
+	return rec.base_radius() * size_k
+
+
+## How much further than its species it reaches, being bigger (bodies touch sooner).
+func extra_reach() -> float:
+	return hit_radius() - rec.base_radius()
+
+
+## How big it is drawn and built: its own size (evolved, alpha), and bigger in an arena so a fight reads clearly.
+func size_now() -> float:
+	var g: TamerGame = TamerGame.current
+	var in_arena: bool = g != null and g.area == "arena"
+	return rec.body_scale() * (float(TamerData.rule("arena_view.creature_scale")) if in_arena else 1.0)
 
 
 func element_id() -> String:
@@ -110,21 +124,22 @@ func is_basic_move(m: Dictionary) -> bool:
 	return m == TamerData.move(String(rec.data()["basic"]))
 
 
-## Uses move `id` toward `at` (gauge costs are paid by the caller). Your basic is a combo with no cooldown, only
-## the rhythm of its hits; other moves wind up, go off, then recover. Opponents pace themselves with cooldowns.
+## Uses move `id` toward `at` (gauge costs are paid by the caller). The same rules for every creature, yours or
+## not: the basic is a combo with only the rhythm of its hits; other moves wind up (with a warning on the ground),
+## go off, then recover, and a short lockout follows.
 func cast(id: String, at: Vector2, strength: float = 1.0) -> bool:
-	if not move_ready(id) or dazed:
+	if not move_ready(id) or (dazed and id != String(TamerData.rule("sync.struggle_move"))):
 		return false
 	var m: Dictionary = TamerData.move(id)
 	face(at)
 	reveal_t = float(TamerData.rule("terrain.reveal_time"))
 	effects.remove("hidden")
-	if is_basic(id) and side == SIDE_TEAM:
+	if is_basic(id):
 		_combo_step(id)
 		view.act()
 		MoveBook.cast(self, id, at, strength)
 		return true
-	cooldowns[id] = float(m["cooldown"]) if side != SIDE_TEAM else float(TamerData.rule("combat.lockout"))
+	cooldowns[id] = float(TamerData.rule("combat.lockout"))
 	_commit(id, m, at, strength)
 	_first_use(id, m)
 	return true
@@ -149,6 +164,7 @@ func _commit(id: String, m: Dictionary, at: Vector2, strength: float) -> void:
 		MoveBook.cast(self, id, at, strength)
 		return
 	view.windup(wind)
+	Telegraphs.show_for(self, m, at, wind)
 	get_tree().create_timer(wind, false).timeout.connect(func() -> void:
 		if alive() and stun_t <= 0.0:
 			view.act()
@@ -252,6 +268,7 @@ func receive_hit(dmg: float, dir: Vector2, knock_px: float, stun: float, attacke
 		set_dazed(true)
 
 
+
 ## Thorns, falls and burning ground: a share of its life, with a word.
 func take_terrain_damage(share: float, word: String) -> void:
 	rec.life -= rec.max_life() * share
@@ -298,8 +315,9 @@ func _physics_process(delta: float) -> void:
 	if dash_t > 0.0:
 		dash_t -= delta
 		want = dash_vel
-		if TerrainRules.feature_at(global_position) == ArenaLayout.F.ROOTS and dash_vel.length() > speed() * 2.0:
-			dash_t = 0.0                                   # tripped on the roots
+		var under_foot: int = TerrainRules.feature_at(global_position)
+		if (under_foot == ArenaLayout.F.ROOTS or under_foot == ArenaLayout.F.RUBBLE) and dash_vel.length() > speed() * 2.0:
+			dash_t = 0.0                                   # tripped on roots or rubble
 			TamerFx.word(global_position, "Tripped!", Pal.c("earth_lt"))
 	elif stun_t <= 0.0 and commit_t <= 0.0 and channel_id == "" and brain != null:
 		want = brain.think(delta)
@@ -347,7 +365,7 @@ func _separation() -> Vector2:
 		if o == self or o.fainted_now:
 			continue
 		var d: Vector2 = global_position - o.global_position
-		var min_d: float = (rec.radius() + o.rec.radius()) * PERSONAL_SPACE
+		var min_d: float = (hit_radius() + o.hit_radius()) * PERSONAL_SPACE
 		if d.length() < min_d and d.length() > 0.01:
 			push += d.normalized() * (1.0 - d.length() / min_d)
 	return push

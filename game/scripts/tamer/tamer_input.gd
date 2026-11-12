@@ -199,7 +199,7 @@ func _hover() -> void:
 		var cr := n as Creature
 		if cr.side == Combatant.SIDE_TEAM or cr.fainted_now:
 			continue
-		var d: float = c.distance_to(cr.global_position + Vector2(0, -cr.view.body_height() * 0.5))
+		var d: float = c.distance_to(cr.global_position + Vector2(0, -cr.view.body_height() * cr.size_k * 0.5))
 		if d < cr.hit_radius() + PICK_PAD and d < best:
 			best = d
 			hovered = cr

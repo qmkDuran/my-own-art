@@ -8,7 +8,6 @@ extends Node
 signal partner_changed(c: Creature)
 
 const ENTRY_SPOT := Vector2(26, 10)
-const AUTO_SWAP_DELAY: float = 0.8
 const SWAP_COOLDOWN_OUT: float = 0.5
 const RECALL_TIME: float = 0.25
 
@@ -68,19 +67,8 @@ func summon_at(i: int, at: Vector2, entry: bool) -> void:
 	Fx.burst(g.fx_layer, c.global_position + Vector2(0, -12), 22, Vector2(50, 160), 0.45, TamerData.sparks(rec.element()))
 	Fx.ring(g.fx_layer, c.global_position, 6.0, 46.0, TamerData.color(rec.element(), "light"), 0.3)
 	if entry:
-		_entry_attack(c)
+		CreatureCombat.entry(c)
 	partner_changed.emit(c)
-
-
-func _entry_attack(c: Creature) -> void:
-	var E: Dictionary = TamerData.rule("entry")
-	var m: Dictionary = {"name": "Entry", "type": "special", "damage": float(E["damage"]), "stun": float(E["stun"]), "knock": 14.0,
-		"stagger": float(TamerData.rule("combat.stagger.entry")) / float(E["damage"])}
-	TamerFx.blast(c.global_position, float(E["radius"]), c.element_id(), true)
-	TamerFx.word(c.global_position, "Go, %s!" % c.rec.display_name(), TamerData.color(c.element_id(), "light"), UiDraw.TITLE)
-	Audio.sfx("slam", -6.0, 1.1)
-	for f: Combatant in MoveKind.foes_in(c, c.global_position, float(E["radius"])):
-		CreatureCombat.hit(c, f, m, (f.global_position - c.global_position).normalized())
 
 
 func release_control() -> void:
@@ -101,6 +89,8 @@ func swap(i: int) -> bool:
 		g.hud.gauge_short(int(TamerData.rule("combat.gauge.swap_cost")))
 		return false
 	_swap_cd = float(TamerData.rule("combat.swap_cooldown")) if g.battle.on else SWAP_COOLDOWN_OUT
+	if partner != null and is_instance_valid(partner):
+		TrainerShout.swap(partner.rec.display_name(), g.team.members[i].display_name())
 	recall()
 	summon(i, g.battle.on)
 	return true
@@ -134,7 +124,7 @@ func _on_knocked_out(c: Creature) -> void:
 	partner = null
 	partner_changed.emit(null)
 	g.hud.notice("%s is knocked out!" % c.rec.data()["name"])
-	_auto_t = AUTO_SWAP_DELAY
+	_auto_t = float(TamerData.rule("combat.step_in_delay"))
 
 
 func _process(delta: float) -> void:

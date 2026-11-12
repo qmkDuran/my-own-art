@@ -6,7 +6,8 @@ extends Control
 
 const W: float = 470.0
 const HEAD: float = 30.0
-const ROW: float = 68.0
+const ROW: float = 84.0
+const BUTTONS_Y: float = 62.0
 const PORTRAIT: float = 46.0
 const PAD: float = 8.0
 const BTN := Vector2(46, 18)
@@ -55,8 +56,8 @@ func _rebuild() -> void:
 
 
 func _row_buttons(rec: CreatureRecord, at: Vector2) -> void:
-	_button("Info", at + Vector2(PORTRAIT + 8.0 + 2.0 * (BTN.x + 6.0), 46.0), BTN, func() -> void: g.hud.info_panel.open(rec))
-	_button("Moves", at + Vector2(PORTRAIT + 8.0, 46.0), BTN, func() -> void: g.hud.station.open_moves(rec))
+	_button("Info", at + Vector2(PORTRAIT + 8.0 + BTN.x + 6.0, BUTTONS_Y), BTN, func() -> void: g.hud.info_panel.open(rec))
+	_button("Moves", at + Vector2(PORTRAIT + 8.0, BUTTONS_Y), BTN, func() -> void: g.hud.station.open_moves(rec))
 	var stats: Array = ["life", "power", "speed"]
 	for k: int in stats.size():
 		var stat: String = stats[k]

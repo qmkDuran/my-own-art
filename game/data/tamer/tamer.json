@@ -38,8 +38,6 @@
   "outline": "gold"
  },
  "wild": {
-  "life_mult": 0.9,
-  "power_mult": 0.6,
   "wander": 80
  },
  "level": {
@@ -207,7 +205,7 @@
   "text": "Your team is worn out. You hurry back to camp, and they recover by the fire."
  },
  "combat": {
-  "_doc": "The gauge (physical hits fill it, specials spend it), the basic combo, stagger, swaps and channelling.",
+  "_doc": "The gauge (physical hits fill it, specials spend it), the basic combo, stagger, swaps and channelling. bonus_cap: element + terrain + buffs together add at most this much damage.",
   "gauge": {
    "segments": 3,
    "per_physical_hit": 0.18,
@@ -241,11 +239,17 @@
    "entry": 40.0,
    "wall_slam": 40.0
   },
-  "bolt_speed_mult": 0.75
+  "bolt_speed_mult": 0.75,
+  "bonus_cap": 0.4,
+  "step_in_delay": 0.8
  },
  "sync_to_team": 3,
  "sync": {
-  "hold": 1.2,
+  "_doc": "The Sync Lens in an arena: F on a weakened (dazed) wild creature starts a scan of `scan` seconds (faster with a better lens). The creature struggles (telegraphed lunges at your creature every `struggle_every` s); a hit on your creature breaks the scan, retry after `retry` s.",
+  "scan": 2.5,
+  "retry": 1.5,
+  "struggle_every": 1.1,
+  "struggle_move": "struggle_lunge",
   "range": 150,
   "lenses": {
    "basic": {
@@ -266,7 +270,7 @@
   }
  },
  "terrain": {
-  "_doc": "Arena features (ArenaLayout): slow multipliers, hiding, high ground, hazards.",
+  "_doc": "Arena features (ArenaLayout) and how they change. Destroying terrain changes the fight, never ends it: it costs a move, it transforms (grass burns -> ash and smoke -> burnt field -> regrows; rock -> rubble; bridge -> water; cracked floor -> pit), effects stay local, walls, ledges and deep water never break. states: how long each passing state lasts (s) and its sound.",
   "shallow_speed": 0.7,
   "mud_speed": 0.7,
   "mud_dodge": 0.6,
@@ -278,14 +282,46 @@
   "fall_stun": 0.6,
   "thorn_damage": 0.06,
   "coals_dps": 0.03,
-  "coals_time": 7.0,
   "fog_vision": 150,
   "fog_clear_time": 8.0,
   "heavy_hit": 15,
-  "wall_slam_knock": 16
+  "wall_slam_knock": 16,
+  "states": {
+   "coals": {
+    "time": 3.0,
+    "sound": "flare"
+   },
+   "ash": {
+    "time": 4.0,
+    "sound": "hiss"
+   },
+   "burnt": {
+    "time": 20.0,
+    "sound": "pickup"
+   },
+   "flat": {
+    "time": 20.0,
+    "sound": "pickup"
+   },
+   "rubble": {
+    "sound": "slam"
+   },
+   "pit": {
+    "sound": "crack"
+   },
+   "water": {
+    "sound": "crack"
+   }
+  },
+  "burnt_speed": 0.9,
+  "pit_speed": 0.8,
+  "pit_damage": 0.1,
+  "spread_every": 1.0,
+  "spread_chance": 0.35,
+  "spread_steps": 3
  },
  "ai_tiers": {
-  "_doc": "How smart the opposing creature (and trainer) plays. react: seconds before it responds; dodge: chance to dodge your wind-ups; lead: how well it leads shots (0 aims at you, 1 at where you'll be); cover: chance to step behind cover when hurt; grass: chance to hide in grass; swap_below: a trainer swaps out under this life; counter_swap: swaps into an element advantage; save_gauge: waits for a full gauge or a stagger to spend; status: chance to channel its status move; channel: how long it channels (share of max); tell_mult: its wind-ups are longer when easier; high_ground: chance to climb a ledge when you are at range.",
+  "_doc": "How well the opponent plays. Only DECISION-MAKING (equal footing: the same stats, moves, wind-ups, gauge and rules as yours). react: seconds before it responds; pace: seconds it waits between attacks; dodge: chance to dodge your wind-ups; lead: how well it leads shots (0 aims at you, 1 at where you'll be); cover: chance to step behind cover when hurt; grass: chance to hide in grass; high_ground: chance to climb a ledge when you are at range; swap_below: a trainer swaps out under this life; counter_swap: swaps into an element advantage; save_gauge: waits for a full gauge or a stagger to spend; status: chance to channel its status move; channel: how long it channels (share of max).",
   "easy": {
    "react": 0.7,
    "dodge": 0.0,
@@ -297,8 +333,8 @@
    "save_gauge": false,
    "status": 0.15,
    "channel": 0.4,
-   "tell_mult": 1.4,
-   "high_ground": 0.0
+   "high_ground": 0.0,
+   "pace": 1.4
   },
   "normal": {
    "react": 0.35,
@@ -311,8 +347,8 @@
    "save_gauge": false,
    "status": 0.3,
    "channel": 0.7,
-   "tell_mult": 1.0,
-   "high_ground": 0.2
+   "high_ground": 0.2,
+   "pace": 0.8
   },
   "hard": {
    "react": 0.15,
@@ -325,8 +361,8 @@
    "save_gauge": true,
    "status": 0.45,
    "channel": 1.0,
-   "tell_mult": 0.85,
-   "high_ground": 0.6
+   "high_ground": 0.6,
+   "pace": 0.45
   }
  },
  "progression": {
@@ -422,5 +458,43 @@
   "damage": 12,
   "radius": 70,
   "stun": 0.4
+ },
+ "trainer_shouts": {
+  "_doc": "Short lines from the trainer at the arena edge (flavour). gap: at most one every this many seconds.",
+  "gap": 3.0,
+  "staggered": [
+   "Now!",
+   "Go for it!"
+  ],
+  "low": [
+   "Hang in there!",
+   "You can do it!"
+  ],
+  "win": [
+   "We did it!"
+  ]
+ },
+ "arena_view": {
+  "_doc": "Creatures render (and their bodies are) `creature_scale` times bigger in arenas. The camera fits the arena plus `margin` px; `hud` px at the bottom stay clear for the cards.",
+  "creature_scale": 1.5,
+  "margin": [
+   70,
+   30
+  ],
+  "hud": 110
+ },
+ "alpha": {
+  "_doc": "Rare bigger wild creatures: drawn and built `scale` times bigger with a glow, more life and power, their signature move as an extra attack (`attack`: its tell), and better rewards (`rewards` x XP and materials). One waits on the route; the Gate Hall's switch can send one.",
+  "scale": 1.4,
+  "life": 2.2,
+  "power": 1.2,
+  "rewards": 2.0,
+  "attack": {
+   "windup": 0.75,
+   "opening": 1.0,
+   "reach": 220,
+   "min": 60
+  },
+  "route": 1
  }
 }

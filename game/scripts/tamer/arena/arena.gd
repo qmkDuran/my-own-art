@@ -1,11 +1,11 @@
 class_name Arena
 extends Node2D
-## One battle arena, built from data/tamer/arenas.json at `origin` (away from the route): a square walled ArenaLayout,
-## its view, a y-sorted stage for the creatures, and fog if it has any. The trainers watch from outside its left and
-## right walls. Moves change it through affect() and grow_vine().
+## One battle arena, built from data/tamer/arenas.json at `origin` (away from the route) in a size (medium or large:
+## the layout is scaled to fit): a square walled ArenaLayout, its view, a y-sorted stage for the creatures, and fog
+## if it has any. The trainers watch from outside its left and right walls. Moves change it through affect() and
+## grow_vine() (TerrainChange).
 
 const TRAINER_OUT: float = 26.0         ## how far outside the wall the trainers stand
-const ROCK_LIFE: float = 70.0
 
 var id: String
 var data: Dictionary
@@ -13,16 +13,21 @@ var layout: ArenaLayout
 var view: ArenaView
 var stage: Node2D
 var fog: ArenaFog
+var change: TerrainChange
+var _scale := Vector2.ONE               ## this size over the size the arena was drawn for
 
 
-func build(arena_id: String, at: Vector2) -> Arena:
+func build(arena_id: String, at: Vector2, size_id: String = "medium") -> Arena:
 	id = arena_id
 	data = TamerData.arenas["arenas"][arena_id]
 	var A: Dictionary = TamerData.arenas
-	layout = ArenaLayout.new().build(int(A["cols"]), int(A["rows"]), int(A["cell"]), at)
+	var sz: Array = A["sizes"][size_id]
+	_scale = Vector2(float(sz[0]) / float(A["cols"]), float(sz[1]) / float(A["rows"]))
+	layout = ArenaLayout.new().build(int(sz[0]), int(sz[1]), int(A["cell"]), at)
 	var life: Dictionary = data.get("life", {})
 	for p: Array in data["paint"]:
-		layout.paint(String(p[0]), p[1], float(life.get(String(p[0]), 0.0)))
+		layout.paint(String(p[0]), _scaled(p[1]), float(life.get(String(p[0]), 0.0)))
+	change = TerrainChange.new(self)
 	stage = Node2D.new()
 	stage.y_sort_enabled = true
 	view = ArenaView.new().setup(layout, String(data["style"]), stage)
@@ -34,6 +39,16 @@ func build(arena_id: String, at: Vector2) -> Arena:
 	return self
 
 
+## A painted rectangle [x, y, w, h] in this size's cells (features keep at least one cell).
+func _scaled(r: Array) -> Array:
+	return [roundi(float(r[0]) * _scale.x), roundi(float(r[1]) * _scale.y),
+		maxi(1, roundi(float(r[2]) * _scale.x)), maxi(1, roundi(float(r[3]) * _scale.y))]
+
+
+func _cell(spot: Array) -> Vector2i:
+	return Vector2i(roundi(float(spot[0]) * _scale.x), roundi(float(spot[1]) * _scale.y))
+
+
 func display_name() -> String:
 	return String(data["name"])
 
@@ -43,11 +58,11 @@ func center() -> Vector2:
 
 
 func you_spot() -> Vector2:
-	return layout.center_of(Vector2i(int(data["you"][0]), int(data["you"][1])))
+	return layout.center_of(_cell(data["you"]))
 
 
 func foe_spot() -> Vector2:
-	return layout.center_of(Vector2i(int(data["foe"][0]), int(data["foe"][1])))
+	return layout.center_of(_cell(data["foe"]))
 
 
 ## Your trainer stands just outside the left wall, the opposing trainer outside the right one.
@@ -56,9 +71,14 @@ func trainer_spot(yours: bool) -> Vector2:
 	return Vector2(r.position.x - TRAINER_OUT if yours else r.end.x + TRAINER_OUT, r.get_center().y + layout.cell)
 
 
-## A move hits the ground: Ember burns grass and vines into coals, Gale flattens grass and clears fog, Echo shatters
-## rocks, and heavy hits wear down rocks, bridges and cracked floor.
-func affect(at: Vector2, r: float, burns: bool, gale: bool, echo: bool, heavy: bool) -> void:
+func _process(delta: float) -> void:
+	if change.tick(delta):
+		view.refresh()
+
+
+## A move lands on the ground at `at` (radius `r`): a local patch changes by its element and weight (TerrainChange);
+## Gale also blows fog away and Echo shows who was hiding.
+func affect(at: Vector2, r: float, m: Dictionary, heavy: bool) -> void:
 	var changed: bool = false
 	var a: Vector2i = layout.cell_of(at - Vector2(r, r))
 	var b: Vector2i = layout.cell_of(at + Vector2(r, r))
@@ -66,57 +86,15 @@ func affect(at: Vector2, r: float, burns: bool, gale: bool, echo: bool, heavy: b
 		for x: int in range(a.x, b.x + 1):
 			var c := Vector2i(x, y)
 			if layout.inside(c) and layout.center_of(c).distance_to(at) <= r + layout.cell * 0.5:
-				changed = _affect_cell(c, burns, gale, echo, heavy) or changed
-	if gale and fog != null:
+				changed = change.apply(c, m, heavy) or changed
+	if bool(m.get("gale", false)) and fog != null:
 		fog.clear_around(at, r * 2.0)
-	if echo:
+	if bool(m.get("echo", false)):
 		for n: Node in get_tree().get_nodes_in_group("creatures"):
 			if (n as Creature).global_position.distance_to(at) < r * 2.0:
 				(n as Creature).reveal_t = float(TamerData.rule("terrain.reveal_time")) * 2.0
 	if changed:
 		view.refresh()
-
-
-func _affect_cell(c: Vector2i, burns: bool, gale: bool, echo: bool, heavy: bool) -> bool:
-	var f: int = layout.f(c)
-	var T: Dictionary = TamerData.rule("terrain")
-	if burns and (f == ArenaLayout.F.GRASS or f == ArenaLayout.F.VINE or f == ArenaLayout.F.FLAT):
-		layout.set_temporary(c, ArenaLayout.F.COALS, float(T["coals_time"]))
-		return true
-	if gale and f == ArenaLayout.F.GRASS:
-		layout.set_f(c, ArenaLayout.F.FLAT)
-		return true
-	if (heavy or echo) and [ArenaLayout.F.ROCK, ArenaLayout.F.BRIDGE, ArenaLayout.F.CRACKED, ArenaLayout.F.VINE].has(f):
-		return _wear(c, f, ROCK_LIFE if echo else float(T["heavy_hit"]))
-	return false
-
-
-## Breakable things lose life; at zero a rock is rubble, a bridge falls into the channel, a cracked floor caves in.
-func _wear(c: Vector2i, f: int, amount: float) -> bool:
-	var i: int = layout.idx(c)
-	layout.hp[i] -= amount
-	if layout.hp[i] > 0.0:
-		return false
-	var into: int = ArenaLayout.F.NONE
-	if f == ArenaLayout.F.BRIDGE or f == ArenaLayout.F.CRACKED:
-		into = ArenaLayout.F.DEEP
-	layout.timer[i] = 0.0
-	layout.set_f(c, into)
-	Fx.burst(TamerGame.current.fx_layer, layout.center_of(c), 16, Vector2(40, 140), 0.5, [Pal.c("stone_lt"), Pal.c("stone"), Pal.c("stone_dk", 0.0)], Vector2.UP)
-	Audio.sfx("crack", -6.0)
-	_drop_into(c, into)
-	return true
-
-
-## Whoever stood on a bridge or floor that gave way falls: damage, then out on the nearest solid ground.
-func _drop_into(c: Vector2i, into: int) -> void:
-	if into != ArenaLayout.F.DEEP:
-		return
-	for n: Node in get_tree().get_nodes_in_group("creatures"):
-		var cr := n as Creature
-		if layout.cell_of(cr.global_position) == c:
-			cr.take_terrain_damage(float(TamerData.rule("terrain.fall_damage")) * 2.0, "Fell in!")
-			cr.global_position = layout.free_spot_near(cr.global_position, cr.hit_radius())
 
 
 func grow_vine(at: Vector2, seconds: float, life: float) -> void:

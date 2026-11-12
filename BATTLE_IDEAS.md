@@ -4,6 +4,54 @@ A menu to pick from. Everything has a counter, and every buff has a cost.
 
 ---
 
+## Design rules (agreed with the user; every change is checked against these)
+**Keep it simple**
+- No overheat, weather or mid-fight arena events for now (later, if the core holds up).
+- Each creature has at most 1 status move.
+- At most 1 active buff and 1 active debuff per creature: a new one replaces the old one of its kind.
+- Each arena has ONE main terrain mechanic; the others are secondary.
+- Only grass regrows (about 20 s after it burns or is flattened).
+
+**Terrain: destroying it changes the fight, never ends it**
+- Destroying terrain costs a move (gauge or time); nothing breaks on its own.
+- Destroyed terrain transforms: grass burns, then lies as ash and smoke (hides whoever is in it, about 4 s), then
+  a burnt field (a slight slow), then regrows. A rock becomes rubble (trips a dash). A bridge breaks and drops
+  anyone on it into the water. A cracked floor caves into a pit (damage).
+- Burning spreads slowly through grass and hurts anyone inside, the one who lit it too (unless it is their home).
+- Effects stay local (a patch, never the whole arena). Walls, ledges and deep water never break.
+- Bloom regrows grass (and grows vines).
+
+**Readability: one visual language**
+- Buff: a gold ring with rising arrows at the feet. Debuff: a purple ring with sinking arrows.
+- Channelling: a circle filling at the feet.
+- Every terrain state looks distinct (flames, ash and smoke, black burnt ground, rubble, cracks, a pit) and has its
+  own sound.
+- Creatures render (and their bodies are) 1.5x bigger in arenas; status icons with timers stay, larger.
+- Total damage bonus from element + terrain + buffs is capped at +40%.
+
+**Equal footing**
+- Your creatures and AI creatures follow exactly the same rules: the same stat formulas, gauge, move costs,
+  wind-ups, lockouts, swap cost and cooldown, entry strike, buff limits, bonus cap and home-terrain bonuses. No
+  items in battle for either side.
+- The AI difficulty tiers change only DECISION-MAKING (how fast it reacts, how often it attacks, whether it dodges,
+  leads, takes cover, saves gauge, swaps). Never stats, never hidden bonuses.
+- Visible variants of a species (an alpha, an evolved form) are part of the species, not a hidden edge.
+
+**The trainer, catching**
+- The trainer at the arena edge calls the swaps ("Come back, X! Go, Y!"), uses the Sync Lens, and shouts on big
+  moments (flavour only).
+- Catching: weaken it until gold stars show, press F, the lens beam locks on and a 2.5 s scan runs (faster with a
+  better lens). The creature struggles with telegraphed lunges; a hit on your creature breaks the scan (the stars
+  stay; retry after a moment). Success syncs it and ends the battle.
+
+**Arenas**
+- Two sizes (medium, large) picked in the Gate Hall; the camera fits each with a margin; creatures stay 1.5x.
+
+**Parked**
+- Bond, as a NON-COMBAT system for later (ideas: field abilities, finding secrets, personality, cosmetics, bond
+  events). It never gives a combat advantage. Not in the demo.
+- Overheat, weather, mid-fight arena events.
+
 ## 1. Combat feel (the foundation)
 - **Pace:** slower and methodical. Moderate movement speed, readable projectile speed.
 - **Reference game: Battlerite** (and its predecessor Bloodline Champions). Top-down arena fights of 1v1 up to 3v3, where almost every ability is a **skillshot**: you aim it, it travels, and it can miss. Win by **predicting** where the enemy will be, **timing**, **dodging**, and **baiting**. The closest existing game to what you described.
@@ -49,8 +97,8 @@ A menu to pick from. Everything has a counter, and every buff has a cost.
 - **Rewards from battles:** XP (plus materials, and the chance to catch wild ones).
 - **Levelling up:** stats grow, and **new moves unlock over time.** You don't get the good stuff right away.
 - **Choosing moves:** each creature keeps **4 active moves** chosen from everything it has learned, swappable at camp.
-- **Evolution:** at certain levels (or bond). It's a big moment, with a stronger form and new moves.
-- **Strong moves come late:** the strongest moves and the bond move only unlock at high levels or high bond.
+- **Evolution:** at certain levels. It's a big moment, with a stronger form and new moves.
+- **Strong moves come late:** the strongest moves (signature moves) only unlock at high levels, the same for everyone.
 
 ## 1f. Catching, shinies and the wider game
 - **Sync Lens upgrades:** better lenses scan faster, work on stronger creatures, and some species can only be synced with a specific lens (a deep-water lens, a night lens). Early lenses can only catch common or weakened creatures.
@@ -82,7 +130,6 @@ A menu to pick from. Everything has a counter, and every buff has a cost.
 | **Taunt** | forces the enemy to target you | you take more damage while taunting |
 | **Burrow / Dig** | underground and untouchable, pops up with an attack | can't see; the exit point is telegraphed |
 | **Take flight** | over hazards and grass, hard to hit with melee | ranged hits do double damage while airborne |
-| **Bond surge** | huge stats briefly | the creature is exhausted for the rest of the battle |
 | **Element infusion** | your moves take on an extra element | you also take on that element's weaknesses |
 
 ## 3b. Home terrain: every creature has one
@@ -151,7 +198,7 @@ A menu to pick from. Everything has a counter, and every buff has a cost.
 - **Rot:** decays wood (bridges, logs, vines); leaves spore patches.
 - **Shade:** creates patches of darkness to hide in; snuffs light sources.
 
-## 6. Weather and time of day (per arena)
+## 6. Weather and time of day (per arena) (later: not in the demo, see the design rules)
 - **Rain:** Tide up, Ember down, puddles form over time.
 - **Heatwave:** Ember up, Tide down, grass dries (burns faster).
 - **Wind:** Gale up, projectiles drift.
@@ -160,7 +207,7 @@ A menu to pick from. Everything has a counter, and every buff has a cost.
 - **Spore season:** Rot up, random spore clouds.
 - **Storm:** random lightning strikes (telegraphed) on high ground.
 
-## 7. Arena events mid-fight
+## 7. Arena events mid-fight (later: not in the demo, see the design rules)
 - The tide rises and the low ground floods.
 - The floor collapses and everyone drops to the underground level.
 - The canopy branch snaps and the upper level breaks.

@@ -43,8 +43,8 @@ func setup(rec: CreatureRecord) -> CreatureSprite:
 	_fps = float(rec.data().get("anim_fps", 8))
 	hover = float(rec.data().get("hover", 0.0))
 	var frame := Vector2(float(meta["frame"][0]), float(meta["frame"][1]))
-	add_child(PropSprite.shadow(rec.radius() * 2.6))
-	ring = _make_ring(rec.radius())
+	add_child(PropSprite.shadow(rec.base_radius() * 2.6))
+	ring = _make_ring(rec.base_radius())
 	sprite = Sprite2D.new()
 	sprite.texture = PropSprite.tex("res://art/creatures/%s%s.png" % [rec.species_id, "_shiny" if rec.shiny else ""])
 	sprite.hframes = COLS

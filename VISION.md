@@ -10,7 +10,7 @@
 - **Elements still exist** for matchups (fire, glass, storm, and so on), but you don't specialise in one.
 
 ## Pillars (every decision gets checked against these)
-1. **Bond first.** You should love your team. They have personality, react to the world, grow with you, and remember your history together.
+1. **Your team first.** You should love your team. They have personality, react to the world, grow with you, and remember your history together (bond as a system is parked; it would never be a combat edge).
 2. **Cool attacks.** Creature moves are flashy, glowing and powerful. Combat feels weighty and fast.
 3. **Lots of creatures.** A big roster to discover across the world, with cute-to-cool evolution lines.
 4. **Be the very best with your team.** You hone the creatures you have into masters.
@@ -22,13 +22,13 @@
 - **Your partner is always out:** walking beside you, resting with you, fighting at your side.
 - **The team:** up to 6 creatures. One partner fights at a time, and you swap in others instantly.
 - **Combat:** exploring as the trainer, battles as your creature in a separate arena (see below). Elements matter, so swapping to the right creature for the fight is part of the skill.
-- **Catching (syncing):** weaken or stagger a wild creature in battle and the trainer syncs it with the Sync Lens. The basic lens only syncs weakened common creatures; upgraded lenses are faster and work on rarer ones.
+- **Catching (syncing):** weaken a wild creature in battle until gold stars show and the trainer syncs it with the Sync Lens (it struggles while scanned). The basic lens only syncs weakened common creatures; upgraded lenses are faster and work on rarer ones.
 - **Gentle defeat:** a knocked-out creature recovers after a while or at a rest point. If your whole team is knocked out, the screen fades and you retreat to the last rest point, where they recover (a small material cost at most). Nothing is lost permanently (except in the opt-in hardcore modes).
 
 ## Starters
 - **Choose 1 of 3 at the start,** each with a clear role: a brave close-range fighter, a quick ranged trickster, a sturdy protector.
 - **It's a meeting, not a menu.** Three young creatures react to how you act in the opening, and then you choose.
-- **Your starter is special:** it's always your partner, gets unique story moments, has the highest bond potential, and gets one of the most impressive final evolutions.
+- **Your starter is special:** it's always your partner, gets unique story moments, and gets one of the most impressive final evolutions.
 - **The other two aren't lost.** They appear rarely later, and in the endgame.
 
 ## Elements (8, each strong against 2 and weak against 2)
@@ -56,17 +56,9 @@ Nothing is ever resisted, so no creature is ever useless in a matchup, only bett
 - **Rot:** Tasmanian devil, marabou stork, matamata turtle
 - **Shade:** thylacine, fossa, binturong
 
-## Bond
-*(Long-term. Not in the current combat demo: its bond meter and bond moves were taken out to keep the test about combat; each creature's signature move now unlocks at level 25.)*
-- **How it grows:** fighting together, winning hard fights, exploring, resting at camp, feeding and playing.
-- **High bond unlocks:**
-  - holding on through a knockout hit for you
-  - stronger attacks and a signature bond move
-  - more personality (celebrating, protecting you when you're low, nudging you toward secrets)
-- **Natures** (brave, shy, proud, playful, lazy) colour each creature's behaviour. A proud one may not obey perfectly until the bond grows. It should be charming, never frustrating.
-- **Camp:** at rest points you sit with your team, feed them, play with them and watch them interact.
-- **Memory:** milestones and history ("together for 100 battles", first evolution, favourite food).
-- **Story:** your team is part of story moments, and some quests are about them.
+## Bond (parked)
+Parked for now (see the design rules). Later it can come back as a non-combat system: field abilities, finding
+secrets, personality, cosmetics, bond events. It never gives a combat advantage.
 
 ## Battles (the current model; BATTLE_IDEAS.md has the wider idea list)
 Battles are meant to be **fun and fair**: readable, skill-based, no surprises you could not see coming.
@@ -105,18 +97,66 @@ Battles are meant to be **fun and fair**: readable, skill-based, no surprises yo
 - **Wild battles** reward XP, materials and the chance to sync. **Trainer battles** are 3v3, one creature at a time,
   and the trainer swaps smartly.
 
+## Design rules (agreed with the user; every change is checked against these)
+**Keep it simple**
+- No overheat, weather or mid-fight arena events for now (later, if the core holds up).
+- Each creature has at most 1 status move.
+- At most 1 active buff and 1 active debuff per creature: a new one replaces the old one of its kind.
+- Each arena has ONE main terrain mechanic; the others are secondary.
+- Only grass regrows (about 20 s after it burns or is flattened).
+
+**Terrain: destroying it changes the fight, never ends it**
+- Destroying terrain costs a move (gauge or time); nothing breaks on its own.
+- Destroyed terrain transforms: grass burns, then lies as ash and smoke (hides whoever is in it, about 4 s), then
+  a burnt field (a slight slow), then regrows. A rock becomes rubble (trips a dash). A bridge breaks and drops
+  anyone on it into the water. A cracked floor caves into a pit (damage).
+- Burning spreads slowly through grass and hurts anyone inside, the one who lit it too (unless it is their home).
+- Effects stay local (a patch, never the whole arena). Walls, ledges and deep water never break.
+- Bloom regrows grass (and grows vines).
+
+**Readability: one visual language**
+- Buff: a gold ring with rising arrows at the feet. Debuff: a purple ring with sinking arrows.
+- Channelling: a circle filling at the feet.
+- Every terrain state looks distinct (flames, ash and smoke, black burnt ground, rubble, cracks, a pit) and has its
+  own sound.
+- Creatures render (and their bodies are) 1.5x bigger in arenas; status icons with timers stay, larger.
+- Total damage bonus from element + terrain + buffs is capped at +40%.
+
+**Equal footing**
+- Your creatures and AI creatures follow exactly the same rules: the same stat formulas, gauge, move costs,
+  wind-ups, lockouts, swap cost and cooldown, entry strike, buff limits, bonus cap and home-terrain bonuses. No
+  items in battle for either side.
+- The AI difficulty tiers change only DECISION-MAKING (how fast it reacts, how often it attacks, whether it dodges,
+  leads, takes cover, saves gauge, swaps). Never stats, never hidden bonuses.
+- Visible variants of a species (an alpha, an evolved form) are part of the species, not a hidden edge.
+
+**The trainer, catching**
+- The trainer at the arena edge calls the swaps ("Come back, X! Go, Y!"), uses the Sync Lens, and shouts on big
+  moments (flavour only).
+- Catching: weaken it until gold stars show, press F, the lens beam locks on and a 2.5 s scan runs (faster with a
+  better lens). The creature struggles with telegraphed lunges; a hit on your creature breaks the scan (the stars
+  stay; retry after a moment). Success syncs it and ends the battle.
+
+**Arenas**
+- Two sizes (medium, large) picked in the Gate Hall; the camera fits each with a margin; creatures stay 1.5x.
+
+**Parked**
+- Bond, as a NON-COMBAT system for later (ideas: field abilities, finding secrets, personality, cosmetics, bond
+  events). It never gives a combat advantage. Not in the demo.
+- Overheat, weather, mid-fight arena events.
+
 ## Honing your creatures (no element path)
 - **Your build is how deeply you've raised the creatures you have,** not a chosen element. "Being the very best" means mastering your own team.
 - **Each creature has its own growth:**
   - its own small skill tree
   - stats raised with materials
   - move choices (pick 4 from the ones it has learned; moves unlock by level)
-  - evolutions, and bond-unlocked moves and traits
+  - evolutions
 - **Mastery comes from using a creature:** the more battles it fights with you, the more it unlocks. Long-time partners become specialists.
 - **Any creature you love can be raised to the top.** No creature is a dead end.
 
 ## Progression and rewards
-- **The rewards** are new creatures, materials, evolutions, bond and shinies. **Gear is not the focus:** at most a few simple trainer items.
+- **The rewards** are new creatures, materials, evolutions and shinies. **Gear is not the focus:** at most a few simple trainer items.
 - **Materials:**
   - **Each zone has its own materials,** so you farm where your favourites' materials come from.
   - **Uses:** raising stats, unlocking moves, pushing evolutions and enhancing shinies.
@@ -135,7 +175,7 @@ Battles are meant to be **fun and fair**: readable, skill-based, no surprises yo
 - Challenge maps that get harder and harder, with modifiers you choose.
 - More danger means better rewards: higher shiny odds, rare materials, and endgame-only creatures and forms.
 - Pinnacle bosses that test your whole team.
-- The best creature in the game is **one you raised**, pushed to its apex through bond and materials.
+- The best creature in the game is **one you raised**, pushed to its apex through levels and materials.
 - **Opt-in challenges:**
   - Hardcore (one life)
   - Trainer Challenge mode (only the first creature per zone; a fallen creature is gone for good)
