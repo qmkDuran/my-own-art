@@ -1,15 +1,118 @@
 {
- "_doc": "The eight elements and their matchups (VISION.md). An attack whose element is strong against the target's element deals super_mult; one whose element is weak against it (the target's element is strong against it) deals resist_mult. Colours are palette names: core (bright, additive), light (highlight), dark (shade).",
- "super_mult": 1.6,
- "resist_mult": 0.6,
+ "_doc": "The eight elements. Advantage only (VISION.md): an attack whose element is strong against the target's hits x advantage_mult and shows \"Strong hit!\". There are no weaknesses and no resisted hits: `weak` lists only who has the advantage over this element, for reference. Colours are palette names: core (bright, additive), light (highlight), dark (shade).",
  "elements": {
-  "ember": {"name": "Ember", "core": "flame", "light": "gold", "dark": "ember", "strong": ["glass", "rot"], "weak": ["tide", "gale"]},
-  "tide": {"name": "Tide", "core": "sea", "light": "sea_lt", "dark": "sea_dk", "strong": ["ember", "echo"], "weak": ["bloom", "shade"]},
-  "bloom": {"name": "Bloom", "core": "leaf", "light": "leaf_lt", "dark": "leaf_dk", "strong": ["tide", "gale"], "weak": ["rot", "shade"]},
-  "rot": {"name": "Rot", "core": "bile", "light": "bile", "dark": "bile_dk", "strong": ["bloom", "echo"], "weak": ["ember", "gale"]},
-  "gale": {"name": "Gale", "core": "pale", "light": "bone", "dark": "mist", "strong": ["ember", "rot"], "weak": ["bloom", "glass"]},
-  "glass": {"name": "Glass", "core": "glass_lt", "light": "glint", "dark": "glass", "strong": ["shade", "gale"], "weak": ["ember", "echo"]},
-  "echo": {"name": "Echo", "core": "violet_lt", "light": "pale", "dark": "violet", "strong": ["glass", "shade"], "weak": ["tide", "rot"]},
-  "shade": {"name": "Shade", "core": "dusk3", "light": "violet_lt", "dark": "night", "strong": ["bloom", "tide"], "weak": ["glass", "echo"]}
- }
+  "ember": {
+   "name": "Ember",
+   "core": "flame",
+   "light": "gold",
+   "dark": "ember",
+   "strong": [
+    "glass",
+    "rot"
+   ],
+   "weak": [
+    "tide",
+    "gale"
+   ]
+  },
+  "tide": {
+   "name": "Tide",
+   "core": "sea",
+   "light": "sea_lt",
+   "dark": "sea_dk",
+   "strong": [
+    "ember",
+    "echo"
+   ],
+   "weak": [
+    "bloom",
+    "shade"
+   ]
+  },
+  "bloom": {
+   "name": "Bloom",
+   "core": "leaf",
+   "light": "leaf_lt",
+   "dark": "leaf_dk",
+   "strong": [
+    "tide",
+    "gale"
+   ],
+   "weak": [
+    "rot",
+    "shade"
+   ]
+  },
+  "rot": {
+   "name": "Rot",
+   "core": "bile",
+   "light": "bile",
+   "dark": "bile_dk",
+   "strong": [
+    "bloom",
+    "echo"
+   ],
+   "weak": [
+    "ember",
+    "gale"
+   ]
+  },
+  "gale": {
+   "name": "Gale",
+   "core": "pale",
+   "light": "bone",
+   "dark": "mist",
+   "strong": [
+    "ember",
+    "rot"
+   ],
+   "weak": [
+    "bloom",
+    "glass"
+   ]
+  },
+  "glass": {
+   "name": "Glass",
+   "core": "glass_lt",
+   "light": "glint",
+   "dark": "glass",
+   "strong": [
+    "shade",
+    "gale"
+   ],
+   "weak": [
+    "ember",
+    "echo"
+   ]
+  },
+  "echo": {
+   "name": "Echo",
+   "core": "violet_lt",
+   "light": "pale",
+   "dark": "violet",
+   "strong": [
+    "glass",
+    "shade"
+   ],
+   "weak": [
+    "tide",
+    "rot"
+   ]
+  },
+  "shade": {
+   "name": "Shade",
+   "core": "dusk3",
+   "light": "violet_lt",
+   "dark": "night",
+   "strong": [
+    "bloom",
+    "tide"
+   ],
+   "weak": [
+    "glass",
+    "echo"
+   ]
+  }
+ },
+ "advantage_mult": 1.3
 }

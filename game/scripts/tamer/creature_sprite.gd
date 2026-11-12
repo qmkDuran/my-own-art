@@ -2,7 +2,8 @@ class_name CreatureSprite
 extends Node2D
 ## How a creature looks and moves: its sheet (normal or shiny) with the emissive layer, a ground shadow, idle and
 ## gait frames with a squash-and-bob, an attack pose, the hit flash, the gold outline and ground ring while you
-## steer it, a shiny's sparkle, dazed stars when it can be befriended, and fading out when it faints.
+## steer it, a shiny's sparkle, dazed stars when it can be synced, see-through while hidden, and fading out when
+## it faints.
 
 const ROWS: Dictionary = {"idle": 0, "move": 1, "act": 2}
 const COLS: int = 4
@@ -16,6 +17,9 @@ const RING_PULSE: float = 5.0
 const SPARKLE_EVERY: float = 0.35
 const STAR_COUNT: int = 3
 const STAR_ORBIT := Vector2(13.0, 4.0)
+const VEIL_OWN: float = 0.45           ## your hidden creature: still clear to you
+const VEIL_FOE: float = 0.1            ## a hidden foe: a faint shimmer, so a hidden foe is never quite unfair
+const VEIL_RATE: float = 4.0
 
 var sprite: Sprite2D
 var ring: Sprite2D                      ## under the one you steer
@@ -85,6 +89,12 @@ func set_highlight(on: bool) -> void:
 
 func set_dazed(on: bool) -> void:
 	stars.visible = on
+
+
+## Hidden (tall grass, fog, camouflage): yours turns see-through, a foe all but disappears.
+func veil(hidden: bool, own: bool, delta: float) -> void:
+	var to: float = (VEIL_OWN if own else VEIL_FOE) if hidden else 1.0
+	sprite.modulate.a = move_toward(sprite.modulate.a, to, VEIL_RATE * delta)
 
 
 ## Rears back before a wild attack: a squat and a red glow that build up over `time`.

@@ -1,8 +1,8 @@
 class_name Trainer
 extends Node2D
 ## You, the trainer. You are never hurt (as in the shows): wild creatures ignore you. You walk where you left-click
-## (grid path), roll (Space) to reposition, sync creatures with the Sync Lens, use items and call swaps. In battle
-## you keep back on your own (BattleMode). Not a Combatant: nothing can target you.
+## (grid path), roll (Space) to reposition, sync creatures with the Sync Lens and use items. In a battle you watch
+## from outside the arena wall. Not a Combatant: nothing can target you.
 
 const TEAM_LAYER: int = 4
 const FPS: float = 8.0
@@ -11,7 +11,6 @@ const MOVING: float = 10.0
 const ROLL_SPIN: float = TAU
 
 var heading: Vector2 = Vector2.DOWN     ## last walking direction (the partner walks behind it)
-var attack_target: Combatant            ## a foe your creature should go for on its own (Mark)
 var sprite: Sprite2D
 var body: CharacterBody2D
 var T: Dictionary

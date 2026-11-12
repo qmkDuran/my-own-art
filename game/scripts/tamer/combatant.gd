@@ -80,10 +80,5 @@ func steer_to(goal: Vector2, delta: float) -> Vector2:
 	return (_path[0] - global_position).normalized()
 
 
-func clear_path() -> void:
-	_path.clear()
-	_path_goal = Vector2.INF
-
-
 func untouchable() -> bool:
 	return iframe_t > 0.0 or not alive()

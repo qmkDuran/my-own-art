@@ -1,10 +1,8 @@
 class_name TamerSpawner
 extends Node
-## Wild creatures: packs spread over open ground away from the meadow start and the camp (tougher kinds and levels
-## further out, tamer.json "spawn"), a shiny roll per creature (1 in 64; F1 spawns one for testing), material drops
-## when one faints, and fresh packs when you rest at camp.
-
-signal defeated(c: Creature)
+## Wild creatures on the route: one per patch of tall grass, spread over open ground away from the start and the
+## camp (tougher kinds and levels further out, tamer.json "spawn"), a shiny roll each (1 in 4096; F1 spawns one for
+## testing), and fresh ones when you rest at camp.
 
 const T := ZoneLayout.T
 const MEMBER_SPREAD := Vector2(60, 44)
@@ -20,7 +18,7 @@ var rng := RandomNumberGenerator.new()
 
 func setup(game: TamerGame) -> void:
 	g = game
-	rng.seed = g.layout.seed + SEED_OFFSET
+	rng.seed = g.route_layout.seed + SEED_OFFSET
 	_place_packs()
 
 
@@ -29,12 +27,12 @@ func _place_packs() -> void:
 	var camp: Vector2 = g.camp_point()
 	var cand: Array[Vector2i] = []
 	var far: float = 1.0
-	for y: int in g.layout.rows:
-		for x: int in g.layout.cols:
+	for y: int in g.route_layout.rows:
+		for x: int in g.route_layout.cols:
 			var c := Vector2i(x, y)
 			if _cell_ok(c, S, camp):
 				cand.append(c)
-				far = maxf(far, g.layout.center_of(c).distance_to(g.layout.start))
+				far = maxf(far, g.route_layout.center_of(c).distance_to(g.route_layout.start))
 	for i: int in range(cand.size() - 1, 0, -1):
 		var j: int = rng.randi_range(0, i)
 		var tmp: Vector2i = cand[i]
@@ -43,10 +41,10 @@ func _place_packs() -> void:
 	for c: Vector2i in cand:
 		if packs.size() >= int(S["packs"]):
 			break
-		var pos: Vector2 = g.layout.center_of(c)
-		if packs.any(func(p: Dictionary) -> bool: return (p["pos"] as Vector2).distance_to(pos) < float(S["spacing"]) * g.layout.cell):
+		var pos: Vector2 = g.route_layout.center_of(c)
+		if packs.any(func(p: Dictionary) -> bool: return (p["pos"] as Vector2).distance_to(pos) < float(S["spacing"]) * g.route_layout.cell):
 			continue
-		packs.append({"pos": pos, "progress": pos.distance_to(g.layout.start) / far})
+		packs.append({"pos": pos, "progress": pos.distance_to(g.route_layout.start) / far})
 		_grass(pos)
 
 
@@ -54,17 +52,17 @@ func _place_packs() -> void:
 func _grass(center: Vector2) -> void:
 	for k: int in GRASS_TUFTS:
 		var at: Vector2 = center + Vector2(rng.randf_range(-GRASS_SPREAD.x, GRASS_SPREAD.x), rng.randf_range(-GRASS_SPREAD.y, GRASS_SPREAD.y))
-		if not g.layout.point_free(at, 4.0):
+		if not g.route_layout.point_free(at, 4.0):
 			continue
 		var s: Sprite2D = PropSprite.make("tall_grass", k % 3)
 		s.position = at.round()
 		s.flip_h = rng.randf() < 0.5
 		s.modulate = ZoneView.prop_tint()
-		g.world.add_child(s)
+		g.route_root.add_child(s)
 
 
 func _cell_ok(c: Vector2i, S: Dictionary, camp: Vector2) -> bool:
-	var z: ZoneLayout = g.layout
+	var z: ZoneLayout = g.route_layout
 	if not (z.t(c) == T.MOSS or z.t(c) == T.PATH) or not z.walkable(c):
 		return false
 	var p: Vector2 = z.center_of(c)
@@ -96,13 +94,13 @@ func _spawn_pack(i: int) -> void:
 	for k: int in rng.randi_range(int(size[0]), int(size[1])):
 		var at: Vector2 = _member_spot(packs[i]["pos"])
 		if at != Vector2.INF:
-			spawn(kind, at, int(row["level"]), i)
+			spawn(kind, at, int(row["level"]))
 
 
 func _member_spot(center: Vector2) -> Vector2:
 	for k: int in MEMBER_TRIES:
 		var p: Vector2 = center + Vector2(rng.randf_range(-MEMBER_SPREAD.x, MEMBER_SPREAD.x), rng.randf_range(-MEMBER_SPREAD.y, MEMBER_SPREAD.y))
-		if g.layout.point_free(p, 14.0):
+		if g.route_layout.point_free(p, 14.0):
 			return p.round()
 	return Vector2.INF
 
@@ -123,36 +121,29 @@ func _shiny_roll(kind: String) -> bool:
 	return rng.randf() < float(TamerData.species(kind)["shiny_chance"])
 
 
-func spawn(kind: String, at: Vector2, level: int, pack: int = -1, shiny: int = -1) -> Creature:
+## A wild creature on the route, roaming by its temperament (RouteBrain). Walking into it starts a battle.
+func spawn(kind: String, at: Vector2, level: int, shiny: int = -1) -> Creature:
 	var rec := CreatureRecord.make(kind, level, true, _shiny_roll(kind) if shiny < 0 else shiny == 1)
 	var c := Creature.new().setup(rec, Combatant.SIDE_WILD)
 	c.position = at
-	var brain := WildBrain.new(c)
-	brain.home = at
-	brain.pack = pack
-	c.brain = brain
-	c.struck.connect(func(cr: Creature, by: Combatant) -> void:
-		if cr.brain is WildBrain:
-			(cr.brain as WildBrain).wake(by))
-	c.fainted.connect(_on_fainted)
-	g.world.add_child(c)
+	c.brain = RouteBrain.new(c, at)
+	g.route_root.add_child(c)
 	CreatureTag.attach(c)
 	if rec.shiny:
 		Audio.sfx("lamp_lit", -6.0, 1.6)
 	return c
 
 
-## F1 (dev): a shiny of the showcase species right next to you.
+## F1 (dev) on the route: a shiny of the showcase species right next to you.
 func spawn_shiny_near(at: Vector2) -> Creature:
-	var kind: String = String(TamerData.rule("spawn.guarantee_shiny"))
-	var c: Creature = spawn(kind, g.layout.free_spot_near(at + Vector2(140, 0), 14.0), 1, -1, 1)
+	var kind: String = String(TamerData.rule("spawn.showcase_shiny"))
+	var c: Creature = spawn(kind, g.route_layout.free_spot_near(at + Vector2(140, 0), 14.0), 5, 1)
 	g.hud.notice("Dev: a shiny %s appeared" % TamerData.species(kind)["name"])
 	return c
 
 
-func _on_fainted(c: Creature) -> void:
-	var D: Dictionary = TamerData.rule("drops")
-	if rng.randf() < float(D["chance"]):
-		var n: int = rng.randi_range(int(D["count"][0]), int(D["count"][1]))
-		MaterialPickup.drop(g, c.global_position, String(c.rec.data()["material"]), n)
-	defeated.emit(c)
+## No wild creature right where a rival stands.
+func clear_near(at: Vector2, r: float) -> void:
+	for n: Node in get_tree().get_nodes_in_group(Combatant.SIDE_WILD):
+		if (n as Node2D).global_position.distance_to(at) < r:
+			n.queue_free()

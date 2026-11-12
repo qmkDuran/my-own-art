@@ -5,7 +5,7 @@ extends MoveKind
 const MUZZLE: float = 12.0
 
 
-func cast(user: Creature, m: Dictionary, at: Vector2) -> void:
+func cast(user: Creature, m: Dictionary, at: Vector2, _strength: float = 1.0) -> void:
 	var dir: Vector2 = dir_to(user, at)
 	var n: int = int(m.get("count", 1))
 	var spread: float = deg_to_rad(float(m.get("spread", 0.0)))

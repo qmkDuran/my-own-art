@@ -1,12 +1,14 @@
 class_name CreatureBolt
 extends Node2D
 ## A creature's projectile: a glowing orb in its element's colours with a white core and a tapering trail. It hits
-## each foe once (stops at the first unless it pierces) and bursts against blocked ground or at the end of its range.
+## each foe once (stops at the first unless it pierces) and bursts against cover, blocked ground or at the end of its
+## range (it never homes: lead your shots). Where it bursts, it can change the ground (TerrainRules).
 
 const HEIGHT: float = 12.0
 const HIT_PAD: float = 5.0
 const TRAIL_POINTS: int = 8
 const ORB_PX: float = 9.0
+const POP_RADIUS: float = 20.0
 
 var user: Creature
 var m: Dictionary
@@ -16,6 +18,7 @@ var _travel: float = 0.0
 var _hit: Array[Combatant] = []
 var _trail: Line2D
 var _size: float = 1.0
+var _range: float = 0.0
 
 
 static func fire(by: Creature, move: Dictionary, from: Vector2, toward: Vector2) -> CreatureBolt:
@@ -25,6 +28,7 @@ static func fire(by: Creature, move: Dictionary, from: Vector2, toward: Vector2)
 	b.dir = toward.normalized()
 	b.element = CreatureCombat.move_element(by, move)
 	b._size = float(move.get("size", 1.0))
+	b._range = float(move["range"]) * TerrainRules.range_mult(by)
 	b.position = from
 	TamerGame.current.fx_layer.add_child(b)
 	return b
@@ -59,13 +63,13 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
-	var step: float = float(m["speed"]) * delta
+	var step: float = float(m["speed"]) * float(TamerData.rule("combat.bolt_speed_mult")) * delta
 	position += dir * step
 	_travel += step
 	_trail.add_point(global_position + Vector2(0, -HEIGHT))
 	while _trail.get_point_count() > TRAIL_POINTS:
 		_trail.remove_point(0)
-	if not TamerGame.current.layout.walkable(TamerGame.current.layout.cell_of(global_position)) or _travel >= float(m["range"]):
+	if TamerGame.current.blocks_shot(global_position) or _travel >= _range:
 		_pop()
 		return
 	if not is_instance_valid(user):
@@ -81,5 +85,6 @@ func _physics_process(delta: float) -> void:
 
 
 func _pop() -> void:
+	TerrainRules.on_impact(global_position, POP_RADIUS * _size, m, float(m["damage"]))
 	Fx.burst(get_parent(), global_position + Vector2(0, -HEIGHT), 8, Vector2(40, 120), 0.3, TamerData.sparks(element))
 	queue_free()

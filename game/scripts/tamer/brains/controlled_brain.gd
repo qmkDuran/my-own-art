@@ -8,7 +8,7 @@ var target: Combatant
 
 
 func think(delta: float) -> Vector2:
-	var speed: float = c.rec.speed() * float(TamerData.rule("control.speed_mult"))
+	var speed: float = c.speed() * float(TamerData.rule("control.speed_mult"))
 	if goal != Vector2.INF:
 		var dir: Vector2 = c.steer_to(goal, delta)
 		if dir == Vector2.ZERO:

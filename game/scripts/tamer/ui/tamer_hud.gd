@@ -1,10 +1,10 @@
 class_name TamerHud
 extends CanvasLayer
-## The prototype's screen: the tracker (what to try next) top left, materials top right, notices top centre, the
-## story caption above the cards; bottom left the two items and the Exploring/Battle badge (the trainer is never
-## hurt, so there is no life to show); under the creature card the bond gauge;
-## bottom centre the active creature's card; bottom right the team strip; the camp panel when resting. Laid out
-## from the viewport size every frame (no fixed coordinates).
+## The demo's screen: the tracker (what to try next) top left, materials top right, notices top centre, a
+## trainer's creatures left (in a 3v3) top centre, the story caption above the cards; bottom left the items
+## (outside battle) and the mode badge (Gate Hall / Exploring / Battle, with the difficulty); bottom centre the
+## active creature's card with the gauge under it; bottom right the team strip. Panels: camp, info, Sanctuary,
+## the team station, and the Accept/Decline question. Laid out from the viewport size every frame.
 
 const LAYER: int = 10
 const MARGIN: float = 10.0
@@ -19,14 +19,12 @@ const NOTICE_MAX: int = 3
 const NOTICE_AT: float = 0.24           ## share of the screen height where notices start (clear of the tracker)
 const CAPTION_TIME: float = 6.0
 const LINE: float = 13.0
-const BADGE := Vector2(150, 18)
-const VIGNETTE_TIME: float = 0.35
+const BADGE := Vector2(170, 18)
+const BALL: float = 5.0
 const VICTORY_TIME: float = 3.5
 const CALLOUT_TIME: float = 1.6
 
 var g: TamerGame
-var _fade := ColorRect.new()
-var _vignette := TextureRect.new()
 var _victory: Array[String] = []
 var _victory_t: float = 0.0
 var _callout: String = ""               ## a move's name the first time it is used, just above the creature card
@@ -39,6 +37,8 @@ var strip := TeamStrip.new()
 var camp_panel := CampPanel.new()
 var info_panel := CreatureInfoPanel.new()
 var sanctuary := SanctuaryPanel.new()
+var station := TeamStation.new()
+var question := AskDialog.new()
 var tracker_hidden: bool = false
 var forced_tip: int = -1                ## tests and stills: show this card slot's tooltip as if hovered
 var _canvas := Control.new()
@@ -65,45 +65,19 @@ func setup(game: TamerGame) -> void:
 	add_child(info_panel)
 	sanctuary.setup(g)
 	add_child(sanctuary)
-	_vignette.set_anchors_preset(Control.PRESET_FULL_RECT)
-	_vignette.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_vignette.texture = _vignette_tex()
-	_vignette.stretch_mode = TextureRect.STRETCH_SCALE
-	_vignette.modulate.a = 0.0
-	add_child(_vignette)
-	move_child(_vignette, 0)
-	_fade.set_anchors_preset(Control.PRESET_FULL_RECT)
-	_fade.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_fade.color = Color(UiDraw.INK, 0.0)
-	add_child(_fade)
+	station.setup(g)
+	add_child(station)
+	question.setup()
+	add_child(question)
 	_tip.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_tip.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_tip.draw.connect(_draw_tip)
 	add_child(_tip)
 
 
-## The screen fades to ink, `then` runs while it is dark, and it fades back (the white-out retreat).
-func fade(time: float, hold: float, then: Callable) -> void:
-	var tw := create_tween()
-	tw.tween_property(_fade, "color:a", 1.0, time)
-	tw.tween_callback(then)
-	tw.tween_interval(hold)
-	tw.tween_property(_fade, "color:a", 0.0, time)
-
-
-func _vignette_tex() -> GradientTexture2D:
-	var gr := Gradient.new()
-	gr.set_color(0, Color(UiDraw.INK, 0.0))
-	gr.add_point(0.62, Color(UiDraw.INK, 0.0))
-	gr.set_color(gr.get_point_count() - 1, Color(UiDraw.INK, 0.55))
-	var t := GradientTexture2D.new()
-	t.gradient = gr
-	t.fill = GradientTexture2D.FILL_RADIAL
-	t.fill_from = Vector2(0.5, 0.5)
-	t.fill_to = Vector2(1.0, 1.0)
-	t.width = 256
-	t.height = 144
-	return t
+## "Want to battle?": Accept or Decline.
+func ask(text: String, yes: Callable, no: Callable) -> void:
+	question.ask(text, yes, no)
 
 
 ## Not enough gauge: the gauge flashes and says how much the move needs.
@@ -113,7 +87,7 @@ func gauge_short(cost: int) -> void:
 	Audio.sfx("ui_click", -10.0, 0.7)
 
 
-## The shared bond gauge under the creature card: segments that fill with basic hits and are spent on moves.
+## The shared gauge under the creature card: segments that fill with basic hits and are spent on moves.
 func _gauge(at: Vector2) -> void:
 	var n: int = int(g.team.gauge_max())
 	var w: float = (card.size.x - (n - 1) * GAUGE_GAP) / n
@@ -132,7 +106,21 @@ func _gauge(at: Vector2) -> void:
 
 
 func panel_open() -> bool:
-	return camp_panel.visible or info_panel.visible or sanctuary.visible
+	return camp_panel.visible or info_panel.visible or sanctuary.visible or station.visible or question.visible
+
+
+## Esc: the top panel closes (a question is declined).
+func close_panels() -> void:
+	if question.visible:
+		question.decline()
+	elif station.visible:
+		station.close()
+	elif sanctuary.visible:
+		sanctuary.close()
+	elif info_panel.visible:
+		info_panel.close()
+	else:
+		camp_panel.close()
 
 
 ## Hovering a move on the card shows what it does; hovering the team strip says it can be clicked.
@@ -173,6 +161,8 @@ func _process(delta: float) -> void:
 	strip.position = Vector2(vp.x - MARGIN - strip.size.x, vp.y - MARGIN - strip.size.y)
 	camp_panel.position = ((vp - camp_panel.size) * 0.5).round()
 	sanctuary.position = ((vp - sanctuary.size) * 0.5).round()
+	station.position = ((vp - station.size) * 0.5).round()
+	question.position = Vector2(roundf((vp.x - question.size.x) * 0.5), card.position.y - question.size.y - 40.0)
 	info_panel.position = Vector2(roundf((vp.x - info_panel.size.x) * 0.5), MARGIN * 3.0)   # clear of the cards below
 	_tip.queue_redraw()
 	for n: Array in _notices:
@@ -190,7 +180,10 @@ func _draw_canvas() -> void:
 	if not tracker_hidden:
 		_tracker(Vector2(MARGIN, MARGIN))
 	_materials(Vector2(vp.x - MARGIN, MARGIN))
-	_items(Vector2(MARGIN, vp.y - MARGIN - ITEM - 10.0))
+	if not g.battle.on:
+		_items(Vector2(MARGIN, vp.y - MARGIN - ITEM - 10.0))
+	elif g.battle.opponent != null:
+		_opponent(Vector2(vp.x * 0.5, MARGIN + 8.0))
 	_badge(Vector2(MARGIN, vp.y - MARGIN - ITEM - BADGE.y - 22.0))
 	_gauge(Vector2(card.position.x, card.position.y + card.size.y + 4.0))
 	for i: int in _notices.size():
@@ -245,19 +238,26 @@ func _items(at: Vector2) -> void:
 		x += ITEM + 6.0
 
 
-## The mode, always on screen: Exploring (you are the trainer) or Battle (you control your creature).
+## The mode, always on screen: Gate Hall, Exploring (you are the trainer) or Battle (you are your creature), and
+## the difficulty.
 func _badge(at: Vector2) -> void:
 	var on: bool = g.battle.on
 	var r := Rect2(at, BADGE)
+	var mode: String = "BATTLE" if on else ("GATE HALL" if g.area == "hall" else "EXPLORING")
 	UiDraw.box(_canvas, r, Color(UiDraw.PANEL, 0.85), Pal.c("rose") if on else UiDraw.FRAME)
-	UiDraw.text(_canvas, at + Vector2(6, 12), "BATTLE" if on else "EXPLORING", Pal.c("rose") if on else UiDraw.TEXT, UiDraw.SMALL)
-	var who: String = String(g.field.partner.rec.data()["name"]) if on and g.field.partner != null else "Trainer"
-	UiDraw.text(_canvas, at + Vector2(0, 12), "you: " + who.to_lower(), UiDraw.DIM, UiDraw.SMALL, HORIZONTAL_ALIGNMENT_RIGHT, BADGE.x - 6.0)
+	UiDraw.text(_canvas, at + Vector2(6, 12), mode, Pal.c("rose") if on else UiDraw.TEXT, UiDraw.SMALL)
+	var right: String = g.battle.tier_id.capitalize() if on else g.hall.tier_id().capitalize()
+	UiDraw.text(_canvas, at + Vector2(0, 12), right, UiDraw.DIM, UiDraw.SMALL, HORIZONTAL_ALIGNMENT_RIGHT, BADGE.x - 6.0)
 
 
-## A soft dark edge on the screen while a battle is on.
-func vignette(on: bool) -> void:
-	create_tween().tween_property(_vignette, "modulate:a", 1.0 if on else 0.0, VIGNETTE_TIME)
+## A trainer battle: their name and a ball per creature, dark once it is down.
+func _opponent(at: Vector2) -> void:
+	var o: OpponentTrainer = g.battle.opponent
+	UiDraw.text(_canvas, Vector2(at.x - 100.0, at.y), o.display_name(), Pal.c("rose"), UiDraw.BODY, HORIZONTAL_ALIGNMENT_CENTER, 200.0)
+	for i: int in o.team.size():
+		var p := Vector2(at.x + (i - (o.team.size() - 1) * 0.5) * (BALL * 2.0 + 6.0), at.y + 10.0)
+		_canvas.draw_circle(p, BALL + 1.0, UiDraw.INK)
+		_canvas.draw_circle(p, BALL, Pal.c("rose") if o.team[i].life > 0.0 else UiDraw.LOCKED)
 
 
 ## "Victory!" and what the fight earned, fading out on its own.

@@ -1,13 +1,12 @@
 class_name TeamStrip
 extends Control
-## Your team on keys 1-6: a portrait per member with its life and bond, the one that is out framed in gold, a
-## knocked-out one greyed with its recovery time, and empty slots waiting to be filled by befriending. Click one for
-## its info panel.
+## Your team on keys 1-3: a portrait per member with its life, the one that is out framed in gold, the others
+## shuttered while the swap cooldown runs in battle, a knocked-out one greyed (with its recovery time outside
+## battle), and empty slots waiting to be filled by syncing. Click one for its info panel.
 
 const SLOT := Vector2(38, 38)
 const GAP: float = 4.0
 const BAR_H: float = 3.0
-const HEART: float = 2.0
 
 var g: TamerGame
 
@@ -61,13 +60,12 @@ func _member(rec: CreatureRecord, r: Rect2, active: bool) -> void:
 	var bar := Rect2(r.position + Vector2(0, r.size.y + 4.0), Vector2(r.size.x, BAR_H))
 	draw_rect(bar.grow(1.0), UiDraw.INK)
 	draw_rect(Rect2(bar.position, Vector2(bar.size.x * rec.life_frac(), BAR_H)), Pal.c("leaf_lt") if rec.life_frac() > 0.3 else Pal.c("rose"))
-	var bond := Rect2(bar.position + Vector2(0, BAR_H + 3.0), Vector2(r.size.x, BAR_H - 1.0))
-	draw_rect(bond.grow(1.0), UiDraw.INK)
-	draw_rect(Rect2(bond.position, Vector2(bond.size.x * rec.bond_frac(), bond.size.y)), Pal.c("rose"))
-	if rec.bond_move_ready():
-		draw_circle(r.end - Vector2(5, 5), HEART + 1.0, UiDraw.INK)
-		draw_circle(r.end - Vector2(5, 5), HEART, Pal.c("rose"))
+	var cd: float = g.field.swap_cooldown_left()
+	if not active and g.battle.on and cd > 0.0 and not rec.knocked_out():
+		var k: float = cd / float(TamerData.rule("combat.swap_cooldown"))
+		draw_rect(Rect2(r.position, Vector2(r.size.x, r.size.y * k)), Color(0, 0, 0, 0.55))
 	if rec.knocked_out():
 		draw_rect(r, Color(0, 0, 0, 0.45))
-		UiDraw.text(self, r.position + Vector2(0, r.size.y * 0.5 + 4.0), "%ds" % ceili(rec.ko_left), Pal.c("rose"), UiDraw.BODY,
+		var t: String = "KO" if g.battle.on else "%ds" % ceili(rec.ko_left)
+		UiDraw.text(self, r.position + Vector2(0, r.size.y * 0.5 + 4.0), t, Pal.c("rose"), UiDraw.BODY,
 			HORIZONTAL_ALIGNMENT_CENTER, r.size.x)

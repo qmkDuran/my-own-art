@@ -4,15 +4,14 @@ extends RefCounted
 ## moves, the rules (tamer.json) and the creature sprite layouts. Nothing about creatures lives in code.
 
 const DIR: String = "res://data/tamer/"
-const SUPER: int = 1
-const NEUTRAL: int = 0
-const RESISTED: int = -1
 
 static var elements: Dictionary = {}
 static var species_all: Dictionary = {}
 static var moves: Dictionary = {}
 static var rules: Dictionary = {}
 static var sprites: Dictionary = {}
+static var effects: Dictionary = {}
+static var arenas: Dictionary = {}
 
 
 static func ensure() -> void:
@@ -24,14 +23,12 @@ static func ensure() -> void:
 	moves = GameData.load_json("tamer/moves")["moves"]
 	rules = GameData.load_json("tamer/tamer")
 	sprites = GameData.load_json("tamer/creature_sprites")
+	effects = GameData.load_json("tamer/effects")
+	arenas = GameData.load_json("tamer/arenas")
 
 
 static func species(id: String) -> Dictionary:
 	return species_all["species"][id]
-
-
-static func starters() -> Array:
-	return species_all["starters"]
 
 
 static func move(id: String) -> Dictionary:
@@ -52,23 +49,14 @@ static func sparks(element_id: String) -> Array[Color]:
 	return [color(element_id, "light"), color(element_id, "core"), color(element_id, "dark", 0.0)]
 
 
-## SUPER when the attack's element is strong against the target's, RESISTED when the target's element beats it.
-static func matchup(attack: String, target: String) -> int:
-	var e: Dictionary = element(attack)
-	if (e["strong"] as Array).has(target):
-		return SUPER
-	if (e["weak"] as Array).has(target):
-		return RESISTED
-	return NEUTRAL
+## Does an attack of this element have the advantage over the target's element? (There are no weaknesses: the
+## other way round is simply neutral.)
+static func advantage(attack: String, target: String) -> bool:
+	return target != "" and (element(attack)["strong"] as Array).has(target)
 
 
 static func element_mult(attack: String, target: String) -> float:
-	match matchup(attack, target):
-		SUPER:
-			return float(elements["super_mult"])
-		RESISTED:
-			return float(elements["resist_mult"])
-	return 1.0
+	return float(elements["advantage_mult"]) if advantage(attack, target) else 1.0
 
 
 static func rule(path: String) -> Variant:

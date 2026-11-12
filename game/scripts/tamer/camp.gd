@@ -1,21 +1,19 @@
 class_name Camp
 extends Node2D
-## The rest point: a campfire in its own clearing. Walk in (with no fight nearby) and you rest: you and your team
-## are healed and woken, the wild packs return, and your creatures sit around the fire (the one that was out walks
-## over and sits too). The camp panel opens: pet and feed (bond, once each per rest) and spend materials on stats.
-## Walking away ends the rest.
+## The rest point on the route: a campfire in its own clearing. Walk in (with nothing chasing you) and you rest:
+## your team is healed and woken, the wild creatures return, and your creatures sit around the fire (the one that
+## was out walks over and sits too). The camp panel opens: choose moves and spend materials on stats. Walking away
+## ends the rest.
 
 signal rested
 
 const FLAME_COLORS: Array[String] = ["sun", "gold", "flame", "ember"]
-const SAFE_RADIUS: float = 260.0        ## no awake wild creature this close, or there is no rest
+const SAFE_RADIUS: float = 260.0        ## no creature chasing you this close, or there is no rest
 const SIT_SQUASH: float = 0.88
 const FIRE_LIGHT: float = 220.0
 
 var g: TamerGame
 var resting: bool = false
-var petted: Dictionary = {}             ## CreatureRecord -> true, this rest
-var fed: Dictionary = {}
 var _sitters: Array[Node2D] = []
 var _glow: Sprite2D
 var _t: float = 0.0
@@ -78,18 +76,14 @@ func _process(delta: float) -> void:
 func _safe() -> bool:
 	for n: Node in get_tree().get_nodes_in_group(Combatant.SIDE_WILD):
 		var c := n as Creature
-		if c.brain is WildBrain and (c.brain as WildBrain).awake and c.global_position.distance_to(global_position) < SAFE_RADIUS:
+		if c.brain is RouteBrain and (c.brain as RouteBrain).chasing() and c.global_position.distance_to(global_position) < SAFE_RADIUS:
 			return false
 	return true
 
 
 func _rest() -> void:
 	resting = true
-	petted.clear()
-	fed.clear()
 	g.team.rest()
-	for r: CreatureRecord in g.team.members:
-		r.add_bond(float(TamerData.rule("bond.camp_rest")))
 	g.spawner.spawn_all(global_position)
 	Audio.sfx("lamp_lit", -6.0, 0.9)
 	Fx.ring(g.fx_layer, global_position, 10.0, radius(), Pal.c("amber"), 0.6)
@@ -147,16 +141,3 @@ func spot_of(rec: CreatureRecord) -> Vector2:
 			sitters_before += 1
 	return _sitters[sitters_before].position if sitters_before < _sitters.size() else global_position
 
-
-## Pet (or feed): bond grows, hearts rise. Once per rest each.
-func care(rec: CreatureRecord, kind: String) -> bool:
-	var done: Dictionary = petted if kind == "pet" else fed
-	if not resting or done.has(rec):
-		return false
-	done[rec] = true
-	rec.add_bond(float(TamerData.rule("bond." + kind)))
-	var at: Vector2 = spot_of(rec) + Vector2(0, -16)
-	Fx.burst(g.fx_layer, at, 16, Vector2(20, 70), 0.9, [Pal.c("sun"), Pal.c("rose"), Pal.c("blood", 0.0)], Vector2.UP, 50.0, Vector2(1.5, 2.5))
-	TamerFx.word(at, "Happy!" if kind == "pet" else "Yum!", Pal.c("rose"))
-	Audio.sfx("pickup", -6.0, 1.5 if kind == "pet" else 1.1)
-	return true

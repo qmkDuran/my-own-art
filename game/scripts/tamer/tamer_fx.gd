@@ -1,7 +1,7 @@
 class_name TamerFx
 extends RefCounted
 ## Element-coloured effects for creature moves, on top of Lanternfall's Fx kit: a sweeping slash crescent, an area
-## blast, a ward bubble, dash streaks, the "Super effective!" and "Resisted" words, and the bond celebration. All
+## blast, a ward bubble, dash streaks, floating words ("Strong hit!", "Lv 6!") and the celebration burst. All
 ## additive and unlit (abilities shine), short so fights stay readable.
 
 const SLASH_TIME: float = 0.16

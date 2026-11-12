@@ -1,10 +1,8 @@
 class_name StaggerBar
 extends RefCounted
-## A creature's stagger: hits fill it (element weaknesses much faster); when it fills the creature is STAGGERED for
+## A creature's stagger: hits fill it (an element advantage much faster); when it fills the creature is STAGGERED for
 ## a few seconds: it reels (stunned), takes more damage, and your gauge fills faster on it. It drains when the
 ## creature is left alone for a moment.
-
-signal staggered
 
 var c: Creature
 var value: float = 0.0
@@ -49,7 +47,6 @@ func add(amount: float) -> void:
 		TamerFx.word(c.global_position, "STAGGERED!", Pal.c("gold"), UiDraw.TITLE)
 		CameraRig.shake(0.35)
 		Audio.sfx("slam", -4.0, 0.8)
-		staggered.emit()
 
 
 func tick(delta: float) -> void:

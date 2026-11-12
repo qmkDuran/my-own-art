@@ -1,8 +1,8 @@
 class_name TamerGuide
 extends RefCounted
-## What to try next, for the tracker: the steps in tamer.json "guide", each done by an event (picked a starter,
-## won a fight, used a trainer command, befriended, swapped, rested, raised a stat, unlocked a bond move). The tracker
-## shows the first step not yet done, so doing things out of order is fine.
+## What to try next, for the tracker: the steps in tamer.json "guide", each done by an event (the team station
+## used, a battle started, a special and a status move used, a foe staggered, a battle won, the route visited, a
+## creature synced). The tracker shows the first step not yet done, so doing things out of order is fine.
 
 signal changed
 

@@ -5,7 +5,7 @@ extends MoveKind
 const BLINK_RADIUS: float = 40.0
 
 
-func cast(user: Creature, m: Dictionary, at: Vector2) -> void:
+func cast(user: Creature, m: Dictionary, at: Vector2, _strength: float = 1.0) -> void:
 	var from: Vector2 = user.global_position
 	var to: Vector2 = TamerGame.current.layout.free_spot_near(clamp_aim(user, m, at), user.hit_radius())
 	var el: String = element(user, m)
@@ -27,6 +27,7 @@ func _land(user: Creature, m: Dictionary, from: Vector2, to: Vector2) -> void:
 	var el: String = element(user, m)
 	TamerFx.streak(from, to, el)
 	TamerFx.blast(to, float(m.get("radius", BLINK_RADIUS)), el)
+	TerrainRules.on_impact(to, float(m.get("radius", BLINK_RADIUS)), m, float(m["damage"]))
 	Audio.sfx("slam", -8.0, randf_range(1.1, 1.3))
 	var hit: Array[Combatant] = foes_in(user, to, float(m.get("radius", BLINK_RADIUS)))
 	if bool(m.get("path_hits", false)):

@@ -1,8 +1,8 @@
 class_name CampPanel
 extends Control
 ## The camp panel (opens when you rest; C toggles it while you are at camp): one row per team member with its
-## portrait, bond meter, Pet and Feed (bond, once each per rest), and its three stats with the material each next
-## level costs and a Raise button. Materials come from the wild creatures of each kind (the grind loop).
+## portrait, level and XP, a Moves button (its 4 active moves, TeamStation), and its three stats with the material
+## each next level costs and a Raise button. Materials come from the wild creatures of each kind (the grind loop).
 
 const W: float = 470.0
 const HEAD: float = 30.0
@@ -56,14 +56,7 @@ func _rebuild() -> void:
 
 func _row_buttons(rec: CreatureRecord, at: Vector2) -> void:
 	_button("Info", at + Vector2(PORTRAIT + 8.0 + 2.0 * (BTN.x + 6.0), 46.0), BTN, func() -> void: g.hud.info_panel.open(rec))
-	var care: Array[String] = ["pet", "feed"]
-	for k: int in care.size():
-		var kind: String = care[k]
-		var b: Button = _button(kind.capitalize(), at + Vector2(PORTRAIT + 8.0 + k * (BTN.x + 6.0), 46.0), BTN, func() -> void:
-			if g.camp.care(rec, kind):
-				queue_redraw()
-				_rebuild())
-		b.disabled = (g.camp.petted if kind == "pet" else g.camp.fed).has(rec)
+	_button("Moves", at + Vector2(PORTRAIT + 8.0, 46.0), BTN, func() -> void: g.hud.station.open_moves(rec))
 	var stats: Array = ["life", "power", "speed"]
 	for k: int in stats.size():
 		var stat: String = stats[k]
@@ -102,12 +95,10 @@ func _row(rec: CreatureRecord, at: Vector2) -> void:
 	CreaturePortrait.draw_in(self, Rect2(at, Vector2(PORTRAIT, PORTRAIT)), rec)
 	var x: float = at.x + PORTRAIT + 8.0
 	UiDraw.text(self, Vector2(x, at.y + 10.0), rec.display_name(), Pal.c("gold") if rec.shiny else UiDraw.TEXT, UiDraw.BODY)
-	UiDraw.text(self, Vector2(x, at.y + 22.0), "Bond %d / %d" % [roundi(rec.bond), int(TamerData.rule("bond.max"))], Pal.c("rose"), UiDraw.SMALL)
+	UiDraw.text(self, Vector2(x, at.y + 22.0), "Lv %d" % rec.level, UiDraw.TEXT, UiDraw.SMALL)
 	var bar := Rect2(Vector2(x, at.y + 28.0), Vector2(BAR_W, 4.0))
 	draw_rect(bar.grow(1.0), UiDraw.INK)
-	draw_rect(Rect2(bar.position, Vector2(BAR_W * rec.bond_frac(), 4.0)), Pal.c("rose"))
-	UiDraw.text(self, Vector2(x, at.y + 40.0), "Bond move unlocked (T)" if rec.bond_move_ready() else "Bond move at %d" % int(TamerData.rule("bond.unlock")),
-		Pal.c("sun") if rec.bond_move_ready() else UiDraw.DIM, UiDraw.SMALL)
+	draw_rect(Rect2(bar.position, Vector2(BAR_W * rec.growth.xp_frac(), 4.0)), Pal.c("sun"))
 	for k: int in 3:
 		_stat(rec, ["life", "power", "speed"][k], Vector2(at.x + STAT_X, at.y + k * STAT_LINE + 13.0))
 	draw_line(Vector2(PAD, at.y + ROW - 6.0), Vector2(W - PAD, at.y + ROW - 6.0), Color(UiDraw.FRAME, 0.5))

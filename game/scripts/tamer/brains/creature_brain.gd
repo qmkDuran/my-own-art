@@ -1,7 +1,7 @@
 class_name CreatureBrain
 extends RefCounted
-## What a creature wants to do each frame, as a velocity. Partners follow and assist the trainer, wild creatures
-## wander and defend themselves, and in battle your creature goes where you point. Swapped at runtime by BattleMode.
+## What a creature wants to do each frame, as a velocity. On the route partners follow the trainer and wild ones
+## roam by temperament; in an arena your creature goes where you point and the opponent fights (FoeBrain).
 
 var c: Creature
 
@@ -12,6 +12,11 @@ func _init(creature: Creature) -> void:
 
 func think(_delta: float) -> Vector2:
 	return Vector2.ZERO
+
+
+## Every frame, even while the creature can't move (channelling, committed, stunned).
+func tick(_delta: float) -> void:
+	pass
 
 
 ## Range of the creature's auto-attack (basic move), with some slack so it stands inside it.
@@ -34,6 +39,6 @@ func fight(target: Combatant, delta: float, slack: float, speed: float) -> Vecto
 	return Vector2.ZERO
 
 
-## Uses a move on the target; wild creatures wind up first (WildBrain).
+## Uses a move on the target; opponents telegraph first (FoeBrain).
 func attack(id: String, target: Combatant) -> void:
 	c.cast(id, target.global_position)

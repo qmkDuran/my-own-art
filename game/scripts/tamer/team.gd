@@ -1,18 +1,18 @@
 class_name Team
 extends RefCounted
-## Your creatures (up to team_max), which one is out, the shared bond gauge, your materials and your items. Pure state with signals: the
-## field (TamerGame) and the HUD listen. Knocked-out members recover on their own over time (CreatureRecord.tick).
+## Your creatures (up to team_max), which one is out, the shared gauge, your materials and your items (used only
+## outside battle). Pure state with signals: the field (TamerGame) and the HUD listen. Knocked-out members recover on their own over time (CreatureRecord.tick).
 
 signal changed
-signal joined(rec: CreatureRecord)
-signal bond_unlocked(rec: CreatureRecord)
+signal leveled(rec: CreatureRecord)
+signal evolved(rec: CreatureRecord)
 
 var members: Array[CreatureRecord] = []
 var sanctuary: Array[CreatureRecord] = []     ## synced creatures not in the team (move them at camp)
 var active: int = -1
 var materials: Dictionary = {}          ## material id -> count
 var items: Dictionary = {}              ## item id -> count
-var gauge: float = 0.0                  ## the shared bond gauge, in segments (0..segments): basics fill it, moves spend it
+var gauge: float = 0.0                  ## the shared gauge, in segments (0..segments): basics fill it, moves spend it
 
 
 func _init() -> void:
@@ -77,13 +77,36 @@ func add(rec: CreatureRecord) -> bool:
 		return false
 	rec.wild = false
 	rec.life = minf(rec.life, rec.max_life())
-	rec.bond_unlocked.connect(func(r: CreatureRecord) -> void: bond_unlocked.emit(r))
+	_listen(rec)
 	members.append(rec)
 	if active < 0:
 		active = members.size() - 1
-	joined.emit(rec)
 	changed.emit()
 	return true
+
+
+## A whole new team (the Gate Hall's station); the first one is out.
+func replace(recs: Array[CreatureRecord]) -> void:
+	members.clear()
+	active = -1
+	for r: CreatureRecord in recs:
+		add(r)
+
+
+func _listen(rec: CreatureRecord) -> void:
+	if not rec.growth.leveled.is_connected(_on_leveled):
+		rec.growth.leveled.connect(_on_leveled)
+		rec.growth.evolved.connect(_on_evolved)
+
+
+func _on_leveled(rec: CreatureRecord) -> void:
+	if members.has(rec):
+		leveled.emit(rec)
+
+
+func _on_evolved(rec: CreatureRecord) -> void:
+	if members.has(rec):
+		evolved.emit(rec)
 
 
 func current() -> CreatureRecord:

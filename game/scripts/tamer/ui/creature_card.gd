@@ -1,14 +1,15 @@
 class_name CreatureCard
 extends Control
-## The active creature at the bottom of the screen: its portrait, name, element and level, life, the bond meter
-## (with the mark where the bond move unlocks), and its moves on Q W E R plus the bond move on T, each with its
-## gauge cost (pips), dimmed while the gauge cannot pay. While it is knocked out the card says how long until it is back.
+## The active creature at the bottom of the screen: its portrait, name, element and level, life, experience, its
+## moves on Q W E R (each with its gauge cost as pips, dimmed while the gauge cannot pay; status moves marked HOLD)
+## and its buffs and debuffs with their timers. While it is knocked out the card says how long until it is back.
 
 const PORTRAIT: float = 50.0
 const SLOT: float = 26.0
 const SLOT_GAP: float = 6.0
 const BAR_H: float = 6.0
-const BOND_H: float = 3.0
+const XP_H: float = 3.0
+const EFFECT: float = 14.0
 const GAP: float = 6.0
 const SIZE := Vector2(300, 74)
 
@@ -38,6 +39,9 @@ func _draw() -> void:
 	_title(rec, Vector2(x, GAP + 9.0), w)
 	_bars(rec, Vector2(x, GAP + 14.0), w)
 	_moves(rec, Vector2(x, GAP + 27.0))
+	var p: Creature = g.field.partner
+	if p != null and is_instance_valid(p) and p.rec == rec:
+		EffectIcons.draw_row(self, Vector2(x + 4.0 * (SLOT + SLOT_GAP) + GAP, GAP + 27.0), p.effects, EFFECT)
 	if rec.knocked_out():
 		draw_rect(Rect2(pr.position, pr.size), Color(0, 0, 0, 0.5))
 		UiDraw.text(self, pr.position + Vector2(0, pr.size.y * 0.5 + 4.0), "%ds" % ceili(rec.ko_left), Pal.c("rose"), UiDraw.BODY,
@@ -55,10 +59,8 @@ func _bars(rec: CreatureRecord, at: Vector2, w: float) -> void:
 	draw_rect(Rect2(at - Vector2.ONE, Vector2(w + 2.0, BAR_H + 2.0)), UiDraw.INK)
 	draw_rect(Rect2(at, Vector2(w * rec.life_frac(), BAR_H)), Pal.c("leaf_lt") if rec.life_frac() > 0.3 else Pal.c("rose"))
 	var bt: Vector2 = at + Vector2(0, BAR_H + 3.0)
-	draw_rect(Rect2(bt - Vector2.ONE, Vector2(w + 2.0, BOND_H + 2.0)), UiDraw.INK)
-	draw_rect(Rect2(bt, Vector2(w * rec.bond_frac(), BOND_H)), Pal.c("rose"))
-	var mark: float = w * float(TamerData.rule("bond.unlock")) / float(TamerData.rule("bond.max"))
-	draw_rect(Rect2(bt + Vector2(mark, -2), Vector2(1, BOND_H + 4.0)), Pal.c("sun") if rec.bond_move_ready() else UiDraw.DIM)
+	draw_rect(Rect2(bt - Vector2.ONE, Vector2(w + 2.0, XP_H + 2.0)), UiDraw.INK)
+	draw_rect(Rect2(bt, Vector2(w * rec.growth.xp_frac(), XP_H)), Pal.c("sun"))
 
 
 ## The move under a point in the card's own coordinates ([id, key] or empty), for the tooltip.
@@ -66,36 +68,32 @@ func move_at(p: Vector2) -> Array:
 	var rec: CreatureRecord = g.team.current()
 	if rec == null:
 		return []
-	var ids: Array = rec.moves().duplicate()
-	ids.append(rec.bond_move())
-	var keys: Array[String] = TamerKeys.MOVE_LABELS.duplicate()
-	keys.append("T")
+	var ids: Array = rec.moves()
 	for i: int in ids.size():
 		if _slot_rect(i).has_point(p):
-			return [String(ids[i]), keys[i]]
+			return [String(ids[i]), TamerKeys.MOVE_LABELS[i]]
 	return []
 
 
 func _slot_rect(i: int) -> Rect2:
 	var at := Vector2(GAP + PORTRAIT + GAP, GAP + 27.0)
-	var x: float = i * (SLOT + SLOT_GAP) + (SLOT_GAP if i >= TamerKeys.MOVE_LABELS.size() else 0.0)
-	return Rect2(at + Vector2(x, 0), Vector2(SLOT, SLOT))
+	return Rect2(at + Vector2(i * (SLOT + SLOT_GAP), 0), Vector2(SLOT, SLOT))
 
 
 func _moves(rec: CreatureRecord, at: Vector2) -> void:
-	var c: Creature = g.field.partner if g.field.partner != null and g.field.partner.rec == rec else null
 	var kit: Array = rec.moves()
 	for i: int in kit.size():
-		_slot(c, String(kit[i]), rec.element(), TamerKeys.MOVE_LABELS[i], at + Vector2(i * (SLOT + SLOT_GAP), 0), false)
-	var bond_at: Vector2 = at + Vector2(kit.size() * (SLOT + SLOT_GAP) + SLOT_GAP, 0)
-	_slot(c, rec.bond_move(), rec.element(), "T", bond_at, not rec.bond_move_ready())
+		_slot(String(kit[i]), rec.element(), TamerKeys.MOVE_LABELS[i], at + Vector2(i * (SLOT + SLOT_GAP), 0))
 
 
-## A move slot: its icon, its gauge cost as pips, dimmed while the gauge cannot pay for it.
-func _slot(_c: Creature, id: String, el: String, key: String, at: Vector2, locked: bool) -> void:
-	var cost: int = int(TamerData.move(id).get("cost", 0))
+## A move slot: its icon, its gauge cost as pips, dimmed while the gauge cannot pay for it; HOLD on a status move.
+func _slot(id: String, el: String, key: String, at: Vector2) -> void:
+	var m: Dictionary = TamerData.move(id)
+	var cost: int = int(m.get("cost", 0))
 	var r := Rect2(at, Vector2(SLOT, SLOT))
-	MoveIcon.draw_slot(self, r, id, el, key, 0.0, 0.0, locked)
+	MoveIcon.draw_slot(self, r, id, el, key, 0.0, 0.0)
+	if String(m["type"]) == "status":
+		UiDraw.text(self, r.position + Vector2(0, r.size.y + 9.0), "hold", Pal.c("glint"), UiDraw.SMALL, HORIZONTAL_ALIGNMENT_RIGHT, r.size.x)
 	if g.team.gauge + 0.001 < float(cost):
 		draw_rect(r, Color(0, 0, 0, 0.55))
 	for k: int in cost:

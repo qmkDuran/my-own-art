@@ -1,8 +1,10 @@
 class_name Creature
 extends Combatant
-## A creature on the field, yours or wild, made from its CreatureRecord. Its brain (partner, wild or your direct
-## control in battle) says where to go; moves (MoveBook) run on cooldowns; hits shove and stun it. A partner never blocks the
-## trainer (they do not collide); creatures keep a little personal space from each other instead.
+## A creature on the field (the route, the Gate Hall or an arena), made from its CreatureRecord. Its brain (following
+## the trainer, a wild temperament, an arena foe, or you in battle) says where to go. Moves (MoveBook) commit it: a
+## wind-up and a recovery with no dodging; your basic is a 3-hit combo; status moves are channelled (no moving, a
+## hit cancels). Effects (buffs and debuffs), stagger, and the ground under it (TerrainRules) change how it moves
+## and how hard it hits and is hit.
 
 signal fainted(c: Creature)
 signal struck(c: Creature, attacker: Combatant)
@@ -13,6 +15,7 @@ const SEPARATION: float = 0.7
 const PERSONAL_SPACE: float = 1.25
 const FAINT_TIME: float = 0.6
 const FACE_MIN: float = 4.0
+const KNOCK_SETTLE: float = 0.15        ## after a shove, terrain reactions (wall, thorns, ledge) are checked
 
 var rec: CreatureRecord
 var brain: CreatureBrain
@@ -26,13 +29,18 @@ var guard_left: float = 0.0             ## damage a ward still soaks
 var guard_t: float = 0.0
 var dodge_cd: float = 0.0
 var dazed: bool = false                 ## weak enough to sync: it stops fighting
+var catchable: bool = true              ## a trainer's creature is never dazed (it can't be synced)
 var stagger: StaggerBar
-var catchable: bool = true              ## a rival trainer's creature is never dazed (it can't be caught)
+var effects := CreatureEffects.new()
+var gauge: float = 0.0                  ## an opposing creature's own gauge (yours is the team's)
 var combo_scale: float = 1.0            ## the current basic hit's share of the combo (the last hit is the big one)
 var commit_t: float = 0.0               ## a move's wind-up and recovery: no moving, no dodging
+var channel_id: String = ""             ## a status move being channelled
+var channel_t: float = 0.0
+var reveal_t: float = 0.0               ## just attacked: tall grass doesn't hide it
+var fainted_now: bool = false
 var _combo_i: int = 0
 var _combo_quiet: float = 0.0
-var fainted_now: bool = false
 
 
 func setup(r: CreatureRecord, s: String) -> Creature:
@@ -53,6 +61,7 @@ func _ready() -> void:
 	cs.shape = shape
 	add_child(cs)
 	view = CreatureSprite.new().setup(rec)
+	view.scale = Vector2.ONE * rec.growth.size_mult()
 	add_child(view)
 	stagger = StaggerBar.new(self)
 	if rec.life < 0.0:
@@ -84,10 +93,13 @@ func power() -> float:
 	return rec.power()
 
 
+func speed() -> float:
+	return rec.speed() * effects.mult("speed") * TerrainRules.speed_mult(self)
 
 
 func move_ready(id: String) -> bool:
-	return float(cooldowns.get(id, 0.0)) <= 0.0 and busy_t <= 0.0 and commit_t <= 0.0 and stun_t <= 0.0 and alive()
+	return float(cooldowns.get(id, 0.0)) <= 0.0 and busy_t <= 0.0 and commit_t <= 0.0 and stun_t <= 0.0 \
+		and channel_id == "" and alive()
 
 
 func is_basic(id: String) -> bool:
@@ -98,29 +110,23 @@ func is_basic_move(m: Dictionary) -> bool:
 	return m == TamerData.move(String(rec.data()["basic"]))
 
 
-func cooldown_frac(id: String) -> float:
-	var cd: float = float(TamerData.move(id)["cooldown"])
-	return clampf(float(cooldowns.get(id, 0.0)) / maxf(cd, 0.01), 0.0, 1.0)
-
-
-## Uses move `id` toward `at` if it is ready. Returns whether it went off. Your creature's basic is a combo (no
-## cooldown, just the rhythm of its hits); its moves commit it: a wind-up, the move, a recovery (no dodging).
-func cast(id: String, at: Vector2) -> bool:
+## Uses move `id` toward `at` (gauge costs are paid by the caller). Your basic is a combo with no cooldown, only
+## the rhythm of its hits; other moves wind up, go off, then recover. Opponents pace themselves with cooldowns.
+func cast(id: String, at: Vector2, strength: float = 1.0) -> bool:
 	if not move_ready(id) or dazed:
 		return false
 	var m: Dictionary = TamerData.move(id)
 	face(at)
-	if side == SIDE_TEAM and is_basic(id):
+	reveal_t = float(TamerData.rule("terrain.reveal_time"))
+	effects.remove("hidden")
+	if is_basic(id) and side == SIDE_TEAM:
 		_combo_step(id)
-	elif side == SIDE_TEAM:
-		cooldowns[id] = float(TamerData.rule("combat.lockout"))
-		_commit(id, m, at)
-		_first_use(id, m)
+		view.act()
+		MoveBook.cast(self, id, at, strength)
 		return true
-	else:
-		cooldowns[id] = float(m["cooldown"])
-	view.act()
-	MoveBook.cast(self, id, at)
+	cooldowns[id] = float(m["cooldown"]) if side != SIDE_TEAM else float(TamerData.rule("combat.lockout"))
+	_commit(id, m, at, strength)
+	_first_use(id, m)
 	return true
 
 
@@ -135,20 +141,55 @@ func _combo_step(id: String) -> void:
 
 
 ## Wind-up (it rears back), the move, then recovery; the whole time it can neither move nor dodge.
-func _commit(id: String, m: Dictionary, at: Vector2) -> void:
+func _commit(id: String, m: Dictionary, at: Vector2, strength: float) -> void:
 	var wind: float = float(m.get("windup", 0.0))
 	commit_t = wind + float(m.get("recovery", 0.0))
+	if wind <= 0.0:
+		view.act()
+		MoveBook.cast(self, id, at, strength)
+		return
 	view.windup(wind)
 	get_tree().create_timer(wind, false).timeout.connect(func() -> void:
 		if alive() and stun_t <= 0.0:
 			view.act()
-			MoveBook.cast(self, id, at))
+			MoveBook.cast(self, id, at, strength))
 
 
 func _first_use(id: String, m: Dictionary) -> void:
-	if not rec.used_moves.has(id) and not bool(m.get("bond", false)):
+	if side == SIDE_TEAM and not rec.used_moves.has(id) and not bool(m.get("signature", false)):
 		rec.used_moves[id] = true
 		TamerGame.current.hud.callout(String(m["name"]), TamerData.color(CreatureCombat.move_element(self, m), "light"))
+
+
+## A status move: hold to channel (standing still, a hit cancels), release to use it with the strength held.
+func begin_channel(id: String) -> bool:
+	if not move_ready(id) or dazed:
+		return false
+	channel_id = id
+	channel_t = 0.0
+	view.windup(float(TamerData.move(id)["channel"]))
+	return true
+
+
+func channel_strength() -> float:
+	if channel_id == "":
+		return 0.0
+	return clampf(channel_t / float(TamerData.move(channel_id)["channel"]), float(TamerData.rule("combat.channel_min")), 1.0)
+
+
+func release_channel(at: Vector2) -> bool:
+	if channel_id == "":
+		return false
+	var id: String = channel_id
+	var s: float = channel_strength()
+	channel_id = ""
+	return cast(id, at, s)
+
+
+func cancel_channel() -> void:
+	if channel_id != "":
+		channel_id = ""
+		TamerFx.word(global_position, "Interrupted!", Pal.c("rose"))
 
 
 func face(at: Vector2) -> void:
@@ -157,33 +198,21 @@ func face(at: Vector2) -> void:
 		facing = d.normalized()
 
 
-## A short quick hop (the creature's own dodge while you steer it).
+## A short quick hop. Not while committed, channelling or hardened; shorter in mud.
 func dodge(toward: Vector2, d: Dictionary) -> bool:
-	if dodge_cd > 0.0 or busy_t > 0.0 or commit_t > 0.0 or not alive():
+	if dodge_cd > 0.0 or busy_t > 0.0 or commit_t > 0.0 or channel_id != "" or effects.flag("no_dodge") or not alive():
 		return false
 	var dir: Vector2 = (toward - global_position).normalized() if toward.distance_to(global_position) > 1.0 else facing
+	var dist: float = float(d["distance"])
+	if TerrainRules.feature_at(global_position) == ArenaLayout.F.MUD:
+		dist *= float(TamerData.rule("terrain.mud_dodge"))
 	dodge_cd = float(d["cooldown"])
 	iframe_t = float(d["iframes"])
-	dash(dir * float(d["distance"]) / float(d["time"]), float(d["time"]))
+	dash(dir * dist / float(d["time"]), float(d["time"]))
 	Fx.burst(TamerGame.current.fx_layer, global_position + Vector2(0, -6), 10, Vector2(40, 120), 0.3,
 		TamerData.sparks(element_id()), -dir, 40.0)
 	Audio.sfx("dash", -10.0, 1.2)
-	if side == SIDE_TEAM:
-		_perfect_dodge()
 	return true
-
-
-## Dodging through a wild attack at the last moment: a chunk of gauge and a short slow-motion flash.
-func _perfect_dodge() -> void:
-	var P: Dictionary = TamerData.rule("combat.perfect_dodge")
-	for n: Node in get_tree().get_nodes_in_group(SIDE_WILD):
-		var b := (n as Creature).brain as WildBrain
-		if b != null and b.winding_at(self) and b.windup_left() <= float(P["window"]):
-			TamerGame.current.team.add_gauge(float(TamerData.rule("combat.gauge.perfect_dodge")))
-			TamerFx.word(global_position, "Perfect dodge!", Pal.c("sun"), UiDraw.TITLE)
-			Fx.screen_flash(Pal.c("sun"), 0.18, 0.25)
-			HitStop.trigger(get_tree(), float(P["slow_real"]))
-			return
 
 
 ## Moves the body itself for `time` seconds (lunges, dodges); the brain waits.
@@ -208,13 +237,28 @@ func receive_hit(dmg: float, dir: Vector2, knock_px: float, stun: float, attacke
 		dmg -= soak
 	rec.life -= dmg
 	view.flash()
+	cancel_channel()
+	var from: Vector2 = global_position
 	shove(dir, knock_px)
 	stun_t = maxf(stun_t, stun)
 	struck.emit(self, attacker)
+	if knock_px > 0.0:
+		get_tree().create_timer(KNOCK_SETTLE, false).timeout.connect(func() -> void:
+			if alive():
+				TerrainRules.after_knock(self, dir, from))
 	if rec.life <= 0.0:
 		faint()
-	elif side == SIDE_WILD and catchable and rec.life_frac() <= float(rec.data()["befriend_at"]):
+	elif side == SIDE_WILD and catchable and rec.life_frac() <= float(rec.data()["sync_at"]):
 		set_dazed(true)
+
+
+## Thorns, falls and burning ground: a share of its life, with a word.
+func take_terrain_damage(share: float, word: String) -> void:
+	rec.life -= rec.max_life() * share
+	view.flash()
+	TamerFx.word(global_position, word, Pal.c("rose"))
+	if rec.life <= 0.0:
+		faint()
 
 
 func set_dazed(on: bool) -> void:
@@ -222,7 +266,7 @@ func set_dazed(on: bool) -> void:
 	view.set_dazed(on)
 
 
-## Called back by a rival trainer: it fades away (not a knock-out; no drops).
+## Called back (a swap, a trainer recalling it, a battle ending): it fades away; not a knock-out, no drops.
 func recall_quietly() -> void:
 	fainted_now = true
 	collision_layer = 0
@@ -248,15 +292,20 @@ func _physics_process(delta: float) -> void:
 	_tick(delta)
 	if fainted_now:
 		return
+	if brain != null:
+		brain.tick(delta)
 	var want: Vector2 = Vector2.ZERO
 	if dash_t > 0.0:
 		dash_t -= delta
 		want = dash_vel
-	elif stun_t <= 0.0 and commit_t <= 0.0 and brain != null:
+		if TerrainRules.feature_at(global_position) == ArenaLayout.F.ROOTS and dash_vel.length() > speed() * 2.0:
+			dash_t = 0.0                                   # tripped on the roots
+			TamerFx.word(global_position, "Tripped!", Pal.c("earth_lt"))
+	elif stun_t <= 0.0 and commit_t <= 0.0 and channel_id == "" and brain != null:
 		want = brain.think(delta)
 	if want.length() > FACE_MIN and dash_t <= 0.0:
 		facing = want.normalized()
-	velocity = want + knock_velocity(delta) + _separation() * rec.speed() * SEPARATION
+	velocity = want + knock_velocity(delta) + _separation() * speed() * SEPARATION
 	move_and_slide()
 	view.animate(delta, want, facing.x)
 
@@ -267,14 +316,30 @@ func _tick(delta: float) -> void:
 	stun_t = maxf(0.0, stun_t - delta)
 	busy_t = maxf(0.0, busy_t - delta)
 	commit_t = maxf(0.0, commit_t - delta)
+	reveal_t = maxf(0.0, reveal_t - delta)
+	if channel_id != "":
+		channel_t += delta
 	_combo_quiet -= delta
 	stagger.tick(delta)
+	effects.tick(delta)
 	iframe_t = maxf(0.0, iframe_t - delta)
 	dodge_cd = maxf(0.0, dodge_cd - delta)
 	guard_t = maxf(0.0, guard_t - delta)
+	if not fainted_now:
+		TerrainRules.tick(self, delta)
+		view.veil(hidden(), side == SIDE_TEAM, delta)
 
 
-## Creatures keep a little apart so a pack never reads as one blob.
+## Hidden from the creature it is fighting in an arena (grass, fog, camouflage)?
+func hidden() -> bool:
+	var g: TamerGame = TamerGame.current
+	if g == null or not g.battle.on:
+		return false
+	var other: Creature = g.battle.foe if side == SIDE_TEAM else g.field.partner
+	return other != null and is_instance_valid(other) and other != self and TerrainRules.hidden_from(self, other)
+
+
+## Creatures keep a little apart so they never read as one blob.
 func _separation() -> Vector2:
 	var push: Vector2 = Vector2.ZERO
 	for n: Node in get_tree().get_nodes_in_group("creatures"):

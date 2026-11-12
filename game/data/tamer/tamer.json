@@ -1,8 +1,7 @@
 {
- "_doc": "Rules of the trainer prototype (feel numbers live here, not in code). trainer: the person you play; never damaged. aura: your creature deals more damage near you. commands: the trainer's own buttons (A S D G), stronger with bond (command_bond_scale at full bond). perfect_swap: swapping just as a wild attack is about to land on your creature. white_out: every creature knocked out -> back to camp (lose `lose` of each material). items: keys Z and V. control: your creature in battle (camera blend, speed, dodge, outline). partner: how your creature follows and picks fights. wild: behaviour and scaling (windup: the telegraphed pause before every wild attack). sync: the Sync Lens (F, hold) on a weakened or staggered wild creature; the first sync_to_team join the team (max team_max), the rest go to the Sanctuary. bond: meter 0-100 per creature. camp: the rest point. materials and upgrades: the grind loop. spawn: wild packs (size grows deeper in). guide: the tracker's steps in order.",
+ "_doc": "Rules of the trainer prototype (feel numbers live here, not in code): combat (gauge, combo, stagger, swaps, channelling), control, terrain, ai_tiers, progression, sync (lens tiers), battle (arenas, trainers), temperament (route), hall, team, items (route only), partner (following on the route), wild (scaling), camp, materials, upgrades, spawn, guide.",
  "zone": "tamer_glade",
- "team_max": 6,
- "starter_level": 3,
+ "team_max": 3,
  "trainer": {
   "speed": 165,
   "radius": 7,
@@ -29,61 +28,26 @@
   }
  },
  "control": {
-  "camera_ease": 7.0,
-  "speed_mult": 1.15,
+  "speed_mult": 1.0,
   "dodge": {
-   "distance": 100,
-   "time": 0.2,
-   "cooldown": 0.6,
-   "iframes": 0.26
+   "distance": 80,
+   "time": 0.22,
+   "cooldown": 0.9,
+   "iframes": 0.24
   },
   "outline": "gold"
  },
- "partner": {
-  "follow": 44,
-  "follow_side": 26,
-  "catch_up": 1.35,
-  "assist_range": 260,
-  "guard_range": 150,
-  "leash": 340,
-  "basic_range_slack": 0.85,
-  "teleport_after": 700,
-  "swap_entry": "entry"
- },
  "wild": {
-  "wake_range": 210,
-  "chase_leash": 520,
-  "wander": 80,
-  "think": 0.25,
-  "basic_range_slack": 0.85,
   "life_mult": 0.9,
   "power_mult": 0.6,
-  "level_life": 0.12,
-  "level_power": 0.08,
-  "regen": 6.0
+  "wander": 80
  },
  "level": {
   "life": 0.08,
   "power": 0.06
  },
- "entry": {
-  "damage": 12,
-  "radius": 70,
-  "stun": 0.4
- },
- "bond": {
-  "max": 100,
-  "unlock": 60,
-  "per_hit": 0.6,
-  "per_win": 7,
-  "per_befriend": 10,
-  "feed": 15,
-  "pet": 8,
-  "camp_rest": 4
- },
  "knockout": {
-  "recover": 20.0,
-  "trainer_vulnerable_mult": 1.0
+  "recover": 20.0
  },
  "camp": {
   "radius": 130,
@@ -114,13 +78,6 @@
    "name": "Rot Fang",
    "color": "bile"
   }
- },
- "drops": {
-  "count": [
-   1,
-   2
-  ],
-  "chance": 0.9
  },
  "upgrades": {
   "life": {
@@ -161,7 +118,7 @@
   }
  },
  "spawn": {
-  "packs": 10,
+  "packs": 14,
   "spacing": 16,
   "safe_radius": 14,
   "camp_clear": 9,
@@ -172,10 +129,10 @@
      "maned_wolf": 0.6,
      "aye_aye": 0.4
     },
-    "level": 1,
+    "level": 4,
     "size": [
      1,
-     2
+     1
     ]
    },
    {
@@ -185,10 +142,10 @@
      "aye_aye": 0.3,
      "tas_devil": 0.35
     },
-    "level": 2,
+    "level": 6,
     "size": [
-     2,
-     3
+     1,
+     1
     ]
    },
    {
@@ -198,205 +155,272 @@
      "aye_aye": 0.3,
      "tas_devil": 0.4
     },
-    "level": 4,
+    "level": 8,
     "size": [
-     2,
-     4
+     1,
+     1
     ]
    }
   ],
-  "guarantee_shiny": "maned_wolf"
- },
- "meet": {
-  "spots": [
-   [
-    -140,
-    0
-   ],
-   [
-    0,
-    -64
-   ],
-   [
-    140,
-    0
-   ]
-  ],
-  "react_range": 90,
-  "caption": "Three young creatures are waiting in the meadow. Walk up to each, then click the one you want."
+  "showcase_shiny": "maned_wolf"
  },
  "guide": [
   {
-   "id": "pick",
-   "text": "Meet the three creatures and click one to choose it"
+   "id": "station",
+   "text": "Gate Hall: set your team at the station (right), then walk through a gate"
   },
   {
    "id": "battle",
-   "text": "Right-click a wild creature to start a battle. Then YOU are your creature: left click moves, right click attacks, hold Q W E R to aim a move"
+   "text": "In battle YOU are your creature: left click moves, right click attacks, Space dodges"
   },
   {
-   "id": "fight",
-   "text": "Right-click (hold) for basic combos: they fill the gauge. Q W E R spend gauge; holding one slows time"
+   "id": "special",
+   "text": "Physical moves fill the gauge; specials spend it. They're skillshots: lead your shots"
+  },
+  {
+   "id": "status",
+   "text": "Hold a status move to channel it: stronger the longer you hold, but a hit cancels it"
   },
   {
    "id": "stagger",
-   "text": "Fill a foe's stagger bar (gold, under its life) to stagger it: it takes 50% more. Element weaknesses stagger fast"
+   "text": "Fill the gold stagger bar: a staggered foe takes 50% more"
   },
   {
-   "id": "befriend",
-   "text": "Weaken (dazed) or stagger a wild creature, press F and HOLD it: your trainer syncs it with the Sync Lens"
+   "id": "win",
+   "text": "Win a battle"
   },
   {
-   "id": "swap",
-   "text": "Press 1-6 to swap (1 gauge in battle). Swap just as a red warning lands for a perfect swap"
+   "id": "route",
+   "text": "Take the door on the right to the route: wild creatures, the Sync Lens, a rival"
   },
   {
-   "id": "camp",
-   "text": "Rest at the camp (the fire, up the path): heal, pet and feed"
-  },
-  {
-   "id": "upgrade",
-   "text": "At camp, spend materials to raise a stat"
-  },
-  {
-   "id": "bond",
-   "text": "Battle together to fill the bond meter and unlock a bond move (T)"
+   "id": "sync",
+   "text": "Weaken or stagger a wild creature, then hold F: the trainer syncs it"
   },
   {
    "id": "free",
-   "text": "Explore: find the shiny maned wolf, raise your team at camp, unlock every bond move"
+   "text": "Try every gate on Easy, Normal and Hard"
   }
  ],
- "aura": {
-  "radius": 170,
-  "damage": 0.15
- },
- "perfect_swap": {
-  "window": 0.35,
-  "mult": 2.0
- },
  "white_out": {
-  "fade": 0.6,
-  "hold": 0.8,
   "lose": 1,
   "text": "Your team is worn out. You hurry back to camp, and they recover by the fire."
  },
  "combat": {
-  "_doc": "The gauge, slow-time, stagger and combo (VISION.md, combat model).",
+  "_doc": "The gauge (physical hits fill it, specials spend it), the basic combo, stagger, swaps and channelling.",
   "gauge": {
    "segments": 3,
-   "per_basic_hit": 0.16,
+   "per_physical_hit": 0.18,
    "on_staggered_mult": 1.5,
-   "perfect_dodge": 0.6,
    "swap_cost": 1
   },
   "combo": {
    "hits": 3,
    "gap": [
-    0.32,
-    0.32,
-    0.55
+    0.42,
+    0.42,
+    0.7
    ],
    "scale": [
     1.0,
     1.0,
-    1.7
+    1.6
    ],
-   "reset": 0.9
+   "reset": 1.1
   },
   "lockout": 0.5,
-  "slow_time": {
-   "scale": 0.2,
-   "max_real": 2.0
-  },
-  "perfect_dodge": {
-   "window": 0.3,
-   "slow": 0.3,
-   "slow_real": 0.25
-  },
+  "swap_cooldown": 3.0,
+  "channel_min": 0.25,
   "stagger": {
    "max_per_life": 0.6,
-   "super_mult": 2.5,
-   "resist_mult": 0.6,
+   "advantage_mult": 2.0,
    "time": 3.0,
    "damage_taken": 1.5,
    "decay": 10.0,
    "decay_after": 2.0,
    "entry": 40.0,
-   "perfect_swap": 60.0
-  }
- },
- "ring": {
-  "radius": 250,
-  "grace": 4.0
- },
- "rivals": {
-  "spot_range": 260,
-  "talk_time": 1.6,
-  "send_delay": 0.9,
-  "swap_below": 0.3,
-  "item_below": 0.35,
-  "item_heal": 0.4,
-  "walk_up": 70,
-  "life_mult": 1.25,
-  "power_mult": 1.1,
-  "trainers": [
-   {
-    "id": "ivo",
-    "name": "Ivo",
-    "sprite": "rival_ivo",
-    "route": 0.6,
-    "team": [
-     [
-      "maned_wolf",
-      3
-     ],
-     [
-      "tas_devil",
-      3
-     ]
-    ],
-    "reward": {
-     "wind_tuft": 3,
-     "rot_fang": 3
-    },
-    "spot": "Ivo: Hey! A new trainer? Let's see what your partner can do!",
-    "win": "Ivo: Wow. Your partner really trusts you.",
-    "lose": "Ivo: Come back when you've trained some more!"
-   },
-   {
-    "id": "mara",
-    "name": "Mara",
-    "sprite": "rival_mara",
-    "route": 1.0,
-    "team": [
-     [
-      "aye_aye",
-      4
-     ],
-     [
-      "tas_devil",
-      5
-     ],
-     [
-      "maned_wolf",
-      5
-     ]
-    ],
-    "reward": {
-     "wind_tuft": 4,
-     "rot_fang": 4,
-     "night_whisker": 4
-    },
-    "spot": "Mara: I've been waiting at the end of this route for someone worth fighting.",
-    "win": "Mara: ...You read every tell. I'll remember you.",
-    "lose": "Mara: Swap smarter. Watch for the openings."
-   }
-  ]
+   "wall_slam": 40.0
+  },
+  "bolt_speed_mult": 0.75
  },
  "sync_to_team": 3,
  "sync": {
   "hold": 1.2,
-  "range": 150
+  "range": 150,
+  "lenses": {
+   "basic": {
+    "name": "Sync Lens",
+    "speed": 1.0,
+    "rarities": [
+     "common"
+    ]
+   },
+   "plus": {
+    "name": "Sync Lens+",
+    "speed": 1.8,
+    "rarities": [
+     "common",
+     "rare"
+    ]
+   }
+  }
+ },
+ "terrain": {
+  "_doc": "Arena features (ArenaLayout): slow multipliers, hiding, high ground, hazards.",
+  "shallow_speed": 0.7,
+  "mud_speed": 0.7,
+  "mud_dodge": 0.6,
+  "grass_hide_range": 150,
+  "reveal_time": 1.5,
+  "ledge_range": 1.2,
+  "ledge_dealt": 1.2,
+  "fall_damage": 0.08,
+  "fall_stun": 0.6,
+  "thorn_damage": 0.06,
+  "coals_dps": 0.03,
+  "coals_time": 7.0,
+  "fog_vision": 150,
+  "fog_clear_time": 8.0,
+  "heavy_hit": 15,
+  "wall_slam_knock": 16
+ },
+ "ai_tiers": {
+  "_doc": "How smart the opposing creature (and trainer) plays. react: seconds before it responds; dodge: chance to dodge your wind-ups; lead: how well it leads shots (0 aims at you, 1 at where you'll be); cover: chance to step behind cover when hurt; grass: chance to hide in grass; swap_below: a trainer swaps out under this life; counter_swap: swaps into an element advantage; save_gauge: waits for a full gauge or a stagger to spend; status: chance to channel its status move; channel: how long it channels (share of max); tell_mult: its wind-ups are longer when easier; high_ground: chance to climb a ledge when you are at range.",
+  "easy": {
+   "react": 0.7,
+   "dodge": 0.0,
+   "lead": 0.0,
+   "cover": 0.0,
+   "grass": 0.0,
+   "swap_below": 0.0,
+   "counter_swap": false,
+   "save_gauge": false,
+   "status": 0.15,
+   "channel": 0.4,
+   "tell_mult": 1.4,
+   "high_ground": 0.0
+  },
+  "normal": {
+   "react": 0.35,
+   "dodge": 0.35,
+   "lead": 0.5,
+   "cover": 0.3,
+   "grass": 0.1,
+   "swap_below": 0.25,
+   "counter_swap": false,
+   "save_gauge": false,
+   "status": 0.3,
+   "channel": 0.7,
+   "tell_mult": 1.0,
+   "high_ground": 0.2
+  },
+  "hard": {
+   "react": 0.15,
+   "dodge": 0.75,
+   "lead": 1.0,
+   "cover": 0.6,
+   "grass": 0.5,
+   "swap_below": 0.35,
+   "counter_swap": true,
+   "save_gauge": true,
+   "status": 0.45,
+   "channel": 1.0,
+   "tell_mult": 0.85,
+   "high_ground": 0.6
+  }
+ },
+ "progression": {
+  "xp_growth": 45,
+  "win_xp": 30,
+  "trainer_win_xp": 60,
+  "max_level": 40,
+  "levels": [
+   5,
+   15,
+   30
+  ]
+ },
+ "battle": {
+  "_doc": "Arena battles: transition time, how wild opponents are picked in the Gate Hall, rewards, trainers.",
+  "transition": 0.55,
+  "wild_species": [
+   "maned_wolf",
+   "tas_devil",
+   "aye_aye"
+  ],
+  "route_tier": "normal",
+  "contact": 26,
+  "rewards": {
+   "materials": [
+    1,
+    2
+   ]
+  },
+  "trainers": {
+   "hall": {
+    "name": "Gate Warden",
+    "team": [
+     "tas_devil",
+     "maned_wolf",
+     "aye_aye"
+    ],
+    "lines": {
+     "ask": "Gate Warden: Three of mine against three of yours?",
+     "win": "Gate Warden: Well fought.",
+     "lose": "Gate Warden: Again?",
+     "decline": ""
+    }
+   },
+   "ivo": {
+    "name": "Ivo",
+    "sprite": "rival_ivo",
+    "route": 0.6,
+    "team": [
+     "maned_wolf",
+     "tas_devil",
+     "aye_aye"
+    ],
+    "tier": "normal",
+    "reward": {
+     "wind_tuft": 3,
+     "rot_fang": 3
+    },
+    "lines": {
+     "ask": "Ivo: Hey, new trainer! Want to battle?",
+     "win": "Ivo: Wow. Your partner really trusts you.",
+     "lose": "Ivo: Come back when you've trained some more!",
+     "decline": "Ivo: Anytime!"
+    }
+   }
+  },
+  "route_arena": "meadow"
+ },
+ "temperament": {
+  "_doc": "Wild creatures on the route never force a fight (walking into one starts it). warn: a territorial one warns at this range and calms after `calm_after` s if you back off; flee_range: a shy one runs from you; chase_range: an aggressive one (rare, red eye glint) chases.",
+  "warn": 150,
+  "calm_after": 2.5,
+  "flee_range": 170,
+  "chase_range": 220,
+  "aggressive_chance": 0.1
+ },
+ "hall": {
+  "default_team": [
+   "honey_badger",
+   "cuttlefish",
+   "pangolin"
+  ],
+  "default_level": 5
+ },
+ "partner": {
+  "follow": 44,
+  "follow_side": 26,
+  "catch_up": 1.35,
+  "teleport_after": 700,
+  "basic_range_slack": 0.85
+ },
+ "entry": {
+  "damage": 12,
+  "radius": 70,
+  "stun": 0.4
  }
 }

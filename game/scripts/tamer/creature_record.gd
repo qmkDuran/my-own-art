@@ -1,22 +1,18 @@
 class_name CreatureRecord
 extends RefCounted
-## One creature as a living record, in the world or not: its species, level, shiny form, bond, raised stats,
-## current life and knock-out time. A team member keeps its record while it is called back; the Creature node that
-## fights is made from it and writes its life back.
-
-signal bond_unlocked(rec: CreatureRecord)
+## One creature as a living record, in the world or not: its species, level and growth (CreatureGrowth: XP, moves,
+## evolution), shiny form, raised stats, current life and knock-out time. A team member keeps its record while it
+## is called back; the Creature node that fights is made from it and writes its life back.
 
 var species_id: String
 var shiny: bool = false
 var wild: bool = false
 var level: int = 1
-var bond: float = 0.0
 var upgrades: Dictionary = {"life": 0, "power": 0, "speed": 0}
 var life: float = -1.0                  ## -1: full
 var ko_left: float = 0.0                ## seconds until it recovers from a knock-out (0: awake)
-var life_boost: float = 1.0             ## a rival trainer's creatures are raised: more life and power
-var power_boost: float = 1.0
 var used_moves: Dictionary = {}         ## moves it has used with you (the first use shows the move's name)
+var growth: CreatureGrowth
 
 
 static func make(id: String, lvl: int, is_wild: bool, is_shiny: bool = false) -> CreatureRecord:
@@ -25,6 +21,7 @@ static func make(id: String, lvl: int, is_wild: bool, is_shiny: bool = false) ->
 	r.level = lvl
 	r.wild = is_wild
 	r.shiny = is_shiny
+	r.growth = CreatureGrowth.new(r)
 	r.life = r.max_life()
 	return r
 
@@ -38,7 +35,7 @@ func element() -> String:
 
 
 func display_name() -> String:
-	return ("Shiny " if shiny else "") + String(data()["name"])
+	return ("Shiny " if shiny else "") + growth.form_name()
 
 
 func max_life() -> float:
@@ -46,7 +43,7 @@ func max_life() -> float:
 	base *= 1.0 + float(TamerData.rule("upgrades.life.per_level")) * int(upgrades["life"])
 	if wild:
 		base *= float(TamerData.rule("wild.life_mult"))
-	return roundf(base * life_boost)
+	return roundf(base * growth.life_mult())
 
 
 func power() -> float:
@@ -54,7 +51,7 @@ func power() -> float:
 	p *= 1.0 + float(TamerData.rule("upgrades.power.per_level")) * int(upgrades["power"])
 	if wild:
 		p *= float(TamerData.rule("wild.power_mult"))
-	return p * power_boost
+	return p * growth.power_mult()
 
 
 func speed() -> float:
@@ -101,22 +98,6 @@ func tick(delta: float) -> void:
 			revive(1.0)
 
 
-func bond_frac() -> float:
-	return bond / float(TamerData.rule("bond.max"))
-
-
-func bond_move_ready() -> bool:
-	return bond >= float(TamerData.rule("bond.unlock"))
-
-
-## Bond grows; crossing the threshold unlocks the bond move once.
-func add_bond(amount: float) -> void:
-	var was: bool = bond_move_ready()
-	bond = minf(float(TamerData.rule("bond.max")), bond + amount)
-	if not was and bond_move_ready():
-		bond_unlocked.emit(self)
-
-
 ## Materials the next level of `stat` costs; -1 when it is maxed.
 func upgrade_cost(stat: String) -> int:
 	var costs: Array = TamerData.rule("upgrades." + stat + ".cost")
@@ -125,8 +106,4 @@ func upgrade_cost(stat: String) -> int:
 
 
 func moves() -> Array:
-	return data()["kit"]
-
-
-func bond_move() -> String:
-	return String(data()["bond_move"])
+	return growth.active

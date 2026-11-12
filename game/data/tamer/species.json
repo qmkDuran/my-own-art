@@ -1,5 +1,5 @@
 {
- "_doc": "Creatures of the prototype. stats: life, power (damage scale), speed (px/s), radius (body). basic: the auto-attack the partner uses on its own; kit: the four moves on Q W E R; bond_move: unlocked by bond (key T). befriend_at: share of life at or below which the trainer can win it over. material: what it drops. shiny_chance: per spawn (1 in 64 in the demo; F1 spawns one for testing). meet: the starter meeting (its reaction and line). Elements and roles come from VISION.md. ai: how it fights when wild or a rival's (style flanker / brawler / skirmisher; attacks with their tells: windup before, opening after, reach).",
+ "_doc": "Creatures of the demo. stats: life, power (damage scale), speed (px/s), radius (body). basic: the right-click physical attack. learn: [level, move] unlocked by level (the level-25 one is its signature move); kit: the 4 active moves by default (the team station changes them). sync_at: share of life at or below which it is weakened (it stops fighting and can be synced). material: what it drops. home: its home terrain bonus and cost (VISION.md). temperament: on the route (shy flees, calm ignores, territorial warns, aggressive chases). rarity: common or rare (the basic Sync Lens only syncs common ones). evolve: a level and what it becomes. shiny_chance: 1 in 4096 (F1 spawns one). ai: how it fights (style flanker / brawler / skirmisher; attacks with their tells: windup before, opening after, reach).",
  "species": {
   "honey_badger": {
    "name": "Honey Badger",
@@ -9,7 +9,7 @@
    "stats": {
     "life": 150,
     "power": 1.25,
-    "speed": 150,
+    "speed": 98,
     "radius": 11
    },
    "anim_fps": 8,
@@ -17,17 +17,11 @@
    "kit": [
     "claw_rush",
     "ember_pounce",
-    "cinder_roar",
-    "fury_spin"
+    "growl",
+    "cinder_spit"
    ],
-   "bond_move": "honey_rage",
-   "befriend_at": 0.4,
    "material": "ember_tuft",
-   "shiny_chance": 0.01562,
-   "meet": {
-    "react": "puff",
-    "line": "The honey badger stamps and puffs up at you. It is not afraid of anything."
-   },
+   "shiny_chance": 0.000244140625,
    "ai": {
     "style": "brawler",
     "attacks": [
@@ -35,17 +29,80 @@
       "move": "claw_rush",
       "windup": 0.4,
       "opening": 0.35,
-      "reach": 60
+      "reach": 55,
+      "min": 0
      },
      {
       "move": "ember_pounce",
       "windup": 0.6,
       "opening": 0.8,
-      "reach": 200,
+      "reach": 170,
       "min": 80
+     },
+     {
+      "move": "cinder_spit",
+      "windup": 0.5,
+      "opening": 0.5,
+      "reach": 300,
+      "min": 140
+     },
+     {
+      "move": "growl",
+      "windup": 0.0,
+      "opening": 0.4,
+      "reach": 260,
+      "min": 0
      }
     ]
-   }
+   },
+   "learn": [
+    [
+     1,
+     "claw_rush"
+    ],
+    [
+     1,
+     "ember_pounce"
+    ],
+    [
+     1,
+     "growl"
+    ],
+    [
+     1,
+     "cinder_spit"
+    ],
+    [
+     12,
+     "cinder_roar"
+    ],
+    [
+     20,
+     "fury_spin"
+    ],
+    [
+     25,
+     "honey_rage"
+    ]
+   ],
+   "home": {
+    "terrain": [
+     "coals"
+    ],
+    "dealt": 1.25,
+    "burn_immune": true,
+    "text": "Burning ground: hits 25% harder and ignores burns there. Easy to find in the fire."
+   },
+   "temperament": "territorial",
+   "rarity": "common",
+   "evolve": {
+    "level": 16,
+    "into": "Ratel Warden",
+    "scale": 1.25,
+    "life": 1.3,
+    "power": 1.2
+   },
+   "sync_at": 0.4
   },
   "cuttlefish": {
    "name": "Cuttlefish",
@@ -55,44 +112,97 @@
    "stats": {
     "life": 110,
     "power": 1.1,
-    "speed": 175,
+    "speed": 114,
     "radius": 10
    },
    "anim_fps": 7,
    "hover": 6,
    "basic": "glint_shot",
    "kit": [
+    "tentacle_snap",
     "prism_shot",
-    "shard_fan",
-    "mirror_blink",
-    "dazzle"
+    "camouflage",
+    "shard_fan"
    ],
-   "bond_move": "kaleidoscope",
-   "befriend_at": 0.4,
    "material": "glass_scale",
-   "shiny_chance": 0.01562,
-   "meet": {
-    "react": "flicker",
-    "line": "The cuttlefish ripples through every colour, then winks at you."
-   },
+   "shiny_chance": 0.000244140625,
    "ai": {
-    "style": "brawler",
+    "style": "skirmisher",
+    "keep": 150,
+    "flee_below": 0.5,
+    "flee_keep": 220,
     "attacks": [
      {
+      "move": "tentacle_snap",
+      "windup": 0.35,
+      "opening": 0.3,
+      "reach": 55,
+      "min": 0
+     },
+     {
       "move": "prism_shot",
-      "windup": 0.4,
-      "opening": 0.35,
-      "reach": 60
+      "windup": 0.35,
+      "opening": 0.3,
+      "reach": 320,
+      "min": 90
      },
      {
       "move": "shard_fan",
-      "windup": 0.6,
-      "opening": 0.8,
-      "reach": 200,
-      "min": 80
+      "windup": 0.5,
+      "opening": 0.5,
+      "reach": 230,
+      "min": 60
+     },
+     {
+      "move": "camouflage",
+      "windup": 0.0,
+      "opening": 0.3,
+      "reach": 400,
+      "min": 0
      }
     ]
-   }
+   },
+   "learn": [
+    [
+     1,
+     "tentacle_snap"
+    ],
+    [
+     1,
+     "prism_shot"
+    ],
+    [
+     1,
+     "camouflage"
+    ],
+    [
+     1,
+     "shard_fan"
+    ],
+    [
+     10,
+     "mirror_blink"
+    ],
+    [
+     18,
+     "dazzle"
+    ],
+    [
+     25,
+     "kaleidoscope"
+    ]
+   ],
+   "home": {
+    "terrain": [
+     "shallow"
+    ],
+    "hidden": true,
+    "dealt": 0.85,
+    "text": "Water: hidden from foes while in it, but its shots are 15% weaker."
+   },
+   "temperament": "shy",
+   "rarity": "common",
+   "sync_at": 0.4
   },
   "pangolin": {
    "name": "Pangolin",
@@ -102,7 +212,7 @@
    "stats": {
     "life": 195,
     "power": 1.0,
-    "speed": 135,
+    "speed": 88,
     "radius": 12
    },
    "anim_fps": 6,
@@ -110,25 +220,20 @@
    "kit": [
     "tail_swipe",
     "roll_charge",
-    "thorn_guard",
-    "seed_burst"
+    "harden",
+    "vine_wall"
    ],
-   "bond_move": "bloom_wall",
-   "befriend_at": 0.4,
    "material": "bloom_leaf",
-   "shiny_chance": 0.01562,
-   "meet": {
-    "react": "curl",
-    "line": "The pangolin curls into a ball, then peeks out to see if you are still there."
-   },
+   "shiny_chance": 0.000244140625,
    "ai": {
     "style": "brawler",
     "attacks": [
      {
       "move": "tail_swipe",
-      "windup": 0.4,
-      "opening": 0.35,
-      "reach": 60
+      "windup": 0.5,
+      "opening": 0.4,
+      "reach": 55,
+      "min": 0
      },
      {
       "move": "roll_charge",
@@ -136,9 +241,55 @@
       "opening": 0.8,
       "reach": 200,
       "min": 80
+     },
+     {
+      "move": "harden",
+      "windup": 0.0,
+      "opening": 0.3,
+      "reach": 400,
+      "min": 0
      }
     ]
-   }
+   },
+   "learn": [
+    [
+     1,
+     "tail_swipe"
+    ],
+    [
+     1,
+     "roll_charge"
+    ],
+    [
+     1,
+     "harden"
+    ],
+    [
+     1,
+     "vine_wall"
+    ],
+    [
+     12,
+     "seed_burst"
+    ],
+    [
+     25,
+     "bloom_wall"
+    ]
+   ],
+   "home": {
+    "terrain": [
+     "roots",
+     "ramp",
+     "cracked"
+    ],
+    "taken": 0.7,
+    "speed": 0.85,
+    "text": "Rocks and roots: takes 30% less damage there, but moves slower."
+   },
+   "temperament": "shy",
+   "rarity": "common",
+   "sync_at": 0.4
   },
   "maned_wolf": {
    "name": "Maned Wolf",
@@ -148,7 +299,7 @@
    "stats": {
     "life": 110,
     "power": 1.05,
-    "speed": 170,
+    "speed": 110,
     "radius": 11
    },
    "anim_fps": 9,
@@ -156,13 +307,11 @@
    "kit": [
     "gust_bite",
     "wind_dash",
-    "howl",
-    "gale_shot"
+    "gale_shot",
+    "sprint"
    ],
-   "bond_move": "tempest",
-   "befriend_at": 0.45,
    "material": "wind_tuft",
-   "shiny_chance": 0.01562,
+   "shiny_chance": 0.000244140625,
    "ai": {
     "style": "flanker",
     "flank": 80,
@@ -173,7 +322,8 @@
       "move": "gust_bite",
       "windup": 0.4,
       "opening": 0.35,
-      "reach": 50
+      "reach": 50,
+      "min": 0
      },
      {
       "move": "wind_dash",
@@ -181,9 +331,52 @@
       "opening": 0.7,
       "reach": 220,
       "min": 90
+     },
+     {
+      "move": "gale_shot",
+      "windup": 0.5,
+      "opening": 0.5,
+      "reach": 280,
+      "min": 120
      }
     ]
-   }
+   },
+   "learn": [
+    [
+     1,
+     "gust_bite"
+    ],
+    [
+     1,
+     "wind_dash"
+    ],
+    [
+     1,
+     "gale_shot"
+    ],
+    [
+     1,
+     "sprint"
+    ],
+    [
+     12,
+     "howl"
+    ],
+    [
+     25,
+     "tempest"
+    ]
+   ],
+   "home": {
+    "terrain": [
+     "grass"
+    ],
+    "speed": 1.3,
+    "text": "Tall grass: 30% faster there (and hidden like anyone in grass). Burnt or flattened grass loses it."
+   },
+   "temperament": "calm",
+   "rarity": "common",
+   "sync_at": 0.45
   },
   "aye_aye": {
    "name": "Aye-aye",
@@ -193,21 +386,19 @@
    "stats": {
     "life": 90,
     "power": 1.0,
-    "speed": 140,
+    "speed": 91,
     "radius": 10
    },
    "anim_fps": 7,
    "basic": "tap_shot",
    "kit": [
     "echo_tap",
-    "echo_pulse",
+    "screech",
     "ghost_finger",
-    "screech"
+    "echo_pulse"
    ],
-   "bond_move": "resonance",
-   "befriend_at": 0.45,
    "material": "night_whisker",
-   "shiny_chance": 0.01562,
+   "shiny_chance": 0.000244140625,
    "ai": {
     "style": "skirmisher",
     "keep": 120,
@@ -215,27 +406,63 @@
     "flee_keep": 190,
     "attacks": [
      {
-      "move": "echo_tap",
-      "windup": 0.35,
-      "opening": 0.3,
-      "reach": 250,
-      "min": 100
-     },
-     {
       "move": "echo_pulse",
       "windup": 0.45,
       "opening": 0.5,
-      "reach": 90
+      "reach": 90,
+      "min": 0
+     },
+     {
+      "move": "echo_tap",
+      "windup": 0.35,
+      "opening": 0.3,
+      "reach": 260,
+      "min": 100
      },
      {
       "move": "screech",
-      "windup": 0.65,
-      "opening": 0.7,
-      "reach": 250,
-      "min": 120
+      "windup": 0.0,
+      "opening": 0.4,
+      "reach": 260,
+      "min": 0
      }
     ]
-   }
+   },
+   "learn": [
+    [
+     1,
+     "echo_tap"
+    ],
+    [
+     1,
+     "screech"
+    ],
+    [
+     1,
+     "ghost_finger"
+    ],
+    [
+     1,
+     "echo_pulse"
+    ],
+    [
+     25,
+     "resonance"
+    ]
+   ],
+   "home": {
+    "terrain": [
+     "ledge",
+     "ramp"
+    ],
+    "range": 1.25,
+    "dealt": 1.15,
+    "taken": 1.2,
+    "text": "High ground: shots reach 25% further and hit 15% harder, but it takes 20% more."
+   },
+   "temperament": "shy",
+   "rarity": "rare",
+   "sync_at": 0.45
   },
   "tas_devil": {
    "name": "Tasmanian Devil",
@@ -245,21 +472,19 @@
    "stats": {
     "life": 140,
     "power": 1.1,
-    "speed": 145,
+    "speed": 94,
     "radius": 11
    },
    "anim_fps": 8,
    "basic": "devil_crunch",
    "kit": [
     "crunch",
-    "rot_spit",
     "frenzy",
-    "stench"
+    "rot_spit",
+    "berserk"
    ],
-   "bond_move": "rot_storm",
-   "befriend_at": 0.35,
    "material": "rot_fang",
-   "shiny_chance": 0.01562,
+   "shiny_chance": 0.000244140625,
    "ai": {
     "style": "brawler",
     "attacks": [
@@ -267,29 +492,68 @@
       "move": "crunch",
       "windup": 0.45,
       "opening": 0.4,
-      "reach": 50
+      "reach": 50,
+      "min": 0
      },
      {
       "move": "frenzy",
       "windup": 0.85,
       "opening": 1.3,
-      "reach": 180,
+      "reach": 170,
       "min": 70
      },
      {
       "move": "rot_spit",
       "windup": 0.6,
       "opening": 0.5,
-      "reach": 230,
-      "min": 160
+      "reach": 240,
+      "min": 140
+     },
+     {
+      "move": "berserk",
+      "windup": 0.0,
+      "opening": 0.3,
+      "reach": 400,
+      "min": 0
      }
     ]
-   }
+   },
+   "learn": [
+    [
+     1,
+     "crunch"
+    ],
+    [
+     1,
+     "frenzy"
+    ],
+    [
+     1,
+     "rot_spit"
+    ],
+    [
+     1,
+     "berserk"
+    ],
+    [
+     10,
+     "stench"
+    ],
+    [
+     25,
+     "rot_storm"
+    ]
+   ],
+   "home": {
+    "terrain": [
+     "mud"
+    ],
+    "regen": 1.5,
+    "text": "Mud: heals 1.5% of its life a second there (slowed like everyone)."
+   },
+   "temperament": "territorial",
+   "rarity": "common",
+   "sync_at": 0.35
   }
- },
- "starters": [
-  "honey_badger",
-  "cuttlefish",
-  "pangolin"
- ]
+ }
 }

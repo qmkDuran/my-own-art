@@ -1,13 +1,13 @@
 class_name CreatureCombat
 extends RefCounted
-## Damage between creatures: the move's damage x the user's power x the element matchup x the combo step x a staggered
-## target's weakness x a little spread; your hits also fill the gauge and the target's stagger bar. Then the weight
-## of the hit (Lanternfall's impact, hit-stop and shake, in the element's colours), the number, the "Super
-## effective!" or "Resisted" word, and bond for your creature.
+## Damage between creatures: the move's damage x the user's power x the element advantage (x1.3 when its element is
+## strong against the target's, never a penalty) x the combo step x buffs and debuffs x the ground (home terrain,
+## high ground) x a staggered target's weakness x a little spread. Physical hits fill the gauge (yours, or the
+## opponent's own); every hit fills the target's stagger bar (an advantage fills it faster). Then the weight of the
+## hit: Lanternfall's impact, hit-stop and shake in the element's colours, the number, and "Strong hit!".
 
 const SPREAD: float = 0.1
-const WORD_GAP: float = 0.6             ## one matchup word per target this often, so a flurry is not a wall of text
-const TRAINER_HIT := Color("e8505a")
+const WORD_GAP: float = 0.6             ## one advantage word per target this often, so a flurry is not a wall of text
 
 static var _last_word: Dictionary = {}
 
@@ -18,66 +18,60 @@ static func move_element(user: Creature, m: Dictionary) -> String:
 
 ## One hit of move `m` from `user` on `target`; `scale` for pulses and path hits. Returns the damage dealt.
 static func hit(user: Creature, target: Combatant, m: Dictionary, dir: Vector2, scale: float = 1.0) -> float:
-	if target == null or not is_instance_valid(target) or target.untouchable():
+	var tc := target as Creature
+	if tc == null or not is_instance_valid(tc) or tc.untouchable():
 		return 0.0
 	var el: String = move_element(user, m)
-	var mult: float = TamerData.element_mult(el, target.element_id()) if target.element_id() != "" else 1.0
-	var crit: bool = false
-	var tc := target as Creature
-	var basic: bool = user.is_basic_move(m)
-	if basic and user.side == Combatant.SIDE_TEAM:
-		scale *= user.combo_scale
-	var dmg: float = float(m["damage"]) * user.power() * mult * scale * randf_range(1.0 - SPREAD, 1.0 + SPREAD)
-	if tc != null:
-		dmg *= tc.stagger.damage_taken()
-	dmg = maxf(1.0, roundf(dmg))
-	var share: float = dmg / maxf(target.max_life_value(), 1.0)
-	target.receive_hit(dmg, dir, float(m.get("knock", 6.0)), float(m.get("stun", 0.0)), user)
-	_feedback(target, dmg, share, el, dir, bool(m.get("bond", false)) or crit)
-	if target.element_id() != "":
-		_matchup_word(target, TamerData.matchup(el, target.element_id()))
-	if user.side == Combatant.SIDE_TEAM and user.rec != null:
-		user.rec.add_bond(float(TamerData.rule("bond.per_hit")))
-		_gauge_and_stagger(user, tc, m, dmg, el, basic)
+	var advantage: bool = TamerData.advantage(el, tc.element_id())
+	var dmg: float = float(m["damage"]) * user.power() * scale * _mults(user, tc, m, advantage) * randf_range(1.0 - SPREAD, 1.0 + SPREAD)
+	dmg = maxf(1.0, roundf(dmg * tc.effects.on_hit()))
+	var share: float = dmg / maxf(tc.max_life_value(), 1.0)
+	tc.receive_hit(dmg, dir, float(m.get("knock", 6.0)), float(m.get("stun", 0.0)), user)
+	_feedback(tc, dmg, share, el, dir, bool(m.get("signature", false)))
+	if advantage:
+		_strong_word(tc)
+	_gauge_and_stagger(user, tc, m, dmg, advantage)
+	if tc.stagger.is_staggered() and user.side == Combatant.SIDE_TEAM:
+		TamerGame.current.guide.done("stagger")
 	return dmg
 
 
-## Your hits fill the gauge (basics; more on a staggered foe) and the foe's stagger bar (weaknesses much more).
-static func _gauge_and_stagger(user: Creature, tc: Creature, m: Dictionary, dmg: float, el: String, basic: bool) -> void:
-	if tc == null:
-		return
+static func _mults(user: Creature, tc: Creature, m: Dictionary, advantage: bool) -> float:
+	var k: float = float(TamerData.elements["advantage_mult"]) if advantage else 1.0
+	if user.is_basic_move(m) and user.side == Combatant.SIDE_TEAM:
+		k *= user.combo_scale
+	k *= user.effects.mult("dealt") * TerrainRules.dealt_mult(user)
+	k *= tc.effects.mult("taken") * TerrainRules.taken_mult(tc) * tc.stagger.damage_taken()
+	return k
+
+
+## Physical hits fill the hitter's gauge (more on a staggered target); every hit fills the target's stagger bar.
+static func _gauge_and_stagger(user: Creature, tc: Creature, m: Dictionary, dmg: float, advantage: bool) -> void:
 	var G: Dictionary = TamerData.rule("combat.gauge")
-	var S: Dictionary = TamerData.rule("combat.stagger")
-	if basic:
-		TamerGame.current.team.add_gauge(float(G["per_basic_hit"]) * (float(G["on_staggered_mult"]) if tc.stagger.is_staggered() else 1.0))
+	if String(m.get("type", "physical")) == "physical":
+		var fill: float = float(G["per_physical_hit"]) * (float(G["on_staggered_mult"]) if tc.stagger.is_staggered() else 1.0)
+		if user.side == Combatant.SIDE_TEAM:
+			TamerGame.current.team.add_gauge(fill)
+		else:
+			user.gauge = minf(float(G["segments"]), user.gauge + fill)
 	var k: float = float(m.get("stagger", 1.0))
-	match TamerData.matchup(el, tc.element_id()):
-		TamerData.SUPER:
-			k *= float(S["super_mult"])
-		TamerData.RESISTED:
-			k *= float(S["resist_mult"])
+	if advantage:
+		k *= float(TamerData.rule("combat.stagger.advantage_mult"))
 	tc.stagger.add(dmg * k)
 
 
-static func _feedback(target: Combatant, dmg: float, share: float, el: String, dir: Vector2, bond: bool) -> void:
-	var trainer: bool = target.element_id() == ""
-	FloatText.hit(target, dmg, bond, false, TRAINER_HIT if trainer else TamerData.color(el, "light"))
+static func _feedback(target: Creature, dmg: float, share: float, el: String, dir: Vector2, big: bool) -> void:
+	FloatText.hit(target, dmg, big, false, TamerData.color(el, "light"))
 	var at: Vector2 = target.global_position + Vector2(0, -target.hit_radius() * 1.2)
-	var killed: bool = not target.alive()
-	Impact.hit(at, dir, share * (1.5 if bond else 1.0), TamerData.color(el), bond, killed, TamerData.sparks(el))
+	Impact.hit(at, dir, share * (1.5 if big else 1.0), TamerData.color(el), big, not target.alive(), TamerData.sparks(el))
 	Audio.sfx("impact", -6.0 + 4.0 * minf(share * 3.0, 1.0), randf_range(0.9, 1.15))
-	Audio.sfx("hurt" if trainer else "hurt_beast", -10.0, randf_range(0.95, 1.2))
+	Audio.sfx("hurt_beast", -10.0, randf_range(0.95, 1.2))
 
 
-static func _matchup_word(target: Combatant, matchup: int) -> void:
-	if matchup == TamerData.NEUTRAL:
-		return
+static func _strong_word(target: Creature) -> void:
 	var id: int = target.get_instance_id()
 	var now: float = Time.get_ticks_msec() / 1000.0
 	if now - float(_last_word.get(id, -10.0)) < WORD_GAP:
 		return
 	_last_word[id] = now
-	if matchup == TamerData.SUPER:
-		TamerFx.word(target.global_position, "Super effective!", Pal.c("gold"))
-	else:
-		TamerFx.word(target.global_position, "Resisted", Pal.c("pale"))
+	TamerFx.word(target.global_position, "Strong hit!", Pal.c("gold"))

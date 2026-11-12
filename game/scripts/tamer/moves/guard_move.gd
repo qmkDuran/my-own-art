@@ -1,12 +1,12 @@
 class_name GuardMove
 extends MoveKind
-## A ward: the user soaks `absorb` damage for `duration` seconds; a bond ward also heals it and blasts the foes
+## A ward: the user soaks `absorb` damage for `duration` seconds; a signature ward also heals it and blasts the foes
 ## around it.
 
 const WARD_R: float = 22.0
 
 
-func cast(user: Creature, m: Dictionary, _at: Vector2) -> void:
+func cast(user: Creature, m: Dictionary, _at: Vector2, _strength: float = 1.0) -> void:
 	var el: String = element(user, m)
 	var time: float = float(m["duration"])
 	user.add_guard(float(m["absorb"]), time)

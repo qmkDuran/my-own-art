@@ -1,10 +1,11 @@
 class_name SyncLens
 extends Node2D
 ## Catching is the trainer's job, with a handheld scanner: once a wild creature is weakened (dazed) or STAGGERED,
-## press F and the trainer walks into range and raises the Sync Lens; HOLD F while the scan beam plays and the ring
-## around the creature fills. Your creature being hit, the target being hit (it breaks free), letting go, walking
-## off or the target fainting stops it. On success the creature dissolves into light and is synced to your team
-## (the first three) or your Sanctuary.
+## HOLD F and the trainer raises the Sync Lens from outside the arena wall while the scan beam plays and the ring
+## around the creature fills. Your creature being hit, the target being hit (it breaks free), letting go or the
+## target fainting stops it. The basic lens only reads common creatures; the upgraded one (the Gate Hall's stand) is
+## faster and reads rare ones too (tamer.json "sync.lenses"). On success the creature dissolves into light, is synced
+## to your team (up to three) or your Sanctuary, and the battle is won.
 
 signal synced(rec: CreatureRecord)
 
@@ -19,6 +20,7 @@ const BEAM_W: float = 3.0
 const SCAN_LINES: int = 3
 
 var g: TamerGame
+var tier: String = "basic"
 var target: Creature
 var progress: float = 0.0
 var scanning: bool = false
@@ -46,21 +48,36 @@ func range_px() -> float:
 	return float(TamerData.rule("sync.range"))
 
 
+func lens() -> Dictionary:
+	return TamerData.rule("sync.lenses." + tier)
+
+
 ## Can this creature be synced now (weakened or staggered, wild, not a rival's)?
 static func syncable(c: Creature) -> bool:
 	return is_instance_valid(c) and c.alive() and c.catchable and c.side == Combatant.SIDE_WILD and \
 		(c.dazed or c.stagger.is_staggered())
 
 
-## F: the trainer goes to the nearest creature that can be synced. Returns whether there was one.
+## Can this lens read the creature's rarity?
+func reads(c: Creature) -> bool:
+	return (lens()["rarities"] as Array).has(String(c.rec.data().get("rarity", "common")))
+
+
+## F: the trainer aims the lens at the nearest creature that can be synced (walking into range on the route; in
+## an arena the lens reaches from outside the wall). Returns whether there was one.
 func request() -> bool:
 	cancel()
-	target = _nearest()
-	if target == null:
+	var c: Creature = _nearest()
+	if c == null:
 		g.hud.notice("Nothing to sync. Weaken a creature (the pink mark on its life bar) or stagger it first.")
 		return false
+	if not reads(c):
+		g.hud.notice("Your %s can't read a rare creature. Upgrade it at the Gate Hall's lens stand." % lens()["name"])
+		return false
+	target = c
 	target.struck.connect(_on_target_hit)
-	g.trainer.walk_to(target.global_position)
+	if not g.battle.on:
+		g.trainer.walk_to(target.global_position)
 	return true
 
 
@@ -73,7 +90,7 @@ func _process(delta: float) -> void:
 		cancel()
 		return
 	var tr: Trainer = g.trainer
-	if tr.global_position.distance_to(target.global_position) > range_px():
+	if not g.battle.on and tr.global_position.distance_to(target.global_position) > range_px():
 		scanning = false
 		_walk_t -= delta
 		if _walk_t <= 0.0:
@@ -85,14 +102,14 @@ func _process(delta: float) -> void:
 	if not scanning:
 		progress = 0.0
 		return
-	progress += delta / float(TamerData.rule("sync.hold"))
+	progress += delta * float(lens()["speed"]) / float(TamerData.rule("sync.hold"))
 	if progress >= 1.0:
 		_win(target)
 
 
 func _nearest() -> Creature:
 	var best: Creature = null
-	var best_d: float = FIND_RANGE
+	var best_d: float = INF if g.battle.on else FIND_RANGE
 	for n: Node in get_tree().get_nodes_in_group(Combatant.SIDE_WILD):
 		var c := n as Creature
 		var d: float = c.global_position.distance_to(g.trainer.global_position)
@@ -140,10 +157,10 @@ func _win(c: Creature) -> void:
 	c.get_tree().create_timer(0.5).timeout.connect(c.queue_free)
 	rec.wild = false
 	rec.life = rec.max_life() * JOIN_LIFE
-	rec.add_bond(float(TamerData.rule("bond.per_befriend")))
 	var to_party: bool = g.team.sync(rec)
 	g.hud.notice(("%s joined your team!" if to_party else "%s was synced to your Sanctuary (camp).") % rec.display_name())
 	synced.emit(rec)
+	g.battle.synced(c)
 
 
 ## The scanner in the trainer's hand, the beam to the creature, scan lines and the filling ring.

@@ -6,7 +6,7 @@ extends MoveKind
 const WARN_ALPHA: float = 0.9
 
 
-func cast(user: Creature, m: Dictionary, at: Vector2) -> void:
+func cast(user: Creature, m: Dictionary, at: Vector2, _strength: float = 1.0) -> void:
 	var fixed: Vector2 = clamp_aim(user, m, at)
 	var delay: float = float(m.get("delay", 0.0))
 	if delay <= 0.0:
@@ -34,9 +34,10 @@ func _pulses(user: Creature, m: Dictionary, fixed: Vector2) -> void:
 func _pulse(user: Creature, m: Dictionary, fixed: Vector2) -> void:
 	var center: Vector2 = user.global_position if String(m.get("at", "aim")) == "self" else fixed
 	var el: String = element(user, m)
-	TamerFx.blast(center, float(m["radius"]), el, bool(m.get("bond", false)))
+	TamerFx.blast(center, float(m["radius"]), el, bool(m.get("signature", false)))
 	Audio.sfx("flare", -10.0, randf_range(1.1, 1.4))
+	TerrainRules.on_impact(center, float(m["radius"]), m, float(m["damage"]))
 	for f: Combatant in foes_in(user, center, float(m["radius"])):
 		CreatureCombat.hit(user, f, m, (f.global_position - center).normalized())
-	if m.has("heal"):
+	if m.has("heal") and m["kind"] == "burst":
 		user.rec.heal_points(float(m["heal"]))

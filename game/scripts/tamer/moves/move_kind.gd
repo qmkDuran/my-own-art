@@ -4,7 +4,7 @@ extends RefCounted
 ## data; a new behaviour is a new subclass registered there. Helpers find who is in reach and clamp aims to range.
 
 
-func cast(_user: Creature, _m: Dictionary, _at: Vector2) -> void:
+func cast(_user: Creature, _m: Dictionary, _at: Vector2, _strength: float = 1.0) -> void:
 	pass
 
 
