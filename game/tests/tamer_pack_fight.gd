@@ -31,7 +31,7 @@ func run() -> void:
 	var lost: float = (losses[0] + losses[1] + losses[2]) / PACK_FIGHTS
 	print("TAMER pack fight: %s s, partner lost %s life (average %d%%)" % [times, losses, roundi(lost * 100.0)])
 	var wins: int = times.filter(func(x: float) -> bool: return x < 40.0).size()
-	smoke.expect(wins >= 2, "the starter wins a near pack of two (%d of 3 within 40 s; a kiting aye-aye can stall a melee bot)" % wins)
+	smoke.expect(wins >= 2, "the starter wins a near pack of two (%d of 3 within 40 s)" % wins)
 	smoke.expect(lost >= 0.15 and lost <= 0.4, "the pack fight costs a fair share of life (%d%% on average; target 20-35%%)" % roundi(lost * 100.0))
 
 

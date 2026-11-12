@@ -12,6 +12,9 @@ const MOTES_EXTENTS := Vector2(520, 300)
 const VIEW_RADIUS: float = 560.0
 const CAMP_STAND := Vector2(0, 40)
 const ROOF_ROOM: float = 60.0
+const ROUTE_REACH: float = 0.92         ## the last rival stands just short of the far clearing
+const RIVAL_ROOM: float = 10.0
+const RIVAL_CLEAR: float = 300.0
 const FLASH_GAIN: float = 0.35          ## the meadow is daylit: hit lights only need to warm the ground
 
 var layout: ZoneLayout
@@ -32,6 +35,7 @@ var befriend: Befriending
 var meeting: StarterMeeting
 var aim: AimPreview
 var slow: SlowTime
+var rivals: Array[RivalTrainer] = []
 var retreating: bool = false            ## the team was wiped and the trainer is on the way back to camp
 
 
@@ -48,6 +52,7 @@ func _ready() -> void:
 	team = Team.new()
 	_build_systems()
 	_wire()
+	_place_rivals()
 	meeting = StarterMeeting.new()
 	add_child(meeting)
 	meeting.setup(self)
@@ -147,6 +152,23 @@ func white_out() -> void:
 		team.rest()
 		retreating = false
 		hud.notice(String(W["text"])))
+
+
+## Rival trainers stand along the route from the meadow to its farthest clearing (tamer.json "rivals").
+func _place_rivals() -> void:
+	var far: Vector2 = layout.start
+	for cl: Dictionary in layout.clearings:
+		var at: Vector2 = layout.center_of(cl["center"])
+		if not bool(cl.get("secret", false)) and at.distance_to(layout.start) > far.distance_to(layout.start):
+			far = at
+	for d: Dictionary in TamerData.rule("rivals.trainers"):
+		var at: Vector2 = layout.free_spot_near(layout.start.lerp(far, float(d["route"]) * ROUTE_REACH), RIVAL_ROOM)
+		var r := RivalTrainer.new().setup(self, d, at)
+		world.add_child(r)
+		rivals.append(r)
+		for n: Node in get_tree().get_nodes_in_group(Combatant.SIDE_WILD):  # no wild pack right on top of a rival
+			if (n as Node2D).global_position.distance_to(at) < RIVAL_CLEAR:
+				n.queue_free()
 
 
 func camp_point() -> Vector2:

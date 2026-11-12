@@ -28,6 +28,7 @@ var _safe_t: float = 0.0
 var _end_t: float = 0.0
 var _tally: Dictionary = {}             ## defeated, materials and bond at the start of the battle
 var ring := BattleRing.new()
+var rival: RivalTrainer                 ## set in a trainer battle
 var _grace: float = 0.0                 ## after a battle, a few seconds when nothing can start a new one
 
 
@@ -74,6 +75,27 @@ func engage(foe: Creature) -> void:
 	_brain.target = foe
 	_beat(c, foe)
 	started.emit()
+
+
+## A rival trainer's battle: the same, with their creatures coming and going inside the ring.
+func engage_rival(r: RivalTrainer, first: Creature) -> void:
+	_grace = 0.0
+	engage(first)
+	rival = r
+	add_fighter(first)
+
+
+func add_fighter(c: Creature) -> void:
+	if not ring.inside.has(c):
+		ring.inside.append(c)
+	if c.brain is WildBrain:
+		(c.brain as WildBrain).wake(g.field.partner)
+	if _brain != null:
+		_brain.target = c
+
+
+func remove_fighter(c: Creature) -> void:
+	ring.inside.erase(c)
 
 
 ## The ring forms around your creature and the foe; the foe's pack-mates near it are in the fight too.
@@ -166,7 +188,7 @@ func _check_end(c: Creature) -> void:
 			end(false)
 		return
 	var foes: Array[Creature] = awake_foes(c)
-	if foes.is_empty():
+	if foes.is_empty() and (rival == null or not rival.has_more()):
 		end(true)
 
 
@@ -177,6 +199,9 @@ func end(won: bool) -> void:
 		return
 	on = false
 	ring.dissolve()
+	if rival != null:
+		rival.finish(won)
+		rival = null
 	_grace = float(TamerData.rule("ring.grace"))
 	var c: Creature = g.field.partner
 	if c != null and is_instance_valid(c):

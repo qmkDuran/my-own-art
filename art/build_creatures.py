@@ -20,6 +20,16 @@ TRAINER = {"name": "Trainer", "role": "", "head": "cap", "hat": ("sea_dk", "sea"
            "coat": ("leaf_dk", "leaf", "leaf_lt"), "scale": 0.8, "hem": 47, "hem_w": 10, "pack": "earth_lt",
            "legs": "earth_dk", "skin": "skin_lt", "scarf": ("amber", "flame"), "belt": "earth_dk",
            "rim_cool": "sea_lt", "rim_warm": "amber"}
+RIVALS = {
+    "rival_ivo": {"name": "Ivo", "role": "", "head": "cap", "hat": ("rust", "ember", "flame"), "hair": "ink",
+                  "coat": ("night", "dusk2", "dusk3"), "scale": 0.8, "hem": 47, "hem_w": 10, "pack": "earth",
+                  "legs": "ink", "skin": "skin", "scarf": ("glint", "glass_lt"), "belt": "ink", "rim_cool": "mist",
+                  "rim_warm": "flame"},
+    "rival_mara": {"name": "Mara", "role": "", "head": "hood", "hat": ("violet", "violet_lt", "pale"),
+                   "coat": ("sea_dk", "sea", "sea_lt"), "scale": 0.8, "hem": 55, "hem_w": 11, "legs": "night",
+                   "skin": "skin_lt", "scarf": ("gold", "amber"), "belt": "earth_dk", "rim_cool": "violet_lt",
+                   "rim_warm": "gold", "split": False},
+}
 TRAINER_POSES = ("idle", "walk")
 REVIEW_SCALE = 4
 
@@ -46,6 +56,10 @@ def build() -> dict:
     img, glow = sheet(rows, 64, 64)
     _save(img, glow, "trainer")
     meta["trainer"] = {"frame": [64, 64], "anchor": [32, people.FEET], "poses": [[p, people.POSES[p]] for p in TRAINER_POSES]}
+    for key, spec in RIVALS.items():                          # rival trainers share the trainer's sheet layout
+        rows = [[people.draw(spec, pose, i) for i in range(people.POSES[pose])] for pose in TRAINER_POSES]
+        img, glow = sheet(rows, 64, 64)
+        _save(img, glow, key)
     return meta
 
 

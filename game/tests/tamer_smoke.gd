@@ -48,6 +48,7 @@ func _run() -> void:
 	await _bond()
 	await _combat_model()
 	await _ring()
+	await _rival()
 	await _camp()
 	await _drops_and_white_out()
 	await TamerPackFight.new(self).run()
@@ -355,3 +356,31 @@ func _ring() -> void:
 	expect(not g.battle.on and g.battle._grace > 0.0, "after a battle there is a grace before the next one")
 	expect(p.alive(), "your creature is fine")
 	await seconds(4.5)
+
+
+## A rival trainer spots you, walks up, battles with a team, uses a heal once, and is beaten for a reward.
+func _rival() -> void:
+	_clear_wild(3000.0)
+	g.battle.end(false)
+	g.battle._grace = 0.0
+	g.team.rest()
+	var r: RivalTrainer = g.rivals[0]
+	expect(r.state == "waiting", "a rival trainer waits on the route")
+	g.trainer.place(g.layout.free_spot_near(r.global_position + Vector2(-200, 0), 8.0))
+	g.field.partner.global_position = g.trainer.global_position
+	await seconds(float(TamerData.rule("rivals.talk_time")) + 2.0)
+	expect(g.battle.on and g.battle.rival == r, "the rival spots you, walks up and battles")
+	var first: Creature = r.active
+	first.rec.life = first.rec.max_life() * 0.3
+	await seconds(0.3)
+	expect(r._item_used or r.active != first, "the rival heals or swaps when its creature is hurt")
+	var wins: int = 0
+	for k: int in 8:
+		if not g.battle.on:
+			break
+		if r.active != null and is_instance_valid(r.active) and not r.active.fainted_now:
+			r.active.faint()
+			wins += 1
+		await seconds(1.4)
+	expect(r.state == "beaten" and not g.battle.on, "beating every creature wins the trainer battle (%d down)" % wins)
+	expect(r.active == null, "the rival's creatures are gone")

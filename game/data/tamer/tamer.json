@@ -57,7 +57,7 @@
   "think": 0.25,
   "basic_range_slack": 0.85,
   "life_mult": 0.9,
-  "power_mult": 0.5,
+  "power_mult": 0.6,
   "level_life": 0.12,
   "level_power": 0.08,
   "regen": 6.0
@@ -335,5 +335,69 @@
  "ring": {
   "radius": 250,
   "grace": 4.0
+ },
+ "rivals": {
+  "spot_range": 260,
+  "talk_time": 1.6,
+  "send_delay": 0.9,
+  "swap_below": 0.3,
+  "item_below": 0.35,
+  "item_heal": 0.4,
+  "walk_up": 70,
+  "life_mult": 1.25,
+  "power_mult": 1.1,
+  "trainers": [
+   {
+    "id": "ivo",
+    "name": "Ivo",
+    "sprite": "rival_ivo",
+    "route": 0.5,
+    "team": [
+     [
+      "maned_wolf",
+      3
+     ],
+     [
+      "tas_devil",
+      3
+     ]
+    ],
+    "reward": {
+     "wind_tuft": 3,
+     "rot_fang": 3
+    },
+    "spot": "Ivo: Hey! A new trainer? Let's see what your partner can do!",
+    "win": "Ivo: Wow. Your partner really trusts you.",
+    "lose": "Ivo: Come back when you've trained some more!"
+   },
+   {
+    "id": "mara",
+    "name": "Mara",
+    "sprite": "rival_mara",
+    "route": 1.0,
+    "team": [
+     [
+      "aye_aye",
+      4
+     ],
+     [
+      "tas_devil",
+      5
+     ],
+     [
+      "maned_wolf",
+      5
+     ]
+    ],
+    "reward": {
+     "wind_tuft": 4,
+     "rot_fang": 4,
+     "night_whisker": 4
+    },
+    "spot": "Mara: I've been waiting at the end of this route for someone worth fighting.",
+    "win": "Mara: ...You read every tell. I'll remember you.",
+    "lose": "Mara: Swap smarter. Watch for the openings."
+   }
+  ]
  }
 }

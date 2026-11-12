@@ -27,6 +27,7 @@ var guard_t: float = 0.0
 var dodge_cd: float = 0.0
 var dazed: bool = false                 ## weak enough to sync: it stops fighting
 var stagger: StaggerBar
+var catchable: bool = true              ## a rival trainer's creature is never dazed (it can't be caught)
 var combo_scale: float = 1.0            ## the current basic hit's share of the combo (the last hit is the big one)
 var commit_t: float = 0.0               ## a move's wind-up and recovery: no moving, no dodging
 var _combo_i: int = 0
@@ -212,13 +213,22 @@ func receive_hit(dmg: float, dir: Vector2, knock_px: float, stun: float, attacke
 	struck.emit(self, attacker)
 	if rec.life <= 0.0:
 		faint()
-	elif side == SIDE_WILD and rec.life_frac() <= float(rec.data()["befriend_at"]):
+	elif side == SIDE_WILD and catchable and rec.life_frac() <= float(rec.data()["befriend_at"]):
 		set_dazed(true)
 
 
 func set_dazed(on: bool) -> void:
 	dazed = on
 	view.set_dazed(on)
+
+
+## Called back by a rival trainer: it fades away (not a knock-out; no drops).
+func recall_quietly() -> void:
+	fainted_now = true
+	collision_layer = 0
+	remove_from_group(side)
+	view.fade_out(FAINT_TIME * 0.5)
+	get_tree().create_timer(FAINT_TIME * 0.5).timeout.connect(queue_free)
 
 
 func faint() -> void:

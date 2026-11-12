@@ -14,6 +14,8 @@ var bond: float = 0.0
 var upgrades: Dictionary = {"life": 0, "power": 0, "speed": 0}
 var life: float = -1.0                  ## -1: full
 var ko_left: float = 0.0                ## seconds until it recovers from a knock-out (0: awake)
+var life_boost: float = 1.0             ## a rival trainer's creatures are raised: more life and power
+var power_boost: float = 1.0
 var used_moves: Dictionary = {}         ## moves it has used with you (the first use shows the move's name)
 
 
@@ -44,7 +46,7 @@ func max_life() -> float:
 	base *= 1.0 + float(TamerData.rule("upgrades.life.per_level")) * int(upgrades["life"])
 	if wild:
 		base *= float(TamerData.rule("wild.life_mult"))
-	return roundf(base)
+	return roundf(base * life_boost)
 
 
 func power() -> float:
@@ -52,7 +54,7 @@ func power() -> float:
 	p *= 1.0 + float(TamerData.rule("upgrades.power.per_level")) * int(upgrades["power"])
 	if wild:
 		p *= float(TamerData.rule("wild.power_mult"))
-	return p
+	return p * power_boost
 
 
 func speed() -> float:

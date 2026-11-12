@@ -8,6 +8,7 @@ extends RefCounted
 
 const FLANK_TIME: float = 1.6
 const STRAFE: float = 0.6
+const BACK_OFF: float = 0.7
 
 var b: WildBrain
 var ai: Dictionary
@@ -78,8 +79,8 @@ func _skirmisher(target: Combatant, delta: float) -> Vector2:
 	if _try(target):
 		return Vector2.ZERO
 	var away: Vector2 = (me - target.global_position).normalized()
-	if d < keep * 0.8:
-		return b.c.steer_to(me + away * 80.0 + away.orthogonal() * 40.0 * _side, delta) * b.c.rec.speed()
+	if d < keep * 0.8:                                     # backs off slower than it chases: it can be caught
+		return b.c.steer_to(me + away * 80.0 + away.orthogonal() * 40.0 * _side, delta) * b.c.rec.speed() * BACK_OFF
 	if d > keep * 1.3:
 		return b.c.steer_to(target.global_position, delta) * b.c.rec.speed()
 	return b.c.steer_to(me + away.orthogonal() * 60.0 * _side, delta) * b.c.rec.speed() * STRAFE

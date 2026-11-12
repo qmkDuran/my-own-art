@@ -16,4 +16,5 @@ func think(delta: float) -> Vector2:
 		return dir * speed
 	if target != null and is_instance_valid(target) and target.alive() and not (target is Creature and (target as Creature).dazed):
 		return fight(target, delta, float(TamerData.rule("partner.basic_range_slack")), speed)
+	target = null                                          # down or dazed: right-click the next one
 	return Vector2.ZERO
