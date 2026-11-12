@@ -1,5 +1,5 @@
 {
- "_doc": "Creatures of the prototype. stats: life, power (damage scale), speed (px/s), radius (body). basic: the auto-attack the partner uses on its own; kit: the four moves on Q W E R; bond_move: unlocked by bond (key T). befriend_at: share of life at or below which the trainer can win it over. material: what it drops. shiny_chance: per spawn (the vision's 1 in 200; the maned wolf is high in the prototype so it can be seen). meet: the starter meeting (its reaction and line). Elements and roles come from VISION.md.",
+ "_doc": "Creatures of the prototype. stats: life, power (damage scale), speed (px/s), radius (body). basic: the auto-attack the partner uses on its own; kit: the four moves on Q W E R; bond_move: unlocked by bond (key T). befriend_at: share of life at or below which the trainer can win it over. material: what it drops. shiny_chance: per spawn (1 in 64 in the demo; F1 spawns one for testing). meet: the starter meeting (its reaction and line). Elements and roles come from VISION.md. ai: how it fights when wild or a rival's (style flanker / brawler / skirmisher; attacks with their tells: windup before, opening after, reach).",
  "species": {
   "honey_badger": {
    "name": "Honey Badger",
@@ -23,10 +23,28 @@
    "bond_move": "honey_rage",
    "befriend_at": 0.4,
    "material": "ember_tuft",
-   "shiny_chance": 0.005,
+   "shiny_chance": 0.01562,
    "meet": {
     "react": "puff",
     "line": "The honey badger stamps and puffs up at you. It is not afraid of anything."
+   },
+   "ai": {
+    "style": "brawler",
+    "attacks": [
+     {
+      "move": "claw_rush",
+      "windup": 0.4,
+      "opening": 0.35,
+      "reach": 60
+     },
+     {
+      "move": "ember_pounce",
+      "windup": 0.6,
+      "opening": 0.8,
+      "reach": 200,
+      "min": 80
+     }
+    ]
    }
   },
   "cuttlefish": {
@@ -52,10 +70,28 @@
    "bond_move": "kaleidoscope",
    "befriend_at": 0.4,
    "material": "glass_scale",
-   "shiny_chance": 0.005,
+   "shiny_chance": 0.01562,
    "meet": {
     "react": "flicker",
     "line": "The cuttlefish ripples through every colour, then winks at you."
+   },
+   "ai": {
+    "style": "brawler",
+    "attacks": [
+     {
+      "move": "prism_shot",
+      "windup": 0.4,
+      "opening": 0.35,
+      "reach": 60
+     },
+     {
+      "move": "shard_fan",
+      "windup": 0.6,
+      "opening": 0.8,
+      "reach": 200,
+      "min": 80
+     }
+    ]
    }
   },
   "pangolin": {
@@ -80,10 +116,28 @@
    "bond_move": "bloom_wall",
    "befriend_at": 0.4,
    "material": "bloom_leaf",
-   "shiny_chance": 0.005,
+   "shiny_chance": 0.01562,
    "meet": {
     "react": "curl",
     "line": "The pangolin curls into a ball, then peeks out to see if you are still there."
+   },
+   "ai": {
+    "style": "brawler",
+    "attacks": [
+     {
+      "move": "tail_swipe",
+      "windup": 0.4,
+      "opening": 0.35,
+      "reach": 60
+     },
+     {
+      "move": "roll_charge",
+      "windup": 0.6,
+      "opening": 0.8,
+      "reach": 200,
+      "min": 80
+     }
+    ]
    }
   },
   "maned_wolf": {
@@ -108,7 +162,28 @@
    "bond_move": "tempest",
    "befriend_at": 0.45,
    "material": "wind_tuft",
-   "shiny_chance": 0.12
+   "shiny_chance": 0.01562,
+   "ai": {
+    "style": "flanker",
+    "flank": 80,
+    "retreat": 140,
+    "retreat_time": 1.0,
+    "attacks": [
+     {
+      "move": "gust_bite",
+      "windup": 0.4,
+      "opening": 0.35,
+      "reach": 50
+     },
+     {
+      "move": "wind_dash",
+      "windup": 0.55,
+      "opening": 0.7,
+      "reach": 220,
+      "min": 90
+     }
+    ]
+   }
   },
   "aye_aye": {
    "name": "Aye-aye",
@@ -132,7 +207,35 @@
    "bond_move": "resonance",
    "befriend_at": 0.45,
    "material": "night_whisker",
-   "shiny_chance": 0.005
+   "shiny_chance": 0.01562,
+   "ai": {
+    "style": "skirmisher",
+    "keep": 120,
+    "flee_below": 0.65,
+    "flee_keep": 190,
+    "attacks": [
+     {
+      "move": "echo_tap",
+      "windup": 0.35,
+      "opening": 0.3,
+      "reach": 250,
+      "min": 100
+     },
+     {
+      "move": "echo_pulse",
+      "windup": 0.45,
+      "opening": 0.5,
+      "reach": 90
+     },
+     {
+      "move": "screech",
+      "windup": 0.65,
+      "opening": 0.7,
+      "reach": 250,
+      "min": 120
+     }
+    ]
+   }
   },
   "tas_devil": {
    "name": "Tasmanian Devil",
@@ -156,7 +259,32 @@
    "bond_move": "rot_storm",
    "befriend_at": 0.35,
    "material": "rot_fang",
-   "shiny_chance": 0.005
+   "shiny_chance": 0.01562,
+   "ai": {
+    "style": "brawler",
+    "attacks": [
+     {
+      "move": "crunch",
+      "windup": 0.45,
+      "opening": 0.4,
+      "reach": 50
+     },
+     {
+      "move": "frenzy",
+      "windup": 0.85,
+      "opening": 1.3,
+      "reach": 180,
+      "min": 70
+     },
+     {
+      "move": "rot_spit",
+      "windup": 0.6,
+      "opening": 0.5,
+      "reach": 230,
+      "min": 160
+     }
+    ]
+   }
   }
  },
  "starters": [

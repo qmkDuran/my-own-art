@@ -2,7 +2,7 @@ class_name CreatureCard
 extends Control
 ## The active creature at the bottom of the screen: its portrait, name, element and level, life, the bond meter
 ## (with the mark where the bond move unlocks), and its moves on Q W E R plus the bond move on T, each with its
-## cooldown. While it is knocked out the card says how long until it is back.
+## gauge cost (pips), dimmed while the gauge cannot pay. While it is knocked out the card says how long until it is back.
 
 const PORTRAIT: float = 50.0
 const SLOT: float = 26.0
@@ -91,7 +91,14 @@ func _moves(rec: CreatureRecord, at: Vector2) -> void:
 	_slot(c, rec.bond_move(), rec.element(), "T", bond_at, not rec.bond_move_ready())
 
 
-func _slot(c: Creature, id: String, el: String, key: String, at: Vector2, locked: bool) -> void:
-	var frac: float = c.cooldown_frac(id) if c != null else 0.0
-	var left: float = float(c.cooldowns.get(id, 0.0)) if c != null else 0.0
-	MoveIcon.draw_slot(self, Rect2(at, Vector2(SLOT, SLOT)), id, el, key, frac, left, locked)
+## A move slot: its icon, its gauge cost as pips, dimmed while the gauge cannot pay for it.
+func _slot(_c: Creature, id: String, el: String, key: String, at: Vector2, locked: bool) -> void:
+	var cost: int = int(TamerData.move(id).get("cost", 0))
+	var r := Rect2(at, Vector2(SLOT, SLOT))
+	MoveIcon.draw_slot(self, r, id, el, key, 0.0, 0.0, locked)
+	if g.team.gauge + 0.001 < float(cost):
+		draw_rect(r, Color(0, 0, 0, 0.55))
+	for k: int in cost:
+		var pip := Rect2(r.position + Vector2(r.size.x - 5.0 - k * 5.0, 2.0), Vector2(3, 3))
+		draw_rect(pip.grow(1.0), UiDraw.INK)
+		draw_rect(pip, Pal.c("sun") if g.team.gauge >= k + 1.0 else UiDraw.DIM)

@@ -32,7 +32,9 @@ static func numbers(m: Dictionary, power: float) -> Array:
 	if dmg > 0.0:
 		out.append(["Damage %d%s" % [roundi(dmg), " x %d" % hits if hits > 1 else ""], UiDraw.GOLD])
 	out.append([_reach(m), UiDraw.TEXT])
-	out.append(["Cooldown %.1f s" % float(m["cooldown"]), UiDraw.TEXT])
+	out.append(["Costs %d gauge" % int(m.get("cost", 0)) if int(m.get("cost", 0)) > 0 else "Free: fills the gauge", UiDraw.GOLD])
+	if m.has("windup"):
+		out.append(["Wind-up %.2f s, recovery %.2f s (no dodge)" % [float(m["windup"]), float(m.get("recovery", 0.0))], UiDraw.DIM])
 	for e: String in effects(m):
 		out.append([e, UiDraw.UP])
 	return out

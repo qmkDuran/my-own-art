@@ -10,8 +10,7 @@ extends Node
 signal started
 signal ended(won: bool)
 
-const RANGE: float = 420.0              ## awake wild creatures this close to your creature keep the battle going
-const ESCAPE: float = 560.0             ## your creature this far from every awake foe: you got away
+const ESCAPE: float = 560.0             ## dazed creatures this close are listed in the Victory summary
 const SAFE_BEHIND: float = 110.0        ## the trainer stands this far behind your creature, away from the foes
 const SAFE_EVERY: float = 0.4
 const SAFE_SLACK: float = 40.0
@@ -28,6 +27,8 @@ var _brain: ControlledBrain
 var _safe_t: float = 0.0
 var _end_t: float = 0.0
 var _tally: Dictionary = {}             ## defeated, materials and bond at the start of the battle
+var ring := BattleRing.new()
+var _grace: float = 0.0                 ## after a battle, a few seconds when nothing can start a new one
 
 
 func setup(game: TamerGame) -> void:
@@ -40,6 +41,15 @@ func setup(game: TamerGame) -> void:
 		if on:
 			_tally["defeated"] = int(_tally.get("defeated", 0)) + 1)
 	g.trainer.set_highlight(true)
+	g.fx_layer.add_child(ring)
+	ring.visible = false
+
+
+## Can this creature join in? Outside a battle anyone can start one (after the grace); during one only those in it.
+func may_join(c: Creature) -> bool:
+	if on:
+		return ring.inside.has(c)
+	return _grace <= 0.0
 
 
 func controlled() -> Node2D:
@@ -53,16 +63,34 @@ func brain() -> ControlledBrain:
 ## A wild creature engages (it noticed you, or you right-clicked it). Starts a battle if none is on.
 func engage(foe: Creature) -> void:
 	var c: Creature = g.field.partner
-	if on or c == null or not c.alive() or g.retreating:
-		if on and _brain != null and _brain.target == null and foe != null:
+	if on or c == null or not c.alive() or g.retreating or _grace > 0.0:
+		if on and _brain != null and _brain.target == null and foe != null and ring.inside.has(foe):
 			_brain.target = foe
 		return
 	on = true
+	_raise_ring(c, foe)
 	_tally = {"defeated": 0, "materials": g.team.materials.duplicate(), "bond": c.rec.bond, "rec": c.rec}
 	_take(c)
 	_brain.target = foe
 	_beat(c, foe)
 	started.emit()
+
+
+## The ring forms around your creature and the foe; the foe's pack-mates near it are in the fight too.
+func _raise_ring(c: Creature, foe: Creature) -> void:
+	var R: Dictionary = TamerData.rule("ring")
+	var at: Vector2 = c.global_position if foe == null else c.global_position.lerp(foe.global_position, 0.5)
+	var fighters: Array[Creature] = []
+	for n: Node in get_tree().get_nodes_in_group(Combatant.SIDE_WILD):
+		var w := n as Creature
+		var b := w.brain as WildBrain
+		if w == foe or (foe != null and b != null and b.pack >= 0 and b.pack == (foe.brain as WildBrain).pack and
+				w.global_position.distance_to(at) < float(R["radius"])):
+			fighters.append(w)
+	ring.raise(at, float(R["radius"]), fighters)
+	for w: Creature in fighters:
+		if w != foe and w.brain is WildBrain:
+			(w.brain as WildBrain).wake(c)
 
 
 func _take(c: Creature) -> void:
@@ -90,6 +118,7 @@ func _on_partner_changed(c: Creature) -> void:
 
 
 func _physics_process(delta: float) -> void:
+	_grace -= delta
 	var c: Creature = g.field.partner
 	var has: bool = c != null and is_instance_valid(c)
 	var k: float = minf(1.0, float(TamerData.rule("control.camera_ease")) * delta)
@@ -125,10 +154,8 @@ func _keep_trainer_safe(c: Creature) -> void:
 
 func awake_foes(c: Creature) -> Array[Creature]:
 	var out: Array[Creature] = []
-	for n: Node in get_tree().get_nodes_in_group(Combatant.SIDE_WILD):
-		var w := n as Creature
-		var b := w.brain as WildBrain
-		if b != null and b.awake and not w.dazed and w.global_position.distance_to(c.global_position) < ESCAPE:
+	for w: Creature in ring.inside:
+		if is_instance_valid(w) and w.alive() and not w.dazed:
 			out.append(w)
 	return out
 
@@ -141,9 +168,7 @@ func _check_end(c: Creature) -> void:
 	var foes: Array[Creature] = awake_foes(c)
 	if foes.is_empty():
 		end(true)
-	elif foes.all(func(f: Creature) -> bool: return f.global_position.distance_to(c.global_position) > RANGE) and \
-			_brain != null and _brain.target == null:
-		end(false)
+
 
 
 ## Back to exploring: the trainer leads again, the camera eases back, and a summary of what the fight earned.
@@ -151,6 +176,8 @@ func end(won: bool) -> void:
 	if not on:
 		return
 	on = false
+	ring.dissolve()
+	_grace = float(TamerData.rule("ring.grace"))
 	var c: Creature = g.field.partner
 	if c != null and is_instance_valid(c):
 		c.brain = PartnerBrain.new(c)

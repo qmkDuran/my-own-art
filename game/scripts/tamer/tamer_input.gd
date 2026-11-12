@@ -4,7 +4,7 @@ extends Node
 ## starter in the opening it picks it), RMB on a wild creature starts a battle with it. In battle you control your
 ## creature: LMB moves it (hold to keep moving), RMB attacks the creature under the cursor (or swings toward the
 ## cursor), Space is its dodge. Always: Q W E R and T aim while held and fire on release, 1-3 swap, 4-5 items,
-## A S D G trainer commands (Mark at the cursor), F befriend (the trainer walks over), C camp, I creature info.
+## F Sync Lens (the trainer scans a weakened or staggered creature), C camp, I creature info, F1 (dev) a shiny.
 ## The pointer can be the real mouse or a test's virtual cursor.
 
 const REPATH: float = 0.12
@@ -14,6 +14,7 @@ var g: TamerGame
 var cursor_override: Vector2 = Vector2.INF
 var hovered: Creature
 var _held: bool = false
+var _rmb_held: bool = false
 var _repath: float = 0.0
 
 
@@ -38,7 +39,10 @@ func _unhandled_input(event: InputEvent) -> void:
 	elif event.is_action_released("click"):
 		_held = false
 	elif event.is_action_pressed("slot_rmb"):
+		_rmb_held = true
 		attack()
+	elif event.is_action_released("slot_rmb"):
+		_rmb_held = false
 	else:
 		_keys(event)
 
@@ -56,13 +60,14 @@ func _keys(event: InputEvent) -> void:
 		g.field.use_item("berry")
 	elif event.is_action_pressed("item_salts"):
 		g.field.use_item("salts")
+	elif event.is_action_pressed("retreat") and g.battle.on:
+		g.battle.end(false)
+	elif event.is_action_pressed("dev_shiny"):
+		g.spawner.spawn_shiny_near(g.trainer.global_position)
 	elif event.is_action_pressed("interact"):
 		g.befriend.request()
 	elif event.is_action_pressed("camp") and g.camp.resting:
 		g.hud.camp_panel.toggle()
-	for id: String in TrainerCommands.IDS:
-		if event.is_action_pressed("cmd_" + id):
-			g.commands.use(id, cursor())
 	for i: int in TamerKeys.SWAPS.size():
 		if event.is_action_pressed(TamerKeys.SWAPS[i]) and g.field.swap(i):
 			g.guide.done("swap")
@@ -115,7 +120,7 @@ func _mark(foe: Creature) -> void:
 	Audio.sfx("ui_click", -10.0, 1.4)
 
 
-## A move key goes down: show where it will land (the creature's own move, or the bond move for -1).
+## A move key goes down: if the gauge can pay for it, time slows (SlowTime) and a ghost shows where it will land.
 func start_aim(i: int) -> void:
 	var p: Creature = g.field.partner
 	if p == null or not p.alive():
@@ -123,25 +128,36 @@ func start_aim(i: int) -> void:
 	if i < 0 and not p.rec.bond_move_ready():
 		g.hud.notice("Fight together to fill the bond meter first")
 		return
-	g.aim.aim(p, p.rec.bond_move() if i < 0 else String(p.rec.moves()[i]))
+	var id: String = p.rec.bond_move() if i < 0 else String(p.rec.moves()[i])
+	var cost: int = int(TamerData.move(id).get("cost", 0))
+	if g.team.gauge + 0.001 < float(cost):
+		g.hud.gauge_short(cost)
+		return
+	g.aim.aim(p, id)
+	g.slow.begin()
 
 
-## The key comes up: the move goes off at the cursor.
-func release_aim(i: int) -> void:
+## The key comes up: time returns, the gauge is spent and the move goes off at the cursor.
+func release_aim(_i: int) -> void:
 	if not g.aim.aiming():
 		return
+	var id: String = g.aim.move_id
 	g.aim.clear()
-	if i < 0:
-		use_bond_move()
-	else:
-		use_move(i)
+	g.slow.end()
+	var p: Creature = g.field.partner
+	if p == null or not p.move_ready(id):
+		return
+	if g.team.spend_gauge(int(TamerData.move(id).get("cost", 0))):
+		p.cast(id, cursor())
 
 
+## A move straight away (tests): pays its gauge cost first.
 func use_move(i: int) -> bool:
 	var p: Creature = g.field.partner
 	if p == null or not p.alive():
 		return false
-	return p.cast(String(p.rec.moves()[i]), cursor())
+	var id: String = String(p.rec.moves()[i])
+	return p.move_ready(id) and g.team.spend_gauge(int(TamerData.move(id).get("cost", 0))) and p.cast(id, cursor())
 
 
 func use_bond_move() -> bool:
@@ -150,7 +166,8 @@ func use_bond_move() -> bool:
 		if p != null:
 			g.hud.notice("Fight together to fill the bond meter first")
 		return false
-	return p.cast(p.rec.bond_move(), cursor())
+	var id: String = p.rec.bond_move()
+	return p.move_ready(id) and g.team.spend_gauge(int(TamerData.move(id).get("cost", 0))) and p.cast(id, cursor())
 
 
 func dodge() -> bool:
@@ -165,6 +182,8 @@ func _physics_process(delta: float) -> void:
 	if _held and _repath <= 0.0 and not g.hud.panel_open():
 		_repath = REPATH
 		_move_to(cursor())
+	if _rmb_held and g.battle.on and g.battle.brain() != null and g.battle.brain().target == null and g.field.partner != null:
+		g.field.partner.cast(String(g.field.partner.rec.data()["basic"]), cursor())      # held: the combo keeps going
 
 
 ## The creature under the cursor (wild ones and the starters), measured to its body's middle.

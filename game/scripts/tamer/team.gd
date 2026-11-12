@@ -1,6 +1,6 @@
 class_name Team
 extends RefCounted
-## Your creatures (up to team_max), which one is out, your materials and your items. Pure state with signals: the
+## Your creatures (up to team_max), which one is out, the shared bond gauge, your materials and your items. Pure state with signals: the
 ## field (TamerGame) and the HUD listen. Knocked-out members recover on their own over time (CreatureRecord.tick).
 
 signal changed
@@ -11,12 +11,29 @@ var members: Array[CreatureRecord] = []
 var active: int = -1
 var materials: Dictionary = {}          ## material id -> count
 var items: Dictionary = {}              ## item id -> count
+var gauge: float = 0.0                  ## the shared bond gauge, in segments (0..segments): basics fill it, moves spend it
 
 
 func _init() -> void:
 	var defs: Dictionary = TamerData.rule("items")
 	for id: String in defs:
 		items[id] = int(defs[id]["count"])
+
+
+func gauge_max() -> float:
+	return float(TamerData.rule("combat.gauge.segments"))
+
+
+func add_gauge(amount: float) -> void:
+	gauge = minf(gauge_max(), gauge + amount)
+
+
+## Spends whole segments; false (and nothing spent) when there are not enough.
+func spend_gauge(segments: int) -> bool:
+	if gauge + 0.001 < float(segments):
+		return false
+	gauge -= float(segments)
+	return true
 
 
 func full() -> bool:

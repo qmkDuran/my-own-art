@@ -1,8 +1,9 @@
 class_name CreatureCombat
 extends RefCounted
-## Damage between creatures: the move's damage x the user's power x the element matchup x the trainer's help (Cheer,
-## the bond aura, Mark, a Focus crit) x a little spread, then the weight of the hit (Lanternfall's impact, hit-stop and shake, in the element's colours),
-## the number, the "Super effective!" or "Resisted" word, and bond for your creature.
+## Damage between creatures: the move's damage x the user's power x the element matchup x the combo step x a staggered
+## target's weakness x a little spread; your hits also fill the gauge and the target's stagger bar. Then the weight
+## of the hit (Lanternfall's impact, hit-stop and shake, in the element's colours), the number, the "Super
+## effective!" or "Resisted" word, and bond for your creature.
 
 const SPREAD: float = 0.1
 const WORD_GAP: float = 0.6             ## one matchup word per target this often, so a flurry is not a wall of text
@@ -21,10 +22,14 @@ static func hit(user: Creature, target: Combatant, m: Dictionary, dir: Vector2, 
 		return 0.0
 	var el: String = move_element(user, m)
 	var mult: float = TamerData.element_mult(el, target.element_id()) if target.element_id() != "" else 1.0
-	var crit: bool = user.critical()
-	var dmg: float = float(m["damage"]) * user.power() * mult * scale * user.outgoing_mult(target) * randf_range(1.0 - SPREAD, 1.0 + SPREAD)
-	if crit:
-		dmg *= user.focus_crit
+	var crit: bool = false
+	var tc := target as Creature
+	var basic: bool = user.is_basic_move(m)
+	if basic and user.side == Combatant.SIDE_TEAM:
+		scale *= user.combo_scale
+	var dmg: float = float(m["damage"]) * user.power() * mult * scale * randf_range(1.0 - SPREAD, 1.0 + SPREAD)
+	if tc != null:
+		dmg *= tc.stagger.damage_taken()
 	dmg = maxf(1.0, roundf(dmg))
 	var share: float = dmg / maxf(target.max_life_value(), 1.0)
 	target.receive_hit(dmg, dir, float(m.get("knock", 6.0)), float(m.get("stun", 0.0)), user)
@@ -33,7 +38,25 @@ static func hit(user: Creature, target: Combatant, m: Dictionary, dir: Vector2, 
 		_matchup_word(target, TamerData.matchup(el, target.element_id()))
 	if user.side == Combatant.SIDE_TEAM and user.rec != null:
 		user.rec.add_bond(float(TamerData.rule("bond.per_hit")))
+		_gauge_and_stagger(user, tc, m, dmg, el, basic)
 	return dmg
+
+
+## Your hits fill the gauge (basics; more on a staggered foe) and the foe's stagger bar (weaknesses much more).
+static func _gauge_and_stagger(user: Creature, tc: Creature, m: Dictionary, dmg: float, el: String, basic: bool) -> void:
+	if tc == null:
+		return
+	var G: Dictionary = TamerData.rule("combat.gauge")
+	var S: Dictionary = TamerData.rule("combat.stagger")
+	if basic:
+		TamerGame.current.team.add_gauge(float(G["per_basic_hit"]) * (float(G["on_staggered_mult"]) if tc.stagger.is_staggered() else 1.0))
+	var k: float = float(m.get("stagger", 1.0))
+	match TamerData.matchup(el, tc.element_id()):
+		TamerData.SUPER:
+			k *= float(S["super_mult"])
+		TamerData.RESISTED:
+			k *= float(S["resist_mult"])
+	tc.stagger.add(dmg * k)
 
 
 static func _feedback(target: Combatant, dmg: float, share: float, el: String, dir: Vector2, bond: bool) -> void:

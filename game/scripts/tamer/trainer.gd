@@ -1,22 +1,19 @@
 class_name Trainer
 extends Node2D
 ## You, the trainer. You are never hurt (as in the shows): wild creatures ignore you. You walk where you left-click
-## (grid path), roll (Space) to reposition, command your creature (TrainerCommands), befriend, use items and call
-## swaps. Your creature fights better near you: the bond aura (a faint ring around you) is where that bonus holds,
-## so where you stand matters even while you steer the creature. Not a Combatant: nothing can target you.
+## (grid path), roll (Space) to reposition, sync creatures with the Sync Lens, use items and call swaps. In battle
+## you keep back on your own (BattleMode). Not a Combatant: nothing can target you.
 
 const TEAM_LAYER: int = 4
 const FPS: float = 8.0
 const COLS: int = 8
 const MOVING: float = 10.0
 const ROLL_SPIN: float = TAU
-const AURA_ALPHA := Vector2(0.05, 0.2)         ## the aura ring: faint, brighter while your creature is inside it
 
 var heading: Vector2 = Vector2.DOWN     ## last walking direction (the partner walks behind it)
 var attack_target: Combatant            ## a foe your creature should go for on its own (Mark)
 var sprite: Sprite2D
 var body: CharacterBody2D
-var aura: Sprite2D
 var T: Dictionary
 var _goal: Vector2 = Vector2.INF
 var _path := PackedVector2Array()
@@ -42,7 +39,6 @@ func _ready() -> void:
 	add_child(body)
 	body.top_level = true
 	body.global_position = global_position
-	aura = _make_aura()
 	add_child(PropSprite.shadow(22.0))
 	var meta: Dictionary = TamerData.sprites["trainer"]
 	sprite = Sprite2D.new()
@@ -55,27 +51,6 @@ func _ready() -> void:
 	mat.set_shader_parameter("outline_color", Pal.c(String(TamerData.rule("control.outline"))))
 	sprite.material = mat
 	add_child(sprite)
-
-
-func _make_aura() -> Sprite2D:
-	var s := Sprite2D.new()
-	s.texture = LightTex.ring()
-	s.material = Fx.glow_material()
-	s.modulate = Pal.c("rose", AURA_ALPHA.x)
-	s.scale = Vector2(1.0, Fx.RING_SQUASH) * aura_radius() * 2.0 / 128.0
-	s.z_index = -1
-	s.show_behind_parent = true
-	add_child(s)
-	return s
-
-
-func aura_radius() -> float:
-	return float(TamerData.rule("aura.radius"))
-
-
-## Is a point inside the bond aura (your creature hits harder there)?
-func in_aura(p: Vector2) -> bool:
-	return global_position.distance_to(p) <= aura_radius()
 
 
 func hit_radius() -> float:
@@ -168,6 +143,3 @@ func _animate(delta: float, want: Vector2) -> void:
 	sprite.frame = row * COLS + int(_anim_t) % COLS
 	if absf(want.x) > MOVING:
 		sprite.flip_h = want.x < 0.0
-	var p: Creature = TamerGame.current.field.partner if TamerGame.current.field != null else null
-	var inside: bool = p != null and is_instance_valid(p) and in_aura(p.global_position)
-	aura.modulate.a = lerpf(aura.modulate.a, AURA_ALPHA.y if inside else AURA_ALPHA.x, minf(1.0, delta * 6.0))

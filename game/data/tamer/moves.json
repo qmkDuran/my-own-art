@@ -1,5 +1,5 @@
 {
- "_doc": "Creature moves. kind picks the behaviour (MoveBook): strike (an arc in front, toward the aim), bolt (projectiles), lunge (a dash to the aim that hits on the way and on landing), burst (an area at the user or at the aim, after a short warning, optionally in pulses), guard (a ward on the user and the trainer that soaks damage). damage is scaled by the user's power; cooldown in seconds; range in px. An element missing here is the user's own. bond: a bond move (bigger flash and shake). desc: what it does in a sentence (the tooltip adds the numbers).",
+ "_doc": "Creature moves. kind picks the behaviour (MoveBook): strike (an arc in front, toward the aim), bolt (projectiles), lunge (a dash to the aim that hits on the way and on landing), burst (an area at the user or at the aim, after a short warning, optionally in pulses), guard (a ward on the user and the trainer that soaks damage). damage is scaled by the user's power; cooldown in seconds; range in px. An element missing here is the user's own. bond: a bond move (bigger flash and shake). desc: what it does in a sentence (the tooltip adds the numbers). cost: gauge segments a move spends when your creature uses it (moves are earned, not on free cooldowns); windup and recovery: seconds of commitment (no dodge) before and after; stagger: how much the hit fills the target's stagger bar per point of damage. Wild creatures still use `cooldown`.",
  "moves": {
   "badger_bite": {
    "name": "Bite",
@@ -9,7 +9,8 @@
    "range": 34,
    "arc": 100,
    "knock": 6,
-   "desc": "A quick bite at whatever is in front. Its auto-attack."
+   "desc": "A quick bite at whatever is in front. Its auto-attack.",
+   "stagger": 2.0
   },
   "claw_rush": {
    "name": "Claw Rush",
@@ -20,7 +21,11 @@
    "arc": 140,
    "knock": 10,
    "icon": "slash",
-   "desc": "A wide claw swipe in front. Fast and cheap: your go-to hit."
+   "desc": "A wide claw swipe in front. Fast and cheap: your go-to hit.",
+   "cost": 1,
+   "windup": 0.12,
+   "recovery": 0.25,
+   "stagger": 1.6
   },
   "ember_pounce": {
    "name": "Ember Pounce",
@@ -32,7 +37,11 @@
    "radius": 46,
    "stun": 0.4,
    "icon": "dash",
-   "desc": "Leaps to the cursor and bursts on landing, stunning what it hits."
+   "desc": "Leaps to the cursor and bursts on landing, stunning what it hits.",
+   "cost": 1,
+   "windup": 0.18,
+   "recovery": 0.35,
+   "stagger": 1.4
   },
   "cinder_roar": {
    "name": "Cinder Roar",
@@ -45,7 +54,11 @@
    "stun": 0.9,
    "knock": 14,
    "icon": "burst",
-   "desc": "A roar of embers all around it: hits, shoves back and stuns."
+   "desc": "A roar of embers all around it: hits, shoves back and stuns.",
+   "cost": 2,
+   "windup": 0.25,
+   "recovery": 0.45,
+   "stagger": 1.4
   },
   "fury_spin": {
    "name": "Fury Spin",
@@ -59,7 +72,11 @@
    "every": 0.22,
    "knock": 6,
    "icon": "spin",
-   "desc": "Spins in place for about a second, hitting everything around it 5 times."
+   "desc": "Spins in place for about a second, hitting everything around it 5 times.",
+   "cost": 3,
+   "windup": 0.35,
+   "recovery": 0.6,
+   "stagger": 1.2
   },
   "honey_rage": {
    "name": "Honey Rage",
@@ -74,7 +91,11 @@
    "knock": 22,
    "bond": true,
    "icon": "star",
-   "desc": "Bond move. A huge blast at the cursor that stuns and throws foes back."
+   "desc": "Bond move. A huge blast at the cursor that stuns and throws foes back.",
+   "cost": 3,
+   "windup": 0.4,
+   "recovery": 0.7,
+   "stagger": 2.0
   },
   "glint_shot": {
    "name": "Glint",
@@ -86,7 +107,8 @@
    "count": 1,
    "spread": 0,
    "size": 1.0,
-   "desc": "A small glass bolt. Its auto-attack."
+   "desc": "A small glass bolt. Its auto-attack.",
+   "stagger": 2.0
   },
   "prism_shot": {
    "name": "Prism Shot",
@@ -99,7 +121,11 @@
    "spread": 0,
    "size": 1.3,
    "icon": "bolt",
-   "desc": "A fast glass bolt to the cursor. Short cooldown: keep firing."
+   "desc": "A fast glass bolt to the cursor. Short cooldown: keep firing.",
+   "cost": 1,
+   "windup": 0.12,
+   "recovery": 0.25,
+   "stagger": 1.6
   },
   "shard_fan": {
    "name": "Shard Fan",
@@ -112,7 +138,11 @@
    "spread": 46,
    "size": 1.0,
    "icon": "fan",
-   "desc": "Fires a fan of 5 shards toward the cursor. Great up close."
+   "desc": "Fires a fan of 5 shards toward the cursor. Great up close.",
+   "cost": 1,
+   "windup": 0.18,
+   "recovery": 0.35,
+   "stagger": 1.4
   },
   "mirror_blink": {
    "name": "Mirror Blink",
@@ -124,7 +154,11 @@
    "radius": 54,
    "blink": true,
    "icon": "dash",
-   "desc": "Teleports to the cursor and bursts where it lands. Your escape and engage."
+   "desc": "Teleports to the cursor and bursts where it lands. Your escape and engage.",
+   "cost": 2,
+   "windup": 0.25,
+   "recovery": 0.45,
+   "stagger": 1.4
   },
   "dazzle": {
    "name": "Dazzle",
@@ -137,7 +171,11 @@
    "delay": 0.3,
    "stun": 1.6,
    "icon": "burst",
-   "desc": "A flash at the cursor after a short delay: hits and stuns everything there."
+   "desc": "A flash at the cursor after a short delay: hits and stuns everything there.",
+   "cost": 3,
+   "windup": 0.35,
+   "recovery": 0.6,
+   "stagger": 1.2
   },
   "kaleidoscope": {
    "name": "Kaleidoscope",
@@ -152,7 +190,11 @@
    "pierce": true,
    "bond": true,
    "icon": "star",
-   "desc": "Bond move. A ring of 12 piercing shards in every direction."
+   "desc": "Bond move. A ring of 12 piercing shards in every direction.",
+   "cost": 3,
+   "windup": 0.4,
+   "recovery": 0.7,
+   "stagger": 2.0
   },
   "pangolin_swipe": {
    "name": "Swipe",
@@ -162,7 +204,8 @@
    "range": 34,
    "arc": 110,
    "knock": 8,
-   "desc": "A claw swipe in front. Its auto-attack."
+   "desc": "A claw swipe in front. Its auto-attack.",
+   "stagger": 2.0
   },
   "tail_swipe": {
    "name": "Tail Swipe",
@@ -173,7 +216,11 @@
    "arc": 200,
    "knock": 18,
    "icon": "slash",
-   "desc": "A wide tail sweep that knocks foes back hard."
+   "desc": "A wide tail sweep that knocks foes back hard.",
+   "cost": 1,
+   "windup": 0.12,
+   "recovery": 0.25,
+   "stagger": 1.6
   },
   "roll_charge": {
    "name": "Roll Charge",
@@ -186,7 +233,11 @@
    "path_hits": true,
    "knock": 20,
    "icon": "dash",
-   "desc": "Curls up and rolls to the cursor, hitting everything on the way."
+   "desc": "Curls up and rolls to the cursor, hitting everything on the way.",
+   "cost": 1,
+   "windup": 0.18,
+   "recovery": 0.35,
+   "stagger": 1.4
   },
   "thorn_guard": {
    "name": "Thorn Guard",
@@ -196,7 +247,11 @@
    "duration": 5.0,
    "absorb": 60,
    "icon": "shield",
-   "desc": "A ward on it that soaks damage for 5 s."
+   "desc": "A ward on it that soaks damage for 5 s.",
+   "cost": 2,
+   "windup": 0.25,
+   "recovery": 0.45,
+   "stagger": 1.4
   },
   "seed_burst": {
    "name": "Seed Burst",
@@ -209,7 +264,11 @@
    "delay": 0.35,
    "icon": "burst",
    "desc": "Seeds burst at the cursor after a short delay: damage, and heals your creature.",
-   "heal": 20
+   "heal": 20,
+   "cost": 3,
+   "windup": 0.35,
+   "recovery": 0.6,
+   "stagger": 1.2
   },
   "bloom_wall": {
    "name": "Bloom Wall",
@@ -222,7 +281,11 @@
    "heal": 40,
    "bond": true,
    "icon": "star",
-   "desc": "Bond move. A big ward that heals it and blasts the foes around it."
+   "desc": "Bond move. A big ward that heals it and blasts the foes around it.",
+   "cost": 3,
+   "windup": 0.4,
+   "recovery": 0.7,
+   "stagger": 2.0
   },
   "wolf_nip": {
    "name": "Nip",
@@ -232,7 +295,8 @@
    "range": 36,
    "arc": 90,
    "knock": 6,
-   "desc": "A quick nip. Its auto-attack."
+   "desc": "A quick nip. Its auto-attack.",
+   "stagger": 2.0
   },
   "gust_bite": {
    "name": "Gust Bite",
@@ -243,7 +307,11 @@
    "arc": 110,
    "knock": 14,
    "icon": "slash",
-   "desc": "A biting gust in front that shoves foes back."
+   "desc": "A biting gust in front that shoves foes back.",
+   "cost": 1,
+   "windup": 0.12,
+   "recovery": 0.25,
+   "stagger": 1.6
   },
   "wind_dash": {
    "name": "Wind Dash",
@@ -255,7 +323,11 @@
    "radius": 34,
    "path_hits": true,
    "icon": "dash",
-   "desc": "Dashes to the cursor, hitting everything it passes."
+   "desc": "Dashes to the cursor, hitting everything it passes.",
+   "cost": 1,
+   "windup": 0.18,
+   "recovery": 0.35,
+   "stagger": 1.4
   },
   "howl": {
    "name": "Howl",
@@ -268,7 +340,11 @@
    "knock": 30,
    "stun": 0.5,
    "icon": "burst",
-   "desc": "A howl around it that throws foes back and stuns briefly."
+   "desc": "A howl around it that throws foes back and stuns briefly.",
+   "cost": 2,
+   "windup": 0.25,
+   "recovery": 0.45,
+   "stagger": 1.4
   },
   "gale_shot": {
    "name": "Gale Shot",
@@ -282,7 +358,11 @@
    "size": 1.3,
    "pierce": true,
    "icon": "fan",
-   "desc": "Three piercing gusts in a narrow fan."
+   "desc": "Three piercing gusts in a narrow fan.",
+   "cost": 3,
+   "windup": 0.35,
+   "recovery": 0.6,
+   "stagger": 1.2
   },
   "tempest": {
    "name": "Tempest",
@@ -297,7 +377,11 @@
    "knock": 12,
    "bond": true,
    "icon": "star",
-   "desc": "Bond move. A whirlwind around it that hits 6 times."
+   "desc": "Bond move. A whirlwind around it that hits 6 times.",
+   "cost": 3,
+   "windup": 0.4,
+   "recovery": 0.7,
+   "stagger": 2.0
   },
   "tap_shot": {
    "name": "Tap",
@@ -309,7 +393,8 @@
    "count": 1,
    "spread": 0,
    "size": 1.0,
-   "desc": "A soft echo bolt. Its auto-attack."
+   "desc": "A soft echo bolt. Its auto-attack.",
+   "stagger": 2.0
   },
   "echo_tap": {
    "name": "Echo Tap",
@@ -322,7 +407,11 @@
    "spread": 10,
    "size": 1.0,
    "icon": "bolt",
-   "desc": "Two echo bolts toward the cursor."
+   "desc": "Two echo bolts toward the cursor.",
+   "cost": 1,
+   "windup": 0.12,
+   "recovery": 0.25,
+   "stagger": 1.6
   },
   "echo_pulse": {
    "name": "Echo Pulse",
@@ -336,7 +425,11 @@
    "every": 0.35,
    "knock": 12,
    "icon": "burst",
-   "desc": "Two pulses of sound around it that shove foes away."
+   "desc": "Two pulses of sound around it that shove foes away.",
+   "cost": 1,
+   "windup": 0.18,
+   "recovery": 0.35,
+   "stagger": 1.4
   },
   "ghost_finger": {
    "name": "Ghost Finger",
@@ -348,7 +441,11 @@
    "radius": 44,
    "blink": true,
    "icon": "dash",
-   "desc": "Blinks to the cursor and taps the ground there."
+   "desc": "Blinks to the cursor and taps the ground there.",
+   "cost": 2,
+   "windup": 0.25,
+   "recovery": 0.45,
+   "stagger": 1.4
   },
   "screech": {
    "name": "Screech",
@@ -361,7 +458,11 @@
    "delay": 0.3,
    "stun": 1.2,
    "icon": "burst",
-   "desc": "A screech at the cursor after a short delay: hits and stuns."
+   "desc": "A screech at the cursor after a short delay: hits and stuns.",
+   "cost": 3,
+   "windup": 0.35,
+   "recovery": 0.6,
+   "stagger": 1.2
   },
   "resonance": {
    "name": "Resonance",
@@ -377,7 +478,11 @@
    "stun": 0.4,
    "bond": true,
    "icon": "star",
-   "desc": "Bond move. Four pulses of sound at the cursor that keep foes stunned."
+   "desc": "Bond move. Four pulses of sound at the cursor that keep foes stunned.",
+   "cost": 3,
+   "windup": 0.4,
+   "recovery": 0.7,
+   "stagger": 2.0
   },
   "devil_crunch": {
    "name": "Crunch",
@@ -387,7 +492,8 @@
    "range": 34,
    "arc": 90,
    "knock": 8,
-   "desc": "A crunching bite. Its auto-attack."
+   "desc": "A crunching bite. Its auto-attack.",
+   "stagger": 2.0
   },
   "crunch": {
    "name": "Crunch",
@@ -398,7 +504,11 @@
    "arc": 110,
    "knock": 12,
    "icon": "slash",
-   "desc": "A heavy bite in front."
+   "desc": "A heavy bite in front.",
+   "cost": 1,
+   "windup": 0.12,
+   "recovery": 0.25,
+   "stagger": 1.6
   },
   "rot_spit": {
    "name": "Rot Spit",
@@ -411,7 +521,11 @@
    "spread": 0,
    "size": 1.6,
    "icon": "bolt",
-   "desc": "A slow, big glob of rot at the cursor."
+   "desc": "A slow, big glob of rot at the cursor.",
+   "cost": 1,
+   "windup": 0.18,
+   "recovery": 0.35,
+   "stagger": 1.4
   },
   "frenzy": {
    "name": "Frenzy",
@@ -423,7 +537,11 @@
    "radius": 44,
    "stun": 0.3,
    "icon": "dash",
-   "desc": "Lunges to the cursor and mauls what is there, stunning briefly."
+   "desc": "Lunges to the cursor and mauls what is there, stunning briefly.",
+   "cost": 2,
+   "windup": 0.25,
+   "recovery": 0.45,
+   "stagger": 1.4
   },
   "stench": {
    "name": "Stench",
@@ -436,7 +554,11 @@
    "pulses": 5,
    "every": 0.4,
    "icon": "burst",
-   "desc": "A cloud of stench around it that hurts 5 times."
+   "desc": "A cloud of stench around it that hurts 5 times.",
+   "cost": 3,
+   "windup": 0.35,
+   "recovery": 0.6,
+   "stagger": 1.2
   },
   "rot_storm": {
    "name": "Rot Storm",
@@ -451,7 +573,11 @@
    "knock": 18,
    "bond": true,
    "icon": "star",
-   "desc": "Bond move. A huge rot blast at the cursor that stuns."
+   "desc": "Bond move. A huge rot blast at the cursor that stuns.",
+   "cost": 3,
+   "windup": 0.4,
+   "recovery": 0.7,
+   "stagger": 2.0
   }
  }
 }

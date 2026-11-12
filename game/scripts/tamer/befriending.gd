@@ -75,7 +75,7 @@ func _nearest_dazed() -> Creature:
 
 ## The creature is hit while you calm it: it startles and you start over.
 func _on_struck(c: Creature, _by: Combatant) -> void:
-	if c == target and progress > 0.0:
+	if c == target:
 		cancel()
 		g.hud.notice("Startled! Keep it calm: don't hit it while you befriend it.")
 

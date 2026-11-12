@@ -31,7 +31,7 @@ var camp: Camp
 var befriend: Befriending
 var meeting: StarterMeeting
 var aim: AimPreview
-var commands: TrainerCommands
+var slow: SlowTime
 var retreating: bool = false            ## the team was wiped and the trainer is on the way back to camp
 
 
@@ -55,6 +55,7 @@ func _ready() -> void:
 
 
 func _exit_tree() -> void:
+	HitStop.set_base(1.0)
 	if current == self:
 		current = null
 
@@ -104,13 +105,12 @@ func _build_systems() -> void:
 	aim = AimPreview.new()
 	fx_layer.add_child(aim)
 	aim.clear()
+	slow = SlowTime.new()
+	add_child(slow)
+	slow.setup(self)
 	befriend = Befriending.new()
 	fx_layer.add_child(befriend)
 	befriend.setup(self)
-	commands = TrainerCommands.new()
-	add_child(commands)
-	commands.setup(self)
-	commands.used.connect(func(_id: String) -> void: guide.done("command"))
 	input = TamerInput.new()
 	add_child(input)
 	input.setup(self)

@@ -1,15 +1,17 @@
 class_name TamerHud
 extends CanvasLayer
 ## The prototype's screen: the tracker (what to try next) top left, materials top right, notices top centre, the
-## story caption above the cards; bottom left the trainer's commands (A S D G), the two items and the "controlling"
-## badge (the trainer is never hurt, so there is no life to show);
+## story caption above the cards; bottom left the two items and the Exploring/Battle badge (the trainer is never
+## hurt, so there is no life to show); under the creature card the bond gauge;
 ## bottom centre the active creature's card; bottom right the team strip; the camp panel when resting. Laid out
 ## from the viewport size every frame (no fixed coordinates).
 
 const LAYER: int = 10
 const MARGIN: float = 10.0
-const CMD: float = 30.0
-const CMD_ROW: float = 48.0             ## height of the command row (slots, keys under them)
+const GAUGE_H: float = 6.0
+const GAUGE_GAP: float = 4.0
+const GAUGE_ROOM: float = 12.0          ## room under the card for the gauge
+const SHORT_TIME: float = 0.8
 const ITEM: float = 26.0
 const TRACKER_W: float = 300.0
 const NOTICE_TIME: float = 4.0
@@ -30,6 +32,8 @@ var _victory_t: float = 0.0
 var _callout: String = ""               ## a move's name the first time it is used, just above the creature card
 var _callout_col: Color
 var _callout_t: float = 0.0
+var _short_t: float = 0.0
+var _short_cost: int = 0
 var card := CreatureCard.new()
 var strip := TeamStrip.new()
 var camp_panel := CampPanel.new()
@@ -99,27 +103,29 @@ func _vignette_tex() -> GradientTexture2D:
 	return t
 
 
-func command_origin() -> Vector2:
-	return Vector2(MARGIN, _canvas.size.y - MARGIN - CMD_ROW + 8.0)
+## Not enough gauge: the gauge flashes and says how much the move needs.
+func gauge_short(cost: int) -> void:
+	_short_t = SHORT_TIME
+	_short_cost = cost
+	Audio.sfx("ui_click", -10.0, 0.7)
 
 
-func command_rect(i: int) -> Rect2:
-	return Rect2(command_origin() + Vector2(i * (CMD + 6.0), 0), Vector2(CMD, CMD))
-
-
-## The trainer's four commands with their cooldowns, under "TRAINER".
-func _commands(at: Vector2) -> void:
-	UiDraw.text(_canvas, at + Vector2(0, -4), "TRAINER", UiDraw.GOLD, UiDraw.SMALL)
-	for i: int in TrainerCommands.IDS.size():
-		var id: String = TrainerCommands.IDS[i]
-		var d: Dictionary = g.commands.data(id)
-		var r: Rect2 = command_rect(i)
-		UiDraw.box(_canvas, r, UiDraw.PANEL_DEEP, Pal.c(String(d["color"])))
-		MoveIcon.glyph(_canvas, r.grow(-5.0), String(d["icon"]), Pal.c(String(d["color"])), Pal.c("sun"))
-		var cd: float = g.commands.cooldown_frac(id)
-		if cd > 0.0:
-			_canvas.draw_rect(Rect2(r.position, Vector2(r.size.x, r.size.y * cd)), Color(0, 0, 0, 0.6))
-		UiDraw.text(_canvas, r.position + Vector2(2, r.size.y + 9.0), String(d["key"]), UiDraw.DIM, UiDraw.SMALL)
+## The shared bond gauge under the creature card: segments that fill with basic hits and are spent on moves.
+func _gauge(at: Vector2) -> void:
+	var n: int = int(g.team.gauge_max())
+	var w: float = (card.size.x - (n - 1) * GAUGE_GAP) / n
+	for i: int in n:
+		var r := Rect2(at + Vector2(i * (w + GAUGE_GAP), 0), Vector2(w, GAUGE_H))
+		_canvas.draw_rect(r.grow(1.0), UiDraw.INK)
+		var fill: float = clampf(g.team.gauge - i, 0.0, 1.0)
+		var col: Color = Pal.c("sun") if fill >= 1.0 else Pal.c("amber")
+		_canvas.draw_rect(Rect2(r.position, Vector2(r.size.x * fill, r.size.y)), col)
+		if _short_t > 0.0 and i < _short_cost and fill < 1.0:
+			_canvas.draw_rect(r, Color(Pal.c("rose"), 0.5 + 0.5 * sin(_short_t * 30.0)), false, 1.0)
+	UiDraw.text(_canvas, at + Vector2(0, -2), "GAUGE", UiDraw.DIM, UiDraw.SMALL)
+	if _short_t > 0.0:
+		UiDraw.text(_canvas, at + Vector2(0, -2), "needs %d" % _short_cost, Pal.c("rose"), UiDraw.SMALL,
+			HORIZONTAL_ALIGNMENT_RIGHT, card.size.x)
 
 
 func panel_open() -> bool:
@@ -137,22 +143,8 @@ func _draw_tip() -> void:
 		var rows: Array = MoveText.rows(_tip, String(hit[0]), rec.power(), rec.element(), String(hit[1]))
 		var sz: Vector2 = UiDraw.tooltip_size(_tip, rows)
 		UiDraw.tooltip_at(_tip, Vector2(mouse.x - sz.x * 0.5, card.position.y - sz.y - 6.0), rows)
-	elif _command_at(mouse) >= 0:
-		var d: Dictionary = g.commands.data(TrainerCommands.IDS[_command_at(mouse)])
-		var rows: Array = [["[%s] %s" % [d["key"], d["name"]], Pal.c(String(d["color"]))]]
-		for line: String in UiDraw.wrap(_tip, String(d["desc"]), MoveText.WRAP):
-			rows.append(line)
-		rows.append(["Cooldown %d s   Stronger with bond" % int(d["cooldown"]), UiDraw.DIM])
-		UiDraw.tooltip(_tip, mouse, rows)
 	elif strip.member_at(mouse - strip.position) >= 0:
 		UiDraw.tooltip(_tip, mouse, ["Click: creature info (I)"])
-
-
-func _command_at(p: Vector2) -> int:
-	for i: int in TrainerCommands.IDS.size():
-		if command_rect(i).has_point(p):
-			return i
-	return -1
 
 
 func callout(text: String, col: Color) -> void:
@@ -174,7 +166,7 @@ func caption(text: String) -> void:
 
 func _process(delta: float) -> void:
 	var vp: Vector2 = _canvas.size
-	card.position = Vector2(roundf((vp.x - card.size.x) * 0.5), vp.y - MARGIN - card.size.y)
+	card.position = Vector2(roundf((vp.x - card.size.x) * 0.5), vp.y - MARGIN - card.size.y - GAUGE_ROOM)
 	strip.position = Vector2(vp.x - MARGIN - strip.size.x, vp.y - MARGIN - strip.size.y)
 	camp_panel.position = ((vp - camp_panel.size) * 0.5).round()
 	info_panel.position = Vector2(roundf((vp.x - info_panel.size.x) * 0.5), MARGIN * 3.0)   # clear of the cards below
@@ -185,6 +177,7 @@ func _process(delta: float) -> void:
 	_caption_t -= delta
 	_victory_t -= delta
 	_callout_t -= delta
+	_short_t -= delta
 	_canvas.queue_redraw()
 
 
@@ -193,9 +186,9 @@ func _draw_canvas() -> void:
 	if not tracker_hidden:
 		_tracker(Vector2(MARGIN, MARGIN))
 	_materials(Vector2(vp.x - MARGIN, MARGIN))
-	_commands(command_origin())
-	_items(Vector2(MARGIN, vp.y - MARGIN - CMD_ROW - ITEM - 14.0))
-	_badge(Vector2(MARGIN, vp.y - MARGIN - CMD_ROW - ITEM - BADGE.y - 26.0))
+	_items(Vector2(MARGIN, vp.y - MARGIN - ITEM - 10.0))
+	_badge(Vector2(MARGIN, vp.y - MARGIN - ITEM - BADGE.y - 22.0))
+	_gauge(Vector2(card.position.x, card.position.y + card.size.y + 4.0))
 	for i: int in _notices.size():
 		var a: float = clampf(float(_notices[i][1]), 0.0, 1.0)
 		UiDraw.text(_canvas, Vector2(0, vp.y * NOTICE_AT + i * LINE), String(_notices[i][0]), Color(UiDraw.TEXT, a), UiDraw.BODY,

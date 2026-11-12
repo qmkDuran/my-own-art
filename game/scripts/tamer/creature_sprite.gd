@@ -96,6 +96,19 @@ func windup(time: float) -> void:
 	tw.parallel().tween_property(sprite, "self_modulate", Color.WHITE, 0.1)
 
 
+## Staggered: it reels, wobbling and tinted gold, for `time` seconds.
+func reel(time: float) -> void:
+	var tw := create_tween()
+	var n: int = int(time / 0.25)
+	for k: int in n:
+		tw.tween_property(sprite, "rotation", 0.18 if k % 2 == 0 else -0.18, 0.25)
+	tw.tween_property(sprite, "rotation", 0.0, 0.1)
+	var glow := create_tween()
+	glow.tween_property(sprite, "self_modulate", Color(1.5, 1.3, 0.7), 0.1)
+	glow.tween_interval(time - 0.2)
+	glow.tween_property(sprite, "self_modulate", Color.WHITE, 0.1)
+
+
 func act() -> void:
 	_act_t = ACT_TIME
 

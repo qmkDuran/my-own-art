@@ -1,8 +1,8 @@
 class_name TamerSpawner
 extends Node
 ## Wild creatures: packs spread over open ground away from the meadow start and the camp (tougher kinds and levels
-## further out, tamer.json "spawn"), a shiny roll per creature (one shiny of the named species is guaranteed in the
-## prototype every time the packs return, so it can be seen), material drops when one faints, and fresh packs when you rest at camp.
+## further out, tamer.json "spawn"), a shiny roll per creature (1 in 64; F1 spawns one for testing), material drops
+## when one faints, and fresh packs when you rest at camp.
 
 signal defeated(c: Creature)
 
@@ -14,7 +14,6 @@ const SEED_OFFSET: int = 31
 var g: TamerGame
 var packs: Array[Dictionary] = []       ## {pos, progress, row}
 var rng := RandomNumberGenerator.new()
-var _shiny_given: bool = false
 
 
 func setup(game: TamerGame) -> void:
@@ -60,7 +59,6 @@ func _cell_ok(c: Vector2i, S: Dictionary, camp: Vector2) -> bool:
 func spawn_all(keep_clear: Vector2 = Vector2.INF) -> void:
 	for n: Node in get_tree().get_nodes_in_group(Combatant.SIDE_WILD):
 		n.queue_free()
-	_shiny_given = false
 	for i: int in packs.size():
 		if keep_clear != Vector2.INF and (packs[i]["pos"] as Vector2).distance_to(keep_clear) < g.view_radius():
 			continue
@@ -106,9 +104,6 @@ func _weighted(table: Dictionary) -> String:
 
 
 func _shiny_roll(kind: String) -> bool:
-	if not _shiny_given and kind == String(TamerData.rule("spawn.guarantee_shiny")):
-		_shiny_given = true
-		return true
 	return rng.randf() < float(TamerData.species(kind)["shiny_chance"])
 
 
@@ -128,6 +123,14 @@ func spawn(kind: String, at: Vector2, level: int, pack: int = -1, shiny: int = -
 	CreatureTag.attach(c)
 	if rec.shiny:
 		Audio.sfx("lamp_lit", -6.0, 1.6)
+	return c
+
+
+## F1 (dev): a shiny of the showcase species right next to you.
+func spawn_shiny_near(at: Vector2) -> Creature:
+	var kind: String = String(TamerData.rule("spawn.guarantee_shiny"))
+	var c: Creature = spawn(kind, g.layout.free_spot_near(at + Vector2(140, 0), 14.0), 1, -1, 1)
+	g.hud.notice("Dev: a shiny %s appeared" % TamerData.species(kind)["name"])
 	return c
 
 

@@ -2,7 +2,8 @@ extends Node
 ## --tamer-smoke: headless play of the trainer prototype. Starts the real prototype scene, then: the meeting and
 ## picking a starter, the element chart, moves, battle mode (start, control, end with Victory), befriending
 ## (and being interrupted), swapping with the entry attack, a knock-out and the step-in, bond and the bond move, camp
-## (rest, pet, an upgrade), drops, the shiny, trainer commands, the white-out retreat, and a pack fight. Prints
+## (rest, pet, an upgrade), drops, the shiny, the gauge, slow-time, commitment, stagger, the battle ring, the
+## white-out retreat, and a pack fight. Prints
 ## TAMER PASS or FAIL.
 
 var g: TamerGame
@@ -45,7 +46,8 @@ func _run() -> void:
 	await _befriend()
 	await _swap_and_knockout()
 	await _bond()
-	await _commands()
+	await _combat_model()
+	await _ring()
 	await _camp()
 	await _drops_and_white_out()
 	await TamerPackFight.new(self).run()
@@ -101,10 +103,11 @@ func _fight() -> void:
 	var before: float = wolf.rec.life
 	g.input.cursor_override = wolf.global_position
 	p.global_position = wolf.global_position + Vector2(-30, 0)
+	g.team.gauge = 3.0
 	expect(g.input.use_move(0), "Q uses the partner's first move at the cursor")
-	await frames(4)
+	await seconds(0.4)
 	expect(wolf.rec.life < before, "Claw Rush hits the wild wolf (%d -> %d)" % [before, wolf.rec.life])
-	expect(p.cooldown_frac("claw_rush") > 0.0, "the move goes on cooldown")
+	expect(p.cooldown_frac("claw_rush") > 0.0, "a move locks out a moment against double casts")
 	expect(p.rec.used_moves.has("claw_rush"), "the first use of a move is remembered (its name popped up)")
 	_clear_wild(900.0)
 	await frames(2)
@@ -149,6 +152,7 @@ func _battle_fight(p: Creature, wolf: Creature) -> void:
 	g.input.attack()
 	expect(g.battle.brain().target == wolf, "right click in battle attacks the creature under the cursor")
 	p.cooldowns.clear()
+	g.team.gauge = 3.0
 	g.input.start_aim(1)
 	expect(g.aim.aiming() and g.aim.move_id == String(p.rec.moves()[1]), "holding W shows where the move will land")
 	await frames(2)
@@ -244,7 +248,9 @@ func _bond() -> void:
 	await frames(2)
 	expect(rec.bond_move_ready() and g.guide.is_done("bond"), "a full bond meter unlocks the bond move")
 	g.input.cursor_override = g.trainer.global_position + Vector2(100, 0)
-	expect(g.input.use_bond_move(), "T uses the bond move")
+	g.team.gauge = 3.0
+	g.field.partner.cooldowns.clear()
+	expect(g.input.use_bond_move(), "T uses the bond move (it costs the whole gauge)")
 
 
 func _camp() -> void:
@@ -256,12 +262,14 @@ func _camp() -> void:
 	expect(g.team.members[0].life >= g.team.members[0].max_life(), "resting heals the team")
 	var rec: CreatureRecord = g.team.members[0]
 	var life_before: float = rec.max_life()
-	expect(g.team.upgrade(rec, "life") and rec.max_life() > life_before and g.team.count("rot_fang") == 1, "materials raise a stat")
+	var fangs: int = g.team.count("rot_fang")
+	expect(g.team.upgrade(rec, "life") and rec.max_life() > life_before and g.team.count("rot_fang") == fangs - 2, "materials raise a stat")
 	var bond: float = g.team.members[1].bond
 	expect(g.camp.care(g.team.members[1], "pet") and g.team.members[1].bond > bond, "petting at camp raises bond")
 	expect(not g.camp.care(g.team.members[1], "pet"), "petting is once per rest")
-	var shinies: int = get_tree().get_nodes_in_group(Combatant.SIDE_WILD).filter(func(n: Node) -> bool: return (n as Creature).rec.shiny).size()
-	expect(shinies >= 1, "a shiny maned wolf is out in the meadow (%d shiny)" % shinies)
+	var shiny: Creature = g.spawner.spawn_shiny_near(g.trainer.global_position)
+	expect(shiny.rec.shiny and TamerData.species("maned_wolf")["shiny_chance"] < 0.02, "shinies are rare (1 in 64); F1 spawns one")
+	shiny.queue_free()
 
 
 func _drops_and_white_out() -> void:
@@ -299,37 +307,51 @@ func _white_out() -> void:
 	expect(g.team.count("bloom_leaf") == tufts - int(TamerData.rule("white_out.lose")), "the white-out costs one of each material (gentle: %d -> %d)" % [tufts, g.team.count("bloom_leaf")])
 
 
-## The trainer's commands: Cheer, Focus, Rally, Mark; and the perfect swap.
-func _commands() -> void:
+func _combat_model() -> void:
 	var p: Creature = g.field.partner
-	g.commands.cooldowns.clear()
-	expect(g.commands.use("cheer", Vector2.ZERO) and p.cheer_t > 0.0 and p.outgoing_mult(null) > 1.0, "Cheer makes your creature hit harder")
-	expect(not g.commands.use("cheer", Vector2.ZERO), "commands have cooldowns")
-	expect(g.commands.use("focus", Vector2.ZERO) and p.focus_ready, "Focus readies a critical move")
-	p.rec.life = p.rec.max_life() * 0.5
-	var life: float = p.rec.life
-	expect(g.commands.use("rally", Vector2.ZERO), "Rally starts")
+	_clear_wild(2000.0)
+	g.battle.end(false)
+	await seconds(4.5)                                      # the grace after a battle
+	var wolf: Creature = _wild("maned_wolf", Vector2(60, 0))
+	wolf.brain = null
+	await frames(2)
+	g.team.gauge = 0.0
+	g.input.cursor_override = wolf.global_position
+	expect(not g.input.use_move(0), "a move needs gauge: with none it does not go off")
+	p.global_position = wolf.global_position + Vector2(-24, 0)
+	p.cooldowns.clear()
+	for k: int in 6:
+		p.cast(String(p.rec.data()["basic"]), wolf.global_position)
+		await seconds(0.6)
+	expect(g.team.gauge > 0.5, "basic combo hits fill the gauge (%.2f)" % g.team.gauge)
+	g.team.gauge = 3.0
+	g.input.start_aim(0)
+	expect(g.slow.on and Engine.time_scale < 0.5, "holding a move key slows time")
+	g.input.release_aim(0)
+	expect(not g.slow.on and Engine.time_scale > 0.5 and g.team.gauge <= 2.01, "releasing casts it, spends its gauge, and time returns")
+	expect(p.commit_t > 0.0 and not p.dodge(p.global_position + Vector2(0, 50), TamerData.rule("control.dodge")), "a move commits: no dodging during it")
+	wolf.stagger.add(wolf.stagger.max_value())
+	expect(wolf.stagger.is_staggered() and wolf.stagger.damage_taken() > 1.0, "a full stagger bar staggers: it takes more damage")
+	wolf.queue_free()
 	await seconds(1.0)
-	expect(p.rec.life > life, "Rally heals over time")
-	var wolf: Creature = _wild("maned_wolf", Vector2(80, 0))
+
+
+## The ring: outsiders are kept out, and only creatures in the fight join it.
+func _ring() -> void:
+	var p: Creature = g.field.partner
+	var foe: Creature = _wild("tas_devil", Vector2(120, 0))
+	var outsider: Creature = _wild("aye_aye", Vector2(-420, 0))
+	outsider.brain = null
 	await frames(2)
-	expect(g.commands.use("mark", wolf.global_position) and wolf.marked_t > 0.0 and g.trainer.attack_target == wolf, "Mark picks the target")
-	expect(p.outgoing_mult(wolf) > p.outgoing_mult(null), "marked creatures take more from yours")
-	expect(g.guide.is_done("command"), "the guide counts a command")
-	g.trainer.global_position = p.global_position
-	await frames(2)
-	var near: float = p.outgoing_mult(null)
-	g.trainer.global_position = p.global_position + Vector2(400, 0)
-	await frames(2)
-	expect(p.outgoing_mult(null) < near, "your creature hits harder inside your bond aura")
-	g.trainer.global_position = p.global_position
-	await frames(2)
-	(wolf.brain as WildBrain).wake(p)
-	wolf.global_position = p.global_position + Vector2(24, 0)
-	wolf.cooldowns.clear()
-	(wolf.brain as WildBrain).attack("wolf_nip", p)
-	await seconds(float(TamerData.rule("wild.windup")) - 0.2)
-	var i: int = g.team.next_awake()
-	expect(i >= 0 and g.field.swap(i), "a swap just before a wild attack lands")
-	expect(not (wolf.brain as WildBrain).winding_at(p), "the perfect swap makes the attack whiff")
-	_clear_wild(900.0)
+	g.battle.engage(foe)
+	expect(g.battle.on and g.battle.ring.inside.has(foe), "a battle raises a ring around the fight")
+	outsider.global_position = g.battle.ring.global_position + Vector2(40, 0)
+	await frames(3)
+	expect(outsider.global_position.distance_to(g.battle.ring.global_position) >= g.battle.ring.radius, "an outsider cannot get into the ring")
+	expect(not g.battle.may_join(outsider), "an outsider cannot join the battle")
+	foe.faint()
+	outsider.queue_free()
+	await seconds(1.0)
+	expect(not g.battle.on and g.battle._grace > 0.0, "after a battle there is a grace before the next one")
+	expect(p.alive(), "your creature is fine")
+	await seconds(4.5)

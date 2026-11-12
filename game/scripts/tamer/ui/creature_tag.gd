@@ -6,6 +6,7 @@ extends Node2D
 ## tag is on the overlay, so it reads above tree canopies. Starters in the opening meeting show their kind, element and role.
 
 const BAR := Vector2(30, 3)
+const STAGGER_H: float = 2.0
 const ABOVE: float = 8.0
 const PROMPT_GAP: float = 12.0
 const NAME_W: float = 140.0
@@ -33,7 +34,7 @@ func _draw() -> void:
 	if c.side == StarterMeeting.SIDE:
 		_meet_label(top)
 		return
-	var hurt: bool = c.rec.life_frac() < 0.999
+	var hurt: bool = c.rec.life_frac() < 0.999 or c.stagger.frac() > 0.0
 	if hurt or hovered == c:
 		_bar(Vector2(-BAR.x / 2.0, top))
 	var fighting: bool = c.brain is WildBrain and (c.brain as WildBrain).awake
@@ -61,6 +62,11 @@ func _bar(at: Vector2) -> void:
 	draw_rect(Rect2(at, Vector2(BAR.x * c.rec.life_frac(), BAR.y)), TamerData.color(c.element_id(), "core"))
 	var notch: float = BAR.x * float(c.rec.data()["befriend_at"])
 	draw_rect(Rect2(at + Vector2(notch, -1), Vector2(1, BAR.y + 2)), Pal.c("rose"))
+	var st := at + Vector2(0, BAR.y + 2.0)                 # the stagger bar, gold, under the life bar
+	draw_rect(Rect2(st - Vector2.ONE, Vector2(BAR.x + 2.0, STAGGER_H + 2.0)), UiDraw.INK)
+	var fill: float = 1.0 if c.stagger.is_staggered() else c.stagger.frac()
+	var col: Color = Pal.c("sun") if c.stagger.is_staggered() else Pal.c("gold")
+	draw_rect(Rect2(st, Vector2(BAR.x * fill, STAGGER_H)), col)
 
 
 func _trainer_near() -> bool:

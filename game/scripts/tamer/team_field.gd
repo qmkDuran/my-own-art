@@ -46,7 +46,8 @@ func summon(i: int, entry: bool, perfect: bool = false) -> void:
 func _entry_attack(c: Creature, perfect: bool) -> void:
 	var E: Dictionary = TamerData.rule("entry")
 	var k: float = float(TamerData.rule("perfect_swap.mult")) if perfect else 1.0
-	var m: Dictionary = {"name": "Entry", "damage": float(E["damage"]) * k, "stun": float(E["stun"]) * k, "knock": 14.0}
+	var m: Dictionary = {"name": "Entry", "damage": float(E["damage"]) * k, "stun": float(E["stun"]) * k, "knock": 14.0,
+		"stagger": float(TamerData.rule("combat.stagger.entry")) / float(E["damage"])}
 	TamerFx.blast(c.global_position, float(E["radius"]), c.element_id(), true)
 	var call: String = "Perfect swap! Go, %s!" if perfect else "Go, %s!"
 	TamerFx.word(c.global_position, call % c.rec.data()["name"], Pal.c("gold") if perfect else TamerData.color(c.element_id(), "light"), UiDraw.TITLE)
@@ -61,6 +62,9 @@ func _entry_attack(c: Creature, perfect: bool) -> void:
 func swap(i: int) -> bool:
 	if _swap_cd > 0.0 or not g.team.can_swap_to(i):
 		return false
+	if g.battle.on and not g.team.spend_gauge(int(TamerData.rule("combat.gauge.swap_cost"))):
+		g.hud.gauge_short(int(TamerData.rule("combat.gauge.swap_cost")))
+		return false
 	_swap_cd = SWAP_COOLDOWN
 	var perfect: bool = _dodge_incoming()
 	recall()
@@ -69,8 +73,9 @@ func swap(i: int) -> bool:
 	return true
 
 
-## Swapping just as a wild attack is about to land on your creature: the attack whiffs and the swap-in hits twice
-## as hard (perfect_swap.window seconds before it lands).
+## Swapping just as a wild attack is about to land on your creature: the attack whiffs, the attacker takes a stagger
+## burst, and the swap-in hits twice as hard (perfect_swap.window seconds before it lands). In battle a swap costs
+## a gauge segment.
 func _dodge_incoming() -> bool:
 	if partner == null:
 		return false
@@ -79,6 +84,7 @@ func _dodge_incoming() -> bool:
 		var b := (n as Creature).brain as WildBrain
 		if b != null and b.winding_at(partner) and b.windup_left() <= float(TamerData.rule("perfect_swap.window")):
 			b.cancel_windup()
+			(n as Creature).stagger.add(float(TamerData.rule("combat.stagger.perfect_swap")) * (n as Creature).stagger.max_value() / 100.0)
 			perfect = true
 	return perfect
 

@@ -12,32 +12,40 @@ The first import takes a minute while Godot builds its cache. Errors about fonts
 their own.
 
 ## How it plays
-- **Exploring:** you are the trainer. Left click walks. Your creature follows.
-- **Battle:** right-click a wild creature (or walk too close to one) and a battle starts: "Go, <name>!", your
-  creature leaps in and **you control your creature**. The trainer stays back on their own and is **never hurt**.
-  The battle ends when no awake wild creature is left nearby (or you run away), with a **Victory** summary.
-- **Your whole team knocked out:** the screen fades and you retreat to camp, where they recover (you lose one of
-  each material).
-- **Befriend:** weaken a wild creature until it is dazed (gold stars, the pink mark on its life bar), then press
-  **F**: your trainer walks over and calms it. Don't hit it meanwhile.
-- **Learn your moves:** hover a move icon for what it does; press **I** (or click the team strip) for the creature
-  info panel. Each move's name pops up the first time you use it.
-- **Wild attacks are telegraphed:** a red warning shows where they will land. Dodge (Space) or step out.
-- **Camp:** heal, pet, feed, and spend materials on stats. **Shiny:** one maned wolf is always shiny.
+- **Exploring:** you are the trainer. Left click walks. Your creature follows. Wild creatures roam in the grass.
+- **Battle:** right-click a wild creature (or let one notice you) and a glowing **ring** forms around the fight:
+  nothing else can come in. **You control your creature.** The trainer stays back and is **never hurt**.
+- **The combat model:**
+  - **Right click (hold)**: a basic 3-hit combo, no cooldown. Basic hits fill the **gauge** (3 segments under the
+    creature card).
+  - **Q W E R** cost gauge (1-3 segments, pips on each icon). **Hold** the key: time slows right down, a ghost shows
+    where the move lands; **release** to use it. Moves **commit**: a wind-up and a recovery where you cannot dodge.
+  - **Space** dodges. Dodging through a red warning at the last moment is a **perfect dodge**: gauge and a flash.
+  - **Stagger:** the gold bar under a foe's life fills with hits (element weaknesses fill it much faster). Full, the
+    foe is **STAGGERED** for 3 s: it reels and takes 50% more. Spend your gauge then.
+  - **Swaps (1-3)** cost 1 gauge in battle; the swap-in strikes as it lands. Swap just as a red warning lands for a
+    **perfect swap** (the attack misses, the foe staggers).
+  - Wild creatures fight in their own way: maned wolves flank and run, devils commit to big lunges (punish the
+    pause after), aye-ayes keep their distance.
+- The battle ends when no foe in the ring can fight (defeated or dazed), or press **X** to retreat. A Victory
+  summary shows what you won. Then 4 seconds of grace.
+- **Your whole team knocked out:** fade, retreat to camp, they recover there (you lose one of each material).
+- **Catch:** weaken a wild creature until it is dazed (the pink mark on its life bar), then press **F**: your trainer
+  walks over and calms it. Don't hit it meanwhile.
+- **Learn your moves:** hover a move icon; press **I** (or click the team strip) for the creature info panel.
+- **Shinies** are rare (1 in 64). **F1** (dev) spawns one next to you.
 
 ## Controls
 | Key | Exploring (trainer) | Battle (your creature) |
 |---|---|---|
 | **Left click** | Walk (hold to keep walking) | Move your creature (hold to keep moving) |
-| **Right click** | On a wild creature: start a battle | Attack the creature under the cursor (or swing toward the cursor) |
-| **Q W E R** | Hold to aim (a ghost of the move shows), release to use | same |
-| **T** | Bond move (after the bond meter reaches its mark) | same |
+| **Right click** | On a wild creature: start a battle | Basic combo on the creature under the cursor (hold to keep going) |
+| **Q W E R / T** | Hold to aim (time slows), release to use; costs gauge (T: bond move) | same |
 | **Space** | Trainer roll | Your creature's dodge |
-| **A S D G** | Trainer commands: Cheer (hits harder), Focus (next move crits), Rally (heal over time), Mark (the creature under the cursor takes more) | same |
-| **1 2 3** | Swap creature (the one coming in strikes; swap just before a red warning lands for a **perfect swap**) | same |
+| **1 2 3** | Swap creature | Swap (1 gauge); perfect swap on a landing attack |
 | **4 / 5** | Honeyberry (heal) / Smelling Salts (revive) | same |
-| **F** | Befriend the nearest dazed creature (the trainer walks over) | same |
-| **I** | Creature info | same |
-| **C / Esc** | Camp panel (at camp) / close panels | same |
+| **F** | Catch the nearest dazed creature (the trainer walks over) | same |
+| **X** | - | Retreat |
+| **I / C / Esc** | Creature info / camp panel (at camp) / close panels | same |
+| **F1** | Dev: spawn a shiny | same |
 
-Your creature hits harder inside the faint ring around the trainer (the bond aura), so stay close.

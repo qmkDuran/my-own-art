@@ -1,12 +1,14 @@
 class_name WildBrain
 extends CreatureBrain
-## A wild creature: it wanders near home until you or your creature come close or it is hit, then fights your
-## creature (never the trainer) with its basic attack and sometimes one of its moves, each telegraphed. With no
-## creature of yours out it loses interest. It walks home if pulled too far. Dazed, it only wobbles about.
+## A wild creature (or a rival trainer's): it wanders near home until your creature comes close or it is hit, then
+## fights your creature (never the trainer) the way its species does (FightStyle): every attack has a tell (a
+## wind-up with a red warning) and an opening after it. Outside a battle it joins in; during one it ignores you unless
+## it is in the fight (BattleMode). It walks home if pulled too far. Dazed, it only wobbles about.
 
 const DAZED_SPEED: float = 0.25
 const WANDER_SPEED: float = 0.35
 const HOME_SPEED: float = 0.8
+const DEFAULT_TELL: float = 0.45
 
 var home: Vector2
 var awake: bool = false
@@ -18,6 +20,9 @@ var _going_home: bool = false
 var _windup: float = 0.0                ## > 0: winding up `_pending` toward `_aim` (a telegraph shows where)
 var _pending: String = ""
 var _aim: Vector2
+var _opening: float = 0.0               ## after an attack it stands still this long: the moment to punish it
+var _next_opening: float = 0.0
+var style: FightStyle
 
 
 func winding_at(c: Creature) -> bool:
@@ -37,7 +42,7 @@ func after_team() -> bool:
 
 
 func wake(by: Combatant = null) -> void:
-	if not awake and not _going_home:
+	if not awake and not _going_home and TamerGame.current.battle.may_join(c):
 		awake = true
 		if by != null:
 			_target = by
@@ -57,6 +62,10 @@ func think(delta: float) -> Vector2:
 		_windup -= delta
 		if _windup <= 0.0:
 			c.cast(_pending, _aim)
+			_opening = _next_opening
+		return Vector2.ZERO
+	if _opening > 0.0:
+		_opening -= delta
 		return Vector2.ZERO
 	if _going_home:
 		return _home(delta, W)
@@ -71,9 +80,9 @@ func think(delta: float) -> Vector2:
 	if c.global_position.distance_to(home) > float(W["chase_leash"]):
 		_going_home = true
 		return Vector2.ZERO
-	if randf() < float(W["move_chance"]) * delta:
-		_try_move()
-	return fight(_target, delta, float(W["basic_range_slack"]), c.rec.speed())
+	if style == null:
+		style = FightStyle.new(self)
+	return style.think(_target, delta)
 
 
 func _retarget(W: Dictionary) -> void:
@@ -89,25 +98,23 @@ func _retarget(W: Dictionary) -> void:
 	_target = partner if has else null                     # only ever your creature: the trainer is never a target
 
 
-## One of its kit moves at the target, now and then (wild creatures use the same moves as yours).
-func _try_move() -> void:
-	var kit: Array = c.rec.moves()
-	var id: String = String(kit[randi() % kit.size()])
-	var m: Dictionary = TamerData.move(id)
-	if m["kind"] == "guard" or c.global_position.distance_to(_target.global_position) > float(m.get("range", 120.0)) + 40.0:
-		return
-	attack(id, _target)
-
-
 ## Every wild attack is telegraphed: it stops, a warning shows where it will land, then it strikes there. Step out
 ## (or roll) and it misses.
 func attack(id: String, target: Combatant) -> void:
+	attack_with({"move": id, "windup": DEFAULT_TELL, "opening": DEFAULT_TELL}, target)
+
+
+## An attack from the species' list: its own tell (wind-up) and opening.
+func attack_with(a: Dictionary, target: Combatant) -> void:
+	var id: String = String(a["move"])
 	if _windup > 0.0 or not c.move_ready(id):
 		return
 	var m: Dictionary = TamerData.move(id)
 	_pending = id
+	_target = target
 	_aim = target.global_position
-	_windup = float(TamerData.rule("wild.windup"))
+	_windup = float(a["windup"])
+	_next_opening = float(a.get("opening", 0.0))
 	var fx: Node2D = TamerGame.current.fx_layer
 	var t: Telegraph
 	if m["kind"] == "strike":
