@@ -29,7 +29,7 @@ It uses the Compatibility renderer (OpenGL), so it runs on almost any graphics c
 | F | **set a snare** at your feet (takes about a second, makes noise, one at a time, long cooldown) |
 | Tab | **lock on** to Thornback while you can see it (again to release) |
 | Esc | pause and free the mouse (Esc or click to resume) |
-| R | restart (on the pause, win or lose screen) |
+| R | restart (any time after the start screen; shown on the win and lose screens) |
 
 ## How to win
 
