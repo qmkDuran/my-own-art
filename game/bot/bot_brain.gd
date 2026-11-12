@@ -21,7 +21,8 @@ var mover: BotMover
 var reflexes: BotReflexes
 var rng := RandomNumberGenerator.new()
 var state_name: String = ""
-## When false the mind is paused (tests, staged stills) but the legs still follow mover commands.
+## When false the mind is paused (tests, staged stills): it still perceives, and the legs still follow mover
+## commands, but no state runs.
 var active: bool = true
 var since_retreat: float = INF
 var since_cover: float = INF
@@ -76,6 +77,8 @@ func _physics_process(delta: float) -> void:
 		return
 	if active:
 		_think(delta)
+	else:
+		senses.tick(delta)
 	mover.tick(delta)
 
 

@@ -46,7 +46,7 @@ func _fresh_match() -> void:
 	finder = SpotFinder.new(m)
 	await stage.frames(3)
 	stage.freeze_bot()
-	m.controller.set_physics_process(false)
+	stage.script_player()
 
 
 func fresh_match() -> void:

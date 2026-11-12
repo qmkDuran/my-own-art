@@ -84,8 +84,6 @@ func _bush_with_view() -> HidingSpot:
 	return t.m.woods.hiding_spots[0]
 
 
-## Ticks the bot's senses by hand (its mind is paused in these checks).
+## Lets the bot's senses (which keep working while its mind is paused) take in the scene.
 func _sense(count: int) -> void:
-	for k: int in count:
-		await t.stage.frames(1)
-		t.m.brain.senses.tick(1.0 / Engine.physics_ticks_per_second)
+	await t.stage.frames(count)

@@ -10,6 +10,6 @@ SHOTS=("$@")
 mkdir -p "$OUT"
 "$GODOT" --headless --path game --import >/dev/null 2>&1
 for s in "${SHOTS[@]}"; do
-  timeout 300 xvfb-run -a -s "-screen 0 1920x1080x24" "$GODOT" --rendering-driver opengl3 --resolution 1920x1080 \
+  timeout 300 xvfb-run -a -s "-screen 0 1920x1080x24" "$GODOT" --rendering-driver opengl3 --audio-driver Dummy --resolution 1920x1080 \
     --path game -- --shots --only="$s" --out="$OUT" 2>&1 | grep -E "SCRIPT ERROR|SHOT|ERROR" -A2 | sed "s/^/$s: /"
 done

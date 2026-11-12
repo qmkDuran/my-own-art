@@ -1,7 +1,7 @@
 class_name BiteAbility
 extends Ability
 ## Bite: a clear wind-up (head pulls back, jaw glows), a short lunge, then a hit check in a front arc. A bite started
-## from hiding, or while the target has not noticed the biter, is an ambush (bonus damage and a stagger).
+## while the target has not noticed the biter (from hiding, from behind) is an ambush: bonus damage and a stagger.
 
 var ambush: bool = false
 

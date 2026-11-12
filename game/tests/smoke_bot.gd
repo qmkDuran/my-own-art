@@ -54,13 +54,10 @@ func _snare_crossing(bot_watches: bool) -> SnareTrap:
 	var spot: Vector2 = Stage.ground_xz(t.m.woods.patrol_points[1])
 	t.stage.place(t.m.player, spot, t.m.woods.ground_at(spot + Vector2(0, CROSSING)))
 	var watch_from: Vector2 = spot + Vector2(-CROSSING * (1.5 if bot_watches else EARSHOT_FACTOR), 0)
-	t.stage.place(t.m.bot, watch_from, t.m.player.global_position)
+	var look_at: Vector3 = t.m.player.global_position if bot_watches else t.m.woods.ground_at(watch_from * 2.0 - spot)
+	t.stage.place(t.m.bot, watch_from, look_at)
 	t.m.player.try_trap()
-	var setting_time: float = Tuning.f("trap", "place_time") + Tuning.f("trap", "arm_delay")
-	for k: int in ceili(setting_time * Engine.physics_ticks_per_second):
-		await t.stage.frames(1)
-		if bot_watches:
-			t.m.brain.senses.tick(1.0 / Engine.physics_ticks_per_second)
+	await t.stage.seconds(Tuning.f("trap", "place_time") + Tuning.f("trap", "arm_delay"))
 	var snare: SnareTrap = t.m.player.trap.snare
 	t.stage.place(t.m.player, spot + Vector2(0, CROSSING * 2.0), t.m.bot.global_position)
 	var snare_at: Vector2 = Stage.ground_xz(snare.global_position)

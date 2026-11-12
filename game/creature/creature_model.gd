@@ -21,12 +21,12 @@ const DEAD_TILT: float = 1.45
 const DEAD_DARKEN: float = 0.45
 const DEAD_DROP: float = 0.45
 const GLOW_MIN_SCALE: float = 0.4
-const BODY_GLOW_SHARE: float = 0.35
+const BODY_GLOW_SHARE: float = 0.12
 const TAIL_WAG_SHARE: float = 0.5
 const MARKER_HEIGHT: float = 1.75
-const MARKER_SIZE: int = 96
+const MARKER_SIZE: int = 150
 const MARKER_PIXEL: float = 0.006
-const MARKER_OUTLINE: int = 18
+const MARKER_OUTLINE: int = 28
 
 var torso: Node3D
 var head: Node3D

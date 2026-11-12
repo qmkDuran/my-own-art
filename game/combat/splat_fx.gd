@@ -3,7 +3,7 @@ extends Node3D
 ## Where a glob of spit lands: a bright splat stuck to the surface plus a few droplets, fading out over a few
 ## seconds so the player can read exactly what stopped the shot.
 
-const SPLAT_RADIUS: float = 0.4
+const SPLAT_RADIUS: float = 0.5
 const SPLAT_THICKNESS: float = 0.06
 const DROPLETS: int = 6
 const DROPLET_RADIUS: float = 0.07
@@ -11,7 +11,7 @@ const DROPLET_REACH: float = 0.6
 const DROPLET_TIME: float = 0.35
 const LINGER_TIME: float = 3.0
 const FADE_TIME: float = 1.0
-const SPIT_EMISSION: float = 0.8
+const SPIT_EMISSION: float = 0.5
 const NEARLY_SIDEWAYS: float = 0.9
 
 static var _spit_material: StandardMaterial3D
@@ -28,10 +28,12 @@ static func spit_material() -> StandardMaterial3D:
 	return _spit_material
 
 
-static func spawn(parent: Node, at: Vector3, normal: Vector3) -> void:
+## size is a share of the full splat: 1 on bark, rock or ground, smaller on a creature so it stays readable.
+static func spawn(parent: Node, at: Vector3, normal: Vector3, size: float) -> void:
 	var fx := SplatFx.new()
 	parent.add_child(fx)
 	fx.global_position = at
+	fx.scale = Vector3.ONE * size
 	fx._build(normal)
 
 

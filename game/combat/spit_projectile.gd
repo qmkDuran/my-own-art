@@ -9,6 +9,7 @@ const TRAIL_COUNT: int = 3
 const TRAIL_SPACING: float = 0.22
 const TRAIL_SHRINK: float = 0.22
 const SPLAT_DISTANCE: float = 0.05
+const CREATURE_SPLAT_SIZE: float = 0.4
 
 var shooter: Creature
 var direction: Vector3 = Vector3.FORWARD
@@ -74,7 +75,8 @@ func _finish(result: String, normal: Vector3) -> void:
 	var where: Vector3 = global_position
 	NoiseBus.emit_noise(shooter, where, Tuning.f("noise", "impact_radius"), "impact")
 	if result != "fizzle":
-		SplatFx.spawn(get_parent(), where + normal * SPLAT_DISTANCE, normal)
+		var size: float = CREATURE_SPLAT_SIZE if result in ["hit", "dodged"] else 1.0
+		SplatFx.spawn(get_parent(), where + normal * SPLAT_DISTANCE, normal, size)
 	landed.emit(result, where)
 	queue_free()
 

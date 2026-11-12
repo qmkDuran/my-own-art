@@ -9,6 +9,7 @@ const OPEN_SHOT_RANGE: float = 8.0
 const BITE_CLOSE: float = 1.8
 const BITE_FAR: float = 6.0
 const BITE_WAIT: float = 1.2
+const BUSH_STRIKE: float = 3.4
 const DAMAGE_TOLERANCE: float = 0.01
 
 var t: Node
@@ -89,20 +90,21 @@ func _ambush_bonus() -> void:
 func _ambush_from_bush() -> void:
 	await t.fresh_match()
 	var bush: HidingSpot = t.m.woods.hiding_spots[3]
-	var bot_spot: Vector2 = Stage.ground_xz(bush.global_position) + Vector2(BITE_CLOSE, 0)
+	var bot_spot: Vector2 = Stage.ground_xz(bush.global_position) + Vector2(BUSH_STRIKE, 0)
+	t.stage.place(t.m.bot, bot_spot, t.m.woods.ground_at(bot_spot + Vector2(BUSH_STRIKE, 0)))
 	t.stage.place(t.m.player, Stage.ground_xz(bush.global_position), t.m.woods.ground_at(bot_spot))
-	t.stage.place(t.m.bot, bot_spot, t.m.player.global_position)
 	await t.stage.frames(3)
-	t.expect(t.m.player.stealth.is_hidden(), "standing in a bush hides the player")
-	t.m.bot.aware_of_opponent = true
+	t.stage.face(t.m.bot, t.m.player.global_position)
+	await t.stage.seconds(Tuning.f("stealth", "unaware_memory"))
+	t.expect(t.m.player.stealth.is_hidden() and not t.m.bot.aware_of_opponent,
+			"a bot %.1f m from a bush, looking at it, does not notice the player hidden inside" % BUSH_STRIKE)
 	var staggered: Array[bool] = [false]
 	t.m.bot.hit_taken.connect(func(_a: float, _b: Creature, _c: bool, _d: String) -> void:
 		staggered[0] = t.m.bot.is_staggered())
 	await _bite_at_bot()
 	var expected: float = Tuning.f("bite", "damage") * Tuning.f("stealth", "ambush_multiplier")
 	var lost: float = t.m.bot.health.maximum - t.m.bot.health.current
-	t.expect(absf(lost - expected) < DAMAGE_TOLERANCE,
-			"a bite from a bush is an ambush even on an alert bot (-%.1f)" % lost)
+	t.expect(absf(lost - expected) < DAMAGE_TOLERANCE, "a lunging bite out of the bush is an ambush (-%.1f)" % lost)
 	t.expect(staggered[0], "an ambush staggers the target")
 	t.expect(not t.m.player.stealth.is_hidden(), "attacking from a bush reveals the player")
 

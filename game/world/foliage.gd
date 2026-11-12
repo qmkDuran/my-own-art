@@ -25,6 +25,8 @@ static func bush(ground: Vector3, radius: float, rng: RandomNumberGenerator) -> 
 	var spot := HidingSpot.new()
 	spot.setup("bush", radius)
 	spot.position = ground
+	for color_name: String in BUSH_COLORS:
+		spot.fade_materials.append(WoodsMaterials.solid(color_name).duplicate())
 	for ball: int in BUSH_BALLS:
 		var sphere := SphereMesh.new()
 		sphere.radius = radius * BUSH_BALL_SHARE * rng.randf_range(BUSH_SIZE_JITTER.x, BUSH_SIZE_JITTER.y)
@@ -33,7 +35,7 @@ static func bush(ground: Vector3, radius: float, rng: RandomNumberGenerator) -> 
 		sphere.rings = BUSH_RINGS
 		var view := MeshInstance3D.new()
 		view.mesh = FlatMesh.lumpy(sphere, rng, BUSH_LUMP)
-		view.material_override = WoodsMaterials.solid(BUSH_COLORS[ball % BUSH_COLORS.size()])
+		view.material_override = spot.fade_materials[ball % spot.fade_materials.size()]
 		var angle: float = TAU * ball / BUSH_BALLS
 		var spread: float = radius * BUSH_SPREAD_SHARE * (0.0 if ball == 0 else 1.0)
 		var height: float = BUSH_HEIGHT * rng.randf_range(BUSH_HEIGHT_JITTER.x, BUSH_HEIGHT_JITTER.y)
@@ -60,7 +62,8 @@ static func tall_grass(ground: Vector3, radius: float, density: float, rng: Rand
 		multimesh.set_instance_color(k, Tuning.palette("tall_grass").lerp(Tuning.palette("tall_grass_tip"), tint))
 	var view := MultiMeshInstance3D.new()
 	view.multimesh = multimesh
-	view.material_override = WoodsMaterials.blades()
+	spot.fade_materials.append(WoodsMaterials.blades().duplicate())
+	view.material_override = spot.fade_materials[0]
 	view.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	spot.sway_root.add_child(view)
 	return spot

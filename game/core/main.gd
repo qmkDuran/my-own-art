@@ -30,6 +30,7 @@ func _ready() -> void:
 	player = _spawn("player", woods.player_spawn, woods.bot_spawn)
 	bot = _spawn("bot", woods.bot_spawn, woods.player_spawn)
 	player.opponent = bot
+	player.see_through_cover = true
 	bot.opponent = player
 	_add_player_side()
 	brain = BotBrain.new()

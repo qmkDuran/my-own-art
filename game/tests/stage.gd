@@ -33,6 +33,11 @@ func camera_behind_player(pitch_degrees: float) -> void:
 	match_root.rig.snap()
 
 
+## Takes the player off the keyboard and mouse so a scenario can aim and act for it.
+func script_player() -> void:
+	match_root.controller.set_physics_process(false)
+
+
 ## Stops the bot's mind so a scenario controls it fully.
 func freeze_bot() -> void:
 	match_root.brain.active = false

@@ -45,7 +45,7 @@ func _draw() -> void:
 	line += HudStyle.FONT_SMALL + HudStyle.EDGE_WIDTH * 2.0
 	HudStyle.text(self, Vector2(0, line), _cover_words(), HudStyle.FONT_SMALL, HudStyle.INK_DIM,
 			HORIZONTAL_ALIGNMENT_CENTER, PANEL_SIZE.x)
-	if _player.ambush_ready() and not _player.opponent.is_dead():
+	if _player.ambush_ready():
 		line += HudStyle.FONT_SMALL + HudStyle.EDGE_WIDTH * 2.0
 		HudStyle.text(self, Vector2(0, line), "AMBUSH READY", HudStyle.FONT_SMALL, HudStyle.AMBUSH_COLOR,
 				HORIZONTAL_ALIGNMENT_CENTER, PANEL_SIZE.x)

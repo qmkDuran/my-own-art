@@ -29,6 +29,8 @@ var sneaking: bool = false
 var aim_point: Vector3 = Vector3.ZERO
 var look_target: Vector3 = Vector3.ZERO
 var has_look_target: bool = false
+## True for the player's creature: a bush or grass it hides in turns see-through so the player can read the scene.
+var see_through_cover: bool = false
 ## Written by the creature's senses: does it currently know where its opponent is?
 var aware_of_opponent: bool = true
 var _dash_velocity: Vector3 = Vector3.ZERO
@@ -119,9 +121,10 @@ func mouth_position() -> Vector3:
 	return global_position + forward() * MOUTH_FORWARD + Vector3.UP * MOUTH_HEIGHT
 
 
-## An attack counts as an ambush when it starts from hiding, or while the target has not noticed us.
+## An attack is an ambush when it starts while the target has not noticed us: we are hidden from it (a bush,
+## tall grass, behind cover) or simply behind it. A target that watched us go into a bush is not fooled.
 func ambush_ready() -> bool:
-	return stealth.is_hidden() or (opponent != null and not opponent.aware_of_opponent)
+	return opponent != null and not opponent.is_dead() and not opponent.aware_of_opponent
 
 
 ## Attacks are loud and give away a hiding place.

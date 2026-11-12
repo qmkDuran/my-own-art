@@ -3,18 +3,19 @@ class_name Props
 ## rocks and logs are obstacles (they block movement, sight and spit); canopies only stop the camera.
 
 const TRUNK_RADIUS: float = 0.32
-const TRUNK_HEIGHT: float = 7.0
+const TRUNK_HEIGHT: float = 7.8
 const TRUNK_TAPER: float = 0.7
 const PINE_TIERS: int = 3
-const PINE_BASE_HEIGHT: float = 2.6
+const PINE_BASE_HEIGHT: float = 3.3
 const PINE_TIER_RADIUS: float = 2.1
 const PINE_TIER_HEIGHT: float = 2.6
 const PINE_TIER_RISE: float = 1.45
 const PINE_TIER_SHRINK: float = 0.28
 const LEAFY_BLOBS: int = 3
-const LEAFY_BASE_HEIGHT: float = 4.6
+const LEAFY_BASE_HEIGHT: float = 5.4
 const LEAFY_RADIUS: float = 1.9
 const LEAFY_SPREAD: float = 1.1
+const LEAFY_TRUNK_REACH: float = 0.8
 const CANOPY_LUMP: float = 0.14
 const ROCK_LUMP: float = 0.18
 const ROCK_SINK: float = 0.25
@@ -38,7 +39,7 @@ static func tree(ground: Vector3, kind: String, scale: float, rng: RandomNumberG
 	var trunk := CylinderMesh.new()
 	trunk.top_radius = TRUNK_RADIUS * scale * TRUNK_TAPER
 	trunk.bottom_radius = TRUNK_RADIUS * scale
-	trunk.height = TRUNK_HEIGHT * scale
+	trunk.height = (TRUNK_HEIGHT if kind == "pine" else LEAFY_BASE_HEIGHT + LEAFY_TRUNK_REACH) * scale
 	_add_view(body, trunk, WoodsMaterials.solid("bark"), Vector3(0, trunk.height * 0.5, 0))
 	var trunk_shape := CylinderShape3D.new()
 	trunk_shape.radius = TRUNK_RADIUS * scale
