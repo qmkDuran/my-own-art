@@ -1,12 +1,15 @@
 class_name SmokeStealth
 extends RefCounted
 ## Smoke checks for hiding: the bot loses sight of a player who slips into a bush while it looks away (but keeps
-## sight if it watched them go in), and the bot searches a lead and then finds the player hiding there.
+## sight if it watched them go in), the bot searches a lead and then finds the player hiding there, the lock-on
+## breaks when the bot hides, and an unseen bot moving close by gives itself away (the rustle cue).
 
 const WATCH_DISTANCE: float = 8.0
 const BESIDE_BUSH: float = 3.2
 const HEARD_FROM: float = 12.0
 const SEARCH_LIMIT: float = 40.0
+const LOCK_SLACK: float = 0.5
+const RUSTLE_FROM: float = 4.0
 
 var t: Node
 
@@ -19,6 +22,8 @@ func run() -> void:
 	await _loses_sight_in_bush()
 	await _watched_entry_keeps_sight()
 	await _search_then_find()
+	await _lock_breaks_when_bot_hides()
+	await _rustle_cue()
 
 
 func _setup_by_bush() -> HidingSpot:
@@ -73,6 +78,34 @@ func _search_then_find() -> void:
 			SEARCH_LIMIT)
 	t.expect(visited.has("search"), "a heard noise sends the bot into its search state (%s)" % ", ".join(visited))
 	t.expect(found, "searching, the bot finds the player hiding in the bush")
+
+
+func _lock_breaks_when_bot_hides() -> void:
+	await t.fresh_match()
+	var bush: HidingSpot = _bush_with_view()
+	var player_spot: Vector2 = t.finder.open_view_spot(bush.global_position, WATCH_DISTANCE)
+	var beside: Vector2 = Stage.ground_xz(bush.global_position) \
+			+ (player_spot - Stage.ground_xz(bush.global_position)).normalized().orthogonal() * BESIDE_BUSH
+	t.stage.place(t.m.bot, beside, t.m.woods.ground_at(player_spot))
+	t.stage.place(t.m.player, player_spot, bush.global_position)
+	t.stage.camera_behind_player(0.0)
+	await t.stage.frames(5)
+	t.m.lock_on.toggle()
+	t.expect(t.m.lock_on.target_locked(), "Tab locks on to a bot in plain view")
+	t.stage.place(t.m.bot, Stage.ground_xz(bush.global_position), t.m.player.global_position)
+	await t.stage.seconds(Tuning.f("lock_on", "lose_sight_time") + LOCK_SLACK)
+	t.expect(not t.m.lock_on.target_locked(), "the lock breaks once the bot hides in a bush")
+
+
+func _rustle_cue() -> void:
+	await t.fresh_match()
+	var spot: Vector2 = Stage.ground_xz(t.m.woods.patrol_points[1])
+	t.stage.place(t.m.player, spot, t.m.woods.ground_at(spot + Vector2(0, -10)))
+	t.stage.camera_behind_player(0.0)
+	t.stage.place(t.m.bot, spot + Vector2(0, RUSTLE_FROM), t.m.player.global_position)
+	t.m.brain.mover.go_to(t.m.woods.ground_at(spot + Vector2(RUSTLE_FROM, RUSTLE_FROM)), true)
+	await t.stage.seconds(LOCK_SLACK)
+	t.expect(not t.m.sight.sees_bot and t.m.sight.rustling, "a bot sneaking unseen behind the player rustles")
 
 
 ## A bush with open ground around it, inside the arena.

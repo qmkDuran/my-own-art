@@ -20,7 +20,7 @@ var _clock: float = 0.0
 func setup(sight: PlayerSight, rig: CameraRig) -> void:
 	_sight = sight
 	_rig = rig
-	set_anchors_preset(Control.PRESET_FULL_RECT)
+	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 

@@ -22,7 +22,7 @@ func setup(match_root: Main) -> void:
 	_sight = match_root.sight
 	_lock_on = match_root.lock_on
 	var root := Control.new()
-	root.set_anchors_preset(Control.PRESET_FULL_RECT)
+	root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(root)
 	_add_overlays(root, match_root)

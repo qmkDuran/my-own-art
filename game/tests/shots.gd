@@ -3,7 +3,7 @@ extends Node
 ## Stills only (no video). Needs a display (xvfb-run is fine).
 
 const SHOTS: Array[String] = ["overview", "third_person", "lock_on", "spit_tree", "hiding", "searching",
-	"ridge_fight", "hud_closeup"]
+	"ridge_fight", "hud_closeup", "start_screen"]
 const OVERVIEW_EYE: Vector3 = Vector3(0, 46, 40)
 const OVERVIEW_FOG_SHARE: float = 0.35
 const HUD_TOP_SHARE: float = 0.12
@@ -11,6 +11,8 @@ const HUD_BOTTOM_SHARE: float = 0.3
 const DUEL_DISTANCE: float = 8.0
 const SIDE_VIEW: float = 0.7
 const RIDGE_HIGH: float = 2.4
+const RIDGE_PLAYER: Vector2 = Vector2(12.5, -13.5)
+const RIDGE_BOT: Vector2 = Vector2(18.0, -17.0)
 
 var stage: Stage
 var finder: SpotFinder
@@ -167,15 +169,24 @@ func _ridge_spot(from: Vector2, distance: float) -> Vector2:
 
 
 func _stage_hud_closeup() -> void:
-	await _duel_setup(Stage.ground_xz(m.woods.patrol_points[1]))
+	stage.freeze_bot()
+	stage.place(m.bot, RIDGE_BOT, m.player.global_position)
+	stage.place(m.player, RIDGE_PLAYER, m.bot.global_position)
+	stage.camera_behind_player(-12.0)
+	await stage.frames(10)
 	m.lock_on.toggle()
-	m.brain.active = true
 	m.player.health.hurt(26.0)
 	m.bot.health.hurt(38.0)
 	m.player.spit.start()
 	await stage.seconds(Tuning.f("spit", "windup") + 0.6)
 	m.player.dodge.cooldown_left = Tuning.f("dodge", "cooldown") * 0.6
 	m.player.trap.cooldown_left = Tuning.f("trap", "cooldown") * 0.8
+
+
+func _stage_start_screen() -> void:
+	stage.camera_behind_player(-12.0)
+	m.flow.begin(true)
+	await stage.frames(5)
 
 
 ## The top band (Thornback's bar) above the bottom band (life, moves, stealth eye), as one picture.

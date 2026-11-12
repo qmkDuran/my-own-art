@@ -15,7 +15,7 @@ var _camera: Camera3D
 func setup(lock_on: LockOn, camera: Camera3D) -> void:
 	_lock_on = lock_on
 	_camera = camera
-	set_anchors_preset(Control.PRESET_FULL_RECT)
+	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 

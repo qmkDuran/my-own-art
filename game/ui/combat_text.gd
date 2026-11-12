@@ -15,7 +15,7 @@ var _left: float = 0.0
 
 
 func setup(player: Creature, bot: Creature) -> void:
-	set_anchors_preset(Control.PRESET_FULL_RECT)
+	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	bot.hit_taken.connect(_on_bot_hit)
 	player.hit_taken.connect(_on_player_hit)

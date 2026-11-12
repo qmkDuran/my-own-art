@@ -34,14 +34,19 @@ It uses the Compatibility renderer (OpenGL), so it runs on almost any graphics c
 ## How to win
 
 - **Hide** in bushes and tall grass: Thornback cannot see you there unless it is very close or watched you go in.
-- **Ambush**: a bite or spit started from hiding, or while Thornback has not noticed you, does 1.75x damage and
-  staggers it. The HUD says **AMBUSH READY** when your next attack would be one.
+- **Ambush**: a bite or spit started while Thornback has not noticed you (you are hidden from it, or behind it)
+  does 1.75x damage and staggers it, cutting off whatever it was winding up. The HUD says **AMBUSH READY** when
+  your next attack would be one. From a bush, strike as it passes within lunge reach (about 4 m) but before it
+  comes close enough to spot you (2.5 m). Attacking gives your hiding place away for a few seconds.
 - **Sneak** (Shift): running is heard from about 10 m, sneaking from about 3 m. Attacks are loud.
-- **Snares**: a snare roots Thornback for 2 s and hurts it a little. If it saw or heard you set it, it remembers
-  and walks around it.
+- **Snares**: a snare roots Thornback for 2 s and hurts it a little. Setting one takes a second and is heard
+  about 9 m away; if Thornback saw or heard you set it, it remembers and walks around it. While searching
+  carefully it can also spot one from about 2 m. Lure it over one: a glob of spit that lands somewhere makes a
+  noise it will come to check.
 - **Cover**: trees, rocks and logs stop spit (both ways). The ridge in the north-east gives a little more spit range
   when you shoot down from it.
-- **Patience**: both of you heal slowly when left alone for a few seconds.
+- **Patience**: both of you heal slowly after about 6 s without being hurt. Thornback plays by exactly the same
+  rules as you (same life, speeds, moves, wind-ups and cooldowns).
 
 ## The HUD
 
@@ -49,4 +54,6 @@ It uses the Compatibility renderer (OpenGL), so it runs on almost any graphics c
 - bottom right: the **stealth eye**: green closed eye HIDDEN (it does not know where you are), amber HEARD (it has
   a clue and is looking), red open eye SEEN;
 - top centre: Thornback's life, only while you can see it (or are locked on);
-- amber chevrons around the crosshair ("rustle"): Thornback is close, moving and out of sight.
+- amber chevrons around the crosshair ("rustle"): Thornback is close, moving and out of sight. Bushes and grass
+  also sway when something moves through them.
+- over Thornback's head: "!" when it notices something, "?" while it searches.
