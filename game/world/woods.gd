@@ -77,9 +77,10 @@ func _add_rocks_and_logs(layout: Dictionary) -> void:
 		_region.add_child(Props.rock(ground, size, _rng))
 		cover_objects.append({ "pos": ground, "radius": minf(size.x, size.z) * 0.5 })
 	for log_spec: Dictionary in layout["logs"]:
-		var ground: Vector3 = ground_at(Tuning.vec2(log_spec["pos"]))
-		_region.add_child(Props.fallen_log(ground, float(log_spec["length"]), float(layout["log_radius"]),
-				float(log_spec["yaw"])))
+		var centre: Vector2 = Tuning.vec2(log_spec["pos"])
+		var half: Vector2 = Vector2.from_angle(-deg_to_rad(float(log_spec["yaw"]))) * float(log_spec["length"]) * 0.5
+		_region.add_child(Props.fallen_log(ground_at(centre - half), ground_at(centre + half),
+				float(layout["log_radius"])))
 
 
 func _add_walls() -> void:

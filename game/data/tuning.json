@@ -40,7 +40,7 @@
     "search_bush_count": 3, "bush_check_pause": 1.2, "look_around_time": 2.4, "look_around_speed": 1.6,
     "patrol_pause": 2.0, "dodge_chance": 0.5, "dodge_react_time": 0.55, "dodge_threat_width": 1.1,
     "stalk_range": 16.0, "stalk_give_up_range": 20.0, "arrive_distance": 0.9, "repath_distance": 0.6,
-    "stuck_time": 1.4, "stuck_speed": 0.4, "steer_look_ahead": 3.0, "seed": 11
+    "stuck_time": 1.4, "stuck_progress": 0.6, "sidestep_time": 0.6, "slow_down_distance": 2.0, "min_approach_share": 0.35, "steer_look_ahead": 3.0, "seed": 11
   },
   "camera": {
     "distance": 5.0, "height": 1.5, "shoulder_offset": 0.55, "mouse_sensitivity": 0.0025,

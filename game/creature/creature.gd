@@ -105,8 +105,10 @@ func forward() -> Vector3:
 	return Vector3(-sin(yaw), 0.0, -cos(yaw))
 
 
+## How fast the creature really moved last step (not what it asked for: pushing into a tree is not moving).
 func horizontal_speed() -> float:
-	return Vector2(velocity.x, velocity.z).length()
+	var moved: Vector3 = get_real_velocity()
+	return Vector2(moved.x, moved.z).length()
 
 
 func chest_position() -> Vector3:

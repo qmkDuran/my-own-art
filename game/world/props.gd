@@ -24,6 +24,7 @@ const ROUND_SEGMENTS: int = 9
 const ROUND_RINGS: int = 5
 const CONE_SEGMENTS: int = 8
 const LOG_SEGMENTS: int = 10
+const LOG_SINK: float = 0.8
 const LOG_CAP_SHARE: float = 0.86
 const LOG_CAP_THICKNESS: float = 0.02
 const LEAFY_SQUASH: float = 1.7
@@ -74,27 +75,29 @@ static func rock(ground: Vector3, size: Vector3, rng: RandomNumberGenerator) -> 
 	return body
 
 
-static func fallen_log(ground: Vector3, length: float, radius: float, yaw_degrees: float) -> StaticBody3D:
-	var body: StaticBody3D = _obstacle_body("Log", ground + Vector3(0, radius, 0))
-	body.rotation.y = deg_to_rad(yaw_degrees)
-	var lying := Basis(Vector3.FORWARD, PI * 0.5)
+## A log lying from one ground point to another, following the slope and sunk a little so nothing fits under it.
+static func fallen_log(from: Vector3, to: Vector3, radius: float) -> StaticBody3D:
+	var length: float = from.distance_to(to)
+	var body: StaticBody3D = _obstacle_body("Log", (from + to) * 0.5 + Vector3.UP * radius * LOG_SINK)
+	var along: Vector3 = (to - from).normalized()
+	var side: Vector3 = along.cross(Vector3.UP).normalized()
+	var lying := Basis(side, along, side.cross(along))
 	var cylinder := CylinderMesh.new()
 	cylinder.top_radius = radius
 	cylinder.bottom_radius = radius
 	cylinder.height = length
 	cylinder.radial_segments = LOG_SEGMENTS
 	_add_view(body, cylinder, WoodsMaterials.solid("bark_dark"), Vector3.ZERO).basis = lying
-	for side: float in [-1.0, 1.0]:
+	for end: float in [-1.0, 1.0]:
 		var cap := CylinderMesh.new()
 		cap.top_radius = radius * LOG_CAP_SHARE
 		cap.bottom_radius = radius * LOG_CAP_SHARE
 		cap.height = LOG_CAP_THICKNESS
-		_add_view(body, cap, WoodsMaterials.solid("log_end"), Vector3(side * length * 0.5, 0, 0)).basis = lying
+		_add_view(body, cap, WoodsMaterials.solid("log_end"), along * end * length * 0.5).basis = lying
 	var shape := CylinderShape3D.new()
 	shape.radius = radius
 	shape.height = length
-	var collider: CollisionShape3D = _add_shape(body, shape, Vector3.ZERO)
-	collider.basis = lying
+	_add_shape(body, shape, Vector3.ZERO).basis = lying
 	return body
 
 

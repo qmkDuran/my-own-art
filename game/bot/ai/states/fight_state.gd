@@ -5,6 +5,8 @@ extends BotState
 ## breaks off to cover when it is being shot at.
 
 const STRAFE_STEP: float = 2.5
+## A strafe goal the navmesh pulls back to less than this share of a step means that side is blocked.
+const BLOCKED_SHARE: float = 0.5
 
 var _strafe_side: float = 1.0
 var _strafe_left: float = 0.0
@@ -70,8 +72,16 @@ func _reposition(delta: float, distance: float) -> void:
 		radial = -1.0
 	elif distance < preferred - Tuning.f("bot", "distance_slack"):
 		radial = 1.0
-	var step: Vector3 = (away.cross(Vector3.UP) * _strafe_side + away * radial).normalized() * STRAFE_STEP
-	mover().go_to(bot().global_position + step, false)
+	var goal: Vector3 = brain.woods.on_navmesh(bot().global_position + _strafe_step(away, radial))
+	var reach: Vector3 = goal - bot().global_position
+	if Vector2(reach.x, reach.z).length() < STRAFE_STEP * BLOCKED_SHARE:
+		_strafe_side = -_strafe_side
+		goal = brain.woods.on_navmesh(bot().global_position + _strafe_step(away, radial))
+	mover().go_to(goal, false)
+
+
+func _strafe_step(away: Vector3, radial: float) -> Vector3:
+	return (away.cross(Vector3.UP) * _strafe_side + away * radial).normalized() * STRAFE_STEP
 
 
 func _wants_cover(distance: float) -> bool:

@@ -1,12 +1,15 @@
 class_name BotMover
 extends Node
 ## Walks the bot along the baked navmesh: go to a point (running or sneaking), stop, report arrival. Steers around
-## snares the bot knows about, and if it ever stops making progress it asks for a fresh path and reports being
-## stuck so the current state can pick another goal. The bot never just grinds against a tree.
+## snares the bot knows about. If it stops making progress it side-steps (alternating sides) and asks for a fresh
+## path; stuck a third time on the same goal, it gives up on it (counts as arrived), so every state moves on. The
+## bot never grinds against a tree.
 
 const PATH_SPACING: float = 0.5
 const DETOUR_REACHED: float = 0.4
 const DETOUR_PAST: float = 0.6
+const GIVE_UP_AFTER: int = 3
+const NEW_GOAL_DISTANCE: float = 3.0
 
 var _bot: Creature
 var _senses: Perception
@@ -18,6 +21,10 @@ var _sneak: bool = false
 var _stuck_for: float = 0.0
 var _was_stuck: bool = false
 var _detour: Vector3 = Vector3.INF
+var _stuck_count: int = 0
+var _window_start: Vector3 = Vector3.ZERO
+var _sidestep: Vector3 = Vector3.ZERO
+var _sidestep_left: float = 0.0
 
 
 func setup(bot: Creature, senses: Perception, woods: Woods) -> void:
@@ -36,6 +43,9 @@ func go_to(point: Vector3, sneak: bool) -> void:
 	var goal: Vector3 = _woods.on_navmesh(_clear_of_snares(point))
 	if _moving and goal.distance_to(_destination) < Tuning.f("bot", "repath_distance"):
 		return
+	if not _moving or goal.distance_to(_destination) > NEW_GOAL_DISTANCE:
+		_stuck_count = 0
+		_restart_progress_window()
 	_destination = goal
 	_detour = Vector3.INF
 	_agent.target_position = goal
@@ -66,9 +76,19 @@ func tick(delta: float) -> void:
 	if _flat(_destination - _bot.global_position).length() <= Tuning.f("bot", "arrive_distance"):
 		stop()
 		return
+	if _sidestep_left > 0.0:
+		_sidestep_left -= delta
+		_bot.move_intent = _sidestep
+		return
 	var direction: Vector3 = _flat(_agent.get_next_path_position() - _bot.global_position).normalized()
-	_bot.move_intent = _steer_around_snares(direction)
+	_bot.move_intent = _steer_around_snares(direction) * _approach_share()
 	_watch_progress(delta)
+
+
+## Eases off near the goal so the bot stops on it instead of circling it.
+func _approach_share() -> float:
+	var left: float = _flat(_destination - _bot.global_position).length()
+	return clampf(left / Tuning.f("bot", "slow_down_distance"), Tuning.f("bot", "min_approach_share"), 1.0)
 
 
 ## A known snare near the way ahead gets one detour point beside and just past it, on a side chosen once, so
@@ -119,21 +139,43 @@ func _clear_of_snares(point: Vector3) -> Vector3:
 	return point
 
 
+func _restart_progress_window() -> void:
+	_stuck_for = 0.0
+	_window_start = _bot.global_position
+
+
 func _snare_keep_out() -> float:
 	return Tuning.f("trap", "trigger_radius") + Tuning.f("trap", "avoid_margin")
 
 
+## Progress is measured as distance covered over a time window, so pushing into a trunk and circling a goal
+## both count as stuck.
 func _watch_progress(delta: float) -> void:
-	var blocked: bool = _bot.horizontal_speed() < Tuning.f("bot", "stuck_speed")
-	if _bot.busy() or _bot.is_rooted() or _bot.is_staggered() or not blocked:
-		_stuck_for = 0.0
+	if _bot.busy() or _bot.is_rooted() or _bot.is_staggered():
+		_restart_progress_window()
 		return
 	_stuck_for += delta
-	if _stuck_for >= Tuning.f("bot", "stuck_time"):
-		_stuck_for = 0.0
+	if _stuck_for < Tuning.f("bot", "stuck_time"):
+		return
+	var covered: float = _flat(_bot.global_position - _window_start).length()
+	_restart_progress_window()
+	if covered < Tuning.f("bot", "stuck_progress"):
 		_was_stuck = true
 		_detour = Vector3.INF
-		_agent.target_position = _destination
+		_stuck_count += 1
+		if _stuck_count >= GIVE_UP_AFTER:
+			stop()
+		else:
+			_side_step()
+
+
+## A short step to one side (the other side next time) to come free of a snag, then a fresh path.
+func _side_step() -> void:
+	var side: float = 1.0 if _stuck_count % 2 == 1 else -1.0
+	var heading: Vector3 = _bot.move_intent if _bot.move_intent.length() > 0.0 else _bot.forward()
+	_sidestep = heading.cross(Vector3.UP).normalized() * side
+	_sidestep_left = Tuning.f("bot", "sidestep_time")
+	_agent.target_position = _destination
 
 
 static func _flat(v: Vector3) -> Vector3:
