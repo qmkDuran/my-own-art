@@ -4,6 +4,8 @@ class_name ParticleKit
 
 const FADE_IN: float = 0.2
 const FADE_OUT: float = 0.8
+const DOT_SHOULDER: float = 0.35
+const DOT_SHOULDER_ALPHA: float = 0.4
 
 
 ## A camera-facing quad that glows on its own (fireflies, sparks).
@@ -14,7 +16,7 @@ static func glow_quad(size: float, color: Color, energy: float) -> QuadMesh:
 	material.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
 	material.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES
 	material.vertex_color_use_as_albedo = true
-	material.albedo_color = color * energy
+	material.albedo_color = color * minf(energy, SoftGlow.ENERGY_CAP)
 	material.albedo_texture = soft_dot()
 	return _quad(size, material)
 
@@ -43,11 +45,12 @@ static func fade_ramp() -> GradientTexture1D:
 	return texture
 
 
-## A round, soft-edged dot texture.
+## A round dot that fades out smoothly from its centre (a soft, Gaussian-like falloff, no hard core).
 static func soft_dot() -> GradientTexture2D:
 	var gradient := Gradient.new()
 	gradient.set_color(0, Color.WHITE)
 	gradient.set_color(1, Color(1, 1, 1, 0))
+	gradient.add_point(DOT_SHOULDER, Color(1, 1, 1, DOT_SHOULDER_ALPHA))
 	var texture := GradientTexture2D.new()
 	texture.gradient = gradient
 	texture.fill = GradientTexture2D.FILL_RADIAL

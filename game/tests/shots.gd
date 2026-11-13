@@ -15,6 +15,8 @@ const SHOTS: Dictionary = {
 	"defence": [Vector3(-1.5, 4.2, 12.5), Vector3(0.5, 0.6, 1.0), [0.0, 5.0, 0.0], false],
 	"boss": [Vector3(3.5, 3.0, 13.0), Vector3(-1.0, 1.6, -1.0), [0.5, 6.0, 0.0], false],
 	"level_up": [Vector3(-1.5, 4.2, 12.5), Vector3(0.5, 0.6, 1.0), [0.0, 5.0, 0.0], false],
+	"busy": [Vector3(-1.5, 4.2, 12.5), Vector3(0.5, 0.6, 1.0), [0.0, 5.0, 0.0], false],
+	"busy_no_actors": [Vector3(-1.5, 4.2, 12.5), Vector3(0.5, 0.6, 1.0), [0.0, 5.0, 0.0], false],
 	"contrast_on": [Vector3(-1.5, 4.2, 12.5), Vector3(0.5, 0.6, 1.0), [0.0, 5.0, 0.0], false],
 	"contrast_off": [Vector3(-1.5, 4.2, 12.5), Vector3(0.5, 0.6, 1.0), [0.0, 5.0, 0.0], false],
 	"bench": [Vector3(-2.0, 1.3, -3.4), Vector3(-4.5, 0.6, -5.2), [], false],
@@ -139,3 +141,18 @@ func _stage_contrast_on() -> void:
 func _stage_contrast_off() -> void:
 	await _stage_contrast_on()
 	m.night.horde.visible = false
+
+
+## A busy wave with every effect showing, frozen so a second shot without the actors matches it.
+func _stage_busy() -> void:
+	await _night()
+	await get_tree().create_timer(1.2).timeout
+	_freeze_horde()
+	m.night.loadout.process_mode = Node.PROCESS_MODE_DISABLED
+	m.night.pickups.process_mode = Node.PROCESS_MODE_DISABLED
+
+
+func _stage_busy_no_actors() -> void:
+	await _stage_busy()
+	m.night.horde.visible = false
+	m.player.visible = false

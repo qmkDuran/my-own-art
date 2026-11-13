@@ -1,7 +1,7 @@
 class_name Pickups
 extends Node3D
-## Things the creatures leave behind: light motes (experience) and glowing ingredients. Inside the player's pickup
-## reach they fly to the player and are collected.
+## Things the creatures leave behind: light motes (experience) and ingredients (each its own little shape).
+## Inside the player's pickup reach they fly to the player and are collected.
 
 signal collected(item: String, amount: int)
 
@@ -20,15 +20,17 @@ func setup(player: Node3D) -> void:
 
 ## Drops an item ("xp" or an ingredient id) near a spot, scattered a little.
 func drop(item: String, amount: int, at: Vector3) -> void:
-	var colour: Color = Tuning.color(Tuning.doc("defence")["pickup"]["xp_color"])
-	var size: float = Tuning.number("defence", "pickup", "xp_size")
-	if item != XP:
-		colour = Tuning.color(Tuning.doc("defence")["ingredients"][item]["color"])
-		size = Tuning.number("defence", "pickup", "ingredient_size")
+	var spec: Dictionary = Tuning.doc("defence")["pickup"]
 	var node := Node3D.new()
 	node.set_meta("item", item)
 	node.set_meta("amount", amount)
-	node.add_child(_gem(colour, size, item == XP))
+	if item == XP:
+		node.add_child(IngredientShapes.make("mote", Tuning.color(spec["xp_color"]), float(spec["xp_size"]),
+			float(spec["xp_energy"])))
+	else:
+		var ingredient: Dictionary = Tuning.doc("defence")["ingredients"][item]
+		node.add_child(IngredientShapes.make(ingredient["shape"], Tuning.color(ingredient["color"]),
+			float(spec["ingredient_size"]), float(spec["energy"])))
 	add_child(node)
 	var scatter: float = Tuning.number("defence", "pickup", "scatter")
 	node.global_position = Vector3(at.x + randf_range(-scatter, scatter), 0.0, at.z + randf_range(-scatter, scatter))
@@ -64,26 +66,3 @@ func _collect(item: Node3D) -> void:
 	_items.erase(item)
 	collected.emit(item.get_meta("item"), item.get_meta("amount"))
 	item.queue_free()
-
-
-func _gem(colour: Color, size: float, is_mote: bool) -> MeshInstance3D:
-	var mesh: PrimitiveMesh
-	if is_mote:
-		var sphere := SphereMesh.new()
-		sphere.radius = size * 0.5
-		sphere.height = size
-		mesh = sphere
-	else:
-		var prism := PrismMesh.new()
-		prism.size = Vector3.ONE * size
-		mesh = prism
-	var material := StandardMaterial3D.new()
-	material.albedo_color = colour
-	material.emission_enabled = true
-	material.emission = colour
-	material.emission_energy_multiplier = Tuning.number("defence", "pickup", "energy")
-	mesh.material = material
-	var instance := MeshInstance3D.new()
-	instance.mesh = mesh
-	instance.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	return instance

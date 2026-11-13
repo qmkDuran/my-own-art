@@ -32,7 +32,8 @@ if [ -n "$LONG" ]; then
   echo "$out" | grep -E "^PERF" | head -10
   echo "$out" | grep -qE "^PERF PASS" || status=1
   stills=$(mktemp -d)
-  tools/shoot.sh "$stills" square street canal_bridge alley overlook rain defence contrast_on contrast_off >/dev/null
+  tools/shoot.sh "$stills" square street canal_bridge alley overlook rain defence boss busy busy_no_actors \\
+    contrast_on contrast_off >/dev/null
   python3 -I tools/readability.py "$stills" || status=1
 fi
 [ $status -eq 0 ] && echo "ALL CHECKS PASS" || echo "SOME CHECKS FAILED"

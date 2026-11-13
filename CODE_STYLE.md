@@ -20,6 +20,11 @@ headless smoke test. Never commit unless `tools/run_all.sh` prints `ALL CHECKS P
 - **No dead or commented-out code**, no TODOs, no `print` outside tests, no unused functions (the lint checks).
 - **Typed GDScript everywhere**; every script starts with a `##` header saying what it is for.
 
+- **The glow rule** (art direction): glows are soft, warm and diffuse, "Luigi's Mansion, not LED headlights".
+  Make small glows with `SoftGlow.make()`, keep emission at or below `SoftGlow.ENERGY_CAP` in saturated colour,
+  and use soft sprites (`ParticleKit.soft_dot()`) for particles. `tools/readability.py` fails stills where effects
+  push too much of the frame near white.
+
 ## Folders (by feature, under `game/`)
 | Folder | What lives there |
 | --- | --- |

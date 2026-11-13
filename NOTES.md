@@ -22,6 +22,23 @@ from the fog, auto-firing lantern magic, about 8 upgrades, 3 creature types plus
 of 8 to 10 minutes, snuffed lamps to relight); (3) the café in the bakery (3 recipes, 2 or 3 customers with emotes
 and portraits, coins, one upgrade shop). The 700-credit cap covers steps 1 to 3.
 
+## The glow rule: "Luigi's Mansion, not LED headlights"
+Every glow in the game is **soft, warm and diffuse**: a gentle halo that falls off smoothly and keeps its colour
+(warm amber, candle orange, ghostly teal and green). There are no white-hot cores, hard star points or big
+bloom smears.
+- **Bloom:** the WorldEnvironment glow is wide and gentle (levels 3 to 6 with falling weights, intensity 0.5, HDR
+  threshold 1.4, no bloom term), so only genuinely bright light sources bloom.
+- **Small glows** (lamp flames, fireflies, candles, bolts) all come from `SoftGlow`: a small core in the light's
+  own saturated colour with emission capped at 1.6, plus a wide billboard halo with a smooth falloff.
+- **Particles:** fireflies, sparkles and pickups are soft round sprites, additive but capped. Pickups are lit,
+  with only a faint glow of their own, so they read as things to pick up, not as lights.
+- **Ghosts:** about one in five sheet ghosts carries a small, dim amber light from its lantern eyes, so it softly
+  lights its surroundings. The Gloom King has a soft purple glow.
+- **Magic near the camera:** anything glowing that comes within about 2 to 3 m of the camera shrinks away.
+- **The readability check enforces it:** in the busy-wave stills (defence, boss, busy) at most 1.5% of the frame
+  may be above 0.85 luminance, every still keeps near-white pixels under 0.5%, and the player and creatures must
+  still stand out from the effects.
+
 ## Step 2: the defence-night test (N in game)
 - **Loop:** the townsfolk go indoors and creatures drift in from the fog for 9 minutes. The pace and mix are set
   by `data/defence.json`: a trickle that thickens, plus four surges. The **Gloom King** comes at 7:00. Win by

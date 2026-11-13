@@ -2,7 +2,7 @@ class_name LampLight
 extends OmniLight3D
 ## One warm light of the town: a street lamp, a wall lantern or a lit window. Reads its look from the matching
 ## section of data/lighting.json, flickers gently like a flame, and can be snuffed out and relit (the night's
-## creatures snuff lamps; the player relights them). Lamps with a flame show a small glowing flame mesh that blooms.
+## creatures snuff lamps; the player relights them). Lamps with a flame show a small, soft flame glow.
 
 const FADE_SPEED: float = 2.5
 const MS_TO_SECONDS: float = 0.001
@@ -13,7 +13,7 @@ var lit: bool = true
 var _base_energy: float = 0.0
 var _level: float = 1.0
 var _phase: float = 0.0
-var _flame: MeshInstance3D
+var _flame: Node3D
 
 
 func setup(lamp_kind: String) -> void:
@@ -53,18 +53,5 @@ func _process(delta: float) -> void:
 
 
 func _add_flame() -> void:
-	var sphere := SphereMesh.new()
-	var size: float = Tuning.look_f(kind, "flame_size")
-	sphere.radius = size
-	sphere.height = size * 2.0
-	var material := StandardMaterial3D.new()
-	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	material.albedo_color = light_color
-	material.emission_enabled = true
-	material.emission = light_color
-	material.emission_energy_multiplier = Tuning.look_f(kind, "flame_energy")
-	sphere.material = material
-	_flame = MeshInstance3D.new()
-	_flame.mesh = sphere
-	_flame.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_flame = SoftGlow.make(light_color, Tuning.look_f(kind, "flame_size"), Tuning.look_f(kind, "flame_energy"))
 	add_child(_flame)

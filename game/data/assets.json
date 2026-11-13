@@ -1,9 +1,9 @@
 {
   "_doc": "Meshy assets. height: metres after scaling (the model is scaled uniformly to it). collide: box, none. The collision box is measured from the mesh at walking height (tuning.json town.collision_band_*). glow: emission strength for warm-lit pixels (windows, lantern glass). lamp: where the light source sits, as shares of the model's bounds (0..1 on x, y, z). windows: where small window lights sit, as shares of the bounds, on the front (+z) face.",
   "street_lamp": { "path": "res://assets/meshy/props/street_lamp.glb", "height": 3.6, "collide": "box",
-    "glow": 6.0, "lamp": [0.14, 0.6, 0.5] },
+    "glow": 3.0, "lamp": [0.14, 0.6, 0.5] },
   "hanging_lantern": { "path": "res://assets/meshy/props/hanging_lantern.glb", "height": 1.3, "collide": "none",
-    "glow": 6.0, "lamp": [0.17, 0.2, 0.5] },
+    "glow": 3.0, "lamp": [0.17, 0.2, 0.5] },
   "bench": { "path": "res://assets/meshy/props/bench.glb", "height": 1.0, "collide": "box", "glow": 0.0 },
   "fountain": { "path": "res://assets/meshy/props/fountain.glb", "height": 2.3, "collide": "box", "glow": 0.0 },
   "bridge": { "path": "res://assets/meshy/props/bridge.glb", "height": 2.6, "collide": "none", "glow": 0.0 },

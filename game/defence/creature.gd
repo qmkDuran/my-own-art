@@ -42,6 +42,8 @@ func setup(creature_kind: String, library: AssetLibrary, player: Node3D, lamps: 
 	add_child(_model)
 	if spec.has("aura_color"):
 		_add_aura()
+	if spec.has("eye_light") and randf() < float(spec["eye_light"]["share"]):
+		_add_eye_light(spec["eye_light"])
 	_clock = randf() * TAU
 
 
@@ -53,6 +55,17 @@ func _add_aura() -> void:
 	aura.omni_range = float(spec["aura_range"])
 	aura.position = Vector3(0.0, radius * 2.0, radius * 2.0)
 	add_child(aura)
+
+
+## A small, dim light from a key ghost's lantern eyes, so it softly lights its surroundings (only some ghosts have
+## one, to stay within the light budget).
+func _add_eye_light(look: Dictionary) -> void:
+	var glow := OmniLight3D.new()
+	glow.light_color = Tuning.color(look["color"])
+	glow.light_energy = float(look["energy"])
+	glow.omni_range = float(look["range"])
+	glow.position = Vector3(0.0, float(spec["hover"]) + radius * 2.0, radius)
+	add_child(glow)
 
 
 ## Solid creatures collide with walls; floaters pass through them (a deliberate rule).

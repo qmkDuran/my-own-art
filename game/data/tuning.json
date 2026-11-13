@@ -6,7 +6,7 @@
     "pitch_min_deg": -55.0, "pitch_max_deg": 25.0, "start_pitch_deg": -12.0, "follow_sharpness": 10.0,
     "collision_margin": 0.2 },
   "lantern": { "color": [1.0, 0.7, 0.38], "energy": 1.3, "range": 5.5, "attenuation": 1.3, "fog_energy": 1.2,
-    "hang_drop": 0.24, "hang_out": 0.09, "glass_radius": 0.06, "glass_height": 0.13, "glass_energy": 5.0, "frame_color": [0.55, 0.4, 0.18] },
+    "hang_drop": 0.24, "hang_out": 0.09, "glass_radius": 0.06, "glass_height": 0.13, "glass_energy": 2.0, "frame_color": [0.55, 0.4, 0.18] },
   "player_fill": { "color": [1.0, 0.72, 0.45], "front_energy": 0.7, "front_range": 2.2, "front_at": [0.25, 1.45, -0.7],
     "rim_energy": 0.9, "rim_range": 2.5, "rim_at": [-0.3, 1.8, 0.6] },
   "town": { "seed": 7, "collision_band_low": 0.15, "collision_trim_share": 0.02, "grid_cell": 0.5, "collision_band_high": 1.9, "rot_jitter_deg": 2.5, "scale_jitter": 0.06, "gap": 0.15, "row_overrun": 1.0,

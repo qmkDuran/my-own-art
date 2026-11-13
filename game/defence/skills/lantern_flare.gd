@@ -3,7 +3,7 @@ extends Attack
 ## The starter: light bolts at the nearest creatures (more bolts and piercing with levels).
 
 const CHEST_HEIGHT: float = 1.1
-const BOLT_ENERGY: float = 6.0
+const BOLT_ENERGY: float = 1.5
 
 
 func fire() -> void:

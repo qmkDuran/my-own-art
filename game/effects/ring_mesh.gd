@@ -3,7 +3,7 @@ class_name RingMesh
 
 const LIFT: float = 0.05
 const INNER_SHARE: float = 0.85
-const ENERGY: float = 3.0
+const ENERGY: float = 1.2
 
 
 static func make(colour: Color) -> MeshInstance3D:

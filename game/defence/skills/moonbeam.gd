@@ -5,11 +5,11 @@ extends Attack
 
 const SPOT_SHARE: float = 0.3
 const BEAM_HEIGHT: float = 9.0
-const BEAM_SECONDS: float = 0.35
-const BEAM_ENERGY: float = 0.6
+const BEAM_SECONDS: float = 0.2
+const BEAM_ENERGY: float = 0.35
 const BEAM_WIDTH_SHARE: float = 0.45
-const FLASH_ENERGY: float = 3.0
-const FLASH_REACH: float = 3.0
+const FLASH_ENERGY: float = 0.7
+const FLASH_REACH: float = 2.0
 
 
 func fire() -> void:

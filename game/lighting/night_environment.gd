@@ -1,15 +1,15 @@
 class_name NightEnvironment
 extends WorldEnvironment
 ## The night's atmosphere from data/lighting.json: the starry sky, ambient light, AgX tone mapping with a warm/cool
-## colour grade, glow, screen-space reflections and ambient occlusion, distance fog, volumetric fog (thicker in a
-## low layer over the streets), and how all of it thickens when it rains.
+## colour grade, a soft wide glow (high threshold, so only real light sources bloom, and gently), screen-space
+## reflections and ambient occlusion, distance fog, volumetric fog (thicker in a low layer over the streets), and
+## how all of it thickens when it rains.
 
 const SKY_SHADER: Shader = preload("res://shaders/night_sky.gdshader")
 const SKY_RADIANCE: int = 256
 const SKY_KEYS: Array[String] = ["glow_height", "star_density", "star_brightness", "moon_size", "moon_energy", "halo",
 	"cloud_cover", "rain_cloud_cover"]
 const SKY_COLOURS: Array[String] = ["top", "horizon", "glow", "moon_color", "cloud"]
-const GLOW_LEVELS: Array[int] = [2, 3, 4, 5]
 const GRADE_SIZE: int = 256
 
 var _env: Environment
@@ -64,8 +64,8 @@ func _light_and_tone() -> void:
 
 func _glow() -> void:
 	_env.glow_enabled = true
-	for level: int in GLOW_LEVELS:
-		_env.set_glow_level(level, 1.0)
+	for level: Array in Tuning.doc("lighting")["glow"]["levels"]:
+		_env.set_glow_level(int(level[0]), float(level[1]))
 	_env.glow_intensity = Tuning.look_f("glow", "intensity")
 	_env.glow_strength = Tuning.look_f("glow", "strength")
 	_env.glow_bloom = Tuning.look_f("glow", "bloom")

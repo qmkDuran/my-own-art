@@ -4,6 +4,8 @@ extends Node3D
 ## (base + per_level for each level past the first), scaled by the passives. Attacks that fire on a timer
 ## override fire(); attacks that are always there (orbiting things) override tick().
 
+const SMALLEST: float = 0.01
+
 var id: String = ""
 var level: int = 1
 var spec: Dictionary = {}
@@ -72,19 +74,20 @@ func on_level_changed() -> void:
 	pass
 
 
-## A small glowing ball, the look shared by bolts, fireflies and flames.
-func glow_ball(size: float, energy: float) -> MeshInstance3D:
-	var sphere := SphereMesh.new()
-	sphere.radius = size * 0.5
-	sphere.height = size
-	var material := StandardMaterial3D.new()
-	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	material.albedo_color = colour()
-	material.emission_enabled = true
-	material.emission = colour()
-	material.emission_energy_multiplier = energy
-	sphere.material = material
-	var mesh := MeshInstance3D.new()
-	mesh.mesh = sphere
-	mesh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	return mesh
+## Shrinks and hides a glowing thing as it nears the camera, so magic passing close to the lens never blooms into
+## a white smudge.
+func fade_near_camera(node: Node3D) -> void:
+	var camera: Camera3D = get_viewport().get_camera_3d()
+	if camera == null:
+		return
+	var near: float = float(Tuning.doc("skills")["camera_fade"][0])
+	var far: float = float(Tuning.doc("skills")["camera_fade"][1])
+	var share: float = clampf((node.global_position.distance_to(camera.global_position) - near) / (far - near), 0.0,
+		1.0)
+	node.visible = share > 0.0
+	node.scale = Vector3.ONE * maxf(share, SMALLEST)
+
+
+## A small soft glow in the attack's colour, the look shared by bolts, fireflies and candle flames.
+func glow_ball(size: float, energy: float) -> Node3D:
+	return SoftGlow.make(colour(), size, energy)

@@ -23,6 +23,7 @@ func _physics_process(delta: float) -> void:
 		return
 	var step: float = _attack.stat("speed") * delta
 	global_position += _direction * step
+	_attack.fade_near_camera(self)
 	_travelled += step
 	for creature: Creature in _attack.horde.within(global_position, _attack.area_stat("size")):
 		if _already.has(creature) or absf(creature.centre().y - global_position.y) > creature.radius * 2.0:
