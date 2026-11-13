@@ -6,6 +6,7 @@ class_name Blocks
 const DEFAULT_SURFACE: String = "cobbles"
 const PROBE_UP: float = 0.3
 const PROBE_DOWN: float = 0.6
+const RAMP_THICKNESS: float = 0.5
 
 
 ## A box centred at centre; with a facing, its length (z) runs along that direction.
@@ -66,3 +67,13 @@ static func wall_between(parent: Node3D, a: Vector3, b: Vector3, height: float, 
 	var holder: Node3D = box(parent, centre, Vector3(width, height, a.distance_to(b) + width), material, true,
 		a.direction_to(b))
 	holder.get_child(holder.get_child_count() - 1).set_meta("invisible_wall", material == null)
+
+
+## A walkable slope whose top surface runs from one point to another.
+static func ramp(parent: Node3D, from: Vector3, to: Vector3, width: float) -> StaticBody3D:
+	var direction: Vector3 = from.direction_to(to)
+	var body: StaticBody3D = solid(Vector3(width, RAMP_THICKNESS, from.distance_to(to)))
+	parent.add_child(body)
+	var up: Vector3 = direction.cross(direction.cross(Vector3.UP)).normalized() * -1.0
+	body.global_transform = Transform3D(Basis.looking_at(direction, up), (from + to) * 0.5 - up * RAMP_THICKNESS * 0.5)
+	return body

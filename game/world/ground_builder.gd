@@ -3,10 +3,10 @@ extends Node3D
 ## Builds the code-made ground of the town from data/town.json: the cobbled streets, the canal (walls, floor and
 ## water), the low stone parapets, stone blocks (the overlook terrace and fillers), the steps up to the overlook,
 ## the iron railings around it, the walkable deck of the stone bridge, invisible walls along the canal (so nobody
-## walks or jumps in; the bridge stays open) and the far edge of the world, hidden in a dense band of trees.
+## walks or jumps in; the bridge stays open) and the far edge of the world, hidden in a dense band of trees (open
+## to the east, where the gate leads into the Gloomwood).
 
 const FLOOR_THICKNESS: float = 1.0
-const RAMP_THICKNESS: float = 0.5
 const RAIL_POST_SPACING: float = 1.4
 const RAIL_BAR: float = 0.07
 const BRIDGE_WALL_HEIGHT: float = 1.1
@@ -136,7 +136,7 @@ func _steps(flight: Dictionary) -> void:
 			var solid_top: float = rise * index / count
 			var below: Vector3 = from + run * ((index + 0.5) / count) + Vector3.UP * solid_top * 0.5
 			Blocks.box(self, below, Vector3(width, solid_top, tread), null, true, run.normalized())
-	_ramp(from, to, width)
+	Blocks.ramp(self, from, to, width)
 
 
 func _bridge_deck(bridge: Dictionary) -> void:
@@ -145,8 +145,8 @@ func _bridge_deck(bridge: Dictionary) -> void:
 	var half: Vector3 = along * float(bridge["length"]) * 0.5
 	var top: Vector3 = centre + Vector3.UP * float(bridge["peak"])
 	var width: float = bridge["width"]
-	Blocks.mark_surface(_ramp(centre - half, top, width), "bridge")
-	Blocks.mark_surface(_ramp(top, centre + half, width), "bridge")
+	Blocks.mark_surface(Blocks.ramp(self, centre - half, top, width), "bridge")
+	Blocks.mark_surface(Blocks.ramp(self, top, centre + half, width), "bridge")
 	var side: Vector3 = along.cross(Vector3.UP) * (width * 0.5 + BRIDGE_WALL_WIDTH)
 	for sign: float in [-1.0, 1.0]:
 		var a: Vector3 = centre - half + side * sign
@@ -179,21 +179,14 @@ func _world_edge(edge: Dictionary) -> void:
 	var centre: Vector3 = Tuning.point(edge["centre"])
 	var radius := Vector2(float(edge["radius"][0]), float(edge["radius"][1]))
 	var segments: int = int(edge["segments"])
+	var gap: Array = edge["open"]
+	var opening := Rect2(float(gap[0]), float(gap[1]), float(gap[2]) - float(gap[0]), float(gap[3]) - float(gap[1]))
 	for index: int in segments:
 		var a: Vector3 = centre + _ellipse(radius, TAU * index / segments)
 		var b: Vector3 = centre + _ellipse(radius, TAU * (index + 1) / segments)
-		Blocks.wall_between(self, a, b, float(edge["height"]), float(edge["width"]), null)
+		if not (opening.has_point(Vector2(a.x, a.z)) and opening.has_point(Vector2(b.x, b.z))):
+			Blocks.wall_between(self, a, b, float(edge["height"]), float(edge["width"]), null)
 
 
 static func _ellipse(radius: Vector2, angle: float) -> Vector3:
 	return Vector3(cos(angle) * radius.x, 0.0, sin(angle) * radius.y)
-
-
-## A walkable slope whose top surface runs from one point to another.
-func _ramp(from: Vector3, to: Vector3, width: float) -> StaticBody3D:
-	var direction: Vector3 = from.direction_to(to)
-	var body: StaticBody3D = Blocks.solid(Vector3(width, RAMP_THICKNESS, from.distance_to(to)))
-	add_child(body)
-	var up: Vector3 = direction.cross(direction.cross(Vector3.UP)).normalized() * -1.0
-	body.global_transform = Transform3D(Basis.looking_at(direction, up), (from + to) * 0.5 - up * RAMP_THICKNESS * 0.5)
-	return body

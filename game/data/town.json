@@ -9,7 +9,7 @@
  "walk_bounds": [
   -80.0,
   -52.0,
-  80.0,
+  175.0,
   68.0
  ],
  "outskirts": {
@@ -864,7 +864,14 @@
   ],
   "segments": 64,
   "height": 10.0,
-  "width": 0.6
+  "width": 0.6,
+  "open": [
+   60.0,
+   -9.5,
+   200.0,
+   32.0
+  ],
+  "_open": "Edge segments inside this rect [x0, z0, x1, z1] are left out: the woods' own edge and the gate close it there."
  },
  "canal_block_height": 3.0
 }

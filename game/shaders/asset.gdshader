@@ -1,6 +1,7 @@
 // Material for the Meshy town assets: keeps their hand-painted colour, makes warm-lit painted windows and lantern
 // glass glow (pixels in a warm hue window that are bright and saturated), and darkens and polishes upward-facing
-// surfaces when the town is wet.
+// surfaces when the town is wet. Enemies flash a soft warm colour when hit, and creatures can get a rim light
+// (per-instance flash and rim uniforms) so their silhouettes read against the dark woods.
 shader_type spatial;
 render_mode cull_back;
 
@@ -14,6 +15,10 @@ uniform float saturation_min = 0.45;
 uniform float value_min = 0.72;
 uniform float softness = 0.12;
 uniform float base_roughness = 0.85;
+instance uniform float flash = 0.0;
+instance uniform vec3 flash_color : source_color = vec3(1.0, 0.7, 0.4);
+instance uniform float rim = 0.0;
+instance uniform vec3 rim_color : source_color = vec3(0.6, 0.7, 1.0);
 
 varying float up;
 
@@ -39,5 +44,6 @@ void fragment() {
 	ALBEDO = c * mix(1.0, 0.6, wet);
 	ROUGHNESS = mix(base_roughness, 0.3, wet);
 	SPECULAR = 0.4;
-	EMISSION = c * c * mask * glow;
+	float edge = pow(1.0 - clamp(dot(NORMAL, VIEW), 0.0, 1.0), 3.0);
+	EMISSION = c * c * mask * glow + flash_color * flash * (0.35 + 0.65 * edge) + rim_color * rim * edge;
 }

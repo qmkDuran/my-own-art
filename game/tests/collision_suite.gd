@@ -21,6 +21,9 @@ const CROSSINGS: Array = [
 	["bridge south to north", Vector3(0, 0, 23.5), Vector3(0, 0, 11)],
 	["steps up", Vector3(30, 0, 22.25), Vector3(47, 6, 22.25)],
 	["steps down", Vector3(47, 6, 22.25), Vector3(30, 0, 22.25)],
+	["through the gate into the woods", Vector3(70, 0, 8), Vector3(86, 0, 8)],
+	["up the ruins' ramp", Vector3(104, 0, -16), Vector3(118, 1.6, -16)],
+	["down the ruins' front ramp", Vector3(121, 1.6, -12), Vector3(121, 0, 1)],
 ]
 const CROSS_SECONDS: float = 10.0
 const ARRIVE: float = 0.8
@@ -55,11 +58,11 @@ func _run() -> void:
 	layout.run()
 	report.append_array(layout.report)
 	failures.append_array(layout.failures)
+	_seat_pose()
 	await _walls_hold()
 	await _sweep()
 	await _crossings()
 	await _camera_probes()
-	_seat_pose()
 	var standing := StandingChecks.new(self, m)
 	await standing.run()
 	report.append_array(standing.report)
@@ -252,37 +255,50 @@ func _seat_top(at: Vector3) -> float:
 	return top
 
 
-## A pumpkin behind a row of houses chases the player in the street (through the open gaps between houses): it
-## must never get inside a house on the way.
+## Enemies chasing the player through the Gloomwood's cover (rocks, logs, the ruins, the gate) never end up
+## inside any of it: swarmers, an elite and a shooter run at the player from behind obstacles.
 func _walkers_stay_out() -> void:
-	m.start_night()
-	m.night.set_physics_process(false)
-	m.night.loadout.process_mode = Node.PROCESS_MODE_DISABLED
-	m.player.global_position = Vector3(-28, ProbeBody.INSET, 0)
-	var pumpkin: Creature = m.night.horde.spawn("pumpkin_head", Vector3(-28, 0.5, -14))
+	var chases: Array = [[Vector3(91.0, 0.0, 3.0), [["mushroom_imp", Vector3(104.0, 0.0, 7.0)], ["pumpkin_head",
+		Vector3(97.0, 0.0, 13.0)], ["scarecrow_knight", Vector3(110.0, 0.0, 5.0)]]], [Vector3(121.0, 1.7, -16.0),
+		[["mushroom_imp", Vector3(121.0, 0.0, 0.0)], ["lantern_moth", Vector3(108.0, 0.0, -24.0)], ["pumpkin_head",
+		Vector3(130.0, 0.0, -26.0)]]], [Vector3(70.0, 0.0, 8.0), [["mushroom_imp", Vector3(88.0, 0.0, 9.0)]]]]
+	m.health.invulnerable = true
 	var inside: int = 0
-	for frame: int in 180:
-		await get_tree().physics_frame
-		var query := PhysicsPointQueryParameters3D.new()
-		query.position = pumpkin.global_position + Vector3.UP * pumpkin.radius
-		query.collision_mask = Layers.WORLD
-		if not m.get_world_3d().direct_space_state.intersect_point(query, 1).is_empty():
-			inside += 1
-	report.append("walkers: a pumpkin chasing past a row of houses: inside geometry on %d of 180 frames, ended at %s"
-		% [inside, pumpkin.global_position])
+	for chase: Array in chases:
+		m.player.global_position = chase[0] + Vector3.UP * ProbeBody.INSET
+		var enemies: Array[Enemy] = []
+		for entry: Array in chase[1]:
+			enemies.append(m.roster.spawn(entry[0], entry[1]))
+		for frame: int in 240:
+			await get_tree().physics_frame
+			for enemy: Enemy in enemies:
+				inside += int(_inside_world(enemy))
+		m.roster.clear()
+	m.health.invulnerable = false
+	report.append("enemies: chasing through the woods' cover, inside geometry on %d enemy-frames" % inside)
 	if inside > 0:
-		failures.append("a pumpkin got into a house")
-	m.night.finish(true)
-	m.night.loadout.process_mode = Node.PROCESS_MODE_INHERIT
+		failures.append("enemies got inside the world's geometry (%d enemy-frames)" % inside)
 
 
+func _inside_world(enemy: Enemy) -> bool:
+	if not is_instance_valid(enemy):
+		return false
+	var query := PhysicsPointQueryParameters3D.new()
+	query.position = enemy.global_position + Vector3.UP * enemy.radius
+	query.collision_mask = Layers.WORLD
+	return not m.get_world_3d().direct_space_state.intersect_point(query, 1).is_empty()
+
+
+## Every enemy spawn point of the mission is on ground the player can walk to.
 func _spawn_reachability() -> void:
 	var unreachable: int = 0
-	var spots: Array[Vector3] = [Vector3(0, 0, 4), Vector3(-30, 0, 0), Vector3(20, 0, 0), Vector3(0, 0, 22)]
-	for index: int in SPAWN_SAMPLES:
-		m.player.global_position = spots[index % spots.size()]
-		var at: Vector3 = m.night.spawner.free_spot()
-		if at != Vector3.INF and not grid.is_reachable(at):
-			unreachable += 1
-			failures.append("spawn spot %s can't be walked to" % at)
-	report.append("spawns: %d sampled, %d unreachable" % [SPAWN_SAMPLES, unreachable])
+	var count: int = 0
+	for encounter: Dictionary in Tuning.doc("mission")["encounters"]:
+		for wave: Array in encounter["waves"]:
+			for entry: Array in wave:
+				count += 1
+				var at: Vector3 = Tuning.point(entry.slice(1))
+				if not grid.is_reachable(at):
+					unreachable += 1
+					failures.append("spawn spot %s (%s) can't be walked to" % [at, encounter["id"]])
+	report.append("spawns: %d mission spawn spots, %d unreachable" % [count, unreachable])

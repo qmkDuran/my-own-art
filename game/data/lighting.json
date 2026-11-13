@@ -256,6 +256,33 @@
     1.6,
     2.6,
     18
+   ],
+   [
+    97.0,
+    1.6,
+    4.0,
+    26.0,
+    2.0,
+    20.0,
+    40
+   ],
+   [
+    123.0,
+    3.0,
+    -16.0,
+    18.0,
+    2.0,
+    14.0,
+    26
+   ],
+   [
+    149.0,
+    2.4,
+    2.0,
+    26.0,
+    2.4,
+    26.0,
+    40
    ]
   ]
  },
@@ -289,6 +316,54 @@
    0.78,
    0.95,
    0.35
+  ]
+ },
+ "brazier": {
+  "color": [
+   1.0,
+   0.55,
+   0.22
+  ],
+  "energy": 3.2,
+  "range": 9.5,
+  "attenuation": 1.3,
+  "fog_energy": 1.4,
+  "specular": 0.5
+ },
+ "rune": {
+  "color": [
+   0.62,
+   0.4,
+   1.0
+  ],
+  "energy": 1.8,
+  "range": 7.0,
+  "attenuation": 1.4,
+  "fog_energy": 1.6,
+  "specular": 0.3
+ },
+ "sunrise": {
+  "_doc": "The Sunrise super's grade: the night warms towards dawn while the lantern sun burns (mixed in by 0..1).",
+  "ambient": [
+   0.62,
+   0.36,
+   0.26
+  ],
+  "ambient_energy": 0.9,
+  "sky_glow": [
+   0.9,
+   0.42,
+   0.2
+  ],
+  "glow_height": 0.45,
+  "saturation": 1.22,
+  "brightness": 1.07,
+  "sun_light_energy": 4.0,
+  "sun_light_range": 34.0,
+  "sun_color": [
+   1.0,
+   0.6,
+   0.28
   ]
  }
 }

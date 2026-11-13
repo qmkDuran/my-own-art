@@ -4,8 +4,8 @@ extends Node
 ## Tuning.look_f("moon", "energy") reads data/lighting.json; Tuning.doc("town") returns a whole file.
 
 const DATA_DIR: String = "res://data/"
-const FILES: Array[String] = ["tuning", "lighting", "assets", "town", "npcs", "audio", "defence", "skills", "graphics",
-	"perf", "vfx"]
+const FILES: Array[String] = ["tuning", "lighting", "assets", "town", "npcs", "audio", "graphics",
+	"perf", "vfx", "combat", "mission", "music"]
 
 var _docs: Dictionary = {}
 

@@ -1,7 +1,7 @@
 class_name PlayerController
 extends Node
-## Turns the keyboard into the player's wishes: WASD moves relative to the camera, Shift runs, V dashes, Space
-## jumps.
+## Turns the keyboard into the player's wishes: WASD moves relative to the camera, Shift runs, Space jumps (V's
+## blink is part of the kit, see KitInput).
 ## Esc frees the mouse, a click captures it again.
 
 var _player: Player
@@ -34,8 +34,6 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if event.is_action_pressed("jump"):
 		_player.jump()
-	elif event.is_action_pressed("dash"):
-		_player.dash()
 	elif event.is_action_pressed("free_mouse"):
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	elif event is InputEventMouseButton and (event as InputEventMouseButton).pressed:

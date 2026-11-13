@@ -1,0 +1,13 @@
+{
+ "_doc": "Music by game state, crossfaded (see CREDITS.md for the sources and licences). Volumes in dB. The state is town in town, explore in the mission between fights, combat while enemies are engaged and boss in the Gloom King's fight (the combat track a little louder). silent_db is where a faded-out track sits before it stops.",
+ "tracks": {
+  "town": { "path": "res://assets/audio/music/town_goblin_king.ogg", "volume_db": -12.0 },
+  "explore": { "path": "res://assets/audio/music/explore_pippin.ogg", "volume_db": -13.0 },
+  "combat": { "path": "res://assets/audio/music/combat_mountain_king.ogg", "volume_db": -11.0 }
+ },
+ "states": { "town": "town", "explore": "explore", "combat": "combat", "boss": "combat" },
+ "boss_boost_db": 2.0,
+ "crossfade_seconds": 2.2,
+ "silent_db": -50.0,
+ "limits": { "music_max_db": -6.0, "music_min_db": -24.0, "sfx_max_db": 0.0, "sfx_min_db": -30.0 }
+}

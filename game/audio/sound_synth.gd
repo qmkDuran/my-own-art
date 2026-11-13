@@ -81,22 +81,66 @@ static func music_box() -> AudioStreamWAV:
 	return _to_wav(samples)
 
 
-## A short effect sound by name: the flare's whoosh (a rising filtered breath), pop (a warm chime that dips in
-## pitch) or crackle (a tail of soft clicks).
+## A short effect sound by name, by its data type: whoosh (a rising filtered breath), chime (a warm chime that dips
+## in pitch), crackle (a tail of soft clicks), pluck (a bright tick that drops), thump (a soft low boom), shimmer
+## (a quick rising run of bell notes) or swell (a long rising breath with a climbing tone).
 static func effect(sound: String) -> AudioStreamWAV:
 	var spec: Dictionary = _spec(sound)
 	var samples := PackedFloat32Array()
 	samples.resize(_length(spec["seconds"]))
-	match sound:
-		"flare_whoosh":
+	match String(spec["type"]):
+		"whoosh":
 			_whoosh(samples, spec)
-		"flare_pop":
+		"chime":
 			_chime(samples, spec)
+		"pluck", "thump":
+			_drop(samples, spec)
+		"shimmer":
+			_shimmer(samples, spec)
+		"swell":
+			_swell(samples, spec)
 		_:
 			_crackle(samples, spec)
 	var wav: AudioStreamWAV = _to_wav(samples)
 	wav.loop_mode = AudioStreamWAV.LOOP_DISABLED
 	return wav
+
+
+## A sine that falls in pitch and fades fast (a bright pluck high up, a soft thump low down).
+static func _drop(samples: PackedFloat32Array, spec: Dictionary) -> void:
+	var rate: float = _rate()
+	var phase: float = 0.0
+	for n: int in samples.size():
+		var t: float = n / rate
+		var hz: float = float(spec["hz"]) * (1.0 - float(spec["drop"]) * minf(t * CHIME_DIP_SPEED, 1.0))
+		phase += TAU * hz / rate
+		samples[n] = sin(phase) * exp(-t * float(spec["decay"])) * float(spec["level"])
+
+
+## A run of bell notes, one every step seconds, each a decaying sine with an octave.
+static func _shimmer(samples: PackedFloat32Array, spec: Dictionary) -> void:
+	var rate: float = _rate()
+	var notes: Array = spec["notes"]
+	for index: int in notes.size():
+		var start: int = int(index * float(spec["step"]) * rate)
+		var hz: float = A4_HZ * pow(2.0, (int(notes[index]) - A4_NOTE) / SEMITONES)
+		for n: int in samples.size() - start:
+			var t: float = n / rate
+			var tone: float = sin(TAU * hz * t) + sin(TAU * hz * 2.0 * t) * 0.5
+			samples[start + n] += tone * exp(-t * float(spec["decay"])) * float(spec["level"]) * 0.5
+
+
+## Filtered noise opening up over the sound, under a tone gliding upwards: the build-up of a charge.
+static func _swell(samples: PackedFloat32Array, spec: Dictionary) -> void:
+	var rate: float = _rate()
+	var low: float = 0.0
+	var phase: float = 0.0
+	for n: int in samples.size():
+		var share: float = float(n) / samples.size()
+		low += (randf_range(-1.0, 1.0) - low) * lerpf(spec["cutoff_from"], spec["cutoff_to"], share)
+		phase += TAU * lerpf(spec["hz_from"], spec["hz_to"], share * share) / rate
+		var shape: float = share * sqrt(1.0 - share)
+		samples[n] = (low + sin(phase) * 0.5) * shape * float(spec["level"])
 
 
 static func _whoosh(samples: PackedFloat32Array, spec: Dictionary) -> void:

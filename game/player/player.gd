@@ -15,6 +15,10 @@ var yaw: float = 0.0
 var speed_scale: float = 1.0
 var agility := Agility.new()
 var footsteps: Footsteps
+## Held still in the air by the Sunrise (no movement or gravity while true).
+var frozen: bool = false
+## A yaw to face instead of the walking direction (aiming faces the crosshair); NAN when free.
+var face_yaw: float = NAN
 var _landing: float = 0.0
 
 
@@ -66,8 +70,13 @@ func _add_fill_lights() -> void:
 ## A quick dodge in the wished direction (or straight ahead), with a little dust puff; creatures can't hurt you
 ## mid-dash.
 func dash() -> void:
-	if agility.start_dash(wish if wish.length() > 0.0 else -global_basis.z):
-		_puff()
+	if agility.start_dash(dash_direction()):
+		puff()
+
+
+## Where a dash goes: the way the player is pushing, or straight ahead.
+func dash_direction() -> Vector3:
+	return wish if wish.length() > 0.0 else -global_basis.z
 
 
 func jump() -> void:
@@ -83,6 +92,10 @@ func speed() -> float:
 
 
 func _physics_process(delta: float) -> void:
+	if frozen:
+		velocity = Vector3.ZERO
+		model.play("idle", Tuning.f("player", "blend_seconds"))
+		return
 	var top: float = Tuning.f("player", "run_speed" if running else "walk_speed") * speed_scale
 	var goal: Vector3 = wish.limit_length(1.0) * top
 	var flat := Vector3(velocity.x, 0.0, velocity.z).move_toward(goal, Tuning.f("player", "acceleration") * delta)
@@ -98,11 +111,13 @@ func _physics_process(delta: float) -> void:
 		model.play_from("jump", Tuning.f("agility", "jump_clip_takeoff"), Tuning.f("player", "blend_seconds"))
 	if events.get("landed", false):
 		_landing = Tuning.f("agility", "landing_seconds")
-		_puff()
-	if wish.length() > Tuning.f("player", "moving_threshold"):
-		var goal_yaw: float = atan2(-wish.x, -wish.z)
-		yaw = lerp_angle(yaw, goal_yaw, clampf(Tuning.f("player", "turn_sharpness") * delta, 0.0, 1.0))
-		rotation.y = yaw
+		puff()
+	var turn: float = clampf(Tuning.f("player", "turn_sharpness") * delta, 0.0, 1.0)
+	if not is_nan(face_yaw):
+		yaw = lerp_angle(yaw, face_yaw, turn)
+	elif wish.length() > Tuning.f("player", "moving_threshold"):
+		yaw = lerp_angle(yaw, atan2(-wish.x, -wish.z), turn)
+	rotation.y = yaw
 	_animate()
 
 
@@ -120,7 +135,7 @@ func _animate() -> void:
 
 
 ## A small puff of dust at the feet (dash starts, landings).
-func _puff() -> void:
+func puff() -> void:
 	var dust: GPUParticles3D = ParticleBursts.smoke(Tuning.i("agility", "dust_puffs"), Tuning.color(
 		Tuning.doc("tuning")["agility"]["dust_color"]), Tuning.f("agility", "dust_size"), Tuning.f("agility",
 		"dust_seconds"))

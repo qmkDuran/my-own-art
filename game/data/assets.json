@@ -27,5 +27,9 @@
   "sheet_ghost": { "path": "res://assets/meshy/creatures/sheet_ghost.glb", "height": 1.1, "collide": "none", "glow": 3.0 },
   "pumpkin_head": { "path": "res://assets/meshy/creatures/pumpkin_head.glb", "height": 0.9, "collide": "none", "glow": 0.5 },
   "lantern_moth": { "path": "res://assets/meshy/creatures/lantern_moth.glb", "height": 0.8, "collide": "none", "glow": 3.0 },
-  "gloom_king": { "path": "res://assets/meshy/creatures/gloom_king.glb", "height": 3.6, "collide": "none", "glow": 3.0 }
+  "gloom_king": { "path": "res://assets/meshy/creatures/gloom_king.glb", "height": 3.6, "collide": "none", "glow": 3.0 },
+  "scarecrow_knight": { "path": "res://assets/meshy/creatures/scarecrow_knight.glb", "height": 2.3, "collide": "none", "glow": 3.0 },
+  "mushroom_imp": { "path": "res://assets/meshy/creatures/mushroom_imp.glb", "height": 0.85, "collide": "none", "glow": 0.0 },
+  "town_gate": { "path": "res://assets/meshy/buildings/town_gate.glb", "height": 8.5, "collide": "none", "glow": 2.4 },
+  "ruined_arch": { "path": "res://assets/meshy/props/ruined_arch.glb", "height": 3.4, "collide": "box", "glow": 0.0 }
 }

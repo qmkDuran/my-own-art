@@ -1,8 +1,9 @@
 extends Node
 ## --smoke: loads the real town headless and checks the rules: the town and its lights are built, the shadow
 ## budget holds, the player walks and runs with the right clips, the townsfolk move through their routines, and
-## the rain toggle wets the town; plus the graphics tiers and the defence night (see SmokeGraphics,
-## SmokeDefence). Prints SMOKE PASS or SMOKE FAIL lines, then quits.
+## the rain toggle wets the town; plus the graphics tiers, the tools, the UI layout, posture, the combat kit, the
+## enemies and the mission (see SmokeGraphics, SmokeTools, UiLayout, PostureCheck, SmokeCombat, SmokeEnemies,
+## SmokeMission). Prints SMOKE PASS or SMOKE FAIL lines, then quits.
 
 var m: Main
 var failures: Array[String] = []
@@ -24,9 +25,11 @@ func _run() -> void:
 	await _check_agility()
 	failures.append_array(await SmokeTools.new(m).run())
 	failures.append_array(SmokeGraphics.new(m).run())
-	failures.append_array(await SmokeDefence.new(m).run())
 	failures.append_array(await UiLayout.new(m).run())
 	failures.append_array(await PostureCheck.new(m).run())
+	failures.append_array(await SmokeCombat.new(m).run())
+	failures.append_array(await SmokeEnemies.new(m).run())
+	failures.append_array(await SmokeMission.new(m).run())
 	for failure: String in failures:
 		print("SMOKE FAIL ", failure)
 	if failures.is_empty():

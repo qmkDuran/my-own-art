@@ -1,9 +1,9 @@
 class_name Main
 extends Node3D
 ## Builds the cozy night town and wires it together: the night environment and moonlight, the ground and the
-## Meshy town, the light budget, the player with camera and lantern, the townsfolk, fireflies, dust and rain,
-## the weather, the ambience, the HUD and the
-## defence night (N starts one). Everything gets what it needs through setup().
+## Meshy town, the Gloomwood beyond the gate, the light budget, the player with camera and lantern, the townsfolk,
+## fireflies, dust and rain, the weather, the ambience and music, the Lamplighter's combat kit, the enemies, the
+## mission and the HUDs. Everything gets what it needs through setup().
 
 static var current: Main
 
@@ -19,9 +19,15 @@ var budget: LightBudget
 var hud: Hud
 var rain_fall: CameraParticles
 var ambience: Ambience
-var night: NightRun
-var night_hud: DefenceHud
-var level_panel: LevelUpPanel
+var woods: MissionDecor
+var roster: Roster
+var fx: CombatFx
+var health: PlayerHealth
+var kit: LamplighterKit
+var kit_input: KitInput
+var mission: Mission
+var music: MusicDirector
+var combat_hud: CombatHud
 var library: AssetLibrary
 var graphics: GraphicsSettings
 var vfx: VfxKit
@@ -40,7 +46,7 @@ func _ready() -> void:
 	hud = Hud.new()
 	add_child(hud)
 	hud.setup()
-	_build_night()
+	_build_combat()
 	display = DisplaySettings.new()
 	add_child(display)
 	display.setup()
@@ -64,7 +70,8 @@ func _build_tools() -> void:
 	fly.setup(camera_rig.camera, controller)
 	fly.toggled.connect(func(flying: bool) -> void:
 		hud.visible = not flying
-		night_hud.visible = not flying and night.state != NightRun.State.IDLE)
+		combat_hud.visible = not flying
+		kit_input.enabled = not flying)
 	perf_overlay = PerfOverlay.new()
 	add_child(perf_overlay)
 	perf_overlay.setup(display, graphics)
@@ -87,6 +94,13 @@ func _build_world() -> void:
 	var outskirts := Outskirts.new()
 	add_child(outskirts)
 	outskirts.build(library)
+	var ground_of_woods := MissionGround.new()
+	add_child(ground_of_woods)
+	ground_of_woods.build(library)
+	woods = MissionDecor.new()
+	add_child(woods)
+	woods.build(library)
+	town.lights.append_array(woods.lights)
 
 
 func _build_player() -> void:
@@ -136,49 +150,36 @@ func _build_weather() -> void:
 	add_child(weather)
 
 
-func _build_night() -> void:
+## The combat: the effects kit, health, the enemies, the Lamplighter's kit and its controls, the mission in the
+## Gloomwood, the music and the combat HUD.
+func _build_combat() -> void:
 	vfx = VfxKit.new()
 	add_child(vfx)
 	vfx.setup(camera_rig.camera)
-	night = NightRun.new()
-	add_child(night)
-	night.setup(player, library, town.lamps, vfx)
-	night_hud = DefenceHud.new()
-	add_child(night_hud)
-	night_hud.setup(night)
-	level_panel = LevelUpPanel.new()
-	add_child(level_panel)
-	night.level_up_ready.connect(level_panel.show_offers)
-	level_panel.chosen.connect(night.choose)
-	night.ended.connect(_on_night_ended)
-
-
-## Starts a defence night: the townsfolk go indoors and the creatures come.
-func start_night() -> void:
-	if night.state != NightRun.State.IDLE:
-		return
-	_townsfolk_home(true)
-	night_hud.visible = true
-	night.start()
-	var seconds: float = Tuning.number("defence", "run", "start_banner_seconds")
-	night_hud.banner("The gloom is coming... keep the lamps lit!", seconds)
-
-
-func _on_night_ended(won: bool, kept: Dictionary) -> void:
-	_townsfolk_home(false)
-	var seconds: float = Tuning.number("defence", "run", "end_banner_seconds")
-	var haul: String = DefenceHud.bag_text(kept)
-	if won:
-		night_hud.banner("Dawn breaks! The town is safe.\n" + haul, seconds)
-	else:
-		night_hud.banner("You wake up at the café, warm and safe.\nYou kept:\n" + haul, seconds)
-		player.global_position = Tuning.point(Tuning.doc("defence")["run"]["wake_at"])
-
-
-func _townsfolk_home(away: bool) -> void:
-	for person: Townsperson in townsfolk:
-		person.visible = not away
-		person.process_mode = Node.PROCESS_MODE_DISABLED if away else Node.PROCESS_MODE_INHERIT
+	fx = CombatFx.new()
+	add_child(fx)
+	fx.setup(vfx)
+	health = PlayerHealth.new()
+	add_child(health)
+	health.setup(player)
+	roster = Roster.new()
+	add_child(roster)
+	roster.setup(library, player, health, fx)
+	kit = LamplighterKit.new()
+	add_child(kit)
+	kit.setup(player, camera_rig, roster, fx, health, environment_node)
+	kit_input = KitInput.new()
+	add_child(kit_input)
+	kit_input.setup(kit)
+	music = MusicDirector.new()
+	add_child(music)
+	music.setup()
+	mission = Mission.new()
+	add_child(mission)
+	mission.setup(roster, player, health, woods, music)
+	combat_hud = CombatHud.new()
+	add_child(combat_hud)
+	combat_hud.setup(kit, mission)
 
 
 func _on_rain_mix(mix: float) -> void:
@@ -190,9 +191,7 @@ func _on_rain_mix(mix: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("start_night"):
-		start_night()
-	elif event.is_action_pressed("graphics"):
+	if event.is_action_pressed("graphics"):
 		graphics.cycle()
 	elif event.is_action_pressed("frame_cap"):
 		display.cycle_frame_cap()

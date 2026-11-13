@@ -45,7 +45,7 @@ func _meadow(size: float) -> void:
 		Rect2(-half, inner.end.y, size, half - inner.end.y),
 		Rect2(-half, inner.position.y, inner.position.x + half, inner.size.y),
 		Rect2(inner.end.x, inner.position.y, half - inner.end.x, inner.size.y)]
-	var material: StandardMaterial3D = _flat(MEADOW)
+	var material: StandardMaterial3D = flat(MEADOW)
 	for piece: Rect2 in pieces:
 		var plane := PlaneMesh.new()
 		plane.size = piece.size
@@ -60,28 +60,43 @@ func _meadow(size: float) -> void:
 		Blocks.mark_surface(body, "grass")
 
 
-## A ring of trees as one MultiMesh: positions between two radii, with random turn and size.
+## A ring of trees as one MultiMesh: positions between two radii, with random turn and size (none inside the
+## mission woods' clearing, which plants its own).
 func _ring(mesh: Mesh, ring: Dictionary) -> MultiMeshInstance3D:
-	var multi := MultiMesh.new()
-	multi.transform_format = MultiMesh.TRANSFORM_3D
-	multi.mesh = mesh
-	multi.instance_count = int(ring["count"])
-	for index: int in multi.instance_count:
+	var clear: Array = Tuning.doc("mission")["tree_clear"]
+	var keep_out := Rect2(float(clear[0]), float(clear[1]), float(clear[2]) - float(clear[0]), float(clear[3]) -
+		float(clear[1]))
+	var placed: Array[Transform3D] = []
+	for index: int in int(ring["count"]):
 		var angle: float = _rng.randf() * TAU
 		var distance: float = _rng.randf_range(float(ring["radius_min"]), float(ring["radius_max"]))
 		var at := Vector3(float(ring["centre"][0]) + cos(angle) * distance, 0.0, float(ring["centre"][1]) +
 			sin(angle) * distance * float(ring["squash"]))
 		var size: float = _rng.randf_range(float(ring["scale_min"]), float(ring["scale_max"]))
 		var basis := Basis(Vector3.UP, _rng.randf() * TAU).scaled(Vector3.ONE * size)
-		multi.set_instance_transform(index, Transform3D(basis, at))
-	var instance := MultiMeshInstance3D.new()
-	instance.multimesh = multi
-	instance.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		if not keep_out.has_point(Vector2(at.x, at.z)):
+			placed.append(Transform3D(basis, at))
+	var instance: MultiMeshInstance3D = trees(mesh, placed)
 	add_child(instance)
 	return instance
 
 
-func _meshy_trees(library: AssetLibrary, ring: Dictionary) -> void:
+## Many copies of one tree mesh as a single MultiMesh (a few draw calls for a whole forest).
+static func trees(mesh: Mesh, placed: Array[Transform3D]) -> MultiMeshInstance3D:
+	var multi := MultiMesh.new()
+	multi.transform_format = MultiMesh.TRANSFORM_3D
+	multi.mesh = mesh
+	multi.instance_count = placed.size()
+	for index: int in placed.size():
+		multi.set_instance_transform(index, placed[index])
+	var instance := MultiMeshInstance3D.new()
+	instance.multimesh = multi
+	instance.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	return instance
+
+
+## The Meshy tree's mesh, material and the placement its model sits in (folded into each copy).
+static func meshy_tree(library: AssetLibrary) -> Dictionary:
 	var tree: Node3D = library.spawn("tree", 1.0, false)
 	var model: MeshInstance3D = tree.find_children("*", "MeshInstance3D", true, false)[0]
 	var offset: Transform3D = model.transform
@@ -89,22 +104,31 @@ func _meshy_trees(library: AssetLibrary, ring: Dictionary) -> void:
 	while parent != tree:
 		offset = (parent as Node3D).transform * offset
 		parent = parent.get_parent()
-	var placed: MultiMeshInstance3D = _ring(model.mesh, ring)
-	placed.material_override = model.get_surface_override_material(0)
-	_bake_offset(placed, offset)
+	var out: Dictionary = { "mesh": model.mesh, "material": model.get_surface_override_material(0), "offset": offset }
 	tree.free()
+	return out
+
+
+func _meshy_trees(library: AssetLibrary, ring: Dictionary) -> void:
+	var tree: Dictionary = meshy_tree(library)
+	var placed: MultiMeshInstance3D = _ring(tree["mesh"], ring)
+	placed.material_override = tree["material"]
+	bake_offset(placed, tree["offset"])
 
 
 ## The Meshy model sits inside a scaled, offset node; each instance gets that placement folded in.
-func _bake_offset(placed: MultiMeshInstance3D, offset: Transform3D) -> void:
+static func bake_offset(placed: MultiMeshInstance3D, offset: Transform3D) -> void:
 	for index: int in placed.multimesh.instance_count:
 		var at: Transform3D = placed.multimesh.get_instance_transform(index)
 		placed.multimesh.set_instance_transform(index, at * offset)
 
 
-## Far trees: a dark lollipop (trunk and round crown) merged into one mesh.
 func _simple_trees(ring: Dictionary) -> void:
-	var height: float = ring["height"]
+	_ring(lollipop_tree(float(ring["height"])), ring)
+
+
+## A far tree: a dark lollipop (trunk and round crown) merged into one mesh.
+static func lollipop_tree(height: float) -> ArrayMesh:
 	var trunk := CylinderMesh.new()
 	trunk.top_radius = height * TRUNK_SHARE.x * 0.5
 	trunk.bottom_radius = height * TRUNK_SHARE.x * TRUNK_FLARE
@@ -116,8 +140,8 @@ func _simple_trees(ring: Dictionary) -> void:
 	tool.append_from(trunk, 0, Transform3D(Basis(), Vector3.UP * trunk.height * 0.5))
 	tool.append_from(crown, 0, Transform3D(Basis(), Vector3.UP * (trunk.height + crown.radius * CROWN_SINK)))
 	var mesh: ArrayMesh = tool.commit()
-	mesh.surface_set_material(0, _flat(CROWN))
-	_ring(mesh, ring)
+	mesh.surface_set_material(0, flat(CROWN))
+	return mesh
 
 
 func _hill(centre: Vector3, size: Vector3) -> void:
@@ -126,7 +150,7 @@ func _hill(centre: Vector3, size: Vector3) -> void:
 	dome.height = 2.0
 	dome.radial_segments = HILL_SEGMENTS
 	dome.rings = HILL_SEGMENTS / 2
-	dome.material = _flat(HILL)
+	dome.material = flat(HILL)
 	var hill := MeshInstance3D.new()
 	hill.mesh = dome
 	hill.scale = size
@@ -158,7 +182,7 @@ func _cottage_lights(spec: Dictionary) -> void:
 			float(spec["height_max"])), sin(angle) * distance)
 
 
-func _flat(colour: Color) -> StandardMaterial3D:
+static func flat(colour: Color) -> StandardMaterial3D:
 	var material := StandardMaterial3D.new()
 	material.albedo_color = colour
 	material.roughness = 1.0

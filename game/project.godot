@@ -26,7 +26,7 @@ window/stretch/aspect="expand"
 
 3d_physics/layer_1="world"
 3d_physics/layer_2="player"
-3d_physics/layer_3="wisp"
+3d_physics/layer_4="enemy"
 
 [rendering]
 

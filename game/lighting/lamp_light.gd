@@ -37,6 +37,8 @@ func snuff() -> void:
 
 func relight() -> void:
 	lit = true
+	if has_meta("flame"):
+		(get_meta("flame") as Node3D).visible = true
 
 
 func _process(delta: float) -> void:

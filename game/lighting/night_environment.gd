@@ -14,6 +14,8 @@ const GRADE_SIZE: int = 256
 
 var _env: Environment
 var _ground_fog: FogMaterial
+var _sky_material: ShaderMaterial
+var _base: Dictionary = {}
 
 
 func setup() -> void:
@@ -28,6 +30,23 @@ func setup() -> void:
 	environment = _env
 	_add_ground_fog()
 	set_rain(0.0)
+	_base = { "ambient": _env.ambient_light_color, "ambient_energy": _env.ambient_light_energy,
+		"saturation": _env.adjustment_saturation, "brightness": _env.adjustment_brightness,
+		"sky_glow": _sky_material.get_shader_parameter("glow_color"),
+		"glow_height": _sky_material.get_shader_parameter("glow_height") }
+
+
+## The Sunrise super's grade, mixed in 0..1: the night warms towards dawn (warmer ambient light, a glowing
+## horizon, a little more colour and brightness).
+func set_sunrise(mix: float) -> void:
+	_env.ambient_light_color = (_base["ambient"] as Color).lerp(Tuning.look_color("sunrise", "ambient"), mix)
+	_env.ambient_light_energy = lerpf(_base["ambient_energy"], Tuning.look_f("sunrise", "ambient_energy"), mix)
+	_env.adjustment_saturation = lerpf(_base["saturation"], Tuning.look_f("sunrise", "saturation"), mix)
+	_env.adjustment_brightness = lerpf(_base["brightness"], Tuning.look_f("sunrise", "brightness"), mix)
+	_sky_material.set_shader_parameter("glow_color", (_base["sky_glow"] as Color).lerp(Tuning.look_color("sunrise",
+		"sky_glow"), mix))
+	_sky_material.set_shader_parameter("glow_height", lerpf(_base["glow_height"], Tuning.look_f("sunrise",
+		"glow_height"), mix))
 
 
 ## 0 = clear night, 1 = full rain: fog thickens.
@@ -46,6 +65,7 @@ func _sky() -> void:
 		material.set_shader_parameter(key + ("" if key.ends_with("color") else "_color"), Tuning.look_color("sky", key))
 	var sky := Sky.new()
 	sky.sky_material = material
+	_sky_material = material
 	sky.radiance_size = Sky.RADIANCE_SIZE_256
 	sky.process_mode = Sky.PROCESS_MODE_REALTIME
 	_env.background_mode = Environment.BG_SKY

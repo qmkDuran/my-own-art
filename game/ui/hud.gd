@@ -1,9 +1,11 @@
 class_name Hud
 extends CanvasLayer
-## A quiet on-screen hint of the controls that fades after a while (H brings it back), and a small note when the
-## rain starts or stops. The town is the show, so the HUD stays out of the way.
+## A quiet on-screen hint of the controls (two lines: moving about, and the combat kit) that fades after a while
+## (H brings it back), and a small note when the rain starts or stops. The town is the show, so the HUD stays out
+## of the way.
 
-const HINT: String = "WASD walk  Shift run  V dash  Space jump  N night  R rain  G graphics  F1 fly  F3 stats  H hints"
+const HINT: String = "WASD walk   Shift run   Space jump   T rain   G graphics   F1 fly   F3 stats   H hints\n" + \
+	"LMB bolt   RMB charge beam   Q bomb   E ward   V blink   R Sunrise   Tab lock on"
 const SHADOW: Color = Color(0.0, 0.0, 0.0, 0.6)
 
 var _hint: Label
