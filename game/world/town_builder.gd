@@ -74,6 +74,9 @@ func _row(row: Dictionary, backdrop: bool) -> void:
 		house.set_meta("backdrop", backdrop)
 		if not backdrop:
 			_windows(house, asset, scale)
+			if index > 0:
+				_fill_gap(start + along * (travelled - Tuning.f("town", "gap")), start + along * travelled, front,
+					size.z)
 		travelled += size.x + Tuning.f("town", "gap")
 		index += 1
 	if not backdrop:
@@ -85,6 +88,13 @@ func _row_wall(start: Vector3, end: Vector3, front: Vector3) -> void:
 	var back: Vector3 = -front * Tuning.f("town", "row_wall_setback")
 	Blocks.wall_between(self, start + back, end + back, Tuning.f("town", "row_wall_height"), Tuning.f("town",
 		"row_wall_width"), null)
+
+
+## An invisible wall filling the narrow gap between two neighbouring houses, front to back, so nobody squeezes in.
+func _fill_gap(a: Vector3, b: Vector3, front: Vector3, depth: float) -> void:
+	var overlap: Vector3 = a.direction_to(b) * Tuning.f("town", "gap_fill_overlap")
+	var back: Vector3 = -front * depth * 0.5
+	Blocks.wall_between(self, a - overlap + back, b + overlap + back, Tuning.f("town", "row_wall_height"), depth, null)
 
 
 func _windows(house: Node3D, asset: String, scale: float) -> void:

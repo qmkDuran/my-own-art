@@ -20,9 +20,7 @@ static func box(parent: Node3D, centre: Vector3, size: Vector3, material: Materi
 		instance.mesh = mesh
 		holder.add_child(instance)
 	if collide:
-		var body: StaticBody3D = solid(size)
-		body.set_meta("invisible", material == null)
-		holder.add_child(body)
+		holder.add_child(solid(size))
 	return holder
 
 
@@ -42,4 +40,6 @@ static func solid(size: Vector3) -> StaticBody3D:
 static func wall_between(parent: Node3D, a: Vector3, b: Vector3, height: float, width: float,
 		material: Material) -> void:
 	var centre: Vector3 = (a + b) * 0.5 + Vector3.UP * height * 0.5
-	box(parent, centre, Vector3(width, height, a.distance_to(b) + width), material, true, a.direction_to(b))
+	var holder: Node3D = box(parent, centre, Vector3(width, height, a.distance_to(b) + width), material, true,
+		a.direction_to(b))
+	holder.get_child(holder.get_child_count() - 1).set_meta("invisible_wall", material == null)

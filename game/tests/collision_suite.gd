@@ -29,6 +29,7 @@ const SEAT_LOW: float = -0.05
 const SEAT_HIGH: float = 0.35
 const HIPS: String = "Hips"
 const SPAWN_SAMPLES: int = 60
+const SEED: int = 20261113
 
 var m: Main
 var failures: Array[String] = []
@@ -45,6 +46,7 @@ func _run() -> void:
 	await get_tree().create_timer(0.5).timeout
 	m = Main.current
 	m.controller.enabled = false
+	seed(SEED)
 	grid = WalkGrid.new()
 	grid.build(m.get_world_3d(), Tuning.point(Tuning.doc("town")["player_start"]["at"]))
 	report.append("walk grid: %d standable cells, %d reachable" % [grid.floors.size(), grid.reachable.size()])

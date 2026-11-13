@@ -151,7 +151,7 @@ func _grounding() -> void:
 		if node is StaticBody3D:
 			ray.exclude = [(node as StaticBody3D).get_rid()]
 		var hit: Dictionary = space.intersect_ray(ray)
-		while not hit.is_empty() and (hit["collider"] as Node).get_meta("invisible", false):
+		while not hit.is_empty() and (hit["collider"] as Node).get_meta("invisible_wall", false):
 			ray.exclude = ray.exclude + [(hit["collider"] as CollisionObject3D).get_rid()]
 			hit = space.intersect_ray(ray)
 		var floor_y: float = (hit["position"] as Vector3).y if not hit.is_empty() else -INF

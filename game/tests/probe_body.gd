@@ -48,5 +48,8 @@ func is_inside_geometry() -> bool:
 	var hits: Array[Dictionary] = get_world_3d().direct_space_state.intersect_shape(query, 1)
 	if not hits.is_empty():
 		var collider: Node = hits[0]["collider"]
-		set_meta("inside", "%s/%s" % [collider.get_parent().name, collider.name])
+		var box: CollisionShape3D = collider.get_child(0) as CollisionShape3D
+		var size: Vector3 = (box.shape as BoxShape3D).size if box != null and box.shape is BoxShape3D else Vector3.ZERO
+		var where: Vector3 = box.global_position if box != null else Vector3.ZERO
+		set_meta("inside", "%s box %s at %s" % [collider.get_parent().name, size, where])
 	return not hits.is_empty()

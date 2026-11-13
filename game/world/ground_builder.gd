@@ -98,7 +98,7 @@ func _parapets(lines: Array, look: Dictionary) -> void:
 
 
 ## Iron railings between two points (each end has its own height, so a railing can follow a flight of steps):
-## posts, a top bar, and an invisible wall so nobody falls off.
+## posts, a top bar, and an invisible wall down to the ground so nobody falls off or wedges under a sloping one.
 func _railings(lines: Array, look: Dictionary) -> void:
 	var height: float = look["height"]
 	for line: Array in lines:
@@ -113,7 +113,8 @@ func _railings(lines: Array, look: Dictionary) -> void:
 				var bar := Vector3(RAIL_BAR, RAIL_BAR, at.distance_to(next))
 				var mid: Vector3 = (at + next) * 0.5 + Vector3.UP * height
 				Blocks.box(self, mid, bar, _iron, false, at.direction_to(next))
-				Blocks.wall_between(self, at, next, height, RAIL_BAR, null)
+				var top: float = maxf(at.y, next.y) + height
+				Blocks.wall_between(self, Vector3(at.x, 0.0, at.z), Vector3(next.x, 0.0, next.z), top, RAIL_BAR, null)
 
 
 ## A flight of steps: stone blocks to look at, solid blocks one step lower (so nobody walks under the flight)
