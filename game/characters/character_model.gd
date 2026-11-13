@@ -1,8 +1,8 @@
 class_name CharacterModel
 extends Node3D
 ## A rigged Meshy character (one GLB holding the mesh, skin and every clip): turned so it faces the node's -Z
-## like every other mover, its clips set to loop, its walk and run strides measured, and played by name with a
-## soft blend. The player and every
+## like every other mover, its clips set to loop, its walk and run strides measured, its baked-in lean corrected
+## (PostureFix), and played by name with a soft blend. The player and every
 ## townsperson use one.
 
 const LEFT_TOE: String = "LeftToeBase"
@@ -16,9 +16,10 @@ var skeleton: Skeleton3D
 var _clip: String = ""
 var _foot_speeds: Dictionary = {}
 var _plants: Dictionary = {}
+var posture: PostureFix
 
 
-func setup(path: String) -> void:
+func setup(path: String, keep_pose: Array = []) -> void:
 	name = "Model"
 	var model: Node3D = (load(path) as PackedScene).instantiate()
 	model.rotation.y = PI
@@ -34,6 +35,17 @@ func setup(path: String) -> void:
 		if has_clip(clip):
 			var measured: float = ground_speed(clip, Tuning.i("stride", "samples"), Tuning.f("stride", "planted_band"))
 			_foot_speeds[clip] = measured if measured > 0.0 else Tuning.f("stride", "fallback")
+	_stand_up(keep_pose)
+
+
+## Straightens the rig's baked-in lean on every standing clip (except clips whose pose is meant, like a stoop).
+func _stand_up(keep_pose: Array) -> void:
+	var clips: Array = Tuning.doc("tuning")["posture"]["clips"].filter(func(clip: String) -> bool:
+		return not keep_pose.has(clip))
+	posture = PostureFix.new()
+	posture.measure(self, clips, Tuning.i("posture", "samples"))
+	skeleton.add_child(posture)
+	_clip = ""
 
 
 func has_clip(clip: String) -> bool:

@@ -1,5 +1,5 @@
 {
- "_doc": "Townsfolk and their looping routines. Steps: walk to a point; or play a clip (idle, talk, sit, wave) for some seconds, facing a point. A sit step names the bench near a point (bench_near): the seat is worked out from that bench where it actually stands (seat: how far in front of the bench's centre and how high the sitter's origin goes, and the hips' height above the seat top); with no bench there, the step is skipped.",
+ "_doc": "Townsfolk and their looping routines. Steps: walk to a point; or play a clip (idle, talk, sit, wave) for some seconds, facing a point. A sit step names the bench near a point (bench_near): the seat is worked out from that bench where it actually stands (seat: how far in front of the bench's centre and how high the sitter's origin goes, and the hips' height above the seat top); with no bench there, the step is skipped. keep_pose: clips whose posture is meant (the old man's dozing stoop) and is not straightened.",
  "townsfolk": [
   {
    "name": "baker",
@@ -109,6 +109,9 @@
       -3.8
      ]
     }
+   ],
+   "keep_pose": [
+    "idle"
    ]
   },
   {

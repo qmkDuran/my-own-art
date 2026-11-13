@@ -50,9 +50,25 @@ and portraits, coins, one upgrade shop). The 700-credit cap covers steps 1 to 3.
 - **Canal fish:** 26 softly glowing koi (teal, amber, lilac) swim along the canal by the square and bridge.
 
 ## Second playtest fixes
-- **Posture:** the old Meshy "Idle" (action 0) stood with bent knees and splayed legs, and the free rig walk leaned
-  back. The player now uses library "Idle 9" (249) and "Casual Walk" (30), 9 credits with one alternative idle
-  tried; side-view stills show straight legs and an upright walk.
+- **Posture:** the old Meshy "Idle" (action 0) stood with bent knees and splayed legs; the player now uses
+  library "Idle 9" (249) and "Casual Walk" (30) (9 credits). That alone wasn't enough: measured on the skeleton,
+  the Meshy rigs have a lean baked into their bind pose (the player's spine 6 degrees back in the rest pose), so
+  every clip played on them leaned back with the hips pushed forward. `PostureFix` (a SkeletonModifier3D) measures
+  each standing clip at load (hips ahead of the mid-ankles, spine lean) and, every frame after the animation, moves
+  the hips back over the ankles (the upper legs turned so the feet stay planted) and pitches the lowest spine bone
+  upright. The old man's dozing idle is a stoop on purpose and is left alone. The smoke test measures the drawn
+  skeleton (read as it finishes updating) for the player and every townsperson, in idle (cycle average) and at
+  walk mid-stance:
+
+  | Character, clip | Before: head / hips from mid-ankles, spine lean | After |
+  | --- | --- | --- |
+  | Player idle | 0.5 cm / 6 cm, -7.8 deg | 2.5 cm / 0.6 cm, -2.2 deg |
+  | Player walk | 0.2 cm, -7.2 deg | 2.2 cm / 0.8 cm, -1.6 deg |
+  | Baker idle | 8.0 cm, -7.6 deg | 1.4 cm / 0.1 cm, -2.0 deg |
+  | Child idle | 6.9 cm, -9.5 deg | 2.3 cm / 0.0 cm, -2.8 deg |
+  | Walks (baker, old man, child) | up to 4 cm, up to 2.8 deg | under 2.1 cm, under 2.3 deg |
+
+  Limits: head and hips within 5 and 4 cm of the ankles, spine within 5 degrees.
 - **Open town:** fewer houses (each row placed once, in order, with 3 to 7 m walkable gaps), no backdrop rows, no
   brick gap walls, gap fillers or invisible row walls, no hedges, no mist veil. You can walk between houses and out
   onto the meadow (now with a floor) up to an invisible ring hidden in a dense band of 260 trees at the world's

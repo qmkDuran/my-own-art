@@ -1,8 +1,8 @@
 extends Node
-## --walk-sheet --out=<dir> (run with --fixed-fps 30): the player walks across Lamp Street seen from the side, the
+## --walk-sheet --out=<dir> (run with --fixed-fps 30): the player walks across the square seen from the side, the
 ## camera keeping pace, and a still is saved every few frames (<dir>/walk_<n>.png) for a contact sheet. Stills only.
 
-const START: Vector3 = Vector3(-38, 0.05, 0.6)
+const START: Vector3 = Vector3(1.0, 0.05, 8.6)
 const SIDE: Vector3 = Vector3(0, 0.9, 3.2)
 const EVERY: int = 3
 const SHOTS: int = 12

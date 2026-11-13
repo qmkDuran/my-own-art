@@ -26,6 +26,7 @@ func _run() -> void:
 	failures.append_array(SmokeGraphics.new(m).run())
 	failures.append_array(await SmokeDefence.new(m).run())
 	failures.append_array(await UiLayout.new(m).run())
+	failures.append_array(await PostureCheck.new(m).run())
 	for failure: String in failures:
 		print("SMOKE FAIL ", failure)
 	if failures.is_empty():

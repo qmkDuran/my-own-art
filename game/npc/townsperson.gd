@@ -22,7 +22,7 @@ func setup(spec: Dictionary, benches: Array[Node3D]) -> void:
 	name = person_name.to_pascal_case()
 	model = CharacterModel.new()
 	add_child(model)
-	model.setup(spec["model"])
+	model.setup(spec["model"], spec.get("keep_pose", []))
 	var steps := Footsteps.new()
 	add_child(steps)
 	steps.setup(model, Tuning.number("audio", "steps", "townsfolk_db"))
