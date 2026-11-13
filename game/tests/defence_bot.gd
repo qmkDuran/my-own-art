@@ -10,6 +10,8 @@ const HOME_PULL: float = 0.04
 const LAMP_SAFE: float = 5.0
 const LAMP_PULL: float = 0.6
 const HOME: Vector3 = Vector3(0, 0, 4)
+## The "combo" strategy: the combo's attack first, then its passive.
+const COMBO_PRIORITY: Dictionary = { "firefly_swarm": 3.0, "brighter_wick": 2.0 }
 
 var strategy: String = "random"
 var picks: Array[String] = []
@@ -73,4 +75,6 @@ func _score(offer: Dictionary) -> float:
 			return 2.0 if offer["kind"] == "passives" else 1.0
 		"random":
 			return randf()
+		"combo":
+			return COMBO_PRIORITY.get(offer["id"], 0.0) + randf()
 	return 2.0 if offer["id"] == strategy else randf()

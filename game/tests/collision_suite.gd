@@ -12,6 +12,7 @@ const SWEEP_PROBES: int = 40
 const SWEEP_SECONDS: float = 20.0
 const LONG_SWEEP_SECONDS: float = 180.0
 const CHECK_EVERY: float = 0.25
+## Stuck means no way out: a still probe tries each of the 8 directions in turn for STUCK_SECONDS.
 const STUCK_SECONDS: float = 2.0
 const STUCK_MOVE: float = 0.25
 const BELOW_FLOOR: float = 0.2
@@ -157,7 +158,7 @@ func _sweep_check(probe: ProbeBody, problems: Dictionary) -> void:
 	var moved: float = at.distance_to(probe.get_meta("last"))
 	probe.set_meta("last", at)
 	if moved < STUCK_MOVE * CHECK_EVERY:
-		probe.heading = Vector3.FORWARD.rotated(Vector3.UP, randf() * TAU)
+		probe.heading = probe.heading.rotated(Vector3.UP, TAU / DIRECTIONS)
 		probe.set_meta("still", float(probe.get_meta("still")) + CHECK_EVERY)
 		if float(probe.get_meta("still")) > STUCK_SECONDS:
 			problems["stuck for over 2 s near " + where] = true

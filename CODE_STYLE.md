@@ -23,18 +23,20 @@ headless smoke test. Never commit unless `tools/run_all.sh` prints `ALL CHECKS P
 ## Folders (by feature, under `game/`)
 | Folder | What lives there |
 | --- | --- |
-| `core/` | `Main`, the `Tuning` autoload, input map, physics layers |
-| `world/` | the Meshy asset library, town and ground builders, box helpers, surface materials, fountain water |
+| `core/` | `Main`, the `Tuning` autoload, input map, physics layers, graphics tiers |
+| `world/` | the Meshy asset library, town and ground builders, box helpers, surface materials, fountain water, the walkable grid |
 | `lighting/` | the night environment, moonlight, lamp lights and the shadow budget |
 | `weather/` | the rain toggle |
-| `effects/` | fireflies, dust motes, rain particles and their shared parts |
+| `effects/` | fireflies, dust motes, rain particles, sparkle bursts, ground rings and their shared parts |
+| `defence/` | the defence night: `NightRun`, `Horde`, `Creature`, `Spawner`, `Pickups`, `LampKeeper`, `Vitality`, `Pantry` |
+| `defence/skills/` | lantern magic: `Attack` and one class per attack family, `MagicStats`, `Loadout` |
 | `characters/` | the rigged-character model shared by the player and townsfolk |
 | `player/` | the player body, controller and hand lantern |
 | `camera/` | the third-person orbit camera |
 | `npc/` | townsfolk routines and the cat |
 | `audio/` | the procedural sound synth and the ambience |
-| `ui/` | the HUD |
+| `ui/` | the town HUD, the night HUD, the level-up panel and the shared `UiStyle` |
 | `shaders/` | stone, water, Meshy asset and sky shaders |
 | `data/` | JSON |
 | `assets/meshy/` | the Meshy GLBs and `ASSETS.md` |
-| `tests/` | the smoke test, the stills script and the test runner |
+| `tests/` | smoke test parts, collision suite and layout checks, perf probe, balance bot and stability run, stills |

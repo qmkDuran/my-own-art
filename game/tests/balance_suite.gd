@@ -1,11 +1,11 @@
 extends Node
-## --balance [--nights=N] [--stability]: the bot plays defence nights headless and reports survival time, deaths,
-## kills and how each skill's picks relate to winning, flagging outliers (a skill never picked, a skill whose
-## pickers win far more or less, nights far too easy or too hard). With --stability it plays shortened nights back
-## to back and checks that nodes, orphan nodes, particle systems and memory stay flat (nothing piles up).
+## --balance [--nights=N] [--strategy=S] [--stability]: the bot plays defence nights headless and reports survival
+## time, deaths, kills and how each skill's picks relate to winning, flagging outliers (a skill never picked, a skill
+## whose pickers win far more or less, nights far too easy or too hard). With --stability it plays shortened nights
+## back to back and checks that nodes, orphan nodes, particle systems and memory stay flat (nothing piles up).
 
-const STRATEGIES: Array[String] = ["random", "attacks_first", "passives_first", "candle_ring", "moonbeam",
-	"bell_chime", "firefly_swarm", "random"]
+const STRATEGIES: Array[String] = ["random", "attacks_first", "passives_first", "combo", "candle_ring", "moonbeam",
+	"bell_chime", "random"]
 const TOO_EASY_LEVEL: int = 40
 const TOO_HARD_SECONDS: float = 120.0
 const WIN_GAP: float = 0.6
@@ -59,7 +59,8 @@ func _balance() -> void:
 	var nights: int = int(TestRunner.arg_value("--nights=")) if TestRunner.arg_value("--nights=") != "" else 4
 	var results: Array[Dictionary] = []
 	for index: int in nights:
-		results.append(await _night(STRATEGIES[index % STRATEGIES.size()]))
+		var only: String = TestRunner.arg_value("--strategy=")
+		results.append(await _night(only if only != "" else STRATEGIES[index % STRATEGIES.size()]))
 		var r: Dictionary = results[-1]
 		print("BALANCE night %d (%s): %s at %.0f s, level %d, %d kills, picks %s" % [index + 1, r["strategy"],
 			"WON" if r["won"] else "fainted", r["seconds"], r["level"], r["kills"], r["picks"]])

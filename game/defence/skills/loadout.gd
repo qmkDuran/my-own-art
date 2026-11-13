@@ -10,6 +10,9 @@ const ATTACK_SCRIPTS: Dictionary = {
 	"bell_chime": "res://defence/skills/bell_chime.gd", "star_swarm": "res://defence/skills/orbit_attack.gd",
 }
 
+## Magic you already have is this many times likelier to be offered (so builds deepen towards combos).
+const OWNED_WEIGHT: int = 3
+
 var attacks: Dictionary = {}
 var passives: Dictionary = {}
 var magic := MagicStats.new()
@@ -45,7 +48,7 @@ func level_of(id: String) -> int:
 	return int(passives.get(id, 0))
 
 
-## Up to `choices` random offers; a ready combo is always among them.
+## Up to `choices` random offers (magic you own is likelier); a ready combo is always among them.
 func offers() -> Array[Dictionary]:
 	var pool: Array[Dictionary] = []
 	var combos: Array[Dictionary] = []
@@ -56,9 +59,13 @@ func offers() -> Array[Dictionary]:
 		var table: Dictionary = Tuning.doc("skills")[kind]
 		for id: String in table:
 			if level_of(id) < int(table[id]["max_level"]) and not _replaced_by_combo(id):
-				pool.append(_offer(kind, id, table[id]))
+				for copy: int in OWNED_WEIGHT if level_of(id) > 0 else 1:
+					pool.append(_offer(kind, id, table[id]))
 	pool.shuffle()
-	var picked: Array[Dictionary] = combos + pool
+	var picked: Array[Dictionary] = combos
+	for offer: Dictionary in pool:
+		if not picked.any(func(other: Dictionary) -> bool: return other["id"] == offer["id"]):
+			picked.append(offer)
 	picked.resize(mini(picked.size(), int(Tuning.doc("skills")["choices"])))
 	if picked.is_empty():
 		picked.append(_offer("heal", "warm_tea", Tuning.doc("skills")["heal_choice"]))

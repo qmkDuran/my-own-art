@@ -17,10 +17,118 @@ There are only two activities, **defending** and **the café**. Nothing else (no
 building) unless the core loop proves fun. The tone is a Halloween storybook (Luigi's Mansion, Over the Garden Wall,
 Plants vs Zombies): never horror and never gore.
 
-**Order of work:** (1) the town mood piece (this step, done); (2) one defence-night test in these streets (waves
+**Order of work:** (1) the town mood piece (done); (2) one defence-night test in these streets (waves
 from the fog, auto-firing lantern magic, about 8 upgrades, 3 creature types plus a mini boss, ingredient drops, a run
 of 8 to 10 minutes, snuffed lamps to relight); (3) the café in the bakery (3 recipes, 2 or 3 customers with emotes
 and portraits, coins, one upgrade shop). The 700-credit cap covers steps 1 to 3.
+
+## Step 2: the defence-night test (N in game)
+- **Loop:** the townsfolk go indoors and creatures drift in from the fog for 9 minutes. The pace and mix are set
+  by `data/defence.json`: a trickle that thickens, plus four surges. The **Gloom King** comes at 7:00. Win by
+  beating him or surviving until dawn; fainting wakes you at the café door with half the ingredients.
+- **Creatures** (Meshy, static, moved in code, 18 credits each):
+  - **Sheet ghost** (floats, through walls).
+  - **Pumpkin head** (hops, solid: slides around houses).
+  - **Lantern moth** (flies to the nearest lit lamp and snuffs it).
+  - **Gloom King:** a mini boss with a purple glow so his dark cloak reads. He summons ghosts and snuffs lamps
+    near him.
+
+  The rule is deliberate: spirits drift through walls, while walkers collide and only spawn where they can reach
+  you (a walkable-grid flood fill).
+- **Lamps:** snuffed lamps go dark (the area really dims). Stand by one for 1.2 s to relight it. Near a lit lamp
+  you slowly heal.
+- **Lantern magic** (`data/skills.json`, level = base + per_level x (level - 1), scaled by passives):
+  - **Attacks:** Lantern Flare (starter), Firefly Swarm, Candle Ring, Moonbeam, Bell Chime.
+  - **Passives:** Brighter Wick, Warm Scarf, Quick Boots, Steady Hands (maxing at 3).
+  - **Combo:** Star Swarm (Firefly Swarm 5 + Brighter Wick 3).
+  - **Level-ups:** each offers 3 cards; magic you already own is 3x likelier to be offered, so builds deepen.
+- **Drops:** light motes (experience) and ingredients, pulled in within your pickup reach. Lanterns, sparkles
+  and drops all glow and bloom; nothing is gory.
+- **Pantry:** ingredients saved to `user://pantry.json` for the café step.
+- **Dodge:** Space (a short dash with no damage taken).
+- **Not built yet** (from the approved list): Wisp Lanterns, Sparkler Trail, Teapot Turret; Lucky Charm and
+  Cinnamon Magnet; the Chandelier and Golden Lantern combos.
+
+### Tests (what each one caught)
+`tools/run_all.sh` (about 1 minute) runs:
+- the lint and a parse check;
+- the smoke test: the town, graphics tiers, the defence night and UI layout;
+- the collision suite.
+
+`tools/run_all.sh --long` adds:
+- a 3-minute walk sweep;
+- the balance bot;
+- the stability run;
+- the rendered perf probe;
+- the readability check.
+
+Tests were added only for features that exist; save/load and the end-to-end loop come with the café.
+- **Collision and clipping** (`--collision`, 9 s):
+  - **Walls hold:** about 650 runs at full speed into every solid box from 8 directions.
+  - **Walk-the-town sweep:** 40 bots doing random walks (20 s by default, 180 s with --long).
+  - **Crossings:** the bridge and the steps, both ways.
+  - **Camera probes, seat pose** (the old man's hips are 0.23 m above the bench seat) and **NPC routes.**
+  - **Hoppers stay out:** a pumpkin chasing the player through a row of houses never gets inside one.
+  - **Spawn reachability.**
+  - **Layout checks:** collision boxes against the visible mesh, interpenetration, and floating or sinking props.
+
+  It **caught and I fixed:**
+  - The bridge deck's collision ran along the wrong axis, so you fell into the canal.
+  - Two terrace lamps, a bench and barrels were buried in the terrace (y=0 instead of 6).
+  - Two corner houses I had added sat inside their neighbours.
+  - Barrels were inside a lamp post.
+  - The baker's and child's routes went through the market stall, a bench and the fountain.
+  - The town leaked at several corners and both quay ends (bots walked out into the void).
+  - Bots could walk under the overlook stairs and wedge under the sloping railing.
+  - Bots could squeeze between houses and get stuck in pockets.
+  - The house collision boxes were shrunk bounding boxes. They are now **measured from each mesh's vertices at
+    walking height** (stray 2% trimmed), so what you bump into is what you see. The worst empty box edge is
+    1.0 m (the bakery's sign corner).
+  - The town is now sealed with invisible walls at its edges and gap-fillers between neighbouring houses.
+- **Performance** (headless proxies in the smoke test; rendered `--perf` probe in --long). The busiest spot is the
+  square in the rain with 150 creatures and all magic running:
+
+  | Tier | Draw calls | Primitives | Shadowed lights | Particles |
+  | --- | --- | --- | --- | --- |
+  | High | 437 | 2.7 M | 6 | 6,200 |
+  | Medium | 383 | 2.5 M | 4 | 3,900 |
+  | Low | 232 | 1.8 M | 2 | 2,100 |
+
+  All within the budgets in `data/perf.json`, and each tier is lighter than the one above. Absolute fps is
+  meaningless on lavapipe (it reads 1), so it is printed for reference only.
+- **Graphics setting (G):** Low, Medium and High switch volumetric fog, SSR, SSAO, the number of shadowed lamps,
+  the moon's shadow splits and particle density.
+- **Readability** (`tools/readability.py` on the stills):
+  - **Mean luminance:** 0.17 to 0.34 against a target of 0.10 to 0.45.
+  - **Clipping:** 0% crushed blacks and 0% blown whites. The fog lifts the darks: moody, never muddy.
+  - **Creatures:** they cover 2.8% of the defence frame at a mean contrast of 0.15 against the town and fog
+    behind them (target 0.10).
+- **UI layout:** the town HUD, the night HUD (with a full bag and the boss bar) and the level-up cards, at the
+  logical sizes 1280x720 (every 16:9 screen), 1280x800 (16:10) and 1707x720 (21:9). It caught:
+  - The start banner ran off screen.
+  - The timer overlapped the XP bar on 16:10 and 21:9.
+  - The HUDs froze behind the level-up pause.
+- **Stability** (4 shortened nights back to back): it caught a real leak, about 65 sparkle-burst particle
+  systems piling up per night (their `finished` signal never fires on some renderers). Now nodes (1,393 to
+  1,394), orphans (0), particle systems (7) and memory (200.7 to 200.8 MB) stay flat.
+- **Balance bot** (it kites, dodges, relights lamps when safe, and picks by strategy): it caught orphaned light
+  bolts erroring after a night reset (fixed). Results by tuning pass:
+  - **First pass:** 2 of 8 nights won. Late-game deaths, level 15 at best, and the combo was unreachable.
+  - **After a gentler XP curve, softer late waves and fewer boss summons:** 6 of 8 won.
+  - **With owned-magic weighting and passives maxing at 3:** 5 to 7 of 8 won, depending on the run.
+  - **Every build:** the passives-first build faints at about 170 to 190 s (expected).
+  - **Win timing:** wins come from beating the boss at about 450 to 500 s.
+  - **Star Swarm:** the combo-focused bot reaches it in 2 of 3 nights. It isn't a clear power spike yet.
+  - **Outlier flags:** on 8 nights these come from small samples (for example "lantern_flare: 0% without" is the
+    single passives-only night).
+
+### Step 2 weak spots
+- **The bot is not a person.** Human kiting is better, so real difficulty is probably lower than the bot's
+  results; the late game (the boss plus summons) is where it dies.
+- **Spirits pass through walls by design**, which can feel unfair in tight alleys.
+- **Creatures have no animation rig:** the code bob, hop, flutter and a hit squash give them life.
+- **Moonbeam and Firefly glows bloom strongly** near the camera.
+- **Star Swarm isn't clearly stronger** than the Firefly Swarm it replaces.
 
 ## Step 1: the town mood piece
 A crooked storybook town, always at night. It has a cobbled square with a fountain, a big tree, a clock tower, a
@@ -83,8 +191,9 @@ there is no CREDITS.md.
 - `tools/shrink_glb.py` re-encodes the embedded textures as JPEG (1024 px for props and characters, 2048 px for
   buildings), and `tools/merge_clips.py` merges each character's clips into one GLB. The repo assets total 16 MB.
   The full list, with prompts and costs, is in `game/assets/meshy/ASSETS.md`.
-- **Credits spent: 437 of the 500 cap** (balance 8200 to 7763): 18 on concepts, 198 on 11 props, 90 on 5
-  buildings, 131 on 4 characters. No placeholders were needed. The new cap for steps 1 to 3 is 700 (floor 7450).
+- **Credits spent: 437 for step 1** (balance 8200 to 7763): 18 on concepts, 198 on 11 props, 90 on 5 buildings,
+  131 on 4 characters. No placeholders were needed. **Step 2 added 72** (4 creatures at 18 each), so the total
+  is **509 of the 700 cap** (floor 7450). That leaves 191 for the café.
 
 ### Code
 Typed GDScript in feature folders; each script has one job; all numbers are in `data/*.json`. See CODE_STYLE.md.
@@ -96,8 +205,8 @@ clips, townsfolk routines, rain wets the town). `tools/shoot.sh` takes the revie
   no frame times. Volumetric fog, SSR, SSAO and several dozen lights should suit a mid-range GPU (Forward+ clusters the
   lights, and only 6 cast shadows), but if it struggles, lower the volumetric fog volume size in project settings
   or turn SSAO off in `lighting.json`.
-- **Collisions are boxes.** Houses use shrunk bounding boxes, plus an invisible wall behind each row; the bridge deck
-  is two ramps; the steps are one ramp. Walkable, but not exact: you can stand slightly "inside" an overhang.
+- **Collisions are boxes** measured from each mesh at walking height (see the collision suite above). The bridge
+  deck is two ramps and the steps are one ramp; upper-floor overhangs have no collision (you walk under them).
 - **Townsfolk walk straight lines** between hand-placed points (no navmesh), and they don't react to the player yet
   (dialogue comes with the café step).
 - **The sit pose** is lifted by hand onto the bench; it may sink or float slightly as the clip breathes.

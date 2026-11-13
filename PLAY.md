@@ -17,6 +17,10 @@ to Compatibility on its own: it still runs, but without volumetric fog or screen
 | Shift (hold) | run |
 | Mouse | look around (click the window to capture the mouse) |
 | R | toggle rain (rain falls, puddles grow and shine, the fog thickens, rain sound fades in) |
+| N | start a **defence night** (see below) |
+| Space | dodge (a quick dash; creatures can't hurt you mid-dash) |
+| 1 / 2 / 3 or click | pick a level-up card |
+| G | graphics: Low / Medium / High |
 | H | show the controls hint again |
 | Esc | free the mouse |
 
@@ -28,6 +32,29 @@ to Compatibility on its own: it still runs, but without volumetric fog or screen
 - **Lantern Alley:** east from the square, lit by wall lanterns.
 - **The overlook:** from the south bank, walk east along the canal and up the long steps to the terrace for the view.
 
+## The defence night (N)
+The townsfolk go indoors and the spooky-cute creatures drift in from the fog for about 9 minutes:
+- **Sheet ghosts** float straight at you (through walls: they're ghosts).
+- **Pumpkin heads** hop after you along the streets. They're solid and walk around houses.
+- **Lantern moths** fly for the nearest lit lamp and snuff it, so that part of town goes dark. Stand next to a
+  snuffed lamp for a moment to relight it (a ring fills). Standing near a lit lamp slowly heals you.
+- At 7:00 the **Gloom King** arrives. He summons ghosts and snuffs every lamp he passes. Beat him, or survive
+  until dawn, to win.
+
+Your lantern magic fires on its own; you move, dodge and choose. Defeated creatures pop into sparkles and drop
+light motes (experience) and ingredients (Pumpkin Goo, Moth Dust, Ghost-Pepper Wisps, Moonberries, Bat-Wing
+Toffee). Walk near them to collect them. Each level-up pauses the night and offers 3 cards:
+- **Attacks:** Lantern Flare (the starter: bolts at the nearest creature), Firefly Swarm (orbiting zaps), Candle
+  Ring (spinning candles up close), Moonbeam (beams at random spots), Bell Chime (a knock-back-and-stun pulse).
+- **Passives:** Brighter Wick (area), Warm Scarf (health), Quick Boots (speed), Steady Hands (cooldown).
+- **Combo:** max Firefly Swarm and Brighter Wick to unlock **Star Swarm**.
+
+Fainting is gentle: you wake at the café door and keep half your ingredients. Winning keeps them all. The pantry
+is saved (it's what the café will cook with).
+
 ## For developers
-- `tools/run_all.sh`: lint, parse check and headless smoke test (prints `ALL CHECKS PASS`).
+- `tools/run_all.sh`: lint, parse check, the headless smoke test (town, graphics tiers, defence night, UI layout)
+  and the collision/clipping suite, about 1 minute. Prints `ALL CHECKS PASS`.
+- `tools/run_all.sh --long`: adds the 3-minute walk sweep, the balance bot (4 nights), the stability run, the
+  rendered performance probe and the brightness/readability check (needs `xvfb-run` and Vulkan), about 15 minutes.
 - `tools/shoot.sh OUT_DIR [shot ...]`: review stills (needs `xvfb-run` and a Vulkan driver; lavapipe works).

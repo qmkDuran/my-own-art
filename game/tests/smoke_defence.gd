@@ -67,7 +67,7 @@ func _check_levels() -> void:
 		m.night.loadout.apply({ "kind": "attacks", "id": id })
 	for level: int in 4:
 		m.night.loadout.apply({ "kind": "attacks", "id": "firefly_swarm" })
-	for level: int in 5:
+	for level: int in int(Tuning.doc("skills")["passives"]["brighter_wick"]["max_level"]):
 		m.night.loadout.apply({ "kind": "passives", "id": "brighter_wick" })
 	var combo: bool = m.night.loadout.offers().any(func(o: Dictionary) -> bool: return o["kind"] == "combo")
 	_expect(combo, "Star Swarm offered when Firefly Swarm and Brighter Wick are maxed")

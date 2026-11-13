@@ -26,12 +26,12 @@
       "per_level": { "damage": 2.0, "cooldown": -0.3, "radius": 0.4, "knockback": 0.5, "stun": 0.15 } }
   },
   "passives": {
-    "brighter_wick": { "name": "Brighter Wick", "text": "All magic reaches further (+12% area).", "max_level": 5,
-      "per_level": { "area": 0.12 } },
-    "warm_scarf": { "name": "Warm Scarf", "text": "+20 max health.", "max_level": 5, "per_level": { "max_health": 20.0 } },
-    "quick_boots": { "name": "Quick Boots", "text": "+8% move speed.", "max_level": 5, "per_level": { "speed": 0.08 } },
-    "steady_hands": { "name": "Steady Hands", "text": "Magic recharges 7% faster.", "max_level": 5,
-      "per_level": { "cooldown": 0.07 } }
+    "brighter_wick": { "name": "Brighter Wick", "text": "All magic reaches further (+20% area).", "max_level": 3,
+      "per_level": { "area": 0.2 } },
+    "warm_scarf": { "name": "Warm Scarf", "text": "+30 max health.", "max_level": 3, "per_level": { "max_health": 30.0 } },
+    "quick_boots": { "name": "Quick Boots", "text": "+12% move speed.", "max_level": 3, "per_level": { "speed": 0.12 } },
+    "steady_hands": { "name": "Steady Hands", "text": "Magic recharges 10% faster.", "max_level": 3,
+      "per_level": { "cooldown": 0.1 } }
   },
   "combos": {
     "star_swarm": { "name": "Star Swarm", "text": "COMBO: Firefly Swarm + Brighter Wick. A ring of shooting stars.",
