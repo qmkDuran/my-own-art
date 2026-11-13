@@ -25,7 +25,7 @@ float value_noise(vec2 p) {
 void fragment() {
 	float along = fract(UV.x * 1.5 - TIME * scroll_speed);
 	float band = smoothstep(0.0, 0.35, along) * smoothstep(1.0, 0.6, along);
-	float across = pow(1.0 - abs(UV.y - 0.5) * 2.0, 1.5);
+	float across = pow(clamp(1.0 - abs(UV.y - 0.5) * 2.0, 0.0, 1.0), 1.5);
 	float tip = smoothstep(0.0, 0.15, UV.x) * smoothstep(1.0, 0.7, UV.x);
 	float n = value_noise(UV * vec2(18.0, 4.0));
 	float cut = progress * 1.1;

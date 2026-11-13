@@ -39,6 +39,55 @@ bloom smears.
   may be above 0.85 luminance, every still keeps near-white pixels under 0.5%, and the player and creatures must
   still stand out from the effects.
 
+## Lantern Flare showcase effect (the starter attack)
+The idea is shape and motion over brightness, in a warm amber palette, borrowing principles from Genshin-style
+effects (layered colour cores, crisp pop shapes, a ground ring, anticipation, snappy timing, a lingering afterglow)
+with original designs only:
+- **Wind-up** (0.14 s): warm motes swirl in to the lantern, with a small halo swell and a brief soft light.
+- **Flight** (about 0.3 s):
+  - A teardrop flame (`vfx_flame.gdshader`: amber core, orange, then a deep red, fading edge, with flicker and
+    wobble) inside a soft halo.
+  - The Blender spiral ribbon spinning behind it with a scrolling glow (or a camera-facing ribbon trail in the
+    pure-Godot version).
+  - Embers shed along the way, and a small moving light.
+- **Impact** (on the creature's near side):
+  - A six-point **star pop** that snaps open, bright but coloured.
+  - A soft light pop on the cobbles.
+  - The Blender **swirl ring** expanding with a scrolling, dissolving edge (or an SDF ring).
+  - The Blender **ember flipbook** plus a few loose embers, and warm **smoke-puff** flipbooks.
+  - Hit-stop of 3 frames on kills or strong hits only, and a tiny camera nudge on crits only (12% crit chance,
+    x2 damage).
+  - Sounds synthesised in code: a whoosh on cast, a warm chime pop and a crackle tail.
+- **Aftermath:** a glowing ember decal on the stones that cools over 1.5 s, with drifting embers.
+- **On the creature:** a squash and a knockback on each hit. On defeat it dissolves into light (noise dissolve
+  with a warm edge), pops into sparkles, and the drops appear there.
+- **Reusable pieces** (`game/vfx/`, all configured in `data/vfx.json`): WindupGather, FlameWisp, RibbonTrail,
+  ImpactBurst, StarPop, EmberMark, ParticleBursts (Godot sprites or flipbooks), EffectLight, Dissolve, HitFeel,
+  VfxQuota and VfxKit.
+- **Graphics tiers:** effect lights are capped per tier (2, 4 or 8 at once; a light with no free slot is simply
+  skipped), trails are off on Low, and particle counts scale with density.
+- **The NaN bug:** a NaN in the first ribbon shader (`pow` of a slightly negative number at the mesh edge) made the
+  effect meshes bloom into white blobs; it is clamped now.
+- **Blender-assisted vs pure Godot:** `data/vfx.json` "source" switches between them (Blender is the default).
+  Asset cost of the Blender version:
+
+  | Asset | Size |
+  | --- | --- |
+  | Ember flipbook (1000 px, 5x5 frames) | 272 KB |
+  | Smoke flipbook | 340 KB |
+  | Swirl ring mesh (130 vertices) | 6 KB |
+  | Spiral ribbon mesh | 10 KB |
+  | **Total** | **about 630 KB** |
+
+  Runtime cost is a handful of extra draw calls per impact (a flipbook quad instead of sprite particles, one
+  ring mesh), about the same as the pure-Godot version. The rendered perf probe with flares firing during a
+  150-creature wave stays within its budgets (see below).
+- **Reproducing the assets:** `blender -b -P tools/vfx/make_flipbooks.py -- OUT 25 200`, then
+  `python3 tools/vfx/pack_flipbook.py OUT ember_burst game/assets/vfx/ember_burst.png 5` (and the same for
+  smoke_puff), and `blender -b -P tools/vfx/make_meshes.py -- game/assets/vfx`.
+- **Review clips:** used only for my own timing review (Godot's movie writer to a PNG sequence), then deleted.
+  Only stills are delivered.
+
 ## Step 2: the defence-night test (N in game)
 - **Loop:** the townsfolk go indoors and creatures drift in from the fog for 9 minutes. The pace and mix are set
   by `data/defence.json`: a trickle that thickens, plus four surges. The **Gloom King** comes at 7:00. Win by

@@ -11,6 +11,6 @@ void fragment() {
 	float d = length(UV - 0.5) * 2.0;
 	float radius = 0.15 + progress * 0.8;
 	float ring = smoothstep(thickness, 0.0, abs(d - radius));
-	float fade = pow(1.0 - progress, 1.5);
+	float fade = pow(clamp(1.0 - progress, 0.0, 1.0), 1.5);
 	ALBEDO = color * ring * fade * energy;
 }

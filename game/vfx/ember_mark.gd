@@ -19,7 +19,6 @@ func play(kit: VfxKit, spec: Dictionary) -> void:
 	texture_albedo = _spot(colour)
 	texture_emission = texture_albedo
 	emission_energy = float(spec["energy"])
-	modulate = colour
 	upper_fade = 0.5
 	lower_fade = 0.5
 	var drift := ParticleBursts.embers(kit.quota.count(int(spec["embers"])), colour, size * EMBER_SHARE, float(

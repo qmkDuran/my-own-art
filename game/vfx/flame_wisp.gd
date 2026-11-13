@@ -1,11 +1,14 @@
 class_name FlameWisp
 extends Node3D
-## The look of a flying Lantern Flare: a soft flame-wisp core that wobbles as it flies, a trail (a fading ribbon,
-## or the Blender spiral ribbon with a scrolling glow), embers shed along the path and a small moving light.
+## The look of a flying Lantern Flare: a soft teardrop flame that wobbles and flickers as it flies, a trail (a
+## fading ribbon, or the Blender spiral ribbon with a scrolling glow), embers shed along the path and a small
+## moving light.
 ## When the bolt lands, the trail and embers are left behind to fade out on their own.
 
 const SCROLL_SHADER: Shader = preload("res://shaders/vfx_scroll.gdshader")
-const RIBBON_ENERGY: float = 0.9
+const FLAME_SHADER: Shader = preload("res://shaders/vfx_flame.gdshader")
+const HALO_SHARE: float = 0.6
+const RIBBON_ENERGY: float = 0.8
 const LINGER: float = 0.6
 const WOBBLE_RATIO: float = 1.3
 const WOBBLE_FLAT: float = 0.6
@@ -22,8 +25,10 @@ func setup(kit: VfxKit, spec: Dictionary, direction: Vector3) -> void:
 	name = "FlameWisp"
 	_spec = spec
 	var colour: Color = Tuning.color(spec["color"])
-	_core = SoftGlow.make(colour, float(spec["core_size"]), float(spec["energy"]))
+	basis = Basis.looking_at(direction, Vector3.UP)
+	_core = _flame(float(spec["core_size"]), float(spec["energy"]))
 	add_child(_core)
+	_core.add_child(SoftGlow.make(colour, float(spec["core_size"]) * HALO_SHARE, float(spec["energy"])))
 	if kit.quota.trails:
 		_add_trail(kit, colour, direction)
 	_embers = _ember_trail(kit, colour)
@@ -69,13 +74,28 @@ func _add_trail(kit: VfxKit, colour: Color, direction: Vector3) -> void:
 		_ribbon.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		var holder := Node3D.new()
 		add_child(holder)
-		holder.basis = Basis.looking_at(-direction, Vector3.UP) * Basis(Vector3.RIGHT, -PI * 0.5)
+		holder.basis = Basis(Vector3.RIGHT, PI * 0.5)
 		holder.scale = Vector3.ONE * float(_spec["ribbon_length"])
 		holder.add_child(_ribbon)
 		return
 	_trail = RibbonTrail.new()
 	_trail.setup(self, colour, float(_spec["trail_width"]), int(_spec["trail_points"]))
 	add_child(_trail)
+
+
+## The teardrop flame: a sphere the flame shader draws out into a flickering tail (the node faces its flight).
+func _flame(size: float, energy: float) -> MeshInstance3D:
+	var sphere := SphereMesh.new()
+	sphere.radius = size * 0.5
+	sphere.height = size
+	var material := ShaderMaterial.new()
+	material.shader = FLAME_SHADER
+	material.set_shader_parameter("energy", energy)
+	sphere.material = material
+	var flame := MeshInstance3D.new()
+	flame.mesh = sphere
+	flame.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	return flame
 
 
 func _ember_trail(kit: VfxKit, colour: Color) -> GPUParticles3D:

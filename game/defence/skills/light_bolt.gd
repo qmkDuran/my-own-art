@@ -4,6 +4,9 @@ extends Node3D
 ## pierce count, sometimes a critical hit), and on each hit sets off the impact effect, the hit sound and the hit
 ## feel. At the end of its range, or as soon as its attack is gone, it leaves its trail behind and goes.
 
+## The impact happens on the creature's near side (a share of its radius towards the caster), so it isn't hidden.
+const CONTACT_SHARE: float = 1.6
+
 var _attack: Attack
 var _direction: Vector3
 var _travelled: float = 0.0
@@ -56,11 +59,12 @@ func _hit(creature: Creature) -> void:
 	if kit == null:
 		return
 	var look: Dictionary = Tuning.doc("vfx")["lantern_flare"]
+	var contact: Vector3 = creature.centre() - _direction * creature.radius * CONTACT_SHARE
 	var burst := ImpactBurst.new()
-	kit.place(burst, creature.centre())
-	burst.play(kit, look["impact"], look["mark"], creature.global_position)
-	kit.sfx.play("flare_pop", creature.centre())
-	kit.sfx.play("flare_crackle", creature.centre())
+	kit.place(burst, contact)
+	burst.play(kit, look["impact"], look["mark"], Vector3(contact.x, creature.global_position.y, contact.z))
+	kit.sfx.play("flare_pop", contact)
+	kit.sfx.play("flare_crackle", contact)
 	if creature.health <= 0.0 or strong:
 		kit.hit_feel.hit_stop(int(feel["stop_frames"]), float(feel["stop_time_scale"]))
 	if critical:

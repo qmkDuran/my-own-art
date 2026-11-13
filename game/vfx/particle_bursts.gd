@@ -55,7 +55,7 @@ static func smoke(count: int, colour: Color, size: float, lifetime: float) -> GP
 
 ## A flipbook sheet played once per particle; additive for fire, alpha for smoke.
 static func flipbook(sheet: Texture2D, frames: Vector2i, count: int, size: float, lifetime: float, additive: bool,
-		drift: float) -> GPUParticles3D:
+		drift: float, tint: Color = Color.WHITE) -> GPUParticles3D:
 	var process := ParticleProcessMaterial.new()
 	process.anim_speed_min = 1.0
 	process.anim_speed_max = 1.0
@@ -73,6 +73,7 @@ static func flipbook(sheet: Texture2D, frames: Vector2i, count: int, size: float
 	material.particles_anim_v_frames = frames.y
 	material.particles_anim_loop = false
 	material.albedo_texture = sheet
+	material.albedo_color = tint
 	material.vertex_color_use_as_albedo = true
 	var quad := QuadMesh.new()
 	quad.size = Vector2.ONE * size

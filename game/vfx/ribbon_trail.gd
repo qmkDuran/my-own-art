@@ -1,7 +1,9 @@
 class_name RibbonTrail
 extends MeshInstance3D
 ## A soft ribbon trail behind a moving thing (pure Godot): remembers the last few positions and draws a strip
-## facing the camera that tapers and fades from the head to the tail.
+## facing the camera that tapers and fades from the head to the tail; once left behind, it shrinks away.
+
+const HEAD_STRENGTH: float = 0.6
 
 var _target: Node3D
 var _points: Array[Vector3] = []
@@ -30,9 +32,10 @@ func setup(target: Node3D, colour: Color, width: float, points: int) -> void:
 
 
 func _process(_delta: float) -> void:
-	if not is_instance_valid(_target):
-		return
-	_points.push_front(_target.global_position)
+	if is_instance_valid(_target) and _target.is_inside_tree() and _target.get_parent() != null:
+		_points.push_front(_target.global_position)
+	elif not _points.is_empty():
+		_points.pop_back()
 	if _points.size() > _max_points:
 		_points.pop_back()
 	global_transform = Transform3D.IDENTITY
@@ -50,7 +53,7 @@ func _draw() -> void:
 		var along: Vector3 = _points[maxi(index - 1, 0)] - _points[mini(index + 1, _points.size() - 1)]
 		var facing: Vector3 = camera.global_position - _points[index]
 		var side: Vector3 = along.cross(facing).normalized() * _width * 0.5 * (1.0 - share)
-		var colour: Color = _colour * (1.0 - share) * (1.0 - share)
+		var colour: Color = _colour * HEAD_STRENGTH * (1.0 - share) * (1.0 - share)
 		_mesh.surface_set_color(colour)
 		_mesh.surface_add_vertex(_points[index] + side)
 		_mesh.surface_set_color(colour)

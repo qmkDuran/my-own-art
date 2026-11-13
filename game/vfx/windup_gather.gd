@@ -22,6 +22,8 @@ func play(kit: VfxKit, spec: Dictionary) -> void:
 	process.radial_velocity_max = -radius / seconds
 	process.gravity = Vector3.ZERO
 	process.scale_min = RING_FLATTEN
+	process.tangential_accel_min = radius / seconds / seconds
+	process.tangential_accel_max = radius / seconds / seconds
 	process.color_ramp = ParticleKit.fade_ramp()
 	var motes := GPUParticles3D.new()
 	motes.process_material = process
@@ -34,6 +36,10 @@ func play(kit: VfxKit, spec: Dictionary) -> void:
 	add_child(motes)
 	var pulse: Node3D = SoftGlow.make(colour, float(spec["mote_size"]) * 2.0, PULSE_ENERGY)
 	add_child(pulse)
+	var swell: EffectLight = EffectLight.make(kit.quota, colour, float(spec["light_energy"]), radius * 2.0)
+	if swell != null:
+		add_child(swell)
+		swell.fade_out(seconds * 2.0)
 	var tween: Tween = create_tween()
 	tween.tween_property(pulse, "scale", Vector3.ONE * float(spec["pulse"]), seconds)
 	tween.tween_property(pulse, "scale", Vector3.ONE * GONE, seconds)
