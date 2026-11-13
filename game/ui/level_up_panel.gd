@@ -9,7 +9,7 @@ const TITLE: String = "Your lantern burns brighter!"
 const TITLE_SIZE: int = 30
 const NAME_SIZE: int = 22
 const TEXT_SIZE: int = 16
-const CARD_SIZE: Vector2 = Vector2(260, 150)
+const CARD_SIZE: Vector2 = Vector2(290, 150)
 const COMBO_EDGE: Color = Color(1.0, 0.85, 0.3)
 const KEYS: Array[Key] = [KEY_1, KEY_2, KEY_3]
 
@@ -80,11 +80,15 @@ func _card(index: int, offer: Dictionary) -> Button:
 	var text := VBoxContainer.new()
 	text.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT, Control.PRESET_MODE_KEEP_SIZE, UiStyle.PADDING)
 	text.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var heading: Label = UiStyle.label("%d. %s  (level %d)" % [index + 1, offer["name"], offer["level"]], NAME_SIZE)
+	var heading: Label = UiStyle.label("%d. %s" % [index + 1, offer["name"]], NAME_SIZE)
+	var tier: String = "New!" if int(offer["level"]) == 1 else "Level %d" % offer["level"]
+	var level_line: Label = UiStyle.label("Combo!" if offer["kind"] == "combo" else tier, TEXT_SIZE)
+	level_line.add_theme_color_override("font_color", COMBO_EDGE)
 	heading.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	var body: Label = UiStyle.label(offer["text"], TEXT_SIZE)
 	body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	text.add_child(heading)
+	text.add_child(level_line)
 	text.add_child(body)
 	card.add_child(text)
 	_row.add_child(card)

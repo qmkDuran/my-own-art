@@ -2,7 +2,7 @@ class_name GroundBuilder
 extends Node3D
 ## Builds the code-made ground of the town from data/town.json: the cobbled streets, the canal (walls, floor and
 ## water), the low stone parapets, stone blocks (the overlook terrace and fillers), the steps up to the overlook,
-## the iron railings around it, and the walkable deck of the stone bridge.
+## the iron railings around it, the walkable deck of the stone bridge, and invisible seals closing the town.
 
 const FLOOR_THICKNESS: float = 1.0
 const RAMP_THICKNESS: float = 0.5
@@ -11,6 +11,8 @@ const RAIL_BAR: float = 0.07
 const BRIDGE_WALL_HEIGHT: float = 1.1
 const BRIDGE_WALL_WIDTH: float = 0.2
 const CANAL_WALL: float = 0.6
+const SEAL_HEIGHT: float = 10.0
+const SEAL_WIDTH: float = 0.4
 const IRON_COLOUR: Color = Color(0.07, 0.065, 0.07)
 const IRON_ROUGHNESS: float = 0.45
 const IRON_METALLIC: float = 0.6
@@ -36,6 +38,10 @@ func build() -> void:
 		_steps(flight)
 	_railings(town["railings"], town["railing"])
 	_bridge_deck(town["bridge"])
+	for seal: Array in town["seals"]:
+		var a := Vector3(float(seal[0]), 0.0, float(seal[1]))
+		var b := Vector3(float(seal[2]), 0.0, float(seal[3]))
+		Blocks.wall_between(self, a, b, SEAL_HEIGHT, SEAL_WIDTH, null)
 	for probe: Dictionary in town["reflection_probes"]:
 		_reflection_probe(Tuning.vec3(probe["center"]), Tuning.vec3(probe["size"]))
 
@@ -110,6 +116,8 @@ func _railings(lines: Array, look: Dictionary) -> void:
 				Blocks.wall_between(self, at, next, height, RAIL_BAR, null)
 
 
+## A flight of steps: stone blocks to look at, solid blocks one step lower (so nobody walks under the flight)
+## and a smooth ramp over them to walk on.
 func _steps(flight: Dictionary) -> void:
 	var from: Vector3 = Tuning.vec3(flight["from"])
 	var to: Vector3 = Tuning.vec3(flight["to"])
@@ -122,12 +130,16 @@ func _steps(flight: Dictionary) -> void:
 		var top: float = rise * (index + 1) / count
 		var centre: Vector3 = from + run * ((index + 0.5) / count) + Vector3.UP * top * 0.5
 		Blocks.box(self, centre, Vector3(width, top, tread), SurfaceMaterials.stone("bricks"), false, run.normalized())
+		if index > 0:
+			var solid_top: float = rise * index / count
+			var below: Vector3 = from + run * ((index + 0.5) / count) + Vector3.UP * solid_top * 0.5
+			Blocks.box(self, below, Vector3(width, solid_top, tread), null, true, run.normalized())
 	_ramp(from, to, width)
 
 
 func _bridge_deck(bridge: Dictionary) -> void:
 	var centre := Vector3(float(bridge["center"][0]), 0.0, float(bridge["center"][1]))
-	var along: Vector3 = Vector3.FORWARD.rotated(Vector3.UP, deg_to_rad(float(bridge["rot"])))
+	var along: Vector3 = Vector3.RIGHT.rotated(Vector3.UP, deg_to_rad(float(bridge["rot"])))
 	var half: Vector3 = along * float(bridge["length"]) * 0.5
 	var top: Vector3 = centre + Vector3.UP * float(bridge["peak"])
 	var width: float = bridge["width"]

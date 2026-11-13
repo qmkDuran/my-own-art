@@ -1,8 +1,10 @@
 extends Node
-## Autoload "TestRunner": dormant in play. With --smoke runs the headless smoke test, with --shots the review stills
-## (needs a display). Started after "--" on the command line.
+## Autoload "TestRunner": dormant in play. With --smoke runs the headless smoke test, with --collision the
+## collision and clipping suite, with --shots the review stills (needs a display). Started after "--" on the
+## command line.
 
-const MODES: Dictionary = { "--smoke": "res://tests/smoke_test.gd", "--shots": "res://tests/shots.gd" }
+const MODES: Dictionary = { "--smoke": "res://tests/smoke_test.gd", "--shots": "res://tests/shots.gd",
+	"--collision": "res://tests/collision_suite.gd" }
 
 
 func _ready() -> void:

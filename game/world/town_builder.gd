@@ -8,6 +8,8 @@ extends Node3D
 var library: AssetLibrary
 var lights: Array[OmniLight3D] = []
 var lamps: Array[LampLight] = []
+## Every placed asset (backdrop ones carry the "backdrop" meta), for the collision and layout tests.
+var placed: Array[Node3D] = []
 var cat: TownCat
 var fountain: Node3D
 var _rng := RandomNumberGenerator.new()
@@ -46,6 +48,7 @@ func place(asset: String, at: Vector3, yaw: float, scale: float, collide: bool) 
 	add_child(node)
 	node.position = at
 	node.rotation.y = yaw
+	placed.append(node)
 	return node
 
 
@@ -68,6 +71,7 @@ func _row(row: Dictionary, backdrop: bool) -> void:
 		var centre: Vector3 = start + along * (travelled + size.x * 0.5) - front * size.z * 0.5
 		var turn: float = deg_to_rad(_rng.randf_range(-1.0, 1.0) * Tuning.f("town", "rot_jitter_deg"))
 		var house: Node3D = place(asset, centre, yaw + turn, scale, not backdrop)
+		house.set_meta("backdrop", backdrop)
 		if not backdrop:
 			_windows(house, asset, scale)
 		travelled += size.x + Tuning.f("town", "gap")

@@ -6,7 +6,8 @@ extends Attack
 const SPOT_SHARE: float = 0.3
 const BEAM_HEIGHT: float = 9.0
 const BEAM_SECONDS: float = 0.35
-const BEAM_ENERGY: float = 4.0
+const BEAM_ENERGY: float = 0.6
+const BEAM_WIDTH_SHARE: float = 0.45
 const FLASH_ENERGY: float = 3.0
 const FLASH_REACH: float = 3.0
 
@@ -42,14 +43,14 @@ func _strike(spot: Vector3) -> void:
 func _beam() -> Node3D:
 	var holder := Node3D.new()
 	var column := CylinderMesh.new()
-	column.top_radius = area_stat("radius")
-	column.bottom_radius = area_stat("radius")
+	column.top_radius = area_stat("radius") * BEAM_WIDTH_SHARE
+	column.bottom_radius = area_stat("radius") * BEAM_WIDTH_SHARE
 	column.height = BEAM_HEIGHT
 	var material := StandardMaterial3D.new()
 	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	material.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
-	material.albedo_color = colour() * SPOT_SHARE * BEAM_ENERGY
+	material.albedo_color = colour() * BEAM_ENERGY
 	column.material = material
 	var mesh := MeshInstance3D.new()
 	mesh.mesh = column

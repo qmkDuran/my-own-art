@@ -40,7 +40,19 @@ func setup(creature_kind: String, library: AssetLibrary, player: Node3D, lamps: 
 	add_child(shape)
 	_model = library.spawn(spec["asset"], 1.0, false)
 	add_child(_model)
+	if spec.has("aura_color"):
+		_add_aura()
 	_clock = randf() * TAU
+
+
+## A coloured glow around a big creature, so its dark silhouette reads against the night.
+func _add_aura() -> void:
+	var aura := OmniLight3D.new()
+	aura.light_color = Tuning.color(spec["aura_color"])
+	aura.light_energy = float(spec["aura_energy"])
+	aura.omni_range = float(spec["aura_range"])
+	aura.position = Vector3(0.0, radius * 2.0, radius * 2.0)
+	add_child(aura)
 
 
 ## Solid creatures collide with walls; floaters pass through them (a deliberate rule).
@@ -71,10 +83,12 @@ func _physics_process(delta: float) -> void:
 	var goal: Vector3 = _goal()
 	var to: Vector3 = Vector3(goal.x - global_position.x, 0.0, goal.z - global_position.z)
 	var step: Vector3 = to.normalized() * float(spec["speed"]) * _gait() if _stun == 0.0 else Vector3.ZERO
-	velocity = step + _knock
+	var fall: float = velocity.y - Tuning.f("player", "gravity") * delta if is_solid() and not is_on_floor() else 0.0
+	velocity = step + _knock + Vector3.UP * fall
 	_knock = _knock.move_toward(Vector3.ZERO, Tuning.number("defence", "creature", "knockback_decay") * delta)
 	move_and_slide()
-	global_position.y = 0.0
+	if not is_solid():
+		global_position.y = move_toward(global_position.y, goal.y, float(spec["speed"]) * delta)
 	if to.length() > 0.0:
 		var blend: float = clampf(Tuning.number("defence", "creature", "turn_sharpness") * delta, 0.0, 1.0)
 		rotation.y = lerp_angle(rotation.y, atan2(to.x, to.z), blend)
@@ -87,7 +101,8 @@ func _goal() -> Vector3:
 	if spec["target"] == "lamp":
 		var lamp: LampLight = _lamps.nearest_lit(global_position)
 		if lamp != null:
-			return lamp.global_position
+			var base: Vector3 = (lamp.get_parent() as Node3D).global_position
+			return Vector3(lamp.global_position.x, base.y, lamp.global_position.z)
 	return _player.global_position
 
 

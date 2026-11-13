@@ -2,6 +2,9 @@
   "_doc": "The town layout in metres (x east, z south, y up). Points are [x, z] on the ground or [x, y, z]. rot is the yaw in degrees the asset's front (+z) is turned by; face is a point the front looks at instead.",
   "bounds": [-72.0, -52.0, 72.0, 52.0],
   "walk_bounds": [-50.0, -10.5, 58.0, 32.0],
+  "_seals": "Invisible walls that close the town: its outer edge and the gaps between rows of houses.",
+  "seals": [[-50.4, -17.5, 58.0, -17.5], [58.0, -17.5, 58.0, 32.2], [58.0, 32.2, -50.4, 32.2], [-50.4, 32.2, -50.4, -17.5],
+    [34.4, 3.6, 44.0, 3.6], [44.0, 3.6, 44.0, 6.2], [34.4, -3.6, 34.4, -10.6], [31.8, 24.7, 44.0, 24.7], [30.0, 4.0, 34.6, 4.0], [12.5, -10.5, 12.5, -17.5], [-12.2, -10.5, -12.2, -17.5]],
   "ground": [[-72.0, -52.0, 72.0, 14.0], [-72.0, 20.0, 72.0, 52.0], [-72.0, 14.0, -50.0, 20.0], [32.0, 14.0, 72.0, 20.0]],
   "canal": { "x0": -50.0, "x1": 32.0, "z0": 14.0, "z1": 20.0, "water_y": -0.45, "floor_y": -2.2 },
   "parapets": [
@@ -17,13 +20,14 @@
     { "center": [51.0, 3.0, 19.0], "size": [14.0, 6.0, 26.0], "pattern": "bricks" },
     { "center": [-60.0, 3.0, 17.0], "size": [20.0, 6.0, 8.0], "pattern": "bricks" },
     { "center": [-57.5, 3.5, 0.0], "size": [1.2, 7.0, 26.0], "pattern": "bricks" },
-    { "center": [37.6, 3.5, 0.0], "size": [1.2, 7.0, 16.0], "pattern": "bricks" }
+    { "center": [-12.2, 1.25, -7.0], "size": [0.6, 2.5, 7.0], "pattern": "bricks" },
+    { "center": [12.5, 1.25, -6.3], "size": [0.6, 2.5, 8.4], "pattern": "bricks" }
   ],
   "steps": [
-    { "from": [32.0, 0.0, 22.25], "to": [44.0, 6.0, 22.25], "width": 3.7, "count": 20 }
+    { "from": [32.0, 0.0, 22.45], "to": [44.0, 6.0, 22.45], "width": 4.1, "count": 20 }
   ],
   "railings": [
-    [44.2, 6.0, 6.2, 44.2, 6.0, 20.4], [44.2, 6.0, 24.1, 44.2, 6.0, 31.8], [44.2, 6.0, 6.2, 57.8, 6.0, 6.2],
+    [44.2, 6.0, 6.2, 44.2, 6.0, 20.4], [44.2, 6.0, 24.6, 44.2, 6.0, 31.8], [44.2, 6.0, 6.2, 57.8, 6.0, 6.2],
     [44.2, 6.0, 31.8, 57.8, 6.0, 31.8], [57.8, 6.0, 6.2, 57.8, 6.0, 31.8], [32.0, 0.0, 20.3, 44.0, 6.0, 20.3]
   ],
   "railing": { "height": 1.0 },
@@ -40,8 +44,6 @@
     { "start": [-50.0, 24.5], "end": [44.0, 24.5], "rot": 180.0,
       "types": ["house_balcony", "house_crooked", "house_tall", "house_crooked", "house_balcony", "house_tall", "house_crooked"] },
     { "start": [-50.0, -3.6], "end": [-50.0, 3.6], "rot": 90.0, "types": ["house_crooked"] },
-    { "start": [-12.0, -10.5], "end": [-12.0, -3.5], "rot": 90.0, "types": ["house_tall"] },
-    { "start": [12.2, -6.4], "end": [12.2, -10.5], "rot": -90.0, "types": ["house_tall"] },
     { "start": [34.4, -3.4], "end": [34.4, 3.4], "rot": -90.0, "types": ["house_crooked"] }
   ],
   "backdrop_rows": [
@@ -59,12 +61,12 @@
     { "asset": "market_stall", "at": [6.0, -7.0], "rot": 0.0 },
     { "asset": "bench", "at": [-4.6, -5.2], "face": [0.0, 0.0] },
     { "asset": "bench", "at": [4.8, 4.6], "face": [0.0, 0.0] },
-    { "asset": "bench", "at": [-3.0, 11.6], "rot": 0.0 },
-    { "asset": "bench", "at": [50.0, 19.0], "rot": -90.0 },
-    { "asset": "barrels_crates", "at": [10.6, -9.4], "rot": -20.0 },
+    { "asset": "bench", "at": [-8.0, 11.8], "rot": 0.0 },
+    { "asset": "bench", "at": [50.0, 6.0, 19.0], "rot": -90.0 },
+    { "asset": "barrels_crates", "at": [11.2, -5.4], "rot": -20.0 },
     { "asset": "barrels_crates", "at": [-21.5, -2.7], "rot": 10.0 },
     { "asset": "barrels_crates", "at": [22.0, 1.0], "rot": 200.0 },
-    { "asset": "barrels_crates", "at": [55.5, 8.5], "rot": 160.0 },
+    { "asset": "barrels_crates", "at": [55.5, 6.0, 8.5], "rot": 160.0 },
     { "asset": "signpost", "at": [-11.0, -2.4], "rot": 70.0 },
     { "asset": "flower_box", "at": [-6.0, 0.55, 13.8], "rot": 180.0 },
     { "asset": "flower_box", "at": [6.0, 0.55, 13.8], "rot": 180.0 },
@@ -83,7 +85,7 @@
     { "at": [-24.0, 13.2], "rot": 90.0 }, { "at": [22.0, 13.2], "rot": 90.0 },
     { "at": [-30.0, 20.8], "rot": -90.0 }, { "at": [-14.0, 20.8], "rot": -90.0 },
     { "at": [3.2, 20.8], "rot": -90.0 }, { "at": [18.0, 20.8], "rot": -90.0 },
-    { "at": [-47.4, 0.0], "rot": 0.0 }, { "at": [47.0, 7.6], "rot": 180.0 }, { "at": [47.0, 30.4], "rot": 0.0 }
+    { "at": [-47.4, 0.0], "rot": 0.0 }, { "at": [47.0, 6.0, 7.6], "rot": 180.0 }, { "at": [47.0, 6.0, 30.4], "rot": 0.0 }
   ],
   "hanging_lanterns": [
     { "at": [15.0, 3.2, -1.5], "rot": 90.0 }, { "at": [19.0, 3.2, 1.5], "rot": -90.0 },

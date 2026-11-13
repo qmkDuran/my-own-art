@@ -20,7 +20,9 @@ static func box(parent: Node3D, centre: Vector3, size: Vector3, material: Materi
 		instance.mesh = mesh
 		holder.add_child(instance)
 	if collide:
-		holder.add_child(solid(size))
+		var body: StaticBody3D = solid(size)
+		body.set_meta("invisible", material == null)
+		holder.add_child(body)
 	return holder
 
 

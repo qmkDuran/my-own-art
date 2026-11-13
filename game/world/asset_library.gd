@@ -2,8 +2,9 @@ class_name AssetLibrary
 extends RefCounted
 ## Loads the Meshy GLBs listed in data/assets.json and spawns them ready for the town: scaled to their listed
 ## height, centred on their footprint with the base on the ground, painted with the town asset material (window
-## glow plus wetness) and, when listed, given a collision box. Scale, offset and materials are worked out once
-## per asset and shared by every copy.
+## glow plus wetness) and, when listed, given a collision box. The box is measured from the mesh itself: the
+## extent of the vertices at walking height (the ground-floor walls, a tree's trunk, a lamp's post), so what you
+## bump into is what you see. Everything is worked out once per asset and shared by every copy.
 
 const ASSET_SHADER: Shader = preload("res://shaders/asset.gdshader")
 const GLOW_KEYS: Array[String] = ["hue_min", "hue_max", "saturation_min", "value_min", "softness"]
@@ -28,13 +29,15 @@ func spawn(asset: String, scale: float = 1.0, collide: bool = true) -> Node3D:
 	var info: Dictionary = _prepared(asset)
 	var holder: Node3D = StaticBody3D.new() if collide and info["collide"] else Node3D.new()
 	holder.name = asset.to_pascal_case()
+	holder.set_meta("asset", asset)
+	holder.set_meta("scale", scale)
 	var model: Node3D = (info["scene"] as PackedScene).instantiate()
 	model.scale = Vector3.ONE * info["scale"] * scale
 	model.position = info["offset"] * scale
 	_paint(model, info["materials"])
 	holder.add_child(model)
 	if holder is StaticBody3D:
-		_add_box(holder, info, scale)
+		_add_box(holder, asset, scale)
 	return holder
 
 
@@ -52,10 +55,47 @@ func _prepare(asset: String) -> Dictionary:
 	var scale: float = float(spec["height"]) / bounds.size.y
 	var base_centre := Vector3(bounds.get_center().x, bounds.position.y, bounds.get_center().z)
 	var materials: Array[Material] = _materials_for(probe, float(spec["glow"]))
+	var band: AABB = walking_band(probe, Transform3D(Basis().scaled(Vector3.ONE * scale), -base_centre * scale))
 	probe.free()
 	return { "scene": scene, "scale": scale, "offset": -base_centre * scale, "size": bounds.size * scale,
-		"materials": materials, "collide": spec["collide"] == "box",
-		"footprint": float(spec.get("footprint_share", 1.0)) }
+		"materials": materials, "collide": spec["collide"] == "box", "band": band }
+
+
+## The box around a model's vertices at walking height (data/tuning.json town.collision_band), in the spawned
+## node's space at scale 1, ignoring a small share of stray vertices on each side (a hanging sign, trailing ivy).
+## Empty when no vertex is at that height.
+func walking_band(root: Node3D, placed: Transform3D) -> AABB:
+	var low: float = Tuning.f("town", "collision_band_low")
+	var high: float = Tuning.f("town", "collision_band_high")
+	var xs := PackedFloat32Array()
+	var zs := PackedFloat32Array()
+	for node: Node in root.find_children("*", "MeshInstance3D", true, false):
+		var mesh: MeshInstance3D = node
+		var xform: Transform3D = placed * _relative_transform(mesh, root)
+		for surface: int in mesh.mesh.get_surface_count():
+			for vertex: Vector3 in mesh.mesh.surface_get_arrays(surface)[Mesh.ARRAY_VERTEX]:
+				var point: Vector3 = xform * vertex
+				if point.y >= low and point.y <= high:
+					xs.append(point.x)
+					zs.append(point.z)
+	if xs.is_empty():
+		return AABB()
+	xs.sort()
+	zs.sort()
+	var trim: int = int(xs.size() * Tuning.f("town", "collision_trim_share"))
+	var corner := Vector3(xs[trim], low, zs[trim])
+	return AABB(corner, Vector3(xs[xs.size() - 1 - trim], high, zs[zs.size() - 1 - trim]) - corner)
+
+
+## The collision box of an asset at a scale, in the spawned node's space.
+func collision_box(asset: String, scale: float = 1.0) -> AABB:
+	var info: Dictionary = _prepared(asset)
+	var band: AABB = info["band"]
+	var size: Vector3 = info["size"]
+	if band.size == Vector3.ZERO:
+		band = AABB(Vector3(-size.x * 0.5, 0.0, -size.z * 0.5), size)
+	var corner := Vector3(band.position.x, 0.0, band.position.z)
+	return AABB(corner * scale, Vector3(band.size.x, size.y, band.size.z) * scale)
 
 
 func _bounds(root: Node3D) -> AABB:
@@ -108,12 +148,11 @@ func _paint(model: Node3D, materials: Array[Material]) -> void:
 			index += 1
 
 
-func _add_box(body: StaticBody3D, info: Dictionary, scale: float) -> void:
-	var size: Vector3 = info["size"] * scale
-	var share: float = info["footprint"]
+func _add_box(body: StaticBody3D, asset: String, scale: float) -> void:
+	var bounds: AABB = collision_box(asset, scale)
 	var box := BoxShape3D.new()
-	box.size = Vector3(size.x * share, size.y, size.z * share)
+	box.size = bounds.size
 	var shape := CollisionShape3D.new()
 	shape.shape = box
-	shape.position.y = size.y * 0.5
+	shape.position = bounds.get_center()
 	body.add_child(shape)

@@ -23,7 +23,7 @@ DECIMAL = re.compile(r"(?<![\w.])(\d+\.\d+)(?![\w.])")
 ALLOWED_DECIMALS = {"0.0", "1.0", "0.5", "2.0"}
 ENGINE_CALLBACKS = {"_ready", "_process", "_physics_process", "_input", "_unhandled_input", "_draw", "_init",
                     "_enter_tree", "_exit_tree", "_notification", "_gui_input"}
-DYNAMIC_PREFIXES: tuple[str, ...] = ()
+DYNAMIC_PREFIXES = ("_stage_",)  # shots.gd calls "_stage_" + shot name
 
 
 def _functions(lines: list[str]) -> list[tuple[str, int, int]]:

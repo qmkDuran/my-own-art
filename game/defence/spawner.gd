@@ -1,8 +1,8 @@
 class_name Spawner
 extends Node
 ## Brings the night's creatures in from the fog: follows the wave schedule in data/defence.json (a steady trickle
-## whose mix and pace change with time, plus a few surges), placing each creature in a ring around the player but
-## never inside a wall or a house.
+## whose mix and pace change with time, plus a few surges), placing each creature in a ring around the player, on
+## open ground the player can walk to (never inside a wall or a house, never in a closed-off yard).
 
 const PROBE_HEIGHT: float = 0.6
 
@@ -11,6 +11,7 @@ var _player: Node3D
 var _timer: float = 0.0
 var _surges_done: int = 0
 var _rng := RandomNumberGenerator.new()
+var _grid: WalkGrid
 
 
 func setup(horde: Horde, player: Node3D) -> void:
@@ -22,6 +23,9 @@ func setup(horde: Horde, player: Node3D) -> void:
 func reset() -> void:
 	_timer = 0.0
 	_surges_done = 0
+	if _grid == null:
+		_grid = WalkGrid.new()
+		_grid.build(_player.get_world_3d(), Tuning.point(Tuning.doc("town")["player_start"]["at"]))
 
 
 ## Advances the schedule to the night's clock (seconds since the night began).
@@ -52,8 +56,8 @@ func free_spot() -> Vector3:
 		var distance: float = _rng.randf_range(Tuning.number("defence", "spawn", "radius_min"), Tuning.number(
 			"defence", "spawn", "radius_max"))
 		var at: Vector3 = _player.global_position + Vector3(cos(angle), 0.0, sin(angle)) * distance
-		at.y = 0.0
-		if inside_town(at) and is_open(at):
+		at.y = _grid.floor_at(at) if _grid != null else 0.0
+		if not is_nan(at.y) and inside_town(at) and is_open(at):
 			return at
 	return Vector3.INF
 
