@@ -1,7 +1,7 @@
 class_name LightBolt
 extends Node3D
 ## One Lantern Flare bolt: flies straight, hurts each creature it passes through (up to its pierce count) and
-## fades out at the end of its range.
+## fades out at the end of its range (or as soon as its attack is gone, when a night ends).
 
 var _attack: Attack
 var _direction: Vector3
@@ -18,6 +18,9 @@ func setup(attack: Attack, from: Vector3, to: Vector3) -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if not is_instance_valid(_attack):
+		queue_free()
+		return
 	var step: float = _attack.stat("speed") * delta
 	global_position += _direction * step
 	_travelled += step

@@ -1,10 +1,12 @@
 extends Node
-## Autoload "TestRunner": dormant in play. With --smoke runs the headless smoke test, with --collision the
-## collision and clipping suite, with --shots the review stills (needs a display). Started after "--" on the
-## command line.
+## Autoload "TestRunner": dormant in play. Test modes, started after "--" on the command line: --smoke (headless
+## smoke test), --collision (collision and clipping suite), --perf (rendered performance probe), --balance (the
+## balance bot; with --stability, the back-to-back stability run) and --shots (review stills). --perf and --shots
+## need a display.
 
 const MODES: Dictionary = { "--smoke": "res://tests/smoke_test.gd", "--shots": "res://tests/shots.gd",
-	"--collision": "res://tests/collision_suite.gd" }
+	"--collision": "res://tests/collision_suite.gd", "--perf": "res://tests/perf_probe.gd",
+	"--balance": "res://tests/balance_suite.gd" }
 
 
 func _ready() -> void:

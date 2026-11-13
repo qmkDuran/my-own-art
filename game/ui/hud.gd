@@ -12,6 +12,7 @@ var _timer: float = 0.0
 
 func setup() -> void:
 	name = "Hud"
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	_hint = Label.new()
 	_hint.text = HINT
 	_hint.add_theme_font_size_override("font_size", Tuning.i("hud", "font_size"))
@@ -21,6 +22,10 @@ func setup() -> void:
 	_hint.grow_vertical = Control.GROW_DIRECTION_BEGIN
 	add_child(_hint)
 	show_hints()
+
+
+func hint_label() -> Label:
+	return _hint
 
 
 func show_hints() -> void:

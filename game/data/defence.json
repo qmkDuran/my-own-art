@@ -7,7 +7,7 @@
     { "from": 50.0, "every": 1.1, "mix": { "sheet_ghost": 3, "lantern_moth": 1 } },
     { "from": 130.0, "every": 0.85, "mix": { "sheet_ghost": 3, "lantern_moth": 2, "pumpkin_head": 2 } },
     { "from": 240.0, "every": 0.6, "mix": { "sheet_ghost": 2, "lantern_moth": 2, "pumpkin_head": 3 } },
-    { "from": 360.0, "every": 0.45, "mix": { "sheet_ghost": 3, "lantern_moth": 2, "pumpkin_head": 4 } },
+    { "from": 360.0, "every": 0.55, "mix": { "sheet_ghost": 3, "lantern_moth": 2, "pumpkin_head": 3 } },
     { "from": 420.0, "every": 0.8, "mix": { "sheet_ghost": 2, "pumpkin_head": 1 } }
   ],
   "surges": [ { "at": 100.0, "type": "sheet_ghost", "count": 18 }, { "at": 200.0, "type": "lantern_moth", "count": 14 },
@@ -22,7 +22,7 @@
       "hover": 2.4, "bob": 0.4, "target": "lamp", "xp": 1, "drop": "moth_dust", "drop_chance": 0.18, "drops": 1 },
     "gloom_king": { "asset": "gloom_king", "health": 900.0, "speed": 1.15, "damage": 20.0, "radius": 1.3, "motion": "float",
       "hover": 0.4, "bob": 0.2, "target": "player", "xp": 40, "drop": "moonberry", "drop_chance": 1.0, "drops": 10,
-      "boss": true, "aura_color": [0.7, 0.4, 1.0], "aura_energy": 2.5, "aura_range": 6.0, "summon_every": 7.0, "summon": "sheet_ghost", "summon_count": 6, "snuff_radius": 9.0 }
+      "boss": true, "aura_color": [0.7, 0.4, 1.0], "aura_energy": 2.5, "aura_range": 6.0, "summon_every": 7.0, "summon": "sheet_ghost", "summon_count": 4, "snuff_radius": 9.0 }
   },
   "creature": { "bob_speed": 2.2, "hop_seconds": 0.7, "flutter_speed": 9.0, "flutter_sway": 0.5, "turn_sharpness": 6.0,
     "separation": 0.9, "knockback_decay": 6.0, "hit_squash": 0.25, "hit_seconds": 0.12, "bonus_drop": "batwing_toffee",
@@ -30,7 +30,7 @@
   "player": { "health": 100.0, "invulnerable_seconds": 0.6, "pickup_radius": 2.2, "magnet_speed": 10.0,
     "collect_distance": 0.5, "dash_speed": 10.0, "dash_seconds": 0.22, "dash_cooldown": 1.0, "regen_near_lamp": 1.0,
     "lamp_comfort_radius": 6.0 },
-  "xp": { "first": 5.0, "growth": 1.28, "add": 2.0 },
+  "xp": { "first": 5.0, "growth": 1.17, "add": 1.0 },
   "lamps": { "relight_seconds": 1.2, "relight_radius": 2.6, "snuff_reach": 1.2 },
   "ingredients": {
     "pumpkin_goo": { "name": "Pumpkin Goo", "color": [1.0, 0.5, 0.08] },

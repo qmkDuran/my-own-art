@@ -23,6 +23,10 @@ var lamps: LampKeeper
 var vitality: Vitality
 var loadout: Loadout
 var pantry := Pantry.new()
+## The night's length and when the Gloom King comes (from data; tests may shorten them).
+var length: float = 0.0
+var boss_at: float = 0.0
+var kills: int = 0
 var _player: Player
 var _boss_spawned: bool = false
 var _summon_timer: float = 0.0
@@ -54,6 +58,8 @@ func setup(player: Player, library: AssetLibrary, town_lamps: Array[LampLight]) 
 	pickups.collected.connect(_on_collected)
 	vitality.fainted.connect(finish.bind(false))
 	pantry.load_stock()
+	length = Tuning.number("defence", "run", "seconds")
+	boss_at = Tuning.number("defence", "run", "boss_at")
 	set_physics_process(false)
 
 
@@ -65,6 +71,7 @@ func start() -> void:
 	level = 1
 	xp = 0.0
 	bag = {}
+	kills = 0
 	_boss_spawned = false
 	_pending_levels = 0
 	spawner.reset()
@@ -101,10 +108,10 @@ func _physics_process(delta: float) -> void:
 	clock += delta
 	horde.toughness = 1.0 + Tuning.number("defence", "growth", "health_per_minute") * clock / SECONDS_PER_MINUTE
 	spawner.advance(clock, delta)
-	if not _boss_spawned and clock >= Tuning.number("defence", "run", "boss_at"):
+	if not _boss_spawned and clock >= boss_at:
 		_boss_spawned = spawner.spawn_kind("gloom_king") != null
 	_boss_powers(delta)
-	if clock >= Tuning.number("defence", "run", "seconds"):
+	if clock >= length:
 		finish(true)
 
 
@@ -125,6 +132,7 @@ func _boss_powers(delta: float) -> void:
 
 
 func _on_defeated(creature: Creature) -> void:
+	kills += 1
 	var bonus: String = Tuning.doc("defence")["creature"]["bonus_drop"]
 	if creature.is_boss:
 		_bag_add(creature.spec["drop"], int(creature.spec["drops"]))

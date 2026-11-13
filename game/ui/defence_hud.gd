@@ -26,6 +26,7 @@ var _banner_timer: float = 0.0
 
 func setup(run: NightRun) -> void:
 	name = "DefenceHud"
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	_run = run
 	root = Control.new()
 	root.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -35,24 +36,29 @@ func setup(run: NightRun) -> void:
 	_place(_xp, Control.PRESET_TOP_WIDE)
 	_clock = UiStyle.label("", BIG)
 	_place(_clock, Control.PRESET_CENTER_TOP)
-	_clock.position.y = BAR_HEIGHT
+	_clock.position.y = BAR_HEIGHT + UiStyle.PADDING * 2
 	_health = UiStyle.bar(HEALTH_COLOUR, BAR_HEIGHT)
 	_health.custom_minimum_size.x = SIDE_WIDTH
 	_place(_health, Control.PRESET_BOTTOM_LEFT)
 	_status = UiStyle.label("", SMALL)
 	_place(_status, Control.PRESET_TOP_LEFT)
-	_status.position = Vector2(UiStyle.PADDING, BAR_HEIGHT + UiStyle.PADDING)
+	_status.position = Vector2(UiStyle.PADDING, BAR_HEIGHT + UiStyle.PADDING * 2)
 	_boss = UiStyle.bar(BOSS_COLOUR, BAR_HEIGHT)
 	_place(_boss, Control.PRESET_CENTER_BOTTOM)
 	_banner = UiStyle.label("", BIG)
 	_banner.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_place(_banner, Control.PRESET_CENTER)
+	root.add_child(_banner)
+	_banner.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	_banner.grow_vertical = Control.GROW_DIRECTION_BOTH
+	_banner.set_anchors_and_offsets_preset(Control.PRESET_CENTER, Control.PRESET_MODE_MINSIZE)
 	visible = false
 
 
 func banner(text: String, seconds: float) -> void:
 	_banner.text = text
 	_banner_timer = seconds
+	_banner.reset_size()
+	_banner.set_anchors_and_offsets_preset(Control.PRESET_CENTER, Control.PRESET_MODE_MINSIZE)
 
 
 func _place(control: Control, preset: Control.LayoutPreset) -> void:
@@ -71,7 +77,7 @@ func _process(delta: float) -> void:
 	if not running:
 		return
 	_xp.value = _run.xp / _run.xp_needed() * PERCENT
-	var left: int = int(maxf(Tuning.number("defence", "run", "seconds") - _run.clock, 0.0))
+	var left: int = int(maxf(_run.length - _run.clock, 0.0))
 	_clock.text = "%d:%02d" % [left / 60, left % 60]
 	_health.value = _run.vitality.health / _run.vitality.max_health * PERCENT
 	_status.text = "Level %d    Lamps lit %d/%d\n%s" % [_run.level, _run.lamps.lit_count(), _run.lamps.lamps.size(),

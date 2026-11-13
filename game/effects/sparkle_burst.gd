@@ -1,6 +1,7 @@
 class_name SparkleBurst
 extends GPUParticles3D
-## The cozy pop when a creature is defeated: a one-shot burst of warm sparkles that frees itself afterwards.
+## The cozy pop when a creature is defeated: a one-shot burst of warm sparkles that frees itself after a timer
+## (not the finished signal, which some renderers never send, so bursts would pile up).
 
 const ALL_DIRECTIONS_DEG: float = 180.0
 const FALL: float = 1.5
@@ -24,4 +25,4 @@ func _ready() -> void:
 	draw_pass_1 = ParticleKit.glow_quad(Tuning.number("defence", "sparkle", "size"), colour, Tuning.number("defence",
 		"sparkle", "energy"))
 	emitting = true
-	finished.connect(queue_free)
+	get_tree().create_timer(lifetime * 2.0, false).timeout.connect(queue_free)

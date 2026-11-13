@@ -15,6 +15,8 @@ const SHOTS: Dictionary = {
 	"defence": [Vector3(-1.5, 4.2, 12.5), Vector3(0.5, 0.6, 1.0), [0.0, 5.0, 0.0], false],
 	"boss": [Vector3(3.5, 3.0, 13.0), Vector3(-1.0, 1.6, -1.0), [0.5, 6.0, 0.0], false],
 	"level_up": [Vector3(-1.5, 4.2, 12.5), Vector3(0.5, 0.6, 1.0), [0.0, 5.0, 0.0], false],
+	"contrast_on": [Vector3(-1.5, 4.2, 12.5), Vector3(0.5, 0.6, 1.0), [0.0, 5.0, 0.0], false],
+	"contrast_off": [Vector3(-1.5, 4.2, 12.5), Vector3(0.5, 0.6, 1.0), [0.0, 5.0, 0.0], false],
 	"bench": [Vector3(-2.0, 1.3, -3.4), Vector3(-4.5, 0.6, -5.2), [], false],
 	"townsfolk": [Vector3(2.6, 1.6, -1.2), Vector3(-1.2, 1.0, -7.5), [], false],
 }
@@ -120,3 +122,20 @@ func _stage_level_up() -> void:
 	await get_tree().create_timer(0.8).timeout
 	_freeze_horde()
 	m.level_panel.show_offers(m.night.loadout.offers())
+
+
+## Creatures with no magic, fireflies or dust, so the only difference to contrast_off is the creatures.
+func _stage_contrast_on() -> void:
+	await _night()
+	_freeze_horde()
+	m.night.loadout.visible = false
+	m.night.loadout.process_mode = Node.PROCESS_MODE_DISABLED
+	m.night.pickups.clear()
+	m.night_hud.visible = false
+	for node: Node in m.find_children("*", "GPUParticles3D", true, false):
+		(node as GPUParticles3D).visible = false
+
+
+func _stage_contrast_off() -> void:
+	await _stage_contrast_on()
+	m.night.horde.visible = false

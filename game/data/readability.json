@@ -1,0 +1,7 @@
+{
+  "_doc": "Targets for the stills (luminance 0..1 from sRGB). Moody but readable: not muddy (too dark or too much near-black), not blown out (too much near-white). Creatures must stand out from the fog and the town behind them.",
+  "stills": ["square", "street", "canal_bridge", "alley", "overlook", "rain", "defence"],
+  "mean_min": 0.1, "mean_max": 0.45, "near_black": 0.03, "near_black_share_max": 0.3, "near_white": 0.97,
+  "near_white_share_max": 0.02,
+  "creature_diff": 0.08, "creature_share_min": 0.005, "creature_contrast_min": 0.1
+}
