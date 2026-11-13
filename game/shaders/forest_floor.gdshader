@@ -3,10 +3,10 @@
 shader_type spatial;
 render_mode cull_back;
 
-uniform vec3 moss : source_color = vec3(0.07, 0.12, 0.07);
-uniform vec3 earth : source_color = vec3(0.12, 0.09, 0.07);
+uniform vec3 moss : source_color = vec3(0.12, 0.19, 0.11);
+uniform vec3 earth : source_color = vec3(0.21, 0.16, 0.12);
 uniform vec3 leaves : source_color = vec3(0.3, 0.14, 0.06);
-uniform vec3 grass : source_color = vec3(0.12, 0.2, 0.1);
+uniform vec3 grass : source_color = vec3(0.18, 0.28, 0.14);
 
 varying vec3 world_pos;
 

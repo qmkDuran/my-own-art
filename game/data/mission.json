@@ -406,7 +406,7 @@
     0.40000000000000036
    ],
    "rot": 20.0,
-   "encounter": "glade"
+   "encounter": ""
   },
   {
    "asset": "street_lamp",
@@ -442,6 +442,38 @@
     -3.0
    ],
    "encounter": "ruins"
+  },
+  {
+   "at": [
+    140.0,
+    0.0,
+    -8.5
+   ],
+   "encounter": ""
+  },
+  {
+   "at": [
+    140.0,
+    0.0,
+    12.5
+   ],
+   "encounter": ""
+  },
+  {
+   "at": [
+    159.5,
+    0.0,
+    -6.0
+   ],
+   "encounter": ""
+  },
+  {
+   "at": [
+    159.5,
+    0.0,
+    10.0
+   ],
+   "encounter": ""
   }
  ],
  "brazier": {
@@ -532,7 +564,7 @@
    0.38,
    1.0
   ],
-  "rune_energy": 1.4,
+  "rune_energy": 1.8,
   "rune_lights": 4,
   "barrier_color": [
    0.68,

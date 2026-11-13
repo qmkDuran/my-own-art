@@ -4,6 +4,8 @@ extends Node3D
 ## the world and by the player's ward, and hurts the player if it reaches them (unless they blink through it).
 
 const MAX_RANGE: float = 45.0
+## A shot splashing on the ward pops smaller (it is close to the camera).
+const WARD_SPLASH: float = 0.5
 
 var damage: float = 0.0
 var radius: float = 0.0
@@ -36,7 +38,9 @@ func _physics_process(delta: float) -> void:
 	var ward: Ward = _roster.ward
 	if ward != null and ward.blocks(to):
 		ward.absorb(to)
-		_pop(to)
+		_roster.fx.shot_pop(to, WARD_SPLASH)
+		EnemyShotLook.leave(_look)
+		queue_free()
 		return
 	var query := PhysicsRayQueryParameters3D.create(from, to, Layers.WORLD)
 	var wall: Dictionary = get_world_3d().direct_space_state.intersect_ray(query)

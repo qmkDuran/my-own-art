@@ -2,7 +2,86 @@
 
 > **Superseded:** the game's direction is now **VISION.md** ("Zelda meets Destiny": missions out into regions,
 > aimed combat, puzzles, class and skill trees, loot). The café / survivor-roguelite vision below is kept for
-> history; the defence night and its auto-fire magic will be replaced by the aimed combat core.
+> history; the defence night and its auto-fire magic were replaced by the aimed combat core (next section).
+
+## Step 1 of VISION.md: the combat core
+### Where
+The **Gloomwood**, east of town beyond a stone **town gate** set into the tree line (the world's edge ring is open
+there). A dirt path leads from Lantern Alley over the meadow to the gate and on through the woods: the **Mushroom
+Glade** (rocks and fallen logs for cover), the **Ruins** on a 1.6 m rise with ramps, broken walls and two Meshy
+ruined arches, and the Gloom King's **ring of standing stones** with violet runes. The woods' edge is invisible
+walls behind three rows of trees (a Meshy front row, simple dark trees behind), no visible veil. Lanterns and
+braziers of each encounter stay dark until it is cleared. All of it is data in `data/mission.json`.
+
+### Flow (`Mission`, `Encounter`, `ArenaBarrier`)
+Walking through the gate starts the mission (title and objective banners). Each encounter starts at its trigger
+circle, brings its first wave and, when that is down to `wave_at` enemies, the next; clearing it relights its
+lanterns. The boss's ring closes (invisible walls and a curtain of violet flame across the entrance) while he is
+fought. Beating him completes the mission; after 5 s a fade carries you home to the town side of the gate.
+Fainting fails it the same gentle way. Everything resets for another try.
+
+### The Lamplighter's kit (`game/combat/`, numbers in `data/combat.json`, looks in `data/vfx.json` combat)
+Over-the-shoulder aim with a centred crosshair: a ray from the screen centre to the first wall or enemy (enemies
+are tested as balls a little larger than their bodies, so fair-looking hits count). Any attack holds a 1.4 s
+"stance": the camera tightens (2.5 m, shoulder 0.62, fov 50) and the player turns to face the crosshair. Tab locks
+on (the camera follows the enemy nearest the crosshair). Palette: warm amber and gold for the player's light and
+fire, teal spirit-fire for the bomb, honey gold for the ward, moonlit blue for enemy shields, magenta-violet for
+everything enemy.
+
+| Ability | Tuning | Layers (wind-up, cast, travel, impact, afterglow) |
+| --- | --- | --- |
+| Lantern bolt (LMB) | 9 damage every 0.15 s (60 dps), 52 m/s, 10% crits x2 | muzzle star pop, pluck sound and camera kick; a flame wisp with ribbon trail and embers; star pop, light, ring, ember flipbook and smoke on the enemy's near side; ember scorch; damage number, crosshair hit marker, hit flash and squash |
+| Heavy beam (RMB) | 22 to 130 damage, 0.18 to 0.45 m wide with the charge (1.1 s full; a tap counts as 20%), pierces, knockback 7, 0.8 s cooldown | an orb, a spinning swirl ring, motes pulled in and a light growing at the lantern, a rising hum and a chime when full; a glowing tube with racing bands, rings blown out along it, embers, lights at both ends; heavy impacts on every enemy hit; kick and a small shake |
+| Lantern bomb (Q) | 75 damage in 4.2 m, knockback 9, 3 to 24 m throw, 5 s cooldown | a dotted teal arc and a blast ring while held; a spinning teal flame lantern on the arc; flash, swirl ring, hex dome, star pop, sparks, rising wisps, smoke, scorch; a boom |
+| Ward (E) | 3.2 s, 1.4 m bubble, stops enemy shots, 8 s cooldown | a honeycomb bubble that pops open, ripples where a shot splashes, a warm light; the near side fades so it never fills the screen |
+| Blink (V) | the 0.2 s grounded dash, no hurt while it lasts, 0.9 s cooldown | a warm streak and a star pop |
+| Sunrise (R) | meter = 1,400 damage dealt; rise 1.3 m (0.5 s), the sun forms (1.1 s), 4.6 s of motes (one per 0.075 s, 34 damage in 2.6 m, 60% seek enemies in 12 m), a final 90-damage burst in 9 m | invulnerable while it plays; the camera pulls back to 7.5 m, the night warms to dawn (ambient, horizon glow, saturation), a boiling lantern sun with a turning crown of rays, a corona, a swirl ring, gathering motes and a big warm light; flame-wisp motes with impacts; a flare and collapse |
+
+The **soft glow rule** still holds: every effect's colour lives in its glow (energies capped, additive colours kept
+below white), and the beam, swirl rings and bubbles fade out close to the camera.
+
+### Enemies (`game/enemies/`)
+Static Meshy models moved by code, every one **solid** (a body on the ground that slides along walls, rocks and
+ruins; floaters only float their model), with a role brain:
+
+| Enemy | Role | Behaviour and telegraph |
+| --- | --- | --- |
+| Mushroom imp (new), pumpkin head, sheet ghost | swarmer | rush in packs; up close a 0.35 to 0.4 s crouch and a flicker, then a lunge that bites once; back off, repeat |
+| Lantern moth | shooter | keeps 10 to 17 m away, drifts side to side; every 2.6 s (when it sees you) a 0.75 s violet charge and a chime, then a 13 m/s shot at where you are (dodge it or ward it) |
+| Scarecrow knight (new) | elite | a moonlit shield (170) that takes 0.3x from bolts and 2.4x from the heavy and the bomb; the body can't be hurt until it breaks (shards, a flash, "BREAK!", a hit-stop), then it staggers 1.8 s; a ground slam with a 0.85 s circle telegraph |
+| Gloom King | boss | 1,500 health; keeps 6 to 12 m away; phase one: candle circles (4, 0.9 s), a gloom wave along a line (0.8 s), a fan volley of 5 shots (0.7 s glow); at half health a 1.6 s invulnerable roar and a violet flare, then faster attacks (x0.75 rest), a nova around him (0.9 s, 7.5 m) and ghost adds every 13 s (up to 6) |
+
+Telegraphs are ground shapes (vfx_telegraph shader): a soft magenta rim, a violet fill growing over the wind-up,
+racing stripes, and a flash and violet flame burst when it lands; the player is hurt only if still inside.
+
+### Music and sound
+Music by state, crossfaded over 2.2 s in linear amplitude (`MusicDirector`, `data/music.json`): Kevin MacLeod's
+"The Path of the Goblin King" in town, "Pippin the Hunchback" in the woods, "Hall of the Mountain King" while
+enemies are engaged (2 dB louder for the boss). Every ability is a layered cue (`data/audio.json` cues): CC0
+one-shots from rubberduck's "80 CC0 RPG SFX" mixed with code-made plucks, thumps, chimes, shimmers and swells,
+with random pitch. Enemies get a warning chime on every wind-up, hurt and defeat squeaks, a roar on the phase
+change. See CREDITS.md.
+
+### Tests
+`tools/run_all.sh` (about 2 minutes) now also runs:
+- **SmokeCombat:** the primary fires, hits and keeps its fire rate; the meter fills from damage; the heavy's damage
+  grows with its charge (a quick release 50, a full charge 130) and respects its cooldown; the bomb bursts exactly
+  where its arc was previewed (0.000 m) and hurts what is there; the ward stops a shot (and the shot hurts without
+  it); the blink dashes, can't be hurt and cools down; the Sunrise needs a full meter, fires, rains about 60
+  motes that hurt, keeps the player safe and lands them again.
+- **SmokeEnemies:** the shooter keeps its distance and every shot leaves 0.75 s after its warning; the boss's
+  ground attacks resolve 0.8 to 0.9 s after they appear and his volley 0.7 s after its glow (all within 0.6 to
+  0.95 s); the elite's shield shrugs off a bolt (170 to 167), breaks under a full heavy, then the body can be hurt;
+  the boss turns to phase two at half health, can't be hurt while roaring and summons 4 ghosts.
+- **SmokeMission:** the gate starts the mission, every encounter starts at its trigger and brings all its waves,
+  clearing relights the lanterns, the ring closes for the boss and opens after, beating him completes the
+  mission, the fade carries the player home and the woods reset; the music is town, explore, combat and boss in
+  turn and crossfades cleanly; every music level and sound cue sits in a sane range and every sound file loads.
+- **Collision:** the walk grid now covers the woods (119,000 cells); the sweep, the gate and both ruins ramps are
+  crossed; enemies chasing the player through the cover never end up inside geometry; every mission spawn point is
+  reachable.
+- **UI layout:** the combat HUD and the performance overlay fit and don't overlap at 16:9, 16:10 and 21:9.
+- `--long` adds the rendered perf probe in the busiest fight (the 60 fps cap on) and readability on combat stills.
 
 ## The game (the original vision, superseded)
 **Defend the town at night, run your café by day.** A survivor-roguelite with a cozy heart:
@@ -156,113 +235,10 @@ with original designs only:
 - **Review clips:** used only for my own timing review (Godot's movie writer to a PNG sequence), then deleted.
   Only stills are delivered.
 
-## Step 2: the defence-night test (N in game)
-- **Loop:** the townsfolk go indoors and creatures drift in from the fog for 9 minutes. The pace and mix are set
-  by `data/defence.json`: a trickle that thickens, plus four surges. The **Gloom King** comes at 7:00. Win by
-  beating him or surviving until dawn; fainting wakes you at the café door with half the ingredients.
-- **Creatures** (Meshy, static, moved in code, 18 credits each):
-  - **Sheet ghost** (floats, through walls).
-  - **Pumpkin head** (hops, solid: slides around houses).
-  - **Lantern moth** (flies to the nearest lit lamp and snuffs it).
-  - **Gloom King:** a mini boss with a purple glow so his dark cloak reads. He summons ghosts and snuffs lamps
-    near him.
-
-  The rule is deliberate: spirits drift through walls, while walkers collide and only spawn where they can reach
-  you (a walkable-grid flood fill).
-- **Lamps:** snuffed lamps go dark (the area really dims). Stand by one for 1.2 s to relight it. Near a lit lamp
-  you slowly heal.
-- **Lantern magic** (`data/skills.json`, level = base + per_level x (level - 1), scaled by passives):
-  - **Attacks:** Lantern Flare (starter), Firefly Swarm, Candle Ring, Moonbeam, Bell Chime.
-  - **Passives:** Brighter Wick, Warm Scarf, Quick Boots, Steady Hands (maxing at 3).
-  - **Combo:** Star Swarm (Firefly Swarm 5 + Brighter Wick 3).
-  - **Level-ups:** each offers 3 cards; magic you already own is 3x likelier to be offered, so builds deepen.
-- **Drops:** light motes (experience) and ingredients, pulled in within your pickup reach. Lanterns, sparkles
-  and drops all glow and bloom; nothing is gory.
-- **Pantry:** ingredients saved to `user://pantry.json` for the café step.
-- **Dodge:** Space (a short dash with no damage taken).
-- **Not built yet** (from the approved list): Wisp Lanterns, Sparkler Trail, Teapot Turret; Lucky Charm and
-  Cinnamon Magnet; the Chandelier and Golden Lantern combos.
-
-### Tests (what each one caught)
-`tools/run_all.sh` (about 1 minute) runs:
-- the lint and a parse check;
-- the smoke test: the town, graphics tiers, the defence night and UI layout;
-- the collision suite.
-
-`tools/run_all.sh --long` adds:
-- a 3-minute walk sweep;
-- the balance bot;
-- the stability run;
-- the rendered perf probe;
-- the readability check.
-
-Tests were added only for features that exist; save/load and the end-to-end loop come with the café.
-- **Collision and clipping** (`--collision`, 9 s):
-  - **Walls hold:** about 650 runs at full speed into every solid box from 8 directions.
-  - **Walk-the-town sweep:** 40 bots doing random walks (20 s by default, 180 s with --long).
-  - **Crossings:** the bridge and the steps, both ways.
-  - **Camera probes, seat pose** (the old man's hips are 0.23 m above the bench seat) and **NPC routes.**
-  - **Hoppers stay out:** a pumpkin chasing the player through a row of houses never gets inside one.
-  - **Spawn reachability.**
-  - **Layout checks:** collision boxes against the visible mesh, interpenetration, and floating or sinking props.
-
-  It **caught and I fixed:**
-  - The bridge deck's collision ran along the wrong axis, so you fell into the canal.
-  - Two terrace lamps, a bench and barrels were buried in the terrace (y=0 instead of 6).
-  - Two corner houses I had added sat inside their neighbours.
-  - Barrels were inside a lamp post.
-  - The baker's and child's routes went through the market stall, a bench and the fountain.
-  - The town leaked at several corners and both quay ends (bots walked out into the void).
-  - Bots could walk under the overlook stairs and wedge under the sloping railing.
-  - Bots could squeeze between houses and get stuck in pockets.
-  - The house collision boxes were shrunk bounding boxes. They are now **measured from each mesh's vertices at
-    walking height** (stray 2% trimmed), so what you bump into is what you see. The worst empty box edge is
-    1.0 m (the bakery's sign corner).
-  - The town is now sealed with invisible walls at its edges and gap-fillers between neighbouring houses.
-- **Performance** (headless proxies in the smoke test; rendered `--perf` probe in --long). The busiest spot is the
-  square in the rain with 150 creatures and all magic running:
-
-  | Tier | Draw calls | Primitives | Shadowed lights | Particles |
-  | --- | --- | --- | --- | --- |
-  | High | 437 | 2.7 M | 6 | 6,200 |
-  | Medium | 383 | 2.5 M | 4 | 3,900 |
-  | Low | 232 | 1.8 M | 2 | 2,100 |
-
-  All within the budgets in `data/perf.json`, and each tier is lighter than the one above. Absolute fps is
-  meaningless on lavapipe (it reads 1), so it is printed for reference only.
-- **Graphics setting (G):** Low, Medium and High switch volumetric fog, SSR, SSAO, the number of shadowed lamps,
-  the moon's shadow splits and particle density.
-- **Readability** (`tools/readability.py` on the stills):
-  - **Mean luminance:** 0.17 to 0.34 against a target of 0.10 to 0.45.
-  - **Clipping:** 0% crushed blacks and 0% blown whites. The fog lifts the darks: moody, never muddy.
-  - **Creatures:** they cover 2.8% of the defence frame at a mean contrast of 0.15 against the town and fog
-    behind them (target 0.10).
-- **UI layout:** the town HUD, the night HUD (with a full bag and the boss bar) and the level-up cards, at the
-  logical sizes 1280x720 (every 16:9 screen), 1280x800 (16:10) and 1707x720 (21:9). It caught:
-  - The start banner ran off screen.
-  - The timer overlapped the XP bar on 16:10 and 21:9.
-  - The HUDs froze behind the level-up pause.
-- **Stability** (4 shortened nights back to back): it caught a real leak, about 65 sparkle-burst particle
-  systems piling up per night (their `finished` signal never fires on some renderers). Now nodes (1,393 to
-  1,394), orphans (0), particle systems (7) and memory (200.7 to 200.8 MB) stay flat.
-- **Balance bot** (it kites, dodges, relights lamps when safe, and picks by strategy): it caught orphaned light
-  bolts erroring after a night reset (fixed). Results by tuning pass:
-  - **First pass:** 2 of 8 nights won. Late-game deaths, level 15 at best, and the combo was unreachable.
-  - **After a gentler XP curve, softer late waves and fewer boss summons:** 6 of 8 won.
-  - **With owned-magic weighting and passives maxing at 3:** 5 to 7 of 8 won, depending on the run.
-  - **Every build:** the passives-first build faints at about 170 to 190 s (expected).
-  - **Win timing:** wins come from beating the boss at about 450 to 500 s.
-  - **Star Swarm:** the combo-focused bot reaches it in 2 of 3 nights. It isn't a clear power spike yet.
-  - **Outlier flags:** on 8 nights these come from small samples (for example "lantern_flare: 0% without" is the
-    single passives-only night).
-
-### Step 2 weak spots
-- **The bot is not a person.** Human kiting is better, so real difficulty is probably lower than the bot's
-  results; the late game (the boss plus summons) is where it dies.
-- **Spirits pass through walls by design**, which can feel unfair in tight alleys.
-- **Creatures have no animation rig:** the code bob, hop, flutter and a hit squash give them life.
-- **Moonbeam and Firefly glows bloom strongly** near the camera.
-- **Star Swarm isn't clearly stronger** than the Firefly Swarm it replaces.
+## The defence night (removed)
+The auto-fire defence night (step 2 of the old plan) was removed once the aimed combat core replaced it: its
+creatures, lantern magic, level-up cards, HUD, data, smoke checks and the balance bot are gone. The Lantern Flare
+effect pieces (FlameWisp, ImpactBurst, StarPop, EmberMark, Dissolve, HitFeel) live on in the new kit.
 
 ## Step 1: the town mood piece
 A crooked storybook town, always at night. It has a cobbled square with a fountain, a big tree, a clock tower, a

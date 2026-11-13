@@ -8,6 +8,7 @@ uniform float progress = 0.0;
 uniform float scroll_speed = 2.0;
 uniform float energy = 1.2;
 uniform float edge_width = 0.08;
+uniform float near_fade = 2.5;
 
 float hash12(vec2 p) {
 	vec3 p3 = fract(vec3(p.xyx) * 0.1031);
@@ -32,5 +33,6 @@ void fragment() {
 	float alive = smoothstep(cut, cut + edge_width, n);
 	float edge = smoothstep(cut - edge_width, cut, n) - alive;
 	float glow = (0.35 + 0.65 * band) * across * tip;
-	ALBEDO = color * energy * (glow * alive + edge * 0.8);
+	float near = smoothstep(near_fade * 0.4, near_fade, -VERTEX.z);
+	ALBEDO = color * energy * (glow * alive + edge * 0.8) * near;
 }

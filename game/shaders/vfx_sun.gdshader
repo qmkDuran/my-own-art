@@ -36,5 +36,6 @@ void fragment() {
 	vec3 c = mix(edge_color, mid_color, smoothstep(0.05, 0.5, facing));
 	c = mix(c, core_color, smoothstep(0.5, 1.0, facing) * (0.6 + 0.4 * boil));
 	float pulse = 0.9 + 0.1 * sin(TIME * 5.0);
-	ALBEDO = c * energy * (0.7 + 0.45 * boil) * pulse * smoothstep(0.0, 0.25, facing);
+	float bands = 0.55 + 0.6 * boil;
+	ALBEDO = c * energy * bands * pulse * smoothstep(0.0, 0.25, facing);
 }

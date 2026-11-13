@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Every check for the cozy night town: the clean-code lint, a parse check of every script, the headless smoke test
-# of the real town and the collision/clipping suite. With --long it also runs the slow suites (a 3-minute walk
-# sweep, the balance bot, the stability run, and the rendered performance and brightness probes).
+# (the town, posture, the combat kit, the enemies, the mission and music) and the collision/clipping suite. With
+# --long it also runs the slow suites (a 3-minute walk sweep, the rendered performance probe in the busiest fight,
+# and the brightness/readability check on town and combat stills).
 # Prints ALL CHECKS PASS or SOME CHECKS FAILED and exits 1 on any failure. Never commit on a failure.
 set -u
 cd "$(dirname "$0")/.."
@@ -21,19 +22,13 @@ echo "$out" | grep -E "^COLLISION (FAIL|PASS)|SCRIPT ERROR" | head -20
 echo "$out" | grep -qE "SCRIPT ERROR" && { echo "collision: script errors"; status=1; }
 echo "$out" | grep -qE "^COLLISION PASS" || status=1
 if [ -n "$LONG" ]; then
-  out=$(timeout 3000 "$GODOT" --headless --fixed-fps 30 --path game -- --balance --nights=4 2>&1)
-  echo "$out" | grep -E "^BALANCE (summary|note|FAIL|PASS)|SCRIPT ERROR" | head -20
-  echo "$out" | grep -qE "^BALANCE PASS" || status=1
-  out=$(timeout 1200 "$GODOT" --headless --fixed-fps 30 --path game -- --balance --stability 2>&1)
-  echo "$out" | grep -E "^BALANCE (stability|FAIL|PASS)|SCRIPT ERROR" | sed 's/^BALANCE/STABILITY/' | head -10
-  echo "$out" | grep -qE "^BALANCE PASS" || status=1
   out=$(timeout 900 xvfb-run -a -s "-screen 0 1600x900x24" "$GODOT" --rendering-driver vulkan --audio-driver Dummy \
     --resolution 1600x900 --path game -- --perf 2>&1)
   echo "$out" | grep -E "^PERF" | head -10
   echo "$out" | grep -qE "^PERF PASS" || status=1
   stills=$(mktemp -d)
-  tools/shoot.sh "$stills" square street canal_bridge alley overlook rain defence boss busy busy_no_actors \\
-    contrast_on contrast_off >/dev/null
+  tools/shoot.sh "$stills" square street canal_bridge alley overlook rain >/dev/null
+  tools/shoot.sh "$stills" swarm boss_telegraph busy contrast >/dev/null
   python3 -I tools/readability.py "$stills" || status=1
 fi
 [ $status -eq 0 ] && echo "ALL CHECKS PASS" || echo "SOME CHECKS FAILED"

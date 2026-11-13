@@ -1,6 +1,12 @@
 {
-  "_doc": "Budgets for the rendered performance probe (proxies: frame times on a CPU rasteriser mean nothing). Checked at the busiest spot: the square in the rain with a big creature wave.",
-  "wave": 150,
-  "budgets": { "draw_calls": 800, "objects": 1000, "primitives_millions": 4.5, "lights_in_view": 30, "shadowed_lights": 6,
-    "nodes": 4000, "particles": 7000 }
+ "_doc": "Budgets for the rendered performance probe (proxies: frame times on a CPU rasteriser mean nothing). Checked in the busiest fight: the Gloom King in phase two with his ghosts, a swarm, shooters and the elite, in the rain, with every ability and the Sunrise going.",
+ "budgets": {
+  "draw_calls": 800,
+  "objects": 1000,
+  "primitives_millions": 4.5,
+  "lights_in_view": 30,
+  "shadowed_lights": 6,
+  "nodes": 4000,
+  "particles": 7000
+ }
 }

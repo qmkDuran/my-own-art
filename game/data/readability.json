@@ -1,5 +1,5 @@
 {
- "_doc": "Targets for the stills (luminance 0..1 from sRGB). Moody but readable: not muddy (too dark or too much near-black), not blown out (too much near-white). Creatures must stand out from the fog and the town behind them. Busy waves: effects may not push more than bright_share_max of the frame above bright, and the player and creatures (busy vs busy_no_actors) must stay clearly visible.",
+ "_doc": "Targets for the stills (luminance 0..1 from sRGB). Moody but readable: not muddy (too dark or too much near-black), not blown out (too much near-white). Enemies must stand out from the woods behind them (contrast_on vs contrast_off). Busy fights: effects may not push more than bright_share_max of the frame above bright, and the player and enemies (busy vs busy_no_actors) must stay clearly visible.",
  "stills": [
   "square",
   "street",
@@ -7,7 +7,7 @@
   "alley",
   "overlook",
   "rain",
-  "defence"
+  "swarm"
  ],
  "mean_min": 0.1,
  "mean_max": 0.45,
@@ -21,8 +21,8 @@
  "bright": 0.85,
  "bright_share_max": 0.015,
  "bright_stills": [
-  "defence",
-  "boss",
+  "swarm",
+  "boss_telegraph",
   "busy"
  ],
  "actor_diff": 0.08,

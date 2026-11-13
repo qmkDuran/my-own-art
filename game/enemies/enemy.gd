@@ -130,6 +130,7 @@ func _shield_hit(hit: Hit) -> float:
 	shield -= landed
 	_fx.shield_struck(hit, shield / max_shield)
 	if shield <= 0.0:
+		_fx.shatter()
 		shield_broken.emit(self)
 		brain.on_shield_broken(self)
 	return landed

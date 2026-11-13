@@ -336,8 +336,8 @@
    0.4,
    1.0
   ],
-  "energy": 1.8,
-  "range": 7.0,
+  "energy": 2.6,
+  "range": 9.0,
   "attenuation": 1.4,
   "fog_energy": 1.6,
   "specular": 0.3

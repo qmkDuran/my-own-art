@@ -1,9 +1,9 @@
 class_name Sunrise
 extends Node
-## The Sunrise super (R, when the meter is full): the Lamplighter rises a little into the air, untouchable, the
-## camera pulls back and the night warms towards dawn; a giant blazing lantern sun swells overhead, then rains
-## fiery motes over the area for a few seconds (most of them seeking enemies), and finally flares and collapses in
-## one big burst before the Lamplighter floats back down.
+## The Sunrise super (R, when the meter is full): a golden burst at the Lamplighter's feet, they rise a little into
+## the air, untouchable, the camera pulls back and the night warms towards dawn; a giant blazing lantern sun swells
+## overhead and ahead, then rains fiery motes over the area for a few seconds (most of them seeking enemies), and
+## finally flares and collapses in one big burst before the Lamplighter floats back down.
 
 const FINALE_SHAKE: float = 6.0
 
@@ -17,6 +17,7 @@ var _timer: float = 0.0
 var _mote_timer: float = 0.0
 var _mix: float = 0.0
 var _ground: Vector3 = Vector3.ZERO
+var _ahead: Vector3 = Vector3.FORWARD
 var _sun: SunFx
 
 
@@ -32,17 +33,20 @@ func fire() -> bool:
 	active = true
 	motes_fired = 0
 	_ground = _kit.player.global_position
+	_ahead = _kit.camera_rig.flat_forward()
 	_kit.health.invulnerable = true
 	_kit.player.frozen = true
 	_kit.heavy.release()
 	_begin(Step.RISE, Tuning.number("combat", "super", "rise_seconds"))
 	_kit.fx.kit.sfx.cue("super_start", _ground)
+	_kit.fx.impact_with(_kit.fx.look("sun")["cast"], _kit.fx.look("sun")["mote_mark"], _ground + Vector3.UP, _ground)
 	return true
 
 
-## The sun's centre (above where the super was called).
+## The sun's centre: up and a little ahead of where the super was called, so the pulled-back camera sees it.
 func sun_point() -> Vector3:
-	return _ground + Vector3.UP * Tuning.number("combat", "super", "sun_height")
+	return _ground + Vector3.UP * Tuning.number("combat", "super", "sun_height") + _ahead * Tuning.number("combat",
+		"super", "sun_ahead")
 
 
 func _begin(next: Step, seconds: float) -> void:

@@ -7,7 +7,7 @@ const MARK_HEIGHT: float = 0.6
 const TEXTURE_SIZE: int = 64
 const SPREAD: float = 0.4
 const EMBER_SHARE: float = 0.06
-const EDGE_COOL: Color = Color(0.3, 0.1, 0.0, 0.0)
+const EDGE_COOL: Color = Color(0.0, 0.0, 0.0, 0.0)
 const MID_COOL: Color = Color(1.0, 0.6, 0.3, 0.6)
 
 

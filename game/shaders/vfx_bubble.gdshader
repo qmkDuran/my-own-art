@@ -1,8 +1,10 @@
 // A protective bubble (the player's ward, an elite's shield): a soft colour fill that is strongest at the rim
 // (fresnel), a honeycomb of glowing hex edges that shimmers, a ripple that rings out from where a hit landed, and
-// cracks that open as the shield weakens. Additive; colour kept below white (the soft glow rule).
+// cracks that open as the shield weakens. The part right in front of the camera fades away, so a ward around
+// the player never fills the screen (only the camera-facing half is drawn, so from close by it reads as a glowing
+// rim with ripples). Additive; colour kept below white (the soft glow rule).
 shader_type spatial;
-render_mode unshaded, blend_add, cull_disabled, depth_draw_never, shadows_disabled;
+render_mode unshaded, blend_add, cull_back, depth_draw_never, shadows_disabled;
 
 uniform vec3 color : source_color = vec3(1.0, 0.68, 0.3);
 uniform vec3 edge_color : source_color = vec3(1.0, 0.85, 0.45);
@@ -14,6 +16,7 @@ uniform float strength = 1.0;
 uniform vec3 hit_dir = vec3(0.0, 1.0, 0.0);
 uniform float hit_age = 10.0;
 uniform float crack = 0.0;
+uniform float near_fade = 3.4;
 
 varying vec3 local_pos;
 
@@ -44,9 +47,10 @@ void fragment() {
 	float ripple = smoothstep(0.35, 0.0, ring) * exp(-hit_age * 3.5);
 	vec2 cell = floor(uv * 1.7);
 	float broken = step(1.0 - crack * 0.6, hash12(cell)) * edge;
-	vec3 c = color * (0.05 + rim * 0.75);
+	vec3 c = color * (0.015 + rim * 0.7);
 	c += edge_color * edge * (0.08 + rim * 0.45) * shimmer;
 	c += ripple_color * ripple * (0.5 + edge);
 	c += edge_color * broken * 0.6;
-	ALBEDO = c * energy * strength;
+	float near = smoothstep(near_fade * 0.35, near_fade, -VERTEX.z);
+	ALBEDO = c * energy * strength * near;
 }

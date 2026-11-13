@@ -1,13 +1,12 @@
 extends Node
 ## Autoload "TestRunner": dormant in play. Test modes, started after "--" on the command line: --smoke (headless
-## smoke test), --collision (collision and clipping suite), --perf (rendered performance probe), --balance (the
-## balance bot; with --stability, the back-to-back stability run), --sequence (an effect still sequence) and
-## --shots (review stills). --perf, --sequence and --shots need a display.
+## smoke test), --collision (collision and clipping suite), --perf (rendered performance probe), --shots (town
+## review stills), --combat-shots (combat review stills) and --walk-sheet (a side-view walk sheet). --perf and the
+## stills need a display.
 
 const MODES: Dictionary = { "--smoke": "res://tests/smoke_test.gd", "--shots": "res://tests/shots.gd",
 	"--collision": "res://tests/collision_suite.gd", "--perf": "res://tests/perf_probe.gd",
-	"--balance": "res://tests/balance_suite.gd", "--sequence": "res://tests/vfx_sequence.gd",
-	"--walk-sheet": "res://tests/walk_sheet.gd" }
+	"--walk-sheet": "res://tests/walk_sheet.gd", "--combat-shots": "res://tests/combat_shots.gd" }
 
 
 func _ready() -> void:

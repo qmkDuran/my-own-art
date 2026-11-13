@@ -73,14 +73,15 @@ func defeat_pop(enemy: Enemy) -> void:
 		float(spec["pop_lifetime"]), float(look("primary")["impact"]["pop_energy"]))
 
 
-func shot_pop(at: Vector3) -> void:
+func shot_pop(at: Vector3, size_share: float = 1.0) -> void:
 	var spec: Dictionary = look("enemy")
 	var colour: Color = Tuning.color(spec["shot"])
 	kit.place(ParticleBursts.embers(kit.quota.count(int(spec["pop_count"])), colour, float(spec["pop_size"]),
 		float(spec["pop_speed"]), float(spec["pop_lifetime"])), at)
 	var star := StarPop.new()
 	kit.place(star, at)
-	star.play(colour, colour.darkened(0.5), float(spec["shot_size"]) * 2.0, float(spec["pop_lifetime"]) * 0.5, 1.0)
+	star.play(colour, colour.darkened(0.5), float(spec["shot_size"]) * size_share, float(spec["pop_lifetime"]) * 0.5,
+		1.0)
 
 
 ## A telegraphed attack lands: violet flame bursts over its area (along a line, a row of them).

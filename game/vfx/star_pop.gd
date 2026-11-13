@@ -8,7 +8,7 @@ const POINTS: int = 6
 const INNER_SHARE: float = 0.32
 const OPEN_FROM: float = 0.25
 const TIP_ALPHA: float = 0.0
-const HALO_SHARE: float = 0.5
+const HALO_SHARE: float = 0.2
 
 
 func play(colour: Color, tip_colour: Color, size: float, seconds: float, energy: float) -> void:

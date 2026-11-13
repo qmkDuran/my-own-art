@@ -1,20 +1,21 @@
 class_name BeamFx
 extends Node3D
-## The look of the heavy's release: a thick glowing tube from the lantern to where it ends (vfx_beam shader), a
-## wider faint sheath around it, rings blown outwards along it, embers scattered down its length and a light at
-## each end. It snaps open at full width, then thins and fades over beam_seconds.
+## The look of the heavy's release: a glowing orange tube with a bright gold core from the lantern to where it
+## ends (vfx_beam shader, fading near the camera), rings blown outwards along it, embers scattered down its length
+## and a light at each end. It snaps open at full width, then thins and fades over beam_seconds.
 
 const SHADER: Shader = preload("res://shaders/vfx_beam.gdshader")
 const RING_SHADER: Shader = preload("res://shaders/vfx_scroll.gdshader")
-const SHEATH: float = 2.2
-const SHEATH_ENERGY: float = 0.35
 const SEGMENTS: int = 16
+const RING_ENERGY: float = 0.6
+const BODY_ENERGY: float = 0.7
+const CORE_WIDTH: float = 0.35
 const STRAIGHT_UP: float = 0.99
 const EMBER_SIZE: float = 0.15
 const EMBER_SPEED: float = 4.0
 const EMBER_SPREAD: float = 0.3
 const LIGHT_LINGER: float = 1.5
-const RING_GROW: float = 3.0
+const RING_GROW: float = 2.2
 
 var _materials: Array[ShaderMaterial] = []
 
@@ -25,8 +26,8 @@ func play(kit: VfxKit, spec: Dictionary, from: Vector3, to: Vector3, width: floa
 	kit.place(self, (from + to) * 0.5)
 	basis = Basis.looking_at(from.direction_to(to), Vector3.UP if absf(from.direction_to(to).y) < STRAIGHT_UP else
 		Vector3.RIGHT)
-	_tube(spec, length, width, float(spec["energy"]))
-	_tube(spec, length, width * SHEATH, float(spec["energy"]) * SHEATH_ENERGY)
+	_tube(spec, length, width, float(spec["energy"]) * BODY_ENERGY)
+	_tube({ "core": spec["core"], "outer": spec["core"] }, length, width * CORE_WIDTH, float(spec["energy"]))
 	_rings(kit, spec, length, width, seconds)
 	var embers: GPUParticles3D = ParticleBursts.embers(kit.quota.count(int(spec["embers"])), Tuning.color(
 		spec["outer"]), width * EMBER_SIZE, width * EMBER_SPEED, seconds * 2.0)
@@ -85,7 +86,7 @@ func _rings(kit: VfxKit, spec: Dictionary, length: float, width: float, seconds:
 		var material := ShaderMaterial.new()
 		material.shader = RING_SHADER
 		material.set_shader_parameter("color", Tuning.color(spec["outer"]))
-		material.set_shader_parameter("energy", 1.0)
+		material.set_shader_parameter("energy", RING_ENERGY)
 		ring.material_override = material
 		ring.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		add_child(ring)

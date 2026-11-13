@@ -11,16 +11,14 @@ Vulkan or Direct3D 12 GPU. Any GPU from the last 8 years or so is fine. If your 
 to Compatibility on its own: it still runs, but without volumetric fog or screen-space reflections.
 
 ## Controls
+### Moving about
 | Key | What it does |
 | --- | --- |
 | W A S D / arrow keys | walk (relative to the camera) |
 | Shift (hold) | run |
-| V | dash: a short, quick dodge with a puff of dust (creatures can't hurt you mid-dash) |
 | Space | jump |
 | Mouse | look around (click the window to capture the mouse) |
-| R | toggle rain (rain falls, puddles grow and shine, the fog thickens, rain sound fades in) |
-| N | start a **defence night** (see below) |
-| 1 / 2 / 3 or click | pick a level-up card |
+| T | toggle rain (rain falls, puddles grow and shine, the fog thickens, rain sound fades in) |
 | G | graphics: Low / Medium / High (saved) |
 | F | frame-rate cap: 30 / 60 / 120 / uncapped (default 60, saved) |
 | F9 | VSync on/off (default on, saved) |
@@ -30,6 +28,23 @@ to Compatibility on its own: it still runs, but without volumetric fog or screen
 | F11 | fullscreen / windowed (starts fullscreen at your display's resolution) |
 | H | show the controls hint again |
 | Esc | free the mouse |
+
+### The Lamplighter's kit (fighting)
+Aim with the centred crosshair; the camera tightens over your shoulder while you fight and you turn to face where
+you aim.
+
+| Key | Ability | What it does |
+| --- | --- | --- |
+| Left mouse (hold) | **Lantern bolt** (primary) | a rapid aimed flame bolt; hits pop with a star, a number and a tick on the crosshair |
+| Right mouse (hold, release) | **Heavy beam** | hold to charge (a glow builds at your lantern, a chime when full), let go to fire a beam that pierces everything in line; a full charge hits about 3x harder than a quick tap. Short cooldown |
+| Q (hold, release) | **Lantern bomb** | hold to see the arc and the blast ring, let go to throw; a burst of teal spirit-fire. 5 s cooldown |
+| E | **Ward** | a honeycomb bubble for about 3 s that stops enemy shots (not ground attacks: step out of those). 8 s cooldown |
+| V | **Blink** | a quick dash; nothing can hurt you mid-blink |
+| R | **Sunrise** (super) | when the sun icon's ring is full (it fills as you deal damage): you rise, a giant lantern sun forms overhead and rains fire over the area |
+| Tab | lock on | the camera follows the enemy nearest the crosshair; Tab again lets go |
+
+The HUD shows your health (top left), the objective, the boss's health (top centre) and your abilities (bottom
+right: a dark sweep while one cools down, a ring for the heavy's charge and the Sunrise meter).
 
 ## Keeping the GPU cool
 The game caps itself at 60 fps with VSync on by default, so a strong GPU doesn't run flat out. If your GPU still
@@ -47,29 +62,32 @@ the world. Only the canal (and the trees at the far edge) stop you; cross the ca
 - **Lantern Alley:** east from the square, lit by wall lanterns.
 - **The overlook:** from the south bank, walk east along the canal and up the long steps to the terrace for the view.
 
-## The defence night (N)
-The townsfolk go indoors and the spooky-cute creatures drift in from the fog for about 9 minutes:
-- **Sheet ghosts** float straight at you (through walls: they're ghosts).
-- **Pumpkin heads** hop after you along the streets. They're solid and walk around houses.
-- **Lantern moths** fly for the nearest lit lamp and snuff it, so that part of town goes dark. Stand next to a
-  snuffed lamp for a moment to relight it (a ring fills). Standing near a lit lamp slowly heals you.
-- At 7:00 the **Gloom King** arrives. He summons ghosts and snuffs every lamp he passes. Beat him, or survive
-  until dawn, to win.
+## The Gloomwood (the first mission)
+Walk east out of town across the meadow to the **stone gate in the tree line** (follow the dirt path from Lantern
+Alley). Walking through the gate starts the mission: clear the Gloomwood and break the Gloom King's spell. The
+music turns from the town theme to an exploring tune, and to the fight music whenever enemies are on you.
 
-Your lantern magic fires on its own; you move, dodge and choose. Defeated creatures pop into sparkles and drop
-light motes (experience) and ingredients (Pumpkin Goo, Moth Dust, Ghost-Pepper Wisps, Moonberries, Bat-Wing
-Toffee). Walk near them to collect them. Each level-up pauses the night and offers 3 cards:
-- **Attacks:** Lantern Flare (the starter: bolts at the nearest creature), Firefly Swarm (orbiting zaps), Candle
-  Ring (spinning candles up close), Moonbeam (beams at random spots), Bell Chime (a knock-back-and-stun pulse).
-- **Passives:** Brighter Wick (area), Warm Scarf (health), Quick Boots (speed), Steady Hands (cooldown).
-- **Combo:** max Firefly Swarm and Brighter Wick to unlock **Star Swarm**.
+1. **The Mushroom Glade:** a pack of mushroom imps and pumpkin heads rushes you (they crouch for a moment before
+   they lunge), with a lantern moth shooting from behind. Beat them and a second pack comes. Clearing the glade
+   relights its lanterns.
+2. **The Ruins** on the rise: lantern moths keep their distance and charge glowing shots (a violet glow and a
+   chime warn you about 0.75 s ahead: blink sideways or raise your ward). The **scarecrow knight** guards the
+   ruins behind a moonlit shield: bolts barely scratch it, the heavy beam and the bomb crack it fast. When it
+   breaks he staggers and can be hurt. Watch for his ground slam (a circle on the ground fills up first).
+3. **The Gloom King** in his ring of standing stones (the ring closes behind you): candle circles under your feet,
+   a gloom wave along a line, a fan of shots, and at half health he roars, his attacks quicken, a nova bursts
+   around him and he keeps summoning ghosts. Every attack is drawn on the ground (or glows) for about 0.8 s
+   before it lands.
 
-Fainting is gentle: you wake at the café door and keep half your ingredients. Winning keeps them all. The pantry
-is saved (it's what the café will cook with).
+Beat him and the mission is complete; after a moment your lantern carries you home to the town side of the gate.
+If you faint, you wake there too, and the woods reset for another try. Your health comes back on its own a few
+seconds after you were last hit.
 
 ## For developers
-- `tools/run_all.sh`: lint, parse check, the headless smoke test (town, graphics tiers, defence night, UI layout)
-  and the collision/clipping suite, about 1 minute. Prints `ALL CHECKS PASS`.
-- `tools/run_all.sh --long`: adds the 3-minute walk sweep, the balance bot (4 nights), the stability run, the
-  rendered performance probe and the brightness/readability check (needs `xvfb-run` and Vulkan), about 15 minutes.
-- `tools/shoot.sh OUT_DIR [shot ...]`: review stills (needs `xvfb-run` and a Vulkan driver; lavapipe works).
+- `tools/run_all.sh`: lint, parse check, the headless smoke test (town, posture, tools, UI layout, the combat kit,
+  the enemies and their telegraphs, the mission flow and music) and the collision/clipping suite, about 2 minutes.
+  Prints `ALL CHECKS PASS`.
+- `tools/run_all.sh --long`: adds the 3-minute walk sweep, the rendered performance probe in the busiest fight and
+  the brightness/readability check on town and combat stills (needs `xvfb-run` and Vulkan), about 25 minutes.
+- `tools/shoot.sh OUT_DIR [name ...]`: review stills, town shots or combat stages (overview, primary, heavy, bomb,
+  ward, swarm, elite_break, boss_telegraph, super, busy, contrast); needs `xvfb-run` and a Vulkan driver.

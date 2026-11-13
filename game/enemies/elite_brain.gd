@@ -45,4 +45,3 @@ func on_shield_broken(enemy: Enemy) -> void:
 	_stagger = float(enemy.spec["stagger_seconds"])
 	if is_instance_valid(_slam):
 		_slam.cancel()
-	enemy.look().shatter()

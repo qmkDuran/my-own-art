@@ -29,9 +29,9 @@ void fragment() {
 	float front = smoothstep(0.06, 0.0, abs(along - progress)) * inside * step(progress, 0.999);
 	float stripes = 0.5 + 0.5 * sin((along * 18.0 - TIME * 6.0));
 	vec3 c = rim_color * rim * (0.7 + 0.3 * stripes);
-	c += fill_color * filled * (0.22 + 0.1 * stripes);
+	c += fill_color * filled * (0.13 + 0.07 * stripes);
 	c += rim_color * front * 0.8;
-	c += fill_color * inside * 0.06;
+	c += fill_color * inside * 0.04;
 	c += rim_color * inside * flash * 0.9;
 	ALBEDO = c * energy;
 }

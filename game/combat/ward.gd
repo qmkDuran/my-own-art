@@ -1,12 +1,14 @@
 class_name Ward
 extends Node3D
-## The ward: a short-lived honey-gold honeycomb bubble around the Lamplighter that stops enemy shots (they splash
-## on it with a ripple and a chime). It doesn't stop ground attacks: step out of those. On a cooldown.
+## The ward: a short-lived honey-gold honeycomb bubble around the Lamplighter, with a glowing ring at their feet,
+## that stops enemy shots (they splash on it with a ripple and a chime). It doesn't stop ground attacks: step out
+## of those. On a cooldown.
 
 var active: bool = false
 var _kit: LamplighterKit
 var _bubble: Bubble
 var _light: OmniLight3D
+var _ring: MeshInstance3D
 var _left: float = 0.0
 
 
@@ -30,6 +32,11 @@ func raise() -> bool:
 	_light.light_energy = float(spec["light_energy"])
 	_light.omni_range = float(spec["light_range"])
 	add_child(_light)
+	_ring = RingMesh.make(Tuning.color(spec["edge"]))
+	var radius: float = Tuning.number("combat", "ward", "radius")
+	_ring.scale = Vector3(radius, RingMesh.LIFT, radius)
+	add_child(_ring)
+	_ring.position.y = RingMesh.LIFT - position.y
 	(_kit.cooldowns["ward"] as Cooldown).start()
 	_kit.fx.kit.sfx.cue("ward_up", global_position)
 	return true
@@ -56,3 +63,4 @@ func _process(delta: float) -> void:
 		active = false
 		_bubble.queue_free()
 		_light.queue_free()
+		_ring.queue_free()
