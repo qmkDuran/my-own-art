@@ -15,7 +15,7 @@ to Compatibility on its own: it still runs, but without volumetric fog or screen
 | --- | --- |
 | W A S D / arrow keys | walk (relative to the camera) |
 | Shift (hold) | run |
-| Shift (quick tap) | dash: a short, quick dodge with a puff of dust (creatures can't hurt you mid-dash) |
+| V | dash: a short, quick dodge with a puff of dust (creatures can't hurt you mid-dash) |
 | Space | jump |
 | Mouse | look around (click the window to capture the mouse) |
 | R | toggle rain (rain falls, puddles grow and shine, the fog thickens, rain sound fades in) |
@@ -23,7 +23,10 @@ to Compatibility on its own: it still runs, but without volumetric fog or screen
 | 1 / 2 / 3 or click | pick a level-up card |
 | G | graphics: Low / Medium / High (saved) |
 | F | frame-rate cap: 30 / 60 / 120 / uncapped (default 60, saved) |
-| V | VSync on/off (default on, saved) |
+| F9 | VSync on/off (default on, saved) |
+| F1 | fly mode: a free camera (WASD flies where you look, Space up, Ctrl or C down, Shift faster, no collision, HUD hidden); F1 again puts you back with the player where you left them |
+| F3 | performance overlay: fps, frame time with a small graph, CPU/GPU frame time, draw calls, graphics tier, fps cap and resolution |
+| F10 | Windows renderer: Vulkan (default) or Direct3D 12, used from the next start (some GPU overlays, like NVIDIA's, hook Direct3D 12 more reliably) |
 | F11 | fullscreen / windowed (starts fullscreen at your display's resolution) |
 | H | show the controls hint again |
 | Esc | free the mouse |
@@ -34,6 +37,9 @@ runs hot, press G for Low: no volumetric fog, reflections or ambient occlusion, 
 shadowed lamp, fewer particles, and rendering at 77% with FSR upscaling.
 
 ## Where to go
+The town is open: walk between the houses and out onto the meadow, all the way to the dense trees at the edge of
+the world. Only the canal (and the trees at the far edge) stop you; cross the canal by the bridge.
+
 - **The square:** the fountain, the big tree, the clock tower and the bakery's glowing window. The baker chats by her
   stall, the old man sits on his bench, and the child runs around the fountain and waves at the cat.
 - **Lamp Street:** walk west from the square (past the signpost). There's a music box playing in an upstairs window.

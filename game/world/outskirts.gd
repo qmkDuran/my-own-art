@@ -1,7 +1,8 @@
 class_name Outskirts
 extends Node3D
-## The world around the town, out of reach but always there: a dark meadow framing the town, a forest edge of
-## Meshy trees close in and simple trees further out (each ring one MultiMesh, so hundreds of trees cost a few draw
+## The world around the town: a dark meadow framing the town that you can walk out onto (its floor sounds of
+## grass), a dense band of trees marking the edge of the walkable world, a forest of Meshy trees and simple trees
+## further out (each ring one MultiMesh, so hundreds of trees cost a few draw
 ## calls), rolling hills, a lake to the south and a scatter of warm cottage lights on the hills. Laid out from
 ## data/town.json "outskirts" with a fixed seed.
 
@@ -15,6 +16,7 @@ const TRUNK_FLARE: float = 0.6
 const CROWN_SINK: float = 0.8
 const GROUND_DROP: float = 0.06
 const HILL_SEGMENTS: int = 24
+const FLOOR_THICKNESS: float = 1.0
 
 var _rng := RandomNumberGenerator.new()
 
@@ -26,6 +28,7 @@ func build(library: AssetLibrary) -> void:
 	_meadow(float(spec["meadow_size"]))
 	_meshy_trees(library, spec["near_trees"])
 	_simple_trees(spec["far_trees"])
+	_simple_trees(spec["edge_trees"])
 	for hill: Array in spec["hills"]:
 		_hill(Tuning.vec3(hill.slice(0, 3)), Tuning.vec3(hill.slice(3, 6)))
 	_lake(spec["lake"])
@@ -52,6 +55,9 @@ func _meadow(size: float) -> void:
 		ground.position = Vector3(piece.get_center().x, -GROUND_DROP, piece.get_center().y)
 		ground.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		add_child(ground)
+		var floor_box := Vector3(piece.size.x, FLOOR_THICKNESS, piece.size.y)
+		var body: Node3D = Blocks.box(self, ground.position - Vector3.UP * FLOOR_THICKNESS * 0.5, floor_box, null, true)
+		Blocks.mark_surface(body, "grass")
 
 
 ## A ring of trees as one MultiMesh: positions between two radii, with random turn and size.

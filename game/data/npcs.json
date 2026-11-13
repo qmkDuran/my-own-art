@@ -1,35 +1,197 @@
 {
-  "_doc": "Townsfolk and their looping routines. Steps: walk to a point; or play a clip (idle, talk, sit, wave) for some seconds, facing a point, optionally first settling onto an exact spot (at), like a bench seat.",
-  "townsfolk": [
-    { "name": "baker", "model": "res://assets/meshy/characters/baker.glb", "start": [3.5, -9.3],
-      "routine": [
-        {"do": "talk", "face": [0.0, 0.0], "seconds": 9.0},
-        {"do": "walk", "to": [8.6, -9.4]},
-        {"do": "idle", "face": [8.6, -4.0], "seconds": 6.0},
-        {"do": "walk", "to": [9.2, -4.6]},
-        {"do": "walk", "to": [-2.2, -4.0]},
-        {"do": "talk", "face": [-4.6, -5.2], "seconds": 10.0},
-        {"do": "walk", "to": [3.5, -9.3]}
-      ] },
-    { "name": "old_man", "model": "res://assets/meshy/characters/old_man.glb", "start": [-4.3, 0.1, -4.85],
-      "routine": [
-        {"do": "sit", "at": [-4.3, 0.1, -4.85], "face": [0.0, 0.0], "seconds": 40.0},
-        {"do": "walk", "to": [-2.6, -1.8]},
-        {"do": "idle", "face": [0.0, 0.0], "seconds": 11.0},
-        {"do": "talk", "face": [2.0, 2.0], "seconds": 6.0},
-        {"do": "walk", "to": [-3.4, -3.8]}
-      ] },
-    { "name": "child", "model": "res://assets/meshy/characters/child.glb", "start": [3.4, 0.8],
-      "routine": [
-        {"do": "walk", "to": [0.6, 3.4]},
-        {"do": "walk", "to": [-3.4, 0.8]},
-        {"do": "walk", "to": [-3.4, 12.7]},
-        {"do": "wave", "face": [-3.6, 13.8], "seconds": 4.0},
-        {"do": "idle", "face": [-3.6, 13.8], "seconds": 5.0},
-        {"do": "walk", "to": [-3.6, 0.0]},
-        {"do": "walk", "to": [0.0, -3.6]},
-        {"do": "walk", "to": [3.4, 0.8]},
-        {"do": "idle", "face": [0.0, 0.0], "seconds": 4.0}
-      ] }
-  ]
+ "_doc": "Townsfolk and their looping routines. Steps: walk to a point; or play a clip (idle, talk, sit, wave) for some seconds, facing a point. A sit step names the bench near a point (bench_near): the seat is worked out from that bench where it actually stands (seat: how far in front of the bench's centre and how high the sitter's origin goes, and the hips' height above the seat top); with no bench there, the step is skipped.",
+ "townsfolk": [
+  {
+   "name": "baker",
+   "model": "res://assets/meshy/characters/baker.glb",
+   "start": [
+    3.5,
+    -9.3
+   ],
+   "routine": [
+    {
+     "do": "talk",
+     "face": [
+      0.0,
+      0.0
+     ],
+     "seconds": 9.0
+    },
+    {
+     "do": "walk",
+     "to": [
+      8.6,
+      -9.4
+     ]
+    },
+    {
+     "do": "idle",
+     "face": [
+      8.6,
+      -4.0
+     ],
+     "seconds": 6.0
+    },
+    {
+     "do": "walk",
+     "to": [
+      9.2,
+      -4.6
+     ]
+    },
+    {
+     "do": "walk",
+     "to": [
+      -2.2,
+      -4.0
+     ]
+    },
+    {
+     "do": "talk",
+     "face": [
+      -4.6,
+      -5.2
+     ],
+     "seconds": 10.0
+    },
+    {
+     "do": "walk",
+     "to": [
+      3.5,
+      -9.3
+     ]
+    }
+   ]
+  },
+  {
+   "name": "old_man",
+   "model": "res://assets/meshy/characters/old_man.glb",
+   "start": [
+    -3.4,
+    -3.8
+   ],
+   "routine": [
+    {
+     "do": "sit",
+     "bench_near": [
+      -4.6,
+      -5.2
+     ],
+     "seconds": 40.0
+    },
+    {
+     "do": "walk",
+     "to": [
+      -2.6,
+      -1.8
+     ]
+    },
+    {
+     "do": "idle",
+     "face": [
+      0.0,
+      0.0
+     ],
+     "seconds": 11.0
+    },
+    {
+     "do": "talk",
+     "face": [
+      2.0,
+      2.0
+     ],
+     "seconds": 6.0
+    },
+    {
+     "do": "walk",
+     "to": [
+      -3.4,
+      -3.8
+     ]
+    }
+   ]
+  },
+  {
+   "name": "child",
+   "model": "res://assets/meshy/characters/child.glb",
+   "start": [
+    3.4,
+    0.8
+   ],
+   "routine": [
+    {
+     "do": "walk",
+     "to": [
+      0.6,
+      3.4
+     ]
+    },
+    {
+     "do": "walk",
+     "to": [
+      -3.4,
+      0.8
+     ]
+    },
+    {
+     "do": "walk",
+     "to": [
+      -3.4,
+      12.7
+     ]
+    },
+    {
+     "do": "wave",
+     "face": [
+      -3.6,
+      13.8
+     ],
+     "seconds": 4.0
+    },
+    {
+     "do": "idle",
+     "face": [
+      -3.6,
+      13.8
+     ],
+     "seconds": 5.0
+    },
+    {
+     "do": "walk",
+     "to": [
+      -3.6,
+      0.0
+     ]
+    },
+    {
+     "do": "walk",
+     "to": [
+      0.0,
+      -3.6
+     ]
+    },
+    {
+     "do": "walk",
+     "to": [
+      3.4,
+      0.8
+     ]
+    },
+    {
+     "do": "idle",
+     "face": [
+      0.0,
+      0.0
+     ],
+     "seconds": 4.0
+    }
+   ]
+  }
+ ],
+ "seat": {
+  "forward": 0.46,
+  "lift": -0.01,
+  "hip_clearance": 0.12,
+  "search": 1.5
+ }
 }

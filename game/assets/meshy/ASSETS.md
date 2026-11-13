@@ -43,5 +43,6 @@ Concept images are not in the repo (they were only references).
 | gloom_king | nano-banana-2-lite image (3) + image-to-3D meshy-t2.5 + meshy-n1 (15) | 18 | Using exactly the art style of the reference sheet, draw ONLY ONE object: a tall floating cloaked shadow king in a deep purple hooded cloak with no visible face except two glowing warm orange eyes, wearing a crown made of lit candles. spooky-cute Halloween storybook creature, friendly and silly, never scary, like Over the Garden Wall or Plants vs Zombies. single isolated object, full view, centered, plain light grey background, no ground, no other objects. Soft even daylight. stylised cozy storybook 3D, soft rounded shapes, chunky proportions, hand-painted textures, warm muted colours, like a cozy animated film; game asset; clean silhouette |
 
 | player jump | animation [466] Regular Jump (3) | 3 | (library action, merged into player.glb as "jump") |
+| player posture | animation [249, 247, 30] Idle 9, Idle 7, Casual Walk (9) | 9 | (library actions; Idle 9 and Casual Walk replace the old idle and walk in player.glb; Idle 7 was the alternative) |
 
-**Total: 512 credits** (437 for the town, 72 for the four step-2 creatures, which are static models moved by code, so no rig, 3 for the player's jump clip).
+**Total: 521 credits** (437 for the town, 72 for the four step-2 creatures, which are static models moved by code, so no rig, 3 for the player's jump clip, 9 for the player's upright idle and walk).

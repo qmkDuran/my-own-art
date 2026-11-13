@@ -95,7 +95,8 @@ func collision_box(asset: String, scale: float = 1.0) -> AABB:
 	if band.size == Vector3.ZERO:
 		band = AABB(Vector3(-size.x * 0.5, 0.0, -size.z * 0.5), size)
 	var corner := Vector3(band.position.x, 0.0, band.position.z)
-	return AABB(corner * scale, Vector3(band.size.x, size.y, band.size.z) * scale)
+	var height: float = maxf(size.y, float(Tuning.doc("assets")[asset].get("collide_height", 0.0)))
+	return AABB(corner * scale, Vector3(band.size.x, height, band.size.z) * scale)
 
 
 func _bounds(root: Node3D) -> AABB:

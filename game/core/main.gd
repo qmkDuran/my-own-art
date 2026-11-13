@@ -26,6 +26,8 @@ var library: AssetLibrary
 var graphics: GraphicsSettings
 var vfx: VfxKit
 var display: DisplaySettings
+var fly: FlyCamera
+var perf_overlay: PerfOverlay
 
 
 func _ready() -> void:
@@ -50,8 +52,22 @@ func _ready() -> void:
 	graphics.changed.connect(func(tier: String) -> void:
 		hud.note("Graphics: " + tier.capitalize())
 		display.remember_tier(tier))
+	_build_tools()
 	if not DisplayServer.get_name() == "headless" and TestRunner.is_playing():
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+
+
+## Fly mode (F1) and the performance overlay (F3).
+func _build_tools() -> void:
+	fly = FlyCamera.new()
+	add_child(fly)
+	fly.setup(camera_rig.camera, controller)
+	fly.toggled.connect(func(flying: bool) -> void:
+		hud.visible = not flying
+		night_hud.visible = not flying and night.state != NightRun.State.IDLE)
+	perf_overlay = PerfOverlay.new()
+	add_child(perf_overlay)
+	perf_overlay.setup(display, graphics)
 
 
 func _build_world() -> void:
@@ -94,12 +110,18 @@ func _build_life() -> void:
 	for spec: Dictionary in Tuning.doc("npcs")["townsfolk"]:
 		var person := Townsperson.new()
 		add_child(person)
-		person.setup(spec)
+		person.setup(spec, _benches())
 		townsfolk.append(person)
 	add_child(Fireflies.new())
 	var dust: CameraParticles = CameraParticles.dust()
 	add_child(dust)
 	dust.follow(camera_rig.camera)
+
+
+func _benches() -> Array[Node3D]:
+	var out: Array[Node3D] = []
+	out.assign(town.placed.filter(func(node: Node3D) -> bool: return node.get_meta("asset", "") == "bench"))
+	return out
 
 
 func _build_weather() -> void:
@@ -109,7 +131,7 @@ func _build_weather() -> void:
 	rain_fall.follow(camera_rig.camera)
 	ambience = Ambience.new()
 	add_child(ambience)
-	ambience.setup(town.fountain)
+	ambience.setup(town.fountain, camera_rig.camera)
 	weather.rain_mix_changed.connect(_on_rain_mix)
 	add_child(weather)
 
@@ -176,6 +198,12 @@ func _unhandled_input(event: InputEvent) -> void:
 		display.cycle_frame_cap()
 	elif event.is_action_pressed("vsync"):
 		display.toggle_vsync()
+	elif event.is_action_pressed("render_driver"):
+		display.toggle_windows_driver()
+	elif event.is_action_pressed("fly"):
+		fly.toggle()
+	elif event.is_action_pressed("perf_overlay"):
+		perf_overlay.toggle()
 	elif event.is_action_pressed("fullscreen"):
 		display.toggle_fullscreen()
 	elif event.is_action_pressed("toggle_rain"):

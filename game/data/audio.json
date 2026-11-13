@@ -2,15 +2,20 @@
  "_doc": "Procedural ambience: every sound is synthesised at start into a short loop (no audio files). Volumes in dB.",
  "mix_rate": 22050,
  "crickets": {
-  "seconds": 6.0,
-  "voices": 4,
+  "seconds": 0.8,
   "pitch_min": 4100.0,
   "pitch_max": 4900.0,
   "pulse_rate": 32.0,
   "pulses": 3,
-  "gap_min": 0.6,
-  "gap_max": 1.6,
-  "volume_db": -20.0
+  "chirps": 2,
+  "chirp_gap": 0.22,
+  "gap_min": 8.0,
+  "gap_max": 20.0,
+  "distance_min": 14.0,
+  "distance_max": 32.0,
+  "volume_db": -27.0,
+  "unit_size": 8.0,
+  "max_distance": 60.0
  },
  "trickle": {
   "seconds": 5.0,
@@ -105,5 +110,40 @@
   "decay": 4.0,
   "level": 0.5,
   "volume_db": -14.0
+ },
+ "steps": {
+  "_doc": "Footsteps, synthesised per surface (a few variants each), played at each foot plant of the walk and run clips.",
+  "variants": 4,
+  "pitch_jitter": 0.08,
+  "db_jitter": 2.0,
+  "player_db": -16.0,
+  "townsfolk_db": -21.0,
+  "run_db": 3.0,
+  "unit_size": 3.0,
+  "max_distance": 22.0,
+  "cobbles": {
+   "seconds": 0.12,
+   "cutoff": 0.55,
+   "decay": 45.0,
+   "thump_hz": 120.0,
+   "thump": 0.5,
+   "level": 0.8
+  },
+  "bridge": {
+   "seconds": 0.2,
+   "cutoff": 0.3,
+   "decay": 28.0,
+   "thump_hz": 170.0,
+   "thump": 1.0,
+   "level": 0.8
+  },
+  "grass": {
+   "seconds": 0.22,
+   "cutoff": 0.12,
+   "decay": 16.0,
+   "thump_hz": 70.0,
+   "thump": 0.15,
+   "level": 0.7
+  }
  }
 }

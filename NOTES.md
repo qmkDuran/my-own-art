@@ -49,6 +49,31 @@ and portraits, coins, one upgrade shop). The 700-credit cap covers steps 1 to 3.
   water; it is now four planes around the town.
 - **Canal fish:** 26 softly glowing koi (teal, amber, lilac) swim along the canal by the square and bridge.
 
+## Second playtest fixes
+- **Posture:** the old Meshy "Idle" (action 0) stood with bent knees and splayed legs, and the free rig walk leaned
+  back. The player now uses library "Idle 9" (249) and "Casual Walk" (30), 9 credits with one alternative idle
+  tried; side-view stills show straight legs and an upright walk.
+- **Open town:** fewer houses (each row placed once, in order, with 3 to 7 m walkable gaps), no backdrop rows, no
+  brick gap walls, gap fillers or invisible row walls, no hedges, no mist veil. You can walk between houses and out
+  onto the meadow (now with a floor) up to an invisible ring hidden in a dense band of 260 trees at the world's
+  edge. Wall lanterns are only placed where a house wall is behind them.
+- **Canal:** invisible walls on the parapets, 3 m tall, so nobody walks or jumps in; the bridge stays open. The
+  collision suite has hopping probes at the canal's edges.
+- **Lamps:** the small glowing ball under each lamp is gone. The light sits inside the lamp's glass (which glows
+  through the asset shader), and the lamp models don't cast shadows, so the glass doesn't block its own light.
+- **Props:** a bench's collision box is taller than any jump (its visible top is the backrest, so a box that high
+  left you floating over the seat). Hopping probes at every prop check that wherever one ends up standing on a
+  prop, its feet are within 5 cm of the visible top; the player and townsfolk stand within 5 cm of the floor.
+- **Benches and sitting:** a sit step names the bench near a spot, and the seat is worked out from where that bench
+  really stands; with no bench there, the sit is skipped. The suite checks every sitter: a bench under them, hips
+  within 5 cm of the seat (plus the body's own clearance), facing the bench's way.
+- **Sound:** the cricket loop is gone; now and then one cricket chirps quietly somewhere 14 to 32 m away (every 8
+  to 20 s). Footsteps for the player and townsfolk, synthesised per surface (cobbles, the bridge, the meadow's
+  grass, a few variants each with random pitch and level), are played at the foot-plant moments measured from
+  each walk and run clip. Floors carry their surface as metadata.
+- **Controls:** V dashes (Shift only runs), F9 VSync, F1 fly mode, F3 performance overlay, F10 Windows renderer
+  (Vulkan or Direct3D 12 via override.cfg, from the next start).
+
 ## The glow rule: "Luigi's Mansion, not LED headlights"
 Every glow in the game is **soft, warm and diffuse**: a gentle halo that falls off smoothly and keeps its colour
 (warm amber, candle orange, ghostly teal and green). There are no white-hot cores, hard star points or big

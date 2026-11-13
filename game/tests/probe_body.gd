@@ -1,14 +1,16 @@
 class_name ProbeBody
 extends CharacterBody3D
 ## A stand-in for the player in the collision tests: the same capsule, collision mask, gravity and run speed, but
-## no model, so hundreds can run at once. It walks towards a goal (or in a heading) and can tell if it has ended up
-## inside the town's geometry.
+## no model, so hundreds can run at once. It walks towards a goal (or in a heading), hopping if asked, and can tell
+## if it has ended up inside the town's geometry.
 
 const INSET: float = 0.06
 
 var goal: Vector3 = Vector3.INF
 var heading: Vector3 = Vector3.ZERO
 var speed: float = 0.0
+## Jumps again each time it lands (to test that walls and props can't be hopped over or onto).
+var hopping: bool = false
 var _capsule: CapsuleShape3D
 
 
@@ -32,6 +34,8 @@ func _physics_process(delta: float) -> void:
 		direction = Vector3(goal.x - global_position.x, 0.0, goal.z - global_position.z)
 		direction = direction.normalized() if direction.length() > speed * delta else Vector3.ZERO
 	var fall: float = 0.0 if is_on_floor() else velocity.y - Tuning.f("player", "gravity") * delta
+	if hopping and is_on_floor():
+		fall = sqrt(2.0 * Tuning.f("player", "gravity") * Tuning.f("agility", "jump_height"))
 	velocity = direction * speed + Vector3.UP * fall
 	move_and_slide()
 

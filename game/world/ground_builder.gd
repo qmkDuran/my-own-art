@@ -2,7 +2,8 @@ class_name GroundBuilder
 extends Node3D
 ## Builds the code-made ground of the town from data/town.json: the cobbled streets, the canal (walls, floor and
 ## water), the low stone parapets, stone blocks (the overlook terrace and fillers), the steps up to the overlook,
-## the iron railings around it, the walkable deck of the stone bridge, and invisible seals closing the town.
+## the iron railings around it, the walkable deck of the stone bridge, invisible walls along the canal (so nobody
+## walks or jumps in; the bridge stays open) and the far edge of the world, hidden in a dense band of trees.
 
 const FLOOR_THICKNESS: float = 1.0
 const RAMP_THICKNESS: float = 0.5
@@ -11,16 +12,9 @@ const RAIL_BAR: float = 0.07
 const BRIDGE_WALL_HEIGHT: float = 1.1
 const BRIDGE_WALL_WIDTH: float = 0.2
 const CANAL_WALL: float = 0.6
-const SEAL_HEIGHT: float = 10.0
-const SEAL_WIDTH: float = 0.4
 ## Surfaces that would sit exactly on the street (the canal walls' tops) are kept this far below it, so the two
 ## never fight over the same pixels (z-fighting flicker).
 const SURFACE_GAP: float = 0.03
-const VEIL_SHADER: Shader = preload("res://shaders/barrier_veil.gdshader")
-const VEIL_HEIGHT: float = 12.0
-const HEDGE_WALL: Vector2 = Vector2(0.7, 0.5)
-const HEDGE_SIZE: Vector2 = Vector2(1.0, 0.9)
-const HEDGE_GREEN: Color = Color(0.12, 0.22, 0.1)
 const IRON_COLOUR: Color = Color(0.07, 0.065, 0.07)
 const IRON_ROUGHNESS: float = 0.45
 const IRON_METALLIC: float = 0.6
@@ -46,13 +40,8 @@ func build() -> void:
 		_steps(flight)
 	_railings(town["railings"], town["railing"])
 	_bridge_deck(town["bridge"])
-	for seal: Array in town["seals"]:
-		var a := Vector3(float(seal[0]), 0.0, float(seal[1]))
-		var b := Vector3(float(seal[2]), 0.0, float(seal[3]))
-		Blocks.wall_between(self, a, b, SEAL_HEIGHT, SEAL_WIDTH, null)
-		_veil(a, b)
-	for hedge: Array in town["hedges"]:
-		_hedge(Vector3(float(hedge[0]), 0.0, float(hedge[1])), Vector3(float(hedge[2]), 0.0, float(hedge[3])))
+	_canal_blockers(town["parapets"], town["parapet"])
+	_world_edge(town["edge"])
 	for probe: Dictionary in town["reflection_probes"]:
 		_reflection_probe(Tuning.vec3(probe["center"]), Tuning.vec3(probe["size"]))
 
@@ -156,8 +145,8 @@ func _bridge_deck(bridge: Dictionary) -> void:
 	var half: Vector3 = along * float(bridge["length"]) * 0.5
 	var top: Vector3 = centre + Vector3.UP * float(bridge["peak"])
 	var width: float = bridge["width"]
-	_ramp(centre - half, top, width)
-	_ramp(top, centre + half, width)
+	Blocks.mark_surface(_ramp(centre - half, top, width), "bridge")
+	Blocks.mark_surface(_ramp(top, centre + half, width), "bridge")
 	var side: Vector3 = along.cross(Vector3.UP) * (width * 0.5 + BRIDGE_WALL_WIDTH)
 	for sign: float in [-1.0, 1.0]:
 		var a: Vector3 = centre - half + side * sign
@@ -178,36 +167,33 @@ func _reflection_probe(centre: Vector3, size: Vector3) -> void:
 	probe.position = centre
 
 
-## A faint mist curtain along an invisible seal, seen only up close (the soft edge of the world).
-func _veil(a: Vector3, b: Vector3) -> void:
-	var quad := QuadMesh.new()
-	quad.size = Vector2(a.distance_to(b), VEIL_HEIGHT)
-	var material := ShaderMaterial.new()
-	material.shader = VEIL_SHADER
-	quad.material = material
-	var veil := MeshInstance3D.new()
-	veil.name = "BarrierVeil"
-	veil.mesh = quad
-	veil.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	add_child(veil)
-	veil.position = (a + b) * 0.5 + Vector3.UP * VEIL_HEIGHT * 0.5
-	veil.basis = Basis.looking_at(a.direction_to(b).cross(Vector3.UP), Vector3.UP)
+## Invisible walls on the canal's parapets, tall enough that no jump clears them (the bridge gap stays open).
+func _canal_blockers(lines: Array, look: Dictionary) -> void:
+	for line: Array in lines:
+		Blocks.wall_between(self, Vector3(float(line[0]), 0.0, float(line[1])), Vector3(float(line[2]), 0.0,
+			float(line[3])), float(Tuning.doc("town")["canal_block_height"]), float(look["width"]), null)
 
 
-## A natural blocker: a low brick wall topped with a clipped hedge.
-func _hedge(a: Vector3, b: Vector3) -> void:
-	Blocks.wall_between(self, a, b, HEDGE_WALL.x, HEDGE_WALL.y, SurfaceMaterials.stone("bricks"))
-	var leaves := StandardMaterial3D.new()
-	leaves.albedo_color = HEDGE_GREEN
-	leaves.roughness = 1.0
-	var centre: Vector3 = (a + b) * 0.5 + Vector3.UP * (HEDGE_WALL.x + HEDGE_SIZE.y * 0.5)
-	Blocks.box(self, centre, Vector3(HEDGE_SIZE.x, HEDGE_SIZE.y, a.distance_to(b)), leaves, true, a.direction_to(b))
+## The far edge of the walkable world: an invisible ring of walls, hidden inside the dense edge trees.
+func _world_edge(edge: Dictionary) -> void:
+	var centre: Vector3 = Tuning.point(edge["centre"])
+	var radius := Vector2(float(edge["radius"][0]), float(edge["radius"][1]))
+	var segments: int = int(edge["segments"])
+	for index: int in segments:
+		var a: Vector3 = centre + _ellipse(radius, TAU * index / segments)
+		var b: Vector3 = centre + _ellipse(radius, TAU * (index + 1) / segments)
+		Blocks.wall_between(self, a, b, float(edge["height"]), float(edge["width"]), null)
+
+
+static func _ellipse(radius: Vector2, angle: float) -> Vector3:
+	return Vector3(cos(angle) * radius.x, 0.0, sin(angle) * radius.y)
 
 
 ## A walkable slope whose top surface runs from one point to another.
-func _ramp(from: Vector3, to: Vector3, width: float) -> void:
+func _ramp(from: Vector3, to: Vector3, width: float) -> StaticBody3D:
 	var direction: Vector3 = from.direction_to(to)
 	var body: StaticBody3D = Blocks.solid(Vector3(width, RAMP_THICKNESS, from.distance_to(to)))
 	add_child(body)
 	var up: Vector3 = direction.cross(direction.cross(Vector3.UP)).normalized() * -1.0
 	body.global_transform = Transform3D(Basis.looking_at(direction, up), (from + to) * 0.5 - up * RAMP_THICKNESS * 0.5)
+	return body

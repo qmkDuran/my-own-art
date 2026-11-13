@@ -26,8 +26,8 @@ const CROSS_SECONDS: float = 10.0
 const ARRIVE: float = 0.8
 const CAMERA_SPOTS: Array = [[-15.0, -2.6, 0.0], [-20.0, 2.6, 180.0], [14.0, -1.2, 0.0], [20.0, 1.2, 180.0],
 	[3.0, -9.6, 0.0], [-11.0, 0.0, -90.0]]
-const SEAT_LOW: float = -0.05
-const SEAT_HIGH: float = 0.35
+const SEAT_TOLERANCE: float = 0.05
+const SEAT_FACING: float = 0.9
 const HIPS: String = "Hips"
 const SPAWN_SAMPLES: int = 60
 const SEED: int = 20261113
@@ -60,6 +60,10 @@ func _run() -> void:
 	await _crossings()
 	await _camera_probes()
 	_seat_pose()
+	var standing := StandingChecks.new(self, m)
+	await standing.run()
+	report.append_array(standing.report)
+	failures.append_array(standing.failures)
 	await _walkers_stay_out()
 	_spawn_reachability()
 	for line: String in report:
@@ -201,15 +205,39 @@ func _camera_probes() -> void:
 	report.append("camera: %d probes against walls" % CAMERA_SPOTS.size())
 
 
+## Every townsperson playing the sit clip sits on a real bench: hips at the right height over its seat top,
+## facing the way the bench faces. A sit step with no bench nearby is skipped (never a sit in mid-air).
 func _seat_pose() -> void:
-	var old_man: Townsperson = m.townsfolk[1]
-	var skeleton: Skeleton3D = old_man.model.skeleton
-	var hips: Vector3 = skeleton.global_transform * skeleton.get_bone_global_pose(skeleton.find_bone(HIPS)).origin
-	var seat: float = _seat_top(Tuning.point(Tuning.doc("npcs")["townsfolk"][1]["routine"][0]["at"]))
-	var above: float = hips.y - seat
-	report.append("bench: the old man's hips are %.2f m above the seat top (%.2f m)" % [above, seat])
-	if above < SEAT_LOW or above > SEAT_HIGH:
-		failures.append("the old man's hips are %.2f m from the bench seat" % above)
+	var clearance: float = float(Tuning.doc("npcs")["seat"]["hip_clearance"])
+	var sitters: int = 0
+	for person: Townsperson in m.townsfolk:
+		if person.model.current_clip() != "sit":
+			continue
+		sitters += 1
+		if person.seat_bench == null:
+			failures.append("%s sits with no bench under them" % person.person_name)
+			continue
+		var skeleton: Skeleton3D = person.model.skeleton
+		var hips: Vector3 = skeleton.global_transform * skeleton.get_bone_global_pose(skeleton.find_bone(HIPS)).origin
+		var above: float = hips.y - _seat_top(Townsperson.seat_spot(person.seat_bench)) - clearance
+		var facing: float = -person.global_basis.z.dot(person.seat_bench.global_basis.z)
+		report.append("bench: %s's hips sit %.3f m from the seat (clearance included), facing %.2f" % [
+			person.person_name, above, facing])
+		if absf(above) > SEAT_TOLERANCE or facing < SEAT_FACING:
+			failures.append("%s sits %.2f m off the seat or faces away (%.2f)" % [person.person_name, above, facing])
+	if sitters == 0:
+		failures.append("nobody is sitting at the start (the old man should be on his bench)")
+	_sit_without_bench()
+
+
+func _sit_without_bench() -> void:
+	var person := Townsperson.new()
+	m.add_child(person)
+	var spec: Dictionary = Tuning.doc("npcs")["townsfolk"][1].duplicate(true)
+	person.setup(spec, [] as Array[Node3D])
+	if person.model.current_clip() == "sit":
+		failures.append("a townsperson sat down with no bench there")
+	person.queue_free()
 
 
 ## The top of the bench seat under a point: the highest bench vertex near it below the backrest.
@@ -224,7 +252,8 @@ func _seat_top(at: Vector3) -> float:
 	return top
 
 
-## A pumpkin behind a row of houses chases the player in the street: it must never get inside a house.
+## A pumpkin behind a row of houses chases the player in the street (through the open gaps between houses): it
+## must never get inside a house on the way.
 func _walkers_stay_out() -> void:
 	m.start_night()
 	m.night.set_physics_process(false)
@@ -239,10 +268,10 @@ func _walkers_stay_out() -> void:
 		query.collision_mask = Layers.WORLD
 		if not m.get_world_3d().direct_space_state.intersect_point(query, 1).is_empty():
 			inside += 1
-	report.append("walkers: a pumpkin chasing through a row of houses: inside geometry on %d of 180 frames, ended at %s"
+	report.append("walkers: a pumpkin chasing past a row of houses: inside geometry on %d of 180 frames, ended at %s"
 		% [inside, pumpkin.global_position])
-	if inside > 0 or pumpkin.global_position.z > -3.5:
-		failures.append("a pumpkin got into or through the houses")
+	if inside > 0:
+		failures.append("a pumpkin got into a house")
 	m.night.finish(true)
 	m.night.loadout.process_mode = Node.PROCESS_MODE_INHERIT
 

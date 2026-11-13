@@ -1,14 +1,19 @@
 class_name DisplaySettings
 extends Node
 ## Display settings that keep the GPU cool and the picture right: a frame-rate cap (default 60; F cycles 30, 60,
-## 120 and uncapped), VSync (on by default; V toggles), fullscreen at the display's own resolution (F11), and the
-## graphics tier, all saved to user://settings.json so they stick between sessions.
+## 120 and uncapped), VSync (on by default; F9 toggles), fullscreen at the display's own resolution (F11), and the
+## graphics tier, all saved to user://settings.json so they stick between sessions. F10 switches the Windows
+## rendering driver between Vulkan (the default) and Direct3D 12, written to override.cfg and used from the next
+## start (some GPU overlays hook Direct3D 12 more reliably).
 
 signal changed(text: String)
 
 const SAVE_PATH: String = "user://settings.json"
 const TEST_PATH: String = "user://test_settings.json"
 const UNCAPPED: int = 0
+const DRIVER_SETTING: String = "rendering/rendering_device/driver.windows"
+const DRIVERS: Array[String] = ["vulkan", "d3d12"]
+const OVERRIDE_FILE: String = "override.cfg"
 
 var frame_cap: int = 0
 var vsync: bool = true
@@ -52,6 +57,35 @@ func toggle_vsync() -> void:
 func toggle_fullscreen() -> void:
 	fullscreen = not fullscreen
 	_changed("Fullscreen" if fullscreen else "Windowed")
+
+
+## The Windows rendering driver chosen for the next start.
+func windows_driver() -> String:
+	var path: String = override_path()
+	var config := ConfigFile.new()
+	if config.load(path) == OK:
+		return String(config.get_value("rendering", "rendering_device/driver.windows", DRIVERS[0]))
+	return String(ProjectSettings.get_setting(DRIVER_SETTING, DRIVERS[0]))
+
+
+func toggle_windows_driver() -> void:
+	var next: String = DRIVERS[(DRIVERS.find(windows_driver()) + 1) % DRIVERS.size()]
+	var config := ConfigFile.new()
+	config.load(override_path())
+	config.set_value("rendering", "rendering_device/driver.windows", next)
+	config.save(override_path())
+	changed.emit("Windows renderer: %s (restart the game to use it)" % ("Direct3D 12" if next == "d3d12" else
+		"Vulkan"))
+
+
+## override.cfg sits beside the project when run from the editor, beside the executable in an exported game
+## (tests write to a scratch file in user://).
+func override_path() -> String:
+	if save_path == TEST_PATH:
+		return "user://test_" + OVERRIDE_FILE
+	if OS.has_feature("editor"):
+		return "res://" + OVERRIDE_FILE
+	return OS.get_executable_path().get_base_dir().path_join(OVERRIDE_FILE)
 
 
 ## Remembers the graphics tier chosen elsewhere (so it is saved with the rest).

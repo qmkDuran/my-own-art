@@ -15,6 +15,7 @@ var animator: AnimationPlayer
 var skeleton: Skeleton3D
 var _clip: String = ""
 var _foot_speeds: Dictionary = {}
+var _plants: Dictionary = {}
 
 
 func setup(path: String) -> void:
@@ -79,6 +80,7 @@ func ground_speed(clip: String, samples: int, planted_band: float) -> float:
 			(tracks[side] as Array).append(at)
 	var travelled: float = 0.0
 	var planted_time: float = 0.0
+	var plants := PackedFloat32Array()
 	for side: int in 2:
 		var lowest: float = (tracks[side] as Array).map(func(p: Vector3) -> float: return p.y).min()
 		for index: int in samples:
@@ -87,7 +89,15 @@ func ground_speed(clip: String, samples: int, planted_band: float) -> float:
 			if a.y < lowest + planted_band and b.y < lowest + planted_band:
 				travelled += absf(b.z - a.z)
 				planted_time += animation.length / samples
+			elif b.y < lowest + planted_band:
+				plants.append(animation.length * (index + 1) / samples)
+	_plants[clip] = plants
 	return travelled / planted_time if planted_time > 0.0 else 0.0
+
+
+## The moments in a moving clip (seconds) when a foot comes down, for footsteps.
+func plant_times(clip: String) -> PackedFloat32Array:
+	return _plants.get(clip, PackedFloat32Array())
 
 
 ## The physics lifts the body in a jump, so the clip's own upward hip motion is capped at its standing height

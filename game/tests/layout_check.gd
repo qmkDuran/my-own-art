@@ -38,11 +38,11 @@ func run() -> void:
 	_coplanar_tops()
 
 
-## Solid placed assets (not the backdrop) with their collision shape.
+## Solid placed assets with their collision shape.
 func solids() -> Array[StaticBody3D]:
 	var out: Array[StaticBody3D] = []
 	for node: Node3D in m.town.placed:
-		if node is StaticBody3D and not node.get_meta("backdrop", false):
+		if node is StaticBody3D:
 			out.append(node)
 	return out
 
@@ -146,7 +146,7 @@ func _grounding() -> void:
 	var space: PhysicsDirectSpaceState3D = m.get_world_3d().direct_space_state
 	var bad: int = 0
 	for node: Node3D in m.town.placed:
-		if node.get_meta("backdrop", false) or NOT_GROUNDED.has(node.get_meta("asset", "")):
+		if NOT_GROUNDED.has(node.get_meta("asset", "")):
 			continue
 		var from: Vector3 = node.global_position + Vector3.UP * WalkGrid.RAY_TOP
 		var ray := PhysicsRayQueryParameters3D.create(from, node.global_position + Vector3.DOWN, Layers.WORLD)
@@ -187,8 +187,8 @@ func _npc_routes() -> void:
 		for step: Dictionary in spec["routine"]:
 			if step.has("to"):
 				points.append(Tuning.point(step["to"]))
-			if step.has("at"):
-				seats.append(Tuning.point(step["at"]))
+			if step.has("bench_near"):
+				seats.append(Tuning.point(step["bench_near"]))
 		points.append(points[0])
 		var blocked: int = 0
 		for index: int in points.size() - 1:

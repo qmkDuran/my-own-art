@@ -5,3 +5,4 @@ meshy_cache/
 .godot/
 *.import
 !game/assets/**/*.import
+game/override.cfg

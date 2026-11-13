@@ -1,6 +1,7 @@
 class_name SoundSynth
-## Synthesises the ambience loops from data/audio.json into 16-bit mono AudioStreamWAVs: crickets, the fountain's
-## trickle, a music box tune drifting from a window, and rain. No audio files are needed.
+## Synthesises the town's sounds from data/audio.json into 16-bit mono AudioStreamWAVs: an occasional distant
+## cricket, the fountain's trickle, a music box tune drifting from a window, rain, footsteps on each surface and
+## the effect sounds. No audio files are needed.
 
 const FULL_SCALE: float = 32767.0
 const HEADROOM: float = 0.85
@@ -18,13 +19,30 @@ const BURST_DECAY_SPANS: float = 4.0 ## a burst lasts this many decay times
 const BURST_CHIRP: float = 4.0 ## how fast a burst's pitch rises
 
 
-static func crickets() -> AudioStreamWAV:
+## One short distant cricket call (a couple of chirps), played now and then from somewhere out in the dark.
+static func cricket_chirp() -> AudioStreamWAV:
 	var spec: Dictionary = _spec("crickets")
 	var samples := PackedFloat32Array()
 	samples.resize(_length(spec["seconds"]))
-	for voice: int in int(spec["voices"]):
-		_cricket(samples, spec)
-	return _to_wav(samples)
+	_cricket(samples, spec)
+	var wav: AudioStreamWAV = _to_wav(samples)
+	wav.loop_mode = AudioStreamWAV.LOOP_DISABLED
+	return wav
+
+
+## A footstep on a surface (data/audio.json steps): a short burst of filtered noise (the scuff) over a soft low
+## knock (the heel), each surface with its own brightness, length and body.
+static func footstep(surface: String) -> AudioStreamWAV:
+	var spec: Dictionary = Tuning.doc("audio")["steps"][surface]
+	var rate: float = _rate()
+	var samples: PackedFloat32Array = _filtered_noise(_length(spec["seconds"]), spec["cutoff"], spec["level"])
+	for n: int in samples.size():
+		var t: float = n / rate
+		var knock: float = sin(TAU * float(spec["thump_hz"]) * t) * float(spec["thump"])
+		samples[n] = (samples[n] + knock) * exp(-t * float(spec["decay"]))
+	var wav: AudioStreamWAV = _to_wav(samples)
+	wav.loop_mode = AudioStreamWAV.LOOP_DISABLED
+	return wav
 
 
 static func trickle() -> AudioStreamWAV:
@@ -111,17 +129,18 @@ static func _crackle(samples: PackedFloat32Array, spec: Dictionary) -> void:
 			samples[at + n] += randf_range(-1.0, 1.0) * loud * (1.0 - n / length)
 
 
+## A few chirps of one cricket: each a quick run of pulses of a high sine.
 static func _cricket(samples: PackedFloat32Array, spec: Dictionary) -> void:
 	var rate: float = _rate()
 	var pitch: float = randf_range(spec["pitch_min"], spec["pitch_max"])
 	var pulse: int = int(rate / float(spec["pulse_rate"]))
-	var start: int = randi() % samples.size()
-	while start < samples.size() * 2:
+	for chirp: int in int(spec["chirps"]):
+		var start: int = int(chirp * float(spec["chirp_gap"]) * rate)
 		for p: int in int(spec["pulses"]):
 			for n: int in pulse / 2:
-				var at: int = (start + p * pulse + n) % samples.size()
-				samples[at] += sin(TAU * pitch * n / rate) * sin(PI * n / (pulse / 2.0)) * CRICKET_LEVEL
-		start += int(randf_range(spec["gap_min"], spec["gap_max"]) * rate)
+				var at: int = start + p * pulse + n
+				if at < samples.size():
+					samples[at] += sin(TAU * pitch * n / rate) * sin(PI * n / (pulse / 2.0)) * CRICKET_LEVEL
 
 
 static func _filtered_noise(length: int, cutoff: float, level: float) -> PackedFloat32Array:

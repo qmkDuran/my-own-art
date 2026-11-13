@@ -6,7 +6,8 @@ const KEYS: Dictionary = {
 	"move_forward": [KEY_W, KEY_UP], "move_back": [KEY_S, KEY_DOWN], "move_left": [KEY_A, KEY_LEFT],
 	"move_right": [KEY_D, KEY_RIGHT], "run": [KEY_SHIFT], "toggle_rain": [KEY_R], "free_mouse": [KEY_ESCAPE],
 	"toggle_hints": [KEY_H], "interact": [KEY_E], "jump": [KEY_SPACE], "start_night": [KEY_N], "graphics": [KEY_G],
-	"frame_cap": [KEY_F], "vsync": [KEY_V], "fullscreen": [KEY_F11],
+	"frame_cap": [KEY_F], "vsync": [KEY_F9], "fullscreen": [KEY_F11], "dash": [KEY_V], "fly": [KEY_F1],
+	"fly_down": [KEY_CTRL, KEY_C], "perf_overlay": [KEY_F3], "render_driver": [KEY_F10],
 }
 const MOUSE: Dictionary = {}
 

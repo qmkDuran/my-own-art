@@ -2,18 +2,17 @@ class_name LampLight
 extends OmniLight3D
 ## One warm light of the town: a street lamp, a wall lantern or a lit window. Reads its look from the matching
 ## section of data/lighting.json, flickers gently like a flame, and can be snuffed out and relit (the night's
-## creatures snuff lamps; the player relights them). Lamps with a flame show a small, soft flame glow.
+## creatures snuff lamps; the player relights them). The light sits inside the lamp's glass, which glows by itself
+## (the asset shader), so there is no separate flame or ball.
 
 const FADE_SPEED: float = 2.5
 const MS_TO_SECONDS: float = 0.001
-const SMALLEST_FLAME: float = 0.01
 
 var kind: String = ""
 var lit: bool = true
 var _base_energy: float = 0.0
 var _level: float = 1.0
 var _phase: float = 0.0
-var _flame: Node3D
 
 
 func setup(lamp_kind: String) -> void:
@@ -30,8 +29,6 @@ func setup(lamp_kind: String) -> void:
 	distance_fade_length = Tuning.look_f("budget", "light_fade_length")
 	shadow_enabled = false
 	_phase = randf() * TAU
-	if Tuning.doc("lighting")[kind].has("flame_size"):
-		_add_flame()
 
 
 func snuff() -> void:
@@ -47,11 +44,3 @@ func _process(delta: float) -> void:
 	var time: float = Time.get_ticks_msec() * MS_TO_SECONDS
 	var flicker: float = sin(time * Tuning.look_f("flicker", "speed") + _phase) * sin(time * PI + _phase * 2.0)
 	light_energy = _base_energy * _level * (1.0 + flicker * Tuning.look_f("flicker", "amount"))
-	if _flame != null:
-		_flame.visible = _level > 0.0
-		_flame.scale = Vector3.ONE * maxf(_level, SMALLEST_FLAME)
-
-
-func _add_flame() -> void:
-	_flame = SoftGlow.make(light_color, Tuning.look_f(kind, "flame_size"), Tuning.look_f(kind, "flame_energy"))
-	add_child(_flame)

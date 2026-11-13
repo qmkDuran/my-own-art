@@ -14,6 +14,7 @@ var running: bool = false
 var yaw: float = 0.0
 var speed_scale: float = 1.0
 var agility := Agility.new()
+var footsteps: Footsteps
 var _landing: float = 0.0
 
 
@@ -32,6 +33,9 @@ func setup(at: Vector3, start_yaw: float) -> void:
 	model = CharacterModel.new()
 	add_child(model)
 	model.setup(MODEL_PATH)
+	footsteps = Footsteps.new()
+	add_child(footsteps)
+	footsteps.setup(model, Tuning.number("audio", "steps", "player_db"))
 	lantern = HandLantern.new()
 	model.attach_to_bone(HAND_BONE).add_child(lantern)
 	lantern.owner_body = self

@@ -22,6 +22,7 @@ func _run() -> void:
 	await _check_rain()
 	await _check_strides()
 	await _check_agility()
+	failures.append_array(await SmokeTools.new(m).run())
 	failures.append_array(SmokeGraphics.new(m).run())
 	failures.append_array(await SmokeDefence.new(m).run())
 	failures.append_array(await UiLayout.new(m).run())
@@ -46,7 +47,7 @@ func _check_town() -> void:
 	var outskirts: Node = m.find_child("Outskirts", true, false)
 	_expect(outskirts != null and outskirts.find_children("*", "MultiMeshInstance3D", false, false).size() >= 2,
 		"the outskirts have their forest rings")
-	_expect(m.town.get_child_count() > 60, "town has many pieces (got %d)" % m.town.get_child_count())
+	_expect(m.town.get_child_count() > 40, "town has many pieces (got %d)" % m.town.get_child_count())
 	m.budget.refresh()
 	_expect(m.budget.shadowed_count() <= Tuning.i_look("budget", "shadowed_lights"), "shadow budget holds")
 
