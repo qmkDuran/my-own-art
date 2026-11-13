@@ -1,13 +1,11 @@
 class_name PlayerSight
 extends Node
-## What the player can perceive of the bot, by the same visibility rules the bot uses (range, line of sight, hidden
-## in a bush unless very close) plus "on screen". Drives the bot's life bar, the lock-on, the player's awareness
-## (for ambush rules) and the rustle cue: an unseen bot moving close by always gives itself away. Seeing it takes a
-## clear line both from the creature's eyes and from the camera, so a bot hidden from your view stays hidden.
+## What the player can perceive of the bot, by exactly the rules the bot uses (Visibility: range, line of sight,
+## concealment, burrowed or submerged, sense reveals) plus "on screen". A concealed bot is not drawn at all, so a
+## hidden bot is truly invisible until a sense move reveals it. Drives the bot's life bar, the lock-on and the
+## player's awareness (for the ambush rule). Seeing it takes a clear line from the creature's eyes and the camera.
 
 var sees_bot: bool = false
-var rustling: bool = false
-var rustle_from: Vector3 = Vector3.ZERO
 var _player: Creature
 var _bot: Creature
 var _rig: CameraRig
@@ -26,18 +24,16 @@ func _physics_process(delta: float) -> void:
 	_since_seen = 0.0 if sees_bot else _since_seen + delta
 	_player.aware_of_opponent = _since_seen <= Tuning.f("stealth", "unaware_memory")
 	var distance: float = _player.global_position.distance_to(_bot.global_position)
-	rustling = not sees_bot and not _bot.is_dead() and distance <= Tuning.f("player_view", "rustle_distance") \
-			and _bot.horizontal_speed() >= Tuning.f("player_view", "rustle_min_speed")
-	rustle_from = _bot.global_position
+	_bot.model.visible = _bot.is_dead() or not Visibility.hides(_bot, distance, null)
 
 
 func can_see_bot() -> bool:
 	if _bot.is_dead():
 		return false
 	var distance: float = _player.eye_position().distance_to(_bot.chest_position())
-	if distance > Tuning.f("player_view", "sight_range"):
+	if distance > Visibility.sight_range(_player, Tuning.f("player_view", "sight_range")):
 		return false
-	if _bot.stealth.is_hidden() and distance > Tuning.f("stealth", "reveal_distance"):
+	if Visibility.hides(_bot, distance, null):
 		return false
 	if not _rig.camera.is_position_in_frustum(_bot.chest_position()):
 		return false

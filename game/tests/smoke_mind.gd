@@ -32,14 +32,14 @@ func run() -> void:
 
 func _utility_prefers_cover() -> void:
 	var facts: Dictionary = { "sees": 1.0, "has_lead": 1.0, "distance": 9.0, "own_life": 0.8, "enemy_life": 0.8,
-		"bite_ready": 1.0, "spit_ready": 0.0, "clear_shot": 1.0, "under_fire": 1.0, "cover_quality": 0.8,
+		"melee_ready": 1.0, "ranged_ready": 0.0, "clear_shot": 1.0, "under_fire": 1.0, "cover_quality": 0.8,
 		"cover_ready": 1.0, "target_facing_me": 1.0, "punish_window": 1.0, "retreat_ready": 1.0 }
-	var picked: String = t.m.brain.selector.choose(facts, "spit", 0.0, "")
+	var picked: String = t.m.brain.selector.choose(facts, "ranged", 0.0, "")
 	t.expect(picked == "cover", "utility scoring picks cover when shot at in the open (%s)" % picked)
 	facts["under_fire"] = 0.0
-	facts["spit_ready"] = 1.0
-	picked = t.m.brain.selector.choose(facts, "spit", 0.0, "")
-	t.expect(picked == "spit", "with its spit ready and no fire coming in it spits (%s)" % picked)
+	facts["ranged_ready"] = 1.0
+	picked = t.m.brain.selector.choose(facts, "ranged", 0.0, "")
+	t.expect(picked == "ranged", "with its shot ready and no fire coming in it shoots (%s)" % picked)
 
 
 func _tactics_prefer_concealment_and_cover() -> void:
@@ -99,8 +99,8 @@ func _led_spit(lead: bool) -> void:
 	t.m.player.move_intent = Vector3.RIGHT
 	await t.stage.seconds(WATCH_TIME)
 	var life: float = t.m.player.health.current
-	t.m.bot.try_spit()
-	for k: int in ceili(Tuning.f("spit", "windup") * Engine.physics_ticks_per_second):
+	t.stage.use(t.m.bot, "glob")
+	for k: int in ceili(Stage.move_number("glob", "windup") * Engine.physics_ticks_per_second):
 		_aim(lead)
 		await t.stage.frames(1)
 	await t.stage.seconds(FLIGHT_TIME)
@@ -115,5 +115,6 @@ func _led_spit(lead: bool) -> void:
 func _aim(lead: bool) -> void:
 	var chest: Vector3 = t.m.player.chest_position()
 	var velocity: Vector3 = t.m.brain.senses.observed_velocity if lead else Vector3.ZERO
-	t.m.bot.aim_point = Prediction.lead_point(t.m.bot.mouth_position(), chest, velocity, Tuning.f("spit", "speed"))
+	var speed: float = Stage.move_number("glob", "speed")
+	t.m.bot.aim_point = Prediction.lead_point(t.m.bot.mouth_position(), chest, velocity, speed)
 	t.stage.face(t.m.bot, t.m.bot.aim_point)

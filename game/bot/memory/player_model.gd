@@ -1,10 +1,16 @@
 class_name PlayerModel
 extends RefCounted
 ## What the bot has learned about this player's habits, from what it saw and heard across fights: favourite hiding
-## spots and kinds, how soon they roll after its wind-ups, bite vs spit, time on high ground, where they set snares
-## and which way they flee when hurt. Saved as JSON (user://player_model.json) and reset with F9.
+## spots and kinds, how soon they roll after its wind-ups, which kinds of moves they use (melee, ranged, burrow,
+## sense ...), time on high ground and which way they flee when hurt. Saved as JSON (user://player_model.json) and
+## reset with F9.
 
 signal learned(what: String)
+
+const GRASS_WORDS: String = "tall grass"
+const BUSH_WORDS: String = "bushes"
+## A habit is mentioned (barked) every few sightings, not every time.
+const HABIT_EVERY: int = 3
 
 var data: Dictionary = {}
 var path: String
@@ -20,8 +26,8 @@ func _init(save_path: String) -> void:
 
 
 func reset() -> void:
-	data = { "fights": 0, "hide_spots": {}, "hide_kinds": {}, "roll_delays": [], "attacks": { "bite": 0, "spit": 0 },
-		"high_ground": { "on": 0, "total": 0 }, "snare_spots": [], "flee_dirs": [] }
+	data = { "fights": 0, "hide_spots": {}, "hide_kinds": {}, "roll_delays": [], "moves": {},
+		"high_ground": { "on": 0, "total": 0 }, "flee_dirs": [], "sightings": 0 }
 
 
 func save() -> void:
@@ -37,11 +43,14 @@ func note_fight() -> void:
 func note_hide(spot: HidingSpot) -> void:
 	_count(data["hide_spots"], str(spot.spot_id))
 	_count(data["hide_kinds"], spot.kind)
-	learned.emit("you hide in the %s" % ("tall grass" if spot.kind == "grass" else "bushes"))
+	learned.emit("you hide in the %s" % (GRASS_WORDS if spot.kind == "grass" else BUSH_WORDS))
 
 
-func note_attack(kind: String) -> void:
-	_count(data["attacks"], kind)
+## A move the bot saw the player use, by role (melee, ranged, burrow, climb, sense ...).
+func note_move(role: String) -> void:
+	_count(data["moves"], role)
+	if role_share(role) >= Tuning.ai_f("memory", "habit_share") and int(data["moves"][role]) % HABIT_EVERY == 0:
+		learned.emit("you like %s moves" % role)
 
 
 func note_roll_delay(delay: float) -> void:
@@ -56,11 +65,6 @@ func note_position(on_high_ground: bool) -> void:
 	tally["on"] = int(tally["on"]) + (1 if on_high_ground else 0)
 
 
-func note_snare(where: Vector3) -> void:
-	_push(data["snare_spots"], [where.x, where.z])
-	learned.emit("you set snares here")
-
-
 func note_flee(direction: Vector3) -> void:
 	_push(data["flee_dirs"], [direction.x, direction.z])
 	learned.emit("you flee this way when hurt")
@@ -68,15 +72,8 @@ func note_flee(direction: Vector3) -> void:
 
 ## 0..1: how much this spot is a favourite (its share of all the hiding seen).
 func favourite_weight(spot: HidingSpot) -> float:
-	var spots: Dictionary = data["hide_spots"]
-	var total: int = 0
-	for key: String in spots:
-		total += int(spots[key])
-	return float(spots.get(str(spot.spot_id), 0)) / total if total > 0 else 0.0
-
-
-func has_favourite() -> bool:
-	return not (data["hide_spots"] as Dictionary).is_empty()
+	var total: int = _total(data["hide_spots"])
+	return float((data["hide_spots"] as Dictionary).get(str(spot.spot_id), 0)) / total if total > 0 else 0.0
 
 
 func favourite_kind() -> String:
@@ -86,6 +83,18 @@ func favourite_kind() -> String:
 		if best == "" or int(kinds[kind]) > int(kinds[best]):
 			best = kind
 	return best
+
+
+## How often the player hides, relative to how often it was seen at all (0..1).
+func hide_share() -> float:
+	var hides: int = _total(data["hide_spots"])
+	return clampf(float(hides) / maxf(float(_total(data["moves"])) + hides, 1.0), 0.0, 1.0)
+
+
+## Share of the player's observed moves that had this role.
+func role_share(role: String) -> float:
+	var total: int = _total(data["moves"])
+	return float((data["moves"] as Dictionary).get(role, 0)) / total if total > 0 else 0.0
 
 
 ## Share of observed rolls that came before the wind-up was half done (rolling on reflex, not on the hit).
@@ -101,22 +110,9 @@ func rolls_early() -> bool:
 	return early_roll_share() > 0.5
 
 
-func bite_share() -> float:
-	var attacks: Dictionary = data["attacks"]
-	var total: int = int(attacks["bite"]) + int(attacks["spit"])
-	return float(attacks["bite"]) / total if total > 0 else 0.5
-
-
 func high_ground_share() -> float:
 	var tally: Dictionary = data["high_ground"]
 	return float(tally["on"]) / int(tally["total"]) if int(tally["total"]) > 0 else 0.0
-
-
-func snare_spots() -> Array[Vector3]:
-	var out: Array[Vector3] = []
-	for pair: Array in data["snare_spots"]:
-		out.append(Vector3(float(pair[0]), 0.0, float(pair[1])))
-	return out
 
 
 ## The average direction it flees in when hurt (zero when unknown).
@@ -125,6 +121,13 @@ func flee_direction() -> Vector3:
 	for pair: Array in data["flee_dirs"]:
 		sum += Vector3(float(pair[0]), 0.0, float(pair[1]))
 	return sum.normalized() if sum.length() > 0.0 else Vector3.ZERO
+
+
+static func _total(table: Dictionary) -> int:
+	var total: int = 0
+	for key: String in table:
+		total += int(table[key])
+	return total
 
 
 static func _count(table: Dictionary, key: String) -> void:

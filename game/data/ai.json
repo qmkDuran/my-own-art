@@ -1,90 +1,645 @@
 {
-  "inertia": 0.15,
-  "options": {
-    "patrol":  { "base": 0.15, "considerations": [
-      { "input": "has_lead", "curve": "inverse", "from": 0.0, "to": 1.0 } ] },
-    "chase":   { "base": 0.55, "considerations": [
-      { "input": "sees", "curve": "linear", "from": 0.0, "to": 1.0 },
-      { "input": "distance", "curve": "linear", "from": 12.0, "to": 22.0, "floor": 0.15 } ] },
-    "spit":    { "base": 0.8, "considerations": [
-      { "input": "sees", "curve": "linear", "from": 0.0, "to": 1.0 },
-      { "input": "spit_ready", "curve": "linear", "from": 0.0, "to": 1.0 },
-      { "input": "clear_shot", "curve": "linear", "from": 0.0, "to": 1.0 },
-      { "input": "distance", "curve": "bell", "from": 4.0, "to": 16.0 },
-      { "input": "height_advantage", "curve": "linear", "from": -3.0, "to": 2.0, "floor": 0.7 } ] },
-    "bite":    { "base": 0.85, "considerations": [
-      { "input": "sees", "curve": "linear", "from": 0.0, "to": 1.0 },
-      { "input": "bite_ready", "curve": "linear", "from": 0.0, "to": 1.0 },
-      { "input": "distance", "curve": "inverse", "from": 2.5, "to": 8.0 },
-      { "input": "own_life", "curve": "linear", "from": 0.2, "to": 0.6, "floor": 0.3 },
-      { "input": "punish_window", "curve": "linear", "from": 0.0, "to": 1.0, "floor": 0.75 } ] },
-    "cover":   { "base": 0.95, "considerations": [
-      { "input": "under_fire", "curve": "linear", "from": 0.0, "to": 1.0 },
-      { "input": "cover_quality", "curve": "linear", "from": 0.1, "to": 0.6 },
-      { "input": "distance", "curve": "linear", "from": 4.0, "to": 8.0 },
-      { "input": "cover_ready", "curve": "linear", "from": 0.0, "to": 1.0 } ] },
-    "flank":   { "base": 0.7, "considerations": [
-      { "input": "sees", "curve": "inverse", "from": 0.0, "to": 1.0 },
-      { "input": "has_lead", "curve": "linear", "from": 0.0, "to": 1.0 },
-      { "input": "since_seen", "curve": "inverse", "from": 0.5, "to": 4.0 } ] },
-    "stalk":   { "base": 0.95, "considerations": [
-      { "input": "sees", "curve": "linear", "from": 0.0, "to": 1.0 },
-      { "input": "target_facing_me", "curve": "inverse", "from": 0.0, "to": 1.0 },
-      { "input": "distance", "curve": "bell", "from": 3.5, "to": 16.0 } ] },
-    "snare":   { "base": 0.55, "considerations": [
-      { "input": "snare_ready", "curve": "linear", "from": 0.0, "to": 1.0 },
-      { "input": "sees", "curve": "inverse", "from": 0.0, "to": 1.0 },
-      { "input": "has_lead", "curve": "linear", "from": 0.0, "to": 1.0 },
-      { "input": "since_seen", "curve": "linear", "from": 3.0, "to": 8.0 },
-      { "input": "memory_known_spot", "curve": "linear", "from": 0.0, "to": 1.0 } ] },
-    "ambush":  { "base": 0.6, "considerations": [
-      { "input": "has_lead", "curve": "linear", "from": 0.0, "to": 1.0 },
-      { "input": "sees", "curve": "inverse", "from": 0.0, "to": 1.0 },
-      { "input": "target_approaching", "curve": "linear", "from": 0.0, "to": 1.0 },
-      { "input": "since_seen", "curve": "inverse", "from": 1.0, "to": 6.0 },
-      { "input": "ambush_quality", "curve": "linear", "from": 0.2, "to": 0.7 } ] },
-    "retreat": { "base": 1.0, "considerations": [
-      { "input": "own_life", "curve": "inverse", "from": 0.25, "to": 0.6 },
-      { "input": "retreat_ready", "curve": "linear", "from": 0.0, "to": 1.0 },
-      { "input": "enemy_life", "curve": "linear", "from": 0.2, "to": 0.6, "floor": 0.3 } ] },
-    "search":  { "base": 0.62, "considerations": [
-      { "input": "has_lead", "curve": "linear", "from": 0.0, "to": 1.0 },
-      { "input": "sees", "curve": "inverse", "from": 0.0, "to": 1.0 },
-      { "input": "since_seen", "curve": "linear", "from": 1.0, "to": 3.0, "floor": 0.6 } ] },
-    "bait":    { "base": 0.7, "considerations": [
-      { "input": "own_snare_set", "curve": "linear", "from": 0.0, "to": 1.0 },
-      { "input": "sees", "curve": "linear", "from": 0.0, "to": 1.0 },
-      { "input": "distance", "curve": "bell", "from": 6.0, "to": 18.0 },
-      { "input": "spit_ready", "curve": "inverse", "from": 0.0, "to": 1.0, "floor": 0.5 } ] }
-  },
-  "tactics": {
-    "sample_radii": [3.0, 6.0, 9.0, 12.0], "sample_angles": 12, "escape_probe": 3.0, "escape_directions": 8,
-    "high_ground_full": 2.0, "travel_full": 18.0, "snare_risk_radius": 2.5, "markers_shown": 6,
-    "purposes": {
-      "cover":   { "cover": 1.0, "sightline": 0.0, "concealment": 0.3, "high_ground": 0.15, "escape": 0.3,
-                   "band": 0.4, "travel": -0.6, "snare_risk": -1.0, "band_min": 5.0, "band_max": 14.0 },
-      "flank":   { "cover": 0.3, "sightline": 0.8, "concealment": 0.2, "high_ground": 0.3, "escape": 0.2,
-                   "band": 0.8, "travel": -0.4, "snare_risk": -1.0, "band_min": 5.0, "band_max": 11.0,
-                   "cut_off": 0.6 },
-      "ambush":  { "cover": 0.5, "sightline": 0.2, "concealment": 1.0, "high_ground": 0.1, "escape": 0.2,
-                   "band": 0.6, "travel": -0.3, "snare_risk": -1.0, "band_min": 2.0, "band_max": 6.0,
-                   "cut_off": 0.5 },
-      "retreat": { "cover": 1.0, "sightline": -0.3, "concealment": 0.8, "high_ground": 0.1, "escape": 0.5,
-                   "band": 0.8, "travel": -0.2, "snare_risk": -1.0, "band_min": 14.0, "band_max": 40.0 },
-      "bait":    { "cover": 0.2, "sightline": 1.0, "concealment": 0.0, "high_ground": 0.2, "escape": 0.4,
-                   "band": 0.6, "travel": -0.4, "snare_risk": -1.0, "band_min": 2.5, "band_max": 5.0 }
+ "inertia": 0.15,
+ "options": {
+  "patrol": {
+   "base": 0.15,
+   "considerations": [
+    {
+     "input": "has_lead",
+     "curve": "inverse",
+     "from": 0.0,
+     "to": 1.0
     }
+   ]
   },
-  "prediction": { "max_lead_time": 1.2, "velocity_smoothing": 6.0, "flee_lookahead": 6.0,
-                  "concealment_cone_deg": 50.0, "concealment_reach": 14.0, "roll_punish_window": 1.2 },
-  "memory": { "path": "user://player_model.json", "max_samples": 20, "learning_flash": 4.0,
-              "flee_life_fraction": 0.4, "high_ground_lift": 1.8, "observe_interval": 0.5,
-              "early_roll": 0.45 },
-  "senses": { "facing_half_angle_deg": 60.0, "approach_dot": 0.5 },
-  "difficulty": {
-    "easy":   { "reaction_time": 1.2, "think_interval": 0.7, "score_noise": 0.35, "memory_use": 0.25, "reflex_delay": 0.3 },
-    "normal": { "reaction_time": 0.8, "think_interval": 0.4, "score_noise": 0.15, "memory_use": 0.7,  "reflex_delay": 0.15 },
-    "hard":   { "reaction_time": 0.5, "think_interval": 0.25, "score_noise": 0.04, "memory_use": 1.0,  "reflex_delay": 0.05 }
+  "chase": {
+   "base": 0.55,
+   "considerations": [
+    {
+     "input": "sees",
+     "curve": "linear",
+     "from": 0.0,
+     "to": 1.0
+    },
+    {
+     "input": "distance",
+     "curve": "linear",
+     "from": 10.0,
+     "to": 22.0,
+     "floor": 0.15
+    }
+   ]
   },
-  "session": { "trail_interval": 0.5 }
+  "melee": {
+   "base": 0.85,
+   "considerations": [
+    {
+     "input": "sees",
+     "curve": "linear",
+     "from": 0.0,
+     "to": 1.0
+    },
+    {
+     "input": "melee_ready",
+     "curve": "linear",
+     "from": 0.0,
+     "to": 1.0
+    },
+    {
+     "input": "distance",
+     "curve": "inverse",
+     "from": 2.5,
+     "to": 9.0
+    },
+    {
+     "input": "own_life",
+     "curve": "linear",
+     "from": 0.2,
+     "to": 0.6,
+     "floor": 0.3
+    },
+    {
+     "input": "punish_window",
+     "curve": "linear",
+     "from": 0.0,
+     "to": 1.0,
+     "floor": 0.75
+    },
+    {
+     "input": "player_melee_share",
+     "curve": "inverse",
+     "from": 0.3,
+     "to": 1.0,
+     "floor": 0.7
+    }
+   ]
+  },
+  "ranged": {
+   "base": 0.8,
+   "considerations": [
+    {
+     "input": "sees",
+     "curve": "linear",
+     "from": 0.0,
+     "to": 1.0
+    },
+    {
+     "input": "ranged_ready",
+     "curve": "linear",
+     "from": 0.0,
+     "to": 1.0
+    },
+    {
+     "input": "clear_shot",
+     "curve": "linear",
+     "from": 0.0,
+     "to": 1.0
+    },
+    {
+     "input": "distance",
+     "curve": "bell",
+     "from": 4.0,
+     "to": 20.0
+    },
+    {
+     "input": "height_advantage",
+     "curve": "linear",
+     "from": -3.0,
+     "to": 2.0,
+     "floor": 0.7
+    }
+   ]
+  },
+  "area": {
+   "base": 0.85,
+   "considerations": [
+    {
+     "input": "sees",
+     "curve": "linear",
+     "from": 0.0,
+     "to": 1.0
+    },
+    {
+     "input": "area_ready",
+     "curve": "linear",
+     "from": 0.0,
+     "to": 1.0
+    }
+   ]
+  },
+  "cover": {
+   "base": 0.95,
+   "considerations": [
+    {
+     "input": "under_fire",
+     "curve": "linear",
+     "from": 0.0,
+     "to": 1.0
+    },
+    {
+     "input": "cover_quality",
+     "curve": "linear",
+     "from": 0.1,
+     "to": 0.6
+    },
+    {
+     "input": "distance",
+     "curve": "linear",
+     "from": 4.0,
+     "to": 8.0
+    },
+    {
+     "input": "cover_ready",
+     "curve": "linear",
+     "from": 0.0,
+     "to": 1.0
+    },
+    {
+     "input": "player_ranged_share",
+     "curve": "linear",
+     "from": 0.0,
+     "to": 1.0,
+     "floor": 0.8
+    }
+   ]
+  },
+  "flank": {
+   "base": 0.7,
+   "considerations": [
+    {
+     "input": "sees",
+     "curve": "inverse",
+     "from": 0.0,
+     "to": 1.0
+    },
+    {
+     "input": "has_lead",
+     "curve": "linear",
+     "from": 0.0,
+     "to": 1.0
+    },
+    {
+     "input": "since_seen",
+     "curve": "inverse",
+     "from": 0.5,
+     "to": 4.0
+    }
+   ]
+  },
+  "stalk": {
+   "base": 0.95,
+   "considerations": [
+    {
+     "input": "sees",
+     "curve": "linear",
+     "from": 0.0,
+     "to": 1.0
+    },
+    {
+     "input": "target_facing_me",
+     "curve": "inverse",
+     "from": 0.0,
+     "to": 1.0
+    },
+    {
+     "input": "distance",
+     "curve": "bell",
+     "from": 3.5,
+     "to": 16.0
+    }
+   ]
+  },
+  "ambush": {
+   "base": 0.6,
+   "considerations": [
+    {
+     "input": "has_lead",
+     "curve": "linear",
+     "from": 0.0,
+     "to": 1.0
+    },
+    {
+     "input": "sees",
+     "curve": "inverse",
+     "from": 0.0,
+     "to": 1.0
+    },
+    {
+     "input": "target_approaching",
+     "curve": "linear",
+     "from": 0.0,
+     "to": 1.0
+    },
+    {
+     "input": "since_seen",
+     "curve": "inverse",
+     "from": 1.0,
+     "to": 6.0
+    },
+    {
+     "input": "ambush_quality",
+     "curve": "linear",
+     "from": 0.2,
+     "to": 0.7
+    }
+   ]
+  },
+  "retreat": {
+   "base": 1.0,
+   "considerations": [
+    {
+     "input": "own_life",
+     "curve": "inverse",
+     "from": 0.25,
+     "to": 0.6
+    },
+    {
+     "input": "retreat_ready",
+     "curve": "linear",
+     "from": 0.0,
+     "to": 1.0
+    },
+    {
+     "input": "enemy_life",
+     "curve": "linear",
+     "from": 0.2,
+     "to": 0.6,
+     "floor": 0.3
+    }
+   ]
+  },
+  "search": {
+   "base": 0.62,
+   "considerations": [
+    {
+     "input": "has_lead",
+     "curve": "linear",
+     "from": 0.0,
+     "to": 1.0
+    },
+    {
+     "input": "sees",
+     "curve": "inverse",
+     "from": 0.0,
+     "to": 1.0
+    },
+    {
+     "input": "since_seen",
+     "curve": "linear",
+     "from": 1.0,
+     "to": 3.0,
+     "floor": 0.6
+    }
+   ]
+  },
+  "buff": {
+   "base": 0.6,
+   "considerations": [
+    {
+     "input": "buff_ready",
+     "curve": "linear",
+     "from": 0.0,
+     "to": 1.0
+    },
+    {
+     "input": "sees",
+     "curve": "linear",
+     "from": 0.0,
+     "to": 1.0
+    },
+    {
+     "input": "distance",
+     "curve": "bell",
+     "from": 5.0,
+     "to": 18.0
+    },
+    {
+     "input": "buffed",
+     "curve": "inverse",
+     "from": 0.0,
+     "to": 1.0
+    }
+   ]
+  },
+  "debuff": {
+   "base": 0.7,
+   "considerations": [
+    {
+     "input": "debuff_ready",
+     "curve": "linear",
+     "from": 0.0,
+     "to": 1.0
+    },
+    {
+     "input": "sees",
+     "curve": "linear",
+     "from": 0.0,
+     "to": 1.0
+    }
+   ]
+  },
+  "defend": {
+   "base": 0.95,
+   "considerations": [
+    {
+     "input": "defend_ready",
+     "curve": "linear",
+     "from": 0.0,
+     "to": 1.0
+    },
+    {
+     "input": "target_winding_up",
+     "curve": "linear",
+     "from": 0.0,
+     "to": 1.0
+    }
+   ]
+  },
+  "sense": {
+   "base": 0.75,
+   "considerations": [
+    {
+     "input": "sense_ready",
+     "curve": "linear",
+     "from": 0.0,
+     "to": 1.0
+    },
+    {
+     "input": "sees",
+     "curve": "inverse",
+     "from": 0.0,
+     "to": 1.0
+    },
+    {
+     "input": "has_lead",
+     "curve": "linear",
+     "from": 0.0,
+     "to": 1.0,
+     "floor": 0.6
+    },
+    {
+     "input": "since_seen",
+     "curve": "linear",
+     "from": 2.0,
+     "to": 6.0,
+     "floor": 0.4
+    },
+    {
+     "input": "player_hide_share",
+     "curve": "linear",
+     "from": 0.0,
+     "to": 1.0,
+     "floor": 0.7
+    }
+   ]
+  },
+  "high_ground": {
+   "base": 0.5,
+   "considerations": [
+    {
+     "input": "leap_ready",
+     "curve": "linear",
+     "from": 0.0,
+     "to": 1.0
+    },
+    {
+     "input": "ledge_near",
+     "curve": "linear",
+     "from": 0.0,
+     "to": 1.0
+    },
+    {
+     "input": "sees",
+     "curve": "linear",
+     "from": 0.0,
+     "to": 1.0
+    },
+    {
+     "input": "height_advantage",
+     "curve": "inverse",
+     "from": -1.0,
+     "to": 1.0
+    },
+    {
+     "input": "distance",
+     "curve": "bell",
+     "from": 6.0,
+     "to": 22.0
+    }
+   ]
+  },
+  "burrow_ambush": {
+   "base": 0.7,
+   "considerations": [
+    {
+     "input": "burrow_ready",
+     "curve": "linear",
+     "from": 0.0,
+     "to": 1.0
+    },
+    {
+     "input": "soft_ground_near",
+     "curve": "linear",
+     "from": 0.0,
+     "to": 1.0
+    },
+    {
+     "input": "has_lead",
+     "curve": "linear",
+     "from": 0.0,
+     "to": 1.0
+    },
+    {
+     "input": "target_facing_me",
+     "curve": "inverse",
+     "from": 0.0,
+     "to": 1.0
+    },
+    {
+     "input": "distance",
+     "curve": "bell",
+     "from": 3.0,
+     "to": 18.0
+    }
+   ]
+  },
+  "climb_hide": {
+   "base": 0.55,
+   "considerations": [
+    {
+     "input": "climb_ready",
+     "curve": "linear",
+     "from": 0.0,
+     "to": 1.0
+    },
+    {
+     "input": "has_lead",
+     "curve": "linear",
+     "from": 0.0,
+     "to": 1.0
+    },
+    {
+     "input": "sees",
+     "curve": "inverse",
+     "from": 0.0,
+     "to": 1.0
+    },
+    {
+     "input": "target_approaching",
+     "curve": "linear",
+     "from": 0.0,
+     "to": 1.0,
+     "floor": 0.5
+    },
+    {
+     "input": "since_seen",
+     "curve": "inverse",
+     "from": 1.0,
+     "to": 8.0
+    }
+   ]
+  },
+  "burn_grass": {
+   "base": 0.85,
+   "considerations": [
+    {
+     "input": "fire_ready",
+     "curve": "linear",
+     "from": 0.0,
+     "to": 1.0
+    },
+    {
+     "input": "grass_suspect",
+     "curve": "linear",
+     "from": 0.0,
+     "to": 1.0
+    },
+    {
+     "input": "sees",
+     "curve": "inverse",
+     "from": 0.0,
+     "to": 1.0
+    },
+    {
+     "input": "has_lead",
+     "curve": "linear",
+     "from": 0.0,
+     "to": 1.0
+    }
+   ]
+  }
+ },
+ "tactics": {
+  "sample_radii": [
+   3.0,
+   6.0,
+   9.0,
+   12.0
+  ],
+  "sample_angles": 12,
+  "escape_probe": 3.0,
+  "escape_directions": 8,
+  "high_ground_full": 2.0,
+  "travel_full": 18.0,
+  "markers_shown": 6,
+  "purposes": {
+   "cover": {
+    "cover": 1.0,
+    "sightline": 0.0,
+    "concealment": 0.3,
+    "high_ground": 0.15,
+    "escape": 0.3,
+    "band": 0.4,
+    "travel": -0.6,
+    "band_min": 5.0,
+    "band_max": 14.0
+   },
+   "flank": {
+    "cover": 0.3,
+    "sightline": 0.8,
+    "concealment": 0.2,
+    "high_ground": 0.3,
+    "escape": 0.2,
+    "band": 0.8,
+    "travel": -0.4,
+    "band_min": 5.0,
+    "band_max": 11.0,
+    "cut_off": 0.6
+   },
+   "ambush": {
+    "cover": 0.5,
+    "sightline": 0.2,
+    "concealment": 1.0,
+    "high_ground": 0.1,
+    "escape": 0.2,
+    "band": 0.6,
+    "travel": -0.3,
+    "band_min": 2.0,
+    "band_max": 6.0,
+    "cut_off": 0.5
+   },
+   "retreat": {
+    "cover": 1.0,
+    "sightline": -0.3,
+    "concealment": 0.8,
+    "high_ground": 0.1,
+    "escape": 0.5,
+    "band": 0.8,
+    "travel": -0.2,
+    "band_min": 14.0,
+    "band_max": 40.0
+   }
+  },
+  "near_feature_reach": 12.0,
+  "grass_suspect_reach": 4.0
+ },
+ "prediction": {
+  "max_lead_time": 1.2,
+  "velocity_smoothing": 6.0,
+  "flee_lookahead": 6.0,
+  "concealment_cone_deg": 50.0,
+  "concealment_reach": 14.0,
+  "roll_punish_window": 1.0
+ },
+ "memory": {
+  "path": "user://player_model.json",
+  "max_samples": 20,
+  "learning_flash": 4.0,
+  "flee_life_fraction": 0.4,
+  "high_ground_lift": 1.8,
+  "observe_interval": 0.5,
+  "early_roll": 0.45,
+  "habit_share": 0.4,
+  "roll_watch_window": 0.8
+ },
+ "senses": {
+  "facing_half_angle_deg": 60.0,
+  "approach_dot": 0.5
+ },
+ "difficulty": {
+  "easy": {
+   "reaction_time": 1.2,
+   "think_interval": 0.7,
+   "score_noise": 0.35,
+   "memory_use": 0.25,
+   "reflex_delay": 0.3
+  },
+  "normal": {
+   "reaction_time": 0.8,
+   "think_interval": 0.4,
+   "score_noise": 0.15,
+   "memory_use": 0.7,
+   "reflex_delay": 0.15
+  },
+  "hard": {
+   "reaction_time": 0.5,
+   "think_interval": 0.25,
+   "score_noise": 0.04,
+   "memory_use": 1.0,
+   "reflex_delay": 0.05
+  }
+ },
+ "session": {
+  "trail_interval": 0.5
+ }
 }

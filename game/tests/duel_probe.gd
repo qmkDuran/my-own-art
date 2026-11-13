@@ -1,6 +1,7 @@
 extends Node
-## --duel: a long headless duel between the real bot and a simple scripted player (walks a loop of points on the
-## navmesh, spits when it sees the bot, bites up close). Logs the bot's state changes and checks that the bot is
+## --duel: a long headless duel between the real bot (its default loadout) and a simple scripted player (walks a
+## loop of points on the navmesh, spits when it sees the bot, snaps up close). Logs the bot's state changes and
+## checks that the bot is
 ## never stuck: while it is trying to walk, it always makes progress. Prints DUEL PASS or DUEL FAIL.
 
 const DUEL_SECONDS: float = 150.0
@@ -33,6 +34,7 @@ func _run() -> void:
 	m = Main.current
 	stage = Stage.new(m)
 	stage.script_player()
+	stage.kit(m.player, ["snap", "glob", "leap", "keen_ears"])
 	_route = m.woods.patrol_points.duplicate()
 	_route.reverse()
 	m.brain.state_changed.connect(_on_state)
@@ -64,9 +66,9 @@ func _drive_player() -> void:
 		player.look_target = m.bot.global_position
 		player.has_look_target = true
 		if player.global_position.distance_to(m.bot.global_position) < BITE_REACH:
-			player.try_bite()
+			stage.use(player, "snap")
 		else:
-			player.try_spit()
+			stage.use(player, "glob")
 	else:
 		player.has_look_target = false
 	_walk_route(player)

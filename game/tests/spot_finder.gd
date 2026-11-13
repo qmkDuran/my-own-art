@@ -5,7 +5,7 @@ extends RefCounted
 
 const DIRECTIONS: int = 16
 const MAX_SLOPE_DROP: float = 1.2
-const INNER_LIMIT: float = 24.0
+const INNER_LIMIT: float = 34.0
 const NAVMESH_TOLERANCE: float = 0.3
 const TRUNK_CLEARANCE: float = 0.6
 const SAME_SPOT: float = 0.1

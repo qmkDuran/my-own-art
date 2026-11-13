@@ -5,6 +5,9 @@ extends RefCounted
 
 enum Phase { IDLE, WINDUP, ACTIVE, RECOVER }
 
+## Shortest phase used when dividing by a phase length.
+const MIN_TIME: float = 0.01
+
 var creature: Creature
 var phase: Phase = Phase.IDLE
 var cooldown: float

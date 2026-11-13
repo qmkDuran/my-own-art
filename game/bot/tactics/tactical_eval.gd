@@ -2,9 +2,9 @@ class_name TacticalEval
 extends RefCounted
 ## Scores places to stand. Candidate points are sampled in rings around a centre, plus every hiding spot and the
 ## lee side of every trunk and boulder nearby, all snapped to the navmesh. Each point gets features (covered from the
-## threat, sightline to it, concealment, high ground, escape routes, distance band, travel cost, snare risk, cutting
-## off the player's usual escape) and a purpose ("cover", "flank", "ambush", "retreat", "bait") weighs them from
-## data/ai.json. The last ranking is kept for the F3 overlay.
+## threat, sightline to it, concealment, high ground, escape routes, distance band, travel cost, cutting off the
+## player's usual escape) and a purpose ("cover", "flank", "ambush", "retreat") weighs them from data/ai.json. The
+## last ranking is kept for the F3 overlay.
 
 const NAVMESH_TOLERANCE: float = 0.5
 const NEAR_RADIUS_SHARE: float = 1.2
@@ -77,14 +77,13 @@ func features_at(point: Vector3, threat: Vector3) -> Dictionary:
 		"escape": _escape_share(point),
 		"distance": Vector2(point.x - threat.x, point.z - threat.z).length(),
 		"travel": clampf(point.distance_to(_bot.global_position) / Tuning.ai_f("tactics", "travel_full"), 0.0, 1.0),
-		"snare_risk": 1.0 if _near_snare(point) else 0.0,
 	}
 
 
 func weigh(purpose: String, features: Dictionary, point: Vector3, threat: Vector3) -> float:
 	var weights: Dictionary = Tuning.ai["tactics"]["purposes"][purpose]
 	var total: float = float(weights.get("band", 0.0)) * _band(features["distance"], weights)
-	for feature: String in ["cover", "sightline", "concealment", "high_ground", "escape", "travel", "snare_risk"]:
+	for feature: String in ["cover", "sightline", "concealment", "high_ground", "escape", "travel"]:
 		total += float(weights.get(feature, 0.0)) * float(features[feature])
 	total += float(weights.get("high_ground", 0.0)) * float(features["high_ground"]) * _high_ground_habit()
 	return total + float(weights.get("cut_off", 0.0)) * _cut_off(point, threat)
@@ -135,16 +134,6 @@ func _escape_share(point: Vector3) -> float:
 			open += 1
 	return float(open) / directions
 
-
-func _near_snare(point: Vector3) -> bool:
-	var radius: float = Tuning.ai_f("tactics", "snare_risk_radius")
-	if _senses.knows_snare_near(point, radius):
-		return true
-	var memory_use: float = Difficulty.setting("memory_use")
-	for spot: Vector3 in _model.snare_spots():
-		if Vector2(point.x - spot.x, point.z - spot.z).length() <= radius * memory_use:
-			return true
-	return false
 
 
 func _in_hiding_spot(point: Vector3) -> bool:

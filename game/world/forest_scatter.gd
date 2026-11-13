@@ -36,6 +36,8 @@ func _scatter(count: int, spacing: float, pick: Callable) -> Array[Dictionary]:
 			continue
 		_placed.append(spot)
 		var scale: float = _rng.randf_range(_rules["scale_min"], _rules["scale_max"])
+		if _rng.randf() < float(_rules["elder_share"]):
+			scale = float(_rules["elder_scale"])
 		out.append({ "pos": spot, "kind": _kind(), "scale": scale })
 	return out
 
@@ -63,9 +65,23 @@ func _inner_spot_is_open(spot: Vector2) -> bool:
 		return false
 	if _near_rock_or_log(spot) or _near_points(spot):
 		return false
-	if _shape.ravine_distance(spot) < float(_rules["ravine_margin"]):
+	if _shape.ravine_distance(spot) < float(_rules["ravine_margin"]) or _near_water(spot):
+		return false
+	if _near_any(spot, _layout["hollow_logs"], "length", float(_rules["log_margin"])):
 		return false
 	return _shape.ridge_distance(spot) >= float(_rules["ridge_crest_margin"])
+
+
+func _near_water(spot: Vector2) -> bool:
+	var pond: Dictionary = _layout["pond"]
+	if spot.distance_to(Tuning.vec2(pond["pos"])) < float(pond["radius"]) + float(_rules["water_margin"]):
+		return true
+	var points: Array = _layout["stream"]["points"]
+	var reach: float = float(_layout["stream"]["width"]) * 0.5 + float(_rules["water_margin"])
+	for k: int in points.size() - 1:
+		if TerrainShape.segment_distance(spot, Tuning.vec2(points[k]), Tuning.vec2(points[k + 1])) < reach:
+			return true
+	return false
 
 
 func _near_any(spot: Vector2, items: Array, radius_key: String, margin: float) -> bool:

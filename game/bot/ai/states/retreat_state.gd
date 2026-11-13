@@ -1,7 +1,8 @@
 class_name RetreatState
 extends BotState
 ## Retreat: badly hurt, the bot slips away to the best refuge (far from the player, covered, ideally concealed in a
-## bush, with ways out) and rests there to heal. If it is seen at its refuge it moves to another.
+## bush, with ways out) and rests there to heal (licking its wounds if it can). If it is seen at its refuge it
+## moves to another.
 
 
 func enter() -> void:
@@ -13,6 +14,8 @@ func enter() -> void:
 func tick(_delta: float) -> void:
 	if mover().arrived() and senses().sees_target:
 		_go_to_refuge()
+	elif mover().arrived() and bot().health.fraction() < 1.0:
+		use_role("heal")
 
 
 func _go_to_refuge() -> void:

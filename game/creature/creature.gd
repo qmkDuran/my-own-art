@@ -1,10 +1,14 @@
 class_name Creature
 extends CharacterBody3D
-## One four-legged fighter: movement (run, sneak, dash, lunge), facing, health, stealth and four moves (bite, spit,
-## dodge, snare). The player and the bot drive it through the same small intent API, so both play by the same rules.
+## One four-legged fighter: movement (run, sneak, dash, lunge, jumps), facing, health, stealth, timed effects, how it
+## is getting around (ground, burrowed, perched, submerged), a universal dodge roll and four equipped moves from the
+## library. The player and the bot drive it through the same small intent API, so both play by the same rules.
 
 signal hit_taken(amount: float, attacker: Creature, ambush: bool, kind: String)
 signal died(creature: Creature)
+signal move_started(move: Move)
+## A sense move found something: kind "scent" (trail points) or "echo" (revealed positions).
+signal sensed(kind: String, points: Array)
 
 const BODY_RADIUS: float = 0.45
 const BODY_HEIGHT: float = 1.2
@@ -12,15 +16,19 @@ const MOUTH_FORWARD: float = 0.85
 const MOUTH_HEIGHT: float = 0.75
 const MOVING_SPEED: float = 0.5
 const DIRECTION_EPSILON: float = 0.01
+const TRAIL_INTERVAL: float = 0.5
+const TRAIL_KEPT: float = 12.0
 
 var display_name: String = ""
+var species: String = ""
 var opponent: Creature
+var woods: Woods
 var health: Health
 var stealth := Stealth.new()
-var bite: BiteAbility
-var spit: SpitAbility
-var dodge: DodgeAbility
-var trap: TrapAbility
+var effects := Effects.new()
+var traversal: Traversal
+var moves: Array[Move] = []
+var roll: DodgeAbility
 var model: CreatureModel
 var yaw: float = 0.0
 ## Intent, written by the controller (player input or bot brain) every physics frame.
@@ -33,53 +41,75 @@ var has_look_target: bool = false
 var see_through_cover: bool = false
 ## Written by the creature's senses: does it currently know where its opponent is?
 var aware_of_opponent: bool = true
-var _dash_velocity: Vector3 = Vector3.ZERO
-var _dash_left: float = 0.0
-var _lunging: bool = false
+var _motor: CreatureMotor
 var _stagger_left: float = 0.0
-var _root_left: float = 0.0
-var _step_left: float = 0.0
+var _trail: Array[Dictionary] = []
+var _trail_left: float = 0.0
+var _clock: float = 0.0
 
 
-func setup(look_key: String, spawn: Vector3, facing_yaw: float) -> void:
+func setup(look_key: String, spawn: Vector3, facing_yaw: float, loadout: Array[String], arena: Woods) -> void:
 	var look: Dictionary = Tuning.creatures[look_key]
+	species = look_key
 	display_name = look["name"]
 	name = display_name
 	position = spawn
 	yaw = facing_yaw
+	woods = arena
 	collision_layer = Layers.CREATURE
 	collision_mask = Layers.CREATURE_MOVES_AGAINST
 	floor_snap_length = Tuning.f("creature", "floor_snap")
 	health = Health.new(Tuning.f("creature", "max_health"), Tuning.f("creature", "regen_delay"),
 			Tuning.f("creature", "regen_per_second"))
-	bite = BiteAbility.new(self)
-	spit = SpitAbility.new(self)
-	dodge = DodgeAbility.new(self)
-	trap = TrapAbility.new(self)
+	traversal = Traversal.new(self)
+	roll = DodgeAbility.new(self)
+	_motor = CreatureMotor.new(self)
+	equip(loadout)
 	_add_collider()
 	model = CreatureModel.new()
 	add_child(model)
 	model.build(look)
 
 
+func equip(loadout: Array[String]) -> void:
+	moves.clear()
+	for move_id: String in loadout:
+		moves.append(MoveFactory.create(self, move_id))
+
+
 func abilities() -> Array[Ability]:
-	return [bite, spit, dodge, trap]
+	var all: Array[Ability] = []
+	all.append_array(moves)
+	all.append(roll)
+	return all
 
 
-func try_bite() -> bool:
-	return _can_act() and bite.start()
+## Uses the move in a slot (0..3). Returns false when it cannot be used right now.
+func try_move(slot: int) -> bool:
+	if slot >= moves.size():
+		return false
+	var move: Move = moves[slot]
+	var can: bool = _can_act() or (traversal.mode != Traversal.Mode.GROUND and not busy())
+	if not can or not move.usable() or not move.start():
+		return false
+	move_started.emit(move)
+	return true
 
 
-func try_spit() -> bool:
-	return _can_act() and spit.start()
+func try_roll() -> bool:
+	return _can_act() and traversal.mode == Traversal.Mode.GROUND and not is_rooted() and roll.start()
 
 
-func try_dodge() -> bool:
-	return _can_act() and _root_left <= 0.0 and dodge.start()
+## The first equipped move with this role (melee, ranged, area, leap, burrow, climb, sense ...), or null.
+func move_with_role(role: String) -> Move:
+	for move: Move in moves:
+		if move.role() == role:
+			return move
+	return null
 
 
-func try_trap() -> bool:
-	return _can_act() and trap.start()
+func slot_of(move: Move) -> int:
+	return moves.find(move)
 
 
 func busy() -> bool:
@@ -98,7 +128,11 @@ func is_staggered() -> bool:
 
 
 func is_rooted() -> bool:
-	return _root_left > 0.0
+	return effects.has("rooted")
+
+
+func is_protected() -> bool:
+	return roll.protects() or effects.has("evade") or effects.has("shield")
 
 
 func forward() -> Vector3:
@@ -124,22 +158,23 @@ func mouth_position() -> Vector3:
 
 
 ## An attack is an ambush when it starts while the target has not noticed us: we are hidden from it (a bush,
-## tall grass, behind cover) or simply behind it. A target that watched us go into a bush is not fooled.
+## tall grass, underground, behind cover) or simply behind it. A target that watched us go in is not fooled.
 func ambush_ready() -> bool:
 	return opponent != null and not opponent.is_dead() and not opponent.aware_of_opponent
 
 
 ## Attacks are loud and give away a hiding place.
-func announce_attack() -> void:
+func announce_attack(radius: float) -> void:
 	stealth.reveal()
-	NoiseBus.emit_noise(self, global_position, Tuning.f("noise", "attack_radius"), "attack")
+	NoiseBus.emit_noise(self, global_position, radius, "attack")
 
 
-## Returns false when the hit is avoided (rolling) or the creature is already down.
+## Returns false when the hit is avoided (rolling, sidestepping, warded) or the creature is already down.
 func take_hit(amount: float, attacker: Creature, ambush: bool, kind: String) -> bool:
-	if is_dead() or dodge.protects():
+	if is_dead() or is_protected():
 		return false
-	var dealt: float = amount * (Tuning.f("stealth", "ambush_multiplier") if ambush else 1.0)
+	var dealt: float = amount * effects.value("damage_in", 1.0)
+	dealt *= Tuning.f("stealth", "ambush_multiplier") if ambush else 1.0
 	health.hurt(dealt)
 	model.flash_hit()
 	if ambush:
@@ -150,28 +185,31 @@ func take_hit(amount: float, attacker: Creature, ambush: bool, kind: String) -> 
 	return true
 
 
+## Stops what it was winding up for a moment (not while tucked up steady).
 func stagger(duration: float) -> void:
+	if effects.has("steady"):
+		return
 	_stagger_left = maxf(_stagger_left, duration)
-	for ability: Ability in [bite, spit, trap]:
-		if ability.phase == Ability.Phase.WINDUP:
-			ability.interrupt()
-
-
-func root(duration: float) -> void:
-	_root_left = maxf(_root_left, duration)
+	for move: Move in moves:
+		if move.phase == Ability.Phase.WINDUP:
+			move.interrupt()
 
 
 func lunge(lunge_velocity: Vector3, duration: float) -> void:
-	dash(lunge_velocity, duration)
-	_lunging = true
+	_motor.dash(lunge_velocity, duration, true)
 
 
 func dash(dash_velocity: Vector3, duration: float) -> void:
-	if is_rooted():
-		return
-	_dash_velocity = dash_velocity
-	_dash_left = duration
-	_lunging = false
+	_motor.dash(dash_velocity, duration, false)
+
+
+## Throws the creature into the air (jumps, pounces).
+func launch(launch_velocity: Vector3) -> void:
+	_motor.launch(launch_velocity)
+
+
+func airborne() -> bool:
+	return _motor.airborne
 
 
 ## Roll toward where we are steering; with no steering, roll backwards.
@@ -179,86 +217,44 @@ func dodge_direction() -> Vector3:
 	return move_intent.normalized() if move_intent.length() > DIRECTION_EPSILON else -forward()
 
 
+## Where this creature walked in the last `age` seconds, oldest first (what Scent Trail picks up).
+func trail_since(age: float) -> Array:
+	return _trail.filter(func(mark: Dictionary) -> bool: return _clock - float(mark["t"]) <= age) \
+			.map(func(mark: Dictionary) -> Vector3: return mark["at"])
+
+
 func _physics_process(delta: float) -> void:
+	_clock += delta
 	for ability: Ability in abilities():
 		ability.tick(delta)
 	health.tick(delta)
 	stealth.tick(delta)
+	effects.tick(delta)
+	traversal.tick(delta)
 	_stagger_left = maxf(0.0, _stagger_left - delta)
-	_root_left = maxf(0.0, _root_left - delta)
-	_move(delta)
-	_turn(delta)
-	_footsteps(delta)
+	_motor.step(delta)
+	_record_trail(delta)
 	model.animate(delta, self)
 
 
 func _can_act() -> bool:
-	return not is_dead() and not is_staggered() and not busy()
+	return not is_dead() and not is_staggered() and not busy() and traversal.mode == Traversal.Mode.GROUND
 
 
-func _move(delta: float) -> void:
-	var wanted: Vector3 = _wanted_velocity(delta)
-	var accel: float = Tuning.f("creature", "acceleration") * delta
-	if _dash_left > 0.0 and not is_rooted():
-		velocity.x = wanted.x
-		velocity.z = wanted.z
-	else:
-		velocity.x = move_toward(velocity.x, wanted.x, accel)
-		velocity.z = move_toward(velocity.z, wanted.z, accel)
-	velocity.y = 0.0 if is_on_floor() else velocity.y - Tuning.f("creature", "gravity") * delta
-	move_and_slide()
-
-
-func _wanted_velocity(delta: float) -> Vector3:
-	if is_dead() or is_rooted() or is_staggered():
-		return Vector3.ZERO
-	if _dash_left > 0.0:
-		_dash_left -= delta
-		if _lunging and opponent != null and global_position.distance_to(opponent.global_position) \
-				< Tuning.f("bite", "lunge_stop_distance") + BODY_RADIUS:
-			_dash_left = 0.0
-		return _dash_velocity
-	var speed: float = Tuning.f("creature", "sneak_speed" if sneaking else "run_speed")
-	if trap.busy():
-		speed = 0.0
-	elif busy():
-		speed *= Tuning.f("creature", "windup_move_factor")
-	return move_intent.limit_length(1.0) * speed
-
-
-func _turn(delta: float) -> void:
-	if is_dead() or is_staggered() or dodge.protects():
+func _record_trail(delta: float) -> void:
+	_trail_left -= delta
+	if _trail_left > 0.0:
 		return
-	var direction: Vector3 = _facing_goal()
-	if Vector2(direction.x, direction.z).length() < DIRECTION_EPSILON:
-		return
-	var goal: float = atan2(-direction.x, -direction.z)
-	var winding_up: bool = bite.phase == Ability.Phase.WINDUP or spit.phase == Ability.Phase.WINDUP
-	var rate: float = Tuning.f("creature", "attack_turn_rate" if winding_up else "turn_rate")
-	yaw = rotate_toward(yaw, goal, rate * delta)
-
-
-func _facing_goal() -> Vector3:
-	if bite.phase == Ability.Phase.WINDUP or spit.phase == Ability.Phase.WINDUP:
-		return aim_point - global_position
-	if has_look_target:
-		return look_target - global_position
-	return move_intent
-
-
-func _footsteps(delta: float) -> void:
-	if horizontal_speed() < MOVING_SPEED or not is_on_floor():
-		return
-	_step_left -= delta
-	if _step_left <= 0.0:
-		_step_left = Tuning.f("noise", "step_interval")
-		var radius: float = Tuning.f("noise", "sneak_radius" if sneaking else "run_radius")
-		NoiseBus.emit_noise(self, global_position, radius, "step")
+	_trail_left = TRAIL_INTERVAL
+	_trail.append({ "t": _clock, "at": global_position })
+	while not _trail.is_empty() and _clock - float(_trail[0]["t"]) > TRAIL_KEPT:
+		_trail.pop_front()
 
 
 func _die() -> void:
 	for ability: Ability in abilities():
 		ability.interrupt()
+	traversal.enter(Traversal.Mode.GROUND)
 	model.show_dead()
 	died.emit(self)
 

@@ -1,48 +1,133 @@
 {
-  "creature": {
-    "max_health": 100, "run_speed": 4.2, "sneak_speed": 1.9, "acceleration": 14.0, "turn_rate": 7.0,
-    "attack_turn_rate": 11.0, "gravity": 20.0, "windup_move_factor": 0.35, "regen_delay": 6.0,
-    "regen_per_second": 2.0, "hit_flash_time": 0.15, "stagger_time": 0.7, "floor_snap": 0.6
-  },
-  "bite": {
-    "windup": 0.6, "lunge_time": 0.18, "lunge_distance": 2.0, "recovery": 0.35, "range": 2.3,
-    "arc_degrees": 90, "max_height_gap": 1.4, "damage": 18, "cooldown": 1.6, "lunge_stop_distance": 1.1
-  },
-  "spit": {
-    "windup": 0.7, "recovery": 0.25, "speed": 10.0, "range": 22.0, "damage": 14, "cooldown": 3.0,
-    "radius": 0.22, "high_ground_range_factor": 1.2, "high_ground_min_drop": 1.5
-  },
-  "dodge": { "duration": 0.45, "distance": 4.2, "recovery": 0.1, "cooldown": 2.6 },
-  "trap": {
-    "place_time": 1.0, "cooldown": 14.0, "trigger_radius": 0.8, "root_time": 2.0, "damage": 8,
-    "arm_delay": 0.5, "noise_radius": 9.0, "spot_distance": 2.2, "avoid_margin": 0.9
-  },
-  "stealth": {
-    "ambush_multiplier": 1.75, "reveal_time": 3.0, "reveal_distance": 2.5, "unaware_memory": 1.5
-  },
-  "noise": {
-    "run_radius": 10.0, "sneak_radius": 3.0, "step_interval": 0.45, "attack_radius": 16.0,
-    "dodge_radius": 8.0, "impact_radius": 7.0, "trap_snap_radius": 12.0
-  },
-  "perception": {
-    "vision_range": 24.0, "vision_half_angle_deg": 60.0, "close_awareness": 2.2, "eye_height": 0.9,
-    "chest_height": 0.55, "heard_display_time": 2.0
-  },
-  "player_view": { "sight_range": 24.0, "rustle_distance": 7.0, "rustle_min_speed": 0.5 },
-  "bot": { "preferred_distance": 7.0,
-    "distance_slack": 1.5, "strafe_switch_time": 2.4, "bite_engage_range": 3.2, "cover_min_distance": 5.0, "cover_cooldown": 7.0, "cover_min_wait": 1.5,
-    "cover_max_time": 7.0, "hit_memory": 0.6, "retreat_cooldown": 25.0, "search_time": 24.0, "search_radius": 12.0,
-    "search_bush_count": 3, "bush_check_pause": 1.2, "look_around_time": 2.4, "look_around_speed": 1.6,
-    "patrol_pause": 2.0, "dodge_chance": 0.5, "dodge_react_time": 0.55, "dodge_threat_width": 1.1, "arrive_distance": 0.9, "precise_arrive_distance": 0.35, "repath_distance": 0.6,
-    "stuck_time": 1.4, "stuck_progress": 0.6, "sidestep_time": 0.6, "slow_down_distance": 2.0, "min_approach_share": 0.35, "steer_look_ahead": 3.0, "seed": 11,
-    "ambush_wait": 12.0, "bait_time": 6.0, "bait_distance": 3.0, "snare_offset": 1.6
-  },
-  "camera": {
-    "distance": 5.0, "height": 1.5, "shoulder_offset": 0.55, "mouse_sensitivity": 0.0025,
-    "pitch_min_deg": -55.0, "pitch_max_deg": 20.0, "start_pitch_deg": -14.0, "follow_sharpness": 12.0,
-    "lock_turn_sharpness": 6.0, "lock_pitch_deg": -12.0, "collision_margin": 0.25, "fov": 70.0,
-    "aim_distance": 60.0
-  },
-  "lock_on": { "max_range": 24.0, "lose_sight_time": 1.0 },
-  "hud": { "low_health_fraction": 0.3 }
+ "creature": {
+  "max_health": 100,
+  "run_speed": 4.9,
+  "sneak_speed": 2.2,
+  "acceleration": 16.0,
+  "turn_rate": 8.0,
+  "attack_turn_rate": 12.5,
+  "gravity": 20.0,
+  "windup_move_factor": 0.35,
+  "regen_delay": 6.0,
+  "regen_per_second": 2.0,
+  "hit_flash_time": 0.15,
+  "stagger_time": 0.7,
+  "floor_snap": 0.6,
+  "jump_gravity": 18.0,
+  "glide_fall_speed": 1.6,
+  "wade_factor": 0.75
+ },
+ "dodge": {
+  "duration": 0.38,
+  "distance": 4.4,
+  "recovery": 0.08,
+  "cooldown": 2.2
+ },
+ "stealth": {
+  "ambush_multiplier": 1.75,
+  "reveal_time": 3.0,
+  "reveal_distance": 2.5,
+  "unaware_memory": 1.5
+ },
+ "noise": {
+  "run_radius": 10.0,
+  "sneak_radius": 3.0,
+  "step_interval": 0.45,
+  "attack_radius": 16.0,
+  "dodge_radius": 8.0,
+  "impact_radius": 7.0,
+  "landing_radius": 7.0,
+  "rumble_radius": 9.0,
+  "rumble_interval": 0.35
+ },
+ "perception": {
+  "vision_range": 24.0,
+  "vision_half_angle_deg": 60.0,
+  "close_awareness": 2.2,
+  "eye_height": 0.9,
+  "chest_height": 0.55,
+  "heard_display_time": 2.0
+ },
+ "player_view": {
+  "sight_range": 24.0
+ },
+ "bot": {
+  "preferred_distance": 7.0,
+  "distance_slack": 1.5,
+  "strafe_switch_time": 2.4,
+  "strike_engage_range": 3.2,
+  "cover_min_distance": 5.0,
+  "cover_cooldown": 7.0,
+  "cover_min_wait": 1.5,
+  "cover_max_time": 7.0,
+  "hit_memory": 0.6,
+  "retreat_cooldown": 25.0,
+  "search_time": 24.0,
+  "search_radius": 12.0,
+  "search_bush_count": 3,
+  "bush_check_pause": 1.2,
+  "look_around_time": 2.4,
+  "look_around_speed": 1.6,
+  "patrol_pause": 2.0,
+  "dodge_chance": 0.5,
+  "dodge_react_time": 0.55,
+  "dodge_threat_width": 1.1,
+  "arrive_distance": 0.9,
+  "precise_arrive_distance": 0.35,
+  "repath_distance": 0.6,
+  "stuck_time": 1.4,
+  "stuck_progress": 0.6,
+  "sidestep_time": 0.6,
+  "slow_down_distance": 2.0,
+  "min_approach_share": 0.35,
+  "steer_look_ahead": 3.0,
+  "seed": 11,
+  "ambush_wait": 12.0,
+  "bait_time": 6.0,
+  "bait_distance": 3.0,
+  "snare_offset": 1.6
+ },
+ "camera": {
+  "distance": 5.0,
+  "height": 1.5,
+  "shoulder_offset": 0.55,
+  "mouse_sensitivity": 0.0025,
+  "pitch_min_deg": -55.0,
+  "pitch_max_deg": 20.0,
+  "start_pitch_deg": -14.0,
+  "follow_sharpness": 12.0,
+  "lock_turn_sharpness": 6.0,
+  "lock_pitch_deg": -12.0,
+  "collision_margin": 0.25,
+  "fov": 70.0,
+  "aim_distance": 60.0
+ },
+ "lock_on": {
+  "max_range": 24.0,
+  "lose_sight_time": 1.0
+ },
+ "hud": {
+  "low_health_fraction": 0.3
+ },
+ "attack_rules": {
+  "high_ground_range_factor": 1.2,
+  "high_ground_min_drop": 1.5,
+  "lunge_stop_distance": 1.1,
+  "max_height_gap": 1.4
+ },
+ "fire": {
+  "burn_time": 4.0,
+  "damage_per_second": 6.0,
+  "regrow_time": 25.0,
+  "regrow_grow_time": 4.0,
+  "stubble_height": 0.15,
+  "char": 0.55,
+  "douse_radius": 2.0
+ },
+ "terrain_effects": {
+  "mud_radius": 1.6,
+  "mud_life": 8.0,
+  "mud_slow": 0.6,
+  "smoke_alpha": 0.55
+ }
 }

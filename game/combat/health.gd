@@ -21,6 +21,11 @@ func hurt(amount: float) -> void:
 	_since_hurt = 0.0
 
 
+func heal(amount: float) -> void:
+	if not is_dead():
+		current = minf(maximum, current + amount)
+
+
 func tick(delta: float) -> void:
 	_since_hurt += delta
 	if not is_dead() and _since_hurt >= _regen_delay:

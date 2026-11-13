@@ -1,6 +1,7 @@
 class_name TerrainBuilder
 ## Builds the ground: a vertex-coloured heightmap mesh (grass, sunny clearings, dirt on slopes, stone on the ridge,
-## moss in the ravine) and a matching trimesh collider that the navmesh is baked from.
+## moss in the ravine, dark soft soil you can burrow in, grey gravel you cannot) and a matching trimesh collider that
+## the navmesh is baked from.
 
 const COLOR_NOISE_FREQUENCY: float = 0.08
 const SLOPE_DIRT_START: float = 0.9
@@ -9,14 +10,16 @@ const RIDGE_STONE_START: float = 1.8
 const RIDGE_STONE_SHARE: float = 0.45
 const RAVINE_MOSS_DISTANCE: float = 2.5
 const CLEARING_EDGE: float = 2.5
+const PATCH_GRAIN: float = 3.0
+const PATCH_MIX: float = 0.5
 
 
-static func build(shape: TerrainShape, spec: Dictionary, clearings: Array) -> StaticBody3D:
+static func build(shape: TerrainShape, spec: Dictionary, clearings: Array, features: WoodsFeatures) -> StaticBody3D:
 	var body := StaticBody3D.new()
 	body.name = "Terrain"
 	body.collision_layer = Layers.TERRAIN
 	body.collision_mask = 0
-	var mesh: ArrayMesh = _mesh(shape, float(spec["size"]), float(spec["step"]), clearings)
+	var mesh: ArrayMesh = _mesh(shape, float(spec["size"]), float(spec["step"]), clearings, features)
 	var view := MeshInstance3D.new()
 	view.mesh = mesh
 	view.material_override = WoodsMaterials.vertex_colored()
@@ -27,7 +30,8 @@ static func build(shape: TerrainShape, spec: Dictionary, clearings: Array) -> St
 	return body
 
 
-static func _mesh(shape: TerrainShape, size: float, step: float, clearings: Array) -> ArrayMesh:
+static func _mesh(shape: TerrainShape, size: float, step: float, clearings: Array,
+		features: WoodsFeatures) -> ArrayMesh:
 	var count: int = int(size / step) + 1
 	var half: float = size * 0.5
 	var noise := FastNoiseLite.new()
@@ -38,7 +42,8 @@ static func _mesh(shape: TerrainShape, size: float, step: float, clearings: Arra
 		for col: int in count:
 			var x: float = -half + col * step
 			var z: float = -half + row * step
-			tool.set_color(_ground_color(shape, Vector2(x, z), noise, clearings))
+			var color: Color = _ground_color(shape, Vector2(x, z), noise, clearings)
+			tool.set_color(_patch_color(color, Vector3(x, 0.0, z), features, noise))
 			tool.add_vertex(Vector3(x, shape.height(x, z), z))
 	_add_grid_indices(tool, count)
 	tool.generate_normals()
@@ -66,6 +71,16 @@ static func _ground_color(shape: TerrainShape, p: Vector2, noise: FastNoiseLite,
 	color = color.lerp(Tuning.palette("rock"), stone * RIDGE_STONE_SHARE * (1.0 - shade * 0.5))
 	var moss: float = 1.0 - smoothstep(0.0, RAVINE_MOSS_DISTANCE, shape.ravine_distance(p))
 	return color.lerp(Tuning.palette("moss"), moss)
+
+
+## Soft soil reads dark and rich; rocky ground reads grey and gritty (same noise, so the edges look natural).
+static func _patch_color(color: Color, p: Vector3, features: WoodsFeatures, noise: FastNoiseLite) -> Color:
+	var grain: float = noise.get_noise_2d(p.z * PATCH_GRAIN, p.x * PATCH_GRAIN) * 0.5 + 0.5
+	if features.rocky_at(p):
+		return Tuning.palette("gravel").lerp(Tuning.palette("rock_dark"), grain * PATCH_MIX)
+	if features.soft_at(p):
+		return Tuning.palette("soil").lerp(Tuning.palette("dirt"), grain * PATCH_MIX)
+	return color
 
 
 static func _clearing_weight(p: Vector2, clearings: Array) -> float:

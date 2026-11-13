@@ -1,8 +1,8 @@
 class_name BotReflexes
 extends RefCounted
 ## Split-second reactions, decided once per threat with a fixed chance so the bot is beatable: roll sideways out of
-## the path of an incoming glob of spit it can see, or roll back from a bite wind-up it can see. The roll comes
-## after the difficulty's reflex delay. Also reports incoming spit so the bot can decide to take cover.
+## the path of an incoming shot it can see, or roll back from a strike wind-up it can see. The roll comes after the
+## difficulty's reflex delay. Also reports incoming shots so the bot can decide to take cover.
 
 const ROLL_SIDE_ANGLE: float = PI * 0.25
 
@@ -28,18 +28,18 @@ func tick(delta: float) -> void:
 	if _pending_left <= 0.0:
 		_pending_left = INF
 		_roll(_pending)
-	var glob: SpitProjectile = incoming_spit()
+	var glob: Projectile = incoming_shot()
 	if glob != null and not _decided.has(glob.get_instance_id()):
 		_decided[glob.get_instance_id()] = true
 		if _rng.randf() < Tuning.f("bot", "dodge_chance"):
 			_plan_roll(glob.velocity().cross(Vector3.UP).normalized() * BotBrain.random_side(_rng))
-	_react_to_bite()
+	_react_to_strike()
 
 
-## The target's glob that will pass close to us soon, if any.
-func incoming_spit() -> SpitProjectile:
-	for node: Node in _bot.get_tree().get_nodes_in_group("spit"):
-		var glob := node as SpitProjectile
+## The target's shot that will pass close to us soon, if any.
+func incoming_shot() -> Projectile:
+	for node: Node in _bot.get_tree().get_nodes_in_group("projectiles"):
+		var glob := node as Projectile
 		if glob.shooter != _target or not Sight.clear(_bot.get_world_3d(), _bot.eye_position(), glob.global_position):
 			continue
 		var offset: Vector3 = _bot.chest_position() - glob.global_position
@@ -53,11 +53,12 @@ func incoming_spit() -> SpitProjectile:
 	return null
 
 
-func _react_to_bite() -> void:
-	if _target.bite.phase != Ability.Phase.WINDUP:
+func _react_to_strike() -> void:
+	var strike: Move = _winding_strike()
+	if strike == null:
 		_bite_decided = false
 		return
-	var reach: float = Tuning.f("bite", "range") + Tuning.f("bite", "lunge_distance")
+	var reach: float = BotFacts.effective_range(strike)
 	if _bite_decided or not _senses.sees_target or _bot.global_position.distance_to(_target.global_position) > reach:
 		return
 	_bite_decided = true
@@ -65,6 +66,13 @@ func _react_to_bite() -> void:
 		var away: Vector3 = _bot.global_position - _target.global_position
 		var back: Vector3 = Vector3(away.x, 0.0, away.z).normalized()
 		_plan_roll(back.rotated(Vector3.UP, BotBrain.random_side(_rng) * ROLL_SIDE_ANGLE))
+
+
+func _winding_strike() -> Move:
+	for move: Move in _target.moves:
+		if move.phase == Ability.Phase.WINDUP and (move is MeleeMove or move is AreaMove):
+			return move
+	return null
 
 
 func _plan_roll(direction: Vector3) -> void:
@@ -75,5 +83,5 @@ func _plan_roll(direction: Vector3) -> void:
 func _roll(direction: Vector3) -> void:
 	var steering: Vector3 = _bot.move_intent
 	_bot.move_intent = direction
-	if not _bot.try_dodge():
+	if not _bot.try_roll():
 		_bot.move_intent = steering

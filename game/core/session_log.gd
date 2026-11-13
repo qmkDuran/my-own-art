@@ -29,6 +29,8 @@ func setup(match_root: Main) -> void:
 	name = "SessionLog"
 	match_root.player.hit_taken.connect(_on_hit.bind("player"))
 	match_root.bot.hit_taken.connect(_on_hit.bind("bot"))
+	match_root.player.move_started.connect(_on_move.bind("player"))
+	match_root.bot.move_started.connect(_on_move.bind("bot"))
 	match_root.brain.state_changed.connect(func(state: String) -> void: _event("bot_state", { "state": state }))
 	match_root.brain.decided.connect(_on_decided)
 	match_root.flow.phase_changed.connect(_on_phase)
@@ -43,8 +45,8 @@ func _physics_process(delta: float) -> void:
 		var at: Vector3 = _main.player.global_position
 		_trail.append([snappedf(_clock, PRECISION), snappedf(at.x, PRECISION), snappedf(at.z, PRECISION)])
 	_watch_hiding()
-	_watch_attacks(_main.player, "player")
-	_watch_attacks(_main.bot, "bot")
+	_watch_roll(_main.player, "player")
+	_watch_roll(_main.bot, "bot")
 
 
 ## Writes the log once; returns its path ("" if it could not be written).
@@ -64,6 +66,8 @@ func write(outcome: String) -> String:
 
 func _record(outcome: String) -> Dictionary:
 	return { "outcome": outcome, "duration": snappedf(_clock, PRECISION), "difficulty": Difficulty.level,
+		"level": Loadouts.level, "loadouts": { "player": _main.player.moves.map(func(m: Move) -> String: return m.id),
+			"bot": _main.bot.moves.map(func(m: Move) -> String: return m.id) },
 		"trail": _trail, "events": _events, "decisions": _decisions,
 		"final_life": { "player": _main.player.health.current, "bot": _main.bot.health.current } }
 
@@ -95,17 +99,19 @@ func _watch_hiding() -> void:
 	_spot = spot
 
 
-func _watch_attacks(creature: Creature, who: String) -> void:
-	for move: String in ["bite", "spit", "dodge", "trap"]:
-		var ability: Ability = creature.get(move)
-		var started: bool = ability.busy()
-		if started and not _winding.get(who + move, false):
-			_event("move", { "by": who, "move": move, "ambush_ready": creature.ambush_ready() })
-		_winding[who + move] = started
+func _watch_roll(creature: Creature, who: String) -> void:
+	var rolling: bool = creature.roll.busy()
+	if rolling and not _winding.get(who, false):
+		_event("move", { "by": who, "move": "roll", "ambush_ready": false })
+	_winding[who] = rolling
+
+
+func _on_move(move: Move, who: String) -> void:
+	_event("move", { "by": who, "move": move.id, "role": move.role(), "ambush_ready": move.ambush })
 
 
 func _on_hit(amount: float, attacker: Creature, ambush: bool, kind: String, victim: String) -> void:
-	var by: String = "player" if attacker == _main.player else "bot"
+	var by: String = "player" if attacker == _main.player else ("bot" if attacker == _main.bot else "world")
 	_event("hit", { "by": by, "on": victim, "move": kind, "damage": snappedf(amount, PRECISION), "ambush": ambush })
 
 

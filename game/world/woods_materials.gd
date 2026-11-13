@@ -2,6 +2,8 @@ class_name WoodsMaterials
 ## Shared, cached materials for the woods (one per palette colour), so hundreds of props reuse a handful of
 ## materials. Colours come from the palette in data/woods.json.
 
+const FOLIAGE_SHADER: String = "res://shaders/foliage.gdshader"
+
 static var _cache: Dictionary = {}
 
 
@@ -29,6 +31,18 @@ static func blades() -> StandardMaterial3D:
 		material.cull_mode = BaseMaterial3D.CULL_DISABLED
 		_cache["_blades"] = material
 	return _cache["_blades"]
+
+
+## The wind-swayed foliage material (vertex and instance colours), one per sway strength and height.
+static func foliage(strength: float, height: float) -> ShaderMaterial:
+	var key: String = "_foliage_%s_%s" % [strength, height]
+	if not _cache.has(key):
+		var material := ShaderMaterial.new()
+		material.shader = load(FOLIAGE_SHADER)
+		material.set_shader_parameter("sway_strength", strength)
+		material.set_shader_parameter("sway_height", height)
+		_cache[key] = material
+	return _cache[key]
 
 
 static func glow(color: Color, alpha: float) -> StandardMaterial3D:

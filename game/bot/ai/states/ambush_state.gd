@@ -27,9 +27,9 @@ func tick(delta: float) -> void:
 	_waited += delta
 	look_at_point(brain.predicted_target())
 	var clue: Vector3 = senses().last_known_position
-	if senses().sees_target and distance_to_clue() <= Tuning.f("bot", "bite_engage_range"):
+	if senses().sees_target and distance_to_clue() <= Tuning.f("bot", "strike_engage_range"):
 		bot().aim_point = clue
 		look_at_point(clue)
-		_struck = bot().try_bite()
+		_struck = use_role("melee") or use_role("area")
 	elif senses().target_facing_me() or _waited > Tuning.f("bot", "ambush_wait"):
 		done = true

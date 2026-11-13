@@ -1,7 +1,7 @@
 class_name AbilityIcon
 extends Control
-## One move's icon: a simple glyph, its key, its name, a dark sweep while it cools down (with seconds left) and a
-## bright edge while it is winding up, so you always know what is ready.
+## One move's icon: a simple glyph for its kind, its key, its name, a dark sweep while it cools down (with seconds
+## left), a bright edge while it is winding up, and dimmed when it cannot be used here (no soft soil to burrow ...).
 
 const ICON_SIZE: float = 64.0
 const LABEL_SPACE: float = 26.0
@@ -20,12 +20,12 @@ var _tint: Color
 var _glyph: Callable
 
 
-func setup(ability: Ability, key: String, title: String, tint: Color) -> void:
+func setup(ability: Ability, key: String, title: String, tint: Color, glyph: Callable) -> void:
 	_ability = ability
 	_key = key
 	_title = title
 	_tint = tint
-	_glyph = IconGlyphs.for_move(title)
+	_glyph = glyph
 	custom_minimum_size = Vector2(ICON_SIZE, ICON_SIZE + LABEL_SPACE)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 
@@ -37,7 +37,7 @@ func _process(_delta: float) -> void:
 func _draw() -> void:
 	var box := Rect2(Vector2.ZERO, Vector2(ICON_SIZE, ICON_SIZE))
 	HudStyle.panel(self, box)
-	var usable: bool = _ability.is_ready()
+	var usable: bool = _ability.is_ready() and (not _ability is Move or (_ability as Move).usable())
 	_glyph.call(self, box.get_center(), ICON_SIZE * GLYPH_SCALE, _tint if usable else HudStyle.INK_DIM, GLYPH_WIDTH)
 	if _ability.cooldown_left > 0.0:
 		_draw_sweep(box, _ability.cooldown_share())

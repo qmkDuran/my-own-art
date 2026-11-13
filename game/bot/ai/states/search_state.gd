@@ -2,8 +2,8 @@ class_name SearchState
 extends BotState
 ## Search: go to where the player probably is (last known spot pushed along its heading), look around, then check
 ## hiding spots: first the player's learned favourites, then those along its heading, nearest first. It sneaks and
-## listens; a new sound moves the search there. Close to a bush it sees whoever hides in it; up close it spots
-## snares. When it runs out of places it drops the lead and goes back to patrolling.
+## listens; a new sound moves the search there. Close to a bush it sees whoever hides in it. When it runs out of
+## places it drops the lead and goes back to patrolling.
 
 enum Step { GO_TO_CLUE, LOOK_AROUND, CHECK_SPOT, PAUSE }
 
@@ -16,12 +16,10 @@ var _spots: Array[HidingSpot] = []
 
 func enter() -> void:
 	_time = 0.0
-	senses().searching_carefully = true
 	_go_to_clue()
 
 
 func exit() -> void:
-	senses().searching_carefully = false
 	stop_looking()
 
 

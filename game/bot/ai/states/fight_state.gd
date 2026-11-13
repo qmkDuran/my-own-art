@@ -1,12 +1,14 @@
 class_name FightState
 extends BotState
-## Fight in the open, facing the player. In "spit" mode it holds a middle distance, strafing one way then the
-## other, and spits (leading the player's observed movement) whenever it has a clear shot. In "bite" mode it
-## closes in and bites. Every attack is telegraphed by the creature's wind-up.
+## Fight in the open with one of its equipped attacks, facing the player. "ranged": hold a middle distance,
+## strafing one way then the other, and shoot (leading the player's observed movement) whenever it has a clear shot.
+## "melee" and "area": close in to the move's reach and use it. Every attack is telegraphed by its wind-up.
 
 const STRAFE_STEP: float = 2.5
 ## A strafe goal the navmesh pulls back to less than this share of a step means that side is blocked.
 const BLOCKED_SHARE: float = 0.5
+## Strikes start a little inside their full reach, so the lunge or ring lands.
+const STRIKE_SHARE: float = 0.8
 
 var _mode: String
 var _strafe_side: float = 1.0
@@ -29,40 +31,33 @@ func exit() -> void:
 func tick(delta: float) -> void:
 	var clue: Vector3 = senses().last_known_position
 	look_at_point(clue)
-	_aim(clue)
-	done = not senses().sees_target
+	aim_at_clue(_mode == "ranged")
+	done = not senses().sees_target or bot().move_with_role(_mode) == null
 	if bot().busy():
 		mover().stop()
-	elif _mode == "bite":
-		_close_and_bite(clue)
-	elif not _spit():
-		_strafe(delta)
-
-
-## Spit leads the player's observed velocity; the bite goes straight at it.
-func _aim(clue: Vector3) -> void:
-	var chest: Vector3 = clue + Vector3.UP * Tuning.f("perception", "chest_height")
-	if _mode == "spit":
-		bot().aim_point = Prediction.lead_point(bot().mouth_position(), chest, senses().observed_velocity,
-				Tuning.f("spit", "speed"))
+	elif _mode == "ranged":
+		if not _shoot():
+			_strafe(delta)
 	else:
-		bot().aim_point = chest
+		_close_and_strike(clue)
 
 
-func _close_and_bite(clue: Vector3) -> void:
-	if distance_to_clue() <= Tuning.f("bot", "bite_engage_range"):
+## Closes to the move's reach (a strike's range plus lunge, an area's radius) and uses it.
+func _close_and_strike(clue: Vector3) -> void:
+	var move: Move = bot().move_with_role(_mode)
+	if move != null and distance_to_clue() <= BotFacts.effective_range(move) * STRIKE_SHARE:
 		mover().stop()
-		bot().try_bite()
+		use_role(_mode)
 	else:
 		mover().go_to(clue, false)
 
 
-func _spit() -> bool:
+func _shoot() -> bool:
 	var chest: Vector3 = senses().last_known_position + Vector3.UP * Tuning.f("perception", "chest_height")
-	if not bot().spit.is_ready() or not Sight.clear(bot().get_world_3d(), bot().mouth_position(), chest):
+	if not Sight.clear(bot().get_world_3d(), bot().mouth_position(), chest):
 		return false
 	mover().stop()
-	return bot().try_spit()
+	return use_role("ranged")
 
 
 func _strafe(delta: float) -> void:

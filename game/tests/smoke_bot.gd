@@ -1,13 +1,13 @@
 class_name SmokeBot
 extends RefCounted
-## Smoke checks for the bot's use of the woods: it runs behind cover when spat at, and it walks around a snare it
-## saw being set (while an unseen snare on the same path catches it).
+## Smoke checks for the bot's use of the woods and its moves: it runs behind cover when shot at, it digs in and
+## travels underground to ambush (a movement move), and it leaps up onto high ground from a jump spot.
 
 const DUEL_DISTANCE: float = 11.0
 const COVER_LIMIT: float = 14.0
-const CROSSING: float = 4.0
-const CROSS_LIMIT: float = 8.0
-const EARSHOT_FACTOR: float = 4.0
+const BURROW_LIMIT: float = 12.0
+const LEAP_LIMIT: float = 8.0
+const CLIMBED: float = 0.6
 
 var t: Node
 
@@ -18,12 +18,13 @@ func _init(smoke: Node) -> void:
 
 func run() -> void:
 	await _takes_cover()
-	await _avoids_seen_snare()
-	await _walks_into_unseen_snare()
+	await _burrow_ambush()
+	await _takes_high_ground()
 
 
 func _takes_cover() -> void:
 	await t.fresh_match()
+	t.stage.kit(t.m.bot, ["glob", "keen_ears", "scent_trail", "quickening"])
 	var bot_spot: Vector2 = Stage.ground_xz(t.m.woods.patrol_points[1])
 	t.stage.place(t.m.bot, bot_spot, t.m.player.global_position)
 	var shooter: Vector2 = t.finder.open_view_spot(t.m.bot.global_position, DUEL_DISTANCE)
@@ -31,9 +32,9 @@ func _takes_cover() -> void:
 	t.stage.face(t.m.bot, t.m.player.global_position)
 	await t.stage.frames(2)
 	t.m.brain.active = true
-	t.m.brain.change_state("spit")
+	t.m.brain.change_state("ranged")
 	var took_cover: bool = await t.wait_until(_shoot_until_cover, COVER_LIMIT)
-	t.expect(took_cover, "spat at, the bot switches to taking cover")
+	t.expect(took_cover, "shot at, the bot switches to taking cover")
 	var hidden: bool = await t.wait_until(func() -> bool:
 		return not Sight.clear(t.m.get_world_3d(), t.m.player.eye_position(), t.m.bot.chest_position()), COVER_LIMIT)
 	t.expect(hidden, "the bot gets behind something that blocks the player's line of fire")
@@ -44,37 +45,37 @@ func _shoot_until_cover() -> bool:
 		return true
 	t.m.player.aim_point = t.m.bot.chest_position()
 	t.stage.face(t.m.player, t.m.bot.global_position)
-	t.m.player.try_spit()
+	t.stage.use(t.m.player, "glob")
 	return false
 
 
-## Sets a snare while the bot watches (or out of its sight and earshot), then sends the bot straight across it.
-func _snare_crossing(bot_watches: bool) -> SnareTrap:
+## The player stands near soft soil, back turned; the bot (with Burrow) is sent to burrow-ambush it.
+func _burrow_ambush() -> void:
 	await t.fresh_match()
-	var spot: Vector2 = Stage.ground_xz(t.m.woods.patrol_points[1])
-	t.stage.place(t.m.player, spot, t.m.woods.ground_at(spot + Vector2(0, CROSSING)))
-	var watch_from: Vector2 = spot + Vector2(-CROSSING * (1.5 if bot_watches else EARSHOT_FACTOR), 0)
-	var look_at: Vector3 = t.m.player.global_position if bot_watches else t.m.woods.ground_at(watch_from * 2.0 - spot)
-	t.stage.place(t.m.bot, watch_from, look_at)
-	t.m.player.try_trap()
-	await t.stage.seconds(Tuning.f("trap", "place_time") + Tuning.f("trap", "arm_delay"))
-	var snare: SnareTrap = t.m.player.trap.snare
-	t.stage.place(t.m.player, spot + Vector2(0, CROSSING * 2.0), t.m.bot.global_position)
-	var snare_at: Vector2 = Stage.ground_xz(snare.global_position)
-	t.stage.place(t.m.bot, snare_at + Vector2(-CROSSING, 0), snare.global_position)
-	await t.stage.frames(2)
-	t.m.brain.mover.go_to(t.m.woods.ground_at(snare_at + Vector2(CROSSING, 0)), false)
-	await t.wait_until(func() -> bool: return t.m.brain.mover.arrived() or snare.sprung, CROSS_LIMIT)
-	return snare
+	var soil: Vector3 = t.m.woods.soft_spot_near(t.m.woods.ground_at(Vector2.ZERO), INF)
+	t.stage.place(t.m.player, Stage.ground_xz(soil) + Vector2(1.5, 0), soil + Vector3.RIGHT * 10.0)
+	t.stage.place(t.m.bot, Stage.ground_xz(soil) + Vector2(-8, 0), soil)
+	await t.stage.frames(3)
+	var went_under: Array[bool] = [false]
+	t.m.brain.active = true
+	t.m.brain.change_state("burrow_ambush")
+	var popped: bool = await t.wait_until(func() -> bool:
+		went_under[0] = went_under[0] or t.m.bot.traversal.mode == Traversal.Mode.UNDERGROUND
+		return went_under[0] and t.m.bot.traversal.mode == Traversal.Mode.GROUND, BURROW_LIMIT)
+	t.expect(went_under[0], "the bot uses a movement move: it burrows into soft soil")
+	t.expect(popped, "and pops back up near the player")
 
 
-func _avoids_seen_snare() -> void:
-	var snare: SnareTrap = await _snare_crossing(true)
-	t.expect(t.m.brain.senses.known_snares.size() == 1, "the bot remembers the snare it watched being set")
-	t.expect(not snare.sprung and not t.m.bot.is_rooted(), "the bot walks around a snare it saw being set")
-	t.expect(t.m.brain.mover.arrived(), "and still gets where it was going")
-
-
-func _walks_into_unseen_snare() -> void:
-	var snare: SnareTrap = await _snare_crossing(false)
-	t.expect(snare.sprung and t.m.bot.is_rooted(), "the same path over an unseen snare catches the bot")
+func _takes_high_ground() -> void:
+	await t.fresh_match()
+	t.stage.kit(t.m.bot, ["snap", "glob", "leap", "scent_trail"])
+	var jump: Dictionary = t.m.woods.features.jump_spots()[0]
+	var start: Vector3 = jump["from"]
+	t.stage.place(t.m.bot, Stage.ground_xz(start), jump["to"])
+	t.stage.place(t.m.player, Stage.ground_xz(start) + Vector2(12, 0), jump["to"])
+	await t.stage.frames(3)
+	t.m.brain.active = true
+	t.m.brain.change_state("high_ground")
+	var up: bool = await t.wait_until(func() -> bool:
+		return t.m.bot.global_position.y > (jump["from"] as Vector3).y + CLIMBED and t.m.bot.is_on_floor(), LEAP_LIMIT)
+	t.expect(up, "the bot leaps up onto high ground from a jump spot")

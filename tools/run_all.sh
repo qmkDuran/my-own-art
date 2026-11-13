@@ -8,7 +8,7 @@ GODOT="${GODOT:-/tmp/claude-0/-home-user-my-own-art/cb019c91-d4b5-5ec5-a8ec-8aef
 status=0
 python3 -I tools/check_code.py | grep -v "CODE note" | tail -20
 python3 -I tools/check_code.py >/dev/null || status=1
-"$GODOT" --headless --path game --import >/dev/null 2>&1
+tools/parse_check.sh || exit 1
 out=$(timeout 600 "$GODOT" --headless --fixed-fps 60 --path game -- --smoke 2>&1)
 echo "$out" | grep -E "^SMOKE (FAIL|PASS)|SCRIPT ERROR|Parse Error" | head -20
 echo "$out" | grep -qE "SCRIPT ERROR|Parse Error" && { echo "smoke: script errors"; status=1; }

@@ -34,8 +34,8 @@ func _ready() -> void:
 	woods.name = "Woods"
 	add_child(woods)
 	woods.build()
-	player = _spawn("player", woods.player_spawn, woods.bot_spawn)
-	bot = _spawn("bot", woods.bot_spawn, woods.player_spawn)
+	player = _spawn("player", woods.player_spawn, woods.bot_spawn, Loadouts.for_player())
+	bot = _spawn("bot", woods.bot_spawn, woods.player_spawn, Loadouts.for_bot())
 	player.opponent = bot
 	player.see_through_cover = true
 	bot.opponent = player
@@ -77,12 +77,20 @@ func _on_phase(phase: MatchFlow.Phase) -> void:
 		model.save()
 
 
-func _spawn(look_key: String, at: Vector3, facing: Vector3) -> Creature:
+func _spawn(look_key: String, at: Vector3, facing: Vector3, loadout: Array[String]) -> Creature:
 	var creature := Creature.new()
 	var toward: Vector3 = facing - at
-	creature.setup(look_key, at, atan2(-toward.x, -toward.z))
+	creature.setup(look_key, at, atan2(-toward.x, -toward.z), loadout, woods)
+	creature.add_to_group("creatures")
 	add_child(creature)
 	return creature
+
+
+## Re-equips both creatures from the loadout screen's choices (before the fight starts).
+func apply_loadouts() -> void:
+	player.equip(Loadouts.for_player())
+	bot.equip(Loadouts.for_bot())
+	hud.show_moves(player)
 
 
 func _add_player_side() -> void:
@@ -98,3 +106,6 @@ func _add_player_side() -> void:
 	controller = PlayerController.new()
 	controller.setup(player, rig, lock_on)
 	add_child(controller)
+	var senses := SenseView.new()
+	add_child(senses)
+	senses.setup(player)

@@ -1,8 +1,8 @@
 class_name CoverState
 extends BotState
 ## Cover: being shot at, the bot runs to the best covered point nearby (blocked from the player's last known spot,
-## with escape routes, not into a known snare) and holds there for a moment (until its spit is ready again). It
-## breaks off at once if the player closes in.
+## with escape routes) and holds there for a moment (until its ranged move is ready again, if it has one). It breaks
+## off at once if the player closes in.
 
 var _time: float = 0.0
 var _hidden_for: float = 0.0
@@ -24,7 +24,9 @@ func tick(delta: float) -> void:
 	if mover().arrived():
 		look_at_point(senses().last_known_position)
 		_hidden_for += delta
-	var rested: bool = _hidden_for >= Tuning.f("bot", "cover_min_wait") and bot().spit.is_ready()
+	var ranged: Move = bot().move_with_role("ranged")
+	var reloaded: bool = ranged == null or ranged.is_ready()
+	var rested: bool = _hidden_for >= Tuning.f("bot", "cover_min_wait") and reloaded
 	var rushed: bool = senses().sees_target and distance_to_clue() < Tuning.f("bot", "cover_min_distance")
 	done = done or rested or rushed or _time > Tuning.f("bot", "cover_max_time")
 

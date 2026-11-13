@@ -95,7 +95,7 @@ func _stage_lock_on() -> void:
 	m.lock_on.toggle()
 	m.bot.aim_point = m.player.chest_position()
 	await stage.frames(30)
-	m.bot.try_spit()
+	stage.use(m.bot, "glob")
 	await stage.seconds(0.5)
 
 
@@ -109,8 +109,8 @@ func _stage_spit_tree() -> void:
 	m.rig.snap()
 	await stage.frames(10)
 	m.player.aim_point = m.bot.chest_position()
-	m.player.try_spit()
-	await stage.seconds(Tuning.f("spit", "windup") + 0.9)
+	stage.use(m.player, "glob")
+	await stage.seconds(Stage.move_number("glob", "windup") + 0.9)
 
 
 func _stage_hiding() -> void:
@@ -150,10 +150,10 @@ func _stage_ridge_fight() -> void:
 	await stage.frames(10)
 	m.lock_on.toggle()
 	m.player.aim_point = m.bot.chest_position()
-	m.player.try_spit()
-	await stage.seconds(Tuning.f("spit", "windup") + 0.3)
+	stage.use(m.player, "glob")
+	await stage.seconds(Stage.move_number("glob", "windup") + 0.3)
 	m.bot.aim_point = m.player.chest_position()
-	m.bot.try_spit()
+	stage.use(m.bot, "glob")
 	await stage.seconds(0.4)
 
 
@@ -178,7 +178,7 @@ func _stage_hud_closeup() -> void:
 	m.player.health.hurt(26.0)
 	m.bot.health.hurt(38.0)
 	m.player.spit.start()
-	await stage.seconds(Tuning.f("spit", "windup") + 0.6)
+	await stage.seconds(Stage.move_number("glob", "windup") + 0.6)
 	m.player.dodge.cooldown_left = Tuning.f("dodge", "cooldown") * 0.6
 	m.player.trap.cooldown_left = Tuning.f("trap", "cooldown") * 0.8
 

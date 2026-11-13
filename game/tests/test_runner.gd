@@ -17,7 +17,11 @@ func _ready() -> void:
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(TEST_MEMORY))
 	for flag: String in MODES:
 		if args.has(flag):
-			var runner: Node = (load(MODES[flag]) as GDScript).new()
+			var script: GDScript = load(MODES[flag])
+			if script == null or not script.can_instantiate():
+				get_tree().quit(1)
+				return
+			var runner: Node = script.new()
 			runner.process_mode = Node.PROCESS_MODE_ALWAYS
 			add_child(runner)
 			return

@@ -2,7 +2,7 @@ class_name BotState
 extends RefCounted
 ## One way of acting, carried out while the brain's utility choice stays the same. enter() and exit() bracket it;
 ## tick() runs every physics frame. A state sets `done` when it has finished (the brain then decides again at once)
-## and answers committed() while it must not be interrupted (mid-bite, setting a snare).
+## and answers committed() while it must not be interrupted (mid-strike, underground, up a tree).
 
 var brain: BotBrain
 var done: bool = false
@@ -61,6 +61,21 @@ func look_at_point(point: Vector3) -> void:
 
 func stop_looking() -> void:
 	bot().has_look_target = false
+
+
+## Uses the bot's equipped move of a role (aimed at its current aim point). False if it has none or cannot now.
+func use_role(role: String) -> bool:
+	var move: Move = bot().move_with_role(role)
+	return move != null and bot().try_move(bot().slot_of(move))
+
+
+## Points the bot's aim at the player's last known chest, leading shots on its observed movement.
+func aim_at_clue(lead: bool) -> void:
+	var chest: Vector3 = senses().last_known_position + Vector3.UP * Tuning.f("perception", "chest_height")
+	var velocity: Vector3 = senses().observed_velocity if lead else Vector3.ZERO
+	var move: Move = bot().move_with_role("ranged")
+	var speed: float = move.number("speed") if move != null else INF
+	bot().aim_point = Prediction.lead_point(bot().mouth_position(), chest, velocity, speed) if lead else chest
 
 
 ## Goes to the best spot for a tactical purpose around a centre, judged against the player's last known spot.

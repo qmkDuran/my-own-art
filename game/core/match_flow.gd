@@ -1,8 +1,8 @@
 class_name MatchFlow
 extends Node
 ## The match around the fight: start screen, playing, paused (Esc frees the mouse), won or lost, and restart (R).
-## On the start and pause screens 1 / 2 / 3 pick Easy / Normal / Hard. Everything but the HUD and this node is
-## paused outside of play.
+## The loadout screen (moves, level, difficulty) comes first. Everything but the HUD and this node is paused outside
+## of play.
 
 signal phase_changed(phase: Phase)
 
@@ -41,17 +41,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		_enter(Phase.PAUSED)
 	elif phase == Phase.PAUSED and (event.is_action_pressed("pause") or _is_click(event)):
 		play()
-	elif phase == Phase.INTRO and (event.is_action_pressed("start") or _is_click(event)):
+	elif phase == Phase.INTRO and event.is_action_pressed("start"):
 		play()
-	elif phase == Phase.INTRO or phase == Phase.PAUSED:
-		_pick_difficulty(event)
-
-
-func _pick_difficulty(event: InputEvent) -> void:
-	for level: String in Difficulty.LEVELS:
-		if event.is_action_pressed("difficulty_" + level):
-			Difficulty.level = level
-			phase_changed.emit(phase)
 
 
 func _enter(next: Phase) -> void:

@@ -1,8 +1,8 @@
 class_name PlayerWatcher
 extends Node
-## Feeds the PlayerModel from the bot's own senses only: where it watched (or found) the player hiding, which attack
-## it saw them start, how soon after its own wind-up they rolled, time on high ground, snares it learned of, and
-## which way a hurt player ran. Learning raises a short "learning" flash and a bark for the F3 overlay.
+## Feeds the PlayerModel from the bot's own senses only: where it watched (or found) the player hiding, which moves it
+## saw them use, how soon after its own wind-up they rolled, time on high ground, and which way a hurt player ran.
+## Learning raises a short "learning" flash and a bark for the F3 overlay.
 
 var _brain: BotBrain
 var _model: PlayerModel
@@ -11,9 +11,7 @@ var _observe_left: float = 0.0
 var _noted_spot: HidingSpot
 var _windup_started: float = INF
 var _was_rolling: bool = false
-var _target_winding: bool = false
 var _own_winding: bool = false
-var _snares_known: int = 0
 
 
 func setup(brain: BotBrain, model: PlayerModel) -> void:
@@ -22,21 +20,21 @@ func setup(brain: BotBrain, model: PlayerModel) -> void:
 	_target = brain.target
 	name = "PlayerWatcher"
 	model.learned.connect(_on_learned)
+	_target.move_started.connect(_on_target_move)
 
 
 func tick(delta: float) -> void:
 	_windup_started += delta
-	var bot: Creature = _brain.bot
-	var own_winding: bool = bot.bite.phase == Ability.Phase.WINDUP or bot.spit.phase == Ability.Phase.WINDUP
+	var own_winding: bool = false
+	for move: Move in _brain.bot.moves:
+		own_winding = own_winding or move.phase == Ability.Phase.WINDUP
 	if own_winding and not _own_winding:
 		_windup_started = 0.0
 	_own_winding = own_winding
-	_watch_snares()
 	if not _brain.senses.sees_target:
 		_was_rolling = false
 		return
 	_watch_hiding()
-	_watch_attacks()
 	_watch_rolls()
 	_observe_left -= delta
 	if _observe_left <= 0.0:
@@ -53,16 +51,15 @@ func _watch_hiding() -> void:
 		_model.note_hide(spot)
 
 
-func _watch_attacks() -> void:
-	var winding: bool = _target.bite.phase == Ability.Phase.WINDUP or _target.spit.phase == Ability.Phase.WINDUP
-	if winding and not _target_winding:
-		_model.note_attack("bite" if _target.bite.phase == Ability.Phase.WINDUP else "spit")
-	_target_winding = winding
+## Only moves it can see (or a burrow it hears rumbling) are learned.
+func _on_target_move(move: Move) -> void:
+	if _brain.senses.sees_target or _brain.senses.heard_recently():
+		_model.note_move(move.role())
 
 
 func _watch_rolls() -> void:
-	var rolling: bool = _target.dodge.protects()
-	if rolling and not _was_rolling and _windup_started <= _brain.bot.spit.windup_time:
+	var rolling: bool = _target.roll.protects()
+	if rolling and not _was_rolling and _windup_started <= Tuning.ai_f("memory", "roll_watch_window"):
 		_model.note_roll_delay(_windup_started)
 	_was_rolling = rolling
 
@@ -75,13 +72,6 @@ func _watch_position() -> void:
 	var fleeing: bool = _brain.senses.observed_velocity.dot(away.normalized()) > Creature.MOVING_SPEED
 	if _brain.senses.target_life_seen <= Tuning.ai_f("memory", "flee_life_fraction") and fleeing:
 		_model.note_flee(_brain.senses.observed_velocity.normalized())
-
-
-func _watch_snares() -> void:
-	var known: Array[Vector3] = _brain.senses.known_snares
-	while _snares_known < known.size():
-		_model.note_snare(known[_snares_known])
-		_snares_known += 1
 
 
 func _on_learned(what: String) -> void:

@@ -5,10 +5,11 @@ class_name InputSetup
 const KEYS: Dictionary = {
 	"move_forward": [KEY_W, KEY_UP], "move_back": [KEY_S, KEY_DOWN], "move_left": [KEY_A, KEY_LEFT],
 	"move_right": [KEY_D, KEY_RIGHT], "dodge": [KEY_SPACE], "sneak": [KEY_SHIFT], "lock_on": [KEY_TAB],
-	"trap": [KEY_F], "pause": [KEY_ESCAPE], "restart": [KEY_R], "start": [KEY_ENTER], "debug_view": [KEY_F3],
-	"reset_memory": [KEY_F9], "difficulty_easy": [KEY_1], "difficulty_normal": [KEY_2], "difficulty_hard": [KEY_3],
+	"move_3": [KEY_Q], "move_4": [KEY_E], "pause": [KEY_ESCAPE], "restart": [KEY_R], "start": [KEY_ENTER],
+	"debug_view": [KEY_F3],
+	"reset_memory": [KEY_F9],
 }
-const MOUSE: Dictionary = { "bite": MOUSE_BUTTON_LEFT, "spit": MOUSE_BUTTON_RIGHT }
+const MOUSE: Dictionary = { "move_1": MOUSE_BUTTON_LEFT, "move_2": MOUSE_BUTTON_RIGHT }
 
 
 static func install() -> void:

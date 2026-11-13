@@ -1,8 +1,8 @@
 class_name StalkState
 extends BotState
 ## Stalk: the bot sees the player, and the player's creature is not facing it. It sneaks in (slow and quiet),
-## aiming to come from behind, and opens with a bite: an ambush if the player has not noticed it. Done after the
-## bite, or when the player turns toward it or slips out of sight.
+## aiming to come from behind, and opens with a strike: an ambush if the player has not noticed it. Done after the
+## strike, or when the player turns toward it or slips out of sight.
 
 const BEHIND_DISTANCE: float = 1.5
 
@@ -26,10 +26,10 @@ func tick(_delta: float) -> void:
 		done = true
 		return
 	var clue: Vector3 = senses().last_known_position
-	if distance_to_clue() <= Tuning.f("bot", "bite_engage_range"):
+	if distance_to_clue() <= Tuning.f("bot", "strike_engage_range"):
 		mover().stop()
 		bot().aim_point = clue
 		look_at_point(clue)
-		_struck = bot().try_bite()
+		_struck = use_role("melee") or use_role("area")
 	else:
 		mover().go_to(clue - target().forward() * BEHIND_DISTANCE, true)

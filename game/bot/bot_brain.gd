@@ -11,6 +11,7 @@ signal decided(option: String, scores: Dictionary)
 enum Alert { HIDDEN, HEARD, SEEN }
 
 const MARKERS: Dictionary = { "notice": "!", "search": "?", "chase": "!" }
+const SUSPECT_REACH_KEY: String = "grass_suspect_reach"
 const MARKER_COLORS: Dictionary = { "notice": Color(1.0, 0.85, 0.2), "search": Color(0.9, 0.9, 0.95),
 	"chase": Color(1.0, 0.45, 0.2) }
 const CALM_STATES: Array[String] = ["patrol", "retreat"]
@@ -33,7 +34,7 @@ var state_name: String = ""
 var active: bool = true
 var since_retreat: float = INF
 var since_cover: float = INF
-var since_spit_hit: float = INF
+var since_shot_hit: float = INF
 var learning_left: float = 0.0
 var barks: Array[String] = []
 var last_facts: Dictionary = {}
@@ -53,7 +54,7 @@ func setup(bot_creature: Creature, target_creature: Creature, arena: Woods, habi
 	senses.setup(bot, target)
 	bot.add_child(senses)
 	mover = BotMover.new()
-	mover.setup(bot, senses, woods)
+	mover.setup(bot, woods)
 	bot.add_child(mover)
 	reflexes = BotReflexes.new(bot, target, senses, rng)
 	tactics = TacticalEval.new(woods, bot, senses, model)
@@ -102,6 +103,27 @@ func predicted_target() -> Vector3:
 	return woods.on_navmesh(guess)
 
 
+## The move that sets grass alight, if it has one equipped (Cinder Spit, Kindle).
+func fire_move() -> Move:
+	for move: Move in bot.moves:
+		if move.spec.get("ignite", false):
+			return move
+	return null
+
+
+## A tall-grass patch the player is probably hiding in (near where it is predicted to be), or null.
+func suspect_grass() -> HidingSpot:
+	if senses.sees_target or not senses.has_lead:
+		return null
+	var guess: Vector3 = predicted_target()
+	for spot: HidingSpot in woods.hiding_spots:
+		var reach: float = spot.radius + Tuning.ai_f("tactics", SUSPECT_REACH_KEY)
+		var near: bool = spot.global_position.distance_to(guess) <= reach
+		if spot.kind == "grass" and spot.conceals() and near:
+			return spot
+	return null
+
+
 func bark(words: String) -> void:
 	if barks.is_empty() or barks.back() != words:
 		barks.append(words)
@@ -127,7 +149,7 @@ func _physics_process(delta: float) -> void:
 func _think(delta: float) -> void:
 	since_retreat += delta
 	since_cover += delta
-	since_spit_hit += delta
+	since_shot_hit += delta
 	learning_left = maxf(0.0, learning_left - delta)
 	senses.tick(delta)
 	reflexes.tick(delta)
@@ -153,8 +175,8 @@ func _decide() -> void:
 
 
 func _on_hit_taken(_amount: float, _attacker: Creature, _ambush: bool, kind: String) -> void:
-	if kind == "spit":
-		since_spit_hit = 0.0
+	if Tuning.moves["moves"].has(kind) and MoveLibrary.spec(kind)["archetype"] == "projectile":
+		since_shot_hit = 0.0
 
 
 ## -1 or +1 with equal odds (strafe sides, flank sides, roll sides).

@@ -1,59 +1,38 @@
 class_name Props
-## Builds the solid props of the woods: trees (trunk plus pine or leafy canopy), boulders and fallen logs. Trunks,
-## rocks and logs are obstacles (they block movement, sight and spit); canopies only stop the camera.
+## Builds the solid props of the woods: tree bodies (the trunk collider, plus a crown collider that only stops the
+## camera; trees are drawn by ForestArt), mossy boulders, fallen logs and hollow logs you can crawl into. Trunks,
+## rocks and logs are obstacles: they block movement, sight and shots.
 
 const TRUNK_RADIUS: float = 0.32
-const TRUNK_HEIGHT: float = 7.8
-const TRUNK_TAPER: float = 0.7
-const PINE_TIERS: int = 3
-const PINE_BASE_HEIGHT: float = 3.3
-const PINE_TIER_RADIUS: float = 2.1
-const PINE_TIER_HEIGHT: float = 2.6
-const PINE_TIER_RISE: float = 1.45
-const PINE_TIER_SHRINK: float = 0.28
-const LEAFY_BLOBS: int = 3
-const LEAFY_BASE_HEIGHT: float = 5.4
-const LEAFY_RADIUS: float = 1.9
-const LEAFY_SPREAD: float = 1.1
-const LEAFY_TRUNK_REACH: float = 0.8
-const CANOPY_LUMP: float = 0.14
 const ROCK_LUMP: float = 0.18
 const ROCK_SINK: float = 0.25
-const CANOPY_COLLIDER_SHARE: float = 0.8
 const ROUND_SEGMENTS: int = 9
 const ROUND_RINGS: int = 5
-const CONE_SEGMENTS: int = 8
 const LOG_SEGMENTS: int = 10
 const LOG_SINK: float = 0.8
 const LOG_CAP_SHARE: float = 0.86
 const LOG_CAP_THICKNESS: float = 0.02
-const LEAFY_SQUASH: float = 1.7
-const LEAFY_MIN_SIZE: float = 0.75
-const LEAFY_MAX_LIFT: float = 0.8
-const PINE_COLORS: Array[String] = ["pine", "pine_light"]
-const LEAF_COLORS: Array[String] = ["leaf", "leaf_light", "leaf_warm"]
+const MOSS_SHARE: float = 0.85
+const MOSS_HEIGHT: float = 0.35
+const MOSS_LIFT: float = 0.32
+const HOLLOW_WALL: float = 0.18
+const HOLLOW_SEGMENTS: int = 14
 
 
-static func tree(ground: Vector3, kind: String, scale: float, rng: RandomNumberGenerator) -> StaticBody3D:
+static func tree_body(ground: Vector3, kind: String, scale: float) -> StaticBody3D:
 	var body: StaticBody3D = _obstacle_body("Tree", ground)
-	body.rotation.y = rng.randf() * TAU
-	var trunk := CylinderMesh.new()
-	trunk.top_radius = TRUNK_RADIUS * scale * TRUNK_TAPER
-	trunk.bottom_radius = TRUNK_RADIUS * scale
-	trunk.height = (TRUNK_HEIGHT if kind == "pine" else LEAFY_BASE_HEIGHT + LEAFY_TRUNK_REACH) * scale
-	_add_view(body, trunk, WoodsMaterials.solid("bark"), Vector3(0, trunk.height * 0.5, 0))
-	var trunk_shape := CylinderShape3D.new()
-	trunk_shape.radius = TRUNK_RADIUS * scale
-	trunk_shape.height = trunk.height
-	_add_shape(body, trunk_shape, Vector3(0, trunk.height * 0.5, 0))
-	var canopy := StaticBody3D.new()
-	canopy.collision_layer = Layers.CANOPY
-	canopy.collision_mask = 0
-	body.add_child(canopy)
-	if kind == "pine":
-		_pine_canopy(canopy, scale, rng)
-	else:
-		_leafy_canopy(canopy, scale, rng)
+	var trunk := CylinderShape3D.new()
+	trunk.radius = TRUNK_RADIUS * scale
+	trunk.height = TreeShapes.trunk_height(kind) * scale
+	_add_shape(body, trunk, Vector3(0, trunk.height * 0.5, 0))
+	var crown := StaticBody3D.new()
+	crown.collision_layer = Layers.CANOPY
+	crown.collision_mask = 0
+	body.add_child(crown)
+	var ball := SphereShape3D.new()
+	var spec: Vector2 = TreeShapes.crown_ball(kind)
+	ball.radius = spec.y * scale
+	_add_shape(crown, ball, Vector3(0, spec.x * scale, 0))
 	return body
 
 
@@ -64,8 +43,11 @@ static func rock(ground: Vector3, size: Vector3, rng: RandomNumberGenerator) -> 
 	sphere.radial_segments = ROUND_SEGMENTS
 	sphere.rings = ROUND_RINGS
 	var mesh: ArrayMesh = FlatMesh.lumpy(sphere, rng, ROCK_LUMP)
-	var view: MeshInstance3D = _add_view(body, mesh, WoodsMaterials.solid("rock"), Vector3.ZERO)
-	view.scale = size
+	_add_view(body, mesh, WoodsMaterials.solid("rock"), Vector3.ZERO).scale = size
+	var moss_mesh: ArrayMesh = FlatMesh.lumpy(sphere, rng, ROCK_LUMP)
+	var moss_at := Vector3(0, size.y * MOSS_LIFT, 0)
+	var moss: MeshInstance3D = _add_view(body, moss_mesh, WoodsMaterials.solid("moss_rock"), moss_at)
+	moss.scale = Vector3(size.x * MOSS_SHARE, size.y * MOSS_HEIGHT, size.z * MOSS_SHARE)
 	var shape := ConvexPolygonShape3D.new()
 	var points := PackedVector3Array()
 	for v: Vector3 in mesh.get_faces():
@@ -79,9 +61,7 @@ static func rock(ground: Vector3, size: Vector3, rng: RandomNumberGenerator) -> 
 static func fallen_log(from: Vector3, to: Vector3, radius: float) -> StaticBody3D:
 	var length: float = from.distance_to(to)
 	var body: StaticBody3D = _obstacle_body("Log", (from + to) * 0.5 + Vector3.UP * radius * LOG_SINK)
-	var along: Vector3 = (to - from).normalized()
-	var side: Vector3 = along.cross(Vector3.UP).normalized()
-	var lying := Basis(side, along, side.cross(along))
+	var lying: Basis = _lying(to - from)
 	var cylinder := CylinderMesh.new()
 	cylinder.top_radius = radius
 	cylinder.bottom_radius = radius
@@ -93,7 +73,7 @@ static func fallen_log(from: Vector3, to: Vector3, radius: float) -> StaticBody3
 		cap.top_radius = radius * LOG_CAP_SHARE
 		cap.bottom_radius = radius * LOG_CAP_SHARE
 		cap.height = LOG_CAP_THICKNESS
-		_add_view(body, cap, WoodsMaterials.solid("log_end"), along * end * length * 0.5).basis = lying
+		_add_view(body, cap, WoodsMaterials.solid("log_end"), lying.y * end * length * 0.5).basis = lying
 	var shape := CylinderShape3D.new()
 	shape.radius = radius
 	shape.height = length
@@ -101,36 +81,40 @@ static func fallen_log(from: Vector3, to: Vector3, radius: float) -> StaticBody3
 	return body
 
 
-static func _pine_canopy(canopy: StaticBody3D, scale: float, rng: RandomNumberGenerator) -> void:
-	var material: StandardMaterial3D = WoodsMaterials.solid(PINE_COLORS[rng.randi() % PINE_COLORS.size()])
-	for tier: int in PINE_TIERS:
-		var cone := CylinderMesh.new()
-		cone.top_radius = 0.0
-		cone.bottom_radius = PINE_TIER_RADIUS * scale * (1.0 - tier * PINE_TIER_SHRINK)
-		cone.height = PINE_TIER_HEIGHT * scale
-		cone.radial_segments = CONE_SEGMENTS
-		var y: float = (PINE_BASE_HEIGHT + tier * PINE_TIER_RISE) * scale + cone.height * 0.5
-		_add_view(canopy, FlatMesh.lumpy(cone, rng, CANOPY_LUMP), material, Vector3(0, y, 0))
-	var shape := SphereShape3D.new()
-	shape.radius = PINE_TIER_RADIUS * scale * CANOPY_COLLIDER_SHARE
-	_add_shape(canopy, shape, Vector3(0, (PINE_BASE_HEIGHT + PINE_TIER_RISE) * scale, 0))
+## A big hollow log lying on the ground: open at both ends, walls and roof solid, room inside for a creature.
+static func hollow_log(from: Vector3, to: Vector3, radius: float) -> StaticBody3D:
+	var length: float = from.distance_to(to)
+	var body: StaticBody3D = _obstacle_body("HollowLog", (from + to) * 0.5 + Vector3.UP * radius * LOG_SINK)
+	var lying: Basis = _lying(to - from)
+	var shell := CylinderMesh.new()
+	shell.top_radius = radius
+	shell.bottom_radius = radius
+	shell.height = length
+	shell.radial_segments = HOLLOW_SEGMENTS
+	shell.cap_top = false
+	shell.cap_bottom = false
+	var material: StandardMaterial3D = WoodsMaterials.solid("bark_dark").duplicate()
+	material.cull_mode = BaseMaterial3D.CULL_DISABLED
+	_add_view(body, shell, material, Vector3.ZERO).basis = lying
+	var across: Vector3 = lying.y.cross(Vector3.UP).normalized()
+	for side: float in [-1.0, 1.0]:
+		_wall(body, across * side * radius, lying, length, Vector3(HOLLOW_WALL, radius * 2.0, length))
+	_wall(body, Vector3.UP * radius, lying, length, Vector3(radius * 2.0, HOLLOW_WALL, length))
+	return body
 
 
-static func _leafy_canopy(canopy: StaticBody3D, scale: float, rng: RandomNumberGenerator) -> void:
-	var material: StandardMaterial3D = WoodsMaterials.solid(LEAF_COLORS[rng.randi() % LEAF_COLORS.size()])
-	var centre := Vector3(0, LEAFY_BASE_HEIGHT * scale, 0)
-	for blob: int in LEAFY_BLOBS:
-		var sphere := SphereMesh.new()
-		sphere.radius = LEAFY_RADIUS * scale * rng.randf_range(LEAFY_MIN_SIZE, 1.0)
-		sphere.height = sphere.radius * LEAFY_SQUASH
-		sphere.radial_segments = ROUND_SEGMENTS
-		sphere.rings = ROUND_RINGS
-		var angle: float = TAU * blob / LEAFY_BLOBS + rng.randf()
-		var offset := Vector3(cos(angle), rng.randf_range(0.0, LEAFY_MAX_LIFT), sin(angle)) * LEAFY_SPREAD * scale
-		_add_view(canopy, FlatMesh.lumpy(sphere, rng, CANOPY_LUMP), material, centre + offset)
-	var shape := SphereShape3D.new()
-	shape.radius = LEAFY_RADIUS * scale * CANOPY_COLLIDER_SHARE
-	_add_shape(canopy, shape, centre)
+static func _wall(body: StaticBody3D, at: Vector3, lying: Basis, length: float, size: Vector3) -> void:
+	var box := BoxShape3D.new()
+	box.size = Vector3(size.x, size.y, length)
+	var collider: CollisionShape3D = _add_shape(body, box, at)
+	collider.basis = Basis(lying.y.cross(Vector3.UP).normalized(), Vector3.UP, lying.y).orthonormalized()
+
+
+## A basis whose Y axis lies along `along` (cylinders are built along Y).
+static func _lying(along: Vector3) -> Basis:
+	var axis: Vector3 = along.normalized()
+	var side: Vector3 = axis.cross(Vector3.UP).normalized()
+	return Basis(side, axis, side.cross(axis))
 
 
 static func _obstacle_body(label: String, at: Vector3) -> StaticBody3D:

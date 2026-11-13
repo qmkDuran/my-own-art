@@ -1,11 +1,14 @@
 extends Node
-## --smoke: headless checks of the real game scene. Loads the woods, then checks movement, spit (blocked by a tree,
-## hits in the open), bite range, the ambush bonus, snares (root, and the bot avoiding one it saw set), hiding
+## --smoke: headless checks of the real game scene. Loads the woods, then checks movement, shots (blocked by a tree,
+## hits in the open), strike range, the ambush bonus, hiding
 ## (the bot loses you in a bush it did not see you enter), search-then-find, taking cover from spit, win, lose and
-## restart, the smarter bot (utility, tactics, prediction, learning), the HUD rules and the session log. Prints
+## restart, the smarter bot (utility, tactics, prediction, learning), the move system (loadouts, burrow, jumps,
+## senses, fire, the bot's movement moves), true two-way hiding, the HUD rules and the session log. Prints
 ## "SMOKE ok/FAIL: ..." per check, then SMOKE PASS or SMOKE FAIL.
 
 const SETTLE_TIME: float = 0.5
+const PLAYER_KIT: Array[String] = ["snap", "glob", "leap", "echo_pulse"]
+const BOT_KIT: Array[String] = ["snap", "glob", "burrow", "scent_trail"]
 
 var m: Main
 var stage: Stage
@@ -31,6 +34,7 @@ func _run() -> void:
 	await SmokeStealth.new(self).run()
 	await SmokeBot.new(self).run()
 	await SmokeMind.new(self).run()
+	await SmokeMoves.new(self).run()
 	await _win_lose_restart()
 	print("SMOKE PASS" if _fails.is_empty() else "SMOKE FAIL (%d): %s" % [_fails.size(), ", ".join(_fails)])
 	get_tree().quit(0 if _fails.is_empty() else 1)
@@ -49,6 +53,8 @@ func _fresh_match() -> void:
 	await stage.frames(3)
 	stage.freeze_bot()
 	stage.script_player()
+	stage.kit(m.player, PLAYER_KIT)
+	stage.kit(m.bot, BOT_KIT)
 
 
 func fresh_match() -> void:
@@ -127,11 +133,12 @@ func spit_and_watch(aim: Vector3) -> String:
 	var outcome: Dictionary = { "result": "none" }
 	m.player.aim_point = aim
 	stage.face(m.player, aim)
-	m.player.try_spit()
-	var fired: bool = await wait_until(func() -> bool: return not get_tree().get_nodes_in_group("spit").is_empty(), 2.0)
+	stage.use(m.player, "glob")
+	var fired: bool = await wait_until(func() -> bool:
+		return not get_tree().get_nodes_in_group("projectiles").is_empty(), 2.0)
 	if not fired:
 		return "not fired"
-	var glob: SpitProjectile = get_tree().get_nodes_in_group("spit")[0]
+	var glob: Projectile = get_tree().get_nodes_in_group("projectiles")[0]
 	glob.landed.connect(func(result: String, _where: Vector3) -> void: outcome["result"] = result)
 	await wait_until(func() -> bool: return outcome["result"] != "none", 4.0)
 	return outcome["result"]

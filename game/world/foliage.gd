@@ -18,6 +18,7 @@ const BUSH_SIZE_JITTER: Vector2 = Vector2(0.8, 1.1)
 const BUSH_HEIGHT_JITTER: Vector2 = Vector2(0.8, 1.2)
 const BUSH_SQUASH: float = 1.6
 const GRASS_TINT_SHARE: float = 0.6
+const SMOKE_COLOR: Color = Color(0.78, 0.8, 0.78)
 const BUSH_COLORS: Array[String] = ["bush", "bush_light"]
 
 
@@ -40,6 +41,30 @@ static func bush(ground: Vector3, radius: float, rng: RandomNumberGenerator) -> 
 		var spread: float = radius * BUSH_SPREAD_SHARE * (0.0 if ball == 0 else 1.0)
 		var height: float = BUSH_HEIGHT * rng.randf_range(BUSH_HEIGHT_JITTER.x, BUSH_HEIGHT_JITTER.y)
 		view.position = Vector3(cos(angle) * spread, height, sin(angle) * spread)
+		spot.sway_root.add_child(view)
+	return spot
+
+
+## A drifting cloud of smoke to hide in (from Smoke Puff); fades with its spot.
+static func smoke_cloud(ground: Vector3, radius: float, rng: RandomNumberGenerator) -> HidingSpot:
+	var spot := HidingSpot.new()
+	spot.setup("smoke", radius)
+	spot.position = ground
+	var material := StandardMaterial3D.new()
+	material.albedo_color = Color(SMOKE_COLOR, Tuning.f("terrain_effects", "smoke_alpha"))
+	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	spot.fade_materials.append(material)
+	for puff: int in BUSH_BALLS:
+		var sphere := SphereMesh.new()
+		sphere.radius = radius * BUSH_BALL_SHARE * rng.randf_range(BUSH_SIZE_JITTER.x, BUSH_SIZE_JITTER.y)
+		sphere.height = sphere.radius * 2.0
+		var view := MeshInstance3D.new()
+		view.mesh = sphere
+		view.material_override = material
+		view.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		var angle: float = TAU * puff / BUSH_BALLS
+		view.position = Vector3(cos(angle), 1.0, sin(angle)) * radius * BUSH_SPREAD_SHARE
 		spot.sway_root.add_child(view)
 	return spot
 

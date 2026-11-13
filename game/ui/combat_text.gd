@@ -1,7 +1,7 @@
 class_name CombatText
 extends Control
 ## Short words above the crosshair when something important lands: a gold "AMBUSH!" with the damage when you
-## strike from hiding, "SNARED!" when your trap springs, a red "AMBUSHED!" when the bot gets you. Fades out.
+## strike unnoticed, a "CRIT!" on a critical, a red "AMBUSHED!" when the bot gets you. Fades out.
 
 const SHOW_TIME: float = 1.4
 const RISE: float = 30.0
@@ -44,8 +44,6 @@ func _show(words: String, color: Color, font_size: int) -> void:
 func _on_bot_hit(amount: float, _attacker: Creature, ambush: bool, kind: String) -> void:
 	if ambush:
 		_show("AMBUSH!  -%d" % roundi(amount), HudStyle.AMBUSH_COLOR, HudStyle.FONT_LARGE)
-	elif kind == "trap":
-		_show("SNARED!  -%d" % roundi(amount), HudStyle.AMBUSH_COLOR, HudStyle.FONT_LARGE)
 	else:
 		_show("-%d" % roundi(amount), HudStyle.INK, HudStyle.FONT_MEDIUM)
 

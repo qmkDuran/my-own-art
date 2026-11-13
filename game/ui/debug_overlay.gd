@@ -51,8 +51,8 @@ func _lines() -> Array[Array]:
 	var model: PlayerModel = _brain.model
 	lines.append(["memory: %d fights · hides in: %s" % [int(model.data["fights"]),
 		model.favourite_kind() if model.favourite_kind() != "" else "?"], HudStyle.INK])
-	lines.append(["  early rolls %d%% · bites %d%%" % [roundi(model.early_roll_share() * PERCENT),
-		roundi(model.bite_share() * PERCENT)], HudStyle.INK])
+	lines.append(["  early rolls %d%% · melee %d%% · ranged %d%%" % [roundi(model.early_roll_share() * PERCENT),
+		roundi(model.role_share("melee") * PERCENT), roundi(model.role_share("ranged") * PERCENT)], HudStyle.INK])
 	if _brain.learning_left > 0.0:
 		lines.append(["the bot is learning", LEARNING_COLOR])
 	for words: String in _brain.barks:

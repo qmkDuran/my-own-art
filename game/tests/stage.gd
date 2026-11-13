@@ -33,6 +33,25 @@ func camera_behind_player(pitch_degrees: float) -> void:
 	match_root.rig.snap()
 
 
+## Equips a creature with exactly these moves (tests use fixed kits, whatever the loadout screen says).
+func kit(creature: Creature, move_ids: Array) -> void:
+	var typed: Array[String] = []
+	typed.assign(move_ids)
+	creature.equip(typed)
+
+
+## Uses an equipped move by id (aimed at the creature's current aim point). False if it is not equipped or cannot.
+func use(creature: Creature, move_id: String) -> bool:
+	for slot: int in creature.moves.size():
+		if creature.moves[slot].id == move_id:
+			return creature.try_move(slot)
+	return false
+
+
+static func move_number(move_id: String, key: String) -> float:
+	return float(MoveLibrary.spec(move_id)[key])
+
+
 ## Takes the player off the keyboard and mouse so a scenario can aim and act for it.
 func script_player() -> void:
 	match_root.controller.set_physics_process(false)

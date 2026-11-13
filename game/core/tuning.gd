@@ -1,5 +1,6 @@
 extends Node
-## Autoload "Tuning": every feel number, the woods layout, the creature looks and the bot's decision data (utility
+## Autoload "Tuning": every feel number, the woods layout, the creature looks, the move library and the bot's
+## decision data (utility
 ## curves, tactical weights, memory, difficulty), loaded once from data/*.json so the game is tuned in data, not
 ## code. Read numbers with Tuning.f("bite", "damage") and Tuning.ai_f("prediction", "max_lead_time").
 
@@ -7,10 +8,12 @@ const TUNING_PATH: String = "res://data/tuning.json"
 const WOODS_PATH: String = "res://data/woods.json"
 const CREATURES_PATH: String = "res://data/creatures.json"
 const AI_PATH: String = "res://data/ai.json"
+const MOVES_PATH: String = "res://data/moves.json"
 
 var woods: Dictionary = {}
 var creatures: Dictionary = {}
 var ai: Dictionary = {}
+var moves: Dictionary = {}
 var _tuning: Dictionary = {}
 
 
@@ -19,6 +22,7 @@ func _init() -> void:
 	woods = _load_json(WOODS_PATH)
 	creatures = _load_json(CREATURES_PATH)
 	ai = _load_json(AI_PATH)
+	moves = _load_json(MOVES_PATH)
 
 
 ## One tuning number; a missing key is a data bug, so it fails loudly.

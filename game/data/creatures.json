@@ -1,11 +1,168 @@
 {
-  "player": {
-    "name": "Ember", "shape": "fox", "body": [0.80, 0.42, 0.16], "belly": [0.95, 0.85, 0.70],
-    "accent": [0.25, 0.14, 0.08], "eye": [0.98, 0.96, 0.85], "size": 1.0
-  },
-  "bot": {
-    "name": "Thornback", "shape": "boar", "body": [0.30, 0.24, 0.52], "belly": [0.62, 0.60, 0.74],
-    "accent": [0.88, 0.84, 0.70], "eye": [1.0, 0.85, 0.30], "size": 1.0
-  },
-  "glow": { "bite": [1.0, 0.35, 0.12], "spit": [0.42, 0.95, 0.2], "trap": [0.95, 0.80, 0.35], "strength": 2.2 }
+ "player": {
+  "name": "Ember",
+  "shape": "fox",
+  "body": [
+   0.8,
+   0.42,
+   0.16
+  ],
+  "belly": [
+   0.95,
+   0.85,
+   0.7
+  ],
+  "accent": [
+   0.25,
+   0.14,
+   0.08
+  ],
+  "eye": [
+   0.98,
+   0.96,
+   0.85
+  ],
+  "size": 1.0,
+  "learnset": [
+   "snap",
+   "rush_strike",
+   "leaping_strike",
+   "tail_sweep",
+   "rake",
+   "glob",
+   "cinder_spit",
+   "seed_scatter",
+   "thorn_dart",
+   "twirl",
+   "leap",
+   "spring",
+   "climb",
+   "glide",
+   "submerge",
+   "scamper",
+   "sidestep",
+   "smoke_puff",
+   "ward",
+   "quickening",
+   "steady_eye",
+   "lick_wounds",
+   "kick_dirt",
+   "dizzy_dance",
+   "sticky_sap",
+   "keen_ears",
+   "scent_trail",
+   "echo_pulse",
+   "sprout_cover",
+   "kindle"
+  ],
+  "loadout": [
+   "leaping_strike",
+   "leap",
+   "cinder_spit",
+   "keen_ears"
+  ]
+ },
+ "bot": {
+  "name": "Thornback",
+  "shape": "boar",
+  "body": [
+   0.3,
+   0.24,
+   0.52
+  ],
+  "belly": [
+   0.62,
+   0.6,
+   0.74
+  ],
+  "accent": [
+   0.88,
+   0.84,
+   0.7
+  ],
+  "eye": [
+   1.0,
+   0.85,
+   0.3
+  ],
+  "size": 1.0,
+  "learnset": [
+   "snap",
+   "ram",
+   "rush_strike",
+   "tail_sweep",
+   "glob",
+   "mud_lob",
+   "spray_jet",
+   "ground_thump",
+   "twirl",
+   "leap",
+   "spring",
+   "burrow",
+   "submerge",
+   "scamper",
+   "bark_skin",
+   "ward",
+   "tuck",
+   "bristle",
+   "lick_wounds",
+   "kick_dirt",
+   "menace",
+   "sticky_sap",
+   "keen_ears",
+   "scent_trail",
+   "echo_pulse",
+   "bramble_wall",
+   "sprout_cover"
+  ],
+  "loadout": [
+   "ram",
+   "burrow",
+   "mud_lob",
+   "scent_trail"
+  ]
+ },
+ "glow": {
+  "bite": [
+   1.0,
+   0.35,
+   0.12
+  ],
+  "spit": [
+   0.42,
+   0.95,
+   0.2
+  ],
+  "strength": 2.2,
+  "fire": [
+   1.0,
+   0.5,
+   0.15
+  ],
+  "water": [
+   0.35,
+   0.7,
+   1.0
+  ],
+  "earth": [
+   0.75,
+   0.55,
+   0.3
+  ],
+  "nature": [
+   0.5,
+   0.95,
+   0.3
+  ],
+  "mind": [
+   0.8,
+   0.55,
+   1.0
+  ],
+  "sense": [
+   0.6,
+   0.9,
+   1.0
+  ]
+ }
 }

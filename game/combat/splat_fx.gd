@@ -1,6 +1,6 @@
 class_name SplatFx
 extends Node3D
-## Where a glob of spit lands: a bright splat stuck to the surface plus a few droplets, fading out over a few
+## Where a shot lands: a bright splat in its colour stuck to the surface plus a few droplets, fading out over a few
 ## seconds so the player can read exactly what stopped the shot.
 
 const SPLAT_RADIUS: float = 0.5
@@ -14,31 +14,32 @@ const FADE_TIME: float = 1.0
 const SPIT_EMISSION: float = 0.5
 const NEARLY_SIDEWAYS: float = 0.9
 
-static var _spit_material: StandardMaterial3D
+static var _shot_materials: Dictionary = {}
 
 
-static func spit_material() -> StandardMaterial3D:
-	if _spit_material == null:
-		_spit_material = StandardMaterial3D.new()
-		var green: Color = Tuning.color(Tuning.creatures["glow"]["spit"])
-		_spit_material.albedo_color = green
-		_spit_material.emission_enabled = true
-		_spit_material.emission = green
-		_spit_material.emission_energy_multiplier = SPIT_EMISSION
-	return _spit_material
+## One shared glowing material per shot colour.
+static func shot_material(color: Color) -> StandardMaterial3D:
+	if not _shot_materials.has(color):
+		var material := StandardMaterial3D.new()
+		material.albedo_color = color
+		material.emission_enabled = true
+		material.emission = color
+		material.emission_energy_multiplier = SPIT_EMISSION
+		_shot_materials[color] = material
+	return _shot_materials[color]
 
 
 ## size is a share of the full splat: 1 on bark, rock or ground, smaller on a creature so it stays readable.
-static func spawn(parent: Node, at: Vector3, normal: Vector3, size: float) -> void:
+static func spawn(parent: Node, at: Vector3, normal: Vector3, size: float, color: Color) -> void:
 	var fx := SplatFx.new()
 	parent.add_child(fx)
 	fx.global_position = at
 	fx.scale = Vector3.ONE * size
-	fx._build(normal)
+	fx._build(normal, color)
 
 
-func _build(normal: Vector3) -> void:
-	var material: StandardMaterial3D = spit_material().duplicate()
+func _build(normal: Vector3, color: Color) -> void:
+	var material: StandardMaterial3D = shot_material(color).duplicate()
 	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	var disc := CylinderMesh.new()
 	disc.top_radius = SPLAT_RADIUS
