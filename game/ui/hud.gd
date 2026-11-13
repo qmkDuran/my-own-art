@@ -3,7 +3,7 @@ extends CanvasLayer
 ## A quiet on-screen hint of the controls that fades after a while (H brings it back), and a small note when the
 ## rain starts or stops. The town is the show, so the HUD stays out of the way.
 
-const HINT: String = "WASD walk   Shift run   Space dodge   Mouse look   N start a defence night   R rain   H hints"
+const HINT: String = "WASD walk   Shift run   Space dodge   N defence night   R rain   G graphics   H hints"
 const SHADOW: Color = Color(0.0, 0.0, 0.0, 0.6)
 
 var _hint: Label
