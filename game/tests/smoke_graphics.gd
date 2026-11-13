@@ -26,6 +26,8 @@ func run() -> Array[String]:
 		if lighter.values() == heavier.values():
 			failures.append("graphics: tier %d is no lighter than the next" % index)
 	m.graphics.apply(Tuning.doc("graphics")["default"])
+	if Engine.max_fps != int(Tuning.doc("graphics")["display"]["default_frame_cap"]):
+		failures.append("the frame rate is capped by default (max_fps is %d)" % Engine.max_fps)
 	return failures
 
 
@@ -36,4 +38,5 @@ func _cost() -> Dictionary:
 		particles += (node as GPUParticles3D).amount
 	return { "screen_effects": int(environment.volumetric_fog_enabled) + int(environment.ssr_enabled) +
 		int(environment.ssao_enabled), "shadowed_lights": m.budget.allowed, "particles": particles,
-		"moon_splits": m.moon.directional_shadow_mode }
+		"moon_splits": m.moon.directional_shadow_mode, "shadow_atlas": m.get_viewport().positional_shadow_atlas_size,
+		"render_scale_pct": int(m.get_viewport().scaling_3d_scale * 100.0), "msaa": m.get_viewport().msaa_3d }

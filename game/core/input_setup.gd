@@ -6,6 +6,7 @@ const KEYS: Dictionary = {
 	"move_forward": [KEY_W, KEY_UP], "move_back": [KEY_S, KEY_DOWN], "move_left": [KEY_A, KEY_LEFT],
 	"move_right": [KEY_D, KEY_RIGHT], "run": [KEY_SHIFT], "toggle_rain": [KEY_R], "free_mouse": [KEY_ESCAPE],
 	"toggle_hints": [KEY_H], "interact": [KEY_E], "jump": [KEY_SPACE], "start_night": [KEY_N], "graphics": [KEY_G],
+	"frame_cap": [KEY_F], "vsync": [KEY_V], "fullscreen": [KEY_F11],
 }
 const MOUSE: Dictionary = {}
 

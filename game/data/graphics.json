@@ -1,5 +1,5 @@
 {
- "_doc": "Graphics tiers (G cycles them in game). particle_density scales every particle system; shadowed_lights is how many lamps near the camera cast shadows. vfx_lights caps how many short-lived effect lights (bolt lights, impact pops) may shine at once; vfx_trails turns projectile trails on.",
+ "_doc": "Graphics tiers (G cycles them in game). particle_density scales every particle system; shadowed_lights is how many lamps near the camera cast shadows. vfx_lights caps how many short-lived effect lights (bolt lights, impact pops) may shine at once; vfx_trails turns projectile trails on. Low also shrinks shadow maps, turns MSAA off and renders at 77% with FSR upscaling. display: frame-rate cap (0 = uncapped), VSync and fullscreen defaults.",
  "default": "high",
  "order": [
   "low",
@@ -15,7 +15,12 @@
    "particle_density": 0.35,
    "moon_splits": 2,
    "vfx_lights": 2,
-   "vfx_trails": false
+   "vfx_trails": false,
+   "positional_shadow_atlas": 1024,
+   "directional_shadow": 1024,
+   "msaa": 0,
+   "render_scale": 0.77,
+   "glow": true
   },
   "medium": {
    "volumetric_fog": true,
@@ -25,7 +30,12 @@
    "particle_density": 0.65,
    "moon_splits": 2,
    "vfx_lights": 4,
-   "vfx_trails": true
+   "vfx_trails": true,
+   "positional_shadow_atlas": 2048,
+   "directional_shadow": 2048,
+   "msaa": 2,
+   "render_scale": 1.0,
+   "glow": true
   },
   "high": {
    "volumetric_fog": true,
@@ -35,7 +45,23 @@
    "particle_density": 1.0,
    "moon_splits": 4,
    "vfx_lights": 8,
-   "vfx_trails": true
+   "vfx_trails": true,
+   "positional_shadow_atlas": 4096,
+   "directional_shadow": 4096,
+   "msaa": 2,
+   "render_scale": 1.0,
+   "glow": true
   }
+ },
+ "display": {
+  "default_frame_cap": 60,
+  "frame_caps": [
+   30,
+   60,
+   120,
+   0
+  ],
+  "vsync": true,
+  "fullscreen": true
  }
 }

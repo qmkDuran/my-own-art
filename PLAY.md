@@ -21,9 +21,17 @@ to Compatibility on its own: it still runs, but without volumetric fog or screen
 | R | toggle rain (rain falls, puddles grow and shine, the fog thickens, rain sound fades in) |
 | N | start a **defence night** (see below) |
 | 1 / 2 / 3 or click | pick a level-up card |
-| G | graphics: Low / Medium / High |
+| G | graphics: Low / Medium / High (saved) |
+| F | frame-rate cap: 30 / 60 / 120 / uncapped (default 60, saved) |
+| V | VSync on/off (default on, saved) |
+| F11 | fullscreen / windowed (starts fullscreen at your display's resolution) |
 | H | show the controls hint again |
 | Esc | free the mouse |
+
+## Keeping the GPU cool
+The game caps itself at 60 fps with VSync on by default, so a strong GPU doesn't run flat out. If your GPU still
+runs hot, press G for Low: no volumetric fog, reflections or ambient occlusion, smaller shadow maps, one
+shadowed lamp, fewer particles, and rendering at 77% with FSR upscaling.
 
 ## Where to go
 - **The square:** the fountain, the big tree, the clock tower and the bakery's glowing window. The baker chats by her

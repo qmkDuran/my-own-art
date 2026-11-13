@@ -25,6 +25,7 @@ var level_panel: LevelUpPanel
 var library: AssetLibrary
 var graphics: GraphicsSettings
 var vfx: VfxKit
+var display: DisplaySettings
 
 
 func _ready() -> void:
@@ -38,10 +39,17 @@ func _ready() -> void:
 	add_child(hud)
 	hud.setup()
 	_build_night()
+	display = DisplaySettings.new()
+	add_child(display)
+	display.setup()
+	display.changed.connect(hud.note)
 	graphics = GraphicsSettings.new()
 	add_child(graphics)
 	graphics.setup(environment_node.environment, moon, budget, vfx.quota)
-	graphics.changed.connect(func(tier: String) -> void: hud.note("Graphics: " + tier.capitalize()))
+	graphics.apply(display.tier)
+	graphics.changed.connect(func(tier: String) -> void:
+		hud.note("Graphics: " + tier.capitalize())
+		display.remember_tier(tier))
 	if not DisplayServer.get_name() == "headless" and TestRunner.is_playing():
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
@@ -161,6 +169,12 @@ func _unhandled_input(event: InputEvent) -> void:
 		start_night()
 	elif event.is_action_pressed("graphics"):
 		graphics.cycle()
+	elif event.is_action_pressed("frame_cap"):
+		display.cycle_frame_cap()
+	elif event.is_action_pressed("vsync"):
+		display.toggle_vsync()
+	elif event.is_action_pressed("fullscreen"):
+		display.toggle_fullscreen()
 	elif event.is_action_pressed("toggle_rain"):
 		weather.toggle()
 		hud.note("It starts to rain" if weather.raining else "The rain eases off")
