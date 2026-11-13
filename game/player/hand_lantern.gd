@@ -9,6 +9,7 @@ const BRASS_METALLIC: float = 0.8
 const BRASS_ROUGHNESS: float = 0.35
 
 var light: OmniLight3D
+var owner_body: Node3D
 
 
 func _ready() -> void:
@@ -38,10 +39,15 @@ func _ready() -> void:
 	light.position.y = -drop
 
 
-## The lantern hangs straight down from the hand whatever the arm does: it follows the hand's position only.
+## The lantern hangs straight down from the hand whatever the arm does: it follows the hand bone's position
+## (so it swings with the walk), held a little out from the coat.
 func _process(_delta: float) -> void:
 	var holder: Node3D = get_child(0)
-	holder.global_position = global_position
+	var out := Vector3.ZERO
+	if owner_body != null:
+		out = owner_body.global_basis.x * Tuning.f("lantern", "hang_out")
+	holder.global_position = global_position + out
+	holder.global_rotation = Vector3.ZERO
 
 
 func _add_part(mesh: Mesh, holder: Node3D, height: float) -> void:

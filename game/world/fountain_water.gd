@@ -3,7 +3,7 @@ extends Node3D
 ## The fountain's water, made in code: still pools in the basin and the top bowl (the canal water material, so
 ## they mirror the lamps) and a thin curtain of droplets spilling from the bowl's rim into the basin.
 
-const DROP_MESH_SIZE: Vector2 = Vector2(0.02, 0.09)
+const DROP_MESH_SIZE: Vector2 = Vector2(0.012, 0.07)
 const DROP_ROUGHNESS: float = 0.1
 
 
@@ -55,6 +55,7 @@ func _drop_mesh() -> QuadMesh:
 	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	material.albedo_color = Tuning.color(Tuning.doc("tuning")["fountain"]["drop_color"])
 	material.roughness = DROP_ROUGHNESS
+	material.albedo_texture = ParticleKit.soft_dot()
 	material.billboard_mode = BaseMaterial3D.BILLBOARD_FIXED_Y
 	material.billboard_keep_scale = true
 	var quad := QuadMesh.new()

@@ -30,10 +30,29 @@ func setup(at: Vector3, start_yaw: float) -> void:
 	model.setup(MODEL_PATH)
 	lantern = HandLantern.new()
 	model.attach_to_bone(HAND_BONE).add_child(lantern)
+	lantern.owner_body = self
+	_add_fill_lights()
 	position = at
 	yaw = start_yaw
 	rotation.y = yaw
 	model.play("idle", 0.0)
+
+
+## The lantern's warm glow on the player: a soft front fill so the face reads and a rim from behind, lighting only
+## the player's own meshes.
+func _add_fill_lights() -> void:
+	for mesh: Node in model.find_children("*", "MeshInstance3D", true, false):
+		(mesh as MeshInstance3D).layers |= Layers.PLAYER_VISUAL
+	for part: String in ["front", "rim"]:
+		var fill := OmniLight3D.new()
+		fill.name = part.capitalize() + "Fill"
+		fill.light_color = Tuning.color(Tuning.doc("tuning")["player_fill"]["color"])
+		fill.light_energy = Tuning.f("player_fill", part + "_energy")
+		fill.omni_range = Tuning.f("player_fill", part + "_range")
+		fill.light_cull_mask = Layers.PLAYER_VISUAL
+		fill.light_specular = 0.0
+		fill.position = Tuning.vec3(Tuning.doc("tuning")["player_fill"][part + "_at"])
+		add_child(fill)
 
 
 func speed() -> float:

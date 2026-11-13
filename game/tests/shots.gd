@@ -5,14 +5,15 @@ extends Node
 ## name -> [eye, look-at, player spot [x, z, yaw_deg] or empty, rain]
 const SHOTS: Dictionary = {
 	"overview": [Vector3(30, 40, 50), Vector3(0, 0, 5), [], false],
-	"square": [Vector3(-2.5, 2.4, 9.5), Vector3(1.5, 2.2, -6), [-1.2, 6.0, 160.0], false],
+	"square": [Vector3(3.0, 2.3, 10.0), Vector3(-0.5, 2.6, -6), [1.6, 6.6, 170.0], false],
 	"street": [Vector3(-14, 1.9, 1.2), Vector3(-40, 2.2, -0.5), [-17.0, 0.4, 100.0], false],
 	"canal_bridge": [Vector3(-14, 1.6, 12.6), Vector3(4, 0.0, 17.5), [], false],
 	"alley": [Vector3(13.2, 1.8, 0.4), Vector3(30, 2.6, -0.2), [16.0, 0.2, -90.0], false],
-	"overlook": [Vector3(46.5, 8.2, 22.6), Vector3(10, 1.0, 12), [46.0, 21.5, -100.0], false],
+	"overlook": [Vector3(47.5, 8.6, 17.5), Vector3(10, -1.0, 16.0), [46.2, 16.0, -95.0], false],
 	"rain": [Vector3(-2.5, 2.4, 9.5), Vector3(1.5, 1.6, -6), [-1.2, 6.0, 160.0], true],
 	"player_closeup": [Vector3(-1.1, 1.45, 4.6), Vector3(-1.6, 1.05, 6.0), [-1.6, 6.0, 160.0], false],
-	"townsfolk": [Vector3(-0.2, 1.7, 1.6), Vector3(-3.5, 0.9, -5.0), [], false],
+	"bench": [Vector3(-2.0, 1.3, -3.4), Vector3(-4.5, 0.6, -5.2), [], false],
+	"townsfolk": [Vector3(2.6, 1.6, -1.2), Vector3(-1.2, 1.0, -7.5), [], false],
 }
 
 var m: Main

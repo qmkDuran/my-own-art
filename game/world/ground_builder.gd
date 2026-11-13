@@ -91,19 +91,23 @@ func _parapets(lines: Array, look: Dictionary) -> void:
 		Blocks.wall_between(self, a, b, height, width, SurfaceMaterials.stone("bricks"))
 
 
+## Iron railings between two points (each end has its own height, so a railing can follow a flight of steps):
+## posts, a top bar, and an invisible wall so nobody falls off.
 func _railings(lines: Array, look: Dictionary) -> void:
 	var height: float = look["height"]
-	var base: float = look["base_y"]
 	for line: Array in lines:
-		var a := Vector3(float(line[0]), base, float(line[1]))
-		var b := Vector3(float(line[2]), base, float(line[3]))
-		Blocks.wall_between(self, a, b, height, RAIL_BAR, null)
-		var bar := Vector3(RAIL_BAR, RAIL_BAR, a.distance_to(b))
-		Blocks.box(self, (a + b) * 0.5 + Vector3.UP * height, bar, _iron, false, a.direction_to(b))
+		var a: Vector3 = Tuning.vec3(line.slice(0, 3))
+		var b: Vector3 = Tuning.vec3(line.slice(3, 6))
 		var posts: int = maxi(1, int(a.distance_to(b) / RAIL_POST_SPACING))
 		for index: int in posts + 1:
-			var at: Vector3 = a.lerp(b, float(index) / posts) + Vector3.UP * height * 0.5
-			Blocks.box(self, at, Vector3(RAIL_BAR, height, RAIL_BAR), _iron, false)
+			var at: Vector3 = a.lerp(b, float(index) / posts)
+			Blocks.box(self, at + Vector3.UP * height * 0.5, Vector3(RAIL_BAR, height, RAIL_BAR), _iron, false)
+			if index < posts:
+				var next: Vector3 = a.lerp(b, float(index + 1) / posts)
+				var bar := Vector3(RAIL_BAR, RAIL_BAR, at.distance_to(next))
+				var mid: Vector3 = (at + next) * 0.5 + Vector3.UP * height
+				Blocks.box(self, mid, bar, _iron, false, at.direction_to(next))
+				Blocks.wall_between(self, at, next, height, RAIL_BAR, null)
 
 
 func _steps(flight: Dictionary) -> void:

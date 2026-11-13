@@ -10,9 +10,9 @@
         { "do": "talk", "face": [-4.6, -5.2], "seconds": 10.0 },
         { "do": "walk", "to": [3.5, -9.3] }
       ] },
-    { "name": "old_man", "model": "res://assets/meshy/characters/old_man.glb", "start": [-4.45, -5.05],
+    { "name": "old_man", "model": "res://assets/meshy/characters/old_man.glb", "start": [-4.3, 0.1, -4.85],
       "routine": [
-        { "do": "sit", "at": [-4.45, -5.05], "face": [0.0, 0.0], "seconds": 40.0 },
+        { "do": "sit", "at": [-4.3, 0.1, -4.85], "face": [0.0, 0.0], "seconds": 40.0 },
         { "do": "walk", "to": [-2.6, -1.8] },
         { "do": "idle", "face": [0.0, 0.0], "seconds": 11.0 },
         { "do": "talk", "face": [2.0, 2.0], "seconds": 6.0 },

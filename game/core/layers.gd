@@ -4,3 +4,5 @@ class_name Layers
 const WORLD: int = 1
 const PLAYER: int = 2
 const WISP: int = 4
+## Render layer bit of the player's meshes, so the player's own fill lights light only the player.
+const PLAYER_VISUAL: int = 2

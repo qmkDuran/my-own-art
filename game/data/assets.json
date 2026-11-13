@@ -14,13 +14,13 @@
   "tree": { "path": "res://assets/meshy/props/tree.glb", "height": 7.5, "collide": "box", "footprint_share": 0.15, "glow": 0.0 },
   "cat": { "path": "res://assets/meshy/props/cat.glb", "height": 0.45, "collide": "none", "glow": 0.0 },
   "house_crooked": { "path": "res://assets/meshy/buildings/house_crooked.glb", "height": 9.0, "collide": "box", "footprint_share": 0.85,
-    "glow": 3.5, "windows": [[0.5, 0.2]] },
+    "glow": 2.4, "windows": [[0.5, 0.2]] },
   "bakery": { "path": "res://assets/meshy/buildings/bakery.glb", "height": 8.5, "collide": "box", "footprint_share": 0.85,
-    "glow": 3.5, "windows": [[0.45, 0.17], [0.75, 0.17]] },
+    "glow": 2.4, "windows": [[0.45, 0.17], [0.75, 0.17]] },
   "house_tall": { "path": "res://assets/meshy/buildings/house_tall.glb", "height": 12.0, "collide": "box", "footprint_share": 0.85,
-    "glow": 3.5, "windows": [[0.5, 0.3]] },
+    "glow": 2.4, "windows": [[0.5, 0.3]] },
   "clock_tower": { "path": "res://assets/meshy/buildings/clock_tower.glb", "height": 15.0, "collide": "box", "footprint_share": 0.85,
-    "glow": 3.5, "windows": [[0.5, 0.18]] },
+    "glow": 2.4, "windows": [[0.5, 0.18]] },
   "house_balcony": { "path": "res://assets/meshy/buildings/house_balcony.glb", "height": 9.0, "collide": "box", "footprint_share": 0.85,
-    "glow": 3.5, "windows": [[0.5, 0.45]] }
+    "glow": 2.4, "windows": [[0.5, 0.45]] }
 }

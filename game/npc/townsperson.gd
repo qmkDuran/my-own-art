@@ -41,6 +41,7 @@ func _walk(target: Vector3, delta: float) -> void:
 		_next()
 		return
 	position += to.normalized() * minf(Tuning.f("npc", "walk_speed") * delta, to.length())
+	position.y = move_toward(position.y, target.y, Tuning.f("npc", "walk_speed") * delta)
 	_turn_towards(atan2(-to.x, -to.z), delta)
 
 

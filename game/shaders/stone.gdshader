@@ -11,11 +11,11 @@ uniform int pattern = 0; // 0 cobbles, 1 bricks, 2 plaster
 uniform vec3 base_color : source_color = vec3(0.42, 0.4, 0.42);
 uniform vec3 alt_color : source_color = vec3(0.5, 0.45, 0.4);
 uniform vec3 mortar_color : source_color = vec3(0.13, 0.12, 0.13);
-uniform float cell_scale = 3.4;
+uniform float cell_scale = 5.7;
 uniform float brick_scale = 3.0;
 uniform float puddle_scale = 0.16;
 uniform float puddle_amount = 1.0;
-uniform float bump_strength = 0.9;
+uniform float bump_strength = 0.6;
 
 varying vec3 world_pos;
 varying vec3 world_normal;
