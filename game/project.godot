@@ -1,0 +1,53 @@
+; Engine configuration file.
+config_version=5
+
+[application]
+
+config/name="Cozy Night Town"
+config/description="A cozy storybook town at night: walk the lamplit streets, and keep the lanterns burning."
+run/main_scene="res://scenes/main.tscn"
+config/features=PackedStringArray("4.7", "Forward Plus")
+
+[autoload]
+
+Tuning="*res://core/tuning.gd"
+TestRunner="*res://tests/test_runner.gd"
+
+[display]
+
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/size/window_width_override=1600
+window/size/window_height_override=900
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+
+[layer_names]
+
+3d_physics/layer_1="world"
+3d_physics/layer_2="player"
+3d_physics/layer_3="wisp"
+
+[rendering]
+
+renderer/rendering_method="forward_plus"
+renderer/rendering_method.mobile="mobile"
+anti_aliasing/quality/msaa_3d=2
+anti_aliasing/quality/screen_space_aa=1
+lights_and_shadows/directional_shadow/size=4096
+lights_and_shadows/directional_shadow/soft_shadow_filter_quality=3
+lights_and_shadows/positional_shadow/soft_shadow_filter_quality=3
+environment/volumetric_fog/volume_size=96
+environment/volumetric_fog/volume_depth=96
+textures/default_filters/anisotropic_filtering_level=3
+
+[shader_globals]
+
+wetness={
+"type": "float",
+"value": 0.35
+}
+rain={
+"type": "float",
+"value": 0.0
+}

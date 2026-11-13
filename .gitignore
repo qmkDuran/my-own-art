@@ -2,3 +2,6 @@
 __pycache__/
 *.mp4
 meshy_cache/
+.godot/
+*.import
+!game/assets/**/*.import
