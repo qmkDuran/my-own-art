@@ -6,7 +6,8 @@ extends Node
 
 const MODES: Dictionary = { "--smoke": "res://tests/smoke_test.gd", "--shots": "res://tests/shots.gd",
 	"--collision": "res://tests/collision_suite.gd", "--perf": "res://tests/perf_probe.gd",
-	"--balance": "res://tests/balance_suite.gd", "--sequence": "res://tests/vfx_sequence.gd" }
+	"--balance": "res://tests/balance_suite.gd", "--sequence": "res://tests/vfx_sequence.gd",
+	"--walk-sheet": "res://tests/walk_sheet.gd" }
 
 
 func _ready() -> void:

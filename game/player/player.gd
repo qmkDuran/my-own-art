@@ -103,6 +103,6 @@ func _animate() -> void:
 	if moving < Tuning.f("player", "moving_threshold"):
 		model.play("idle", blend)
 	elif moving > Tuning.f("player", "walk_speed") * speed_scale + Tuning.f("player", "moving_threshold"):
-		model.play("run", blend, moving / Tuning.f("player", "run_clip_speed"))
+		model.play("run", blend, moving / model.foot_speed("run"))
 	else:
-		model.play("walk", blend, moving / Tuning.f("player", "walk_clip_speed"))
+		model.play("walk", blend, moving / model.foot_speed("walk"))

@@ -1,12 +1,18 @@
 class_name CharacterModel
 extends Node3D
 ## A rigged Meshy character (one GLB holding the mesh, skin and every clip): turned so it faces the node's -Z
-## like every other mover, its clips set to loop, and played by name with a soft blend. The player and every
+## like every other mover, its clips set to loop, its walk and run strides measured, and played by name with a
+## soft blend. The player and every
 ## townsperson use one.
+
+const LEFT_TOE: String = "LeftToeBase"
+const RIGHT_TOE: String = "RightToeBase"
+const MOVING_CLIPS: Array[String] = ["walk", "run"]
 
 var animator: AnimationPlayer
 var skeleton: Skeleton3D
 var _clip: String = ""
+var _foot_speeds: Dictionary = {}
 
 
 func setup(path: String) -> void:
@@ -18,6 +24,10 @@ func setup(path: String) -> void:
 	skeleton = model.find_child("Skeleton3D", true, false)
 	for clip: StringName in animator.get_animation_list():
 		animator.get_animation(clip).loop_mode = Animation.LOOP_LINEAR
+	for clip: String in MOVING_CLIPS:
+		if has_clip(clip):
+			var measured: float = ground_speed(clip, Tuning.i("stride", "samples"), Tuning.f("stride", "planted_band"))
+			_foot_speeds[clip] = measured if measured > 0.0 else Tuning.f("stride", "fallback")
 
 
 func has_clip(clip: String) -> bool:
@@ -33,8 +43,38 @@ func play(clip: String, blend: float, speed: float = 1.0) -> void:
 	animator.play(clip, blend)
 
 
+## How fast the feet travel in a moving clip (measured at load), so callers can match playback to body speed.
+func foot_speed(clip: String) -> float:
+	return float(_foot_speeds.get(clip, Tuning.f("stride", "fallback")))
+
+
 func current_clip() -> String:
 	return _clip
+
+
+## How fast a planted foot travels in a clip (metres per second, model space): the walking speed at which the
+## clip's feet would not slide. A foot counts as planted while it is within a hair of its lowest height.
+func ground_speed(clip: String, samples: int, planted_band: float) -> float:
+	var animation: Animation = animator.get_animation(clip)
+	var bones: Array[int] = [skeleton.find_bone(LEFT_TOE), skeleton.find_bone(RIGHT_TOE)]
+	var tracks: Array = [[], []]
+	animator.play(clip)
+	for index: int in samples + 1:
+		animator.seek(animation.length * index / samples, true)
+		for side: int in 2:
+			var at: Vector3 = skeleton.global_transform * skeleton.get_bone_global_pose(bones[side]).origin
+			(tracks[side] as Array).append(at)
+	var travelled: float = 0.0
+	var planted_time: float = 0.0
+	for side: int in 2:
+		var lowest: float = (tracks[side] as Array).map(func(p: Vector3) -> float: return p.y).min()
+		for index: int in samples:
+			var a: Vector3 = tracks[side][index]
+			var b: Vector3 = tracks[side][index + 1]
+			if a.y < lowest + planted_band and b.y < lowest + planted_band:
+				travelled += absf(b.z - a.z)
+				planted_time += animation.length / samples
+	return travelled / planted_time if planted_time > 0.0 else 0.0
 
 
 ## A node that follows a bone (for a carried lantern).

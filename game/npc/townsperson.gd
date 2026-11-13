@@ -40,8 +40,9 @@ func _walk(target: Vector3, delta: float) -> void:
 	if to.length() <= Tuning.f("npc", "arrive_distance"):
 		_next()
 		return
-	position += to.normalized() * minf(Tuning.f("npc", "walk_speed") * delta, to.length())
-	position.y = move_toward(position.y, target.y, Tuning.f("npc", "walk_speed") * delta)
+	var speed: float = model.foot_speed("walk") * Tuning.f("npc", "pace")
+	position += to.normalized() * minf(speed * delta, to.length())
+	position.y = move_toward(position.y, target.y, speed * delta)
 	_turn_towards(atan2(-to.x, -to.z), delta)
 
 
@@ -71,6 +72,6 @@ func _begin_step() -> void:
 	_timer = float(step.get("seconds", 0.0))
 	var blend: float = Tuning.f("npc", "blend_seconds")
 	if clip == "walk":
-		model.play("walk", blend, Tuning.f("npc", "walk_speed") / Tuning.f("npc", "walk_clip_speed"))
+		model.play("walk", blend, Tuning.f("npc", "pace"))
 	else:
 		model.play(clip if model.has_clip(clip) else "idle", blend)

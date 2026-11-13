@@ -20,6 +20,7 @@ func _run() -> void:
 	await _check_player()
 	await _check_townsfolk()
 	await _check_rain()
+	await _check_strides()
 	failures.append_array(SmokeGraphics.new(m).run())
 	failures.append_array(await SmokeDefence.new(m).run())
 	failures.append_array(await UiLayout.new(m).run())
@@ -68,6 +69,21 @@ func _check_townsfolk() -> void:
 	await get_tree().create_timer(2.0).timeout
 	_expect(child.position.distance_to(before) > 0.5, "the child walks her routine")
 	_expect(m.townsfolk[1].model.current_clip() == "sit", "the old man sits on his bench")
+
+
+## Feet must not slide: every character measured a sensible walk stride, and the player's walk plays at body
+## speed / foot speed.
+func _check_strides() -> void:
+	var models: Array[CharacterModel] = [m.player.model]
+	for person: Townsperson in m.townsfolk:
+		models.append(person.model)
+	for model: CharacterModel in models:
+		var speed: float = model.foot_speed("walk")
+		print("SMOKE stride %s: walk feet travel %.2f m/s" % [model.get_parent().name, speed])
+		var who: String = model.get_parent().name
+		_expect(speed > 0.3 and speed < 2.5, "%s has a sensible walk stride (%.2f m/s)" % [who, speed])
+	_expect(m.player.model.foot_speed("run") > m.player.model.foot_speed("walk"), "the run is faster than the walk")
+	await get_tree().process_frame
 
 
 func _check_rain() -> void:
