@@ -19,6 +19,7 @@ const SHOTS: Dictionary = {
 	"busy_no_actors": [Vector3(-1.5, 4.2, 12.5), Vector3(0.5, 0.6, 1.0), [0.0, 5.0, 0.0], false],
 	"contrast_on": [Vector3(-1.5, 4.2, 12.5), Vector3(0.5, 0.6, 1.0), [0.0, 5.0, 0.0], false],
 	"contrast_off": [Vector3(-1.5, 4.2, 12.5), Vector3(0.5, 0.6, 1.0), [0.0, 5.0, 0.0], false],
+	"bridge_end": [Vector3(3.2, 1.5, 11.0), Vector3(0.4, 0.0, 14.6), [], false],
 	"bench": [Vector3(-2.0, 1.3, -3.4), Vector3(-4.5, 0.6, -5.2), [], false],
 	"townsfolk": [Vector3(2.6, 1.6, -1.2), Vector3(-1.2, 1.0, -7.5), [], false],
 }

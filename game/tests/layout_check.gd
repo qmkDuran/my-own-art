@@ -18,6 +18,7 @@ const ROUTE_RADIUS: float = 0.25
 const ROUTE_HEIGHT: float = 0.9
 const SEAT_CLEARANCE: float = 0.9
 const NOT_GROUNDED: Array[String] = ["hanging_lantern", "bridge"]
+const COPLANAR: float = 0.005
 
 var m: Main
 var report: Array[String] = []
@@ -34,6 +35,7 @@ func run() -> void:
 	_overlaps()
 	_grounding()
 	_npc_routes()
+	_coplanar_tops()
 
 
 ## Solid placed assets (not the backdrop) with their collision shape.
@@ -160,6 +162,21 @@ func _grounding() -> void:
 			failures.append("%s at %s: base %.2f but the floor under it is %.2f" % [node.name, node.position,
 				node.global_position.y, floor_y])
 	report.append("grounding: %d assets float or sink" % bad)
+
+
+## No visible box may have its top exactly on the street plane: the two would z-fight (flicker).
+func _coplanar_tops() -> void:
+	var fighting: int = 0
+	for node: Node in m.find_children("*", "MeshInstance3D", true, false):
+		var mesh: MeshInstance3D = node
+		if not mesh.mesh is BoxMesh or not mesh.is_visible_in_tree():
+			continue
+		var top: float = mesh.global_position.y + (mesh.mesh as BoxMesh).size.y * 0.5 * mesh.global_basis.y.length()
+		if absf(top) < COPLANAR and absf(mesh.global_basis.y.normalized().y) > 0.99:
+			fighting += 1
+	report.append("z-fighting: %d boxes with their top on the street plane" % fighting)
+	if fighting > 0:
+		failures.append("%d visible boxes sit exactly on the street plane (z-fighting)" % fighting)
 
 
 func _npc_routes() -> void:

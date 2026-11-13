@@ -13,6 +13,9 @@ const BRIDGE_WALL_WIDTH: float = 0.2
 const CANAL_WALL: float = 0.6
 const SEAL_HEIGHT: float = 10.0
 const SEAL_WIDTH: float = 0.4
+## Surfaces that would sit exactly on the street (the canal walls' tops) are kept this far below it, so the two
+## never fight over the same pixels (z-fighting flicker).
+const SURFACE_GAP: float = 0.03
 const IRON_COLOUR: Color = Color(0.07, 0.065, 0.07)
 const IRON_ROUGHNESS: float = 0.45
 const IRON_METALLIC: float = 0.6
@@ -66,13 +69,14 @@ func _canal(canal: Dictionary) -> void:
 	var z0: float = canal["z0"]
 	var z1: float = canal["z1"]
 	var bottom: float = canal["floor_y"]
-	var mid := Vector3((x0 + x1) * 0.5, bottom * 0.5, (z0 + z1) * 0.5)
+	var top: float = -SURFACE_GAP
+	var mid := Vector3((x0 + x1) * 0.5, (bottom + top) * 0.5, (z0 + z1) * 0.5)
 	var length: float = x1 - x0
 	var span: float = z1 - z0
 	var half_wall: float = CANAL_WALL * 0.5
 	var bricks: ShaderMaterial = SurfaceMaterials.stone("bricks")
-	var long_wall := Vector3(length, -bottom, CANAL_WALL)
-	var end_wall := Vector3(CANAL_WALL, -bottom, span)
+	var long_wall := Vector3(length, top - bottom, CANAL_WALL)
+	var end_wall := Vector3(CANAL_WALL, top - bottom, span)
 	Blocks.box(self, Vector3(mid.x, mid.y, z0 - half_wall), long_wall, bricks, false)
 	Blocks.box(self, Vector3(mid.x, mid.y, z1 + half_wall), long_wall, bricks, false)
 	Blocks.box(self, Vector3(x0 - half_wall, mid.y, mid.z), end_wall, bricks, false)
