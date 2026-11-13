@@ -41,6 +41,11 @@ func _check_town() -> void:
 	_expect(m.town.lamps.size() >= 15, "at least 15 lamps (got %d)" % m.town.lamps.size())
 	_expect(m.town.lights.size() > m.town.lamps.size(), "windows add lights")
 	_expect(m.town.fountain != null, "fountain placed")
+	var fish: Node = m.find_child("CanalFish", true, false)
+	_expect(fish != null and fish.get_child_count() > 10, "glowing fish swim in the canal")
+	var outskirts: Node = m.find_child("Outskirts", true, false)
+	_expect(outskirts != null and outskirts.find_children("*", "MultiMeshInstance3D", false, false).size() >= 2,
+		"the outskirts have their forest rings")
 	_expect(m.town.get_child_count() > 60, "town has many pieces (got %d)" % m.town.get_child_count())
 	m.budget.refresh()
 	_expect(m.budget.shadowed_count() <= Tuning.i_look("budget", "shadowed_lights"), "shadow budget holds")

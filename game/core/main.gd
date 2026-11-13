@@ -68,6 +68,9 @@ func _build_world() -> void:
 	add_child(town)
 	library = AssetLibrary.new()
 	town.build(library)
+	var outskirts := Outskirts.new()
+	add_child(outskirts)
+	outskirts.build(library)
 
 
 func _build_player() -> void:

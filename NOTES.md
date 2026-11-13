@@ -1,6 +1,10 @@
 # Cozy Night Town: notes
 
-## The game (the vision)
+> **Superseded:** the game's direction is now **VISION.md** ("Zelda meets Destiny": missions out into regions,
+> aimed combat, puzzles, class and skill trees, loot). The café / survivor-roguelite vision below is kept for
+> history; the defence night and its auto-fire magic will be replaced by the aimed combat core.
+
+## The game (the original vision, superseded)
 **Defend the town at night, run your café by day.** A survivor-roguelite with a cozy heart:
 
 1. **Night: defend.** Spooky-cute creatures drift in from the fog toward the town's lamps (sheet ghosts with lantern
@@ -21,6 +25,29 @@ Plants vs Zombies): never horror and never gore.
 from the fog, auto-firing lantern magic, about 8 upgrades, 3 creature types plus a mini boss, ingredient drops, a run
 of 8 to 10 minutes, snuffed lamps to relight); (3) the café in the bakery (3 recipes, 2 or 3 customers with emotes
 and portraits, coins, one upgrade shop). The 700-credit cap covers steps 1 to 3.
+
+## Polish fixes after the first playtest
+- **Walk:** feet slid ("goat feet"): the game assumed the walk clip covers 1.6 m/s, but a planted foot only travels
+  about 1.2. Each character now measures its own clips' foot speed when it loads and plays them at body speed /
+  foot speed. A smoke check guards it, and `tools/` has a side-view walk sheet (`--walk-sheet`).
+- **Dash:** now a Shift tap, a 0.2 s ease-out burst that stays grounded, with a dust puff.
+- **Jump:** Space. It uses Meshy's "Regular Jump" (3 credits) started from its take-off, with the clip's own rise
+  capped so physics lifts the body. Coyote time 0.12 s, a jump buffer, heavier fall gravity, and a landing puff.
+- **Bridge flicker:** the canal walls' tops were coplanar with the street (z-fighting). They now sit 3 cm lower,
+  and the parapet gap matches the bridge. A layout check fails on any visible box top lying on the street plane.
+- **Gaps between houses:** brick garden walls now close each gap between two houses' measured ground floors. The
+  quay ends are closed by a hedge on a low wall, and the remaining edge walls show a faint warm mist veil within
+  3 m.
+- **GPU heat:** a 60 fps cap and VSync are on by default (F / V change them; saved), fullscreen runs at the
+  display's resolution (F11), and Low is much lighter (no volumetric fog, reflections or AO, 1024 px shadow maps,
+  one shadowed lamp, no MSAA, FSR at 77%).
+- **Seam line on characters:** every character has a UV seam down its front centre. Downscaling and mipmaps bled
+  the dark texture gutter into it. `tools/shrink_glb.py` now pads colours outward from the UV islands before
+  shrinking, and all Meshy assets were rebuilt.
+- **Outskirts:** a meadow frames the town, a ring of 110 Meshy trees and 520 simple trees (MultiMeshes), five
+  hills, a lake to the south and 44 cottage lights. The first version's meadow covered the canal and hid the
+  water; it is now four planes around the town.
+- **Canal fish:** 26 softly glowing koi (teal, amber, lilac) swim along the canal by the square and bridge.
 
 ## The glow rule: "Luigi's Mansion, not LED headlights"
 Every glow in the game is **soft, warm and diffuse**: a gentle halo that falls off smoothly and keeps its colour

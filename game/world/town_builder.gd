@@ -2,8 +2,8 @@ class_name TownBuilder
 extends Node3D
 ## Places the Meshy town from data/town.json: rows of houses along the streets (each house turned to face the
 ## street, with lit windows), the distant backdrop rows, the props, the street lamps and wall lanterns with their
-## lights, the fountain's water and the cat. Collects every light so the light budget and the lamp network can
-## manage them.
+## lights, the fountain's water, the fish in the canal and the cat. Collects every light so the light budget and
+## the lamp network can manage them.
 
 var library: AssetLibrary
 var lights: Array[OmniLight3D] = []
@@ -37,6 +37,9 @@ func build(asset_library: AssetLibrary) -> void:
 		_lamp("street_lamp", lamp)
 	for lamp: Dictionary in town["hanging_lanterns"]:
 		_lamp("hanging_lantern", lamp)
+	var fish := CanalFish.new()
+	add_child(fish)
+	fish.build()
 	cat = TownCat.new()
 	cat.setup(library, town["cat"])
 	add_child(cat)
