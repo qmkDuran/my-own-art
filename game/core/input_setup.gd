@@ -5,9 +5,9 @@ class_name InputSetup
 const KEYS: Dictionary = {
 	"move_forward": [KEY_W, KEY_UP], "move_back": [KEY_S, KEY_DOWN], "move_left": [KEY_A, KEY_LEFT],
 	"move_right": [KEY_D, KEY_RIGHT], "run": [KEY_SHIFT], "toggle_rain": [KEY_R], "free_mouse": [KEY_ESCAPE],
-	"toggle_hints": [KEY_H], "interact": [KEY_E], "dodge": [KEY_SPACE],
+	"toggle_hints": [KEY_H], "interact": [KEY_E], "dodge": [KEY_SPACE], "start_night": [KEY_N],
 }
-const MOUSE: Dictionary = { "light_burst": MOUSE_BUTTON_LEFT }
+const MOUSE: Dictionary = {}
 
 
 static func install() -> void:

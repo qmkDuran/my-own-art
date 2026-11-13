@@ -34,6 +34,14 @@ func setup(lamp_kind: String) -> void:
 		_add_flame()
 
 
+func snuff() -> void:
+	lit = false
+
+
+func relight() -> void:
+	lit = true
+
+
 func _process(delta: float) -> void:
 	_level = move_toward(_level, 1.0 if lit else 0.0, FADE_SPEED * delta)
 	var time: float = Time.get_ticks_msec() * MS_TO_SECONDS

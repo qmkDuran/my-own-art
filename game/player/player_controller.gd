@@ -1,7 +1,7 @@
 class_name PlayerController
 extends Node
-## Turns the keyboard into the player's wishes: WASD moves relative to the camera, Shift runs. Esc frees the
-## mouse, a click captures it again.
+## Turns the keyboard into the player's wishes: WASD moves relative to the camera, Shift runs, Space dodges.
+## Esc frees the mouse, a click captures it again.
 
 var _player: Player
 var _camera: CameraRig
@@ -23,7 +23,9 @@ func _physics_process(_delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("free_mouse"):
+	if event.is_action_pressed("dodge"):
+		_player.dash()
+	elif event.is_action_pressed("free_mouse"):
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	elif event is InputEventMouseButton and (event as InputEventMouseButton).pressed:
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED

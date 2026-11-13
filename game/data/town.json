@@ -1,6 +1,7 @@
 {
   "_doc": "The town layout in metres (x east, z south, y up). Points are [x, z] on the ground or [x, y, z]. rot is the yaw in degrees the asset's front (+z) is turned by; face is a point the front looks at instead.",
   "bounds": [-72.0, -52.0, 72.0, 52.0],
+  "walk_bounds": [-50.0, -10.5, 58.0, 32.0],
   "ground": [[-72.0, -52.0, 72.0, 14.0], [-72.0, 20.0, 72.0, 52.0], [-72.0, 14.0, -50.0, 20.0], [32.0, 14.0, 72.0, 20.0]],
   "canal": { "x0": -50.0, "x1": 32.0, "z0": 14.0, "z1": 20.0, "water_y": -0.45, "floor_y": -2.2 },
   "parapets": [

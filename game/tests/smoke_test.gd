@@ -19,6 +19,7 @@ func _run() -> void:
 	await _check_player()
 	await _check_townsfolk()
 	await _check_rain()
+	failures.append_array(await SmokeDefence.new(m).run())
 	for failure: String in failures:
 		print("SMOKE FAIL ", failure)
 	if failures.is_empty():

@@ -11,6 +11,10 @@ var lantern: HandLantern
 var wish: Vector3 = Vector3.ZERO
 var running: bool = false
 var yaw: float = 0.0
+var speed_scale: float = 1.0
+var _dash_time: float = 0.0
+var _dash_cooldown: float = 0.0
+var _dash_direction: Vector3 = Vector3.ZERO
 
 
 func setup(at: Vector3, start_yaw: float) -> void:
@@ -55,14 +59,33 @@ func _add_fill_lights() -> void:
 		add_child(fill)
 
 
+## A quick dodge in the wished direction (or straight ahead); creatures can't hurt you mid-dash.
+func dash() -> void:
+	if _dash_cooldown > 0.0:
+		return
+	_dash_direction = wish.normalized() if wish.length() > 0.0 else -global_basis.z
+	_dash_time = Tuning.number("defence", "player", "dash_seconds")
+	_dash_cooldown = Tuning.number("defence", "player", "dash_cooldown")
+
+
+func is_dashing() -> bool:
+	return _dash_time > 0.0
+
+
 func speed() -> float:
 	return Vector2(velocity.x, velocity.z).length()
 
 
 func _physics_process(delta: float) -> void:
-	var top: float = Tuning.f("player", "run_speed" if running else "walk_speed")
+	_dash_time = maxf(_dash_time - delta, 0.0)
+	_dash_cooldown = maxf(_dash_cooldown - delta, 0.0)
+	var top: float = Tuning.f("player", "run_speed" if running else "walk_speed") * speed_scale
 	var goal: Vector3 = wish.limit_length(1.0) * top
+	if is_dashing():
+		goal = _dash_direction * Tuning.number("defence", "player", "dash_speed")
 	var flat := Vector3(velocity.x, 0.0, velocity.z).move_toward(goal, Tuning.f("player", "acceleration") * delta)
+	if is_dashing():
+		flat = goal
 	velocity = Vector3(flat.x, velocity.y - Tuning.f("player", "gravity") * delta, flat.z)
 	if is_on_floor() and velocity.y < 0.0:
 		velocity.y = 0.0
@@ -79,7 +102,7 @@ func _animate() -> void:
 	var moving: float = speed()
 	if moving < Tuning.f("player", "moving_threshold"):
 		model.play("idle", blend)
-	elif moving > Tuning.f("player", "walk_speed") + Tuning.f("player", "moving_threshold"):
+	elif moving > Tuning.f("player", "walk_speed") * speed_scale + Tuning.f("player", "moving_threshold"):
 		model.play("run", blend, moving / Tuning.f("player", "run_clip_speed"))
 	else:
 		model.play("walk", blend, moving / Tuning.f("player", "walk_clip_speed"))

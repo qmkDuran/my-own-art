@@ -2,7 +2,8 @@ class_name Main
 extends Node3D
 ## Builds the cozy night town and wires it together: the night environment and moonlight, the ground and the
 ## Meshy town, the light budget, the player with camera and lantern, the townsfolk, fireflies, dust and rain,
-## the weather, the ambience and the HUD. Everything gets what it needs through setup().
+## the weather, the ambience, the HUD and the
+## defence night (N starts one). Everything gets what it needs through setup().
 
 static var current: Main
 
@@ -18,6 +19,10 @@ var budget: LightBudget
 var hud: Hud
 var rain_fall: CameraParticles
 var ambience: Ambience
+var night: NightRun
+var night_hud: DefenceHud
+var level_panel: LevelUpPanel
+var library: AssetLibrary
 
 
 func _ready() -> void:
@@ -30,6 +35,7 @@ func _ready() -> void:
 	hud = Hud.new()
 	add_child(hud)
 	hud.setup()
+	_build_night()
 	if not DisplayServer.get_name() == "headless" and TestRunner.is_playing():
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
@@ -46,7 +52,8 @@ func _build_world() -> void:
 	ground.build()
 	town = TownBuilder.new()
 	add_child(town)
-	town.build(AssetLibrary.new())
+	library = AssetLibrary.new()
+	town.build(library)
 
 
 func _build_player() -> void:
@@ -90,6 +97,48 @@ func _build_weather() -> void:
 	add_child(weather)
 
 
+func _build_night() -> void:
+	night = NightRun.new()
+	add_child(night)
+	night.setup(player, library, town.lamps)
+	night_hud = DefenceHud.new()
+	add_child(night_hud)
+	night_hud.setup(night)
+	level_panel = LevelUpPanel.new()
+	add_child(level_panel)
+	night.level_up_ready.connect(level_panel.show_offers)
+	level_panel.chosen.connect(night.choose)
+	night.ended.connect(_on_night_ended)
+
+
+## Starts a defence night: the townsfolk go indoors and the creatures come.
+func start_night() -> void:
+	if night.state != NightRun.State.IDLE:
+		return
+	_townsfolk_home(true)
+	night_hud.visible = true
+	night.start()
+	var seconds: float = Tuning.number("defence", "run", "start_banner_seconds")
+	night_hud.banner("The gloom is coming... keep the lamps lit!", seconds)
+
+
+func _on_night_ended(won: bool, kept: Dictionary) -> void:
+	_townsfolk_home(false)
+	var seconds: float = Tuning.number("defence", "run", "end_banner_seconds")
+	var haul: String = DefenceHud.bag_text(kept)
+	if won:
+		night_hud.banner("Dawn breaks! The town is safe.\n" + haul, seconds)
+	else:
+		night_hud.banner("You wake up at the café, warm and safe.\nYou kept:\n" + haul, seconds)
+		player.global_position = Tuning.point(Tuning.doc("defence")["run"]["wake_at"])
+
+
+func _townsfolk_home(away: bool) -> void:
+	for person: Townsperson in townsfolk:
+		person.visible = not away
+		person.process_mode = Node.PROCESS_MODE_DISABLED if away else Node.PROCESS_MODE_INHERIT
+
+
 func _on_rain_mix(mix: float) -> void:
 	environment_node.set_rain(mix)
 	moon.set_rain(mix)
@@ -99,6 +148,8 @@ func _on_rain_mix(mix: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("toggle_rain"):
+	if event.is_action_pressed("start_night"):
+		start_night()
+	elif event.is_action_pressed("toggle_rain"):
 		weather.toggle()
 		hud.note("It starts to rain" if weather.raining else "The rain eases off")
