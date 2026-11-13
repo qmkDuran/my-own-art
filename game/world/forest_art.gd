@@ -13,9 +13,9 @@ const CROWN_SWAY_HEIGHT: float = 8.0
 const LUMP: float = 0.14
 const PINE_GREENS: Array[String] = ["pine", "pine_light"]
 const LEAF_GREENS: Array[String] = ["leaf", "leaf_light", "leaf_warm"]
-const MARK_RINGS: int = 3
+const MARK_RINGS: int = 2
 const MARK_BULGE: float = 1.07
-const MARK_HEIGHT: float = 0.12
+const MARK_HEIGHT: float = 0.07
 const MARK_START: float = 0.8
 const MARK_STEP: float = 0.7
 
@@ -114,5 +114,5 @@ func _add_marks() -> void:
 		multimesh.set_instance_transform(k, marks[k])
 	var layer := MultiMeshInstance3D.new()
 	layer.multimesh = multimesh
-	layer.material_override = WoodsMaterials.solid("log_end")
+	layer.material_override = WoodsMaterials.solid("climb_mark")
 	add_child(layer)

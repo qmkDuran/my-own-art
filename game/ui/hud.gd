@@ -7,7 +7,7 @@ extends CanvasLayer
 
 const PLAYER_BAR_SIZE: Vector2 = Vector2(320, 44)
 const BOT_BAR_SIZE: Vector2 = Vector2(420, 44)
-const ICON_GAP: int = 14
+const ICON_GAP: int = 4
 const KEYS: Array[String] = ["LMB", "RMB", "Q", "E"]
 const ROLL_KEY: String = "SPACE"
 const ROLL_TITLE: String = "Roll"

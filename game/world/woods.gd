@@ -50,6 +50,7 @@ func build() -> void:
 	_add_hiding_spots(layout)
 	Atmosphere.build(self, shape)
 	Water.build(self, self)
+	CliffFaces.build(self, self, _rng)
 	Undergrowth.build(self, self, _rng)
 	AmbientLife.build(self, self)
 	for point: Array in layout["patrol_points"]:

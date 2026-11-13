@@ -11,6 +11,7 @@ const BOB_HEIGHT: float = 0.04
 const POSES: Dictionary = { "lunge": Vector2(0.45, 0.18), "rear": Vector2(0.6, 0.0), "crouch": Vector2(-0.2, -0.25),
 	"spin": Vector2(0.0, 0.1), "none": Vector2.ZERO }
 const SINK_DEPTH: float = -1.0
+const OWN_SINK_DEPTH: float = -0.8
 const SINK_SPEED: float = 3.0
 const LUNGE_LEAN: float = -0.3
 const STAGGER_SHAKE: float = 0.12
@@ -28,6 +29,7 @@ const MARKER_HEIGHT: float = 1.75
 const MARKER_SIZE: int = 150
 const MARKER_PIXEL: float = 0.006
 const MARKER_OUTLINE: int = 28
+const PING_RADIUS: float = 0.18
 
 var torso: Node3D
 var head: Node3D
@@ -44,6 +46,7 @@ var _clock: float = 0.0
 var _flash_left: float = 0.0
 var _roll: float = 0.0
 var _marker: Label3D
+var _ping: MeshInstance3D
 
 
 func build(look: Dictionary) -> void:
@@ -58,6 +61,22 @@ func build(look: Dictionary) -> void:
 	_marker.no_depth_test = true
 	_marker.position.y = MARKER_HEIGHT
 	add_child(_marker)
+	_ping = MeshInstance3D.new()
+	var ball := SphereMesh.new()
+	ball.radius = PING_RADIUS
+	ball.height = PING_RADIUS * 2.0
+	_ping.mesh = ball
+	var ping_material: StandardMaterial3D = WoodsMaterials.glow(Tuning.color(Tuning.creatures["glow"]["sense"]), 1.0)
+	ping_material.no_depth_test = true
+	_ping.material_override = ping_material
+	_ping.position.y = MARKER_HEIGHT
+	_ping.visible = false
+	add_child(_ping)
+
+
+## While a sense has exposed this creature, a bright ping hangs over it, visible even through leaves.
+func show_exposed(exposed: bool) -> void:
+	_ping.visible = exposed
 
 
 func show_marker(text: String, color: Color) -> void:
@@ -79,6 +98,7 @@ func show_dead() -> void:
 
 func animate(delta: float, creature: Creature) -> void:
 	rotation.y = creature.yaw
+	show_exposed(creature.stealth.is_exposed() and not creature.see_through_cover)
 	if creature.is_dead():
 		return
 	_walk(delta, creature)
@@ -118,9 +138,11 @@ func _pose(delta: float, creature: Creature) -> void:
 	_sink(delta, creature)
 
 
-## Burrowed or submerged, the body sinks out of sight (only its own player sees the top of it).
+## Burrowed or submerged, the body sinks out of sight; the player's own creature sinks only to its back, so you
+## can still see where you are.
 func _sink(delta: float, creature: Creature) -> void:
-	var goal: float = SINK_DEPTH if creature.traversal.deep() else 0.0
+	var depth: float = OWN_SINK_DEPTH if creature.see_through_cover else SINK_DEPTH
+	var goal: float = depth if creature.traversal.deep() else 0.0
 	position.y = move_toward(position.y, goal, SINK_SPEED * delta)
 
 

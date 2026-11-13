@@ -7,8 +7,8 @@ const FERN_LEAVES: int = 6
 const FERN_LEAF: Vector2 = Vector2(0.22, 0.9)
 const FERN_TILT: float = 0.9
 const FERN_SCALE: Vector2 = Vector2(0.6, 1.3)
-const FLOWER_STEM: Vector2 = Vector2(0.02, 0.35)
-const FLOWER_HEAD: float = 0.07
+const FLOWER_STEM: Vector2 = Vector2(0.012, 0.3)
+const FLOWER_HEAD: float = 0.09
 const FLOWER_SCALE: Vector2 = Vector2(0.8, 1.4)
 const CAP_RADIUS: float = 0.12
 const STEM_HEIGHT: float = 0.12
@@ -25,6 +25,7 @@ const FERN_GREENS: Array[String] = ["fern", "fern_light"]
 const FLOWER_TONES: Array[String] = ["flower_white", "flower_yellow", "flower_violet", "flower_pink"]
 const MUSHROOM_TONES: Array[String] = ["mushroom_cap", "mushroom_pale"]
 const LEAF_THIN: float = 0.1
+const HEAD_FLAT: float = 0.5
 const STEM_TOP: float = 0.35
 const STEM_FOOT: float = 0.4
 const PEBBLE_SCALE: Vector2 = Vector2(0.6, 1.6)
@@ -95,7 +96,7 @@ static func _flower_mesh() -> ArrayMesh:
 	tool.append_from(stem, 0, Transform3D(Basis.IDENTITY, Vector3(0, FLOWER_STEM.y * 0.5, 0)))
 	var head := SphereMesh.new()
 	head.radius = FLOWER_HEAD
-	head.height = FLOWER_HEAD
+	head.height = FLOWER_HEAD * HEAD_FLAT
 	tool.append_from(head, 0, Transform3D(Basis.IDENTITY, Vector3(0, FLOWER_STEM.y, 0)))
 	return TreeShapes.white(tool.commit())
 

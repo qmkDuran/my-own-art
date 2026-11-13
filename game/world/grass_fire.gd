@@ -2,13 +2,15 @@ class_name GrassFire
 extends Node3D
 ## Flames over a burning grass patch: rising orange sparks and a warm flicker light. Freed when the fire ends.
 
-const SPARKS_PER_M2: float = 6.0
-const SPARK_SIZE: float = 0.18
+const SPARKS_PER_M2: float = 10.0
+const SPARK_SIZE: float = 0.14
 const SPARK_LIFE: float = 0.9
 const RISE: float = 2.2
 const LIGHT_ENERGY: float = 2.0
 const LIGHT_RANGE_SHARE: float = 2.5
-const FLAME: Color = Color(1.0, 0.55, 0.12)
+const FLAME: Color = Color(1.0, 0.45, 0.08)
+const SMOKE: Color = Color(0.25, 0.22, 0.2, 0.0)
+const SHRINK: float = 0.4
 const SPREAD_DEG: float = 15.0
 
 
@@ -27,7 +29,17 @@ func setup(radius: float) -> void:
 	mesh.radius = SPARK_SIZE
 	mesh.height = SPARK_SIZE * 2.0
 	sparks.mesh = mesh
-	sparks.material_override = WoodsMaterials.glow(FLAME, 1.0)
+	var material := StandardMaterial3D.new()
+	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	material.vertex_color_use_as_albedo = true
+	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	sparks.material_override = material
+	var ramp := Gradient.new()
+	ramp.set_color(0, FLAME)
+	ramp.set_color(1, SMOKE)
+	sparks.color_ramp = ramp
+	sparks.scale_amount_min = SHRINK
+	sparks.scale_amount_max = 1.0
 	sparks.position.y = SPARK_SIZE
 	add_child(sparks)
 	var light := OmniLight3D.new()

@@ -47,11 +47,12 @@ test. Never commit when `tools/run_all.sh` does not print `ALL CHECKS PASS`.
 | `bot/utility/` | facts, response curves and the utility selector |
 | `bot/tactics/` | tactical position evaluation and its F3 markers |
 | `bot/memory/` | the learned player model and the watcher that feeds it |
-| `combat/` | health, the moves, the spit glob, the snare, hit effects |
-| `perception/` | the bot's senses and the shared line-of-sight test |
-| `world/` | terrain, props, foliage and hiding spots, atmosphere, the woods builder |
+| `combat/` | health, effects, projectiles and hit effects |
+| `combat/moves/` | `Move` and one class per move archetype; `MoveLibrary` reads `data/moves.json` |
+| `perception/` | the shared seeing and hearing rules (`Visibility`), the bot's senses, line of sight |
+| `world/` | terrain, water, cliffs, props, foliage, hiding spots, fire, ambient life, the woods builder |
 | `ui/` | HUD widgets and screens |
-| `data/` | JSON: tuning, woods layout, creature looks |
+| `data/` | JSON: tuning, moves, creatures (learnsets, loadouts), AI, woods layout |
 | `tests/` | the smoke test, staging helpers and the screenshot script |
 
 ## Checks
@@ -59,4 +60,6 @@ test. Never commit when `tools/run_all.sh` does not print `ALL CHECKS PASS`.
 - `tools/check_code.py`: typed signatures, function/file/line length, `##` headers, no print/TODO/commented code,
   no unused functions, no bare decimals.
 - `game/tests/smoke_test.gd` (`--smoke`): the rules, played headless in the real scene.
-- `tools/run_all.sh`: both of the above. `tools/shoot.sh OUT_DIR`: the review stills (needs `xvfb-run`).
+- `tools/parse_check.sh`: every script parses (run first, so a broken script cannot hang the tests).
+- `tools/moves_doc.py`: regenerates `MOVES.md` from `game/data/moves.json`.
+- `tools/run_all.sh`: all of the above plus a headless duel. `tools/shoot.sh OUT_DIR`: the review stills (needs `xvfb-run`).

@@ -2,7 +2,7 @@
 
 A slow, readable third-person duel in the woods. You are **Ember**, a fox-like creature. Your opponent is
 **Thornback**, a horned boar-like creature run by the computer. Win by outsmarting it: stalk, hide, ambush,
-set snares and use the terrain.
+use your senses and use the terrain.
 
 ## Run it on Windows
 
@@ -16,6 +16,17 @@ set snares and use the terrain.
 
 It uses the Compatibility renderer (OpenGL), so it runs on almost any graphics card.
 
+## Before the fight: the loadout screen
+
+The game opens on the loadout screen (R after a fight brings it back):
+
+- **Level**: Baby or Grown, for both creatures. Baby fights only allow the simpler moves; Grown unlocks all 40.
+- **Difficulty**: Easy, Normal or Hard (how fast and how well Thornback thinks, never its stats).
+- **Ember's four moves**: click a slot (LMB, RMB, Q, E), then a move from Ember's learnset. The line below shows
+  what the move does, what it costs you and how to counter it. Defaults: Leaping Strike, Leap, Cinder Spit,
+  Keen Ears. Thornback takes Ram, Burrow, Mud Lob, Scent Trail (its own Baby set at Baby level).
+- **Start the fight** (button or Enter). Every move is listed in `MOVES.md`.
+
 ## Controls
 
 | Input | Action |
@@ -23,48 +34,48 @@ It uses the Compatibility renderer (OpenGL), so it runs on almost any graphics c
 | W A S D | move, relative to the camera |
 | Mouse | look around (orbit camera) |
 | Shift (hold) | sneak: slow and quiet |
-| Left click | **Bite**: a visible wind-up, a short lunge, close range |
-| Right click | **Spit**: a slow glob aimed at the crosshair; trees, rocks and logs stop it |
+| Left click / Right click / Q / E | your four moves, in loadout order |
 | Space | **dodge roll** (you cannot be hurt while rolling; cooldown) |
-| F | **set a snare** at your feet (takes about a second, makes noise, one at a time, long cooldown) |
 | Tab | **lock on** to Thornback while you can see it (again to release) |
 | Esc | pause and free the mouse (Esc or click to resume) |
-| R | restart (any time after the start screen; shown on the win and lose screens) |
-| 1 / 2 / 3 | difficulty Easy / Normal / Hard (on the start or pause screen) |
+| R | restart (back to the loadout screen) |
 | F3 | show the bot's mind: its plan, scores, best tactical spots, what it has learned |
 | F9 | wipe what the bot has learned about you |
 
 ## How to win
 
-- **Hide** in bushes and tall grass: Thornback cannot see you there unless it is very close or watched you go in.
-- **Ambush**: a bite or spit started while Thornback has not noticed you (you are hidden from it, or behind it)
-  does 1.75x damage and staggers it, cutting off whatever it was winding up. The HUD says **AMBUSH READY** when
-  your next attack would be one. From a bush, strike as it passes within lunge reach (about 4 m) but before it
-  comes close enough to spot you (2.5 m). Attacking gives your hiding place away for a few seconds.
+- **Hide** in bushes, tall grass, a tree crown (Climb), under the ground (Burrow) or under water (Submerge).
+  Hiding is **true both ways**: a hidden creature gives nothing away, no sway, no rustle, no marker. Concealed in
+  leaves you are invisible beyond 2.5 m unless it watched you go in; burrowed or submerged you are invisible at any
+  distance (a burrow's dust trail and a swimmer's bubbles still show where it moves).
+- **Senses are the counter.** Keen Ears pings every sound nearby from much further away; Scent Trail shows where
+  the target walked in the last few seconds; Echo Pulse reveals every hidden creature nearby for a moment (a bright
+  ping over it, even through leaves). Senses work both ways: Thornback uses them on you.
+- **Ambush**: an attack started while Thornback has not noticed you (hidden from it, or behind it) does 1.75x
+  damage and staggers it. The HUD says **AMBUSH READY** when your next attack would be one. Attacking gives your
+  hiding place away for a few seconds.
 - **Sneak** (Shift): running is heard from about 10 m, sneaking from about 3 m. Attacks are loud.
-- **Snares**: a snare roots Thornback for 2 s and hurts it a little. Setting one takes a second and is heard
-  about 9 m away; if Thornback saw or heard you set it, it remembers and walks around it. While searching
-  carefully it can also spot one from about 2 m. Lure it over one: a glob of spit that lands somewhere makes a
-  noise it will come to check.
-- **Cover**: trees, rocks and logs stop spit (both ways). The ridge in the north-east gives a little more spit range
-  when you shoot down from it.
+- **Use the woods**: the plateau in the south-west has a ramp and four jump spots (flat stones) where Leap reaches
+  the top; high ground gives more range. Soft brown soil is diggable (Burrow works only there, not on rocky grey
+  ground). The stream and the pond hide swimmers and put out fire. Cinder Spit and Kindle set tall grass alight,
+  burning away hiding spots (yours too); burnt grass regrows. Hollow logs hide and block shots. Trees, rocks and
+  logs stop projectiles both ways.
 - **Patience**: both of you heal slowly after about 6 s without being hurt. Thornback plays by exactly the same
-  rules as you (same life, speeds, moves, wind-ups and cooldowns).
+  rules as you (same life, speeds, moves, wind-ups and cooldowns at the same level).
 
 ## Thornback learns
 
 Thornback only knows what it sees and hears. It remembers your habits across fights (favourite hiding spots, how
-early you roll, where you set snares, which way you run when hurt) and plays around them: it checks your favourite
-bush first, sets its own snare beside it, waits out early rolls. Its snares are hard to see until you are close.
-Difficulty changes how fast and how well it thinks and how much it uses that memory, never its stats.
+early you roll, whether you fight up close or at range, how often you hide, which way you run when hurt) and plays
+around them: it checks your favourite bush first, uses its senses sooner against a hider, takes cover against a
+shooter, waits out early rolls. It uses its moves like you do: leaps to high ground, burrows to ambush, climbs a
+tree to hide, sniffs you out and burns grass it thinks you are in.
 Each fight writes a log to `playtest/sessions/`; `python3 tools/analyze_session.py` summarises the newest one.
 
 ## The HUD
 
-- bottom left: your life; bottom centre: your four moves (dark sweep = cooling down);
+- bottom left: your life and active effects ("Exposed" when one of Thornback's senses has revealed you); bottom centre: your four moves plus roll (dark sweep = cooling down);
 - bottom right: the **stealth eye**: green closed eye HIDDEN (it does not know where you are), amber HEARD (it has
   a clue and is looking), red open eye SEEN;
 - top centre: Thornback's life, only while you can see it (or are locked on);
-- amber chevrons around the crosshair ("rustle"): Thornback is close, moving and out of sight. Bushes and grass
-  also sway when something moves through them.
 - over Thornback's head: "!" when it notices something, "?" while it searches.

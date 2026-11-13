@@ -2,7 +2,8 @@ class_name SessionLog
 extends Node
 ## One fight's playtest log, written as JSON when the fight ends (win or lose) or is restarted or closed: the
 ## player's position trail, hide events, attacks started and hits landed by both sides, the bot's states and
-## decisions (with the top scores), the outcome and the duration. Files go to playtest/sessions/ next to the game
+## decisions (with the top scores), the outcome and the duration. Only fights that were actually played are
+## logged. Files go to playtest/sessions/ next to the game
 ## folder (user://sessions when that is not writable). tools/analyze_session.py summarises one.
 
 const TOP_SCORES: int = 3
@@ -22,6 +23,7 @@ var _decisions: Array = []
 var _last_option: String = ""
 var _spot: HidingSpot
 var _winding: Dictionary = {}
+var _played: bool = false
 
 
 func setup(match_root: Main) -> void:
@@ -34,10 +36,13 @@ func setup(match_root: Main) -> void:
 	match_root.brain.state_changed.connect(func(state: String) -> void: _event("bot_state", { "state": state }))
 	match_root.brain.decided.connect(_on_decided)
 	match_root.flow.phase_changed.connect(_on_phase)
-	tree_exiting.connect(func() -> void: write("unfinished"))
+	tree_exiting.connect(func() -> void:
+		if _played:
+			write("unfinished"))
 
 
 func _physics_process(delta: float) -> void:
+	_played = true
 	_clock += delta
 	_trail_left -= delta
 	if _trail_left <= 0.0:
