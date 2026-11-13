@@ -88,6 +88,7 @@ func _physics_process(delta: float) -> void:
 		flat = goal.limit_length(top) + agility.dash_velocity()
 	velocity = Vector3(flat.x, rise, flat.z)
 	move_and_slide()
+	RenderingServer.global_shader_parameter_set("player_position", global_position)
 	_landing = maxf(_landing - delta, 0.0)
 	if events.get("jumped", false):
 		model.play_from("jump", Tuning.f("agility", "jump_clip_takeoff"), Tuning.f("player", "blend_seconds"))

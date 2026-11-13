@@ -20,6 +20,8 @@ const SHOTS: Dictionary = {
 	"contrast_on": [Vector3(-1.5, 4.2, 12.5), Vector3(0.5, 0.6, 1.0), [0.0, 5.0, 0.0], false],
 	"contrast_off": [Vector3(-1.5, 4.2, 12.5), Vector3(0.5, 0.6, 1.0), [0.0, 5.0, 0.0], false],
 	"bridge_end": [Vector3(3.2, 1.5, 11.0), Vector3(0.4, 0.0, 14.6), [], false],
+	"house_gap": [Vector3(-24.0, 1.7, 1.8), Vector3(-29.5, 1.6, -4.0), [], false],
+	"barrier": [Vector3(55.0, 7.6, 21.5), Vector3(58.5, 7.0, 18.5), [57.2, 18.8, 90.0], false],
 	"bench": [Vector3(-2.0, 1.3, -3.4), Vector3(-4.5, 0.6, -5.2), [], false],
 	"townsfolk": [Vector3(2.6, 1.6, -1.2), Vector3(-1.2, 1.0, -7.5), [], false],
 }
@@ -73,6 +75,8 @@ func _stage_player(spot: Array) -> void:
 		m.player.position = Vector3(60, 6, 40)
 		return
 	m.player.position = Vector3(spot[0], 0.05, spot[1])
+	if spot[0] > 44.0:
+		m.player.position.y = 6.05
 	m.player.yaw = deg_to_rad(spot[2])
 	m.player.rotation.y = m.player.yaw
 

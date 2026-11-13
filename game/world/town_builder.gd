@@ -61,6 +61,7 @@ func _row(row: Dictionary, backdrop: bool) -> void:
 	var types: Array = row["types"]
 	var travelled: float = 0.0
 	var index: int = 0
+	var previous: Node3D = null
 	while true:
 		var asset: String = types[index % types.size()]
 		var jitter: float = _rng.randf_range(-1.0, 1.0) * Tuning.f("town", "scale_jitter")
@@ -77,6 +78,8 @@ func _row(row: Dictionary, backdrop: bool) -> void:
 			if index > 0:
 				_fill_gap(start + along * (travelled - Tuning.f("town", "gap")), start + along * travelled, front,
 					size.z)
+				_garden_wall(previous, house, along, front)
+			previous = house
 		travelled += size.x + Tuning.f("town", "gap")
 		index += 1
 	if not backdrop:
@@ -90,11 +93,36 @@ func _row_wall(start: Vector3, end: Vector3, front: Vector3) -> void:
 		"row_wall_width"), null)
 
 
-## An invisible wall filling the narrow gap between two neighbouring houses, front to back, so nobody squeezes in.
+## A solid block filling the space between two neighbouring houses, front to back, so nobody squeezes in.
 func _fill_gap(a: Vector3, b: Vector3, front: Vector3, depth: float) -> void:
 	var overlap: Vector3 = a.direction_to(b) * Tuning.f("town", "gap_fill_overlap")
 	var back: Vector3 = -front * depth * 0.5
 	Blocks.wall_between(self, a - overlap + back, b + overlap + back, Tuning.f("town", "row_wall_height"), depth, null)
+
+
+## A brick garden wall closing the visible gap between two houses' ground floors, set just behind the nearer front,
+## so a gap never looks open where it isn't. Houses that touch get none.
+func _garden_wall(one: Node3D, two: Node3D, along: Vector3, front: Vector3) -> void:
+	var box_one: Array[Vector3] = _footprint(one)
+	var box_two: Array[Vector3] = _footprint(two)
+	var end_one: float = maxf(box_one[0].dot(along), box_one[1].dot(along))
+	var start_two: float = minf(box_two[0].dot(along), box_two[1].dot(along))
+	if start_two - end_one < Tuning.f("town", "gap_wall_min"):
+		return
+	var face: float = minf(maxf(box_one[0].dot(front), box_one[1].dot(front)), maxf(box_two[0].dot(front),
+		box_two[1].dot(front))) - Tuning.f("town", "gap_wall_inset")
+	var a: Vector3 = along * end_one + front * face
+	var b: Vector3 = along * start_two + front * face
+	Blocks.wall_between(self, a, b, Tuning.f("town", "gap_wall_height"), Tuning.f("town", "gap_wall_width"),
+		SurfaceMaterials.stone("bricks"))
+
+
+## Two opposite corners (world space, on the ground) of a placed house's measured ground-floor box.
+func _footprint(house: Node3D) -> Array[Vector3]:
+	var box: AABB = library.collision_box(house.get_meta("asset"), house.get_meta("scale"))
+	var low: Vector3 = house.global_transform * Vector3(box.position.x, 0.0, box.position.z)
+	var high: Vector3 = house.global_transform * Vector3(box.end.x, 0.0, box.end.z)
+	return [Vector3(low.x, 0.0, low.z), Vector3(high.x, 0.0, high.z)]
 
 
 func _windows(house: Node3D, asset: String, scale: float) -> void:
