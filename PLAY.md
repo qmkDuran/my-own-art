@@ -15,10 +15,11 @@ to Compatibility on its own: it still runs, but without volumetric fog or screen
 | --- | --- |
 | W A S D / arrow keys | walk (relative to the camera) |
 | Shift (hold) | run |
+| Shift (quick tap) | dash: a short, quick dodge with a puff of dust (creatures can't hurt you mid-dash) |
+| Space | jump |
 | Mouse | look around (click the window to capture the mouse) |
 | R | toggle rain (rain falls, puddles grow and shine, the fog thickens, rain sound fades in) |
 | N | start a **defence night** (see below) |
-| Space | dodge (a quick dash; creatures can't hurt you mid-dash) |
 | 1 / 2 / 3 or click | pick a level-up card |
 | G | graphics: Low / Medium / High |
 | H | show the controls hint again |

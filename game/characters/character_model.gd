@@ -8,6 +8,8 @@ extends Node3D
 const LEFT_TOE: String = "LeftToeBase"
 const RIGHT_TOE: String = "RightToeBase"
 const MOVING_CLIPS: Array[String] = ["walk", "run"]
+const JUMP: String = "jump"
+const HIPS_TRACK: String = ":Hips"
 
 var animator: AnimationPlayer
 var skeleton: Skeleton3D
@@ -24,6 +26,9 @@ func setup(path: String) -> void:
 	skeleton = model.find_child("Skeleton3D", true, false)
 	for clip: StringName in animator.get_animation_list():
 		animator.get_animation(clip).loop_mode = Animation.LOOP_LINEAR
+	if has_clip(JUMP):
+		animator.get_animation(JUMP).loop_mode = Animation.LOOP_NONE
+		_cap_rise(animator.get_animation(JUMP))
 	for clip: String in MOVING_CLIPS:
 		if has_clip(clip):
 			var measured: float = ground_speed(clip, Tuning.i("stride", "samples"), Tuning.f("stride", "planted_band"))
@@ -41,6 +46,14 @@ func play(clip: String, blend: float, speed: float = 1.0) -> void:
 		return
 	_clip = clip
 	animator.play(clip, blend)
+
+
+## Plays a clip from a point in it (a jump from its take-off), not looping.
+func play_from(clip: String, offset: float, blend: float) -> void:
+	animator.speed_scale = 1.0
+	_clip = clip
+	animator.play(clip, blend)
+	animator.seek(offset, true)
 
 
 ## How fast the feet travel in a moving clip (measured at load), so callers can match playback to body speed.
@@ -75,6 +88,20 @@ func ground_speed(clip: String, samples: int, planted_band: float) -> float:
 				travelled += absf(b.z - a.z)
 				planted_time += animation.length / samples
 	return travelled / planted_time if planted_time > 0.0 else 0.0
+
+
+## The physics lifts the body in a jump, so the clip's own upward hip motion is capped at its standing height
+## (crouches still lower the hips; in the air the legs tuck instead).
+func _cap_rise(animation: Animation) -> void:
+	for track: int in animation.get_track_count():
+		if animation.track_get_type(track) != Animation.TYPE_POSITION_3D:
+			continue
+		if not String(animation.track_get_path(track)).ends_with(HIPS_TRACK):
+			continue
+		var standing: float = (animation.track_get_key_value(track, 0) as Vector3).y
+		for key: int in animation.track_get_key_count(track):
+			var value: Vector3 = animation.track_get_key_value(track, key)
+			animation.track_set_key_value(track, key, Vector3(value.x, minf(value.y, standing), value.z))
 
 
 ## A node that follows a bone (for a carried lantern).

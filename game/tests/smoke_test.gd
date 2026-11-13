@@ -21,6 +21,7 @@ func _run() -> void:
 	await _check_townsfolk()
 	await _check_rain()
 	await _check_strides()
+	await _check_agility()
 	failures.append_array(SmokeGraphics.new(m).run())
 	failures.append_array(await SmokeDefence.new(m).run())
 	failures.append_array(await UiLayout.new(m).run())
@@ -84,6 +85,25 @@ func _check_strides() -> void:
 		_expect(speed > 0.3 and speed < 2.5, "%s has a sensible walk stride (%.2f m/s)" % [who, speed])
 	_expect(m.player.model.foot_speed("run") > m.player.model.foot_speed("walk"), "the run is faster than the walk")
 	await get_tree().process_frame
+
+
+## The dash is a short grounded burst; the jump rises, plays the jump clip and lands again.
+func _check_agility() -> void:
+	m.player.global_position = Vector3(-30, 0.05, 0)
+	await get_tree().create_timer(0.3).timeout
+	var start: Vector3 = m.player.global_position
+	m.player.dash()
+	await get_tree().create_timer(0.3).timeout
+	var dashed: float = Vector2(m.player.global_position.x - start.x, m.player.global_position.z - start.z).length()
+	_expect(dashed > 0.6 and dashed < 2.0, "the dash is short and snappy (%.2f m)" % dashed)
+	_expect(absf(m.player.global_position.y - start.y) < 0.1, "the dash stays on the ground")
+	m.player.jump()
+	await get_tree().create_timer(0.25).timeout
+	var rise: float = m.player.global_position.y - start.y
+	_expect(rise > 0.4, "the jump rises (%.2f m)" % rise)
+	_expect(m.player.model.current_clip() == "jump", "the jump plays the jump clip")
+	await get_tree().create_timer(1.2).timeout
+	_expect(m.player.is_on_floor() and not m.player.agility.is_airborne(), "the jump lands")
 
 
 func _check_rain() -> void:

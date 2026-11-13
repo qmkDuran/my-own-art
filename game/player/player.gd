@@ -1,7 +1,8 @@
 class_name Player
 extends CharacterBody3D
-## The lamplighter apprentice: a capsule body that walks or runs where its controller asks, turns to face its way,
-## plays the Meshy idle, walk and run clips to match its speed, and carries the hand lantern.
+## The lamplighter apprentice: a capsule body that walks or runs where its controller asks, dashes and jumps (see
+## Agility), turns to face its way, plays the Meshy idle, walk, run and jump clips to match, and carries the hand
+## lantern.
 
 const MODEL_PATH: String = "res://assets/meshy/characters/player.glb"
 const HAND_BONE: String = "RightHand"
@@ -12,9 +13,8 @@ var wish: Vector3 = Vector3.ZERO
 var running: bool = false
 var yaw: float = 0.0
 var speed_scale: float = 1.0
-var _dash_time: float = 0.0
-var _dash_cooldown: float = 0.0
-var _dash_direction: Vector3 = Vector3.ZERO
+var agility := Agility.new()
+var _landing: float = 0.0
 
 
 func setup(at: Vector3, start_yaw: float) -> void:
@@ -59,17 +59,19 @@ func _add_fill_lights() -> void:
 		add_child(fill)
 
 
-## A quick dodge in the wished direction (or straight ahead); creatures can't hurt you mid-dash.
+## A quick dodge in the wished direction (or straight ahead), with a little dust puff; creatures can't hurt you
+## mid-dash.
 func dash() -> void:
-	if _dash_cooldown > 0.0:
-		return
-	_dash_direction = wish.normalized() if wish.length() > 0.0 else -global_basis.z
-	_dash_time = Tuning.number("defence", "player", "dash_seconds")
-	_dash_cooldown = Tuning.number("defence", "player", "dash_cooldown")
+	if agility.start_dash(wish if wish.length() > 0.0 else -global_basis.z):
+		_puff()
+
+
+func jump() -> void:
+	agility.request_jump()
 
 
 func is_dashing() -> bool:
-	return _dash_time > 0.0
+	return agility.is_dashing()
 
 
 func speed() -> float:
@@ -77,19 +79,21 @@ func speed() -> float:
 
 
 func _physics_process(delta: float) -> void:
-	_dash_time = maxf(_dash_time - delta, 0.0)
-	_dash_cooldown = maxf(_dash_cooldown - delta, 0.0)
 	var top: float = Tuning.f("player", "run_speed" if running else "walk_speed") * speed_scale
 	var goal: Vector3 = wish.limit_length(1.0) * top
-	if is_dashing():
-		goal = _dash_direction * Tuning.number("defence", "player", "dash_speed")
 	var flat := Vector3(velocity.x, 0.0, velocity.z).move_toward(goal, Tuning.f("player", "acceleration") * delta)
-	if is_dashing():
-		flat = goal
-	velocity = Vector3(flat.x, velocity.y - Tuning.f("player", "gravity") * delta, flat.z)
-	if is_on_floor() and velocity.y < 0.0:
-		velocity.y = 0.0
+	var events: Dictionary = {}
+	var rise: float = agility.vertical(delta, is_on_floor(), velocity.y, events)
+	if agility.is_dashing():
+		flat = goal.limit_length(top) + agility.dash_velocity()
+	velocity = Vector3(flat.x, rise, flat.z)
 	move_and_slide()
+	_landing = maxf(_landing - delta, 0.0)
+	if events.get("jumped", false):
+		model.play_from("jump", Tuning.f("agility", "jump_clip_takeoff"), Tuning.f("player", "blend_seconds"))
+	if events.get("landed", false):
+		_landing = Tuning.f("agility", "landing_seconds")
+		_puff()
 	if wish.length() > Tuning.f("player", "moving_threshold"):
 		var goal_yaw: float = atan2(-wish.x, -wish.z)
 		yaw = lerp_angle(yaw, goal_yaw, clampf(Tuning.f("player", "turn_sharpness") * delta, 0.0, 1.0))
@@ -100,9 +104,20 @@ func _physics_process(delta: float) -> void:
 func _animate() -> void:
 	var blend: float = Tuning.f("player", "blend_seconds")
 	var moving: float = speed()
+	if agility.is_airborne() or _landing > 0.0 and moving < Tuning.f("player", "walk_speed"):
+		return
 	if moving < Tuning.f("player", "moving_threshold"):
 		model.play("idle", blend)
 	elif moving > Tuning.f("player", "walk_speed") * speed_scale + Tuning.f("player", "moving_threshold"):
 		model.play("run", blend, moving / model.foot_speed("run"))
 	else:
 		model.play("walk", blend, moving / model.foot_speed("walk"))
+
+
+## A small puff of dust at the feet (dash starts, landings).
+func _puff() -> void:
+	var dust: GPUParticles3D = ParticleBursts.smoke(Tuning.i("agility", "dust_puffs"), Tuning.color(
+		Tuning.doc("tuning")["agility"]["dust_color"]), Tuning.f("agility", "dust_size"), Tuning.f("agility",
+		"dust_seconds"))
+	get_tree().current_scene.add_child(dust)
+	dust.global_position = global_position
