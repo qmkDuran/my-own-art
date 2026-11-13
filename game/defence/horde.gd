@@ -1,7 +1,8 @@
 class_name Horde
 extends Node3D
 ## Every creature alive tonight: spawns them, answers "who is near here?" for the lantern magic, hurts the player
-## when one touches them, and pops defeated creatures into sparkles (telling whoever listens, so drops can fall).
+## when one touches them, and dissolves defeated creatures into sparkles (telling whoever listens, so drops can
+## fall).
 
 signal defeated(creature: Creature)
 
@@ -63,6 +64,9 @@ func clear() -> void:
 	for creature: Creature in creatures:
 		creature.queue_free()
 	creatures.clear()
+	for child: Node in get_children():
+		if child is Creature:
+			child.queue_free()
 
 
 func _physics_process(_delta: float) -> void:
@@ -70,8 +74,17 @@ func _physics_process(_delta: float) -> void:
 		_vitality.hurt(float(creature.spec["damage"]))
 
 
+## A defeated creature stops, dissolves into light, then pops into sparkles where its drops appear.
 func _on_died(creature: Creature) -> void:
 	creatures.erase(creature)
+	creature.set_physics_process(false)
+	creature.collision_layer = 0
+	Dissolve.run(creature.model(), Tuning.doc("vfx")["lantern_flare"]["dissolve"], _pop.bind(creature))
+
+
+func _pop(creature: Creature) -> void:
+	if not is_instance_valid(creature):
+		return
 	var burst := SparkleBurst.new()
 	add_child(burst)
 	burst.global_position = creature.centre()

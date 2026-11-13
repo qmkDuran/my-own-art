@@ -33,7 +33,7 @@ var _summon_timer: float = 0.0
 var _pending_levels: int = 0
 
 
-func setup(player: Player, library: AssetLibrary, town_lamps: Array[LampLight]) -> void:
+func setup(player: Player, library: AssetLibrary, town_lamps: Array[LampLight], kit: VfxKit) -> void:
 	name = "NightRun"
 	_player = player
 	lamps = LampKeeper.new()
@@ -53,7 +53,7 @@ func setup(player: Player, library: AssetLibrary, town_lamps: Array[LampLight]) 
 	pickups.setup(player)
 	loadout = Loadout.new()
 	add_child(loadout)
-	loadout.setup(player, horde, vitality, pickups)
+	loadout.setup(player, horde, vitality, pickups, kit)
 	horde.defeated.connect(_on_defeated)
 	pickups.collected.connect(_on_collected)
 	vitality.fainted.connect(finish.bind(false))
@@ -132,6 +132,8 @@ func _boss_powers(delta: float) -> void:
 
 
 func _on_defeated(creature: Creature) -> void:
+	if state != State.RUNNING:
+		return
 	kills += 1
 	var bonus: String = Tuning.doc("defence")["creature"]["bonus_drop"]
 	if creature.is_boss:

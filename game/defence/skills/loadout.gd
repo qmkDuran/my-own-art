@@ -20,10 +20,12 @@ var _player: Player
 var _horde: Horde
 var _vitality: Vitality
 var _pickups: Pickups
+var _kit: VfxKit
 
 
-func setup(player: Player, horde: Horde, vitality: Vitality, pickups: Pickups) -> void:
+func setup(player: Player, horde: Horde, vitality: Vitality, pickups: Pickups, kit: VfxKit) -> void:
 	name = "Loadout"
+	_kit = kit
 	_player = player
 	_horde = horde
 	_vitality = vitality
@@ -116,6 +118,7 @@ func _replaced_by_combo(id: String) -> bool:
 func _add_attack(id: String, table: Dictionary) -> void:
 	var attack: Attack = (load(ATTACK_SCRIPTS[id]) as GDScript).new()
 	add_child(attack)
+	attack.kit = _kit
 	attack.setup(id, table[id], _player, _horde, magic)
 	attacks[id] = attack
 

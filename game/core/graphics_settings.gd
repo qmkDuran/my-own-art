@@ -1,8 +1,9 @@
 class_name GraphicsSettings
 extends Node
 ## The graphics tier (Low, Medium, High from data/graphics.json; G cycles it): turns volumetric fog, screen-space
-## reflections and ambient occlusion on or off, sets how many lamps cast shadows and the moon's shadow splits, and
-## thins out every particle system. Particle systems remember their full amount, so tiers can go up again.
+## reflections and ambient occlusion on or off, sets how many lamps cast shadows and the moon's shadow splits,
+## caps effect lights and trails, and thins out every particle system. Particle systems remember their full
+## amount, so tiers can go up again.
 
 signal changed(tier: String)
 
@@ -12,10 +13,12 @@ var tier: String = ""
 var _environment: Environment
 var _moon: DirectionalLight3D
 var _budget: LightBudget
+var _quota: VfxQuota
 
 
-func setup(environment: Environment, moon: DirectionalLight3D, budget: LightBudget) -> void:
+func setup(environment: Environment, moon: DirectionalLight3D, budget: LightBudget, quota: VfxQuota) -> void:
 	name = "GraphicsSettings"
+	_quota = quota
 	_environment = environment
 	_moon = moon
 	_budget = budget
@@ -42,6 +45,7 @@ func apply(new_tier: String) -> void:
 	_environment.ssr_enabled = settings["ssr"]
 	_environment.ssao_enabled = settings["ssao"]
 	_budget.allowed = int(settings["shadowed_lights"])
+	_quota.apply_tier(settings)
 	_budget.refresh()
 	var splits: int = int(settings["moon_splits"])
 	_moon.directional_shadow_mode = DirectionalLight3D.SHADOW_PARALLEL_4_SPLITS if splits == 4 else \

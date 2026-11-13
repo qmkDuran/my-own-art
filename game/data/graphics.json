@@ -1,10 +1,41 @@
 {
-  "_doc": "Graphics tiers (G cycles them in game). particle_density scales every particle system; shadowed_lights is how many lamps near the camera cast shadows.",
-  "default": "high",
-  "order": ["low", "medium", "high"],
-  "tiers": {
-    "low": { "volumetric_fog": false, "ssr": false, "ssao": false, "shadowed_lights": 1, "particle_density": 0.35, "moon_splits": 2 },
-    "medium": { "volumetric_fog": true, "ssr": false, "ssao": true, "shadowed_lights": 3, "particle_density": 0.65, "moon_splits": 2 },
-    "high": { "volumetric_fog": true, "ssr": true, "ssao": true, "shadowed_lights": 5, "particle_density": 1.0, "moon_splits": 4 }
+ "_doc": "Graphics tiers (G cycles them in game). particle_density scales every particle system; shadowed_lights is how many lamps near the camera cast shadows. vfx_lights caps how many short-lived effect lights (bolt lights, impact pops) may shine at once; vfx_trails turns projectile trails on.",
+ "default": "high",
+ "order": [
+  "low",
+  "medium",
+  "high"
+ ],
+ "tiers": {
+  "low": {
+   "volumetric_fog": false,
+   "ssr": false,
+   "ssao": false,
+   "shadowed_lights": 1,
+   "particle_density": 0.35,
+   "moon_splits": 2,
+   "vfx_lights": 2,
+   "vfx_trails": false
+  },
+  "medium": {
+   "volumetric_fog": true,
+   "ssr": false,
+   "ssao": true,
+   "shadowed_lights": 3,
+   "particle_density": 0.65,
+   "moon_splits": 2,
+   "vfx_lights": 4,
+   "vfx_trails": true
+  },
+  "high": {
+   "volumetric_fog": true,
+   "ssr": true,
+   "ssao": true,
+   "shadowed_lights": 5,
+   "particle_density": 1.0,
+   "moon_splits": 4,
+   "vfx_lights": 8,
+   "vfx_trails": true
   }
+ }
 }

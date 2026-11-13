@@ -29,6 +29,7 @@ func run() -> Array[String]:
 	await _check_lamps()
 	await _check_faint()
 	await _check_boss()
+	await _check_effects()
 	return failures
 
 
@@ -102,6 +103,30 @@ func _check_faint() -> void:
 		"the town is tidied after the night")
 
 
+## A volley of showcase flares: effect lights stay within the tier's quota, and every effect piece frees itself.
+func _check_effects() -> void:
+	m.start_night()
+	m.night.set_physics_process(false)
+	var flare: LanternFlare = m.night.loadout.attacks["lantern_flare"]
+	for index: int in 12:
+		var ghost: Creature = m.night.horde.spawn("sheet_ghost", m.player.global_position + Vector3(5, 0, index - 6))
+		ghost.set_physics_process(false)
+		flare.cast(ghost)
+	var most_lights: int = 0
+	for frame: int in 40:
+		await tree.process_frame
+		most_lights = maxi(most_lights, m.find_children("*", "EffectLight", true, false).size())
+	_expect(most_lights <= m.vfx.quota.max_lights, "effect lights stay in quota (%d of %d)" % [most_lights,
+		m.vfx.quota.max_lights])
+	_expect(most_lights > 0, "flares light up")
+	m.night.finish(true)
+	await tree.create_timer(3.0).timeout
+	var left: int = 0
+	for kind: String in ["ImpactBurst", "EmberMark", "WindupGather", "LightBolt", "EffectLight"]:
+		left += m.find_children("*", kind, true, false).size()
+	_expect(left == 0, "every effect piece frees itself (%d left)" % left)
+
+
 func _check_boss() -> void:
 	m.start_night()
 	m.night.set_physics_process(false)
@@ -109,5 +134,5 @@ func _check_boss() -> void:
 	var result: Array = []
 	m.night.ended.connect(func(won: bool, _kept: Dictionary) -> void: result.append(won), CONNECT_ONE_SHOT)
 	king.hurt(king.health + 1.0)
-	await tree.process_frame
-	_expect(result == [true], "beating the Gloom King wins the night")
+	await tree.create_timer(float(Tuning.doc("vfx")["lantern_flare"]["dissolve"]["seconds"]) + 0.3).timeout
+	_expect(result == [true], "beating the Gloom King wins the night (after he dissolves)")

@@ -24,6 +24,7 @@ var night_hud: DefenceHud
 var level_panel: LevelUpPanel
 var library: AssetLibrary
 var graphics: GraphicsSettings
+var vfx: VfxKit
 
 
 func _ready() -> void:
@@ -39,7 +40,7 @@ func _ready() -> void:
 	_build_night()
 	graphics = GraphicsSettings.new()
 	add_child(graphics)
-	graphics.setup(environment_node.environment, moon, budget)
+	graphics.setup(environment_node.environment, moon, budget, vfx.quota)
 	graphics.changed.connect(func(tier: String) -> void: hud.note("Graphics: " + tier.capitalize()))
 	if not DisplayServer.get_name() == "headless" and TestRunner.is_playing():
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
@@ -103,9 +104,12 @@ func _build_weather() -> void:
 
 
 func _build_night() -> void:
+	vfx = VfxKit.new()
+	add_child(vfx)
+	vfx.setup(camera_rig.camera)
 	night = NightRun.new()
 	add_child(night)
-	night.setup(player, library, town.lamps)
+	night.setup(player, library, town.lamps, vfx)
 	night_hud = DefenceHud.new()
 	add_child(night_hud)
 	night_hud.setup(night)

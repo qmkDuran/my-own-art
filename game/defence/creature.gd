@@ -10,6 +10,7 @@ signal died(creature: Creature)
 var kind: String = ""
 var spec: Dictionary = {}
 var health: float = 0.0
+var max_health: float = 0.0
 var radius: float = 0.0
 var is_boss: bool = false
 var _model: Node3D
@@ -26,6 +27,7 @@ func setup(creature_kind: String, library: AssetLibrary, player: Node3D, lamps: 
 	spec = Tuning.doc("defence")["creatures"][kind]
 	name = kind.to_pascal_case()
 	health = float(spec["health"]) * toughness
+	max_health = health
 	radius = spec["radius"]
 	is_boss = spec.get("boss", false)
 	_player = player
@@ -71,6 +73,10 @@ func _add_eye_light(look: Dictionary) -> void:
 ## Solid creatures collide with walls; floaters pass through them (a deliberate rule).
 func is_solid() -> bool:
 	return spec["motion"] == "hop"
+
+
+func model() -> Node3D:
+	return _model
 
 
 func centre() -> Vector3:

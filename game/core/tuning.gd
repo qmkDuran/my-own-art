@@ -5,7 +5,7 @@ extends Node
 
 const DATA_DIR: String = "res://data/"
 const FILES: Array[String] = ["tuning", "lighting", "assets", "town", "npcs", "audio", "defence", "skills", "graphics",
-	"perf"]
+	"perf", "vfx"]
 
 var _docs: Dictionary = {}
 

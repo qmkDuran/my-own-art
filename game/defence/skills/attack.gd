@@ -12,6 +12,8 @@ var spec: Dictionary = {}
 var player: Node3D
 var horde: Horde
 var magic: MagicStats
+## The shared effects toolbox (null in bare tests: attacks then fall back to plain glows).
+var kit: VfxKit
 var _cooldown: float = 0.0
 
 

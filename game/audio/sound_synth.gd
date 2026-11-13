@@ -9,6 +9,8 @@ const A4_HZ: float = 440.0
 const SEMITONES: float = 12.0
 const BEATS_PER_NOTE: float = 0.5
 const SECONDS_PER_MINUTE: float = 60.0
+const CHIME_DIP_SPEED: float = 4.0 ## the chime's pitch settles over a quarter second
+const CLICK_RATE_SHARE: float = 400.0 ## a crackle click lasts 1/400 of a second
 const DROP_PITCH_SHARES: Vector2 = Vector2(0.25, 0.4) ## raindrop pitch as shares of the mix rate
 const CRICKET_LEVEL: float = 0.3
 const BURST_LEVELS: Vector2 = Vector2(0.1, 0.4)
@@ -59,6 +61,54 @@ static func music_box() -> AudioStreamWAV:
 			var tone: float = sin(TAU * hz * t) + sin(TAU * hz * 2.0 * t) * float(spec["harmonic"])
 			samples[index * note_length + n] += tone * exp(-t * float(spec["decay"])) * 0.5
 	return _to_wav(samples)
+
+
+## A short effect sound by name: the flare's whoosh (a rising filtered breath), pop (a warm chime that dips in
+## pitch) or crackle (a tail of soft clicks).
+static func effect(sound: String) -> AudioStreamWAV:
+	var spec: Dictionary = _spec(sound)
+	var samples := PackedFloat32Array()
+	samples.resize(_length(spec["seconds"]))
+	match sound:
+		"flare_whoosh":
+			_whoosh(samples, spec)
+		"flare_pop":
+			_chime(samples, spec)
+		_:
+			_crackle(samples, spec)
+	var wav: AudioStreamWAV = _to_wav(samples)
+	wav.loop_mode = AudioStreamWAV.LOOP_DISABLED
+	return wav
+
+
+static func _whoosh(samples: PackedFloat32Array, spec: Dictionary) -> void:
+	var low: float = 0.0
+	for n: int in samples.size():
+		var t: float = float(n) / samples.size()
+		low += (randf_range(-1.0, 1.0) - low) * lerpf(spec["cutoff_from"], spec["cutoff_to"], t)
+		samples[n] = low * sin(PI * t) * float(spec["level"])
+
+
+static func _chime(samples: PackedFloat32Array, spec: Dictionary) -> void:
+	var rate: float = _rate()
+	var partials: Array = spec["partials"]
+	for n: int in samples.size():
+		var t: float = n / rate
+		var hz: float = float(spec["hz"]) * (1.0 - float(spec["drop"]) * minf(t * CHIME_DIP_SPEED, 1.0))
+		var tone: float = 0.0
+		for index: int in partials.size():
+			tone += sin(TAU * hz * float(partials[index]) * t) / (index + 1)
+		samples[n] = tone * exp(-t * float(spec["decay"]))
+
+
+static func _crackle(samples: PackedFloat32Array, spec: Dictionary) -> void:
+	var rate: float = _rate()
+	for click: int in int(spec["clicks"]):
+		var at: int = int(pow(randf(), 2.0) * (samples.size() - 1))
+		var loud: float = exp(-float(at) / rate * float(spec["decay"])) * float(spec["level"])
+		var length: float = rate / CLICK_RATE_SHARE
+		for n: int in mini(int(length), samples.size() - at):
+			samples[at + n] += randf_range(-1.0, 1.0) * loud * (1.0 - n / length)
 
 
 static func _cricket(samples: PackedFloat32Array, spec: Dictionary) -> void:

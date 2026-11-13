@@ -1,14 +1,109 @@
 {
-  "_doc": "Procedural ambience: every sound is synthesised at start into a short loop (no audio files). Volumes in dB.",
-  "mix_rate": 22050,
-  "crickets": { "seconds": 6.0, "voices": 4, "pitch_min": 4100.0, "pitch_max": 4900.0, "pulse_rate": 32.0,
-    "pulses": 3, "gap_min": 0.6, "gap_max": 1.6, "volume_db": -20.0 },
-  "trickle": { "seconds": 5.0, "cutoff": 0.18, "bubbles_per_second": 22.0, "bubble_min": 500.0, "bubble_max": 1500.0,
-    "bubble_decay": 40.0, "noise_level": 0.25, "volume_db": -6.0, "unit_size": 3.0, "max_distance": 18.0 },
-  "music": { "bpm": 84.0, "notes": [72, 76, 79, 76, 74, 77, 81, 77, 72, 76, 79, 84, 83, 79, 76, 74,
-      71, 74, 77, 74, 72, 76, 79, 76, 77, 76, 74, 71, 72, 0, 0, 0],
-    "decay": 3.2, "harmonic": 0.3, "volume_db": -8.0, "unit_size": 5.0, "max_distance": 30.0,
-    "at": [-27.4, 3.0, 4.2] },
-  "rain": { "seconds": 6.0, "cutoff": 0.35, "drops_per_second": 70.0, "drop_decay": 160.0, "noise_level": 0.5,
-    "volume_db": -4.0, "fade_db": -40.0 }
+ "_doc": "Procedural ambience: every sound is synthesised at start into a short loop (no audio files). Volumes in dB.",
+ "mix_rate": 22050,
+ "crickets": {
+  "seconds": 6.0,
+  "voices": 4,
+  "pitch_min": 4100.0,
+  "pitch_max": 4900.0,
+  "pulse_rate": 32.0,
+  "pulses": 3,
+  "gap_min": 0.6,
+  "gap_max": 1.6,
+  "volume_db": -20.0
+ },
+ "trickle": {
+  "seconds": 5.0,
+  "cutoff": 0.18,
+  "bubbles_per_second": 22.0,
+  "bubble_min": 500.0,
+  "bubble_max": 1500.0,
+  "bubble_decay": 40.0,
+  "noise_level": 0.25,
+  "volume_db": -6.0,
+  "unit_size": 3.0,
+  "max_distance": 18.0
+ },
+ "music": {
+  "bpm": 84.0,
+  "notes": [
+   72,
+   76,
+   79,
+   76,
+   74,
+   77,
+   81,
+   77,
+   72,
+   76,
+   79,
+   84,
+   83,
+   79,
+   76,
+   74,
+   71,
+   74,
+   77,
+   74,
+   72,
+   76,
+   79,
+   76,
+   77,
+   76,
+   74,
+   71,
+   72,
+   0,
+   0,
+   0
+  ],
+  "decay": 3.2,
+  "harmonic": 0.3,
+  "volume_db": -8.0,
+  "unit_size": 5.0,
+  "max_distance": 30.0,
+  "at": [
+   -27.4,
+   3.0,
+   4.2
+  ]
+ },
+ "rain": {
+  "seconds": 6.0,
+  "cutoff": 0.35,
+  "drops_per_second": 70.0,
+  "drop_decay": 160.0,
+  "noise_level": 0.5,
+  "volume_db": -4.0,
+  "fade_db": -40.0
+ },
+ "flare_whoosh": {
+  "seconds": 0.35,
+  "cutoff_from": 0.05,
+  "cutoff_to": 0.35,
+  "level": 0.6,
+  "volume_db": -10.0
+ },
+ "flare_pop": {
+  "seconds": 0.6,
+  "hz": 660.0,
+  "drop": 0.35,
+  "partials": [
+   1.0,
+   2.4,
+   3.9
+  ],
+  "decay": 9.0,
+  "volume_db": -8.0
+ },
+ "flare_crackle": {
+  "seconds": 0.9,
+  "clicks": 45,
+  "decay": 4.0,
+  "level": 0.5,
+  "volume_db": -14.0
+ }
 }
